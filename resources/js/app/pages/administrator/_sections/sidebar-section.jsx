@@ -21,29 +21,9 @@ import {
     FcCancel,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
+import { Link } from "@inertiajs/react";
 
-const navigation = [
-    { name: "Dashboard", href: "#", icon: FcBullish, current: true },
-    { name: "Users", href: "#", icon: FcConferenceCall, current: false },
-    { name: "Acivities", href: "#", icon: FcSportsMode, current: false },
-    { name: "Ticketing", href: "#", icon: FcCustomerSupport, current: false },
-    { name: "Job Posting", href: "#", icon: FcDocument, current: false },
-    { name: "HR Central", href: "#", icon: FcPortraitMode, current: false },
-    { name: "RnR", href: "#", icon: FcDiploma1, current: false },
-    { name: "Store Admin", href: "#", icon: FcShop, current: false },
-    { name: "Decorations", href: "#", icon: FcCloseUpMode, current: false },
-    { name: "Time Keeping", href: "#", icon: FcOvertime, current: false },
-    { name: "Finance", href: "#", icon: FcSalesPerformance, current: false },
-    { name: "Reports", href: "#", icon: FcBarChart, current: false },
-    { name: "Analytics", href: "#", icon: FcViewDetails, current: false },
-    { name: "Messages", href: "#", icon: FcVoicePresentation, current: false },
-    { name: "Settings", href: "#", icon: FcSettings, current: false },
-];
-const teams = [
-    { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-    { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-    { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
+
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -51,6 +31,24 @@ function classNames(...classes) {
 export default function SidebarSection() {
     const { desktopCollapsed, sidebarOpen } = useSelector((store) => store.app);
     const dispatch = useDispatch();
+    const path = window.location.pathname.split("/")[2];
+        const navigation = [
+            { name: "Dashboard", href: "/administrator/dashboard", icon: FcBullish, current: path == "dashboard" },
+            { name: "Users", href: "/administrator/users", icon: FcConferenceCall, current: path == "users" },
+            { name: "Acivities", href: "/administrator/activities/view", icon: FcSportsMode, current: path == "activities" },
+            { name: "Ticketing", href: "/administrator/ticketing/dashboard", icon: FcCustomerSupport, current: path == "ticketing" },
+            { name: "Job Posting", href: "/administrator/job_posting/dashboard", icon: FcDocument, current: path == "job_posting" },
+            { name: "HR Central", href: "/administrator/hr_central/overview", icon: FcPortraitMode, current: path == "hr_central" },
+            { name: "RnR", href: "/administrator/rnr/grand_rewards", icon: FcDiploma1, current: path == "rnr" },
+            { name: "Store Admin", href: "/administrator/store_admin/rewards_item", icon: FcShop, current: path == "store_admin" },
+            { name: "Decorations", href: "/administrator/decoration/avatar_decorations", icon: FcCloseUpMode, current: path == "decoration" },
+            { name: "Time Keeping", href: "/administrator/time_keeping/dashboard", icon: FcOvertime, current: path == "time_keeping" },
+            { name: "Finance", href: "/administrator/finance/dashboard", icon: FcSalesPerformance, current: path == "finance" },
+            { name: "Reports", href: "/administrator/reports", icon: FcBarChart, current: path == "reports" },
+            { name: "Analytics", href: "/administrator/analytics", icon: FcViewDetails, current: path == "analytics" },
+            { name: "Messages", href: "/administrator/messages", icon: FcVoicePresentation, current: path == "messages" },
+            { name: "Settings", href: "/administrator/settings", icon: FcSettings, current: path == "settings" },
+        ];
 
     const sidebarWidth = desktopCollapsed
         ? "w-20 flex items-center justify-center"
@@ -118,7 +116,7 @@ export default function SidebarSection() {
                                         <ul className="space-y-4">
                                             {navigation.map((item) => (
                                                 <li key={item.name}>
-                                                    <a
+                                                    <Link
                                                         href={item.href}
                                                         className={classNames(
                                                             item.current
@@ -137,7 +135,7 @@ export default function SidebarSection() {
                                                             )}
                                                         />
                                                         {item.name}
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                             ))}
                                         </ul>
@@ -181,7 +179,7 @@ export default function SidebarSection() {
                                         className="w-full"
                                         isShow={desktopCollapsed}
                                     >
-                                        <a
+                                        <Link
                                             href={item.href}
                                             className={classNames(
                                                 item.current
@@ -199,7 +197,7 @@ export default function SidebarSection() {
                                                     {item.name}
                                                 </span>
                                             </div>
-                                        </a>
+                                        </Link>
                                     </Tooltip>
                                 </li>
                             ))}

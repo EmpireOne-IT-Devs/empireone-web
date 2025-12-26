@@ -5,8 +5,9 @@ import TopbarSection from "./_sections/topbar-section";
 import Tooltip from "@/app/_components/tooltip";
 import Button from "@/app/_components/button";
 import Accordion from "@/app/_components/accordion";
+import { Children } from "react";
 
-export default function Layout() {
+export default function Layout({children}) {
     const { desktopCollapsed } = useSelector((store) => store.app);
 
     return (
@@ -21,33 +22,7 @@ export default function Layout() {
                 <main
                     className={`flex-1 p-6 ${desktopCollapsed ? "ml-20" : ""}`}
                 >
-                    Hello world!
-                    <Accordion
-                        items={[
-                            {
-                                title: "What is Flowbite?",
-                                content: (
-                                    <div>
-                                        <p className="mb-2 text-body">
-                                            Flowbite is an open-source library
-                                            of interactive components...
-                                        </p>
-                                        <p className="text-body">
-                                            Check out this guide to learn how to{" "}
-                                            <a
-                                                href="/docs/getting-started/introduction/"
-                                                className="text-fg-brand hover:underline"
-                                            >
-                                                get started
-                                            </a>
-                                            .
-                                        </p>
-                                    </div>
-                                ),
-                            },
-                        ]}
-                        single={true} // only one open at a time
-                    />
+                {children}
                 </main>
             </div>
         </div>

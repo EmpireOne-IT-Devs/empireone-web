@@ -3,6 +3,6 @@ import Layout from '../layout'
 
 export default function Page() {
   return (
-    <Layout>General Dashboard</Layout>
+    <Layout>Message</Layout>
   )
 }
