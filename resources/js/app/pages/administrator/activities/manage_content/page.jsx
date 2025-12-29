@@ -7,11 +7,7 @@ export default function Page() {
     return (
         <Layout>
             <ActivitiesLayout>
-                <div>
-                    <ManageContentLayout>
-                    
-                    </ManageContentLayout>
-                </div>
+                <ManageContentLayout></ManageContentLayout>
             </ActivitiesLayout>
         </Layout>
     );

@@ -1,7 +1,6 @@
 import Tabs from "@/app/_components/tabs";
 import { router } from "@inertiajs/react";
 import React, { useState } from "react";
-
 export default function ActivitiesLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
     const path = window.location.pathname.split("/")[3];
@@ -24,5 +23,6 @@ export default function ActivitiesLayout({ children }) {
             <Tabs tabs={tabs} activeIndex={activeTab} />
             <div className="p-3">{children}</div>
         </div>
+       
     );
 }

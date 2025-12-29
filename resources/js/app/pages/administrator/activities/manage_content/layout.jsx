@@ -1,9 +1,8 @@
-import Tabs from "@/app/_components/tabs";
-import { router } from "@inertiajs/react";
-import React, { useState } from "react";
+import clsx from "clsx";
+import { Link } from "@inertiajs/react";
+import React from "react";
 
 export default function ManageContentLayout({ children }) {
-    const [activeTab, setActiveTab] = useState(0);
     const path = window.location.pathname.split("/")[4];
 
     const tabs = [
@@ -13,7 +12,7 @@ export default function ManageContentLayout({ children }) {
             active: path === "news",
         },
         {
-            label: "Announcement",
+            label: "Announcements",
             path: "/administrator/activities/manage_content/announcement",
             active: path === "announcement",
         },
@@ -28,10 +27,27 @@ export default function ManageContentLayout({ children }) {
             active: path === "activities",
         },
     ];
+
     return (
-        <div className="flex flex-col items-start mt-4 border rounded-2xl max-w-lg p-1 bg-white shadow-lg">
-            <Tabs tabs={tabs} activeIndex={activeTab} />
-            <div className="p-3 w-full">{children}</div>
+        <div>
+            <div className="mt-4 inline-flex gap-2 items-center border rounded-xl bg-white p-1 shadow-lg">
+                {tabs.map((tab) => (
+                    <Link
+                        key={tab.label}
+                        href={tab.path}
+                        className={clsx(
+                            "px-4 py-2 text-md font-medium  rounded-lg transition-all",
+                            tab.active
+                                ? "bg-blue-600 text-white shadow "
+                                : "text-gray-600 hover:bg-gray-100"
+                        )}
+                    >
+                        {tab.label}
+                    </Link>
+                ))}
+            </div>
+
+            <div className="p-4">{children}</div>
         </div>
     );
 }

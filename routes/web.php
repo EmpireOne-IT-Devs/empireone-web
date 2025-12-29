@@ -27,23 +27,26 @@ Route::prefix('administrator')->group(function () {
         return Inertia::render('administrator/users/page');
     });
     Route::prefix('activities')->group(function () {
-        Route::get('/manage_content', function () {
-            return Inertia::render('administrator/activities/manage_content/page');
+        Route::prefix('manage_content')->group(function () {
+            Route::get('/', function () {
+                return Inertia::render('administrator/activities/manage_content/page');
+            });
+            Route::get('/announcement', function () {
+                return Inertia::render('administrator/activities/manage_content/announcement/page');
+            });
+            Route::get('/activities', function () {
+                return Inertia::render('administrator/activities/manage_content/activities/page');
+            });
+            Route::get('/news', function () {
+                return Inertia::render('administrator/activities/manage_content/news/page');
+            });
+            Route::get('/events', function () {
+                return Inertia::render('administrator/activities/manage_content/events/page');
+            });
         });
+
         Route::get('/view', function () {
             return Inertia::render('administrator/activities/view/page');
-        });
-         Route::get('/announcement', function () {
-            return Inertia::render('administrator/activities/manage_content/announcement/page');
-        });
-        Route::get('/activities', function () {
-            return Inertia::render('administrator/activities/manage_content/activities/page');
-        });
-         Route::get('/news', function () {
-            return Inertia::render('administrator/activities/manage_content/news/page');
-        });
-        Route::get('/events', function () {
-            return Inertia::render('administrator/activities/manage_content/events/page');
         });
     });
 
