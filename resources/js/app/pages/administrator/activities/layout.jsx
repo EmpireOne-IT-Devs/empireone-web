@@ -13,7 +13,7 @@ export default function ActivitiesLayout({ children }) {
         },
         {
             label: "Manage Content",
-            path: "/administrator/activities/manage_content",
+            path: "/administrator/activities/manage_content/news",
             active: path === "manage_content",
         },
        

@@ -6,9 +6,7 @@ import ManageContentLayout from "./layout";
 export default function Page() {
     return (
         <Layout>
-            <ActivitiesLayout>
-                <ManageContentLayout></ManageContentLayout>
-            </ActivitiesLayout>
+            <ManageContentLayout></ManageContentLayout>
         </Layout>
     );
 }

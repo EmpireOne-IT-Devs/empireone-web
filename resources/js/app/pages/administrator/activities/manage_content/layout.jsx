@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { Link } from "@inertiajs/react";
 import React from "react";
+import ActivitiesLayout from "../layout";
 
 export default function ManageContentLayout({ children }) {
     const path = window.location.pathname.split("/")[4];
@@ -29,7 +30,7 @@ export default function ManageContentLayout({ children }) {
     ];
 
     return (
-        <div>
+        <ActivitiesLayout>
             <div className="mt-4 inline-flex gap-2 items-center border rounded-xl bg-white p-1 shadow-lg">
                 {tabs.map((tab) => (
                     <Link
@@ -48,6 +49,6 @@ export default function ManageContentLayout({ children }) {
             </div>
 
             <div className="p-4">{children}</div>
-        </div>
+        </ActivitiesLayout>
     );
 }
