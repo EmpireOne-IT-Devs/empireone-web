@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Google_Client;
+use Illuminate\Support\Facades\Hash;
 
 class GoogleController extends Controller
 {
@@ -53,30 +54,26 @@ class GoogleController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            // Added stateless() to avoid session/CSRF issues during OAuth if using as API
-            $googleUser = Socialite::driver('google')->user();
+            // Use stateless() for API
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             $user = User::updateOrCreate([
                 'email' => $googleUser->email,
             ], [
                 'name' => $googleUser->name,
                 'google_id' => $googleUser->id,
-                'password' => null,
             ]);
 
             $token = $user->createToken('auth_token')->plainTextToken;
-            
-            Auth::login($user);
 
             return response()->json([
                 'user' => $user,
                 'token' => $token,
                 'token_type' => 'Bearer',
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Internal Server Error',
-                'debug' => $e->getMessage(), // Remove debug in production
                 'status' => 'error',
             ], 500);
         }
