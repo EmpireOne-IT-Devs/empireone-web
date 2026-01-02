@@ -34,14 +34,15 @@ class GoogleController extends Controller
 
             // Find or create the user
             $user = User::updateOrCreate(
-                ['email' => $googleUser->email],
                 [
-                    'name' => $googleUser->name,
-                    'google_id' => $googleUser->id,
+                    'email' => $googleUser->getEmail(),
+                ],
+                [
+                    'google_id' => $googleUser->getId(),
+                    'name' => $googleUser->getName(),
                 ]
             );
 
-            // Create Sanctum token
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
