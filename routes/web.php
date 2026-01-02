@@ -16,8 +16,8 @@ Route::get('/', function () {
 });
 
 
-
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/web', [GoogleController::class, 'webRedirectToGoogle']);
+Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 

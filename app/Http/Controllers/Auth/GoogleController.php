@@ -13,45 +13,19 @@ use Illuminate\Support\Facades\Hash;
 
 class GoogleController extends Controller
 {
-    // API/Mobile Flow: Verifying an ID Token from a mobile device
-    public function googleLogin(Request $request)
+    public function webRedirectToGoogle()
     {
-        $idToken = $request->token;
-        // Best practice: Use the env helper or config
-        $client = new Google_Client(['client_id' => config('services.google.client_id')]);
-
-        $payload = $client->verifyIdToken($idToken);
-
-        if ($payload) {
-            $user = User::updateOrCreate([
-                'email' => $payload['email'],
-            ], [
-                'name' => $payload['name'],
-                'google_id' => $payload['sub'],
-                'password' => null,
-            ]);
-
-            $token = $user->createToken('mobile-app')->plainTextToken;
-
-            return response()->json([
-                'user' => $user,
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ]);
-        }
-
-        return response()->json(['error' => 'Invalid Token'], 401);
+        return Socialite::driver('google')->redirect();
     }
 
     // Step 1: Redirect to Google
-    public function redirectToGoogle()
+    public function appRedirectToGoogle()
     {
         $url = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
         return response()->json([
             'url' => $url
         ]);
     }
-
 
     public function handleGoogleCallback()
     {
