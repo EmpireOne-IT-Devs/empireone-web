@@ -43,13 +43,13 @@ class GoogleController extends Controller
     }
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             // Find or Create the user
             $user = User::updateOrCreate([
@@ -59,12 +59,17 @@ class GoogleController extends Controller
                 'google_id' => $googleUser->id,
                 'password' => null, // No password needed for social login
             ]);
-
+            $token = $user->createToken('auth_token')->plainTextToken;
             Auth::login($user);
-
-            return redirect()->intended('dashboard');
+            return response()->json([
+                'user' => $user,
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+            ]);
         } catch (Exception $e) {
-            return redirect('/login')->with('error', 'Google authentication failed.');
+            return response()->json([
+                'status' => 'error',
+            ], 500);
         }
     }
 }

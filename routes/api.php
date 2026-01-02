@@ -11,5 +11,5 @@ Route::get('/user', function (Request $request) {
 
 
 Route::post('auth/google/app', [GoogleController::class, 'googleLogin']);
-Route::get('auth/google/web', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
