@@ -1,0 +1,1 @@
+import{j as r}from"./app-7bcR6jdr.js";import t from"./layout-CGBQPpcJ.js";import o from"./layout-CvrvisTE.js";import"./sidebar-section-Cd-DY8pO.js";import"./portal-BbD04_5I.js";import"./topbar-section-B6HjedQ6.js";import"./tabs-Cf7MePPq.js";function u(){return r.jsx(t,{children:r.jsx(o,{children:"Rewards Item"})})}export{u as default};

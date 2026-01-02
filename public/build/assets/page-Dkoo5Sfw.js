@@ -1,0 +1,1 @@
+import{j as t}from"./app-7bcR6jdr.js";import r from"./layout-CGBQPpcJ.js";import o from"./layout-Cvaf_8Tq.js";import"./sidebar-section-Cd-DY8pO.js";import"./portal-BbD04_5I.js";import"./topbar-section-B6HjedQ6.js";import"./tabs-Cf7MePPq.js";function u(){return t.jsx(r,{children:t.jsx(o,{children:"Tickets"})})}export{u as default};

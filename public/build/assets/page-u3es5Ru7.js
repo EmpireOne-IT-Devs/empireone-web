@@ -1,0 +1,1 @@
+import{j as t}from"./app-7bcR6jdr.js";import o from"./layout-CGBQPpcJ.js";import r from"./layout-BfcS2Da5.js";import"./sidebar-section-Cd-DY8pO.js";import"./portal-BbD04_5I.js";import"./topbar-section-B6HjedQ6.js";import"./layout-D3GpMdDe.js";import"./tabs-Cf7MePPq.js";function f(){return t.jsx(o,{children:t.jsx(r,{children:" Activities"})})}export{f as default};

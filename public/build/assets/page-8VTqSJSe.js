@@ -1,0 +1,1 @@
+import{j as o}from"./app-7bcR6jdr.js";import r from"./layout-CGBQPpcJ.js";import t from"./layout-1izUqCzR.js";import"./sidebar-section-Cd-DY8pO.js";import"./portal-BbD04_5I.js";import"./topbar-section-B6HjedQ6.js";import"./tabs-Cf7MePPq.js";function s(){return o.jsx(r,{children:o.jsx(t,{children:"Profile Effects"})})}export{s as default};

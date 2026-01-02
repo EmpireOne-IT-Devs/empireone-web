@@ -1,0 +1,1 @@
+import{j as t}from"./app-7bcR6jdr.js";import r from"./layout-CGBQPpcJ.js";import e from"./layout-D1oMlXPJ.js";import"./sidebar-section-Cd-DY8pO.js";import"./portal-BbD04_5I.js";import"./topbar-section-B6HjedQ6.js";import"./tabs-Cf7MePPq.js";function u(){return t.jsx(r,{children:t.jsx(e,{children:"Time Keeping Attendance"})})}export{u as default};
