@@ -54,7 +54,7 @@ class GoogleController extends Controller
     {
         try {
             // Added stateless() to avoid session/CSRF issues during OAuth if using as API
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            $googleUser = Socialite::driver('google')->user();
 
             $user = User::updateOrCreate([
                 'email' => $googleUser->email,
