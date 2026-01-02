@@ -43,27 +43,31 @@ class GoogleController extends Controller
         return response()->json(['error' => 'Invalid Token'], 401);
     }
 
-    // Web Flow: Redirecting to Google
+    // Step 1: Redirect to Google
     public function redirectToGoogle()
     {
-        // Socialite will now use the 'redirect' key from config/services.php
-        return Socialite::driver('google')->redirect();
+        $url = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
+        return response()->json([
+            'url' => $url
+        ]);
     }
 
-    // Web Flow: Handling the Callback from Google
+
     public function handleGoogleCallback()
     {
         try {
-            // Use stateless() for API
             $googleUser = Socialite::driver('google')->stateless()->user();
 
-            $user = User::updateOrCreate([
-                'email' => $googleUser->email,
-            ], [
-                'name' => $googleUser->name,
-                'google_id' => $googleUser->id,
-            ]);
+            // Find or create the user
+            $user = User::updateOrCreate(
+                ['email' => $googleUser->email],
+                [
+                    'name' => $googleUser->name,
+                    'google_id' => $googleUser->id,
+                ]
+            );
 
+            // Create Sanctum token
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
@@ -71,10 +75,11 @@ class GoogleController extends Controller
                 'token' => $token,
                 'token_type' => 'Bearer',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'message' => 'Internal Server Error',
                 'status' => 'error',
+                // 'debug' => $e->getMessage() // comment out in production
             ], 500);
         }
     }
