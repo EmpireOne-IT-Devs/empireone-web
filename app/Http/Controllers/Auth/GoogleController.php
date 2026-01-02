@@ -12,12 +12,13 @@ use Google_Client;
 
 class GoogleController extends Controller
 {
+    // API/Mobile Flow: Verifying an ID Token from a mobile device
     public function googleLogin(Request $request)
     {
         $idToken = $request->token;
-        $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+        // Best practice: Use the env helper or config
+        $client = new Google_Client(['client_id' => config('services.google.client_id')]);
 
-        // Verify the token with Google
         $payload = $client->verifyIdToken($idToken);
 
         if ($payload) {
@@ -25,11 +26,10 @@ class GoogleController extends Controller
                 'email' => $payload['email'],
             ], [
                 'name' => $payload['name'],
-                'google_id' => $payload['sub'], // 'sub' is the unique Google ID
+                'google_id' => $payload['sub'],
                 'password' => null,
             ]);
 
-            // Create a Sanctum token for the mobile app
             $token = $user->createToken('mobile-app')->plainTextToken;
 
             return response()->json([
@@ -37,37 +37,46 @@ class GoogleController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ]);
-        } else {
-            return response()->json(['error' => 'Invalid Token'], 401);
         }
-    }
-    public function redirectToGoogle()
-    {
-        return Socialite::driver('google')->stateless()->redirect();
+
+        return response()->json(['error' => 'Invalid Token'], 401);
     }
 
+    // Web Flow: Redirecting to Google
+    public function redirectToGoogle()
+    {
+        // Socialite will now use the 'redirect' key from config/services.php
+        return Socialite::driver('google')->redirect();
+    }
+
+    // Web Flow: Handling the Callback from Google
     public function handleGoogleCallback()
     {
         try {
+            // Added stateless() to avoid session/CSRF issues during OAuth if using as API
             $googleUser = Socialite::driver('google')->stateless()->user();
 
-            // Find or Create the user
             $user = User::updateOrCreate([
                 'email' => $googleUser->email,
             ], [
                 'name' => $googleUser->name,
                 'google_id' => $googleUser->id,
-                'password' => null, // No password needed for social login
+                'password' => null,
             ]);
+
             $token = $user->createToken('auth_token')->plainTextToken;
+            
             Auth::login($user);
+
             return response()->json([
                 'user' => $user,
-                'access_token' => $token,
+                'token' => $token,
                 'token_type' => 'Bearer',
             ]);
         } catch (Exception $e) {
             return response()->json([
+                'message' => 'Internal Server Error',
+                'debug' => $e->getMessage(), // Remove debug in production
                 'status' => 'error',
             ], 500);
         }
