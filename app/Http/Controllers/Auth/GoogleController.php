@@ -21,7 +21,7 @@ class GoogleController extends Controller
     // Step 1: Redirect to Google
     public function appRedirectToGoogle()
     {
-        $url = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
+        $url = Socialite::driver('google')->redirect()->getTargetUrl();
         return response()->json([
             'url' => $url
         ]);
@@ -29,7 +29,7 @@ class GoogleController extends Controller
 
     public function handleGoogleCallback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        $googleUser = Socialite::driver('google')->user();
 
         // Find or create the user
         $user = User::updateOrCreate(
