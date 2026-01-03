@@ -1,17 +1,9 @@
-# 🔴 VERY IMPORTANT: Disable ModSecurity for Google OAuth
-<IfModule mod_security.c>
-    SecRuleEngine Off
-</IfModule>
-
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
-
-    # ✅ Explicitly allow Google OAuth callback
-    RewriteRule ^auth/google/callback - [L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
