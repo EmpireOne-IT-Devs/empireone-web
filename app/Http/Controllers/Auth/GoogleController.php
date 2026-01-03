@@ -29,19 +29,19 @@ class GoogleController extends Controller
 
     public function handleGoogleCallback()
     {
-        // $googleUser = Socialite::driver('google')->user();
+        $googleUser = Socialite::driver('google')->user();
 
-        // $user = User::updateOrCreate(
-        //     [
-        //         'email' => $googleUser->getEmail(),
-        //     ],
-        //     [
-        //         'google_id' => $googleUser->getId(),
-        //         'name' => $googleUser->getName(),
-        //     ]
-        // );
+        $user = User::updateOrCreate(
+            [
+                'email' => $googleUser->getEmail(),
+            ],
+            [
+                'google_id' => $googleUser->getId(),
+                'name' => $googleUser->getName(),
+            ]
+        );
 
-        // $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             // 'user' => $user,
