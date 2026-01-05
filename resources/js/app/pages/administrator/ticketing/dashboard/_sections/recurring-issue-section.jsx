@@ -2,7 +2,7 @@ import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Card from "@/app/_components/card";
 import React from "react";
-import { TbBulb } from "react-icons/tb";
+import { TbBulb, TbFileDownload } from "react-icons/tb";
 import { TiWarningOutline } from "react-icons/ti";
 export default function RecurringIssueSection() {
     return (
@@ -18,7 +18,7 @@ export default function RecurringIssueSection() {
                         </div>
                     </div>
                 </div>
-                <div>Export</div>
+                <div><Button variant="primary" className="flex gap-2"><TbFileDownload className="text-xl" /> Export</Button></div>
             </div>
 
             {[1, 2, 3, 4].map((res) => {
