@@ -1,74 +1,89 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
-export default function Input({
-    label,
-    register,
-    name,
-    value,
-    onChange,
-    type = "text",
-    disabled = false,
-    required = false,
-    iconLeft,
-    iconRight,
-    error,
-    readOnly = false,
-}) {
+const Input = forwardRef(
+  (
+    {
+      label,
+      name,
+      type = "text",
+      disabled = false,
+      required = false,
+      iconLeft,
+      iconRight,
+      error,
+      readOnly = false,
+      className = "",
+      ...props
+    },
+    ref
+  ) => {
     return (
-        <div className="w-full">
-            <div className="relative ">
-                {/* Left Icon */}
-                {iconLeft && (
-                    <div className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">
-                        {iconLeft}
-                    </div>
-                )}
-
-                {/* Input */}
-                <input
-                    readOnly={readOnly}
-                    {...register}
-                    disabled={disabled}
-                    required={required}
-                    value={value}
-                    onChange={onChange}
-                    type={type}
-                    id={name}
-                    name={name}
-                    step={type === "number" ? "any" : undefined}
-                    className={`peer text-black placeholder-transparent w-full py-2.5 px-5 border bg-white rounded-md focus:outline-none transition-all
-            ${iconLeft ? "pl-10" : ""}
-            ${iconRight ? "pr-10" : ""}
-            ${error ? "border-red-500" : ""}
-          `}
-                    placeholder=" "
-                />
-
-                {/* Floating Label */}
-                <label
-                    htmlFor={name}
-                    className={` absolute left-2.5 px-2.5 transition-all bg-white rounded-md text-sm -top-3
-            peer-placeholder-shown:text-base
-            peer-placeholder-shown:text-gray-500
-            peer-placeholder-shown:top-2.5
-            peer-focus:-top-3
-            peer-focus:text-sm
-            peer-focus:text-black
-          `}
-                >
-                    {label}
-                </label>
-
-                {/* Right Icon */}
-                {iconRight && (
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">
-                        {iconRight}
-                    </div>
-                )}
+      <div className="w-full">
+        <div className="relative">
+          {/* Left Icon */}
+          {iconLeft && (
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              {iconLeft}
             </div>
+          )}
 
-            {/* Error Message */}
-            {error && <p className="text-sm text-red-500 mt-1 ml-1">{error}</p>}
+          {/* Input */}
+          <input
+          autoComplete="off"
+            ref={ref}
+            id={name}
+            name={name}
+            type={type}
+            disabled={disabled}
+            required={required}
+            readOnly={readOnly}
+            step={type === "number" ? "any" : undefined}
+            placeholder=" " // needed for floating label
+            {...props}
+            className={`
+              peer w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : ""}
+              ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
+              ${className}
+            `}
+          />
+
+          {/* Floating Label */}
+          <label
+            htmlFor={name}
+            className={`
+              absolute left-3 top-2.5 bg-white px-1 text-gray-500 text-sm
+              transition-all duration-200 ease-out
+              peer-placeholder-shown:top-2.5
+              peer-placeholder-shown:text-sm
+              peer-placeholder-shown:text-gray-500
+              peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-600
+              peer-valid:-top-2 peer-valid:text-xs peer-valid:text-gray-700
+            `}
+          >
+            {label}
+          </label>
+
+          {/* Right Icon */}
+          {iconRight && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+              {iconRight}
+            </div>
+          )}
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <p className="mt-1 text-sm text-red-500">
+            {error.message ?? error}
+          </p>
+        )}
+      </div>
     );
-}
+  }
+);
+
+Input.displayName = "Input";
+
+export default Input;

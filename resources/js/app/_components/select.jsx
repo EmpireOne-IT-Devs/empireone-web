@@ -1,62 +1,171 @@
-import { useState } from 'react'
-import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
-import { ChevronUpDownIcon } from '@heroicons/react/16/solid'
-import { CheckIcon } from '@heroicons/react/20/solid'
+import React, { forwardRef, useState, useEffect, useRef } from "react";
 
-export default function Select({
-  label = 'Select an option',
-  options = [],
-  value,
-  onChange,
-}) {
-  const [selected, setSelected] = useState(value || options[0] || null)
+const Select = forwardRef(
+    (
+        {
+            label,
+            name,
+            options = [],
+            error,
+            iconLeft,
+            iconRight,
+            disabled = false,
+            required = false,
+            readOnly = false,
+            className = "",
+            value, // This is the value from React Hook Form
+            onChange, // This is the change handler from React Hook Form
+            ...props
+        },
+        ref
+    ) => {
+        // 1. Initialize search with the label matching the current value
+        const [search, setSearch] = useState("");
+        const [isOpen, setIsOpen] = useState(false);
+        const containerRef = useRef();
 
-  const handleChange = (val) => {
-    setSelected(val)
-    if (onChange) onChange(val)
-  }
+        // Sync search text when the external 'value' (from RHF) changes
+        useEffect(() => {
+            const selectedOption = options.find((o) => o.value === value);
+            if (selectedOption) {
+                setSearch(selectedOption.label);
+            } else if (!value) {
+                setSearch("");
+            }
+        }, [value, options]);
 
-  return (
-    <Listbox value={selected} onChange={handleChange}>
-      <Label className="block text-sm/6 font-medium text-gray-900 dark:text-white">{label}</Label>
-      <div className="relative mt-2">
-        <ListboxButton className="grid w-full border cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:focus-visible:outline-indigo-500">
-          <span className="col-start-1 row-start-1 truncate pr-6">{selected?.name}</span>
-          <ChevronUpDownIcon
-            aria-hidden="true"
-            className="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-          />
-        </ListboxButton>
+        // Filter based on what the user is typing
+        const filteredOptions = options.filter((opt) =>
+            opt.label.toLowerCase().includes(search.toLowerCase())
+        );
 
-        <ListboxOptions
-          className="absolute z-10 mt-1 max-h-60 w-full border overflow-auto rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 sm:text-sm dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
-        >
-          {options.map((option) => (
-            <ListboxOption
-              key={option.id}
-              value={option}
-              className={({ active }) =>
-                `relative cursor-default select-none py-2 pr-9 pl-3 ${
-                  active ? 'bg-indigo-600 text-white' : 'text-gray-900 dark:text-white'
-                }`
-              }
-            >
-              {({ selected }) => (
-                <>
-                  <span className={`block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>
-                    {option.name}
-                  </span>
-                  {selected && (
-                    <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 dark:text-indigo-400">
-                      <CheckIcon aria-hidden="true" className="size-5" />
-                    </span>
-                  )}
-                </>
-              )}
-            </ListboxOption>
-          ))}
-        </ListboxOptions>
-      </div>
-    </Listbox>
-  )
-}
+        const handleSelect = (option) => {
+            setSearch(option.label);
+            onChange(option.value); // Update React Hook Form
+            setIsOpen(false);
+        };
+
+        const handleInputChange = (e) => {
+            setSearch(e.target.value);
+            setIsOpen(true);
+            // Optional: Clear the value in RHF if the user clears the input
+            if (e.target.value === "") {
+                onChange("");
+            }
+        };
+
+        // Close dropdown when clicking outside
+        useEffect(() => {
+            const handleClickOutside = (e) => {
+                if (
+                    containerRef.current &&
+                    !containerRef.current.contains(e.target)
+                ) {
+                    setIsOpen(false);
+                    // Sync search back to the actual selected value label on blur
+                    const selectedOption = options.find(
+                        (o) => o.value === value
+                    );
+                    setSearch(selectedOption ? selectedOption.label : "");
+                }
+            };
+            document.addEventListener("mousedown", handleClickOutside);
+            return () =>
+                document.removeEventListener("mousedown", handleClickOutside);
+        }, [value, options]);
+
+        return (
+            <div className="w-full" ref={containerRef}>
+                <div className="relative">
+                    {/* Left Icon */}
+                    {iconLeft && (
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 z-10">
+                            {iconLeft}
+                        </div>
+                    )}
+
+                    {/* Search Input */}
+                    <input
+                        {...props}
+                        autoComplete="off"
+                        ref={ref}
+                        id={name}
+                        name={name}
+                        disabled={disabled}
+                        placeholder=" " // Required for peer-placeholder-shown to work
+                        readOnly={readOnly}
+                        value={search}
+                        onChange={handleInputChange}
+                        onFocus={() => setIsOpen(true)}
+                        className={`
+              peer w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black
+              placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500
+              ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : ""}
+              ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
+              ${className}
+            `}
+                    />
+
+                    {/* Floating Label */}
+                    <label
+                        htmlFor={name}
+                        className={`
+              absolute left-3 top-2.5 bg-white px-1 text-gray-500 text-sm
+              transition-all duration-200 ease-out
+              peer-placeholder-shown:top-2.5
+              peer-placeholder-shown:text-sm
+              peer-placeholder-shown:text-gray-500
+              peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-600
+              peer-valid:-top-2 peer-valid:text-xs peer-valid:text-gray-700
+            `}
+                    >
+                        {label}
+                    </label>
+
+                    {/* Right Icon */}
+                    {iconRight && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                            {iconRight}
+                        </div>
+                    )}
+
+                    {/* Dropdown Options */}
+                    {isOpen && !disabled && (
+                        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg">
+                            {filteredOptions.length > 0 ? (
+                                filteredOptions.map((option, index) => (
+                                    <li
+                                        key={index}
+                                        className="cursor-pointer px-4 py-2 hover:bg-blue-100 text-black text-sm"
+                                        onMouseDown={(e) => {
+                                            // Use onMouseDown to prevent the input blur from closing list before click
+                                            e.preventDefault();
+                                            handleSelect(option);
+                                        }}
+                                    >
+                                        {option.label}
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="px-4 py-2 text-sm text-gray-500">
+                                    No results found
+                                </li>
+                            )}
+                        </ul>
+                    )}
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                    <p className="mt-1 text-xs text-red-500">
+                        {error.message ?? error}
+                    </p>
+                )}
+            </div>
+        );
+    }
+);
+
+Select.displayName = "Select";
+
+export default Select;
