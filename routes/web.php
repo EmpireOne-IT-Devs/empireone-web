@@ -64,8 +64,8 @@ Route::prefix('administrator')->group(function () {
         Route::get('/my_tickets', function () {
             return Inertia::render('administrator/ticketing/my_tickets/page');
         });
-        Route::get('/sites_categories', function () {
-            return Inertia::render('administrator/ticketing/sites_categories/page');
+        Route::get('/categories', function () {
+            return Inertia::render('administrator/ticketing/categories/page');
         });
         Route::get('/tickets', function () {
             return Inertia::render('administrator/ticketing/tickets/page');

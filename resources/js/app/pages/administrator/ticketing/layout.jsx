@@ -18,9 +18,9 @@ export default function TicketingLayout({children}) {
             active: path === "my_tickets",
         },
         {
-            label: "Categories & Sites",
-            path: "/administrator/ticketing/sites_categories",
-            active: path === "sites_categories",
+            label: "Categories",
+            path: "/administrator/ticketing/categories",
+            active: path === "categories",
         },
         {
             label: "Tickets",
