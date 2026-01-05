@@ -1,11 +1,20 @@
 import React from 'react'
 import Layout from '../../layout'
 import JobPostingLayout from '../layout'
+import HeaderSection from './_sections/header-section'
+import CardSection from './_sections/card-section'
+import SearchSection from './_sections/search-section'
+import ApplicantCardSection from './_sections/applicant-card-section'
 
 export default function Page() {
   return (
     <Layout>
-      <JobPostingLayout>Applicants</JobPostingLayout>
+      <JobPostingLayout>
+        <HeaderSection/>
+        <CardSection/>
+        <SearchSection/>
+        <ApplicantCardSection/>
+      </JobPostingLayout>
     </Layout>
   )
 }

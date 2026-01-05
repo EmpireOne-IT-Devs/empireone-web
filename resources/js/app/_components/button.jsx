@@ -8,7 +8,7 @@ const variantStyles = {
     },
     secondary: {
         solid: "bg-gray-600 text-white hover:bg-gray-700",
-        outlined: "border border-gray-600 text-gray-600 hover:bg-gray-50",
+        outlined: "border border-gray-600 text-gray-800 hover:bg-gray-50",
     },
     danger: {
         solid: "bg-red-600 text-white hover:bg-red-700",
