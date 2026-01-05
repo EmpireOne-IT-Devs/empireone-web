@@ -6,7 +6,7 @@ import { TbBulb, TbFileDownload } from "react-icons/tb";
 import { TiWarningOutline } from "react-icons/ti";
 export default function RecurringIssueSection() {
     return (
-        <div className="bg-white shadow-xl p-5">
+        <div className="bg-white shadow-2xl p-5 rounded-xl border border-gray-200">
             <div className="flex gap-3 py-2">
                 <div className="flex-1 flex gap-3 items-start justify-start">
                     <TiWarningOutline className="text-orange-600 text-5xl" />
