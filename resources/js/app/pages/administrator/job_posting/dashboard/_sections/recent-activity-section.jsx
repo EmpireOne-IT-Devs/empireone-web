@@ -40,14 +40,14 @@ export default function RecentActivitySection() {
         <Card className="flex-1 flex flex-col gap-3">
             <div className=" pb-2 mb-3 flex items-center justify-between">
                 <div className="text-xl font-bold">Recent Activity</div>
-                <div className="text-blue-600"><strong>View All</strong></div>
+                <div className="text-blue-600 font-bold">View All</div>
             </div>
 
             {activities.map((item, index) => (
                 <div key={index} className="py-2">
                     <div className="flex items-start justify-between">
                         <div className="flex items-start gap-2">
-                            <StatusIndicator    
+                            <StatusIndicator
                                 variant={item.variant}
                                 size="sm"
                                 className="mt-1"

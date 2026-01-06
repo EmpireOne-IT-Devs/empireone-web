@@ -1,9 +1,8 @@
-import Button from "@/app/_components/button";
+
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import { TbCategory, TbFilter, TbSearch } from "react-icons/tb";
+import {  TbFilter, TbSearch } from "react-icons/tb";
 import CreateJobSection from "./create-job-section";
 
 export default function SearchSection() {

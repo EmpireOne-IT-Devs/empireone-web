@@ -7,7 +7,7 @@ import { TbCategory, TbFilter, TbSearch } from "react-icons/tb";
 
 export default function SearchSection() {
     return (
-        <div className="bg-white shadow-xl p-5 border-2 rounded-2xl flex gap-2 my-3">
+        <div className="bg-white shadow-sm p-5 border-2 rounded-2xl flex gap-2 my-3">
             <div className="flex-1">
                 <Input
                     iconLeft={<TbSearch className="text-xl" />}
@@ -17,7 +17,7 @@ export default function SearchSection() {
             </div>
             <div>
                 <Select
-                    iconLeft={<TbFilter className="text-xl" />}
+                    iconLeft={<TbCategory className="text-xl" />}
                     label="All Jobs"
                     options={[
                         { value: "all_jobs", label: "All Jobs" },
@@ -30,7 +30,7 @@ export default function SearchSection() {
             </div>
             <div>
                 <Select
-                    iconLeft={<TbCategory className="text-xl" />}
+                    iconLeft={<TbFilter className="text-xl" />}
                     label="All Status"
                     options={[
                         { value: "all_status", label: "All Status" },

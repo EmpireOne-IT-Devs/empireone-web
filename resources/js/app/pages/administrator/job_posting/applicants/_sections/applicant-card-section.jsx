@@ -8,6 +8,7 @@ import {
     TbCalendarEvent,
     TbEye,
 } from "react-icons/tb";
+import ViewApplicantSection from "./view-applicant-section";
 
 const applicants = [
     {
@@ -55,7 +56,7 @@ const applicants = [
         applied: "12/07/2024",
         status: "Rejected",
     },
-     {
+    {
         name: "Wakin",
         role: "Senior Software Engineer",
         email: "wakin@email.com",
@@ -73,14 +74,13 @@ const STATUS_VARIANTS = {
     Rejected: "danger",
     Hired: "success",
     Interview: "info",
-
 };
 
 export default function ApplicantCardSection() {
     return (
         <div className="flex flex-col gap-3">
             {applicants.map((applicant, i) => (
-                <Card key={i} className="rounded-xl border p-5">
+                <Card key={i} className="rounded-xl border p-5 mt-2">
                     <div className="flex items-center justify-between">
                         <div className="flex items-start gap-4">
                             <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
@@ -125,14 +125,13 @@ export default function ApplicantCardSection() {
                                 </div>
                             </div>
                         </div>
-
-                        <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
-                            <TbEye />
-                            View
-                        </button>
+                        <div>
+                            <ViewApplicantSection />
+                        </div>
                     </div>
                 </Card>
             ))}
+           
         </div>
     );
 }
