@@ -32,7 +32,7 @@ class AuthorizationController extends Controller
             'message' => 'Login successful',
             'user'    => $user,
             'token'   => $token,
-        ]);
+        ],200);
     }
 
     public function logout(Request $request)
