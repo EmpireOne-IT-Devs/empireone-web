@@ -4,6 +4,7 @@ import Card from "@/app/_components/card";
 import React from "react";
 import { FaCalendar, FaVideo } from "react-icons/fa6";
 import { FiMoreVertical } from "react-icons/fi";
+import ViewDetailSection from "./view-details-section";
 
 export default function ListApplicantSection() {
     const applicants = [
@@ -11,7 +12,7 @@ export default function ListApplicantSection() {
             name: "John Smith",
             status: "Scheduled",
             role: "Senior Software Engineer",
-            interviewType: "Online",
+            type: "Online",
             date: "12/20/2024",
             time: "10:00",
             description: "Technical interview - Focus on React and Node.js",
@@ -21,7 +22,7 @@ export default function ListApplicantSection() {
             name: "Mike Chen",
             status: "Scheduled",
             role: "Marketing Specialist",
-            interviewType: "In-Person",
+            type: "In-Person",
             date: "12/22/2024",
             time: "14:00",
             description: "HR and culture fit interview",
@@ -31,7 +32,7 @@ export default function ListApplicantSection() {
             name: "Sarah Johnson",
             status: "Completed",
             role: "HR Manager",
-            interviewType: "Online",
+            type: "Online",
             date: "12/15/2024",
             time: "11:00",
             description:
@@ -77,7 +78,7 @@ export default function ListApplicantSection() {
                     <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
                         <span className="flex items-center gap-1.5">
                             <FaVideo className="w-4 h-4" />
-                            {applicant.interviewType}
+                            {applicant.type}
                         </span>
                         <span className="flex items-center gap-1.5">
                             <FaCalendar className="w-4 h-4" />
@@ -96,19 +97,13 @@ export default function ListApplicantSection() {
                             </div>
                         </div>
                     ) : (
-                        <p className="text-gray-700 bg-gray-50 px-3 py-2 rounded-lg mb-6">
+                        <p className="text-gray-700 bg-gray-100 px-3 py-2 rounded-lg mb-6">
                             {applicant.description}
                         </p>
                     )}
 
                     <div className="flex items-center gap-3">
-                        <Button
-                            outlined
-                            variant="secondary"
-                            className="flex-1 px-4 py-2.5 text-sm rounded-lg "
-                        >
-                            View Full Details
-                        </Button>
+                        <ViewDetailSection />
                         <Button className="px-6 py-2.5 text-sm      ">
                             Mark as Completed
                         </Button>
