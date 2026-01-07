@@ -11,5 +11,5 @@ Route::get('/user', function (Request $request) {
 
 
 
-Route::put('auth/login', [AuthorizationController::class, 'login']);
+Route::post('auth/login', [AuthorizationController::class, 'login']);
 Route::post('auth/google/app', [GoogleController::class, 'googleLogin']);
