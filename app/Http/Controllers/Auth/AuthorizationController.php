@@ -6,27 +6,35 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthorizationController extends Controller
 {
     public function login(Request $request)
     {
-        // $credentials = $request->only('email', 'password');
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-        // if (Auth::attempt($credentials)) {
-        //     $user = Auth::user();
-        //     return response()->json([
-        //         'success' => true,
-        //         'user' => $user,
-        //         'token' => $user->createToken('API Token')->plainTextToken
-        //     ], 200);
-        // }
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Invalid credentials',
+                'user'    => null,
+                'token'   => null,
+            ], 401);
+        }
+
+        $user->tokens()->delete();
+
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'success' => false,
-            'message' => 'Invalid credentials'
-        ], 401);
+            'message' => 'Login successful',
+            'user'    => $user,
+            'token'   => $token,
+        ], 200);
     }
 
     public function logout(Request $request)
