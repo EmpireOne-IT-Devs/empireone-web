@@ -48,8 +48,11 @@ class EmailOtpController extends Controller
             'otp' => 'required|digits:6',
         ]);
 
-        $otpData = EmailOtp::where('email', $request->email)
-            ->where('otp', $request->otp)
+        $otpData = EmailOtp::where([
+            ['email', '=', $request->email],
+            ['otp', '=', $request->otp]
+        ])
+
             ->first();
 
         if (!$otpData) {
@@ -60,20 +63,7 @@ class EmailOtpController extends Controller
             return response()->json(['message' => 'OTP expired'], 400);
         }
 
-
-
-        // User::create([
-        //     'name' => $request->applicant['fname'] . ' ' . $request->applicant['lname'],
-        //     'email' => $request->email,
-        //     'location' => stripos($request->applicant['caddress'], 'San Carlos') !== false ? 'San Carlos' : 'Carcar',
-        //     'account_type' => 2,
-        //     'department' => 'Operations Department',
-        //     'position' => $request->position,
-        //     'password' => Hash::make('Business12'),
-        //     'status' => 'active'
-        // ]);
-        // OTP is valid, you can proceed (e.g., mark email verified)
-        $otpData->delete(); // Remove used OTP
+        $otpData->delete();
 
         return response()->json(['message' => 'OTP verified successfully!'], 200);
     }
