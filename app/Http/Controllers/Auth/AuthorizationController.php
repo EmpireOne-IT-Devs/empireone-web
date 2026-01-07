@@ -12,16 +12,16 @@ class AuthorizationController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        // $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json([
-                'success' => true,
-                'user' => $user,
-                'token' => $user->createToken('API Token')->plainTextToken
-            ], 200);
-        }
+        // if (Auth::attempt($credentials)) {
+        //     $user = Auth::user();
+        //     return response()->json([
+        //         'success' => true,
+        //         'user' => $user,
+        //         'token' => $user->createToken('API Token')->plainTextToken
+        //     ], 200);
+        // }
 
         return response()->json([
             'success' => false,
