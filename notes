@@ -1,0 +1,23 @@
+php artisan make:model Post -mcr
+
+
+
+JobPosting
+- title
+- description
+- salary
+- posted_at
+- deadline_at
+- status
+
+
+JobPostingApplicant
+- job_posting_id
+- user_id
+- status (Pending, Initial, Final, Passed or Failed)
+- interview_video
+- meeting_at
+- notes
+
+
+

@@ -19,12 +19,43 @@ class GoogleController extends Controller
     }
 
     // Step 1: Redirect to Google
-    public function appRedirectToGoogle()
+    public function appRedirectToGoogle(Request $request)
     {
-        $url = Socialite::driver('google')->redirect()->getTargetUrl();
-        return response()->json([
-            'url' => $url
+        $request->validate([
+            'token' => 'required|string',
         ]);
+
+        $idToken = $request->token;
+
+        try {
+            // Verify the token with Google
+            $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]); // set in .env
+            $payload = $client->verifyIdToken($idToken);
+
+            if (!$payload) {
+                return response()->json(['error' => 'Invalid Google token'], 401);
+            }
+
+            // Token is valid, create or update user
+            $user = User::updateOrCreate(
+                ['email' => $payload['email']],
+                [
+                    'google_id' => $payload['sub'],
+                    'name' => $payload['name'] ?? $payload['email'],
+                ]
+            );
+
+            // Create API token for Flutter app
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+                'token_type' => 'Bearer',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function handleGoogleCallback()
