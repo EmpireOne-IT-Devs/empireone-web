@@ -17,7 +17,6 @@ export default function ViewDetailSection() {
     const [open, setOpen] = useState(false);
     const [openReschedule, setOpenReschedule] = useState(false);
 
-    const [openMarkComplete, setOpenMarkComplete] = useState(false);
 
     const applicant = {
         name: "John Smith",

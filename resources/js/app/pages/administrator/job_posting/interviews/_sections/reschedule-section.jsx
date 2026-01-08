@@ -1,7 +1,6 @@
 import Input from "@/app/_components/input";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
-import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
 export default function RescheduleSection({ isOpen, onClose }) {
@@ -19,7 +18,7 @@ export default function RescheduleSection({ isOpen, onClose }) {
 
             <div className="flex items-start border border-blue-200 rounded-xl bg-blue-50 p-4 mt-4 gap-2">
                 <span className="font-medium">Current Schedule:</span>
-                <div className="text-lg text-gray-600">
+                <div className="text-md text-gray-600">
                     {applicant.date} {applicant.time}
                 </div>
             </div>
@@ -27,7 +26,9 @@ export default function RescheduleSection({ isOpen, onClose }) {
                 <div className="text-gray-700 font-semibold mb-2">
                     New Date *
                 </div>
-                <Input type="date" className="w-full" />
+                <Input 
+                type="date" 
+                className="w-full" />
             </div>
 
             <div className="mt-6">

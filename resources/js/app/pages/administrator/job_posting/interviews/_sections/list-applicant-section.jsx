@@ -5,6 +5,7 @@ import React from "react";
 import { FaCalendar, FaVideo } from "react-icons/fa6";
 import { FiMoreVertical } from "react-icons/fi";
 import ViewDetailSection from "./view-details-section";
+import MarkCompleteSection from "./mark-complete-section";
 
 export default function ListApplicantSection() {
     const applicants = [
@@ -104,9 +105,7 @@ export default function ListApplicantSection() {
 
                     <div className="flex items-center gap-3">
                         <ViewDetailSection />
-                        <Button className="px-6 py-2.5 text-sm      ">
-                            Mark as Completed
-                        </Button>
+                       <MarkCompleteSection/>
                     </div>
                 </Card>
             ))}
