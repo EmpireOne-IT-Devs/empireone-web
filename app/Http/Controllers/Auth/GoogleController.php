@@ -36,7 +36,6 @@ class GoogleController extends Controller
                 return response()->json(['error' => 'Invalid Google token'], 401);
             }
 
-            // Token is valid, create or update user
             $user = User::updateOrCreate(
                 ['email' => $payload['email']],
                 [
@@ -45,7 +44,6 @@ class GoogleController extends Controller
                 ]
             );
 
-            // Create API token for Flutter app
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
