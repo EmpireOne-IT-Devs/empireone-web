@@ -65,6 +65,7 @@ const Page = () => {
                             <input
                                 type="email"
                                 name="email"
+                                autoComplete="off"
                                 // Bound to Inertia data
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
@@ -86,6 +87,7 @@ const Page = () => {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 name="password"
+                                autoComplete="off"
                                 // Bound to Inertia data
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
