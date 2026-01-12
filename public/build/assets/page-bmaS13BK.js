@@ -1,1 +1,0 @@
-import{j as r}from"./app-7bcR6jdr.js";import o from"./layout-CGBQPpcJ.js";import t from"./layout-LiRApYQP.js";import"./sidebar-section-Cd-DY8pO.js";import"./portal-BbD04_5I.js";import"./topbar-section-B6HjedQ6.js";import"./tabs-Cf7MePPq.js";function u(){return r.jsx(o,{children:r.jsx(t,{children:"LEADERBOARD"})})}export{u as default};
