@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { useDispatch, useSelector } from "react-redux";
 import { setDesktopCollapsed, setSidebarOpen } from "@/app/redux/app-slice";
+import { Link } from "@inertiajs/react";
 
 const userNavigation = [
     { name: "Your profile", href: "#" },
@@ -73,24 +74,29 @@ export default function TopbarSection() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                             >
-                                <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg dark:bg-gray-800">
-                                    {userNavigation.map((item) => (
-                                        <Menu.Item key={item.name}>
-                                            {({ active }) => (
-                                                <a
-                                                    href={item.href}
-                                                    className={classNames(
-                                                        active
-                                                            ? "bg-gray-100 dark:bg-white/5"
-                                                            : "",
-                                                        "block px-3 py-1 text-sm text-gray-900 dark:text-white"
-                                                    )}
-                                                >
-                                                    {item.name}
-                                                </a>
-                                            )}
-                                        </Menu.Item>
-                                    ))}
+                                   <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg dark:bg-gray-800">
+                                    <Menu.Item>
+                                        <a
+                                            as="button"
+                                            className={
+                                                "block px-3 py-1 text-sm text-gray-900 dark:text-white hover:bg-gray-100"
+                                            }
+                                        >
+                                            Profile
+                                        </a>
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        <Link
+                                            method="post"
+                                            href={route("logout")}
+                                            as="button"
+                                            className={
+                                                "block px-3 py-1 text-sm text-gray-900 dark:text-white hover:bg-gray-100"
+                                            }
+                                        >
+                                            Sign Out
+                                        </Link>
+                                    </Menu.Item>
                                 </Menu.Items>
                             </Transition>
                         </Menu>

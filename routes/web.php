@@ -3,17 +3,18 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+    $user = Auth::user();
+    return match ($user?->role) {
+        1 => redirect('/administrator/dashboard'),
+        // 2 => redirect('/account/pos/dashboard'),
+        default => Inertia::render('auth/login/page'),
+    };
+})->name('login');
 
 
 Route::get('api/auth/google/web', [GoogleController::class, 'webRedirectToGoogle']);
@@ -22,11 +23,16 @@ Route::get('api/auth/google/callback', [GoogleController::class, 'handleGoogleCa
 
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = Auth::user();
+    return match ($user?->role) {
+        1 => redirect('/administrator/dashboard'),
+        // 2 => redirect('/account/pos/dashboard'),
+        default => Inertia::render('auth/login/page'),
+    };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::prefix('administrator')->group(function () {
+Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('administrator/dashboard/page');
     });
