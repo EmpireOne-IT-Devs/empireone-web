@@ -17,7 +17,6 @@ export default function ViewDetailSection() {
     const [open, setOpen] = useState(false);
     const [openReschedule, setOpenReschedule] = useState(false);
 
-
     const applicant = {
         name: "John Smith",
         position: "Senior Software Engineer",
@@ -34,15 +33,17 @@ export default function ViewDetailSection() {
 
     return (
         <div>
-            <Button
-                type="button"
-                onClick={() => setOpen(true)}
-                outlined
-                variant="secondary"
-                className="flex-1 px-4 py-2.5 text-sm rounded-lg  min-w-[1300px] "
-            >
-                View Full Details
-            </Button>
+            <div className="flex-1">
+                <Button
+                    type="button"
+                    onClick={() => setOpen(true)}
+                    outlined
+                    variant="secondary"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg"
+                >
+                    View Full Details
+                </Button>
+            </div>
 
             <Modal
                 width="max-w-3xl"

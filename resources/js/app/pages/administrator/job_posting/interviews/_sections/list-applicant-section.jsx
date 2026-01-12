@@ -104,8 +104,10 @@ export default function ListApplicantSection() {
                     )}
 
                     <div className="flex items-center gap-3">
-                        <ViewDetailSection />
-                       <MarkCompleteSection/>
+                        <div className="flex-1">
+                            <ViewDetailSection />
+                        </div>
+                        <MarkCompleteSection />
                     </div>
                 </Card>
             ))}

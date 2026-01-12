@@ -15,15 +15,16 @@ export default function MarkCompleteSection() {
 
     return (
         <div>
-            <Button
-                type="button"
-                onClick={() => setOpen(true)}
-                variant="primary"
-                className="flex-1 px-7 py-2.5 text-sm rounded-lg whitespace-nowrap"
-            >
-                Mark as Completed
-            </Button>
-
+            <div className="flex-none">
+                <Button
+                    type="button"
+                    onClick={() => setOpen(true)}
+                    variant="primary"
+                    className="px-7 py-2.5 text-sm rounded-lg whitespace-nowrap"
+                >
+                    Mark as Completed
+                </Button>
+            </div>
             <Modal
                 width="max-w-3xl"
                 isOpen={open}
@@ -49,7 +50,7 @@ export default function MarkCompleteSection() {
                         <div className="font-medium text-gray-700 mb-3">
                             Overall Rating *
                         </div>
-                        <div className="flex gap-6">
+                        <div className="flex gap-5">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <button
                                     key={star}
