@@ -45,12 +45,6 @@ export default function Badge({
                 "text-orange-600 border border-orange-400 inset-ring  inset-ring-orange-300 dark:text-orange-300 dark:inset-ring-orange-700",
             dot: "fill-orange-500 dark:fill-orange-400",
         },
-        success: {
-            solid: "bg-green-600 text-white dark:bg-green-900/30 dark:text-green-300",
-            outline:
-                "text-green-600 border border-green-400 inset-ring  inset-ring-green-300 dark:text-green-300 dark:inset-ring-green-700",
-            dot: "fill-green-500 dark:fill-green-400",
-        },
         purple: {
             solid: "bg-purple-200 text-purple dark:bg-purple-900/30 dark:text-purple-300",
             outline:

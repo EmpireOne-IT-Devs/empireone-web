@@ -4,7 +4,7 @@ const VARIANTS = {
     primary: "bg-blue-600",
     secondary: "bg-gray-600",
     success: "bg-green-600",
-    warning: "bg-yellow-500",
+    warning: "bg-orange-500",
     danger: "bg-red-600",
     outlined: "bg-transparent border-2 border-gray-600",
 };
