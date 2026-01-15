@@ -22,5 +22,15 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('admin'),
             'role' => 1
         ]);
+
+        $this->call([
+            DepartmentsTableSeeder::class,
+            LocationsTableSeeder::class,
+            SitesTableSeeder::class,
+            AgentAccountsTableSeeder::class,
+            TicketingCategoriesTableSeeder::class,
+            TicketingsTableSeeder::class,
+            TicketingHistoriesTableSeeder::class,
+        ]);
     }
 }

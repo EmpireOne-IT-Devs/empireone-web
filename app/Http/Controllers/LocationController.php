@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobCategory;
+use App\Models\Location;
 use Illuminate\Http\Request;
 
-class JobCategoryController extends Controller
+class LocationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class JobCategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(JobCategory $jobCategory)
+    public function show(Location $location)
     {
         //
     }
@@ -42,7 +42,7 @@ class JobCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JobCategory $jobCategory)
+    public function edit(Location $location)
     {
         //
     }
@@ -50,7 +50,7 @@ class JobCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JobCategory $jobCategory)
+    public function update(Request $request, Location $location)
     {
         //
     }
@@ -58,7 +58,7 @@ class JobCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JobCategory $jobCategory)
+    public function destroy(Location $location)
     {
         //
     }
