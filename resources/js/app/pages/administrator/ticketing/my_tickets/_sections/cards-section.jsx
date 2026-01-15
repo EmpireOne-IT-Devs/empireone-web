@@ -1,7 +1,9 @@
 import Card from '@/app/_components/card'
 import React from 'react'
+import { FcCloseUpMode } from 'react-icons/fc'
+import { LuTicketCheck } from 'react-icons/lu'
 import { TbChecks, TbClockCancel, TbListDetails, TbProgressCheck, TbTicket } from 'react-icons/tb'
-import { TiWarning } from 'react-icons/ti'
+import { TiLockClosed, TiWarning } from 'react-icons/ti'
 
 export default function CardsSection() {
   return (
@@ -53,13 +55,13 @@ export default function CardsSection() {
              </Card>
               <Card className="w-full flex-col gap-3">
                  <div className="flex-row flex items-start justify-between">
-                     <div className="bg-red-600 p-3 rounded-xl w-16">
-                         <TiWarning className="inline-block mr-2 text-4xl text-white" />
+                     <div className="bg-purple-600 p-3 rounded-xl w-16">
+                         <LuTicketCheck className="inline-block mr-2 text-4xl text-white" />
                      </div>
                      <div className=" text-3xl font-black">15%</div>
                  </div>
                  <div className="flex-col flex items-start justify-between">
-                     <div>Critical</div>
+                     <div>Closed</div>
                  </div>
              </Card>
          </div>
