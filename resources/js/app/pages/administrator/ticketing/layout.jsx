@@ -1,8 +1,9 @@
 import Tabs from "@/app/_components/tabs";
 import { router } from "@inertiajs/react";
 import React, { useState } from "react";
+import CreateTicketSection from "./_sections/create-ticket-section";
 
-export default function TicketingLayout({children}) {
+export default function TicketingLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
     const path = window.location.pathname.split("/")[3];
 
@@ -35,13 +36,13 @@ export default function TicketingLayout({children}) {
     ];
     return (
         <div>
-            <Tabs
-                tabs={tabs}
-                activeIndex={activeTab}
-            />
-            <div className="p-3">
-                {children}
+            <div className="flex gap-3 w-full items-center justify-center">
+                <div className="flex-1">
+                    <Tabs tabs={tabs} activeIndex={activeTab} />
+                </div>
+                <CreateTicketSection />
             </div>
+            <div className="p-3">{children}</div>
         </div>
     );
 }

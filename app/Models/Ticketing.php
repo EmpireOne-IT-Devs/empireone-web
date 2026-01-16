@@ -21,7 +21,7 @@ class Ticketing extends Model
         'details',
         'assigned_to',
         'status',
-        'priority_type',
+        'urgent_type',
         'start_at',
         'end_at',
     ];

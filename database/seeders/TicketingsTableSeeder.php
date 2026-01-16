@@ -39,7 +39,7 @@ class TicketingsTableSeeder extends Seeder
                         'details' => "Sample ticket details for {$category->name}",
                         'assigned_to' => $agents->random()->name,
                         'status' => ['pending','inprogress','resolved','closed'][array_rand(['pending','inprogress','resolved','closed'])],
-                        'priority_type' => ['low','medium','high','critical'][array_rand(['low','medium','high','critical'])],
+                        'urgent_type' => ['low','medium','high','critical'][array_rand(['low','medium','high','critical'])],
                         'start_at' => now(),
                         'end_at' => now()->addDays(rand(1,5)),
                     ]);

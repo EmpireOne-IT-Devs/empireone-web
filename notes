@@ -57,6 +57,10 @@ Ticket History
 - details
 - type
 
+Ticket Image 
+- ticketing_id
+- url
+
 Ticket Category
 - id
 - name

@@ -31,7 +31,7 @@ return new class extends Migration
                 'closed'
             ])->default('pending');
 
-            $table->enum('priority_type', [
+            $table->enum('urgent_type', [
                 'low',
                 'medium',
                 'high',
