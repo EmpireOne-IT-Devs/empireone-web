@@ -68,10 +68,15 @@ class EmailOtpController extends Controller
     }
     public function change_password(Request $request)
     {
-        Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
         $user = User::where('email', $request->email)->first();
         if ($user) {
             $user->update([
