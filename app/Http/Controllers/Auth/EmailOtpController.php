@@ -63,7 +63,6 @@ class EmailOtpController extends Controller
             ['email', '=', $request->email],
             ['otp', '=', $request->otp]
         ])
-
             ->first();
 
         if (!$otpData) {
