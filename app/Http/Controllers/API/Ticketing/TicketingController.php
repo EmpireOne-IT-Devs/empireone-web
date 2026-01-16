@@ -39,7 +39,7 @@ class TicketingController extends Controller
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store(
-                'unified/ticketing/' . $ticket->ticketing_id,
+                'unified/ticketing',
                 's3'
             );
             $url = Storage::disk('s3')->url($path);
