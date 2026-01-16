@@ -10,9 +10,39 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class EmailOtpController extends Controller
 {
+    public function sign_up_job_seeker(Request $request)
+    {
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Create new user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 2,
+            'user_type' => 'job seeker'
+        ]);
+
+        return response()->json([
+            'message' => 'Sign Up successfully!',
+            'user' => $user
+        ], 200);
+    }
     public function send_OTP(Request $request)
     {
         $request->validate([

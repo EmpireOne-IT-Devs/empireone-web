@@ -17,6 +17,7 @@ Route::post('auth/login', [AuthorizationController::class, 'login']);
 Route::post('auth/google/app', [GoogleController::class, 'googleLogin']);
 Route::post('auth/send_otp', [EmailOtpController::class, 'send_OTP']);
 Route::post('auth/verify_otp', [EmailOtpController::class, 'verify_OTP']);
+Route::post('auth/sign_up_job_seeker', [EmailOtpController::class, 'sign_up_job_seeker']);
 
 
 Route::get('auth/google/web', [GoogleController::class, 'webRedirectToGoogle']);
