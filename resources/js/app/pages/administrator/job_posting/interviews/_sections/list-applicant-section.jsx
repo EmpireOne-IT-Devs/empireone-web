@@ -69,7 +69,7 @@ export default function ListApplicantSection() {
                                 className="rounded-full"
                             />
                         </div>
-                        <button className="text-gray-400 hover:text-gray-600">
+                        <button className="text-blue-400 hover:text-blue-600">
                             <FiMoreVertical className="w-5 h-5" />
                         </button>
                     </div>

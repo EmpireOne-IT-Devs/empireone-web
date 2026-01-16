@@ -1,10 +1,7 @@
 import Card from '@/app/_components/card'
 import React from 'react'
-import { FcCloseUpMode } from 'react-icons/fc'
 import { LuTicketCheck } from 'react-icons/lu'
 import { TbChecks, TbClockCancel, TbListDetails, TbProgressCheck, TbTicket } from 'react-icons/tb'
-import { TiLockClosed, TiWarning } from 'react-icons/ti'
-
 export default function CardsSection() {
   return (
   <div className="flex gap-3 w-full">

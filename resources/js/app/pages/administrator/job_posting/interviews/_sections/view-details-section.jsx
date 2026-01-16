@@ -1,21 +1,27 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
+
 import RescheduleSection from "./reschedule-section";
+import CancelInterviewSection from "./cancel-interview-section";
+
 import {
     CheckCircleIcon,
     PhoneIcon,
     XCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import { FiBriefcase, FiClock, FiMail, FiVideo } from "react-icons/fi";
 import { CalendarIcon } from "@heroicons/react/20/solid";
+
+import { FiBriefcase, FiClock, FiMail, FiVideo } from "react-icons/fi";
+
 import { LuUser } from "react-icons/lu";
-import MarkCompleteModal from "./mark-complete-section";
 
 export default function ViewDetailSection() {
     const [open, setOpen] = useState(false);
     const [openReschedule, setOpenReschedule] = useState(false);
+    const [openCancel, setOpenCancel] = useState(false);
 
     const applicant = {
         name: "John Smith",
@@ -61,7 +67,6 @@ export default function ViewDetailSection() {
                     <span className="text-sm font-medium text-gray-700">
                         Status
                     </span>
-
                     <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
                         {applicant.status}
                     </span>
@@ -168,6 +173,7 @@ export default function ViewDetailSection() {
                         </div>
                     </div>
                 </div>
+
                 <div className="mt-8">
                     <div className="text-gray-700 font-semibold mb-3">
                         Notes
@@ -177,14 +183,17 @@ export default function ViewDetailSection() {
                     </div>
                 </div>
 
-                <div className="mt-8  border-t pt-4">
-                    <div className="flex justify-end gap-1 ">
+                <div className="mt-8 border-t pt-4">
+                    <div className="flex justify-end gap-1">
                         <Button
                             variant="secondary"
                             type="button"
                             outlined
-                            className="h-11 inline-flex items-center justify-center gap-2 px-6 min-w-[300px]"
-                            onClick={() => setOpenReschedule(true)}
+                            className="h-11 inline-flex items-center gap-2 px-6 min-w-[300px]"
+                            onClick={() => {
+                                setOpen(false);
+                                setOpenReschedule(true);
+                            }}
                         >
                             <FiClock className="w-5 h-5" />
                             <span>Reschedule</span>
@@ -202,7 +211,10 @@ export default function ViewDetailSection() {
                             variant="danger"
                             type="button"
                             className="h-11 inline-flex items-center gap-2 px-4"
-                            onClick={() => setOpen(false)}
+                            onClick={() => {
+                                setOpen(false);
+                                setOpenCancel(true);
+                            }}
                         >
                             <XCircleIcon className="w-5 h-5" />
                             <span>Cancel</span>
@@ -210,17 +222,17 @@ export default function ViewDetailSection() {
                     </div>
                 </div>
             </Modal>
+
             <RescheduleSection
                 isOpen={openReschedule}
                 onClose={() => setOpenReschedule(false)}
                 applicant={applicant}
             />
 
-            {/* <MarkCompleteModal
-                isOpen={openMarkComplete}
-                onClose={() => setOpenMarkComplete(false)}
-                applicant={applicant}
-            /> */}
+            <CancelInterviewSection
+                isOpen={openCancel}
+                onClose={() => setOpenCancel(false)}
+            />
         </div>
     );
 }
