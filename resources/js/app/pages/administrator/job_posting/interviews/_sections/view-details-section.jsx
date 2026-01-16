@@ -17,11 +17,13 @@ import { CalendarIcon } from "@heroicons/react/20/solid";
 import { FiBriefcase, FiClock, FiMail, FiVideo } from "react-icons/fi";
 
 import { LuUser } from "react-icons/lu";
+import MarkCompleteSection from "./mark-complete-section";
 
 export default function ViewDetailSection() {
     const [open, setOpen] = useState(false);
     const [openReschedule, setOpenReschedule] = useState(false);
     const [openCancel, setOpenCancel] = useState(false);
+    const [openMarkComplete, setOpenMarkComplete] = useState(false);
 
     const applicant = {
         name: "John Smith",
@@ -56,7 +58,7 @@ export default function ViewDetailSection() {
                 isOpen={open}
                 onClose={() => setOpen(false)}
             >
-                <div className="flex flex-col items-start border-b pb-6 gap-1">
+                <div className="flex flex-col items-start border-b pb-4 gap-1">
                     <h3 className="text-2xl font-bold">Interview Details</h3>
                     <div className="text-lg text-gray-600">
                         {applicant.name}
@@ -64,7 +66,7 @@ export default function ViewDetailSection() {
                 </div>
 
                 <div className="flex flex-col items-start gap-1 mt-6">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-black">
                         Status
                     </span>
                     <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
@@ -72,8 +74,8 @@ export default function ViewDetailSection() {
                     </span>
                 </div>
 
-                <div className="mt-8">
-                    <div className="text-gray-700 font-semibold mb-4">
+                <div className="mt-6">
+                    <div className="text-black  mb-4">
                         Candidate Information
                     </div>
 
@@ -129,7 +131,7 @@ export default function ViewDetailSection() {
                 </div>
 
                 <div className="mt-8">
-                    <div className="text-gray-700 font-semibold mb-4">
+                    <div className="text-black  mb-4">
                         Interview Schedule
                     </div>
 
@@ -175,10 +177,10 @@ export default function ViewDetailSection() {
                 </div>
 
                 <div className="mt-8">
-                    <div className="text-gray-700 font-semibold mb-3">
+                    <div className="text-black  mb-3">
                         Notes
                     </div>
-                    <div className="bg-gray-50 rounded-lg px-4 py-3 text-gray-700">
+                    <div className="bg-gray-50 rounded-lg px-4 py-3 text-black">
                         {applicant.coverLetter}
                     </div>
                 </div>
@@ -200,8 +202,13 @@ export default function ViewDetailSection() {
                         </Button>
 
                         <Button
+                            variant="primary"
                             type="button"
                             className="h-11 inline-flex items-center gap-2 px-4"
+                            onClick={() => {
+                                setOpen(false);
+                                setOpenMarkComplete(true);
+                            }}
                         >
                             <CheckCircleIcon className="w-5 h-5" />
                             <span>Mark Completed & Add Feedback</span>
@@ -232,6 +239,10 @@ export default function ViewDetailSection() {
             <CancelInterviewSection
                 isOpen={openCancel}
                 onClose={() => setOpenCancel(false)}
+            />
+             <MarkCompleteSection
+                isOpen={openMarkComplete}
+                onClose={() => setOpenMarkComplete(false)}
             />
         </div>
     );

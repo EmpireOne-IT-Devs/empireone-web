@@ -2,7 +2,7 @@ import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import React, { useState } from "react";
 
-export default function MarkCompleteSection() {
+export default function MarkCompleteSection({ isOpen, onClose }) {
     const [open, setOpen] = useState(false);
     const [rating, setRating] = useState(0);
     const [selectedRecommendation, setSelectedRecommendation] =
@@ -15,21 +15,7 @@ export default function MarkCompleteSection() {
 
     return (
         <div>
-            <div className="flex-none">
-                <Button
-                    type="button"
-                    onClick={() => setOpen(true)}
-                    variant="primary"
-                    className="px-7 py-2.5 text-sm rounded-lg whitespace-nowrap"
-                >
-                    Mark as Completed
-                </Button>
-            </div>
-            <Modal
-                width="max-w-3xl"
-                isOpen={open}
-                onClose={() => setOpen(false)}
-            >
+            <Modal width="max-w-3xl" isOpen={isOpen} onClose={onClose}>
                 <div className="flex justify-between items-start border-b pb-4">
                     <div>
                         <h3 className="text-2xl font-bold">
