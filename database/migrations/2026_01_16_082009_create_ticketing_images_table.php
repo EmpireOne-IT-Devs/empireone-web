@@ -16,7 +16,7 @@ return new class extends Migration
              $table->foreignId('ticketing_id')
                 ->constrained()
                 ->cascadeOnDelete();
-             $table->string('name');
+             $table->string('url');
 
            
             $table->timestamps();

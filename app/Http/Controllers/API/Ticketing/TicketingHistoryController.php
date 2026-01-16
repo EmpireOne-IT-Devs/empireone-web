@@ -1,6 +1,6 @@
 <?php
-
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\Ticketing;
+use App\Http\Controllers\Controller;
 
 use App\Models\TicketingHistory;
 use Illuminate\Http\Request;
