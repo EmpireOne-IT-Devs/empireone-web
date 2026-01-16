@@ -29,6 +29,59 @@ class EmailOtpController extends Controller
         );
         Mail::to($email)->send(new EmailOtpMail($otp));
     }
+    public function forgot_password_send_otp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        $this->generate_otp($request->email);
+        return response()->json([
+            'message' => 'OTP Sent',
+        ], 200);
+    }
+    public function forgot_password_verify_otp(Request $request)
+    {
+
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|digits:6',
+        ]);
+
+        $otpData = EmailOtp::where([
+            ['email', '=', $request->email],
+            ['otp', '=', $request->otp]
+        ])
+            ->first();
+
+        if (!$otpData) {
+            return response()->json(['message' => 'Invalid OTP'], 400);
+        }
+
+        if (Carbon::now()->isAfter($otpData->expires_at)) {
+            return response()->json(['message' => 'OTP expired'], 400);
+        }
+        $otpData->delete();
+
+        return response()->json([
+            'message' => 'OTP verified successfully!',
+        ], 200);
+    }
+    public function change_password(Request $request)
+    {
+        Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+        }
+        return response()->json([
+            'message' => 'Change password successfully!',
+        ], 200);
+    }
     public function job_seeker_sign_up(Request $request)
     {
         // Validate input
