@@ -52,7 +52,7 @@ export default function JobPostingCardSection() {
                                             : job.status === "draft"
                                               ? "warning"
                                               : job.status === "closed"
-                                                ? "info"
+                                                ? "primary"
                                                 : "default"
                                     }
                                     label={job.status}
