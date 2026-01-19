@@ -13,9 +13,16 @@ return new class extends Migration
     {
         Schema::create('job_postings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('site_id')
+                ->nullable()
+                ->constrained('sites')
+                ->nullOnDelete();
+            $table->foreignId('location_id')
+                ->nullable()
+                ->constrained('locations')
+                ->nullOnDelete();
             $table->string('title');
             $table->string('department');
-            $table->string('location');
             $table->enum('employment_type', ['full-time', 'part-time', 'contract', 'temporary', 'internship']);
             $table->decimal('salary', 10, 2)->nullable();
             $table->string('status');

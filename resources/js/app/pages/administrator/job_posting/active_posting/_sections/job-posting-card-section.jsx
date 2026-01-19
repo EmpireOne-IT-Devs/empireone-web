@@ -11,6 +11,7 @@ import {
     TbPencil,
     TbTrash,
 } from "react-icons/tb";
+import ViewJobPostingDetailsSection from "./view-job-posting-details-section";
 
 export default function JobPostingCardSection() {
     const { job_postings, loading } = useSelector(
@@ -60,7 +61,7 @@ export default function JobPostingCardSection() {
                             </div>
 
                             <div className="flex items-center gap-3 text-gray-500">
-                                <TbEye className="cursor-pointer text-blue-500 hover:text-blue-600" />
+                                <ViewJobPostingDetailsSection />
                                 <TbPencil className="cursor-pointer text-green-500 hover:text-green-600" />
                                 <TbTrash className="cursor-pointer text-red-500 hover:text-red-600" />
                             </div>
