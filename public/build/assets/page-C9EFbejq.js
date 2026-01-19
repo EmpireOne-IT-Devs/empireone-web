@@ -1,0 +1,1 @@
+import{j as r}from"./app-B34129oN.js";import t from"./layout-DdLAWeDR.js";import"./sidebar-section-Ca7b5iLJ.js";import"./iconBase-BASvOwNd.js";import"./portal-D_SpBcZG.js";import"./description-CO2kAKrj.js";import"./topbar-section-mXVRiu3t.js";import"./label-4qamAbGS.js";import"./index-CcW05Zlk.js";function f(){return r.jsx(t,{children:"Message"})}export{f as default};

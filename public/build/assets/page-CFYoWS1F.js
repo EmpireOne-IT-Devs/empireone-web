@@ -1,1 +1,0 @@
-import{j as r}from"./app-bPSUPQIF.js";import t from"./layout-BmrAaEcE.js";import"./sidebar-section-_3xS_mDq.js";import"./iconBase-Cts_kxSm.js";import"./portal-CvyU3EKt.js";import"./description-DpUH8qcP.js";import"./topbar-section-CenYq6k8.js";import"./label-DCT9XC-q.js";import"./index-Cn9PlCj0.js";function f(){return r.jsx(t,{children:"Reports"})}export{f as default};

@@ -1,0 +1,1 @@
+import{j as e}from"./app-B34129oN.js";function a(){return e.jsxs("div",{className:"flex flex-col gap-1 my-3",children:[e.jsx("div",{className:"text-3xl font-black",children:"Department Categories"}),e.jsx("div",{className:"text-gray-700",children:"Manage ticket categories for each department"})]})}export{a as default};
