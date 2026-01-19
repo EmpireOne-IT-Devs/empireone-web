@@ -8,7 +8,7 @@ import { TbFilter } from "react-icons/tb";
 import { Textarea } from "@headlessui/react";
 import { useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
-import { create_job_posting_service } from "@/app/services/job-posting-service";
+import { create_job_posting_service_thunk } from "@/app/redux/job-posting-slice";
 import { setAlert } from "@/app/redux/app-slice";
 
 export default function CreateJobSection() {
@@ -38,7 +38,7 @@ export default function CreateJobSection() {
     async function onSubmit(data) {
         try {
             console.log("Form data:", data);
-            await create_job_posting_service(data);
+            await dispatch(create_job_posting_service_thunk(data)).unwrap();
             dispatch(
                 setAlert({
                     type: "success",
@@ -55,7 +55,7 @@ export default function CreateJobSection() {
                 setAlert({
                     type: "danger",
                     title: "Failed to create job posting",
-                    message: error.response?.data?.message || "Something went wrong",
+                    message: error.message || "Something went wrong",
                     open: true,
                 })
             );

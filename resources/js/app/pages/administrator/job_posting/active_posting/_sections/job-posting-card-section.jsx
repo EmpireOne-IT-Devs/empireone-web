@@ -1,6 +1,7 @@
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import React from "react";
+import { useSelector } from "react-redux";
 import {
     TbCalendarEvent,
     TbMapPin,
@@ -11,58 +12,31 @@ import {
     TbTrash,
 } from "react-icons/tb";
 
-const jobPostings = [
-    {
-        title: "Senior Software Engineer",
-        department: "IT",
-        location: "Manila",
-        type: "Full-time",
-        salary: "₱80,000 - ₱120,000",
-        applicants: 45,
-        status: "Active",
-        posted: "12/1/2024",
-        deadline: "12/31/2024",
-    },
-    {
-        title: "HR Manager",
-        department: "Human Resources",
-        location: "Manila",
-        type: "Full-time",
-        salary: "₱60,000 - ₱90,000",
-        applicants: 18,
-        status: "Active",
-        posted: "12/5/2024",
-        deadline: "12/28/2024",
-    },
-    {
-        title: "Marketing Specialist",
-        department: "Marketing",
-        location: "Manila",
-        type: "Full-time",
-        salary: "₱45,000 - ₱70,000",
-        applicants: 27,
-        status: "Active",
-        posted: "12/7/2024",
-        deadline: "12/30/2024",
-    },
-    {
-        title: "Accountant",
-        department: "Loan",
-        location: "BGC",
-        type: "Full-time",
-        salary: "₱45,000 - ₱70,000",
-        applicants: 27,
-        status: "Closed",
-        posted: "12/7/2024",
-        deadline: "12/30/2024",
-    },
-];
-
 export default function JobPostingCardSection() {
+    const { job_postings, loading } = useSelector(
+        (state) => state.job_postings,
+    );
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center p-8">
+                <div className="text-gray-500">Loading job postings...</div>
+            </div>
+        );
+    }
+
+    if (!job_postings || job_postings.length === 0) {
+        return (
+            <div className="flex justify-center items-center p-8">
+                <div className="text-gray-500">No job postings found.</div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col gap-3">
-            {jobPostings.map((job, i) => (
-                <Card key={i} className="border rounded-xl">
+            {job_postings.map((job, i) => (
+                <Card key={job.id || i} className="border rounded-xl">
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -72,7 +46,15 @@ export default function JobPostingCardSection() {
                                 <Badge
                                     showDot={false}
                                     className="rounded-md"
-                                    variant="success"
+                                    variant={
+                                        job.status === "active"
+                                            ? "success"
+                                            : job.status === "draft"
+                                              ? "warning"
+                                              : job.status === "closed"
+                                                ? "info"
+                                                : "default"
+                                    }
                                     label={job.status}
                                 />
                             </div>
@@ -91,18 +73,32 @@ export default function JobPostingCardSection() {
                                 <TbMapPin /> {job.location}
                             </div>
                             <div className="flex items-center gap-2">
-                                <TbUser /> {job.type}
+                                <TbUser /> {job.employment_type || job.type}
                             </div>
-                            <div>{job.salary}</div>
+                            <div>
+                                {job.salary
+                                    ? `₱${job.salary}`
+                                    : "Salary not specified"}
+                            </div>
                             <div className="flex items-center gap-2 text-gray-600 font-medium">
-                                <TbCalendarEvent /> {job.applicants} applicants
+                                <TbCalendarEvent /> {job.applicants || 0}{" "}
+                                applicants
                             </div>
                         </div>
 
                         <hr />
                         <div className="flex items-center justify-between text-sm text-gray-500">
-                            <div>Posted: {job.posted}</div>
-                            <div>Deadline: {job.deadline}</div>
+                            <div>
+                                Posted:{" "}
+                                {job.posted ||
+                                    new Date(
+                                        job.created_at,
+                                    ).toLocaleDateString()}
+                            </div>
+                            <div>
+                                Deadline:{" "}
+                                {job.deadline || job.application_deadline}
+                            </div>
                         </div>
                     </div>
                 </Card>

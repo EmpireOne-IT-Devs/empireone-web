@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class JobPostingController extends Controller
 {
+
+    public function index()
+    {
+        $jobPostings = JobPosting::orderBy('created_at', 'desc')->get();
+        return response()->json($jobPostings);
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
