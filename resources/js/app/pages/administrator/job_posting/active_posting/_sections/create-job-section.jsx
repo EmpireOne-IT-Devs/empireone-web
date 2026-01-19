@@ -6,9 +6,61 @@ import Select from "@/app/_components/select";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { TbFilter } from "react-icons/tb";
 import { Textarea } from "@headlessui/react";
+import { useDispatch } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
+import { create_job_posting_service } from "@/app/services/job-posting-service";
+import { setAlert } from "@/app/redux/app-slice";
 
 export default function CreateJobSection() {
     const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
+    const {
+        handleSubmit,
+        reset,
+        control,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        defaultValues: {
+            title: "",
+            department: "",
+            location: "",
+            employment_type: "",
+            salary: "",
+            status: "",
+            application_deadline: "",
+            description: "",
+            requirements: "",
+            experience_required: "",
+            education_required: "",
+        },
+    });
+
+    async function onSubmit(data) {
+        try {
+            console.log("Form data:", data);
+            await create_job_posting_service(data);
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Job Posting Created Successfully!",
+                    message: "The job posting has been created and is ready for review.",
+                    open: true,
+                })
+            );
+            reset();
+            setOpen(false);
+        } catch (error) {
+            console.error("Error creating job posting:", error);
+            dispatch(
+                setAlert({
+                    type: "danger",
+                    title: "Failed to create job posting",
+                    message: error.response?.data?.message || "Something went wrong",
+                    open: true,
+                })
+            );
+        }
+    }
 
     return (
         <div>
@@ -25,50 +77,120 @@ export default function CreateJobSection() {
                 onClose={() => setOpen(false)}
                 title="Create New Job Posting"
             >
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div>
                         <h3 className="text-sm font-semibold text-gray-700 mb-4">
                             Basic Information
                         </h3>
                         <div className="mb-4">
-                            <Input
-                                label="Job Title"
-                                placeholder="e.g. Senior Software Engineer"
+                            <Controller
+                                name="title"
+                                control={control}
+                                rules={{ required: "Job title is required" }}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        label="Job Title"
+                                        placeholder="e.g. Senior Software Engineer"
+                                        error={errors.title?.message}
+                                    />
+                                )}
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Input label="Department" placeholder="e.g. IT" />
-                            <Input label="Location" placeholder="e.g. Manila" />
+                            <Controller
+                                name="department"
+                                control={control}
+                                rules={{ required: "Department is required" }}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        label="Department"
+                                        placeholder="e.g. IT"
+                                        error={errors.department?.message}
+                                    />
+                                )}
+                            />
+                            <Controller
+                                name="location"
+                                control={control}
+                                rules={{ required: "Location is required" }}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        label="Location"
+                                        placeholder="e.g. Manila"
+                                        error={errors.location?.message}
+                                    />
+                                )}
+                            />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Select
-                            iconLeft={<TbFilter className="text-xl" />}
-                            label="Employment Type"
-                            options={[
-                                { value: "full time", label: "Full Time" },
-                                { value: "part time", label: "Part Time" },
-                                { value: "contract", label: "Contract" },
-                            ]}
+                        <Controller
+                            name="employment_type"
+                            control={control}
+                            rules={{ required: "Employment type is required" }}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    iconLeft={<TbFilter className="text-xl" />}
+                                    label="Employment Type"
+                                    options={[
+                                        { value: "full-time", label: "Full Time" },
+                                        { value: "part-time", label: "Part Time" },
+                                        { value: "contract", label: "Contract" },
+                                        { value: "temporary", label: "Temporary" },
+                                        { value: "internship", label: "Internship" },
+                                    ]}
+                                    error={errors.employment_type?.message}
+                                />
+                            )}
                         />
 
-                        <Input
-                            label="Salary Range"
-                            placeholder="₱50,000 - ₱100,000"
+                        <Controller
+                            name="salary"
+                            control={control}
+                            render={({ field }) => (
+                                <Input
+                                    {...field}
+                                    label="Salary Range"
+                                    placeholder="₱50,000 - ₱100,000"
+                                />
+                            )}
                         />
-                        <Select
-                            iconLeft={<TbFilter className="text-xl" />}
-                            label="Status"
-                            options={[
-                                { value: "draft", label: "Draft" },
-                                { value: "active", label: "Active" },
-                                { value: "closed", label: "Closed" },
-                            ]}
+                        <Controller
+                            name="status"
+                            control={control}
+                            rules={{ required: "Status is required" }}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    iconLeft={<TbFilter className="text-xl" />}
+                                    label="Status"
+                                    options={[
+                                        { value: "draft", label: "Draft" },
+                                        { value: "active", label: "Active" },
+                                        { value: "closed", label: "Closed" },
+                                    ]}
+                                    error={errors.status?.message}
+                                />
+                            )}
                         />
                     </div>
 
-                    <Input label="Application Deadline" type="date" />
+                    <Controller
+                        name="application_deadline"
+                        control={control}
+                        render={({ field }) => (
+                            <Input 
+                                {...field}
+                                label="Application Deadline" 
+                                type="date" 
+                            />
+                        )}
+                    />
                     <div>
                         <h3 className="text-sm font-semibold text-gray-700 mb-4">
                             Job Details
@@ -79,28 +201,64 @@ export default function CreateJobSection() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Job Description *
                         </label>
-                        <Textarea
-                            placeholder="Describe the role and responsibilities..."
-                            className="w-full border border-gray-300 rounded-md p-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        <Controller
+                            name="description"
+                            control={control}
+                            rules={{ required: "Job description is required" }}
+                            render={({ field }) => (
+                                <Textarea
+                                    {...field}
+                                    placeholder="Describe the role and responsibilities..."
+                                    className="w-full border border-gray-300 rounded-md p-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            )}
                         />
+                        {errors.description && (
+                            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                        )}
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Requirements (one per line) *
                         </label>
-                        <Textarea
-                            placeholder="Years of experience in relevant field..."
-                            className="w-full border border-gray-300 rounded-md p-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        <Controller
+                            name="requirements"
+                            control={control}
+                            rules={{ required: "Requirements are required" }}
+                            render={({ field }) => (
+                                <Textarea
+                                    {...field}
+                                    placeholder="Years of experience in relevant field..."
+                                    className="w-full border border-gray-300 rounded-md p-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            )}
                         />
+                        {errors.requirements && (
+                            <p className="text-red-500 text-sm mt-1">{errors.requirements.message}</p>
+                        )}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Input
-                            label="Experience Required"
-                            placeholder="e.g. 3+ years in relevant field"
+                        <Controller
+                            name="experience_required"
+                            control={control}
+                            render={({ field }) => (
+                                <Input
+                                    {...field}
+                                    label="Experience Required"
+                                    placeholder="e.g. 3+ years in relevant field"
+                                />
+                            )}
                         />
-                        <Input
-                            label="Education Required"
-                            placeholder="e.g. Bachelor's..."
+                        <Controller
+                            name="education_required"
+                            control={control}
+                            render={({ field }) => (
+                                <Input
+                                    {...field}
+                                    label="Education Required"
+                                    placeholder="e.g. Bachelor's..."
+                                />
+                            )}
                         />
                     </div>
 
@@ -114,7 +272,12 @@ export default function CreateJobSection() {
                             Cancel
                         </Button>
 
-                        <Button type="button">Create Job Post</Button>
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Creating..." : "Create Job Post"}
+                        </Button>
                     </div>
                 </form>
             </Modal>

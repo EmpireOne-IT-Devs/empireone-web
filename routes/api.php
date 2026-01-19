@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthorizationController;
 use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
+use App\Http\Controllers\JobPostingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,3 +37,4 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 // });
 
 Route::apiResource('tickets', TicketingController::class);
+Route::resource('job-postings', JobPostingController::class);
