@@ -66,25 +66,34 @@ class EmailOtpController extends Controller
             'message' => 'OTP verified successfully!',
         ], 200);
     }
+
     public function change_password(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
+
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator->errors()
             ], 422);
         }
+
         $user = User::where('email', $request->email)->first();
-        if ($user) {
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found.'
+            ], 404);
         }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
         return response()->json([
-            'message' => 'Change password successfully!',
+            'message' => 'Password changed successfully!'
         ], 200);
     }
     public function job_seeker_sign_up(Request $request)
