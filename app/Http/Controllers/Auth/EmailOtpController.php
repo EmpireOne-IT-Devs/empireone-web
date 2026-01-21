@@ -71,7 +71,7 @@ class EmailOtpController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:5|confirmed',
         ]);
 
         if ($validator->fails()) {
