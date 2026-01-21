@@ -19,7 +19,7 @@ import { FiBriefcase, FiClock, FiMail, FiVideo } from "react-icons/fi";
 import { LuUser } from "react-icons/lu";
 import MarkCompleteSection from "./mark-complete-section";
 
-export default function ViewDetailSection() {
+export default function ViewDetailSection({ isOpen, onClose }) {
     const [open, setOpen] = useState(false);
     const [openReschedule, setOpenReschedule] = useState(false);
     const [openCancel, setOpenCancel] = useState(false);
@@ -41,23 +41,11 @@ export default function ViewDetailSection() {
 
     return (
         <div>
-            <div className="flex-1">
-                <Button
-                    type="button"
-                    onClick={() => setOpen(true)}
-                    outlined
-                    variant="secondary"
-                    className="w-full px-4 py-2.5 text-sm rounded-lg"
-                >
-                    View Full Details
-                </Button>
-            </div>
+            <Modal 
+            width="max-w-3xl" 
+            isOpen={isOpen} 
+            onClose={onClose}>
 
-            <Modal
-                width="max-w-3xl"
-                isOpen={open}
-                onClose={() => setOpen(false)}
-            >
                 <div className="flex flex-col items-start border-b pb-4 gap-1">
                     <h3 className="text-2xl font-bold">Interview Details</h3>
                     <div className="text-lg text-gray-600">
@@ -131,9 +119,7 @@ export default function ViewDetailSection() {
                 </div>
 
                 <div className="mt-8">
-                    <div className="text-black  mb-4">
-                        Interview Schedule
-                    </div>
+                    <div className="text-black  mb-4">Interview Schedule</div>
 
                     <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                         <div className="flex flex-col gap-6">
@@ -177,9 +163,7 @@ export default function ViewDetailSection() {
                 </div>
 
                 <div className="mt-8">
-                    <div className="text-black  mb-3">
-                        Notes
-                    </div>
+                    <div className="text-black  mb-3">Notes</div>
                     <div className="bg-gray-50 rounded-lg px-4 py-3 text-black">
                         {applicant.coverLetter}
                     </div>
@@ -240,7 +224,7 @@ export default function ViewDetailSection() {
                 isOpen={openCancel}
                 onClose={() => setOpenCancel(false)}
             />
-             <MarkCompleteSection
+            <MarkCompleteSection
                 isOpen={openMarkComplete}
                 onClose={() => setOpenMarkComplete(false)}
             />

@@ -177,7 +177,15 @@ export default function ListApplicantSection() {
 
                     <div className="flex items-center gap-3">
                         <div className="flex-1">
-                            <ViewDetailSection />
+                            <Button
+                                type="button"
+                                onClick={() => setOpenViewDetail(true)}
+                                outlined
+                                variant="secondary"
+                                className="w-full px-4 py-2.5 text-sm rounded-lg"
+                            >
+                                View Full Details
+                            </Button>
                         </div>
                         <Button
                             type="button"
