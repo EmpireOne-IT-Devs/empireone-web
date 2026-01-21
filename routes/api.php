@@ -15,7 +15,6 @@ Route::get('/user', function (Request $request) {
 
 
 Route::post('auth/login', [AuthorizationController::class, 'login']);
-Route::post('auth/google/app', [GoogleController::class, 'googleLogin']);
 Route::post('auth/send_otp', [EmailOtpController::class, 'send_OTP']);
 Route::post('auth/verify_otp', [EmailOtpController::class, 'verify_OTP']);
 Route::post('auth/job_seeker_sign_up', [EmailOtpController::class, 'job_seeker_sign_up']);
