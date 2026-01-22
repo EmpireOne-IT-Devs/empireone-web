@@ -14,6 +14,7 @@ Route::get('/user', function (Request $request) {
 
 
 
+Route::middleware('auth:sanctum')->post('auth/logout', [AuthorizationController::class, 'logout']);
 Route::post('auth/login', [AuthorizationController::class, 'login']);
 Route::post('auth/send_otp', [EmailOtpController::class, 'send_OTP']);
 Route::post('auth/verify_otp', [EmailOtpController::class, 'verify_OTP']);
@@ -22,8 +23,6 @@ Route::post('auth/job_seeker_verify_otp', [EmailOtpController::class, 'job_seeke
 Route::post('auth/forgot_password_send_otp', [EmailOtpController::class, 'forgot_password_send_otp']);
 Route::post('auth/forgot_password_verify_otp', [EmailOtpController::class, 'forgot_password_verify_otp']);
 Route::post('auth/change_password', [EmailOtpController::class, 'change_password']);
-Route::post('auth/logout', [AuthorizationController::class, 'logout']);
-
 
 
 
