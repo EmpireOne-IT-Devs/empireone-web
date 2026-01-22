@@ -22,6 +22,7 @@ Route::post('auth/job_seeker_verify_otp', [EmailOtpController::class, 'job_seeke
 Route::post('auth/forgot_password_send_otp', [EmailOtpController::class, 'forgot_password_send_otp']);
 Route::post('auth/forgot_password_verify_otp', [EmailOtpController::class, 'forgot_password_verify_otp']);
 Route::post('auth/change_password', [EmailOtpController::class, 'change_password']);
+Route::post('auth/logout', [AuthorizationController::class, 'logout']);
 
 
 
