@@ -131,7 +131,7 @@ export default function RecentHrActivitySection() {
                         </div>
                         <div className="flex flex-col items-center gap-3">
                             <span
-                                className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyles(
+                                className={`px-3 py-1 rounded-full text-md font-medium ${getStatusStyles(
                                     item.statusColor
                                 )}`}
                             >

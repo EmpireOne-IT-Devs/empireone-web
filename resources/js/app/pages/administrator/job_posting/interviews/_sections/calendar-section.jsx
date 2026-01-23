@@ -110,7 +110,7 @@ export default function CalendarSection() {
                     isToday(day)
                         ? "border-blue-500 bg-blue-50 shadow-[0_0_0_2px_#3b82f6]"
                         : "border-gray-200"
-                }
+                }   
             `}
                         >
                             <div
