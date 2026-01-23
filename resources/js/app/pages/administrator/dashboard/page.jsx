@@ -17,20 +17,20 @@ export default function Page() {
                 <QuickAccessSection />
             </div>
 
-            <div className="flex gap-3">
-                <div className="flex-[1.5]">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                <div className="lg:col-span-2">
                     <UrgentAnnouncementSection />
                 </div>
-                <div className="flex-1">
+                <div className="lg:col-span-1">
                     <UpcomingEventsSection />
                 </div>
             </div>
 
-            <div className="flex gap-3">
-                <div className="flex-[1.5] mt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-4">
+                <div className="lg:col-span-2 -mt-20">
                     <RecentActivityCardSection />
                 </div>
-                <div className="flex-1 mt-4">
+                <div className="lg:col-span-1">
                     <TopNewsCardSection />
                 </div>
             </div>

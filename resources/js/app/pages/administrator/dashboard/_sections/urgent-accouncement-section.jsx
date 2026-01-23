@@ -3,7 +3,7 @@ import React from "react";
 
 export default function UrgentAnnouncementSection() {
     return (
-        <div className="flex-1 flex flex-col bg-red-50 rounded-lg shadow border-l-4 border-l-red-600 p-6 mt-6 ">
+        <div className="flex-1 flex flex-col bg-red-50 rounded-lg shadow border-l-4 border-l-red-600 p-6 mt-6  ">
             <div className="flex items-center gap-2 mb-4">
                 <AlertCircle className="w-5 h-5 text-red-600" />
                 <h2 className="text-base font-semibold text-gray-900">Urgent Announcements</h2>
