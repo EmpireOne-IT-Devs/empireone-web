@@ -14,30 +14,41 @@ use Illuminate\Support\Facades\Validator;
 
 class EmailOtpController extends Controller
 {
-    public function generate_otp($email)
+    public function generate_otp(string $email)
     {
-        // Generate 6-digit OTP
-        $otp = rand(100000, 999999);
+        $existingOtp = EmailOtp::where('email', $email)->first();
 
-        // Store in DB with 10 min expiry
+        // ⛔ Block resend if OTP still valid
+        if ($existingOtp && Carbon::now()->lt($existingOtp->expires_at)) {
+            return response()->json([
+                'message' => 'OTP already sent. Please try again after 10 minutes.'
+            ], 429);
+        }
+
+        // ✅ Generate secure OTP
+        $otp = random_int(100000, 999999);
+
         EmailOtp::updateOrCreate(
             ['email' => $email],
             [
-                'otp' => $otp,
+                'otp' => Hash::make($otp),
                 'expires_at' => Carbon::now()->addMinutes(10),
             ]
         );
-        Mail::to($email)->send(new EmailOtpMail($otp));
+
+        Mail::to($email)->queue(new EmailOtpMail($otp));
+
+        return response()->json([
+            'message' => 'OTP sent successfully.'
+        ], 200);
     }
     public function forgot_password_send_otp(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
         ]);
-        $this->generate_otp($request->email);
-        return response()->json([
-            'message' => 'OTP Sent',
-        ], 200);
+        $response = $this->generate_otp($request->email);
+        return $response;
     }
     public function forgot_password_verify_otp(Request $request)
     {
@@ -110,11 +121,9 @@ class EmailOtpController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-        $this->generate_otp($request->email);
+        $response = $this->generate_otp($request->email);
 
-        return response()->json([
-            'message' => 'OTP Sent',
-        ], 200);
+        return $response;
     }
 
     public function job_seeker_verify_otp(Request $request)
@@ -166,8 +175,8 @@ class EmailOtpController extends Controller
             return response()->json(['message' => 'Email already registered'], 400);
         }
 
-        $this->generate_otp($request->email);
-        return response()->json(['message' => 'OTP sent successfully!']);
+        $response = $this->generate_otp($request->email);
+        return $response;
     }
 
     public function verify_OTP(Request $request)

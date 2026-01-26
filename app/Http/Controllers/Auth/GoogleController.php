@@ -23,6 +23,8 @@ class GoogleController extends Controller
     {
         $request->validate([
             'token' => 'required|string',
+            'photoUrl' => 'nullable|string',
+            'displayName' => 'nullable|string'
         ]);
 
         $idToken = $request->token;
