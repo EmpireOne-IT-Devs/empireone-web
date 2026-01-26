@@ -17,10 +17,6 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('employees')
                 ->nullOnDelete();
-            $table->foreignId('job_category_id')->nullable()
-                ->nullable()
-                ->constrained('job_categories')
-                ->nullOnDelete();
             $table->timestamps();
         });
     }
