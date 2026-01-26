@@ -31,7 +31,7 @@ class EmailOtpController extends Controller
         EmailOtp::updateOrCreate(
             ['email' => $email],
             [
-                'otp' => Hash::make($otp),
+                'otp' => $otp,
                 'expires_at' => Carbon::now()->addMinutes(10),
             ]
         );
