@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Google_Client;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 
 class GoogleController extends Controller
@@ -19,33 +20,35 @@ class GoogleController extends Controller
     }
 
     // Step 1: Redirect to Google
+
     public function appRedirectToGoogle(Request $request)
     {
         $request->validate([
             'token' => 'required|string',
-            'photoUrl' => 'nullable|string',
-            'displayName' => 'nullable|string'
         ]);
 
-        $idToken = $request->token;
-
         try {
-            // Verify the token with Google
-            $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]); // set in .env
-            $payload = $client->verifyIdToken($idToken);
+            // Call Google UserInfo API
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $request->token,
+            ])->get('https://www.googleapis.com/oauth2/v3/userinfo');
 
-            if (!$payload) {
-                return response()->json(['error' => 'Invalid Google token'], 401);
+            if ($response->failed()) {
+                return response()->json(['error' => 'Invalid Google access token'], 401);
             }
 
+            $googleUser = $response->json();
+
             $user = User::updateOrCreate(
-                ['email' => $payload['email']],
+                ['email' => $googleUser['email']],
                 [
-                    'google_id' => $payload['sub'],
-                    'name' => $payload['name'] ?? $payload['email'],
+                    'google_id' => $googleUser['sub'],
+                    'name' => $googleUser['name'] ?? $googleUser['email'],
+                    'avatar' => $googleUser['picture'] ?? null,
                 ]
             );
 
+            // Laravel Sanctum token
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
@@ -57,6 +60,7 @@ class GoogleController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
 
     public function handleGoogleCallback()
     {
