@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AddDepartmentSection from "./add-department-section";
 
 export default function DepartmentTableSection() {
     const [departments, setDepartments] = useState([
@@ -83,7 +84,7 @@ export default function DepartmentTableSection() {
 
     const [expandedDepartments, setExpandedDepartments] = useState({
         1: true,
-        2: true
+        2: true,
     });
 
     const toggleDepartment = (departmentId) => {
@@ -131,12 +132,10 @@ export default function DepartmentTableSection() {
                 <div className="px-6 py-4">
                     <div className="flex justify-between items-center">
                         <h3 className="text-lg font-medium text-gray-900">
-                            Manage departments and users across your organization
+                            Manage departments and users across your
+                            organization
                         </h3>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
-                            <span className="text-xl">+</span>
-                            <span>Add Department</span>
-                        </button>
+                        <AddDepartmentSection />
                     </div>
                 </div>
             </div>
@@ -262,7 +261,7 @@ export default function DepartmentTableSection() {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span
                                                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(
-                                                            user.role
+                                                            user.role,
                                                         )}`}
                                                     >
                                                         {user.role}
@@ -271,7 +270,7 @@ export default function DepartmentTableSection() {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span
                                                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleTypeColor(
-                                                            user.roleType
+                                                            user.roleType,
                                                         )}`}
                                                     >
                                                         {user.roleType}
