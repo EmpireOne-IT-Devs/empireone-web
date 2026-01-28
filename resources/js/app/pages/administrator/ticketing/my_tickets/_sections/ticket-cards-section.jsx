@@ -49,7 +49,7 @@ export default function TicketCardsSection() {
                                 </div>
                                 <div className="flex-1 items-start justify-start flex gap-3">
                                     <TbUser className="text-xl" /> Assigned:
-                                    {res.assigned_to.name}
+                                    {res?.assigned_to?.name ?? "Undesignated"}
                                 </div>
                                 <div className="flex-1 items-start justify-start flex gap-3">
                                     <TbCalendarEvent className="text-xl" />{" "}

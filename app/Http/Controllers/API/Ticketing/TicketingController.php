@@ -28,7 +28,7 @@ class TicketingController extends Controller
     public function my_tickets()
     {
         $auth = Auth::user();
-        $tickets = Ticketing::where('user_id', $auth->id)->with(['location', 'site', 'agent', 'department', 'assigned_to'])->paginate(10);
+        $tickets = Ticketing::where('user_id', $auth->id)->orderBy('id', 'desc')->with(['location', 'site', 'agent', 'department', 'assigned_to'])->paginate(10);
         return response()->json($tickets, 200);
     }
     public function index()
@@ -49,8 +49,11 @@ class TicketingController extends Controller
      */
     public function store(Request $request)
     {
+
+        $auth = Auth::user();
         $ticket =  Ticketing::create([
             ...$request->all(),
+            'user_id' => $auth->id,
             'ticketing_id' => "TCK-ID-" . date('mdYHis')
         ]);
 
