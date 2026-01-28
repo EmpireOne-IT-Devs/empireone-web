@@ -3,17 +3,34 @@
 namespace App\Http\Controllers\API\Ticketing;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Department;
+use App\Models\Location;
+use App\Models\Site;
 use App\Models\Ticketing;
 use App\Models\TicketingImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class TicketingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function ticketing_tables()
+    {
+        $departments = Department::with(['categories'])->get();
+        $locations = Location::get();
+        $sites = Site::get();
+        return response()->json([
+            'departments' => $departments,
+            'locations' => $locations,
+            'sites' => $sites
+        ], 200);
+    }
+    public function my_tickets()
+    {
+        $auth = Auth::user();
+        $tickets = Ticketing::where('user_id', $auth->id)->with(['location', 'site', 'agent', 'department', 'assigned_to'])->paginate(10);
+        return response()->json($tickets, 200);
+    }
     public function index()
     {
         return 'success';

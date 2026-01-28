@@ -19,7 +19,7 @@ class TicketingsTableSeeder extends Seeder
      */
     public function run(): void
     {
-            $departments = Department::all();
+        $departments = Department::all();
         $locations = Location::all();
         $sites = Site::all();
         $agents = AgentAccount::all();
@@ -35,13 +35,13 @@ class TicketingsTableSeeder extends Seeder
                         'location_id' => $locations->random()->id,
                         'site_id' => $sites->random()->id,
                         'department_id' => $department->id,
-                        'agent_account_id' => $agents->random()->id,
+                        'user_id' => $agents->random()->id,
                         'details' => "Sample ticket details for {$category->name}",
-                        'assigned_to' => $agents->random()->name,
-                        'status' => ['pending','inprogress','resolved','closed'][array_rand(['pending','inprogress','resolved','closed'])],
-                        'urgent_type' => ['low','medium','high','critical'][array_rand(['low','medium','high','critical'])],
+                        'assigned_to' => 1,
+                        'status' => ['pending', 'inprogress', 'resolved', 'closed'][array_rand(['pending', 'inprogress', 'resolved', 'closed'])],
+                        'urgent_type' => ['Low Priority', 'Medium Priority', 'High Priority', 'Critical Priority'][array_rand(['Low Priority', 'Medium Priority', 'High Priority', 'Critical Priority'])],
                         'start_at' => now(),
-                        'end_at' => now()->addDays(rand(1,5)),
+                        'end_at' => now()->addDays(rand(1, 5)),
                     ]);
                 }
             }

@@ -5,15 +5,20 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import Wysiwyg from "@/app/_components/wysiwyg";
 import { setAlert } from "@/app/redux/app-slice";
+import { get_my_tickets_thunk } from "@/app/redux/tickets-thunk";
 import { create_tickets_service } from "@/app/services/tickets-service";
+import store from "@/app/store/store";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function CreateTicketSection() {
     const [open, setOpen] = useState(false);
     const [details, setDetails] = useState("");
     const dispatch = useDispatch();
+    const { tables } = useSelector((store) => store.tickets);
+    const [categories, setCategories] = useState([]);
+    const [timeframe,setTimeframe]=useState('')
     const {
         register,
         handleSubmit,
@@ -30,7 +35,7 @@ export default function CreateTicketSection() {
         },
     });
 
-    console.log("details", details);
+    console.log("categoriessssss", categories);
 
     async function onSubmit(data) {
         if (details == "") return "error";
@@ -50,11 +55,12 @@ export default function CreateTicketSection() {
                 formData.append("image", image[0]);
             }
             await create_tickets_service(formData);
+            await store.dispatch(get_my_tickets_thunk());
             await dispatch(
                 setAlert({
                     type: "success",
                     title: "Ticket Created Successfully!",
-                })
+                }),
             );
             reset();
             setOpen(false);
@@ -79,10 +85,14 @@ export default function CreateTicketSection() {
                                 render={({ field }) => (
                                     <Select
                                         label="Select Department"
-                                        options={[
-                                            { value: 1, label: "Hello" },
-                                            { value: 2, label: "World" },
-                                        ]}
+                                        options={tables?.departments?.map(
+                                            (res) => ({
+                                                ...res,
+                                                label: res.name,
+                                                value: res.id,
+                                            }),
+                                        )}
+                                        onSelect={(e) => setCategories(e)}
                                         error={errors.department_id}
                                         {...field} // passes value & onChange
                                     />
@@ -94,11 +104,14 @@ export default function CreateTicketSection() {
                                 rules={{ required: "Category is required" }}
                                 render={({ field }) => (
                                     <Select
+                                        disabled={categories.length == 0}
                                         label="Select Category"
-                                        options={[
-                                            { value: 1, label: "Hello" },
-                                            { value: 2, label: "World" },
-                                        ]}
+                                        options={categories?.categories?.map(
+                                            (res) => ({
+                                                label: res.name,
+                                                value: res.id,
+                                            }),
+                                        )}
                                         error={errors.ticket_category_id}
                                         {...field} // passes value & onChange
                                     />
@@ -111,10 +124,12 @@ export default function CreateTicketSection() {
                                 render={({ field }) => (
                                     <Select
                                         label="Select Location"
-                                        options={[
-                                            { value: 1, label: "San Carlos" },
-                                            { value: 2, label: "Carcar" },
-                                        ]}
+                                        options={tables?.locations.map(
+                                            (res) => ({
+                                                label: res.name,
+                                                value: res.id,
+                                            }),
+                                        )}
                                         error={errors.location_id}
                                         {...field} // passes value & onChange
                                     />
@@ -127,11 +142,10 @@ export default function CreateTicketSection() {
                                 render={({ field }) => (
                                     <Select
                                         label="Select Site"
-                                        options={[
-                                            { value: 1, label: "Site 1" },
-                                            { value: 2, label: "Site 2" },
-                                            { value: 3, label: "Site 3" },
-                                        ]}
+                                        options={tables?.sites.map((res) => ({
+                                            label: res.name,
+                                            value: res.id,
+                                        }))}
                                         error={errors.site_id}
                                         {...field} // passes value & onChange
                                     />
@@ -145,17 +159,37 @@ export default function CreateTicketSection() {
                                     <Select
                                         label="Select Urgent Type"
                                         options={[
-                                            { value: 1, label: "Hello" },
-                                            { value: 2, label: "World" },
+                                            {
+                                                value: "Low Priority",
+                                                label: "Low Priority",
+                                                timeframe: "72 Hours",
+                                            },
+                                            {
+                                                value: "Medium Priority",
+                                                label: "Medium Priority",
+                                                timeframe: "48 Hours",
+                                            },
+                                            {
+                                                value: "High Priority",
+                                                label: "High Priority",
+                                                timeframe: "24 Hours",
+                                            },
+                                            {
+                                                value: "Critical Priority",
+                                                label: "Critical Priority",
+                                                timeframe: "15 Minutes",
+                                            },
                                         ]}
+                                        onSelect={(e)=>setTimeframe(e.timeframe)}
                                         error={errors.urgent_type}
                                         {...field} // passes value & onChange
                                     />
                                 )}
                             />
                             <Input
-                                label="Resolution Timeframe"
+                                label={timeframe??"Resolution Timeframe"}
                                 name="timeframe"
+                                value={timeframe}
                                 disabled
                             />
                         </div>

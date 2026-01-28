@@ -17,7 +17,7 @@ class Ticketing extends Model
         'location_id',
         'site_id',
         'department_id',
-        'agent_account_id',
+        'user_id',
         'details',
         'assigned_to',
         'status',
@@ -59,8 +59,14 @@ class Ticketing extends Model
 
     public function agent()
     {
-        return $this->belongsTo(User::class, 'agent_account_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function assigned_to()
+    {
+        return $this->hasOne(User::class,'id', 'assigned_to');
+    }
+
 
     public function histories()
     {

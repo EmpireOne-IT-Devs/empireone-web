@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('location_id')->constrained('locations')->cascadeOnDelete();
             $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
             $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
-            $table->foreignId('agent_account_id')
+            $table->foreignId('user_id')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
@@ -32,11 +32,11 @@ return new class extends Migration
             ])->default('pending');
 
             $table->enum('urgent_type', [
-                'low',
-                'medium',
-                'high',
-                'critical'
-            ])->default('low');
+                'Low Priority',
+                'Medium Priority',
+                'High Priority',
+                'Critical Priority'
+            ])->default('Low Priority');
 
             $table->timestamp('start_at')->nullable();
             $table->timestamp('end_at')->nullable();

@@ -57,7 +57,7 @@ export default function Badge({
 
     return (
         <span
-            className={`${base} ${
+            className={`capitalize ${base} ${
                 outlined ? style.outline : style.solid
             } ${className}`}
         >

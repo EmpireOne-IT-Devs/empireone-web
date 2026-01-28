@@ -2,34 +2,36 @@ import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import React from "react";
 import { TbCalendarEvent, TbMapPin, TbTag, TbUser } from "react-icons/tb";
+import { useSelector } from "react-redux";
+import moment from "moment";
 
 export default function TicketCardsSection() {
+    const { tickets } = useSelector((store) => store.tickets);
+
+    console.log("tickets", tickets);
     return (
         <div className="flex flex-col gap-3">
-            {[1, 2, 3, 4, 5].map((res, i) => {
+            {tickets?.data?.map((res, i) => {
                 return (
                     <Card key={i} className="border-2">
                         <div className="flex flex-col gap-2">
                             <div className="flex gap-3">
                                 <div className="underline text-blue-600">
-                                    TKT-2024-001
+                                    {res.ticketing_id}
                                 </div>
                                 <Badge
                                     variant="danger"
                                     outlined
-                                    label="Critical"
+                                    label={res.urgent_type}
                                 />
                                 <Badge
                                     variant="primary"
                                     outlined
-                                    label="In Progress"
+                                    label={res.status}
                                 />
                             </div>
                             <div className="flex w-full items-center justify-between">
-                                <div>
-                                    Network connectivity issue in Conference
-                                    Room A
-                                </div>
+                                <div>{res.details}</div>
                                 <div className="flex-1 flex  items-end justify-end flex-col">
                                     <div className="text-sm">
                                         Expected Resolution
@@ -42,20 +44,21 @@ export default function TicketCardsSection() {
                                     <TbTag className="text-xl" /> Network Issue
                                 </div>
                                 <div className="flex-1 items-start justify-start flex gap-3">
-                                    <TbMapPin className="text-xl" /> Manila HQ
+                                    <TbMapPin className="text-xl" />
+                                    {res.site.name}
                                 </div>
                                 <div className="flex-1 items-start justify-start flex gap-3">
                                     <TbUser className="text-xl" /> Assigned:
-                                    Robert Cruz
+                                    {res.assigned_to.name}
                                 </div>
                                 <div className="flex-1 items-start justify-start flex gap-3">
                                     <TbCalendarEvent className="text-xl" />{" "}
-                                    2024-12-08 09:30 AM
+                                    {moment(res.created_at).format("LLL")}
                                 </div>
                                 <div className="flex-1 flex  items-end justify-end flex-col">
                                     <div className="text-sm">Last Updated</div>
                                     <div className="text-sm">
-                                        2024-12-08 11:30 AM
+                                        {moment(res.updated_at).format("LLL")}
                                     </div>
                                 </div>
                             </div>

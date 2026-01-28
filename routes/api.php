@@ -32,10 +32,14 @@ Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 
-// Route::prefix('')->middleware(['auth', 'verified'])->group(function () {
-//     Route::apiResource('tickets', TicketingController::class);
-// });
+Route::prefix('')->middleware(['auth', 'verified'])->group(function () {
+    Route::apiResource('tickets', TicketingController::class);
+    Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
+    Route::get('ticketing_tables', [TicketingController::class, 'ticketing_tables']);
+});
 
-Route::apiResource('tickets', TicketingController::class);
+
+
+
 Route::resource('job-postings', JobPostingController::class);
 Route::resource('departments', DepartmentController::class);

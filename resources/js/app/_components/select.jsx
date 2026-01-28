@@ -7,6 +7,7 @@ const Select = forwardRef(
             name,
             options = [],
             error,
+            onSelect,
             iconLeft,
             iconRight,
             disabled = false,
@@ -17,7 +18,7 @@ const Select = forwardRef(
             onChange, // This is the change handler from React Hook Form
             ...props
         },
-        ref
+        ref,
     ) => {
         // 1. Initialize search with the label matching the current value
         const [search, setSearch] = useState("");
@@ -36,12 +37,13 @@ const Select = forwardRef(
 
         // Filter based on what the user is typing
         const filteredOptions = options.filter((opt) =>
-            opt.label.toLowerCase().includes(search.toLowerCase())
+            opt.label.toLowerCase().includes(search.toLowerCase()),
         );
 
         const handleSelect = (option) => {
             setSearch(option.label);
-            onChange(option.value); // Update React Hook Form
+            onChange(option.value);
+            onSelect && onSelect(option);
             setIsOpen(false);
         };
 
@@ -64,7 +66,7 @@ const Select = forwardRef(
                     setIsOpen(false);
                     // Sync search back to the actual selected value label on blur
                     const selectedOption = options.find(
-                        (o) => o.value === value
+                        (o) => o.value === value,
                     );
                     setSearch(selectedOption ? selectedOption.label : "");
                 }
@@ -163,7 +165,7 @@ const Select = forwardRef(
                 )}
             </div>
         );
-    }
+    },
 );
 
 Select.displayName = "Select";
