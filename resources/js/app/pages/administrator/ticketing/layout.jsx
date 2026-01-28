@@ -46,7 +46,10 @@ export default function TicketingLayout({ children }) {
                 <div className="flex-1">
                     <Tabs tabs={tabs} activeIndex={activeTab} />
                 </div>
-                <CreateTicketSection />
+                <div className="mb-4">
+                        <CreateTicketSection />
+                </div>
+            
             </div>
             <div className="p-3">{children}</div>
         </div>

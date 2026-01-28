@@ -17,10 +17,10 @@ export default function Page() {
                 <HeaderSection />
                 <CardSection />
                 <div className="flex gap-3 my-5">
-                    <div className="w-3/4">
+                    <div className="w-2/3">
                         <LineGraphSection />
                     </div>
-                    <div className="w-1/4 flex items-center justify-center">
+                    <div className="w-1/3 flex items-center justify-center">
                         <PieGraphSection />
                     </div>
                 </div>

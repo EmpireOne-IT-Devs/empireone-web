@@ -68,7 +68,7 @@ export default function CreateTicketSection() {
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-            <Button onClick={() => setOpen(true)}>CREATE TICKET</Button>
+            <Button  onClick={() => setOpen(true)}>CREATE TICKET</Button>
             <Modal
                 isOpen={open}
                 onClose={() => setOpen(false)}
