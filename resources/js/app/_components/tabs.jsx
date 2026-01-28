@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Tabs({ tabs, activeIndex, onTabClick, children }) {
     return (
-        <div className="border-b bg-white px-4 sm:px-6 lg:px-8">
+        <div className="border-b px-4 sm:px-6 lg:px-8">
             <nav className="flex justify-start space-x-12">
                 {tabs.map((tab, idx) => (
                     <button

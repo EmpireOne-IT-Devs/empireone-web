@@ -7,7 +7,7 @@ import Button from "@/app/_components/button";
 import Accordion from "@/app/_components/accordion";
 import { Children } from "react";
 
-export default function Layout({children}) {
+export default function Layout({ children }) {
     const { desktopCollapsed } = useSelector((store) => store.app);
 
     return (
@@ -20,7 +20,7 @@ export default function Layout({children}) {
             >
                 <TopbarSection />
                 <main
-                    className={`flex-1 p-6 ${desktopCollapsed ? "ml-20" : ""}`}
+                    className={`flex-1 p-6 bg-gray-50  ${desktopCollapsed ? "ml-20" : ""}`}
                 >
                 {children}
                 </main>

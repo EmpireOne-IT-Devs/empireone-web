@@ -23,7 +23,7 @@ export default function CreateJobSection() {
         defaultValues: {
             title: "",
             department: "",
-            location: "",
+            location: "Manila",
             employment_type: "",
             salary: "",
             status: "",

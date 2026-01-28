@@ -13,15 +13,18 @@ return new class extends Migration
     {
         Schema::create('employee_job_categories', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('employee_id')
-                ->nullable()
-                ->constrained('employees')
-                ->nullOnDelete();
-            $table->foreignId('job_category_id')->nullable()
-                ->nullable()
-                ->constrained('job_categories')
-                ->nullOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('job_category_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->timestamps();
+
+            $table->unique(['employee_id', 'job_category_id']);
         });
     }
 
