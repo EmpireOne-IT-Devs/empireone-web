@@ -31,7 +31,7 @@ export default function TicketCardsSection() {
                                 />
                             </div>
                             <div className="flex w-full items-center justify-between">
-                                <div>{res.details}</div>
+                                 <div dangerouslySetInnerHTML={{ __html: res.details }} />
                                 <div className="flex-1 flex  items-end justify-end flex-col">
                                     <div className="text-sm">
                                         Expected Resolution
