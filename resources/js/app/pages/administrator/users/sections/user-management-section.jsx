@@ -9,8 +9,8 @@ export default function UserManagementSection() {
 
     return (
         <div>
-            <div className=" border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">
+            <div className="border-gray-200 mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">
                     User Management
                 </h2>
             </div>

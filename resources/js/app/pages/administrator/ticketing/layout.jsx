@@ -29,13 +29,13 @@ export default function TicketingLayout({ children }) {
             active: path === "tickets",
         },
         {
-            label: "Reports",
+            label: "Admin   Reports",
             path: "/administrator/ticketing/reports",
             active: path === "reports",
         },
     ];
     return (
-        <div>
+        <div >
             <div className="flex gap-3 w-full items-center justify-center">
                 <div className="flex-1">
                     <Tabs tabs={tabs} activeIndex={activeTab} />
