@@ -63,10 +63,12 @@ class TicketingController extends Controller
                 's3'
             );
             $url = Storage::disk('s3')->url($path);
-            TicketingImage::create([
-                'ticketing_id' => $ticket->id,
-                'url' => $url,
-            ]);
+            if ($url) {
+                TicketingImage::create([
+                    'ticketing_id' => $ticket->id,
+                    'url' => $url,
+                ]);
+            }
         }
 
         return response()->json(['message' => 'Created successfully!']);

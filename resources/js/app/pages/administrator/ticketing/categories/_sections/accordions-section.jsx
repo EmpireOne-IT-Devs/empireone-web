@@ -4,11 +4,16 @@ import { TbBuildingCog, TbTags } from "react-icons/tb";
 import CreateCategorySection from "./create-category-section";
 import EditCategorySection from "./edit-category-section";
 import DeleteCategorySection from "./delete-category-section";
+import { useSelector } from "react-redux";
 
 export default function AccordionsSection() {
+    const { tables } = useSelector((store) => store.tickets);
+
+
+    console.log('tablessssaaa',tables.departments)
     return (
         <div className="flex flex-col gap-3">
-            {[1, 2, 3].map((res) => {
+            {tables?.departments?.map((res) => {
                 return (
                     <Accordion
                         items={[
@@ -17,7 +22,7 @@ export default function AccordionsSection() {
                                     <div className="w-full flex items-center  justify-between">
                                         <div className="flex  w-full flex-1 gap-1 items-center">
                                             <TbBuildingCog className="text-xl" />{" "}
-                                            What is a Category?
+                                          {res.name}
                                         </div>
                                         <div>
                                             <CreateCategorySection />
@@ -26,7 +31,7 @@ export default function AccordionsSection() {
                                 ),
                                 content: (
                                     <div className="flex flex-col gap-3">
-                                        {[1, 2, 3].map((res, i) => {
+                                        {res.categories.map((result, i) => {
                                             return (
                                                 <div
                                                     key={i}
@@ -37,17 +42,15 @@ export default function AccordionsSection() {
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="text-lg font-black">
-                                                            Hardware Issue
+                                                           {result.name}
                                                         </div>
                                                         <div>
-                                                            Computer, laptop, or
-                                                            peripheral hardware
-                                                            problems
+                                                            {res.name} Concern Category
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center justify-center gap-3">
-                                                        <EditCategorySection />
-                                                        <DeleteCategorySection />
+                                                        <EditCategorySection data={result} />
+                                                        <DeleteCategorySection data={result}/>
                                                     </div>
                                                 </div>
                                             );

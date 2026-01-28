@@ -5,7 +5,9 @@ export const ticketsSlice = createSlice({
     initialState: {
         ticket: {},
         tickets: [],
-        tables: [],
+        tables: {
+            departments:[]
+        },
     },
     reducers: {
         setTicket: (state, action) => {
