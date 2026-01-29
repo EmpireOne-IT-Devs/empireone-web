@@ -13,53 +13,21 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
+            $table->foreignId('app_id')
+                ->nullable()
+                ->constrained('personal_infos')
+                ->nullOnDelete();
+            $table->foreignId('employee_id')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
-            $table->foreignId('department_id')
-                ->nullable()
-                ->constrained('departments')
-                ->nullOnDelete();
-            // employee information
-            $table->string('work_type')->default('Full Time');
+            $table->string('position')->nullable();
+            $table->string('department')->nullable();
+            $table->string('account')->nullable();
+            $table->string('supervisor')->nullable();
+            $table->string('hired_date')->nullable();
             $table->string('eogs_email')->nullable();
-            $table->string('employee_id')->nullable();
-            // personal information
-            $table->string('first_name')->nullable();
-            $table->string('middle_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('suffix')->nullable();
-            $table->string('gender')->nullable();
-            $table->string('date_of_birth')->nullable();
-            $table->string('birth_place')->nullable();
-            $table->string('nationality')->nullable();
-            $table->string('marital_status')->nullable();
-            // address
-            $table->string('province')->nullable();
-            $table->string('city')->nullable();
-            $table->string('barangay')->nullable();
-            $table->string('street')->nullable();
-            $table->string('zip_code')->nullable();
-            // government information
-            $table->string('government_id_type')->nullable();
-            $table->string('id_number')->nullable();
-            $table->string('sss')->nullable();
-            $table->string('tin')->nullable();
-            $table->string('philhealth')->nullable();
-            $table->string('pagibig')->nullable();
-            // education background
-            $table->string('highest_level_of_education')->nullable();
-            $table->string('school_name')->nullable();
-            $table->string('course')->nullable();
-            $table->string('year_graduated')->nullable();
-            $table->string('awards')->nullable();
             $table->string('status')->nullable();
-            // contact information
-            $table->string('phone_number1')->nullable();
-            $table->string('phone_number2')->nullable();
-            $table->string('emergency_contact_name')->nullable();
-            $table->string('emergency_contact_number')->nullable();
             $table->timestamps();
         });
     }

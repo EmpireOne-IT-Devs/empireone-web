@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sites', function (Blueprint $table) {
+        Schema::create('government_i_d_s', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('app_id')
+                ->constrained('personal_infos')
+                ->onDelete('cascade');
+            $table->string('id_type')->nullable();
+            $table->string('id_number')->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sites');
+        Schema::dropIfExists('government_i_d_s');
     }
 };

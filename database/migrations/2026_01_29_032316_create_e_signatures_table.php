@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employee_documents', function (Blueprint $table) {
+        Schema::create('e_signatures', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')
-                ->nullable()
-                ->constrained('employees')
-                ->nullOnDelete();
-            $table->string('name')->nullable();
-            $table->string('url')->nullable();
+            $table->foreignId('app_id')
+                ->constrained('personal_infos')
+                ->onDelete('cascade');
+            $table->string('signature')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employee_documents');
+        Schema::dropIfExists('e_signatures');
     }
 };

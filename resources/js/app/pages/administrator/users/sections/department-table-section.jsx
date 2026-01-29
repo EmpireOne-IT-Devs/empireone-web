@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AddDepartmentSection from "./add-department-section";
+import AddUserSection from "./add-user-section";
 
 export default function DepartmentTableSection() {
     const [departments, setDepartments] = useState([
@@ -188,10 +189,7 @@ export default function DepartmentTableSection() {
                                 </button>
                             </div>
                             <div className="ml-auto flex space-x-2">
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm flex items-center space-x-1">
-                                    <span className="text-lg">+</span>
-                                    <span>Add User</span>
-                                </button>
+                                <AddUserSection />
                                 <button className="text-red-500 hover:text-red-700">
                                     <svg
                                         className="h-5 w-5"

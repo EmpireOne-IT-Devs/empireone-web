@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
-            'role' => 1
+            'user_type' => 1
         ]);
 
         $this->call([
