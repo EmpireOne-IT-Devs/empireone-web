@@ -3,17 +3,17 @@ import TicketingLayout from "../layout";
 import HeaderSection from "./_sections/header-section";
 import CardsSection from "./_sections/cards-section";
 import SearchSection from "./_sections/search-section";
-import TicketCardsSection from "./_sections/ticket-cards-section";
+import TicketTableSection from "./_sections/ticket-table-section";
 
 export default function Page() {
     return (
         <Layout>
             <TicketingLayout>
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-2">
                     <HeaderSection />
                     <CardsSection />
                     <SearchSection />
-                    <TicketCardsSection />
+                    <TicketTableSection />
                 </div>
             </TicketingLayout>
         </Layout>
