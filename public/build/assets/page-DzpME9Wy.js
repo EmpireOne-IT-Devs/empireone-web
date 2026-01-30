@@ -1,0 +1,1 @@
+import{j as t}from"./app-DYT6GFYo.js";import r from"./layout-DI2zEZ6I.js";import"./sidebar-section-DnnRV_ub.js";import"./iconBase-BIY29w6Q.js";import"./portal-9F8u66Pi.js";import"./description-BeHBqd5m.js";import"./topbar-section-BB4FBJMU.js";import"./label-B1Ya0l5I.js";import"./index-CzM_LuhE.js";function f(){return t.jsx(r,{children:"Setting"})}export{f as default};

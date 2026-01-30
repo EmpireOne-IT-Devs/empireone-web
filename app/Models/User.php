@@ -13,18 +13,37 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
+    // Role constants
+    public const ROLE_ADMIN = 1;
+    public const ROLE_EMPLOYEE = 2;
+    public const ROLE_HR = 3;
+    public const ROLE_MANAGER = 4;
+
+    // Role labels
+    public static $roleLabels = [
+        self::ROLE_ADMIN => 'Administrator',
+        self::ROLE_EMPLOYEE => 'Employee',
+        self::ROLE_HR => 'HR',
+        self::ROLE_MANAGER => 'Manager',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'suffix',
+        'gender',
+        'app_id',
+        'employee_id',
+        'department_id',
         'email',
         'password',
-        'google_id',
-        'role',
-        'user_type'
+        'role'
     ];
 
     /**
@@ -47,6 +66,69 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => 'integer',
         ];
+    }
+
+    /**
+     * Check if user has a specific role
+     */
+    public function hasRole(int $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Check if user is an administrator
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(self::ROLE_ADMIN);
+    }
+
+    /**
+     * Check if user is an employee
+     */
+    public function isEmployee(): bool
+    {
+        return $this->hasRole(self::ROLE_EMPLOYEE);
+    }
+
+    /**
+     * Check if user is HR
+     */
+    public function isHR(): bool
+    {
+        return $this->hasRole(self::ROLE_HR);
+    }
+
+    /**
+     * Check if user is a manager
+     */
+    public function isManager(): bool
+    {
+        return $this->hasRole(self::ROLE_MANAGER);
+    }
+
+    /**
+     * Get role label
+     */
+    public function getRoleLabel(): string
+    {
+        return self::$roleLabels[$this->role] ?? 'Unknown';
+    }
+
+    /**
+     * Get dashboard route based on role
+     */
+    public function getDashboardRoute(): string
+    {
+        return match($this->role) {
+            self::ROLE_ADMIN => '/administrator/dashboard',
+            self::ROLE_EMPLOYEE => '/employee/dashboard',
+            self::ROLE_HR => '/hr/dashboard', 
+            self::ROLE_MANAGER => '/manager/dashboard',
+            default => '/dashboard',
+        };
     }
 }

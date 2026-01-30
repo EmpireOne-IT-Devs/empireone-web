@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -9,28 +10,33 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     $user = Auth::user();
-    return match ($user?->role) {
-        1 => redirect('/administrator/dashboard'),
-        // 2 => redirect('/account/pos/dashboard'),
-        default => Inertia::render('auth/login/page'),
-    };
+    
+    // If user is logged in, redirect to their dashboard based on role
+    if ($user) {
+        return redirect($user->getDashboardRoute());
+    }
+    
+    // If not logged in, show login page
+    return Inertia::render('auth/login/page');
 })->name('login');
-
 
 
 
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    return match ($user?->role) {
-        1 => redirect('/administrator/dashboard'),
-        // 2 => redirect('/account/pos/dashboard'),
-        default => Inertia::render('auth/login/page'),
-    };
+    
+    // Redirect to appropriate dashboard based on role
+    if ($user) {
+        return redirect($user->getDashboardRoute());
+    }
+    
+    // If not logged in, redirect to login
+    return redirect()->route('login');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('administrator')->middleware(['auth', 'verified', 'role:1'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('administrator/dashboard/page');
     });
@@ -181,6 +187,51 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
     });
     Route::get('/settings', function () {
         return Inertia::render('administrator/settings/page');
+    });
+});
+
+// Employee routes (Role 2)
+Route::prefix('employee')->middleware(['auth', 'verified', 'role:2'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('employee/dashboard/page');
+    });
+    Route::get('/profile', function () {
+        return Inertia::render('employee/profile/page');
+    });
+    Route::get('/tickets', function () {
+        return Inertia::render('employee/tickets/page');
+    });
+    Route::get('/attendance', function () {
+        return Inertia::render('employee/attendance/page');
+    });
+});
+
+// HR routes (Role 3)
+Route::prefix('hr')->middleware(['auth', 'verified', 'role:3'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('hr/dashboard/page');
+    });
+    Route::get('/employees', function () {
+        return Inertia::render('hr/employees/page');
+    });
+    Route::get('/recruitment', function () {
+        return Inertia::render('hr/recruitment/page');
+    });
+    Route::get('/performance', function () {
+        return Inertia::render('hr/performance/page');
+    });
+});
+
+// Manager routes (Role 4)  
+Route::prefix('manager')->middleware(['auth', 'verified', 'role:4'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('manager/dashboard/page');
+    });
+    Route::get('/team', function () {
+        return Inertia::render('manager/team/page');
+    });
+    Route::get('/reports', function () {
+        return Inertia::render('manager/reports/page');
     });
 });
 
