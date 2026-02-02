@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthorizationController;
 use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\JobPostingController;
 use Illuminate\Http\Request;
@@ -43,3 +44,5 @@ Route::prefix('')->middleware(['auth', 'verified'])->group(function () {
 
 Route::resource('job-postings', JobPostingController::class);
 Route::resource('departments', DepartmentController::class);
+Route::get('departments/{department}/users', [DepartmentController::class, 'getDepartmentUsers']);
+Route::resource('users', RegisteredUserController::class);

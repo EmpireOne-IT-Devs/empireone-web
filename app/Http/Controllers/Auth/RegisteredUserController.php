@@ -16,6 +16,20 @@ use Inertia\Response;
 class RegisteredUserController extends Controller
 {
     /**
+     * Display a listing of users.
+     */
+    public function index(Request $request)
+    {
+        $users = User::with('department')->orderBy('id', 'desc')->paginate(10);
+
+        if ($request->expectsJson()) {
+            return response()->json($users);
+        }
+
+        return Inertia::render('Users/Index', ['users' => $users]);
+    }
+
+    /**
      * Display the registration view.
      */
     public function create(): Response
@@ -28,24 +42,49 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:10',
+            'gender' => 'nullable|string|in:male,female,other',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'role' => 'required|integer|in:1,2,3,4',
+            'department_id' => 'nullable|exists:departments,id',
+            'site' => 'required|string|max:255',
         ]);
 
+        // Generate a default password
+        $defaultPassword = 'Password123!';
+
+
         $user = User::create([
-            'name' => $request->name,
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'suffix' => $request->suffix,
+            'gender' => $request->gender,
+            'department_id' => $request->department_id,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($defaultPassword),
+            'role' => $request->role,
+            'site' => $request->site,
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Return JSON response for API requests
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'User created successfully',
+                'user' => $user->load('department'),
+                'default_password' => $defaultPassword
+            ], 201);
+        }
 
+        Auth::login($user);
         return redirect(route('dashboard', absolute: false));
     }
 }

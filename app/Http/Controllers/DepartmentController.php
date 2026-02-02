@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
@@ -12,7 +13,18 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $departments = Department::withCount('users')->get();
+
+        // Transform the data to match the frontend structure
+        $departmentsData = $departments->map(function ($department) {
+            return [
+                'id' => $department->id,
+                'name' => $department->name,
+                'userCount' => $department->users_count,
+            ];
+        });
+
+        return response()->json($departmentsData);
     }
 
     /**
@@ -70,5 +82,78 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         //
+    }
+
+    /**
+     * Get users for a specific department
+     */
+    public function getDepartmentUsers($departmentId)
+    {
+        try {
+            $users = User::where('department_id', $departmentId)
+                ->select('id', 'first_name', 'middle_name', 'last_name', 'suffix', 'email', 'department_id', 'role', 'site')
+                ->orderBy('id', 'desc')
+                ->get()
+                ->map(function ($user) {
+                    return [
+                        'id' => $user->id,
+                        'fullName' => trim($user->first_name . ' ' . $user->middle_name . ' ' . $user->last_name . ' ' . $user->suffix),
+                        'email' => $user->email,
+                        'jobPosition' => $this->getJobPositionByRole($user->role),
+                        'site' => $user->site,
+                        'role' => $this->getRoleName($user->role),
+                        'roleType' => $this->getRoleType($user->role),
+                    ];
+                });
+
+            return response()->json($users);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch users for department',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Helper method to get job position based on role
+     */
+    private function getJobPositionByRole($role)
+    {
+        return match ($role) {
+            1 => 'Administrator',
+            2 => 'Employee',
+            3 => 'HR Lead',
+            4 => 'Manager',
+            default => 'Employee'
+        };
+    }
+
+    /**
+     * Helper method to get role name based on role
+     */
+    private function getRoleName($role)
+    {
+        return match ($role) {
+            1 => 'Administrator',
+            2 => 'Developer',
+            3 => 'HR Lead',
+            4 => 'Manager',
+            default => 'Developer'
+        };
+    }
+
+    /**
+     * Helper method to get role type based on role
+     */
+    private function getRoleType($role)
+    {
+        return match ($role) {
+            1 => 'Administrator',
+            2 => 'Employee',
+            3 => 'Lead',
+            4 => 'Manager',
+            default => 'Employee'
+        };
     }
 }

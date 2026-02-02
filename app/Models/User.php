@@ -43,7 +43,8 @@ class User extends Authenticatable
         'department_id',
         'email',
         'password',
-        'role'
+        'role',
+        'site'
     ];
 
     /**
@@ -130,5 +131,19 @@ class User extends Authenticatable
             self::ROLE_MANAGER => '/manager/dashboard',
             default => '/dashboard',
         };
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Get the department that the user belongs to.
+     */
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }

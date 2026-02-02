@@ -34,6 +34,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('role')->nullable();
+            $table->string('site')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

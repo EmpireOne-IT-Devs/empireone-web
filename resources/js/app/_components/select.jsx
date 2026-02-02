@@ -35,11 +35,6 @@ const Select = forwardRef(
             }
         }, [value, options]);
 
-        // Filter based on what the user is typing
-        const filteredOptions = options.filter((opt) =>
-            opt.label.toLowerCase().includes(search.toLowerCase()),
-        );
-
         const handleSelect = (option) => {
             setSearch(option.label);
             onChange(option.value);
@@ -47,13 +42,8 @@ const Select = forwardRef(
             setIsOpen(false);
         };
 
-        const handleInputChange = (e) => {
-            setSearch(e.target.value);
-            setIsOpen(true);
-            // Optional: Clear the value in RHF if the user clears the input
-            if (e.target.value === "") {
-                onChange("");
-            }
+        const handleInputClick = () => {
+            setIsOpen(!isOpen);
         };
 
         // Close dropdown when clicking outside
@@ -64,11 +54,6 @@ const Select = forwardRef(
                     !containerRef.current.contains(e.target)
                 ) {
                     setIsOpen(false);
-                    // Sync search back to the actual selected value label on blur
-                    const selectedOption = options.find(
-                        (o) => o.value === value,
-                    );
-                    setSearch(selectedOption ? selectedOption.label : "");
                 }
             };
             document.addEventListener("mousedown", handleClickOutside);
@@ -86,7 +71,7 @@ const Select = forwardRef(
                         </div>
                     )}
 
-                    {/* Search Input */}
+                    {/* Select Input */}
                     <input
                         {...props}
                         autoComplete="off"
@@ -94,15 +79,14 @@ const Select = forwardRef(
                         id={name}
                         name={name}
                         disabled={disabled}
-                        placeholder=" " // Required for peer-placeholder-shown to work
-                        readOnly={readOnly}
+                        placeholder=""
+                        readOnly={true} // Make it readonly so it behaves like a select
                         value={search}
-                        onChange={handleInputChange}
-                        onFocus={() => setIsOpen(true)}
+                        onClick={handleInputClick}
                         className={`
-              peer w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black
-              placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500
-              ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : ""}
+              w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black cursor-pointer
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : "pr-8"}
               ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
               ${className}
             `}
@@ -112,17 +96,21 @@ const Select = forwardRef(
                     <label
                         htmlFor={name}
                         className={`
-              absolute left-3 top-2.5 bg-white px-1 text-gray-500 text-sm
-              transition-all duration-200 ease-out
-              peer-placeholder-shown:top-2.5
-              peer-placeholder-shown:text-sm
-              peer-placeholder-shown:text-gray-500
-              peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-600
-              peer-valid:-top-2 peer-valid:text-xs peer-valid:text-gray-700
+              absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out
+              ${search || isOpen ? '-top-2 text-xs text-blue-600' : 'top-2.5 text-gray-500'}
             `}
                     >
                         {label}
                     </label>
+
+                    {/* Dropdown Arrow */}
+                    {!iconRight && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                            <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    )}
 
                     {/* Right Icon */}
                     {iconRight && (
@@ -133,12 +121,14 @@ const Select = forwardRef(
 
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
-                        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg">
-                            {filteredOptions.length > 0 ? (
-                                filteredOptions.map((option, index) => (
+                        <ul className="absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg">
+                            {options.length > 0 ? (
+                                options.map((option, index) => (
                                     <li
                                         key={index}
-                                        className="cursor-pointer px-4 py-2 hover:bg-blue-100 text-black text-sm"
+                                        className={`cursor-pointer px-4 py-2 hover:bg-blue-100 text-black text-sm ${
+                                            value === option.value ? 'bg-blue-50 text-blue-600' : ''
+                                        }`}
                                         onMouseDown={(e) => {
                                             // Use onMouseDown to prevent the input blur from closing list before click
                                             e.preventDefault();
