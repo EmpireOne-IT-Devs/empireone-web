@@ -3,6 +3,7 @@ import DepartmentsSection from "./departments-section";
 import UsersSection from "./users-section";
 import SitesSection from "./sites-section";
 import DepartmentTableSection from "./department-table-section";
+import ApplicantsTableSection from "./applicants-table-section";
 
 export default function UserManagementSection() {
     const [activeTab, setActiveTab] = useState("departments");
@@ -46,6 +47,7 @@ export default function UserManagementSection() {
                 {activeTab === "departments" && (
                     <div className="space-y-8">
                         <UsersSection />
+                        <ApplicantsTableSection />
                         <DepartmentTableSection />
                     </div>
                 )}
