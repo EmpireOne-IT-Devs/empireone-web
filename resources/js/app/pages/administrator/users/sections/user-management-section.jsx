@@ -4,6 +4,7 @@ import UsersSection from "./users-section";
 import SitesSection from "./sites-section";
 import DepartmentTableSection from "./department-table-section";
 import ApplicantsTableSection from "./applicants-table-section";
+import RolesSection from "./roles-section";
 
 export default function UserManagementSection() {
     const [activeTab, setActiveTab] = useState("departments");
@@ -39,6 +40,16 @@ export default function UserManagementSection() {
                         >
                             Sites
                         </button>
+                        <button
+                            onClick={() => setActiveTab("roles")}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                                activeTab === "roles"
+                                    ? "border-blue-500 text-blue-600"
+                                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            }`}
+                        >
+                            Roles & Permissions
+                        </button>
                     </nav>
                 </div>
             </div>
@@ -52,6 +63,11 @@ export default function UserManagementSection() {
                     </div>
                 )}
                 {activeTab === "sites" && <SitesSection />}
+                {activeTab === "roles" && (
+                    <div className="space-y-8">
+                        <RolesSection />
+                    </div>
+                )}
             </div>
         </div>
     );
