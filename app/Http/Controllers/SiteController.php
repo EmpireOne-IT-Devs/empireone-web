@@ -7,59 +7,34 @@ use Illuminate\Http\Request;
 
 class SiteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $sites = Site::orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'message' => 'Sites retrieved successfully!',
+            'data' => $sites
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Site $site)
-    {
-        //
-    }
+        // Set default status if not provided
+        if (!isset($validatedData['status'])) {
+            $validatedData['status'] = 'Active';
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Site $site)
-    {
-        //
-    }
+        $site = Site::create($validatedData);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Site $site)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Site $site)
-    {
-        //
+        return response()->json([
+            'message' => 'Site created successfully!',
+            'site' => $site
+        ], 201);
     }
 }
