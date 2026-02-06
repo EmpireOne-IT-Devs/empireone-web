@@ -1,20 +1,16 @@
 import Card from "@/app/_components/card";
+import { CheckCircle, Clock, Ticket } from "lucide-react";
 import React from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
-import {
-    TbChecks,
-    TbClock,
-    TbTicket,
-    TbUsersGroup,
-} from "react-icons/tb";
+import { FiUsers } from "react-icons/fi";
 
 export default function CardSection() {
     return (
         <div className="flex gap-3 w-full">
             <Card className="w-full flex-col gap-3">
                 <div className="flex items-start justify-between">
-                    <div className="bg-blue-200 p-3 rounded-xl w-16 flex items-center justify-center">
-                        <TbTicket className="text-4xl text-blue-600" />
+                    <div className="bg-blue-200 p-4 rounded-xl w-16 flex items-center justify-center">
+                        <Ticket className="text-4xl text-blue-600" />
                     </div>
 
                     <div className="flex items-center gap-1 text-green-600">
@@ -31,8 +27,8 @@ export default function CardSection() {
 
             <Card className="w-full flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
-                    <div className="bg-green-200 p-3 rounded-xl w-16">
-                        <TbChecks className="inline-block mr-2 text-4xl text-green-600" />
+                    <div className="bg-green-200 p-4 rounded-xl w-16">
+                        <CheckCircle className="text-4xl text-green-600" />
                     </div>
                     <div className="flex items-center gap-1 text-green-600">
                         <FaArrowTrendUp className="text-lg" />
@@ -47,8 +43,8 @@ export default function CardSection() {
             </Card>
             <Card className="w-full flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
-                    <div className="bg-orange-200 p-3 rounded-xl w-16">
-                        <TbClock className="inline-block mr-2 text-4xl text-orange-600" />
+                    <div className="bg-orange-200 p-4 rounded-xl w-16">
+                        <Clock className="text-4xl text-orange-600" />
                     </div>
                     <div className="text-red-600 text-md">26 pending</div>
                 </div>
@@ -61,8 +57,8 @@ export default function CardSection() {
             </Card>
             <Card className="w-full flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
-                    <div className="bg-purple-200 p-3 rounded-xl w-16">
-                        <TbUsersGroup className="inline-block mr-2 text-4xl text-purple-600" />
+                    <div className="bg-purple-200 p-4 rounded-xl w-16">
+                        <FiUsers className="text-2xl text-purple-600" />
                     </div>
 
                     <div className="text-green-600 text-md">3 Active</div>

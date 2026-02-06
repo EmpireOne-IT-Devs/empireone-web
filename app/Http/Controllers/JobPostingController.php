@@ -37,4 +37,29 @@ class JobPostingController extends Controller
             'job_posting' => $jobPosting
         ], 201);
     }
+
+    public function destroy($id)
+    {
+        try {
+            $jobPosting = \App\Models\JobPosting::findOrFail($id);
+            
+          
+            
+            $jobPosting->delete();
+            
+            return response()->json([
+                'message' => 'Job posting deleted successfully'
+            ], 201);
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Job posting not found'
+            ], 404);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete job posting: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

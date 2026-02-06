@@ -17,7 +17,6 @@ export default function SearchSection() {
             </div>
             <div>
                 <Select
-                    iconLeft={<TbFilter className="text-xl" />}
                     label="All Status"
                     options={[
                         { value: "all", label: "All Status" },
@@ -31,5 +30,5 @@ export default function SearchSection() {
                 <CreateJobSection/>
             </div>
         </div>
-    );
+    );  
 }

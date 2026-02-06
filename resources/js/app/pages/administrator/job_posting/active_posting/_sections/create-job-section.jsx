@@ -4,7 +4,6 @@ import Modal from "@/app/_components/modal";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { TbFilter } from "react-icons/tb";
 import { Textarea } from "@headlessui/react";
 import { useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
@@ -14,6 +13,7 @@ import { setAlert } from "@/app/redux/app-slice";
 export default function CreateJobSection() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
+
     const {
         handleSubmit,
         reset,
@@ -23,7 +23,7 @@ export default function CreateJobSection() {
         defaultValues: {
             title: "",
             department: "",
-            location: "Manila",
+            location: "",
             employment_type: "",
             salary: "",
             status: "",
@@ -37,27 +37,28 @@ export default function CreateJobSection() {
 
     async function onSubmit(data) {
         try {
-            console.log("Form data:", data);
             await dispatch(create_job_posting_service_thunk(data)).unwrap();
+
             dispatch(
                 setAlert({
                     type: "success",
                     title: "Job Posting Created Successfully!",
-                    message: "The job posting has been created and is ready for review.",
+                    message:
+                        "The job posting has been created and is ready for review.",
                     open: true,
-                })
+                }),
             );
+
             reset();
             setOpen(false);
         } catch (error) {
-            console.error("Error creating job posting:", error);
             dispatch(
                 setAlert({
                     type: "danger",
                     title: "Failed to create job posting",
                     message: error.message || "Something went wrong",
                     open: true,
-                })
+                }),
             );
         }
     }
@@ -76,13 +77,19 @@ export default function CreateJobSection() {
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="Create New Job Posting"
+                
             >
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <div>
-                        <h3 className="text-sm font-semibold text-gray-700 mb-4">
-                            Basic Information
-                        </h3>
-                        <div className="mb-4">
+                
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex flex-col max-h-[80vh]"
+                >
+                    <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+                        <div>
+                            <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                                Basic Information
+                            </h3>
+
                             <Controller
                                 name="title"
                                 control={control}
@@ -97,6 +104,7 @@ export default function CreateJobSection() {
                                 )}
                             />
                         </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Controller
                                 name="department"
@@ -111,6 +119,7 @@ export default function CreateJobSection() {
                                     />
                                 )}
                             />
+
                             <Controller
                                 name="location"
                                 control={control}
@@ -125,86 +134,104 @@ export default function CreateJobSection() {
                                 )}
                             />
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Controller
-                            name="employment_type"
-                            control={control}
-                            rules={{ required: "Employment type is required" }}
-                            render={({ field }) => (
-                                <Select
-                                    {...field}
-                                    iconLeft={<TbFilter className="text-xl" />}
-                                    label="Employment Type"
-                                    options={[
-                                        { value: "full-time", label: "Full Time" },
-                                        { value: "part-time", label: "Part Time" },
-                                        { value: "contract", label: "Contract" },
-                                        { value: "temporary", label: "Temporary" },
-                                        { value: "internship", label: "Internship" },
-                                    ]}
-                                    error={errors.employment_type?.message}
-                                />
-                            )}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Controller
+                                name="employment_type"
+                                control={control}
+                                rules={{
+                                    required: "Employment type is required",
+                                }}
+                                render={({ field }) => (
+                                    <Select
+                                        {...field}
+                                        label="Employment Type"
+                                        options={[
+                                            {
+                                                value: "full-time",
+                                                label: "Full Time",
+                                            },
+                                            {
+                                                value: "part-time",
+                                                label: "Part Time",
+                                            },
+                                            {
+                                                value: "contract",
+                                                label: "Contract",
+                                            },
+                                            {
+                                                value: "temporary",
+                                                label: "Temporary",
+                                            },
+                                            {
+                                                value: "internship",
+                                                label: "Internship",
+                                            },
+                                        ]}
+                                        error={errors.employment_type?.message}
+                                    />
+                                )}
+                            />
+
+                            <Controller
+                                name="salary"
+                                control={control}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        label="Salary Range"
+                                        placeholder="₱50,000 - ₱100,000"
+                                    />
+                                )}
+                            />
+
+                            <Controller
+                                name="status"
+                                control={control}
+                                rules={{ required: "Status is required" }}
+                                render={({ field }) => (
+                                    <Select
+                                        {...field}
+                                        label="Status"
+                                        options={[
+                                            { value: "draft", label: "Draft" },
+                                            {
+                                                value: "active",
+                                                label: "Active",
+                                            },
+                                            {
+                                                value: "closed",
+                                                label: "Closed",
+                                            },
+                                        ]}
+                                        error={errors.status?.message}
+                                    />
+                                )}
+                            />
+                        </div>
 
                         <Controller
-                            name="salary"
+                            name="application_deadline"
                             control={control}
                             render={({ field }) => (
                                 <Input
                                     {...field}
-                                    label="Salary Range"
-                                    placeholder="₱50,000 - ₱100,000"
+                                    label="Application Deadline"
+                                    type="date"
                                 />
                             )}
                         />
-                        <Controller
-                            name="status"
-                            control={control}
-                            rules={{ required: "Status is required" }}
-                            render={({ field }) => (
-                                <Select
-                                    {...field}
-                                    iconLeft={<TbFilter className="text-xl" />}
-                                    label="Status"
-                                    options={[
-                                        { value: "draft", label: "Draft" },
-                                        { value: "active", label: "Active" },
-                                        { value: "closed", label: "Closed" },
-                                    ]}
-                                    error={errors.status?.message}
-                                />
-                            )}
-                        />
-                    </div>
 
-                    <Controller
-                        name="application_deadline"
-                        control={control}
-                        render={({ field }) => (
-                            <Input 
-                                {...field}
-                                label="Application Deadline" 
-                                type="date" 
-                            />
-                        )}
-                    />
-                    <div>
-                        <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700">
                             Job Details
                         </h3>
-                    </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Job Description *
-                        </label>
                         <Controller
                             name="description"
                             control={control}
-                            rules={{ required: "Job description is required" }}
+                            rules={{
+                                required: "Job description is required",
+                            }}
                             render={({ field }) => (
                                 <Textarea
                                     {...field}
@@ -214,55 +241,59 @@ export default function CreateJobSection() {
                             )}
                         />
                         {errors.description && (
-                            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                            <p className="text-red-500 text-sm">
+                                {errors.description.message}
+                            </p>
                         )}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Requirements (one per line) *
-                        </label>
+
                         <Controller
                             name="requirements"
                             control={control}
-                            rules={{ required: "Requirements are required" }}
+                            rules={{
+                                required: "Requirements are required",
+                            }}
                             render={({ field }) => (
                                 <Textarea
                                     {...field}
-                                    placeholder="Years of experience in relevant field..."
+                                    placeholder="List requirements (one per line)"
                                     className="w-full border border-gray-300 rounded-md p-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             )}
                         />
                         {errors.requirements && (
-                            <p className="text-red-500 text-sm mt-1">{errors.requirements.message}</p>
+                            <p className="text-red-500 text-sm">
+                                {errors.requirements.message}
+                            </p>
                         )}
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Controller
-                            name="experience_required"
-                            control={control}
-                            render={({ field }) => (
-                                <Input
-                                    {...field}
-                                    label="Experience Required"
-                                    placeholder="e.g. 3+ years in relevant field"
-                                />
-                            )}
-                        />
-                        <Controller
-                            name="education_required"
-                            control={control}
-                            render={({ field }) => (
-                                <Input
-                                    {...field}
-                                    label="Education Required"
-                                    placeholder="e.g. Bachelor's..."
-                                />
-                            )}
-                        />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                            <Controller
+                                name="experience_required"
+                                control={control}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        label="Experience Required"
+                                        placeholder="e.g. 3+ years"
+                                    />
+                                )}
+                            />
+
+                            <Controller
+                                name="education_required"
+                                control={control}
+                                render={({ field }) => (
+                                    <Input
+                                        {...field}
+                                        label="Education Required"
+                                        placeholder="e.g. Bachelor's Degree"
+                                    />
+                                )}
+                            />
+                        </div>
                     </div>
 
-                    <div className="flex justify-end gap-2 pt-4 px-2 border-t">
+                    <div className="sticky bottom-0 bg-white border-t pt-4 px-2 flex justify-end gap-2">
                         <Button
                             variant="secondary"
                             type="button"
@@ -272,10 +303,7 @@ export default function CreateJobSection() {
                             Cancel
                         </Button>
 
-                        <Button
-                            type="submit"
-                            disabled={isSubmitting}
-                        >
+                        <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting ? "Creating..." : "Create Job Post"}
                         </Button>
                     </div>

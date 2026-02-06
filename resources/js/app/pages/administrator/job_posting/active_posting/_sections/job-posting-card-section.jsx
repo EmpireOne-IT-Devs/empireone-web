@@ -12,6 +12,7 @@ import {
     TbTrash,
 } from "react-icons/tb";
 import ViewJobPostingDetailsSection from "./view-job-posting-details-section";
+import DeleteJobSection from "./delete-job-section";
 
 export default function JobPostingCardSection() {
     const { job_postings, loading } = useSelector(
@@ -61,9 +62,11 @@ export default function JobPostingCardSection() {
                             </div>
 
                             <div className="flex items-center gap-3 text-gray-500">
-                                <ViewJobPostingDetailsSection />
+                                <div className="mt-2">
+                                    <ViewJobPostingDetailsSection />
+                                </div>
                                 <TbPencil className="cursor-pointer text-green-500 hover:text-green-600" />
-                                <TbTrash className="cursor-pointer text-red-500 hover:text-red-600" />
+                                <DeleteJobSection data={job} />
                             </div>
                         </div>
                         <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
