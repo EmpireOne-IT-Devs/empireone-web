@@ -1,0 +1,133 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\JobRequisition;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class JobRequisitionController extends Controller
+{
+    public function index()
+    {
+        $jobRequisitions = JobRequisition::latest()->get();
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => $jobRequisitions
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'position_type' => 'required|string|in:new,existing',
+            'position_title' => 'required|string|max:255',
+            'department' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'employment_type' => 'required|string|in:full-time,part-time,contract,temporary',
+            'number_of_positions' => 'required|integer|min:1',
+            'priority' => 'required|string|in:low,medium,high,urgent',
+            'salary_range' => 'required|string|max:255',
+            'target_start_date' => 'required|date',
+            'justification_for_position' => 'required|string',
+            'required_qualifications' => 'required|string',
+            'key_responsibilities' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $jobRequisition = JobRequisition::create($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Job requisition created successfully',
+            'data' => $jobRequisition
+        ], 201);
+    }
+
+    public function show($id)
+    {
+        $jobRequisition = JobRequisition::find($id);
+
+        if (!$jobRequisition) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Job requisition not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $jobRequisition
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $jobRequisition = JobRequisition::find($id);
+
+        if (!$jobRequisition) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Job requisition not found'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'position_type' => 'sometimes|string|in:new,existing',
+            'position_title' => 'sometimes|string|max:255',
+            'department' => 'sometimes|string|max:255',
+            'location' => 'sometimes|string|max:255',
+            'employment_type' => 'sometimes|string|in:full-time,part-time,contract,temporary',
+            'number_of_positions' => 'sometimes|integer|min:1',
+            'priority' => 'sometimes|string|in:low,medium,high,urgent',
+            'salary_range' => 'sometimes|string|max:255',
+            'target_start_date' => 'sometimes|date',
+            'justification_for_position' => 'sometimes|string',
+            'required_qualifications' => 'sometimes|string',
+            'key_responsibilities' => 'sometimes|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $jobRequisition->update($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Job requisition updated successfully',
+            'data' => $jobRequisition
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $jobRequisition = JobRequisition::find($id);
+
+        if (!$jobRequisition) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Job requisition not found'
+            ], 404);
+        }
+
+        $jobRequisition->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Job requisition deleted successfully'
+        ]);
+    }
+}

@@ -19,9 +19,13 @@ import {
     FcShop,
     FcCloseUpMode,
     FcCancel,
+    FcSurvey,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import { Link } from "@inertiajs/react";
+import { Clipboard, ClipboardIcon } from "lucide-react";
+import { FaClipboard } from "react-icons/fa6";
+import { FaClipboardCheck } from "react-icons/fa";
 
 
 
@@ -37,7 +41,7 @@ export default function SidebarSection() {
             { name: "Users", href: "/administrator/users", icon: FcConferenceCall, current: path == "users" },
             { name: "Acivities", href: "/administrator/activities/view", icon: FcSportsMode, current: path == "activities" },
             { name: "Ticketing", href: "/administrator/ticketing/dashboard", icon: FcCustomerSupport, current: path == "ticketing" },
-            { name: "Job Posting", href: "/administrator/job_posting/dashboard", icon: FcDocument, current: path == "job_posting" },
+            { name: "Job Posting", href: "/administrator/job_posting/dashboard", icon: FcSurvey, current: path == "job_posting" },
              { name: "Job Requisition", href: "/administrator/job_requisition", icon: FcDocument, current: path == "job_requisition" },
             { name: "HR Central", href: "/administrator/hr_central/overview", icon: FcPortraitMode, current: path == "hr_central" },
             { name: "RnR", href: "/administrator/rnr/grand_rewards", icon: FcDiploma1, current: path == "rnr" },
