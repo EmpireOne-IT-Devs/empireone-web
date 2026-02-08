@@ -10,12 +10,12 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     $user = Auth::user();
-    
+
     // If user is logged in, redirect to their dashboard based on role
     if ($user) {
         return redirect($user->getDashboardRoute());
     }
-    
+
     // If not logged in, show login page
     return Inertia::render('auth/login/page');
 })->name('login');
@@ -25,12 +25,12 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    
+
     // Redirect to appropriate dashboard based on role
     if ($user) {
         return redirect($user->getDashboardRoute());
     }
-    
+
     // If not logged in, redirect to login
     return redirect()->route('login');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -98,6 +98,11 @@ Route::prefix('administrator')->middleware(['auth', 'verified', 'role:1'])->grou
             return Inertia::render('administrator/job_posting/interviews/page');
         });
     });
+    Route::get('/job_requisition', function () {
+        return Inertia::render('administrator/job_requisition/page');
+    });
+
+
     Route::prefix('hr_central')->group(function () {
         Route::get('/overview', function () {
             return Inertia::render('administrator/hr_central/overview/page');

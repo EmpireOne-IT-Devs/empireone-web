@@ -38,6 +38,7 @@ export default function SidebarSection() {
             { name: "Acivities", href: "/administrator/activities/view", icon: FcSportsMode, current: path == "activities" },
             { name: "Ticketing", href: "/administrator/ticketing/dashboard", icon: FcCustomerSupport, current: path == "ticketing" },
             { name: "Job Posting", href: "/administrator/job_posting/dashboard", icon: FcDocument, current: path == "job_posting" },
+             { name: "Job Requisition", href: "/administrator/job_requisition", icon: FcDocument, current: path == "job_requisition" },
             { name: "HR Central", href: "/administrator/hr_central/overview", icon: FcPortraitMode, current: path == "hr_central" },
             { name: "RnR", href: "/administrator/rnr/grand_rewards", icon: FcDiploma1, current: path == "rnr" },
             { name: "Store Admin", href: "/administrator/store_admin/rewards_item", icon: FcShop, current: path == "store_admin" },
