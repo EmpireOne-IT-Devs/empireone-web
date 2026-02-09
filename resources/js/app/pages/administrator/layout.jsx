@@ -20,7 +20,7 @@ export default function Layout({ children }) {
             >
                 <TopbarSection />
                 <main
-                    className={`flex-1 p-6 bg-gray-50  ${desktopCollapsed ? "ml-20" : ""}`}
+                    className={`flex-1 p-6 bg-gray-100  ${desktopCollapsed ? "ml-20" : ""}`}
                 >
                 {children}
                 </main>
