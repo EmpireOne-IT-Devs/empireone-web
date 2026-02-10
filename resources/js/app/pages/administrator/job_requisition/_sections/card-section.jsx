@@ -45,8 +45,8 @@ export default function CardSection() {
             <Card className="w-full flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
                     <span className="text-md text-gray-600">In Progress</span>
-                    <div className="p-2 rounded-lg bg-blue-100">
-                        <TbRefresh className="text-xl text-blue-600" />
+                    <div className="p-2 rounded-lg bg-purple-100">
+                        <TbRefresh className="text-xl text-purple-600" />
                     </div>
                 </div>
                 <div className="flex-col flex items-start justify-between">

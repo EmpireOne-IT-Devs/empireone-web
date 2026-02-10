@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import store from "@/app/store/store";
 
 export default function Page() {
-     useEffect(() => {
+    useEffect(() => {
         store.dispatch(get_job_requisitions_thunk());
     }, []);
     return (

@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
     TbCalendarEvent,
     TbMapPin,
-    TbTag,
-    TbUser,
     TbEye,
-    TbCurrencyPeso,
     TbCalendar,
     TbUsers,
     TbBuilding,
+    TbCurrencyDollar,
 } from "react-icons/tb";
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
@@ -16,7 +14,8 @@ import Button from "@/app/_components/button";
 import { useDispatch, useSelector } from "react-redux";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import { set_selected_job_requisition } from "@/app/redux/job-requisition-slice";
-import ViewJobRequisitionSection from "../id/_sections/view-job-requisition-section";
+import ViewJobRequisitionSection from "./view-job-requisition-section";
+import { LuUser } from "react-icons/lu";
 
 export default function JobRequisitionCardSection() {
     const dispatch = useDispatch();
@@ -121,10 +120,22 @@ export default function JobRequisitionCardSection() {
 
                                             {job.position_type === "new" && (
                                                 <Badge
+                                                    outlined
                                                     showDot={false}
                                                     className="rounded-md px-3 py-1 text-xs font-medium"
                                                     variant="primary"
-                                                    label="★ New Position"
+                                                    label="✨ New"
+                                                />
+                                            )}
+
+                                            {job.position_type ===
+                                                "existing" && (
+                                                <Badge
+                                                    outlined
+                                                    showDot={false}
+                                                    className="rounded-md px-3 py-1 text-xs font-medium"
+                                                    variant="purple"
+                                                    label="📋 Existing"
                                                 />
                                             )}
                                         </div>
@@ -139,7 +150,9 @@ export default function JobRequisitionCardSection() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={() => handleViewRequisition(job)}
+                                        onClick={() =>
+                                            handleViewRequisition(job)
+                                        }
                                     >
                                         <TbEye className="w-5 h-5" />
                                     </Button>
@@ -148,19 +161,19 @@ export default function JobRequisitionCardSection() {
 
                             <div className="flex flex-wrap items-center justify-between gap-6 text-sm text-black">
                                 <div className="flex items-center gap-2">
-                                    <TbBuilding />
+                                    <TbBuilding className="text-gray-600" />
                                     <span>{job.department}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <TbMapPin />
+                                    <TbMapPin className="text-gray-600" />
                                     <span className="capitalize">
                                         {job.location}
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <TbUsers />
+                                    <TbUsers className="text-gray-600" />
                                     <span>
                                         {job.number_of_positions} position
                                         {job.number_of_positions > 1
@@ -171,7 +184,7 @@ export default function JobRequisitionCardSection() {
                                 </div>
 
                                 <div className="flex items-center gap-2 mr-20">
-                                    <TbCurrencyPeso />
+                                    <TbCurrencyDollar className="text-gray-600" />
                                     <span>{job.salary_range}</span>
                                 </div>
                             </div>
@@ -181,24 +194,21 @@ export default function JobRequisitionCardSection() {
                             <div className="flex flex-col gap-1 w-full">
                                 <div className="flex items-center gap-4 text-sm text-gray-600">
                                     <div className="flex items-center gap-2">
-                                        <TbCalendar />
-                                        <span>
-                                            Target Start:{" "}
-                                            {formatDate(job.target_start_date)}
-                                        </span>
+                                        <LuUser />
+                                        <span>Don Wakin</span>
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <TbTag />
+                                        <TbCalendar />
                                         <span className="capitalize">
-                                            {job.employment_type}
+                                            {formatDate(job.created_at)}
                                         </span>
                                     </div>
 
                                     <div className="flex items-center gap-2 text-sm ml-auto">
-                                        <TbCalendar className="text-gray-600" />
-                                        <span className="font-medium text-gray-900">
-                                            Created: {formatDate(job.created_at)}
+                                        <TbCalendarEvent className="text-gray-600" />
+                                        <span className="font-medium text-gray-600">
+                                            1 event
                                         </span>
                                     </div>
                                 </div>
