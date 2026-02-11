@@ -10,7 +10,7 @@ class JobRequisitionController extends Controller
 {
     public function index()
     {
-        $jobRequisitions = JobRequisition::with(['department','location'])->get();
+        $jobRequisitions = JobRequisition::with(['department','location'])->orderBy('id','desc')->get();
         
         return response()->json([
             'status' => 'success',
