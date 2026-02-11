@@ -5,11 +5,16 @@ import TopbarSection from "./_sections/topbar-section";
 import Tooltip from "@/app/_components/tooltip";
 import Button from "@/app/_components/button";
 import Accordion from "@/app/_components/accordion";
-import { Children } from "react";
+import { Children, useEffect } from "react";
+import store from "@/app/store/store";
+import { get_app_data_thunk } from "@/app/redux/app-thunk";
 
 export default function Layout({ children }) {
     const { desktopCollapsed } = useSelector((store) => store.app);
 
+    useEffect(()=>{
+        store.dispatch(get_app_data_thunk())
+    },[])
     return (
         <div className="h-full bg-white dark:bg-gray-900">
             <SidebarSection />

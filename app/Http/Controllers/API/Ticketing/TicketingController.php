@@ -14,17 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class TicketingController extends Controller
 {
-    public function ticketing_tables()
-    {
-        $departments = Department::with(['categories'])->get();
-        $locations = Location::get();
-        $sites = Site::get();
-        return response()->json([
-            'departments' => $departments,
-            'locations' => $locations,
-            'sites' => $sites
-        ], 200);
-    }
+ 
     public function my_tickets()
     {
         $auth = Auth::user();

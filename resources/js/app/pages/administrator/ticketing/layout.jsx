@@ -2,16 +2,11 @@ import Tabs from "@/app/_components/tabs";
 import { router } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
 import CreateTicketSection from "./_sections/create-ticket-section";
-import store from "@/app/store/store";
-import { get_ticketing_tables_thunk } from "@/app/redux/tickets-thunk";
 
 export default function TicketingLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
     const path = window.location.pathname.split("/")[3];
 
-    useEffect(() => {
-        store.dispatch(get_ticketing_tables_thunk());
-    }, []);
 
     const tabs = [
         {

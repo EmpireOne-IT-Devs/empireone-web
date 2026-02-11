@@ -4,7 +4,7 @@ import Modal from "@/app/_components/modal";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import { setAlert } from "@/app/redux/app-slice";
 import { create_job_requisition_service } from "@/app/services/job-requisition-service";
@@ -16,6 +16,7 @@ import Radio from "@/app/_components/radio";
 export default function CreateJobRequisition() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
+    const { data } = useSelector((store) => store.app);
     const [form, setForm] = useState({
         justification_for_position: "",
         qualifications: "",
@@ -41,11 +42,11 @@ export default function CreateJobRequisition() {
         },
     });
 
-    async function onSubmit(data) {
+    async function onSubmit(form_data) {
         try {
             await create_job_requisition_service({
                 ...form,
-                ...data,
+                ...form_data,
             });
             await store.dispatch(get_job_requisitions_thunk());
             dispatch(
@@ -145,49 +146,48 @@ export default function CreateJobRequisition() {
                                 />
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Input
-                                        {...register("department_id", {
+                                    <Controller
+                                        name="department_id"
+                                        control={control}
+                                        rules={{
                                             required: "Department is required",
-                                        })}
-                                        error={errors.department_id?.message}
-                                        label="Department"
-                                        placeholder="e.g. Human Resources"
+                                        }}
+                                        render={({ field }) => (
+                                            <Select
+                                                label="Select Department"
+                                                options={data?.departments?.map(
+                                                    (res) => ({
+                                                        ...res,
+                                                        label: res.name,
+                                                        value: res.id,
+                                                    }),
+                                                )}
+                                                // onSelect={(e) =>
+                                                //     setCategories(e)
+                                                // }
+                                                error={errors.department_id}
+                                                {...field} // passes value & onChange
+                                            />
+                                        )}
                                     />
 
                                     <Controller
-                                        name="location"
+                                        name="location_id"
                                         control={control}
                                         rules={{
                                             required: "Location is required",
                                         }}
                                         render={({ field }) => (
                                             <Select
-                                                {...field}
-                                                label="Location"
-                                                options={[
-                                                    {
-                                                        value: "",
-                                                        label: "Select Location",
-                                                    },
-                                                    {
-                                                        value: "manila",
-                                                        label: "Manila",
-                                                    },
-                                                    {
-                                                        value: "cebu",
-                                                        label: "Cebu",
-                                                    },
-                                                    {
-                                                        value: "davao",
-                                                        label: "Davao",
-                                                    },
-                                                    {
-                                                        value: "remote",
-                                                        label: "Remote",
-                                                    },
-                                                ]}
-                                                error={errors.location?.message}
-                                                required
+                                                label="Select Location"
+                                                options={data?.locations.map(
+                                                    (res) => ({
+                                                        label: res.name,
+                                                        value: res.id,
+                                                    }),
+                                                )}
+                                                error={errors.location_id}
+                                                {...field} // passes value & onChange
                                             />
                                         )}
                                     />
@@ -206,24 +206,21 @@ export default function CreateJobRequisition() {
                                                 {...field}
                                                 label="Employment Type"
                                                 options={[
+                                                   
                                                     {
-                                                        value: "",
-                                                        label: "Select Employment Type",
-                                                    },
-                                                    {
-                                                        value: "full-time",
+                                                        value: "Full-time",
                                                         label: "Full-time",
                                                     },
                                                     {
-                                                        value: "part-time",
+                                                        value: "Part-time",
                                                         label: "Part-time",
                                                     },
                                                     {
-                                                        value: "contract",
+                                                        value: "Contract",
                                                         label: "Contract",
                                                     },
                                                     {
-                                                        value: "temporary",
+                                                        value: "Temporary",
                                                         label: "Temporary",
                                                     },
                                                 ]}
@@ -244,6 +241,7 @@ export default function CreateJobRequisition() {
                                         error={
                                             errors.number_of_positions?.message
                                         }
+                                        type="number"
                                         label="Number of Positions"
                                         placeholder="Number of Positions"
                                     />

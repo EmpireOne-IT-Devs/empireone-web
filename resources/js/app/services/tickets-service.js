@@ -7,6 +7,3 @@ export async function get_my_tickets_service() {
     return await axios.get("/api/my_tickets");
 }
 
-export async function get_ticketing_tables_service() {
-    return await axios.get("/api/ticketing_tables");
-}

@@ -16,7 +16,7 @@ export default function CreateTicketSection() {
     const [open, setOpen] = useState(false);
     const [details, setDetails] = useState("");
     const dispatch = useDispatch();
-    const { tables } = useSelector((store) => store.tickets);
+    const { data } = useSelector((store) => store.app);
     const [categories, setCategories] = useState([]);
     const [timeframe,setTimeframe]=useState('')
     const {
@@ -85,7 +85,7 @@ export default function CreateTicketSection() {
                                 render={({ field }) => (
                                     <Select
                                         label="Select Department"
-                                        options={tables?.departments?.map(
+                                        options={data?.departments?.map(
                                             (res) => ({
                                                 ...res,
                                                 label: res.name,
@@ -124,7 +124,7 @@ export default function CreateTicketSection() {
                                 render={({ field }) => (
                                     <Select
                                         label="Select Location"
-                                        options={tables?.locations.map(
+                                        options={data?.locations.map(
                                             (res) => ({
                                                 label: res.name,
                                                 value: res.id,
@@ -142,7 +142,7 @@ export default function CreateTicketSection() {
                                 render={({ field }) => (
                                     <Select
                                         label="Select Site"
-                                        options={tables?.sites.map((res) => ({
+                                        options={data?.sites.map((res) => ({
                                             label: res.name,
                                             value: res.id,
                                         }))}
