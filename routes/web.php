@@ -102,6 +102,10 @@ Route::prefix('administrator')->middleware(['auth', 'verified', 'role:1'])->grou
         return Inertia::render('administrator/job_requisition/page');
     });
 
+      Route::get('/job_requisition/{id}', function () {
+        return Inertia::render('administrator/job_requisition/id/page');
+    });
+
 
     Route::prefix('hr_central')->group(function () {
         Route::get('/overview', function () {

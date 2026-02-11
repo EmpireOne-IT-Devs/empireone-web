@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobRequisition;
+use App\Models\User;
+use App\Notifications\JobRequisitionNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
 
 class JobRequisitionController extends Controller
 {
     public function index()
     {
-        $jobRequisitions = JobRequisition::with(['department','location'])->orderBy('id','desc')->get();
-        
+        $jobRequisitions = JobRequisition::with(['department', 'location'])->orderBy('id', 'desc')->get();
+
         return response()->json([
             'status' => 'success',
             'data' => $jobRequisitions
@@ -20,19 +23,25 @@ class JobRequisitionController extends Controller
 
     public function store(Request $request)
     {
-     
+
         $jobRequisition = JobRequisition::create($request->all());
 
+        $hr = User::where('role', 1)->first();
+
+        if ($hr) {
+            $hr->notify(new JobRequisitionNotification($jobRequisition));
+        }
+        
         return response()->json([
             'status' => 'success',
             'message' => 'Job requisition created successfully',
             'data' => $jobRequisition
-        ], 201);
+        ], 200);
     }
 
     public function show($id)
     {
-        $jobRequisition = JobRequisition::find($id);
+        $jobRequisition = JobRequisition::with(['department', 'location'])->find($id);
 
         if (!$jobRequisition) {
             return response()->json([

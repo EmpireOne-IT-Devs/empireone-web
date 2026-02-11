@@ -16,6 +16,7 @@ import { setJobRequisitions } from "@/app/redux/job-requisition-slice";
 import ViewJobRequisitionSection from "./view-job-requisition-section";
 import { LuUser } from "react-icons/lu";
 import moment from "moment";
+import { router } from "@inertiajs/react";
 
 export default function JobRequisitionCardSection() {
     const dispatch = useDispatch();
@@ -87,7 +88,15 @@ export default function JobRequisitionCardSection() {
         <>
             <div className="flex flex-col gap-3">
                 {job_requisitions.map((job) => (
-                    <Card key={job.id} className="border rounded-xl p-6">
+                    <Card
+                        onClick={() =>
+                            router.visit(
+                                `/administrator/job_requisition/${job.id}`,
+                            )
+                        }
+                        key={job.id}
+                        className="border rounded-xl p-6"
+                    >
                         <div className="flex flex-col gap-4">
                             <div className="flex items-start justify-between">
                                 <div className="flex flex-col gap-2">
