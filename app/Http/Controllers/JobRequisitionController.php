@@ -10,7 +10,7 @@ class JobRequisitionController extends Controller
 {
     public function index()
     {
-        $jobRequisitions = JobRequisition::get();
+        $jobRequisitions = JobRequisition::with(['department','location'])->get();
         
         return response()->json([
             'status' => 'success',
@@ -20,29 +20,7 @@ class JobRequisitionController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'position_type' => 'required|string|in:new,existing',
-            'position_title' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'employment_type' => 'required|string|in:full-time,part-time,contract,temporary',
-            'number_of_positions' => 'required|integer|min:1',
-            'priority' => 'required|string|in:low,medium,high,urgent',
-            'salary_range' => 'required|string|max:255',
-            'target_start_date' => 'required|date',
-            'justification_for_position' => 'required|string',
-            'required_qualifications' => 'required|string',
-            'key_responsibilities' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
+     
         $jobRequisition = JobRequisition::create($request->all());
 
         return response()->json([

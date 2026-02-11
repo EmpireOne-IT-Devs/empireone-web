@@ -38,8 +38,8 @@ return new class extends Migration
             $table->string('salary_range')->nullable();
             $table->date('target_start_date')->nullable();
             $table->text('justification_for_position')->nullable();
-            $table->string('qualifications')->nullable();
-            $table->string('responsibilities')->nullable();
+            $table->text('qualifications')->nullable();
+            $table->text('responsibilities')->nullable();
             $table->string('status')->default('Pending');
             $table->timestamps();
         });

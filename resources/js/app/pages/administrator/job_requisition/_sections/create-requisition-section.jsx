@@ -101,28 +101,47 @@ export default function CreateJobRequisition() {
                                 <span className="text-red-500">*</span>
                             </label>
                             <div className="space-y-3">
-                                <Radio
-                                    label="New Position"
-                                    name="position_type"
+                                <Controller
+                                    name="type"
+                                    control={control}
                                     rules={{
-                                        required:
-                                            "New Position title is required",
+                                        required: "Position type is required",
                                     }}
-                                    {...register("title", {
-                                        required: "New Position is required",
-                                    })}
-                                />
-                                <Radio
-                                    label="Existing Position"
-                                    name="position_type"
-                                    rules={{
-                                        required:
-                                            "Existing Position is required",
-                                    }}
-                                    {...register("title", {
-                                        required:
-                                            "Existing Position is required",
-                                    })}
+                                    render={({ field }) => (
+                                        <div className="space-y-3">
+                                            <Radio
+                                                label="New Position"
+                                                value="New Position"
+                                                checked={
+                                                    field.value ===
+                                                    "New Position"
+                                                }
+                                                onChange={() =>
+                                                    field.onChange(
+                                                        "New Position",
+                                                    )
+                                                }
+                                            />
+                                            <Radio
+                                                label="Existing Position"
+                                                value="Existing Position"
+                                                checked={
+                                                    field.value ===
+                                                    "Existing Position"
+                                                }
+                                                onChange={() =>
+                                                    field.onChange(
+                                                        "Existing Position",
+                                                    )
+                                                }
+                                            />
+                                            {errors.type && (
+                                                <p className="text-red-500 text-sm">
+                                                    {errors.type.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
                                 />
                             </div>
                         </div>
@@ -206,7 +225,6 @@ export default function CreateJobRequisition() {
                                                 {...field}
                                                 label="Employment Type"
                                                 options={[
-                                                   
                                                     {
                                                         value: "Full-time",
                                                         label: "Full-time",

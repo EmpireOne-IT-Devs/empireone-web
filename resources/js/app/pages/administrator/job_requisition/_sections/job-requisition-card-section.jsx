@@ -15,13 +15,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { setJobRequisitions } from "@/app/redux/job-requisition-slice";
 import ViewJobRequisitionSection from "./view-job-requisition-section";
 import { LuUser } from "react-icons/lu";
+import moment from "moment";
 
 export default function JobRequisitionCardSection() {
     const dispatch = useDispatch();
-    const { job_requisitions, loading = false} = useSelector(
+    const { job_requisitions, loading = false } = useSelector(
         (state) => state.job_requisitions,
     );
-    console.log('job_requisitions',job_requisitions)
+    console.log("job_requisitions", job_requisitions);
     const [open, setOpen] = useState(false);
 
     const getStatusVariant = (status) => {
@@ -92,7 +93,7 @@ export default function JobRequisitionCardSection() {
                                 <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-3">
                                         <h3 className="text-lg font-semibold text-gray-900">
-                                            {job.position_title}
+                                            {job.title}
                                         </h3>
 
                                         <div className="flex items-center gap-2">
@@ -114,7 +115,7 @@ export default function JobRequisitionCardSection() {
                                                 label={job.priority}
                                             />
 
-                                            {job.position_type === "new" && (
+                                            {job.type === "New Position" && (
                                                 <Badge
                                                     outlined
                                                     showDot={false}
@@ -124,8 +125,8 @@ export default function JobRequisitionCardSection() {
                                                 />
                                             )}
 
-                                            {job.position_type ===
-                                                "existing" && (
+                                            {job.type ===
+                                                "Existing Position" && (
                                                 <Badge
                                                     outlined
                                                     showDot={false}
@@ -138,7 +139,11 @@ export default function JobRequisitionCardSection() {
                                     </div>
 
                                     <div className="text-sm text-gray-500 font-medium">
-                                        {job.requisition_id}
+                                        JRID:{" "}
+                                        {moment(job.created_at).format(
+                                            "mdyhis",
+                                        )}
+                                        {job.id}
                                     </div>
                                 </div>
 
@@ -158,13 +163,13 @@ export default function JobRequisitionCardSection() {
                             <div className="flex flex-wrap items-center justify-between gap-6 text-sm text-black">
                                 <div className="flex items-center gap-2">
                                     <TbBuilding className="text-gray-600" />
-                                    <span>{job.department}</span>
+                                    <span>{job?.department?.name}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
                                     <TbMapPin className="text-gray-600" />
                                     <span className="capitalize">
-                                        {job.location}
+                                        {job?.location?.name}
                                     </span>
                                 </div>
 
@@ -186,7 +191,29 @@ export default function JobRequisitionCardSection() {
                             </div>
 
                             <hr className="border-gray-200" />
-
+                            <div className="flex flex-col gap-3">
+                                <div>
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: job.justification_for_position,
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: job.qualifications,
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: job.responsibilities,
+                                        }}
+                                    />
+                                </div>
+                            </div>
                             <div className="flex flex-col gap-1 w-full">
                                 <div className="flex items-center gap-4 text-sm text-gray-600">
                                     <div className="flex items-center gap-2">
