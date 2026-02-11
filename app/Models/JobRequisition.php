@@ -6,49 +6,34 @@ use Illuminate\Database\Eloquent\Model;
 
 class JobRequisition extends Model
 {
+
     protected $fillable = [
-        'requisition_id',
-        'position_type',
-        'position_title',
-        'department',
-        'location',
+        'department_id',
+        'location_id',
+        'type',
+        'title',
         'employment_type',
         'number_of_positions',
         'priority',
         'salary_range',
         'target_start_date',
         'justification_for_position',
-        'required_qualifications',
-        'key_responsibilities',
+        'qualifications',
+        'responsibilities',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
+    protected $casts = [
+        'target_start_date' => 'date',
+        'number_of_positions' => 'integer',
+    ];
 
-        static::creating(function ($jobRequisition) {
-            if (empty($jobRequisition->requisition_id)) {
-                $jobRequisition->requisition_id = self::generateRequisitionId();
-            }
-        });
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 
-    private static function generateRequisitionId()
+    public function location()
     {
-        $year = date('Y');
-        
-        $lastRequisition = self::where('requisition_id', 'like', "REQ-{$year}-%")
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($lastRequisition) {
-            $parts = explode('-', $lastRequisition->requisition_id);
-            $lastNumber = isset($parts[2]) ? (int) $parts[2] : 0;
-            $number = $lastNumber + 1;
-        } else {
-            $number = 1;
-        }
-
-        return sprintf('REQ-%s-%04d', $year, $number);
+        return $this->belongsTo(Location::class);
     }
 }

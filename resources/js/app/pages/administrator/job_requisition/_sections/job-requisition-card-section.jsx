@@ -12,21 +12,17 @@ import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import Button from "@/app/_components/button";
 import { useDispatch, useSelector } from "react-redux";
-import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
-import { set_selected_job_requisition } from "@/app/redux/job-requisition-slice";
+import { setJobRequisitions } from "@/app/redux/job-requisition-slice";
 import ViewJobRequisitionSection from "./view-job-requisition-section";
 import { LuUser } from "react-icons/lu";
 
 export default function JobRequisitionCardSection() {
     const dispatch = useDispatch();
-    const { jobRequisitions, loading } = useSelector(
+    const { job_requisitions, loading = false} = useSelector(
         (state) => state.job_requisitions,
     );
+    console.log('job_requisitions',job_requisitions)
     const [open, setOpen] = useState(false);
-
-    useEffect(() => {
-        dispatch(get_job_requisitions_thunk());
-    }, [dispatch]);
 
     const getStatusVariant = (status) => {
         switch (status?.toLowerCase()) {
@@ -66,7 +62,7 @@ export default function JobRequisitionCardSection() {
     };
 
     const handleViewRequisition = (job) => {
-        dispatch(set_selected_job_requisition(job));
+        dispatch(setJobRequisitions(job));
         setOpen(true);
     };
 
@@ -78,7 +74,7 @@ export default function JobRequisitionCardSection() {
         );
     }
 
-    if (!jobRequisitions || jobRequisitions.length === 0) {
+    if (!job_requisitions || job_requisitions.length === 0) {
         return (
             <div className="flex justify-center items-center py-12">
                 <div className="text-gray-500">No job requisitions found</div>
@@ -89,7 +85,7 @@ export default function JobRequisitionCardSection() {
     return (
         <>
             <div className="flex flex-col gap-3">
-                {jobRequisitions.map((job) => (
+                {job_requisitions.map((job) => (
                     <Card key={job.id} className="border rounded-xl p-6">
                         <div className="flex flex-col gap-4">
                             <div className="flex items-start justify-between">

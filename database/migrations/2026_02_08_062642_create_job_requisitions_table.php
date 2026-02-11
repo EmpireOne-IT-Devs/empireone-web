@@ -14,20 +14,32 @@ return new class extends Migration
     {
         Schema::create('job_requisitions', function (Blueprint $table) {
             $table->id();
-
-            $table->string('requisition_id')->unique()->nullable();
-            $table->string('position_type');
-            $table->string('position_title');
-            $table->string('department');
-            $table->string('location');
-            $table->string('employment_type');
-            $table->integer('number_of_positions');
-            $table->string('priority');
-            $table->string('salary_range');
-            $table->date('target_start_date');
-            $table->string('justification_for_position');
-            $table->string('required_qualifications');
-            $table->string('key_responsibilities');
+            $table->foreignId('department_id')
+                ->constrained('departments')
+                ->nullOnDelete();
+            $table->foreignId('location_id')
+                ->constrained('locations')
+                ->nullOnDelete();
+            $table->string('type')->nullable();
+            $table->string('title')->nullable();
+            $table->enum('employment_type', [
+                'Full-time',
+                'Part-time',
+                'Contract',
+                'Temporary',
+            ])->default('Full-time');
+            $table->integer('number_of_positions')->nullable();
+            $table->enum('priority', [
+                'Low',
+                'Medium',
+                'High',
+                'Urgent'
+            ])->default('Low');
+            $table->string('salary_range')->nullable();
+            $table->date('target_start_date')->nullable();
+            $table->text('justification_for_position')->nullable();
+            $table->string('qualifications')->nullable();
+            $table->string('responsibilities')->nullable();
             $table->timestamps();
         });
     }

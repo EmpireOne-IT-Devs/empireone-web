@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('ticketings', function (Blueprint $table) {
             $table->id();
             $table->string('ticketing_id')->unique();
-            $table->foreignId('ticket_category_id')->constrained('ticketing_categories')->cascadeOnDelete();
-            $table->foreignId('location_id')->constrained('locations')->cascadeOnDelete();
-            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
-            $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
+            $table->foreignId('ticket_category_id')->constrained('ticketing_categories')->nullOnDelete();
+            $table->foreignId('location_id')->constrained('locations')->nullOnDelete();
+            $table->foreignId('site_id')->constrained('sites')->nullOnDelete();
+            $table->foreignId('department_id')->constrained('departments')->nullOnDelete();
             $table->foreignId('user_id')
                 ->nullable()
                 ->constrained('users')

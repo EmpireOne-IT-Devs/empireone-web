@@ -10,7 +10,7 @@ class JobRequisitionController extends Controller
 {
     public function index()
     {
-        $jobRequisitions = JobRequisition::latest()->get();
+        $jobRequisitions = JobRequisition::get();
         
         return response()->json([
             'status' => 'success',

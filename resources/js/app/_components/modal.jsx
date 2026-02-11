@@ -11,7 +11,7 @@ export default function Modal({ isOpen, onClose, title, children, width = "", cl
 
     return (
         <Transition show={isOpen} as={Fragment}>
-            <div className="relative z-50">
+            <div className="relative z-40">
                 {/* Overlay */}
                 <Transition.Child
                     as={Fragment}

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('app_id')
                 ->constrained('personal_infos')
-                ->onDelete('cascade');
+               ->nullOnDelete();
             $table->string('signature')->nullable();
             $table->timestamps();
         });

@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ticketing_id')
                 ->constrained('ticketings')
-                ->cascadeOnDelete();
+                ->nullOnDelete();
 
             $table->foreignId('employee_id')
                 ->constrained('users')
-                ->cascadeOnDelete();
+                ->nullOnDelete();
 
             $table->text('details');
 

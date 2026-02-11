@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
              $table->foreignId('ticketing_id')
                 ->constrained()
-                ->cascadeOnDelete();
+                ->nullOnDelete();
              $table->string('url');
 
            
