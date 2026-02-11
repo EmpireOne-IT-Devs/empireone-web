@@ -20,6 +20,7 @@ class JobRequisition extends Model
         'justification_for_position',
         'qualifications',
         'responsibilities',
+        'status'
     ];
 
     protected $casts = [

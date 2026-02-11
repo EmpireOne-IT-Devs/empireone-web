@@ -40,6 +40,7 @@ return new class extends Migration
             $table->text('justification_for_position')->nullable();
             $table->string('qualifications')->nullable();
             $table->string('responsibilities')->nullable();
+            $table->string('status')->default('Pending');
             $table->timestamps();
         });
     }
