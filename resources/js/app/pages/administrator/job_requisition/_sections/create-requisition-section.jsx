@@ -13,7 +13,7 @@ import store from "@/app/store/store";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import Radio from "@/app/_components/radio";
 
-export default function NewJobRequisition() {
+export default function CreateJobRequisition() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const [form, setForm] = useState({
@@ -99,42 +99,31 @@ export default function NewJobRequisition() {
                                 Position Type{" "}
                                 <span className="text-red-500">*</span>
                             </label>
-
-                            <Controller
-                                name="position_type"
-                                control={control}
-                                rules={{
-                                    required: "Position type is required",
-                                }}
-                                render={({ field }) => (
-                                    <div className="space-y-3">
-                                        <Radio
-                                            label="New Position"
-                                            name="position_type"
-                                            rules={{
-                                                required:
-                                                    "New Position title is required",
-                                            }}
-                                            {...register("title", {
-                                                required:
-                                                    "New Position is required",
-                                            })}
-                                        />
-                                        <Radio
-                                            label="Existing Position"
-                                            name="position_type"
-                                            rules={{
-                                                required:
-                                                    "Existing Position is required",
-                                            }}
-                                            {...register("title", {
-                                                required:
-                                                    "Existing Position is required",
-                                            })}
-                                        />
-                                    </div>
-                                )}
-                            />
+                            <div className="space-y-3">
+                                <Radio
+                                    label="New Position"
+                                    name="position_type"
+                                    rules={{
+                                        required:
+                                            "New Position title is required",
+                                    }}
+                                    {...register("title", {
+                                        required: "New Position is required",
+                                    })}
+                                />
+                                <Radio
+                                    label="Existing Position"
+                                    name="position_type"
+                                    rules={{
+                                        required:
+                                            "Existing Position is required",
+                                    }}
+                                    {...register("title", {
+                                        required:
+                                            "Existing Position is required",
+                                    })}
+                                />
+                            </div>
                         </div>
 
                         <div className="px-3">

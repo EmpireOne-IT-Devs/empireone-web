@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import React from "react";
 import { FaDownload, FaFileDownload } from "react-icons/fa";
 import { TbCategory, TbFilter, TbSearch } from "react-icons/tb";
-import NewJobRequisition from "./new-requisition-section";
+import CreateJobRequisition from "./create-requisition-section";
 
 export default function SearchSection() {
     return (
@@ -35,7 +35,7 @@ export default function SearchSection() {
                     ]}
                 />
             </div>
-            <NewJobRequisition />
+            <CreateJobRequisition />
         </div>
     );
 }
