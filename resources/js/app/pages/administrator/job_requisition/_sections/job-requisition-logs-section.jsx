@@ -5,7 +5,10 @@ import Wysiwyg from "@/app/_components/wysiwyg";
 import Button from "@/app/_components/button";
 import { useForm } from "react-hook-form";
 import { create_job_requisition_logs_service } from "@/app/services/job-requisition-logs";
-import { get_job_requisitions_by_id_thunk } from "@/app/redux/job-requisition-thunk";
+import {
+    get_job_requisitions_by_id_thunk,
+    get_job_requisitions_thunk,
+} from "@/app/redux/job-requisition-thunk";
 import store from "@/app/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
@@ -38,9 +41,8 @@ const stepsData = [
     },
 ];
 
-export default function JobRequisitionLogsSection() {
+export default function JobRequisitionLogsSection({ job_requisition }) {
     const [activeStep, setActiveStep] = useState(2);
-    const { job_requisition } = useSelector((store) => store.job_requisitions);
     const [notes, setNotes] = useState(null);
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
@@ -67,10 +69,10 @@ export default function JobRequisitionLogsSection() {
         try {
             setLoading(true);
             await create_job_requisition_logs_service({
-                id: window.location.pathname.split("/")[3],
+                id: job_requisition.id,
                 notes: notes,
             });
-            await store.dispatch(get_job_requisitions_by_id_thunk());
+            await store.dispatch(get_job_requisitions_thunk());
             dispatch(
                 setAlert({
                     type: "success",
@@ -106,7 +108,6 @@ export default function JobRequisitionLogsSection() {
 
                 <div className="space-y-6">
                     {job_requisition?.logs?.map((res, index) => {
-
                         return (
                             <motion.div
                                 key={res.id}

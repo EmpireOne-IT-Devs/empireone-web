@@ -13,7 +13,7 @@ class JobRequisitionController extends Controller
 {
     public function index()
     {
-        $jobRequisitions = JobRequisition::with(['department', 'location'])->orderBy('id', 'desc')->get();
+        $jobRequisitions = JobRequisition::with(['department', 'location','logs'])->orderBy('id', 'desc')->get();
 
         return response()->json([
             'status' => 'success',
@@ -23,10 +23,12 @@ class JobRequisitionController extends Controller
 
     public function store(Request $request)
     {
-
+       
         $jobRequisition = JobRequisition::create($request->all());
-
         $hr = User::where('role', 1)->first();
+        // if ($request->location_id == '') {
+        //     # code...
+        // }
 
         if ($hr) {
             $hr->notify(new JobRequisitionNotification($jobRequisition));

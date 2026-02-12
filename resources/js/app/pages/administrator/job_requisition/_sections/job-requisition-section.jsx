@@ -1,0 +1,353 @@
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import ApproveJobRequisitionSection from "./approve-job-requisition-section";
+import Badge from "@/app/_components/badge";
+import moment from "moment";
+import Button from "@/app/_components/button";
+import {
+    TbBuilding,
+    TbCalendar,
+    TbCalendarEvent,
+    TbCurrencyDollar,
+    TbEye,
+    TbMapPin,
+    TbUsers,
+} from "react-icons/tb";
+import { LuUser } from "react-icons/lu";
+import Modal from "@/app/_components/modal";
+import JobRequisitionLogsSection from "./job-requisition-logs-section";
+
+export default function JobRequisitionBodySection({ job_requisition }) {
+    const [open, setOpen] = useState(false);
+    const queryParams = new URLSearchParams(window.location.search);
+    const id = queryParams.get("id");
+
+    useEffect(() => {
+        if (id == job_requisition.id) {
+            setOpen(true);
+        }
+    }, []);
+
+    const getStatusVariant = (status) => {
+        switch (status?.toLowerCase()) {
+            case "pending":
+                return "warning";
+            case "approved":
+                return "success";
+            case "rejected":
+                return "destructive";
+            case "draft":
+                return "default";
+            default:
+                return "default";
+        }
+    };
+
+    const getPriorityVariant = (priority) => {
+        switch (priority?.toLowerCase()) {
+            case "urgent":
+            case "high":
+                return "destructive";
+            case "medium":
+                return "primary";
+            case "low":
+                return "default";
+            default:
+                return "default";
+        }
+    };
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString("en-US", {
+            month: "numeric",
+            day: "numeric",
+            year: "numeric",
+        });
+    };
+
+    const handleViewRequisition = (job) => {
+        dispatch(setJobRequisitions(job));
+        setOpen(true);
+    };
+
+    if (!job_requisition) return <div>Loading...</div>;
+
+    // Status badge color mapping
+    const statusColors = {
+        pending: "bg-yellow-200 text-yellow-800",
+        approved: "bg-green-200 text-green-800",
+        rejected: "bg-red-200 text-red-800",
+    };
+
+    return (
+        <>
+            <button
+                onClick={() => setOpen(true)}
+                className="flex flex-col gap-4"
+            >
+                <div className="flex items-start justify-between">
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                                {job_requisition.title}
+                            </h3>
+
+                            <div className="flex items-center gap-2">
+                                <Badge
+                                    showDot={false}
+                                    className="rounded-md px-3 py-1 text-xs font-medium"
+                                    variant={getStatusVariant(
+                                        job_requisition.status || "pending",
+                                    )}
+                                    label={job_requisition.status || "Pending"}
+                                />
+
+                                <Badge
+                                    showDot={false}
+                                    className="rounded-md px-3 py-1 text-xs font-medium"
+                                    variant={getPriorityVariant(
+                                        job_requisition.priority,
+                                    )}
+                                    label={job_requisition.priority}
+                                />
+
+                                {job_requisition.type === "New Position" && (
+                                    <Badge
+                                        outlined
+                                        showDot={false}
+                                        className="rounded-md px-3 py-1 text-xs font-medium"
+                                        variant="primary"
+                                        label="✨ New"
+                                    />
+                                )}
+
+                                {job_requisition.type ===
+                                    "Existing Position" && (
+                                    <Badge
+                                        outlined
+                                        showDot={false}
+                                        className="rounded-md px-3 py-1 text-xs font-medium"
+                                        variant="purple"
+                                        label="📋 Existing"
+                                    />
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="text-sm text-gray-500 font-medium">
+                            JRID:{" "}
+                            {moment(job_requisition.created_at).format(
+                                "mdyhis",
+                            )}
+                            {job_requisition.id}
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => handleViewRequisition(job)}
+                        >
+                            <TbEye className="w-5 h-5" />
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-6 text-sm text-black">
+                    <div className="flex items-center gap-2">
+                        <TbBuilding className="text-gray-600" />
+                        <span>{job_requisition?.department?.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <TbMapPin className="text-gray-600" />
+                        <span className="capitalize">
+                            {job_requisition?.location?.name}
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <TbUsers className="text-gray-600" />
+                        <span>
+                            {job_requisition.number_of_positions} position
+                            {job_requisition.number_of_positions > 1
+                                ? "s"
+                                : ""}{" "}
+                            needed
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mr-20">
+                        <TbCurrencyDollar className="text-gray-600" />
+                        <span>{job_requisition.salary_range}</span>
+                    </div>
+                </div>
+
+                <hr className="border-gray-200" />
+                <div className="flex flex-col gap-3 items-start">
+                    <div>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: job_requisition.justification_for_position,
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: job_requisition.qualifications,
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: job_requisition.responsibilities,
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="flex flex-col gap-1 w-full">
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                            <LuUser />
+                            <span>Don Wakin</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <TbCalendar />
+                            <span className="capitalize">
+                                {formatDate(job_requisition.created_at)}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm ml-auto">
+                            <TbCalendarEvent className="text-gray-600" />
+                            <span className="font-medium text-gray-600">
+                                1 event
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </button>
+            <Modal
+                width="max-w-7xl"
+                isOpen={open}
+                onClose={() => setOpen(false)}
+                title="Job Requisition Details"
+                className="overflow-auto h-full"
+            >
+                <div className="flex overflow-auto h-[80vh]">
+                    <div className="flex-1 p-6  space-y-6">
+                        {/* Header Section */}
+                        <div className="flex flex-wrap justify-between items-center gap-2">
+                            <div className="text-2xl font-semibold">
+                                {job_requisition.title || "N/A"}
+                            </div>
+                            <div className="text-2xl font-medium text-gray-600  p-2 border-2 px-3">
+                                {job_requisition.employment_type || "N/A"}
+                            </div>
+                        </div>
+
+                        {/* Quick Info Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+                            <div>
+                                Department:{" "}
+                                {job_requisition?.department?.name || "N/A"}
+                            </div>
+                            <div>
+                                Location:{" "}
+                                {job_requisition?.location?.name || "N/A"}
+                            </div>
+                            <div>
+                                Number of Positions:{" "}
+                                {job_requisition?.number_of_positions || "N/A"}
+                            </div>
+                            <div>
+                                Salary Range:{" "}
+                                {job_requisition?.salary_range || "N/A"}
+                            </div>
+                            <div>
+                                Urgency: {job_requisition?.priority || "N/A"}
+                            </div>
+                            <div>
+                                Target Start Date:{" "}
+                                {job_requisition?.target_start_date
+                                    ? new Date(
+                                          job_requisition.target_start_date,
+                                      ).toLocaleDateString()
+                                    : "N/A"}
+                            </div>
+                            <div>
+                                Status:{" "}
+                                <span
+                                    className={`px-2 py-1 rounded-full text-sm font-semibold ${
+                                        statusColors[job_requisition.status] ||
+                                        "bg-gray-200 text-gray-800"
+                                    }`}
+                                >
+                                    {job_requisition.status || "N/A"}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Toggle Details Button */}
+                        <div className="flex w-full items-center justify-end">
+                            <ApproveJobRequisitionSection />
+                        </div>
+
+                        <div className="mt-4 space-y-6 border-t pt-4 text-gray-800">
+                            {job_requisition.justification_for_position && (
+                                <div>
+                                    <h3 className="font-semibold text-lg mb-2">
+                                        Justification for Position
+                                    </h3>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: job_requisition.justification_for_position,
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            {job_requisition.qualifications && (
+                                <div>
+                                    <h3 className="font-semibold text-lg mb-2">
+                                        Qualifications
+                                    </h3>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: job_requisition.qualifications,
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            {job_requisition.responsibilities && (
+                                <div>
+                                    <h3 className="font-semibold text-lg mb-2">
+                                        Responsibilities
+                                    </h3>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: job_requisition.responsibilities,
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="w-1/3">
+                        <JobRequisitionLogsSection
+                            job_requisition={job_requisition}
+                        />
+                    </div>
+                </div>
+            </Modal>
+        </>
+    );
+}
