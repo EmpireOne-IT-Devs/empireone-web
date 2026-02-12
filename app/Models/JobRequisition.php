@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class JobRequisition extends Model
 {
@@ -36,5 +37,9 @@ class JobRequisition extends Model
     public function location()
     {
         return $this->belongsTo(Location::class);
+    }
+     public function logs():HasMany
+    {
+        return $this->hasMany(JobRequisitionLog::class,'job_requisitions_id','id');
     }
 }

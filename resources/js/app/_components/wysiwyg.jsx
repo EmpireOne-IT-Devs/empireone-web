@@ -8,13 +8,19 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 export default function Wysiwyg({ label, name, value = "", onChange, error }) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
+    useEffect(() => {
+        if (value == null) {
+            setEditorState(EditorState.createEmpty());
+        }
+    }, [value]);
+
     // ✅ Load initial HTML value into editor when `value` changes
     useEffect(() => {
         if (!value) return;
 
         // Convert current editor to HTML
         const currentHTML = draftToHtml(
-            convertToRaw(editorState.getCurrentContent())
+            convertToRaw(editorState.getCurrentContent()),
         );
 
         // Only update editorState if the incoming value is different
@@ -23,7 +29,7 @@ export default function Wysiwyg({ label, name, value = "", onChange, error }) {
             const { contentBlocks, entityMap } = blocksFromHtml;
             const contentState = ContentState.createFromBlockArray(
                 contentBlocks,
-                entityMap
+                entityMap,
             );
             setEditorState(EditorState.createWithContent(contentState));
         }

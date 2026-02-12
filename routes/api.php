@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\JobRequisitionController;
+use App\Http\Controllers\JobRequisitionLogController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,8 @@ Route::prefix('')->middleware(['auth', 'verified'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);
+    Route::resource('job-requisitions', JobRequisitionController::class);
+    Route::resource('job_requisition_logs', JobRequisitionLogController::class);
 });
 
 
@@ -49,4 +52,3 @@ Route::resource('departments', DepartmentController::class);
 Route::resource('sites', SiteController::class);
 Route::get('departments/{department}/users', [DepartmentController::class, 'getDepartmentUsers']);
 Route::resource('users', RegisteredUserController::class);
-Route::resource('job-requisitions', JobRequisitionController::class);

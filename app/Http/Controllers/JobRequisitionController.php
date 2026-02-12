@@ -41,7 +41,7 @@ class JobRequisitionController extends Controller
 
     public function show($id)
     {
-        $jobRequisition = JobRequisition::with(['department', 'location'])->find($id);
+        $jobRequisition = JobRequisition::with(['department', 'location','logs'])->find($id);
 
         if (!$jobRequisition) {
             return response()->json([
