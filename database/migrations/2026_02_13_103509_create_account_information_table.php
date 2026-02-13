@@ -18,6 +18,18 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
             // employee information
+            $table->foreignId('department_id')
+                ->nullable()
+                ->constrained('departments')
+                ->nullOnDelete();
+            $table->foreignId('site_id')
+                ->nullable()
+                ->constrained('sites')
+                ->nullOnDelete();
+            $table->foreignId('location_id')
+                ->nullable()
+                ->constrained('locations')
+                ->nullOnDelete();
             $table->string('work_type')->default('Full Time');
             $table->string('eogs_email')->nullable();
             $table->string('employee_id')->nullable();

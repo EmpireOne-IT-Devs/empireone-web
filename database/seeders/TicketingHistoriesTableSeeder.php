@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\AgentAccount;
-use App\Models\Ticketing;
-use App\Models\TicketingHistory;
+use App\Models\Ticketing\Ticketing;
+use App\Models\Ticketing\TicketingHistory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

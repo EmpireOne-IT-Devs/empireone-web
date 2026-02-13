@@ -17,14 +17,14 @@ class User extends Authenticatable implements MustVerifyEmail
     // Role constants
     public const ROLE_ADMIN = 1;
     public const ROLE_EMPLOYEE = 2;
-    public const ROLE_HR = 3;
+    public const ROLE_APPLICANT = 3;
     public const ROLE_MANAGER = 4;
 
     // Role labels
     public static $roleLabels = [
         self::ROLE_ADMIN => 'Administrator',
         self::ROLE_EMPLOYEE => 'Employee',
-        self::ROLE_HR => 'HR',
+        self::ROLE_APPLICANT => 'HR',
         self::ROLE_MANAGER => 'Manager',
     ];
 
@@ -34,18 +34,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $fillable = [
-        'first_name',
-        'middle_name',
-        'last_name',
-        'suffix',
-        'gender',
-        'app_id',
-        'employee_id',
-        'department_id',
+        'name',
         'email',
         'password',
         'role',
-        'site'
     ];
 
     /**
@@ -101,7 +93,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isHR(): bool
     {
-        return $this->hasRole(self::ROLE_HR);
+        return $this->hasRole(self::ROLE_APPLICANT);
     }
 
     /**
@@ -128,7 +120,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return match ($this->role) {
             self::ROLE_ADMIN => '/administrator/dashboard',
             self::ROLE_EMPLOYEE => '/employee/dashboard',
-            self::ROLE_HR => '/hr/dashboard',
+            self::ROLE_APPLICANT => '/hr/dashboard',
             self::ROLE_MANAGER => '/manager/dashboard',
             default => '/dashboard',
         };

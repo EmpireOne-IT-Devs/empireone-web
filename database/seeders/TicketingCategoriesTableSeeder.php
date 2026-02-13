@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
-use App\Models\TicketingCategory;
+use App\Models\Ticketing\TicketingCategory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

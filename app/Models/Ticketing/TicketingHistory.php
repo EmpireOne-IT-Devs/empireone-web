@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Ticketing;
 
+use App\Models\Ticketing\Ticketing;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
