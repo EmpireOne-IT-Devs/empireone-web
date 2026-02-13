@@ -27,8 +27,10 @@ const Page = ({ flash }) => {
         e.preventDefault();
         
         // Use Inertia's post method
-        post(route('login.auth'), {
-            onFinish: () => reset('password'),
+        post(route('auth.login'), {
+            onFinish: () => {
+                console.log('success');
+            },
             onError: (errors) => {
                 // Errors will be automatically handled by Inertia and shown in the form
                 console.error('Login failed:', errors);
