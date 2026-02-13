@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\Account\AccountInformationController;
+use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Jobs\JobPostingController;
 use App\Http\Controllers\API\Jobs\JobRequisitionController;
 use App\Http\Controllers\API\Jobs\JobRequisitionLogController;
@@ -44,15 +44,15 @@ Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('get_app_data', AppController::class);
     Route::resource('job-requisitions', JobRequisitionController::class);
     Route::resource('job_requisition_logs', JobRequisitionLogController::class);
-    Route::resource('accounts_information', AccountInformationController::class);
+    Route::resource('accounts_information', AccountPersonalInformationController::class);
 
     Route::prefix('accounts')->group(function () {
-        Route::post('personal_information',  [AccountInformationController::class, 'accounts_personal_information']);
-        Route::post('address_information',  [AccountInformationController::class, 'accounts_address_information']);
-        Route::post('government_information',  [AccountInformationController::class, 'accounts_government_information']);
-        Route::post('emergency_contact_information',  [AccountInformationController::class, 'accounts_emergency_contact_information']);
-        Route::post('education',  [AccountInformationController::class, 'accounts_education']);
-        Route::post('work_experience',  [AccountInformationController::class, 'accounts_work_experience']);
+        Route::post('personal_information',  [AccountPersonalInformationController::class, 'accounts_personal_information']);
+        Route::post('address_information',  [AccountPersonalInformationController::class, 'accounts_address_information']);
+        Route::post('government_information',  [AccountPersonalInformationController::class, 'accounts_government_information']);
+        Route::post('emergency_contact_information',  [AccountPersonalInformationController::class, 'accounts_emergency_contact_information']);
+        Route::post('education',  [AccountPersonalInformationController::class, 'accounts_education']);
+        Route::post('work_experience',  [AccountPersonalInformationController::class, 'accounts_work_experience']);
     });
 });
 

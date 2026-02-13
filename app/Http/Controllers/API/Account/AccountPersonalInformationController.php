@@ -1,20 +1,13 @@
 <?php
-
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
-
-use App\Models\Account\AccountInformation;
-use Illuminate\Http\Request;
+use App\Models\Account\AccountPersonalInformation;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
-class AccountInformationController extends Controller
+class AccountPersonalInformationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
     public function accounts_personal_information(Request $request)
     {
         $auth = Auth::user();
@@ -33,7 +26,7 @@ class AccountInformationController extends Controller
         ]);
 
         // 2️⃣ Update or create account information
-        $account = AccountInformation::updateOrCreate(
+        $account = AccountPersonalInformation::updateOrCreate(
             ['user_id' => $auth->id],
             array_merge(['user_id' => $auth->id], $validated)
         );
@@ -61,7 +54,7 @@ class AccountInformationController extends Controller
         ]);
 
         // 2️⃣ Update or create account information
-        $account = AccountInformation::updateOrCreate(
+        $account = AccountPersonalInformation::updateOrCreate(
             ['user_id' => $auth->id],
             array_merge(['user_id' => $auth->id], $validated)
         );
@@ -88,7 +81,7 @@ class AccountInformationController extends Controller
         ]);
 
         // 2️⃣ Update or create account information
-        $account = AccountInformation::updateOrCreate(
+        $account = AccountPersonalInformation::updateOrCreate(
             ['user_id' => $auth->id],
             array_merge(['user_id' => $auth->id], $validated)
         );

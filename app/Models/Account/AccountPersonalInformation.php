@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Models\Account;
-
 use App\Models\Department;
 use App\Models\Location;
 use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
-class AccountInformation extends Model
+class AccountPersonalInformation extends Model
 {
     protected $fillable = [
         // employee information
