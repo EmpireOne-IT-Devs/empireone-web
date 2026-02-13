@@ -1,7 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Ticketing;
 
+use App\Models\Department;
+use App\Models\Location;
+use App\Models\Site;
+use App\Models\Ticketing\TicketingCategory;
+use App\Models\TicketingHistory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

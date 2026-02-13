@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\API\Account\AccountInformationController;
+use App\Http\Controllers\API\Jobs\JobPostingController;
+use App\Http\Controllers\API\Jobs\JobRequisitionController;
+use App\Http\Controllers\API\Jobs\JobRequisitionLogController;
 use App\Http\Controllers\Auth\AuthorizationController;
 use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\GoogleController;
@@ -7,9 +11,6 @@ use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\JobPostingController;
-use App\Http\Controllers\JobRequisitionController;
-use App\Http\Controllers\JobRequisitionLogController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
 
 
 Route::middleware('auth:sanctum')->post('auth/logout', [AuthorizationController::class, 'logout']);
@@ -37,12 +37,14 @@ Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 
+
 Route::prefix('')->middleware(['auth', 'verified'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);
     Route::resource('job-requisitions', JobRequisitionController::class);
     Route::resource('job_requisition_logs', JobRequisitionLogController::class);
+    Route::resource('accounts_information', AccountInformationController::class);
 });
 
 

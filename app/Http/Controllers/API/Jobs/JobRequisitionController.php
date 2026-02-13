@@ -1,8 +1,8 @@
 <?php
+namespace App\Http\Controllers\API\Jobs;
+use App\Http\Controllers\Controller;
 
-namespace App\Http\Controllers;
-
-use App\Models\JobRequisition;
+use App\Models\Jobs\JobRequisition;
 use App\Models\User;
 use App\Notifications\JobRequisitionNotification;
 use Illuminate\Http\Request;
@@ -29,7 +29,6 @@ class JobRequisitionController extends Controller
         // if ($request->location_id == '') {
         //     # code...
         // }
-
         if ($hr) {
             $hr->notify(new JobRequisitionNotification($jobRequisition));
         }

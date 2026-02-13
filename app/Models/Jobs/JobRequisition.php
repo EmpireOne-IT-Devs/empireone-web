@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Jobs;
 
+use App\Models\Department;
+use App\Models\Location;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

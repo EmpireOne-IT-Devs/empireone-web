@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\API\Ticketing;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
-use App\Models\Location;
-use App\Models\Site;
-use App\Models\Ticketing;
+use App\Models\Ticketing\Ticketing;
 use App\Models\TicketingImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

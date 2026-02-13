@@ -1,12 +1,10 @@
 <?php
-
-namespace App\Http\Controllers;
-
-use App\Models\JobRequisitionLog;
+namespace App\Http\Controllers\API\Jobs;
+use App\Http\Controllers\Controller;
+use App\Models\Jobs\JobCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class JobRequisitionLogController extends Controller
+class JobCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -29,18 +27,13 @@ class JobRequisitionLogController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-        JobRequisitionLog::create([
-            'job_requisitions_id' => $request->id,
-            'user_id' => $user->id,
-            'notes' => $request->notes,
-        ]);
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(JobRequisitionLog $jobRequisitionLog)
+    public function show(JobCategory $jobCategory)
     {
         //
     }
@@ -48,7 +41,7 @@ class JobRequisitionLogController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JobRequisitionLog $jobRequisitionLog)
+    public function edit(JobCategory $jobCategory)
     {
         //
     }
@@ -56,7 +49,7 @@ class JobRequisitionLogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JobRequisitionLog $jobRequisitionLog)
+    public function update(Request $request, JobCategory $jobCategory)
     {
         //
     }
@@ -64,7 +57,7 @@ class JobRequisitionLogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JobRequisitionLog $jobRequisitionLog)
+    public function destroy(JobCategory $jobCategory)
     {
         //
     }

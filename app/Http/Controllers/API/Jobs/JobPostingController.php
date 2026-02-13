@@ -1,8 +1,8 @@
 <?php
+namespace App\Http\Controllers\API\Jobs;
+use App\Http\Controllers\Controller;
 
-namespace App\Http\Controllers;
-
-use App\Models\JobPosting;
+use App\Models\Jobs\JobPosting;
 use Illuminate\Http\Request;
 
 class JobPostingController extends Controller
@@ -41,7 +41,7 @@ class JobPostingController extends Controller
     public function destroy($id)
     {
         try {
-            $jobPosting = \App\Models\JobPosting::findOrFail($id);
+            $jobPosting = JobPosting::findOrFail($id);
             
           
             

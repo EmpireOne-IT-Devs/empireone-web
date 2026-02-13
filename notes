@@ -51,17 +51,26 @@ Ticketing
 - start_at
 - end_at
 
-Ticket History 
+Ticketing History 
 - ticketing_id
 - employee_id
 - details
 - type
 
-Ticket Image 
+Ticketing Image 
 - ticketing_id
 - url
 
-Ticket Category
+Ticketing Category
 - id
 - name
 - department_id
+
+
+
+
+esignature
+employee
+personalInfo
+GovernmentId
+workingexperience

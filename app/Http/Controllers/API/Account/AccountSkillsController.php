@@ -1,11 +1,12 @@
 <?php
-namespace App\Http\Controllers\API\Employee;
+namespace App\Http\Controllers\API\Account;
+
 use App\Http\Controllers\Controller;
 
-use App\Models\Employee;
+use App\Models\Account\AccountSkills;
 use Illuminate\Http\Request;
 
-class EmployeeController extends Controller
+class AccountSkillsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class EmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Employee $employee)
+    public function show(AccountSkills $accountSkills)
     {
         //
     }
@@ -42,7 +43,7 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Employee $employee)
+    public function edit(AccountSkills $accountSkills)
     {
         //
     }
@@ -50,7 +51,7 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, AccountSkills $accountSkills)
     {
         //
     }
@@ -58,7 +59,7 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $employee)
+    public function destroy(AccountSkills $accountSkills)
     {
         //
     }
