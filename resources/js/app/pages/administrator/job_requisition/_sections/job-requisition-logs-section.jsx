@@ -13,6 +13,7 @@ import store from "@/app/store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import moment from "moment";
+import { TbTimeline } from "react-icons/tb";
 
 const stepsData = [
     {
@@ -97,9 +98,9 @@ export default function JobRequisitionLogsSection({ job_requisition }) {
         }
     }
     return (
-        <div className="w-full">
+        <div className="w-full mt-12">
             <h2 className="text-2xl font-semibold text-center mb-6">
-                Requisition Logs
+              <TbTimeline className="inline-block text-green-700" /> Timeline
             </h2>
 
             <div className="relative">

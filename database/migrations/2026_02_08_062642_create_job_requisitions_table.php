@@ -20,6 +20,9 @@ return new class extends Migration
             $table->foreignId('location_id')
                 ->constrained('locations')
                 ->nullOnDelete();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->nullOnDelete();
             $table->string('type')->nullable();
             $table->string('title')->nullable();
             $table->enum('employment_type', [

@@ -4,14 +4,17 @@ namespace App\Models\Jobs;
 
 use App\Models\Department;
 use App\Models\Location;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class JobRequisition extends Model
 {
 
     protected $fillable = [
         'department_id',
+        'user_id',
         'location_id',
         'type',
         'title',
@@ -39,6 +42,10 @@ class JobRequisition extends Model
     public function location()
     {
         return $this->belongsTo(Location::class);
+    }
+     public function user():HasOne
+    {
+        return $this->hasOne(User::class,'id','user_id');
     }
      public function logs():HasMany
     {
