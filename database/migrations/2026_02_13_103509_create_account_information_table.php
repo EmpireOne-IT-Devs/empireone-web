@@ -44,13 +44,15 @@ return new class extends Migration
             $table->string('nationality')->nullable();
             $table->string('marital_status')->nullable();
             // address
+            $table->string('region')->nullable();
             $table->string('province')->nullable();
             $table->string('city')->nullable();
             $table->string('barangay')->nullable();
             $table->string('street')->nullable();
             $table->string('zip_code')->nullable();
+            $table->string('village')->nullable();
             // government information
-            $table->string('government_id_type')->nullable();
+            $table->string('government_type')->nullable();
             $table->string('id_number')->nullable();
             $table->string('sss')->nullable();
             $table->string('tin')->nullable();

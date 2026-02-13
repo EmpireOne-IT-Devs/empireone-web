@@ -38,13 +38,22 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 
 
-Route::prefix('')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);
     Route::resource('job-requisitions', JobRequisitionController::class);
     Route::resource('job_requisition_logs', JobRequisitionLogController::class);
     Route::resource('accounts_information', AccountInformationController::class);
+
+    Route::prefix('accounts')->group(function () {
+        Route::post('personal_information',  [AccountInformationController::class, 'accounts_personal_information']);
+        Route::post('address_information',  [AccountInformationController::class, 'accounts_address_information']);
+        Route::post('government_information',  [AccountInformationController::class, 'accounts_government_information']);
+        Route::post('emergency_contact_information',  [AccountInformationController::class, 'accounts_emergency_contact_information']);
+        Route::post('education',  [AccountInformationController::class, 'accounts_education']);
+        Route::post('work_experience',  [AccountInformationController::class, 'accounts_work_experience']);
+    });
 });
 
 
