@@ -310,6 +310,7 @@ export default function CreateJobRequisition() {
                                         placeholder="e.g. ₱50,000 - ₱70,000"
                                     />
                                     <Input
+                                    type="date"
                                         {...register("target_start_date", {
                                             required:
                                                 "Target Start Date is required",

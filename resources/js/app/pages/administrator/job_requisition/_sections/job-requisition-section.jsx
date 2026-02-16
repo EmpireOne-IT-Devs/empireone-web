@@ -16,6 +16,7 @@ import {
 import { LuUser } from "react-icons/lu";
 import Modal from "@/app/_components/modal";
 import JobRequisitionLogsSection from "./job-requisition-logs-section";
+import DeleteRequisitionSection from "./delete-requisition-section";
 
 export default function JobRequisitionBodySection({ job_requisition }) {
     const [open, setOpen] = useState(false);
@@ -134,11 +135,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                             </div>
                         </div>
 
-                        <div className="text-sm text-gray-500 font-medium">
-                            JRID:{" "}
-                            {moment(job_requisition.created_at).format(
-                                "mdyhis",
-                            )}
+                        <div className="text-sm text-gray-700 font-medium justify-start items-center flex gap-2">
+                            JRID-
+                            {moment(job_requisition.created_at).format("mdyhs")}
                             {job_requisition.id}
                         </div>
                     </div>
@@ -170,6 +169,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                     <div className="flex items-center gap-2">
                         <TbUsers className="text-gray-600" />
                         <span>
+                            0/
                             {job_requisition.number_of_positions} position
                             {job_requisition.number_of_positions > 1
                                 ? "s"
@@ -185,7 +185,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                 </div>
 
                 <hr className="border-gray-200" />
-                <div className="flex flex-col gap-3 items-start">
+                {/* <div className="flex flex-col gap-3 items-start">
                     <div>
                         <div
                             dangerouslySetInnerHTML={{
@@ -207,12 +207,12 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                             }}
                         />
                     </div>
-                </div>
+                </div> */}
                 <div className="flex flex-col gap-1 w-full">
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-2">
                             <LuUser />
-                            <span>Don Wakin</span>
+                            <span>{job_requisition?.user?.name || "N/A"}</span>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -235,110 +235,171 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                 width="max-w-7xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="Job Requisition Details"
                 className="overflow-auto h-full"
             >
                 <div className="flex overflow-auto h-[80vh]">
                     <div className="flex-1 p-6  space-y-6">
-                        {/* Header Section */}
-                        <div className="flex flex-wrap justify-between items-center gap-2">
-                            <div className="text-2xl font-semibold">
-                                {job_requisition.title || "N/A"}
-                            </div>
-                            <div className="text-2xl font-medium text-gray-600  p-2 border-2 px-3">
-                                {job_requisition.employment_type || "N/A"}
-                            </div>
-                        </div>
-
-                        {/* Quick Info Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
-                            <div>
-                                Department:{" "}
-                                {job_requisition?.department?.name || "N/A"}
-                            </div>
-                            <div>
-                                Location:{" "}
-                                {job_requisition?.location?.name || "N/A"}
-                            </div>
-                            <div>
-                                Number of Positions:{" "}
-                                {job_requisition?.number_of_positions || "N/A"}
-                            </div>
-                            <div>
-                                Salary Range:{" "}
-                                {job_requisition?.salary_range || "N/A"}
-                            </div>
-                            <div>
-                                Urgency: {job_requisition?.priority || "N/A"}
-                            </div>
-                            <div>
-                                Target Start Date:{" "}
-                                {job_requisition?.target_start_date
-                                    ? new Date(
-                                          job_requisition.target_start_date,
-                                      ).toLocaleDateString()
-                                    : "N/A"}
-                            </div>
-                            <div>
-                                Status:{" "}
-                                <span
-                                    className={`px-2 py-1 rounded-full text-sm font-semibold ${
-                                        statusColors[job_requisition.status] ||
-                                        "bg-gray-200 text-gray-800"
-                                    }`}
-                                >
-                                    {job_requisition.status || "N/A"}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-2xl font-bold text-gray-900">
+                                    {job_requisition.title || "N/A"}
+                                </h1>
+                                <span className="bg-blue-50 text-blue-600 text-sm font-medium px-3 py-1 rounded flex items-center gap-1">
+                                    ✨ New Position
                                 </span>
                             </div>
+                            <div className="text-gray-900 text-sm">
+                                JRID-
+                                {moment(job_requisition.created_at).format(
+                                    "mdyhs",
+                                )}
+                                {job_requisition.id}
+                            </div>
+                            <div className="flex gap-2 border-t pt-4">
+                                <span
+                                    className={`px-3 py-1 rounded text-sm font-medium ${
+                                        statusColors[job_requisition.status] ||
+                                        "bg-yellow-100 text-yellow-800"
+                                    }`}
+                                >
+                                    {job_requisition.status || "Pending"}
+                                </span>
+                                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-medium">
+                                    {job_requisition.priority ||
+                                        "Medium Priority"}
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-4 ">
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Department
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        {job_requisition?.department?.name ||
+                                            "Marketing"}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Location
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        {job_requisition?.location?.name ||
+                                            "Manila HQ"}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Employment Type
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        {job_requisition.employment_type ||
+                                            "Full-time"}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Positions
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        0/
+                                        {job_requisition?.number_of_positions ||
+                                            "0"}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Salary Range
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        {job_requisition?.salary_range ||
+                                            "₱30,000 - ₱40,000"}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Requested By
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        <span>
+                                            {job_requisition?.user?.name ||
+                                                "N/A"}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Date Requested
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        {job_requisition?.created_at
+                                            ? moment(
+                                                  job_requisition.created_at,
+                                              ).format("LL")
+                                            : "N/A"}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 text-sm mb-1">
+                                        Target Start Date
+                                    </div>
+                                    <div className="font-semibold text-gray-900">
+                                        {job_requisition?.target_start_date
+                                            ? moment(
+                                                  job_requisition.target_start_date,
+                                              ).format("LL")
+                                            : "N/A"}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-4 space-y-6 pt-4 text-gray-800">
+                                {job_requisition.justification_for_position && (
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-2">
+                                            Justification for Position
+                                        </h3>
+                                        <div
+                                            className="prose max-w-none"
+                                            dangerouslySetInnerHTML={{
+                                                __html: job_requisition.justification_for_position,
+                                            }}
+                                        />
+                                    </div>
+                                )}
+
+                                {job_requisition.qualifications && (
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-2">
+                                            Qualifications
+                                        </h3>
+                                        <div
+                                            className="prose max-w-none"
+                                            dangerouslySetInnerHTML={{
+                                                __html: job_requisition.qualifications,
+                                            }}
+                                        />
+                                    </div>
+                                )}
+
+                                {job_requisition.responsibilities && (
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-2">
+                                            Responsibilities
+                                        </h3>
+                                        <div
+                                            className="prose max-w-none"
+                                            dangerouslySetInnerHTML={{
+                                                __html: job_requisition.responsibilities,
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        {/* Toggle Details Button */}
-                        <div className="flex w-full items-center justify-end">
+                        <div className="flex w-full items-center justify-end border-t pt-4 gap-3">
+                            <DeleteRequisitionSection />
                             <ApproveJobRequisitionSection />
-                        </div>
-
-                        <div className="mt-4 space-y-6 border-t pt-4 text-gray-800">
-                            {job_requisition.justification_for_position && (
-                                <div>
-                                    <h3 className="font-semibold text-lg mb-2">
-                                        Justification for Position
-                                    </h3>
-                                    <div
-                                        className="prose max-w-none"
-                                        dangerouslySetInnerHTML={{
-                                            __html: job_requisition.justification_for_position,
-                                        }}
-                                    />
-                                </div>
-                            )}
-
-                            {job_requisition.qualifications && (
-                                <div>
-                                    <h3 className="font-semibold text-lg mb-2">
-                                        Qualifications
-                                    </h3>
-                                    <div
-                                        className="prose max-w-none"
-                                        dangerouslySetInnerHTML={{
-                                            __html: job_requisition.qualifications,
-                                        }}
-                                    />
-                                </div>
-                            )}
-
-                            {job_requisition.responsibilities && (
-                                <div>
-                                    <h3 className="font-semibold text-lg mb-2">
-                                        Responsibilities
-                                    </h3>
-                                    <div
-                                        className="prose max-w-none"
-                                        dangerouslySetInnerHTML={{
-                                            __html: job_requisition.responsibilities,
-                                        }}
-                                    />
-                                </div>
-                            )}
                         </div>
                     </div>
                     <div className="w-1/3">
