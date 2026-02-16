@@ -33,7 +33,7 @@ class AccountWorkingExperienceController extends Controller
         }
         return response()->json([
             'status'  => 'success',
-            'message' => 'Personal information saved successfully.',
+            'message' => 'Working Experience saved successfully.',
         ], 200);
     }
 
