@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account\AccountPersonalInformation;
+use App\Models\Account\AccountWorkingExperience;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ class AccountPersonalInformationController extends Controller
             'data'    => $auth
         ], 200);
     }
+
+   
     public function accounts_personal_information(Request $request)
     {
         $auth = Auth::user();

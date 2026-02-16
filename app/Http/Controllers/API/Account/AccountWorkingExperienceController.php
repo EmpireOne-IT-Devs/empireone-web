@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Account\AccountWorkingExperience;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccountWorkingExperienceController extends Controller
 {
@@ -17,20 +18,23 @@ class AccountWorkingExperienceController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        foreach ($request->experiences as $key => $value) {
+            AccountWorkingExperience::create([
+                'user_id' =>  Auth::id(),
+                'company_name' =>  $value['company_name'],
+                'position' =>  $value['position'],
+                'start_date' =>  $value['start_date'],
+                'end_date' =>  $value['end_date'],
+                'job_description' =>  $value['job_description'],
+                'status' => $value['status'],
+            ]);
+        }
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Personal information saved successfully.',
+        ], 200);
     }
 
     /**
