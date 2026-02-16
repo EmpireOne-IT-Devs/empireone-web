@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\Account;
+
 use App\Models\Department;
 use App\Models\Location;
 use App\Models\Site;
@@ -58,8 +59,8 @@ class AccountPersonalInformation extends Model
         // contact information
         'phone_number1',
         'phone_number2',
-        'emergency_contact_name',
-        'emergency_contact_number',
+        'contact_name1',
+        'contact_name2',
     ];
 
     /*

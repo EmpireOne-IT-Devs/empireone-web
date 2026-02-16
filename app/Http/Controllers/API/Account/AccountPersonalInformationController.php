@@ -22,7 +22,30 @@ class AccountPersonalInformationController extends Controller
         ], 200);
     }
 
-   
+    public function accounts_emergency_contact_information(Request $request)
+    {
+        $auth = Auth::user();
+
+        $validated = $request->validate([
+            'phone_number1'   => 'required|string|max:255',
+            'phone_number2' => 'required|string|max:255',
+            'contact_name1'     => 'required|string|max:255',
+            'contact_name2' => 'required|string|max:255',
+        ]);
+
+        // 2️⃣ Update or create account information
+        $account = AccountPersonalInformation::updateOrCreate(
+            ['user_id' => $auth->id],
+            array_merge(['user_id' => $auth->id], $validated)
+        );
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Personal information saved successfully.',
+            'data'    => $account
+        ], 200);
+    }
+
     public function accounts_personal_information(Request $request)
     {
         $auth = Auth::user();

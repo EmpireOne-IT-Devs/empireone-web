@@ -68,8 +68,8 @@ return new class extends Migration
             // contact information
             $table->string('phone_number1')->nullable();
             $table->string('phone_number2')->nullable();
-            $table->string('emergency_contact_name')->nullable();
-            $table->string('emergency_contact_number')->nullable();
+            $table->string('contact_name1')->nullable();
+            $table->string('contact_name2')->nullable();
             $table->timestamps();
         });
     }
