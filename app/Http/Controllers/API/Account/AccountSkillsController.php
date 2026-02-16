@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
 
 use App\Models\Account\AccountSkills;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccountSkillsController extends Controller
 {
@@ -16,22 +18,21 @@ class AccountSkillsController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
 
+        foreach ($request->experiences as $key => $value) {
+            AccountSkills::create([
+                'user_id' =>  Auth::id(),
+                'skill' =>  $value['skill'],
+                'percentage' =>  $value['percentage'],
+            ]);
+        }
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Skills saved successfully.',
+        ], 200);
+    }
     /**
      * Display the specified resource.
      */

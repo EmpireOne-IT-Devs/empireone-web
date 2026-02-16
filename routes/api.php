@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
+use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
 use App\Http\Controllers\API\Jobs\JobPostingController;
 use App\Http\Controllers\API\Jobs\JobRequisitionController;
@@ -54,7 +55,7 @@ Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('government_information',  [AccountPersonalInformationController::class, 'accounts_government_information']);
         Route::post('emergency_contact_information',  [AccountPersonalInformationController::class, 'accounts_emergency_contact_information']);
         Route::resource('work_experience', AccountWorkingExperienceController::class);
-        Route::post('education',  [AccountPersonalInformationController::class, 'accounts_education']);
+        Route::resource('skills', AccountSkillsController::class);
     });
 });
 
