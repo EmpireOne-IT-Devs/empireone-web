@@ -39,7 +39,6 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 
 
-        Route::resource('accounts/work_experience', AccountWorkingExperienceController::class);
 Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
@@ -55,6 +54,7 @@ Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('government_information',  [AccountPersonalInformationController::class, 'accounts_government_information']);
         Route::post('emergency_contact_information',  [AccountPersonalInformationController::class, 'accounts_emergency_contact_information']);
         Route::post('education',  [AccountPersonalInformationController::class, 'accounts_education']);
+        Route::resource('work_experience', AccountWorkingExperienceController::class);
     });
 });
 
