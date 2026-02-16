@@ -16,7 +16,7 @@ class AccountPersonalInformationController extends Controller
         $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience'])->first();
         return response()->json([
             'status'  => 'success',
-            'message' => 'Personal information saved successfully.',
+            'message' => 'Personal Show successfully.',
             'data'    => $auth
         ], 200);
     }
