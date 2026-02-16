@@ -37,6 +37,7 @@ Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 
+Route::get('accounts/user',  [AccountPersonalInformationController::class, 'accounts_user']);
 
 Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
@@ -47,6 +48,7 @@ Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('accounts_information', AccountPersonalInformationController::class);
 
     Route::prefix('accounts')->group(function () {
+        // Route::get('user',  [AccountPersonalInformationController::class, 'accounts_user']);
         Route::post('personal_information',  [AccountPersonalInformationController::class, 'accounts_personal_information']);
         Route::post('address_information',  [AccountPersonalInformationController::class, 'accounts_address_information']);
         Route::post('government_information',  [AccountPersonalInformationController::class, 'accounts_government_information']);

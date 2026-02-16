@@ -1,13 +1,25 @@
 <?php
+
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account\AccountPersonalInformation;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class AccountPersonalInformationController extends Controller
 {
+
+    public function accounts_user()
+    {
+        $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience'])->first();
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Personal information saved successfully.',
+            'data'    => $auth
+        ], 200);
+    }
     public function accounts_personal_information(Request $request)
     {
         $auth = Auth::user();
