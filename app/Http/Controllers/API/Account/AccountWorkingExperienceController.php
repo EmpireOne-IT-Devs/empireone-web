@@ -20,22 +20,26 @@ class AccountWorkingExperienceController extends Controller
 
     public function store(Request $request)
     {
-        foreach ($request->experiences as $key => $value) {
-            AccountWorkingExperience::create([
-                'user_id' =>  Auth::id(),
-                'company_name' =>  $value['company_name'],
-                'position' =>  $value['position'],
-                'start_date' =>  $value['start_date'],
-                'end_date' =>  $value['end_date'],
-                'job_description' =>  $value['job_description'],
-                'status' => $value['status'],
-            ]);
+        foreach ($request->experiences as $value) {
+            AccountWorkingExperience::updateOrCreate(
+                ['user_id' => Auth::id()], // check by user_id only
+                [
+                    'company_name'   => $value['company_name'],
+                    'position'       => $value['position'],
+                    'start_date'     => $value['start_date'],
+                    'end_date'       => $value['end_date'],
+                    'job_description' => $value['job_description'],
+                    'status'         => $value['status'],
+                ]
+            );
         }
+
         return response()->json([
             'status'  => 'success',
             'message' => 'Working Experience saved successfully.',
         ], 200);
     }
+
 
     /**
      * Display the specified resource.

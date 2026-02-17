@@ -20,19 +20,22 @@ class AccountSkillsController extends Controller
 
     public function store(Request $request)
     {
-
-        foreach ($request->experiences as $key => $value) {
-            AccountSkills::create([
-                'user_id' =>  Auth::id(),
-                'skill' =>  $value['skill'],
-                'percentage' =>  $value['percentage'],
-            ]);
+        foreach ($request->experiences as $value) {
+            AccountSkills::updateOrCreate(
+                ['user_id' => Auth::id()], // only check by user_id
+                [
+                    'skill'      => $value['skill'],
+                    'percentage' => $value['percentage'],
+                ]
+            );
         }
+
         return response()->json([
             'status'  => 'success',
             'message' => 'Skills saved successfully.',
         ], 200);
     }
+
     /**
      * Display the specified resource.
      */
