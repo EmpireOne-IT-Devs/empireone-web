@@ -8,7 +8,6 @@ use App\Models\Account\AccountDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class AccountDocumentController extends Controller
 {
@@ -23,60 +22,31 @@ class AccountDocumentController extends Controller
 
     public function store(Request $request)
     {
-        foreach ($request->names as $key => $name) {
-            $url = null;
+        foreach ($request->names as $key => $value) {
+
             if ($request->hasFile("files.$key")) {
-
-                $file = $request->file("files.$key");
-
-                // Convert to Base64
-                $fileContents = file_get_contents($file->getRealPath());
-                $base64 = base64_encode($fileContents);
-
-                // Decode Base64 back to binary
-                $decodedFile = base64_decode($base64);
-
-                // Create temporary file
-                $tmpFilePath = sys_get_temp_dir() . '/' . Str::uuid();
-                file_put_contents($tmpFilePath, $decodedFile);
-
-                // Create UploadedFile instance
-                $tempFile = new \Illuminate\Http\UploadedFile(
-                    $tmpFilePath,
-                    $file->getClientOriginalName(),
-                    $file->getMimeType(),
-                    null,
-                    true // mark as test file
-                );
-
-                // ✅ Now you can use store()
-                $path = $tempFile->store('unified/account', 's3');
-
-                $url = Storage::disk('s3')->url($path);
-
-                // Optional: delete temp file
-                unlink($tmpFilePath);
+                $path = $request->file("files.$key")->store('unified/account', 's3');
+                $url  = Storage::disk('s3')->url($path);
             }
-
-
-            if ($url) {
-                AccountDocument::updateOrCreate(
-                    [
-                        'user_id' => Auth::id(),
-                        'name'    => $name,
-                    ],
-                    [
-                        'url' => $url,
-                    ]
-                );
-            }
+            AccountDocument::updateOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'name'    => $value,
+                ],
+                [
+                    'url' => $url,
+                ]
+            );
         }
 
+
         return response()->json([
+            'data' => $request->all(),
             'status'  => 'success',
-            'message' => 'Documents uploaded successfully.',
+            'message' => 'Documents saved successfully.',
         ], 200);
     }
+
 
     /**
      * Display the specified resource.
