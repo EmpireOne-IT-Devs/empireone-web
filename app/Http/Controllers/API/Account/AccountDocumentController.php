@@ -21,57 +21,60 @@ class AccountDocumentController extends Controller
     }
 
 
- public function store(Request $request)
-{
-    
+    public function store(Request $request)
+    {
 
-    foreach ($request->names as $key => $name) {
-        
-        $url = null; // Initialize URL to null to avoid undefined variable errors
 
-        if ($request->hasFile("files.$key")) {
-            $file = $request->file("files.$key");
+        foreach ($request->names as $key => $name) {
 
-            // 1. Read the file binary data
-            $fileContents = file_get_contents($file->getRealPath());
+            $url = null; // Initialize URL to null to avoid undefined variable errors
 
-            // 2. Encode to Base64
-            $base64 = base64_encode($fileContents);
-            $mimeType = $file->getMimeType();
-            
-            // Format: "data:image/png;base64,....."
-            $base64Data = 'data:' . $mimeType . ';base64,' . $base64;
+            if ($request->hasFile("files.$key")) {
+                $file = $request->file("files.$key");
 
-            // 3. Define the path (Use .txt or .b64 extension since it is now text)
-            $filename = Str::uuid() . '.txt';
-            $path = 'unified/account/' . $filename;
+                // 1. Read the file binary data
+                $fileContents = file_get_contents($file->getRealPath());
 
-            // 4. Upload the TEXT string to S3
-            Storage::disk('s3')->put($path, $base64Data);
+                // 2. Encode to Base64
+                $base64 = base64_encode($fileContents);
+                $mimeType = $file->getMimeType();
 
-            // 5. Get the URL
-            $url = Storage::disk('s3')->url($path);
+                // Format: "data:image/png;base64,....."
+                $base64Data = 'data:' . $mimeType . ';base64,' . $base64;
+
+                // 3. Define the path (Use .txt or .b64 extension since it is now text)
+                $filename = Str::uuid() . '.txt';
+                $path = 'unified/account/' . $filename;
+
+                // 4. Upload the TEXT string to S3
+                $path = $request->file('image')->store(
+                    'unified/ticketing',
+                    's3'
+                );
+
+                // 5. Get the URL
+                $url = Storage::disk('s3')->url($path);
+            }
+
+            // Only update DB if we have a new URL or you want to update just the name
+            if ($url) {
+                AccountDocument::updateOrCreate(
+                    [
+                        'user_id' => Auth::id(),
+                        'name'    => $name,
+                    ],
+                    [
+                        'url' => $url,
+                    ]
+                );
+            }
         }
 
-        // Only update DB if we have a new URL or you want to update just the name
-        if ($url) {
-            AccountDocument::updateOrCreate(
-                [
-                    'user_id' => Auth::id(),
-                    'name'    => $name,
-                ],
-                [
-                    'url' => $url,
-                ]
-            );
-        }
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Documents converted to Base64 and saved to S3.',
+        ], 200);
     }
-
-    return response()->json([
-        'status'  => 'success',
-        'message' => 'Documents converted to Base64 and saved to S3.',
-    ], 200);
-}
     /**
      * Display the specified resource.
      */
