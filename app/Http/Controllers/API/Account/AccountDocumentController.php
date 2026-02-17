@@ -22,21 +22,31 @@ class AccountDocumentController extends Controller
 
     public function store(Request $request)
     {
-      
+        // Validate both name and file
+        $request->validate([
+            'documents.*.name'  => 'required|string|max:255',
+            'documents.*.image' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
         foreach ($request->documents as $key => $value) {
             if ($request->hasFile("documents.$key.image")) {
                 $file = $request->file("documents.$key.image");
 
-                $path = $file->store('unified/account', 's3');
-                $url = Storage::disk('s3')->url($path);
+                if ($file->isValid()) {
+                    $path = $file->store('unified/account', 's3');
+                    $url  = Storage::disk('s3')->url($path);
 
-                AccountDocument::updateOrCreate(
-                    ['user_id' => Auth::id()], // only check by user_id
-                    [
-                        'name' => $value['name'],
-                        'url'  => $url,
-                    ]
-                );
+                    // Use updateOrCreate on both user_id + document name
+                    AccountDocument::updateOrCreate(
+                        [
+                            'user_id' => Auth::id(),
+                            'name'    => $value['name'],
+                        ],
+                        [
+                            'url' => $url,
+                        ]
+                    );
+                }
             }
         }
 
@@ -45,6 +55,7 @@ class AccountDocumentController extends Controller
             'message' => 'Documents saved successfully.',
         ], 200);
     }
+
 
 
     /**

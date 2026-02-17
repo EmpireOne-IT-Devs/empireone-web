@@ -22,9 +22,11 @@ class AccountSkillsController extends Controller
     {
         foreach ($request->experiences as $value) {
             AccountSkills::updateOrCreate(
-                ['user_id' => Auth::id()], // only check by user_id
                 [
-                    'skill'      => $value['skill'],
+                    'user_id' => Auth::id(),
+                    'skill' => $value['skill'],
+                ],
+                [
                     'percentage' => $value['percentage'],
                 ]
             );

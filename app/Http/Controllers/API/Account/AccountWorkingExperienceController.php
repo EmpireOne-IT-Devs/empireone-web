@@ -22,9 +22,11 @@ class AccountWorkingExperienceController extends Controller
     {
         foreach ($request->experiences as $value) {
             AccountWorkingExperience::updateOrCreate(
-                ['user_id' => Auth::id()], // check by user_id only
                 [
+                    'user_id' => Auth::id(),
                     'company_name'   => $value['company_name'],
+                ],
+                [
                     'position'       => $value['position'],
                     'start_date'     => $value['start_date'],
                     'end_date'       => $value['end_date'],
