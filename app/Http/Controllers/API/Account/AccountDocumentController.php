@@ -24,18 +24,22 @@ class AccountDocumentController extends Controller
     {
         foreach ($request->names as $key => $value) {
 
+            $url = null; // ✅ always initialize
+
             if ($request->hasFile("files.$key")) {
-                $path = $request->file("files.$key")->store('unified/account', 's3');
-                $url  = Storage::disk('s3')->url($path);
+                $path = $request->file("files.$key")
+                    ->store('unified/account', 's3');
+
+                $url = Storage::disk('s3')->url($path);
             }
+
+            // Only update URL if file exists
             AccountDocument::updateOrCreate(
                 [
                     'user_id' => Auth::id(),
                     'name'    => $value,
                 ],
-                [
-                    'url' => $url,
-                ]
+                $url ? ['url' => $url] : []
             );
         }
 
