@@ -39,10 +39,10 @@ class AccountDocumentController extends Controller
         //         );
         //     }
         // }
-
-        dd($request->all());
+        
 
         return response()->json([
+            'data'=>$request->all(),
             'status'  => 'success',
             'message' => 'Documents saved successfully.',
         ], 200);
