@@ -23,22 +23,22 @@ class AccountDocumentController extends Controller
     public function store(Request $request)
     {
       
-        foreach ($request->documents as $key => $value) {
-            if ($request->hasFile("documents.$key.image")) {
-                $file = $request->file("documents.$key.image");
+        // foreach ($request->documents as $key => $value) {
+        //     if ($request->hasFile("documents.$key.image")) {
+        //         $file = $request->file("documents.$key.image");
 
-                $path = $file->store('unified/account', 's3');
-                $url = Storage::disk('s3')->url($path);
+        //         $path = $file->store('unified/account', 's3');
+        //         $url = Storage::disk('s3')->url($path);
 
-                AccountDocument::updateOrCreate(
-                    ['user_id' => Auth::id()], // only check by user_id
-                    [
-                        'name' => $value['name'],
-                        'url'  => $url,
-                    ]
-                );
-            }
-        }
+        //         AccountDocument::updateOrCreate(
+        //             ['user_id' => Auth::id()], // only check by user_id
+        //             [
+        //                 'name' => $value['name'],
+        //                 'url'  => $url,
+        //             ]
+        //         );
+        //     }
+        // }
 
         return response()->json([
             'status'  => 'success',
