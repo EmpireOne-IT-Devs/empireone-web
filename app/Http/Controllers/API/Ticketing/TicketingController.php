@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Ticketing;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticketing\Ticketing;
-use App\Models\TicketingImage;
+use App\Models\Ticketing\TicketingImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;

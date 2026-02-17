@@ -16,11 +16,11 @@ function route_page()
 }
 
 Route::get('/', function () {
-    return route_page(); // ✅ remove $this
+    return route_page(); 
 })->name('login');
 
 Route::get('/dashboard', function () {
-    return route_page(); // ✅ remove $this
+    return route_page(); 
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 

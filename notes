@@ -1,5 +1,7 @@
 php artisan make:model Post -mcr
 
+
+
 JobPosting
 - id
 - title

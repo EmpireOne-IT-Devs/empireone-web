@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Account\AccountDocumentController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
@@ -56,6 +57,7 @@ Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('emergency_contact_information',  [AccountPersonalInformationController::class, 'accounts_emergency_contact_information']);
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
+        Route::resource('documents', AccountDocumentController::class);
     });
 });
 

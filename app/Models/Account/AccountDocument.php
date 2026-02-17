@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class AccountDocument extends Model
 {
     //
+ protected $fillable = [
+        'user_id',
+        'name',
+        'url',
+    ];
 }
