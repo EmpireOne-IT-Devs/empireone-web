@@ -23,40 +23,42 @@ class AccountDocumentController extends Controller
 
     public function store(Request $request)
     {
-
-
         foreach ($request->names as $key => $name) {
-
-            $url = null; // Initialize URL to null to avoid undefined variable errors
-
+            $url = null;
             if ($request->hasFile("files.$key")) {
+
                 $file = $request->file("files.$key");
 
-                // 1. Read the file binary data
+                // Convert to Base64
                 $fileContents = file_get_contents($file->getRealPath());
-
-                // 2. Encode to Base64
                 $base64 = base64_encode($fileContents);
-                $mimeType = $file->getMimeType();
 
-                // Format: "data:image/png;base64,....."
-                $base64Data = 'data:' . $mimeType . ';base64,' . $base64;
+                // Decode Base64 back to binary
+                $decodedFile = base64_decode($base64);
 
-                // 3. Define the path (Use .txt or .b64 extension since it is now text)
-                $filename = Str::uuid() . '.txt';
-                $path = 'unified/account/' . $filename;
+                // Create temporary file
+                $tmpFilePath = sys_get_temp_dir() . '/' . Str::uuid();
+                file_put_contents($tmpFilePath, $decodedFile);
 
-                // 4. Upload the TEXT string to S3
-                $path = $request->file('image')->store(
-                    'unified/ticketing',
-                    's3'
+                // Create UploadedFile instance
+                $tempFile = new \Illuminate\Http\UploadedFile(
+                    $tmpFilePath,
+                    $file->getClientOriginalName(),
+                    $file->getMimeType(),
+                    null,
+                    true // mark as test file
                 );
 
-                // 5. Get the URL
+                // ✅ Now you can use store()
+                $path = $tempFile->store('unified/account', 's3');
+
                 $url = Storage::disk('s3')->url($path);
+
+                // Optional: delete temp file
+                unlink($tmpFilePath);
             }
 
-            // Only update DB if we have a new URL or you want to update just the name
+
             if ($url) {
                 AccountDocument::updateOrCreate(
                     [
@@ -72,9 +74,10 @@ class AccountDocumentController extends Controller
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Documents converted to Base64 and saved to S3.',
+            'message' => 'Documents uploaded successfully.',
         ], 200);
     }
+
     /**
      * Display the specified resource.
      */
