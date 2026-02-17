@@ -22,11 +22,7 @@ class AccountDocumentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'documents.*.name'  => 'required|string|max:255',
-            'documents.*.image' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        ]);
-
+      
         foreach ($request->documents as $key => $value) {
             if ($request->hasFile("documents.$key.image")) {
                 $file = $request->file("documents.$key.image");
