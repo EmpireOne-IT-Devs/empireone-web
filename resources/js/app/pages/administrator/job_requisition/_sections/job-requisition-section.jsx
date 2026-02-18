@@ -47,11 +47,11 @@ export default function JobRequisitionBodySection({ job_requisition }) {
     const getPriorityVariant = (priority) => {
         switch (priority?.toLowerCase()) {
             case "urgent":
-            case "high":
+            case "high priority":
                 return "destructive";
-            case "medium":
+            case "medium priority":
                 return "primary";
-            case "low":
+            case "low priority":
                 return "default";
             default:
                 return "default";
@@ -66,9 +66,13 @@ export default function JobRequisitionBodySection({ job_requisition }) {
         });
     };
 
-    const handleViewRequisition = (job) => {
-        dispatch(setJobRequisitions(job));
-        setOpen(true);
+    const formatTime = (timeString) => {
+        if (!timeString) return "Not Scheduled";
+        const [hours, minutes] = timeString.split(":");
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? "PM" : "AM";
+        const displayHour = hour % 12 || 12;
+        return `${displayHour}:${minutes} ${ampm}`;
     };
 
     if (!job_requisition) return <div>Loading...</div>;
@@ -146,7 +150,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={() => handleViewRequisition(job)}
+                            onClick={() => setOpen(true)}
                         >
                             <TbEye className="w-5 h-5" />
                         </Button>
@@ -185,29 +189,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                 </div>
 
                 <hr className="border-gray-200" />
-                {/* <div className="flex flex-col gap-3 items-start">
-                    <div>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: job_requisition.justification_for_position,
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: job_requisition.qualifications,
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: job_requisition.responsibilities,
-                            }}
-                        />
-                    </div>
-                </div> */}
+
                 <div className="flex flex-col gap-1 w-full">
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-2">
@@ -238,7 +220,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                 className="overflow-auto h-full"
             >
                 <div className="flex overflow-auto h-[80vh]">
-                    <div className="flex-1 p-6  space-y-6">
+                    <div className="flex-1 p-6 space-y-6">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
                                 <h1 className="text-2xl font-bold text-gray-900">
@@ -269,7 +251,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         "Medium Priority"}
                                 </span>
                             </div>
-                            <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-4 ">
+                            <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-4">
                                 <div>
                                     <div className="text-gray-500 text-sm mb-1">
                                         Department
@@ -352,6 +334,71 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Interview Schedule Section */}
+                            <div className="mb-5 pb-5 pt-5">
+                                <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                    <TbCalendarEvent className="text-blue-600" />
+                                    Interview Schedule
+                                </h3>
+
+                                <div className="grid grid-cols-2 gap-5">
+                                    <div className="bg-gray-50 rounded-lg p-4">
+                                        <p className="text-sm text-gray-600 mb-2">
+                                            Final Interviewer
+                                        </p>
+                                        <p className="font-semibold text-gray-900 mb-1">
+                                            {job_requisition.final_interviewer_name ||
+                                                "Not Assigned"}
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                            {job_requisition.final_interviewer_email ||
+                                                ""}
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-gray-50 rounded-lg p-4">
+                                        <p className="text-sm text-gray-600 mb-2">
+                                            Sub-Interviewer
+                                        </p>
+                                        <p className="font-semibold text-gray-900 mb-1">
+                                            {job_requisition.sub_interviewer_name ||
+                                                "Not Assigned"}
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                            {job_requisition.sub_interviewer_email ||
+                                                ""}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-5 mt-4">
+                                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                        <p className="text-sm text-gray-600 mb-1">
+                                            Interview Date
+                                        </p>
+                                        <p className="font-semibold text-gray-900">
+                                            {job_requisition.interview_date
+                                                ? formatDate(
+                                                      job_requisition.interview_date,
+                                                  )
+                                                : "Not Scheduled"}
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                        <p className="text-sm text-gray-600 mb-1">
+                                            Interview Time
+                                        </p>
+                                        <p className="font-semibold text-gray-900">
+                                            {formatTime(
+                                                job_requisition.interview_time,
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="mt-4 space-y-6 pt-4 text-gray-800">
                                 {job_requisition.justification_for_position && (
                                     <div>

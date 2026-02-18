@@ -17,30 +17,57 @@ export default function CreateJobRequisition() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
+
     const [form, setForm] = useState({
         justification_for_position: "",
         qualifications: "",
         responsibilities: "",
     });
+
+    // Static interviewer data
+    const FINAL_INTERVIEWERS = [
+        { label: "John Doe (john.doe@example.com)", value: "1" },
+        { label: "Jane Smith (jane.smith@example.com)", value: "2" },
+        { label: "Michael Johnson (michael.j@example.com)", value: "3" },
+        { label: "Sarah Williams (sarah.w@example.com)", value: "4" },
+        { label: "Robert Brown (robert.b@example.com)", value: "5" },
+    ];
+
+    const SUB_INTERVIEWERS = [
+        { label: "Emily Davis (emily.d@example.com)", value: "6" },
+        { label: "David Wilson (david.w@example.com)", value: "7" },
+        { label: "Lisa Anderson (lisa.a@example.com)", value: "8" },
+        { label: "James Taylor (james.t@example.com)", value: "9" },
+        { label: "Maria Garcia (maria.g@example.com)", value: "10" },
+    ];
+
     const {
         register,
         handleSubmit,
         reset,
         control,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
             department_id: "",
             location_id: "",
             type: "",
+            existing_position_id: "",
             title: "",
             employment_type: "",
             number_of_positions: "",
             priority: "",
             salary_range: "",
             target_start_date: "",
+            final_interviewer_id: "",
+            sub_interviewer_id: "",
+            interview_date: "",
+            interview_time: "",
         },
     });
+
+    const positionType = watch("type");
 
     async function onSubmit(form_data) {
         try {
@@ -85,7 +112,7 @@ export default function CreateJobRequisition() {
             </Button>
 
             <Modal
-                width="max-w-3xl"
+                width="max-w-4xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="New Job Requisition"
@@ -97,7 +124,7 @@ export default function CreateJobRequisition() {
                     <div className="flex-1 overflow-y-auto space-y-6 pr-2">
                         <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-300">
                             <label className="text-sm font-medium text-gray-700">
-                                Position Type{" "}
+                                Position Type
                                 <span className="text-red-500">*</span>
                             </label>
                             <div className="space-y-3">
@@ -108,33 +135,47 @@ export default function CreateJobRequisition() {
                                         required: "Position type is required",
                                     }}
                                     render={({ field }) => (
-                                        <div className="space-y-3">
-                                            <Radio
-                                                label="New Position"
-                                                value="New Position"
-                                                checked={
-                                                    field.value ===
-                                                    "New Position"
-                                                }
-                                                onChange={() =>
-                                                    field.onChange(
-                                                        "New Position",
-                                                    )
-                                                }
-                                            />
-                                            <Radio
-                                                label="Existing Position"
-                                                value="Existing Position"
-                                                checked={
-                                                    field.value ===
-                                                    "Existing Position"
-                                                }
-                                                onChange={() =>
-                                                    field.onChange(
-                                                        "Existing Position",
-                                                    )
-                                                }
-                                            />
+                                        <div className="space-y-4">
+                                            <div>
+                                                <Radio
+                                                    label="New Position"
+                                                    value="New Position"
+                                                    checked={
+                                                        field.value ===
+                                                        "New Position"
+                                                    }
+                                                    onChange={() =>
+                                                        field.onChange(
+                                                            "New Position",
+                                                        )
+                                                    }
+                                                />
+                                                <p className="ml-6 text-sm text-gray-500">
+                                                    Create a requsition for a
+                                                    brand new position
+                                                </p>
+                                            </div>
+
+                                            <div>
+                                                <Radio
+                                                    label="Existing Position"
+                                                    value="Existing Position"
+                                                    checked={
+                                                        field.value ===
+                                                        "Existing Position"
+                                                    }
+                                                    onChange={() =>
+                                                        field.onChange(
+                                                            "Existing Position",
+                                                        )
+                                                    }
+                                                />
+                                                <p className="ml-6 text-sm text-gray-500">
+                                                    Request additional headcount
+                                                    for an existing position
+                                                </p>
+                                            </div>
+
                                             {errors.type && (
                                                 <p className="text-red-500 text-sm">
                                                     {errors.type.message}
@@ -143,6 +184,41 @@ export default function CreateJobRequisition() {
                                         </div>
                                     )}
                                 />
+
+                                {positionType === "Existing Position" && (
+                                    <div className="mt-4">
+                                        <Controller
+                                            name="existing_position_id"
+                                            control={control}
+                                            rules={{
+                                                required:
+                                                    positionType ===
+                                                    "Existing Position"
+                                                        ? "Please select an existing position"
+                                                        : false,
+                                            }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    {...field}
+                                                    label="Select Existing Position"
+                                                    options={
+                                                        data?.positions?.map(
+                                                            (res) => ({
+                                                                label: res.title,
+                                                                value: res.id,
+                                                            }),
+                                                        ) || []
+                                                    }
+                                                    error={
+                                                        errors
+                                                            .existing_position_id
+                                                            ?.message
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -310,7 +386,7 @@ export default function CreateJobRequisition() {
                                         placeholder="e.g. ₱50,000 - ₱70,000"
                                     />
                                     <Input
-                                    type="date"
+                                        type="date"
                                         {...register("target_start_date", {
                                             required:
                                                 "Target Start Date is required",
@@ -320,6 +396,90 @@ export default function CreateJobRequisition() {
                                         }
                                         label="Target Start Date"
                                     />
+                                </div>
+                            </div>
+                        </div>
+                        {/* Interview Schedule Section */}
+                        <div className="px-3">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                                Interview Schedule
+                            </h3>
+
+                            <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Controller
+                                        name="final_interviewer_id"
+                                        control={control}
+                                        rules={{
+                                            required:
+                                                "Final interviewer is required",
+                                        }}
+                                        render={({ field }) => (
+                                            <Select
+                                                {...field}
+                                                label="Final Interviewer"
+                                                options={FINAL_INTERVIEWERS}
+                                                error={
+                                                    errors.final_interviewer_id
+                                                        ?.message
+                                                }
+                                            />
+                                        )}
+                                    />
+
+                                    <Controller
+                                        name="sub_interviewer_id"
+                                        control={control}
+                                        rules={{
+                                            required:
+                                                "Sub-interviewer is required",
+                                        }}
+                                        render={({ field }) => (
+                                            <Select
+                                                {...field}
+                                                label="Sub-Interviewer"
+                                                options={SUB_INTERVIEWERS}
+                                                error={
+                                                    errors.sub_interviewer_id
+                                                        ?.message
+                                                }
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Input
+                                        type="date"
+                                        {...register("interview_date", {
+                                            required:
+                                                "Interview date is required",
+                                        })}
+                                        error={errors.interview_date?.message}
+                                        label="Interview Date"
+                                    />
+
+                                    <Input
+                                        type="time"
+                                        {...register("interview_time", {
+                                            required:
+                                                "Interview time is required",
+                                        })}
+                                        error={errors.interview_time?.message}
+                                        label="Interview Time"
+                                    />
+                                </div>
+
+                                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                    <p className="text-sm text-gray-600">
+                                        <span className="font-medium">
+                                            Note:
+                                        </span>{" "}
+                                        The final interviewer will conduct the
+                                        last round of interviews, while the
+                                        sub-interviewer will assist in the
+                                        initial screening process.
+                                    </p>
                                 </div>
                             </div>
                         </div>
