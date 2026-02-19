@@ -55,6 +55,7 @@ class AccountPersonalInformation extends Model
         'year_graduated',
         'awards',
         'status',
+        'degree',
 
         // contact information
         'phone_number1',

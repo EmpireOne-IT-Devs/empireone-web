@@ -66,6 +66,7 @@ return new class extends Migration
             $table->string('year_graduated')->nullable();
             $table->string('awards')->nullable();
             $table->string('status')->nullable();
+            $table->string('degree')->nullable();
             // contact information
             $table->string('phone_number1')->nullable();
             $table->string('phone_number2')->nullable();

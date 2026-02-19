@@ -31,6 +31,7 @@ class AccountPersonalInformationController extends Controller
             'year_graduated'     => 'required|string|max:255',
             'awards' => 'required|string|max:255',
             'status' => 'required|string|max:255',
+            'degree' => 'nullable|string|max:255',
         ]);
         AccountPersonalInformation::updateOrCreate(
             ['user_id' => $auth->id],
