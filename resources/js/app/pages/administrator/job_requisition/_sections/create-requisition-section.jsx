@@ -60,8 +60,8 @@ export default function CreateJobRequisition() {
             priority: "",
             salary_range: "",
             target_start_date: "",
-            final_interviewer_id: "",
-            sub_interviewer_id: "",
+            interviewer: "",
+            sub_interviewer: "",
             interview_date: "",
             interview_time: "",
         },
@@ -399,7 +399,6 @@ export default function CreateJobRequisition() {
                                 </div>
                             </div>
                         </div>
-                        {/* Interview Schedule Section */}
                         <div className="px-3">
                             <h3 className="text-sm font-semibold text-gray-700 mb-4">
                                 Interview Schedule
@@ -407,44 +406,24 @@ export default function CreateJobRequisition() {
 
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Controller
-                                        name="final_interviewer_id"
-                                        control={control}
-                                        rules={{
+                                    <Input
+                                        {...register("interviewer", {
                                             required:
-                                                "Final interviewer is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Final Interviewer"
-                                                options={FINAL_INTERVIEWERS}
-                                                error={
-                                                    errors.final_interviewer_id
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
+                                                "Interview date is required",
+                                        })}
+                                        error={errors.interviewer?.message}
+                                        label="Interview"
+                                        placeholder="e.g. John Doe"
                                     />
 
-                                    <Controller
-                                        name="sub_interviewer_id"
-                                        control={control}
-                                        rules={{
+                                    <Input
+                                        {...register("sub_interviewer", {
                                             required:
-                                                "Sub-interviewer is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Sub-Interviewer"
-                                                options={SUB_INTERVIEWERS}
-                                                error={
-                                                    errors.sub_interviewer_id
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
+                                                "Interview time is required",
+                                        })}
+                                        error={errors.sub_interviewer?.message}
+                                        label="Sub Interviewer"
+                                        placeholder="e.g. Jane Smith"
                                     />
                                 </div>
 

@@ -40,6 +40,10 @@ return new class extends Migration
             ])->default('Low');
             $table->string('salary_range')->nullable();
             $table->date('target_start_date')->nullable();
+            $table->string('interviewer')->nullable();
+            $table->string('sub_interviewer')->nullable();
+            $table->date('interview_date')->nullable();
+            $table->text('interview_time')->nullable();
             $table->text('justification_for_position')->nullable();
             $table->text('qualifications')->nullable();
             $table->text('responsibilities')->nullable();
