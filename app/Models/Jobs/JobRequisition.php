@@ -23,6 +23,10 @@ class JobRequisition extends Model
         'priority',
         'salary_range',
         'target_start_date',
+        'interviewer',
+        'sub_interviewer',
+        'interview_date',
+        'interview_time',
         'justification_for_position',
         'qualifications',
         'responsibilities',
@@ -31,6 +35,7 @@ class JobRequisition extends Model
 
     protected $casts = [
         'target_start_date' => 'date',
+        'interview_date' => 'date',
         'number_of_positions' => 'integer',
     ];
 
@@ -43,12 +48,12 @@ class JobRequisition extends Model
     {
         return $this->belongsTo(Location::class);
     }
-     public function user():HasOne
+    public function user(): HasOne
     {
-        return $this->hasOne(User::class,'id','user_id');
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
-     public function logs():HasMany
+    public function logs(): HasMany
     {
-        return $this->hasMany(JobRequisitionLog::class,'job_requisitions_id','id');
+        return $this->hasMany(JobRequisitionLog::class, 'job_requisitions_id', 'id');
     }
 }

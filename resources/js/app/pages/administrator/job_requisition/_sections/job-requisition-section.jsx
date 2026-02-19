@@ -334,8 +334,6 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Interview Schedule Section */}
                             <div className="mb-5 pb-5 pt-5">
                                 <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                     <TbCalendarEvent className="text-blue-600" />
@@ -348,12 +346,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                             Final Interviewer
                                         </p>
                                         <p className="font-semibold text-gray-900 mb-1">
-                                            {job_requisition.final_interviewer_name ||
+                                            {job_requisition.interviewer ||
                                                 "Not Assigned"}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                            {job_requisition.final_interviewer_email ||
-                                                ""}
                                         </p>
                                     </div>
 
@@ -362,12 +356,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                             Sub-Interviewer
                                         </p>
                                         <p className="font-semibold text-gray-900 mb-1">
-                                            {job_requisition.sub_interviewer_name ||
+                                            {job_requisition.sub_interviewer ||
                                                 "Not Assigned"}
-                                        </p>
-                                        <p className="text-sm text-gray-600">
-                                            {job_requisition.sub_interviewer_email ||
-                                                ""}
                                         </p>
                                     </div>
                                 </div>
@@ -378,11 +368,11 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                             Interview Date
                                         </p>
                                         <p className="font-semibold text-gray-900">
-                                            {job_requisition.interview_date
-                                                ? formatDate(
+                                            {job_requisition?.interview_date
+                                                ? moment(
                                                       job_requisition.interview_date,
-                                                  )
-                                                : "Not Scheduled"}
+                                                  ).format("LL")
+                                                : "N/A"}
                                         </p>
                                     </div>
 
@@ -443,17 +433,16 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                 )}
                             </div>
                         </div>
-
-                        <div className="flex w-full items-center justify-end border-t pt-4 gap-3">
-                            <DeleteRequisitionSection />
-                            <ApproveJobRequisitionSection />
-                        </div>
                     </div>
                     <div className="w-1/3">
                         <JobRequisitionLogsSection
                             job_requisition={job_requisition}
                         />
                     </div>
+                </div>
+                <div className="flex w-full items-center justify-end border-t pt-4 gap-3">
+                    <DeleteRequisitionSection />
+                    <ApproveJobRequisitionSection />
                 </div>
             </Modal>
         </>
