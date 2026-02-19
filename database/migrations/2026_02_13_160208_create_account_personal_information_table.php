@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('work_type')->default('Full Time');
             $table->string('eogs_email')->nullable();
             $table->string('employee_id')->nullable();
+            $table->string('with_bpo')->nullable();
             // personal information
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();

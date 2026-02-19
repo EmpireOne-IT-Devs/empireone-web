@@ -39,6 +39,7 @@ class AccountDocumentController extends Controller
                 ],
                 [
                     'url' => $url,
+                    'status' => 'Approved'
                 ]
             );
         }

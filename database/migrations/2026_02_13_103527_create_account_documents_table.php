@@ -18,6 +18,8 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
             $table->string('name')->nullable();
+            $table->text('reason')->nullable();
+            $table->string('status')->nullable();
             $table->string('url')->nullable();
             $table->timestamps();
         });

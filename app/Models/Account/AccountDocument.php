@@ -10,6 +10,8 @@ class AccountDocument extends Model
  protected $fillable = [
         'user_id',
         'name',
+        'status',
+        'reason',
         'url',
     ];
 }

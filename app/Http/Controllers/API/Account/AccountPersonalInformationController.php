@@ -22,6 +22,29 @@ class AccountPersonalInformationController extends Controller
         ], 200);
     }
 
+    public function accounts_educational_information(Request $request)
+    {
+        $auth = Auth::user();
+        $validated = $request->validate([
+            'highest_level_of_education'   => 'required|string|max:255',
+            'school_name' => 'required|string|max:255',
+            'year_graduated'     => 'required|string|max:255',
+            'awards' => 'required|string|max:255',
+            'status' => 'required|string|max:255',
+        ]);
+        AccountPersonalInformation::updateOrCreate(
+            ['user_id' => $auth->id],
+            array_merge(['user_id' => $auth->id], $validated)
+        );
+
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Personal Show successfully.',
+            'data'    => $auth
+        ], 200);
+    }
+
     public function accounts_emergency_contact_information(Request $request)
     {
         $auth = Auth::user();
