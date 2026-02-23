@@ -26,11 +26,11 @@ class AccountPersonalInformationController extends Controller
     {
         $auth = Auth::user();
         $validated = $request->validate([
-            'highest_level_of_education'   => 'required|string|max:255',
-            'school_name' => 'required|string|max:255',
-            'year_graduated'     => 'required|string|max:255',
-            'awards' => 'required|string|max:255',
-            'status' => 'required|string|max:255',
+            'highest_level_of_education'   => 'nullable|string|max:255',
+            'school_name' => 'nullable|string|max:255',
+            'year_graduated'     => 'nullable|string|max:255',
+            'awards' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:255',
             'degree' => 'nullable|string|max:255',
         ]);
         AccountPersonalInformation::updateOrCreate(
@@ -51,10 +51,10 @@ class AccountPersonalInformationController extends Controller
         $auth = Auth::user();
 
         $validated = $request->validate([
-            'phone_number1'   => 'required|string|max:255',
-            'phone_number2' => 'required|string|max:255',
-            'contact_name1'     => 'required|string|max:255',
-            'contact_name2' => 'required|string|max:255',
+            'phone_number1'   => 'nullable|string|max:255',
+            'phone_number2' => 'nullable|string|max:255',
+            'contact_name1'     => 'nullable|string|max:255',
+            'contact_name2' => 'nullable|string|max:255',
         ]);
 
         // 2️⃣ Update or create account information
@@ -76,12 +76,12 @@ class AccountPersonalInformationController extends Controller
 
         // 1️⃣ Validate request (throws automatic JSON response on failure in API)
         $validated = $request->validate([
-            'first_name'   => 'required|string|max:255',
+            'first_name'   => 'nullable|string|max:255',
             'middle_name' => 'nullable|string|max:255',
-            'last_name'     => 'required|string|max:255',
+            'last_name'     => 'nullable|string|max:255',
             'suffix' => 'nullable|string|max:255',
-            'gender'   => 'required|string|max:255',
-            'date_of_birth' => 'required|string|max:255',
+            'gender'   => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|string|max:255',
             'nationality'  => 'nullable|string|max:255',
             'birth_place'  => 'nullable|string|max:255',
             'marital_status'  => 'nullable|string|max:255',
@@ -106,12 +106,12 @@ class AccountPersonalInformationController extends Controller
 
         // 1️⃣ Validate request (throws automatic JSON response on failure in API)
         $validated = $request->validate([
-            'region'   => 'required|string|max:255',
-            'province' => 'required|string|max:255',
-            'city'     => 'required|string|max:255',
-            'barangay' => 'required|string|max:255',
-            'street'   => 'required|string|max:255',
-            'zip_code' => 'required|string|max:20',
+            'region'   => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'city'     => 'nullable|string|max:255',
+            'barangay' => 'nullable|string|max:255',
+            'street'   => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:20',
             'village'  => 'nullable|string|max:255',
         ]);
 
@@ -134,12 +134,12 @@ class AccountPersonalInformationController extends Controller
 
         // 1️⃣ Validate request (throws automatic JSON response on failure in API)
         $validated = $request->validate([
-            'government_type'   => 'required|string|max:255',
-            'id_number' => 'required|string|max:255',
-            'sss'     => 'required|string|max:255',
-            'tin' => 'required|string|max:255',
-            'philhealth'   => 'required|string|max:255',
-            'pagibig' => 'required|string|max:255',
+            'government_type'   => 'nullable|string|max:255',
+            'id_number' => 'nullable|string|max:255',
+            'sss'     => 'nullable|string|max:255',
+            'tin' => 'nullable|string|max:255',
+            'philhealth'   => 'nullable|string|max:255',
+            'pagibig' => 'nullable|string|max:255',
         ]);
 
         // 2️⃣ Update or create account information
