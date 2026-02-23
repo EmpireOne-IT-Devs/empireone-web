@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('eogs_email')->nullable();
             $table->string('employee_id')->nullable();
             $table->string('with_bpo')->nullable();
+            $table->string('source')->nullable();
             // personal information
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
@@ -68,10 +69,10 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->string('degree')->nullable();
             // contact information
-            $table->string('phone_number1')->nullable();
-            $table->string('phone_number2')->nullable();
-            $table->string('contact_name1')->nullable();
-            $table->string('contact_name2')->nullable();
+            $table->string('contact_name')->nullable();
+            $table->string('contact_address')->nullable();
+            $table->string('contact_relationship')->nullable();
+            $table->string('contact_number')->nullable();
             $table->timestamps();
         });
     }

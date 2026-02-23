@@ -14,30 +14,31 @@ class AccountPersonalInformation extends Model
         // employee information
         'user_id',
         'department_id',
-        'site_id',
+        'site_id',  // required
         'location_id',
         'work_type',
         'eogs_email',
         'employee_id',
+        'source', // required
 
         // personal information
-        'first_name',
-        'middle_name',
-        'last_name',
+        'first_name', // required
+        'middle_name', // required
+        'last_name', // required
         'suffix',
-        'gender',
-        'date_of_birth',
-        'birth_place',
+        'gender', // required
+        'date_of_birth', // required
+        'birth_place', // required
         'nationality',
         'marital_status',
 
         // address
-        'region',
-        'province',
-        'city',
-        'barangay',
-        'street',
-        'zip_code',
+        'region', // required
+        'province', // required
+        'city', // required
+        'barangay', // required
+        'street', // required
+        'zip_code', // required
         'village',
 
         // government information
@@ -48,8 +49,8 @@ class AccountPersonalInformation extends Model
         'philhealth',
         'pagibig',
 
-        // education background
-        'highest_level_of_education',
+        // education background 
+        'highest_level_of_education', // required
         'school_name',
         'course',
         'year_graduated',
@@ -58,10 +59,10 @@ class AccountPersonalInformation extends Model
         'degree',
 
         // contact information
-        'phone_number1',
-        'phone_number2',
-        'contact_name1',
-        'contact_name2',
+        'contact_name',
+        'contact_address',
+        'contact_relationship',
+        'contact_number',
     ];
 
     /*

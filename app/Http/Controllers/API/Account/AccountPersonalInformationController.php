@@ -51,10 +51,10 @@ class AccountPersonalInformationController extends Controller
         $auth = Auth::user();
 
         $validated = $request->validate([
-            'phone_number1'   => 'nullable|string|max:255',
-            'phone_number2' => 'nullable|string|max:255',
-            'contact_name1'     => 'nullable|string|max:255',
-            'contact_name2' => 'nullable|string|max:255',
+            'contact_name'   => 'nullable|string|max:255',
+            'contact_address' => 'nullable|string|max:255',
+            'contact_relationship'     => 'nullable|string|max:255',
+            'contact_number' => 'nullable|string|max:255',
         ]);
 
         // 2️⃣ Update or create account information
