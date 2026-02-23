@@ -12,6 +12,7 @@ class AccountDocument extends Model
         'name',
         'status',
         'reason',
+        'type',
         'url',
     ];
 }

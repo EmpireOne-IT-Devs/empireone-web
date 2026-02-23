@@ -39,7 +39,8 @@ class AccountDocumentController extends Controller
                 ],
                 [
                     'url' => $url,
-                    'status' => 'Approved'
+                    'status' => 'Approved',
+                    'type'=>$request->type.$key
                 ]
             );
         }
