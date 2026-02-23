@@ -90,4 +90,5 @@ class AccountPersonalInformation extends Model
     {
         return $this->belongsTo(Location::class);
     }
+    
 }

@@ -14,11 +14,43 @@ class AccountPersonalInformationController extends Controller
 
     public function accounts_user()
     {
+
         $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience'])->first();
+        $requiredFields = collect([
+            'site_id',
+            'source',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'gender',
+            'date_of_birth',
+            'birth_place',
+            'region',
+            'province',
+            'city',
+            'barangay',
+            'street',
+            'zip_code',
+            'highest_level_of_education'
+        ]);
+        $percent = '0%';
+        $info = $auth->personal_information;
+
+        // 2. Only calculate if personal_information actually exists
+        if ($info) {
+            // Use the collection's filter method to count how many fields are NOT empty
+            $filledCount = $requiredFields->filter(function ($field) use ($info) {
+                return !empty($info->{$field});
+            })->count();
+            // Calculate percentage
+            $percent = round(($filledCount / $requiredFields->count()) * 100) . '%';
+        }
         return response()->json([
             'status'  => 'success',
             'message' => 'Personal Show successfully.',
-            'data'    => $auth
+            'data'    => array_merge($auth->toArray(), [
+                'percent' => $percent
+            ])
         ], 200);
     }
 
