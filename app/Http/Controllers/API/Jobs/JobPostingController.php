@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Jobs\JobPosting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobPostingController extends Controller
 {
@@ -22,6 +23,7 @@ class JobPostingController extends Controller
 
         $jobPosting = JobPosting::create([
             'job_requisition_id' => $request->job_requisition_id,
+            'user_id' => Auth::id(),
             'application_deadline' => $request->application_deadline,
             'experience_required' => $request->experience_required,
             'education_required' => $request->education_required,
