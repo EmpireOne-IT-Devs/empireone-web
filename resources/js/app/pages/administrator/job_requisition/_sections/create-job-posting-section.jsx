@@ -11,6 +11,7 @@ import Select from "@/app/_components/select";
 import { create_job_posting_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
+import Radio from "@/app/_components/radio";
 
 export default function CreateJobPostingSection({ initial_data }) {
     const [open, setOpen] = useState(false);
@@ -18,16 +19,18 @@ export default function CreateJobPostingSection({ initial_data }) {
     const { data } = useSelector((store) => store.app);
 
     const {
+        register,
         handleSubmit,
         reset,
         control,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
+            target_audience: "Both",
             status: "Active",
-            application_deadline: "",
-            experience_required: "",
-            education_required: "",
+            application_deadline: null,
+            experience_required: null,
+            education_required: null,
         },
     });
     console.log("initial_data", initial_data);
@@ -182,19 +185,35 @@ export default function CreateJobPostingSection({ initial_data }) {
                                 {errors.requirements.message}
                             </p>
                         )}
+                        <div className="flex gap-5">
+                            {["Both", "Internal", "External"].map((option) => (
+                                <Radio
+                                    key={option}
+                                    value={option}
+                                    label={option}
+                                    {...register("target_audience", {
+                                        required: true,
+                                    })}
+                                />
+                            ))}
+                        </div>
+                        {errors.target_audience && (
+                            <p className="text-red-500">
+                                {errors.target_audience.message}
+                            </p>
+                        )}
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Controller
                                 name="status"
                                 control={control}
-                                rules={{ required: "Status is required" }}
+                                rules={{ required: true }}
                                 value="Active"
                                 render={({ field }) => (
                                     <Select
                                         {...field}
                                         label="Status"
                                         options={[
-                                            { value: "Draft", label: "Draft" },
                                             {
                                                 value: "Active",
                                                 label: "Active",
@@ -203,46 +222,42 @@ export default function CreateJobPostingSection({ initial_data }) {
                                                 value: "Closed",
                                                 label: "Closed",
                                             },
+                                            { value: "Draft", label: "Draft" },
                                         ]}
                                         error={errors.status?.message}
                                     />
                                 )}
                             />
-                            <Controller
+                            <Input
                                 name="application_deadline"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        {...field}
-                                        label="Application Deadline"
-                                        type="date"
-                                    />
-                                )}
+                                label="Application Deadline"
+                                type="date"
+                                {...register("application_deadline", {
+                                    required: true,
+                                })}
+                                error={errors.application_deadline}
                             />
                         </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4  pb-20">
-                            <Controller
+                            <Input
                                 name="experience_required"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        {...field}
-                                        label="Experience Required"
-                                        placeholder="e.g. 3+ years"
-                                    />
-                                )}
+                                label="Years of Experience"
+                                type="text"
+                                {...register("experience_required", {
+                                    required: true,
+                                })}
+                                error={errors.experience_required}
                             />
 
-                            <Controller
+                            <Input
                                 name="education_required"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        {...field}
-                                        label="Education Required"
-                                        placeholder="e.g. Bachelor's Degree"
-                                    />
-                                )}
+                                label="Bachelor's Degree"
+                                type="text"
+                                {...register("education_required", {
+                                    required: true,
+                                })}
+                                error={errors.education_required}
                             />
                         </div>
                     </div>

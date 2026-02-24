@@ -13,6 +13,7 @@ class JobPosting extends Model
         'application_deadline',
         'experience_required',
         'education_required',
+        'target_audience',
         'status',
     ];
 

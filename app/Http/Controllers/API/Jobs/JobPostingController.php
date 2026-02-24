@@ -27,7 +27,9 @@ class JobPostingController extends Controller
             'application_deadline' => $request->application_deadline,
             'experience_required' => $request->experience_required,
             'education_required' => $request->education_required,
+            'target_audience' => $request->target_audience,
             'status' => $request->status,
+
         ]);
 
         return response()->json([

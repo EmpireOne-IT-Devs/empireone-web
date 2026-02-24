@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('reason')->nullable();
             $table->string('status')->nullable();
             $table->string('url')->nullable();
-             $table->enum('type', [
+            $table->enum('type', [
                 'Resume',
                 'Cover Letter',
                 '201 File',
