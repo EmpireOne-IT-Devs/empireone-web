@@ -47,6 +47,7 @@ Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('get_app_data', AppController::class);
     Route::resource('job-requisitions', JobRequisitionController::class);
     Route::resource('job_requisition_logs', JobRequisitionLogController::class);
+    Route::resource('job-postings', JobPostingController::class);
     Route::resource('accounts_information', AccountPersonalInformationController::class);
 
     Route::prefix('accounts')->group(function () {
@@ -64,7 +65,6 @@ Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
 
 
 
-Route::resource('job-postings', JobPostingController::class);
 Route::resource('departments', DepartmentController::class);
 Route::resource('sites', SiteController::class);
 Route::get('departments/{department}/users', [DepartmentController::class, 'getDepartmentUsers']);
