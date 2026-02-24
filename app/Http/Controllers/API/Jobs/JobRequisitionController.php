@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Account\AccountEmployee;
 use App\Models\Jobs\JobRequisition;
 use App\Models\User;
 use App\Notifications\JobRequisitionNotification;
@@ -31,14 +31,11 @@ class JobRequisitionController extends Controller
             ...$request->all(),
             'user_id' =>  $auth->id,
         ]);
-        $hr = User::where('role', 1)->first();
-        // if ($request->location_id == '') {
-        //     # code...
-        // }
-        if ($hr) {
-            $hr->notify(new JobRequisitionNotification($jobRequisition));
-        }
 
+        $approver = AccountEmployee::where('user_id', Auth::id())->first();
+        if ($approver && $approver->eogs_email) {
+            $approver->notify(new JobRequisitionNotification($jobRequisition));
+        }
         return response()->json([
             'status' => 'success',
             'message' => 'Job requisition created successfully',

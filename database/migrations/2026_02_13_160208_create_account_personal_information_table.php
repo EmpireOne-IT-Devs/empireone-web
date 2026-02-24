@@ -17,24 +17,6 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
-            // employee information
-            $table->foreignId('department_id')
-                ->nullable()
-                ->constrained('departments')
-                ->nullOnDelete();
-            $table->foreignId('site_id')
-                ->nullable()
-                ->constrained('sites')
-                ->nullOnDelete();
-            $table->foreignId('location_id')
-                ->nullable()
-                ->constrained('locations')
-                ->nullOnDelete();
-            $table->string('work_type')->default('Full Time');
-            $table->string('eogs_email')->nullable();
-            $table->string('employee_id')->nullable();
-            $table->string('with_bpo')->nullable();
-            $table->string('source')->nullable();
             // personal information
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();

@@ -15,10 +15,8 @@ class AccountPersonalInformationController extends Controller
     public function accounts_user()
     {
 
-        $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience'])->first();
+        $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience','account_employee'])->first();
         $requiredFields = collect([
-            'site_id',
-            'source',
             'first_name',
             'middle_name',
             'last_name',

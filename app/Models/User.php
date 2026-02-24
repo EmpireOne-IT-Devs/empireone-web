@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Account\AccountDocument;
+use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
@@ -64,6 +65,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function personal_information(): HasOne
     {
         return $this->hasOne(AccountPersonalInformation::class);
+    }
+      public function account_employee(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class);
     }
     public function documents(): HasMany
     {

@@ -12,6 +12,7 @@ import Wysiwyg from "@/app/_components/wysiwyg";
 import store from "@/app/store/store";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import Radio from "@/app/_components/radio";
+import { peso_format } from "@/app/lib/peso-format";
 
 export default function CreateJobRequisition() {
     const [open, setOpen] = useState(false);
@@ -74,6 +75,7 @@ export default function CreateJobRequisition() {
             await create_job_requisition_service({
                 ...form,
                 ...form_data,
+                salary_range: `₱${peso_format(form_data.salary_range_from)} ${form_data.salary_range_to ?` - ₱${peso_format(form_data.salary_range_to)}` : ""}`,
             });
             await store.dispatch(get_job_requisitions_thunk());
             dispatch(
@@ -122,9 +124,9 @@ export default function CreateJobRequisition() {
                     className="flex flex-col max-h-[80vh]"
                 >
                     <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+                        Position Type
                         <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-300">
                             <label className="text-sm font-medium text-gray-700">
-                                Position Type
                                 <span className="text-red-500">*</span>
                             </label>
                             <div className="space-y-3">
@@ -221,7 +223,6 @@ export default function CreateJobRequisition() {
                                 )}
                             </div>
                         </div>
-
                         <div className="px-3">
                             <h3 className="text-sm font-semibold text-gray-700 mb-4">
                                 Position Details
@@ -376,15 +377,30 @@ export default function CreateJobRequisition() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Input
-                                        {...register("salary_range", {
-                                            required:
-                                                "Salary Range is required",
-                                        })}
-                                        error={errors.salary_range?.message}
-                                        label="Salary Range"
-                                        placeholder="e.g. ₱50,000 - ₱70,000"
-                                    />
+                                    <div className="flex gap-3">
+                                        <Input
+                                            {...register("salary_range_from", {
+                                                required:
+                                                    "Salary Range is required",
+                                            })}
+                                            error={
+                                                errors.salary_range_from
+                                                    ?.message
+                                            }
+                                            iconLeft="₱"
+                                            label="Salary Range From"
+                                            placeholder="e.g. 50,000"
+                                        />
+                                        <Input
+                                            {...register("salary_range_to")}
+                                            error={
+                                                errors.salary_range_to?.message
+                                            }
+                                            iconLeft="₱"
+                                            label="Salary Range To"
+                                            placeholder="e.g. 70,000"
+                                        />
+                                    </div>
                                     <Input
                                         type="date"
                                         {...register("target_start_date", {
@@ -462,7 +478,6 @@ export default function CreateJobRequisition() {
                                 </div>
                             </div>
                         </div>
-
                         <div className="px-3">
                             <Wysiwyg
                                 label="Justification For Position"

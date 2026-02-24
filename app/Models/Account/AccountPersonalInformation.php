@@ -7,9 +7,11 @@ use App\Models\Location;
 use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class AccountPersonalInformation extends Model
 {
+    
     protected $fillable = [
         // employee information
         'user_id',
@@ -19,6 +21,7 @@ class AccountPersonalInformation extends Model
         'work_type',
         'eogs_email',
         'employee_id',
+        'position',
         'source', // required
 
         // personal information
@@ -70,6 +73,8 @@ class AccountPersonalInformation extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
+
+
 
     public function user()
     {
