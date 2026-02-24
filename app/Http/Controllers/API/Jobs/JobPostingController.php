@@ -13,7 +13,7 @@ class JobPostingController extends Controller
 
     public function index()
     {
-        $jobPostings = JobPosting::orderBy('created_at', 'desc')->get();
+        $jobPostings = JobPosting::orderBy('created_at', 'desc')->with(['job_requisition'])->get();
         return response()->json($jobPostings);
     }
 
@@ -33,7 +33,7 @@ class JobPostingController extends Controller
         return response()->json([
             'message' => 'Job posting created successfully!',
             'job_posting' => $jobPosting
-        ], 201);
+        ], 200);
     }
 
     public function destroy($id)

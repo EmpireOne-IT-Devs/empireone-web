@@ -3,6 +3,7 @@
 namespace App\Models\Jobs;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class JobPosting extends Model
 {
@@ -14,4 +15,9 @@ class JobPosting extends Model
         'education_required',
         'status',
     ];
+
+    public function job_requisition(): HasOne
+    {
+        return $this->hasOne(JobRequisition::class, 'id', 'job_requisition_id');
+    }
 }
