@@ -17,6 +17,7 @@ import { LuUser } from "react-icons/lu";
 import Modal from "@/app/_components/modal";
 import JobRequisitionLogsSection from "./job-requisition-logs-section";
 import DeleteRequisitionSection from "./delete-requisition-section";
+import CreateJobPostingSection from "./create-job-posting-section";
 
 export default function JobRequisitionBodySection({ job_requisition }) {
     const [open, setOpen] = useState(false);
@@ -440,9 +441,18 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         />
                     </div>
                 </div>
-                <div className="flex w-full items-center justify-end border-t pt-4 gap-3">
-                    <DeleteRequisitionSection />
-                    <ApproveJobRequisitionSection />
+                <div className="flex w-full items-center justify-between border-t pt-4 gap-3">
+                    <div>
+                        {!job_requisition.job_posting && (
+                            <CreateJobPostingSection
+                                initial_data={job_requisition}
+                            />
+                        )}
+                    </div>
+                    <div className="flex gap-3">
+                        <DeleteRequisitionSection />
+                        <ApproveJobRequisitionSection />
+                    </div>
                 </div>
             </Modal>
         </>

@@ -52,6 +52,10 @@ class JobRequisition extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+     public function job_posting(): HasOne
+    {
+        return $this->hasOne(JobPosting::class, 'job_requisition_id', 'id');
+    }
     public function logs(): HasMany
     {
         return $this->hasMany(JobRequisitionLog::class, 'job_requisitions_id', 'id');

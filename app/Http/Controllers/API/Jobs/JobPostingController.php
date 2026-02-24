@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\API\Jobs;
+
 use App\Http\Controllers\Controller;
 
 use App\Models\Jobs\JobPosting;
@@ -16,21 +18,15 @@ class JobPostingController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'employment_type' => 'required|in:full-time,part-time,contract,temporary,internship',
-            'salary' => 'nullable|numeric',
-            'status' => 'required|string|max:255',
-            'application_deadline' => 'nullable|date',
-            'description' => 'required|string',
-            'requirements' => 'nullable|string',
-            'experience_required' => 'nullable|string|max:255',
-            'education_required' => 'nullable|string|max:255',
-        ]);
 
-        $jobPosting = JobPosting::create($validatedData);
+
+        $jobPosting = JobPosting::create([
+            'job_requisition_id' => $request->job_requisition_id,
+            'application_deadline' => $request->application_deadline,
+            'experience_required' => $request->experience_required,
+            'education_required' => $request->education_required,
+            'status' => $request->status,
+        ]);
 
         return response()->json([
             'message' => 'Job posting created successfully!',
@@ -42,20 +38,18 @@ class JobPostingController extends Controller
     {
         try {
             $jobPosting = JobPosting::findOrFail($id);
-            
-          
-            
+
+
+
             $jobPosting->delete();
-            
+
             return response()->json([
                 'message' => 'Job posting deleted successfully'
             ], 201);
-            
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Job posting not found'
             ], 404);
-            
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete job posting: ' . $e->getMessage()
