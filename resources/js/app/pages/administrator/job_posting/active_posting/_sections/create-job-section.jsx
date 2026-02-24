@@ -9,12 +9,14 @@ import { useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import { create_job_posting_service_thunk } from "@/app/redux/job-posting-slice";
 import { setAlert } from "@/app/redux/app-slice";
+import Radio from "@/app/_components/radio";
 
 export default function CreateJobSection() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
 
     const {
+        register,
         handleSubmit,
         reset,
         control,
@@ -73,18 +75,40 @@ export default function CreateJobSection() {
             </Button>
 
             <Modal
-                width="max-w-4xl"
+                width="max-w-3xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="Create New Job Posting"
-                
             >
-                
                 <form
                     onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col max-h-[80vh]"
                 >
                     <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+                        <div className="border p-4 bg-green-50 rounded-md mt-6">
+                            <div className=" mb-4 font-semibold text-gray-800">
+                                Target Audience
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                {["Both", "Internal", "External"].map(
+                                    (option) => (
+                                        <Radio
+                                            key={option}
+                                            value={option}
+                                            label={option}
+                                            {...register("target_audience", {
+                                                required: true,
+                                            })}
+                                        />
+                                    ),
+                                )}
+                            </div>
+                            {errors.target_audience && (
+                                <p className="text-red-500">
+                                    {errors.target_audience.message}
+                                </p>
+                            )}
+                        </div>
                         <div>
                             <h3 className="text-sm font-semibold text-gray-700 mb-4">
                                 Basic Information
