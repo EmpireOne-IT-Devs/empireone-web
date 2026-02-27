@@ -14,16 +14,42 @@ use Illuminate\Support\Facades\Notification;
 
 class JobRequisitionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user','job_posting'])->orderBy('id', 'desc')->get();
+        $search = $request->query('search');
+
+        $stats = [
+            'total'       => JobRequisition::count(),
+            'pending'     => JobRequisition::where('status', 'Pending')->count(),
+            'approved'    => JobRequisition::where('status', 'Approved')->count(),
+            'in_progress' => JobRequisition::where('status', 'In Progress')->count(),
+            'declined'    => JobRequisition::where('status', 'Declined')->count(),
+        ];
+
+        // 2. Build the query for the table (Filtered Data)
+        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting'])
+            ->when($search, function ($q) use ($search) {
+                // Use a nested where to group the 'OR' logic
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('title', 'LIKE', "%{$search}%")
+                        ->orWhere('status', 'LIKE', "%{$search}%");
+                });
+                $q->orWhereHas('department', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'LIKE', "%{$search}%");
+                });
+                $q->orWhereHas('location', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'LIKE', "%{$search}%");
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->get();
 
         return response()->json([
             'status' => 'success',
-            'data' => $jobRequisitions
+            'stats'  => $stats,
+            'data'   => $jobRequisitions
         ]);
     }
-
     public function store(Request $request)
     {
         $auth = Auth::user();

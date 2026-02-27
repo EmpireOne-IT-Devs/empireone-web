@@ -47,7 +47,12 @@ return new class extends Migration
             $table->text('justification_for_position')->nullable();
             $table->text('qualifications')->nullable();
             $table->text('responsibilities')->nullable();
-            $table->string('status')->default('Pending');
+            $table->enum('status', [
+                'Pending',
+                'In Progress',
+                'Approved',
+                'Declined'
+            ])->default('Pending');
             $table->timestamps();
         });
     }
