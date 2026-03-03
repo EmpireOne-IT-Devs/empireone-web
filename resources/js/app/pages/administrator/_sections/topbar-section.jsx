@@ -18,14 +18,15 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
 export default function TopbarSection() {
+    const { data } = useSelector((store) => store.app);
     const dispatch = useDispatch();
-   
+    console.log("user", data);
     return (
         <>
             <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm dark:border-white/10 dark:bg-gray-900">
                 <button
                     className="hidden lg:block p-2  items-center justify-center text-gray-900 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
-                    onClick={() =>dispatch(setDesktopCollapsed())}
+                    onClick={() => dispatch(setDesktopCollapsed())}
                 >
                     <Bars3Icon className="w-5 h-5" />
                 </button>
@@ -60,7 +61,7 @@ export default function TopbarSection() {
                                     alt=""
                                 />
                                 <span className="ml-2 hidden lg:block text-sm font-semibold text-gray-900 dark:text-white">
-                                    Tom Cook
+                                    {data?.user?.name}
                                 </span>
                                 <ChevronDownIcon className="ml-1 w-5 h-5 text-gray-400 dark:text-gray-500" />
                             </Menu.Button>
@@ -74,7 +75,7 @@ export default function TopbarSection() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                             >
-                                   <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg dark:bg-gray-800">
+                                <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg dark:bg-gray-800">
                                     <Menu.Item>
                                         <a
                                             as="button"

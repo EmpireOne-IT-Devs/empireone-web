@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appSlice from "../redux/app-slice";
-import jobPostingSlice from "../redux/job-posting-slice";
+import jobPostingsSlice from "../redux/job-posting-slice";
 import departmentSlice from "../redux/department-slice";
 import siteSlice from "../redux/site-slice";
 import  ticketsSlice  from "../redux/tickets-slice";
@@ -10,7 +10,7 @@ const store = configureStore({
     reducer: {
         app: appSlice,
         tickets:ticketsSlice,
-        job_postings: jobPostingSlice,
+        job_postings: jobPostingsSlice,
         departments: departmentSlice,
         sites: siteSlice,
         job_requisitions: jobRequisitionSlice,

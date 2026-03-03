@@ -48,11 +48,6 @@ export default function JobRequisitionCardSection() {
             <div className="flex flex-col gap-3">
                 {job_requisitions.map((job) => (
                     <Card
-                        // onClick={() =>
-                        //     router.visit(
-                        //         `/administrator/job_requisition/${job.id}`,
-                        //     )
-                        // }
                         key={job.id}
                         className="border rounded-xl p-6"
                     >

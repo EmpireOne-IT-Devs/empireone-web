@@ -12,21 +12,20 @@ import {
 } from "lucide-react";
 import { LuGraduationCap, LuBriefcase } from "react-icons/lu";
 import Badge from "@/app/_components/badge";
+import moment from "moment";
 
-export default function ViewJobPostingDetailsSection({ data }) {
+export default function ViewJobPostingDetailsSection({ data, children }) {
     const [open, setOpen] = useState(false);
 
     return (
         <div>
-            <button type="button" onClick={() => setOpen(true)}>
-                <TbEye className="cursor-pointer text-blue-500 hover:text-blue-600" />
-            </button>
+            <div onClick={() => setOpen(true)}>{children}</div>
 
             <Modal
                 width="max-w-2xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="Senior Software Engineer"
+                title={`Position: ${data?.job_requisition?.title}`}
             >
                 <div className="flex flex-col max-h-[80vh] overflow-y-auto ">
                     <div className="mb-6 gap-2 flex items-center">
@@ -46,7 +45,9 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                 <p className="text-sm text-gray-500 mb-1">
                                     Department
                                 </p>
-                                <p className="font-medium text-gray-900">IT</p>
+                                <p className="font-medium text-gray-900">
+                                    {data?.job_requisition?.department?.name}
+                                </p>
                             </div>
                         </div>
 
@@ -57,7 +58,7 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                     Location
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    Manila
+                                    {data?.job_requisition?.location?.name}
                                 </p>
                             </div>
                         </div>
@@ -69,7 +70,7 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                     Employment Type
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    Full-time
+                                    {data?.job_requisition?.employment_type}
                                 </p>
                             </div>
                         </div>
@@ -81,7 +82,9 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                     Salary Range
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    ₱80,000 - ₱120,000
+                                    {data?.job_requisition?.salary_range
+                                        ? `${data?.job_requisition?.salary_range}`
+                                        : "Salary not specified"}
                                 </p>
                             </div>
                         </div>
@@ -93,7 +96,7 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                     Posted Date
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    12/1/2024
+                                    {moment(data?.created_at).format("LL")}
                                 </p>
                             </div>
                         </div>
@@ -105,40 +108,60 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                     Deadline
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    12/31/2024
+                                    {data?.application_deadline}
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     <div className="mb-6">
-                        <h3 className="font-semibold text-gray-900 mb-3">
-                            Job Description
-                        </h3>
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                            We are looking for an experienced Senior Software
-                            Engineer to join our growing IT team.
-                        </p>
-                    </div>
+                        <div className="mt-4 space-y-6 text-gray-800">
+                            {data?.job_requisition
+                                ?.justification_for_position && (
+                                <div>
+                                    <h3 className="font-semibold text-lg mb-2">
+                                        Justification for Position
+                                    </h3>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: data?.job_requisition
+                                                ?.justification_for_position,
+                                        }}
+                                    />
+                                </div>
+                            )}
 
-                    <div className="mb-6">
-                        <h3 className="font-semibold text-gray-900 mb-3">
-                            Requirements
-                        </h3>
-                        <ul className="space-y-2">
-                            <li className="flex items-start gap-2 text-sm text-gray-600">
-                                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                                5+ years experience
-                            </li>
-                            <li className="flex items-start gap-2 text-sm text-gray-600">
-                                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                                Proficiency in React and Node.js
-                            </li>
-                            <li className="flex items-start gap-2 text-sm text-gray-600">
-                                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5" />
-                                Strong problem-solving skills
-                            </li>
-                        </ul>
+                            {data?.job_requisition.qualifications && (
+                                <div>
+                                    <h3 className="font-semibold text-lg mb-2">
+                                        Qualifications
+                                    </h3>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: data?.job_requisition
+                                                ?.qualifications,
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            {data?.job_requisition?.responsibilities && (
+                                <div>
+                                    <h3 className="font-semibold text-lg mb-2">
+                                        Responsibilities
+                                    </h3>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: data?.job_requisition
+                                                .responsibilities,
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
@@ -149,7 +172,9 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                     Experience
                                 </h4>
                             </div>
-                            <p className="text-sm text-gray-600">5+ years</p>
+                            <p className="text-sm text-gray-600">
+                                {data?.experience_required}
+                            </p>
                         </div>
 
                         <div className="bg-purple-50 rounded-lg p-4">
@@ -160,7 +185,7 @@ export default function ViewJobPostingDetailsSection({ data }) {
                                 </h4>
                             </div>
                             <p className="text-sm text-gray-600">
-                                Bachelor's degree in Computer Science
+                                {data?.education_required}
                             </p>
                         </div>
                     </div>

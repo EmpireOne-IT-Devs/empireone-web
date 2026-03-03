@@ -7,9 +7,9 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { Textarea } from "@headlessui/react";
 import { useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
-import { create_job_posting_service_thunk } from "@/app/redux/job-posting-slice";
 import { setAlert } from "@/app/redux/app-slice";
 import Radio from "@/app/_components/radio";
+import { create_job_posting_service } from "@/app/services/job-posting-service";
 
 export default function CreateJobSection() {
     const [open, setOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function CreateJobSection() {
 
     async function onSubmit(data) {
         try {
-            await dispatch(create_job_posting_service_thunk(data)).unwrap();
+            await create_job_posting_service(data);
 
             dispatch(
                 setAlert({

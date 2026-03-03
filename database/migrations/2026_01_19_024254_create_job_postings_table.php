@@ -21,7 +21,11 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
-            $table->string('status');
+            $table->enum('status', [
+                'Active',
+                'Closed',
+                'Draft',
+            ])->default('Active');
             $table->date('application_deadline')->nullable();
             $table->string('experience_required')->nullable();
             $table->string('education_required')->nullable();

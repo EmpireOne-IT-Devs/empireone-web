@@ -13,7 +13,7 @@ class JobPostingController extends Controller
 
     public function index()
     {
-        $jobPostings = JobPosting::orderBy('created_at', 'desc')->with(['job_requisition'])->get();
+        $jobPostings = JobPosting::where('status', 'Active')->orderBy('created_at', 'desc')->with(['job_requisition'])->get();
         return response()->json($jobPostings);
     }
 

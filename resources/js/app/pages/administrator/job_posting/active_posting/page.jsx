@@ -1,18 +1,17 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import Layout from "../../layout";
 import JobPostingLayout from "../layout";
 import HeaderSection from "./_sections/header-section";
 import SearchSection from "./_sections/search-section";
 import JobPostingCardSection from "./_sections/job-posting-card-section";
-import { get_job_postings_service_thunk } from "@/app/redux/job-posting-slice";
+import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
+import store from "@/app/store/store";
 
 export default function Page() {
-    const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(get_job_postings_service_thunk());
-    }, [dispatch]);
+        store.dispatch(get_job_posting_thunk())
+    }, []);
     return (
         <Layout>
             <JobPostingLayout>
