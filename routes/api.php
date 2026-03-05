@@ -46,11 +46,14 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);
-    Route::resource('job-requisitions', JobRequisitionController::class);
-    Route::resource('job_requisition_logs', JobRequisitionLogController::class);
-    Route::resource('job-postings', JobPostingController::class);
-    Route::resource('job_application', JobApplicationController::class);
     Route::resource('accounts_information', AccountPersonalInformationController::class);
+
+    Route::prefix('job')->group(function () {
+        Route::resource('requisitions', JobRequisitionController::class);
+        Route::resource('requisition_logs', JobRequisitionLogController::class);
+        Route::resource('postings', JobPostingController::class);
+        Route::resource('application', JobApplicationController::class);
+    });
 
     Route::prefix('accounts')->group(function () {
         Route::get('user',  [AccountPersonalInformationController::class, 'accounts_user']);
