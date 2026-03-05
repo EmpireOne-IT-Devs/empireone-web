@@ -3,6 +3,7 @@
 namespace App\Models\Jobs;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class JobPosting extends Model
@@ -19,6 +20,10 @@ class JobPosting extends Model
 
     public function job_requisition(): HasOne
     {
-        return $this->hasOne(JobRequisition::class, 'id', 'job_requisition_id')->with(['location','department','user']);
+        return $this->hasOne(JobRequisition::class, 'id', 'job_requisition_id')->with(['location', 'department', 'user']);
+    }
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class, 'job_posting_id', 'id');
     }
 }

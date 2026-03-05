@@ -34,7 +34,7 @@ class JobApplicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(JobApplication $jobApplication)
+    public function show(Request $request)
     {
         //
     }

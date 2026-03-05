@@ -1,1 +1,0 @@
-import{n as t,o}from"./app-D9o-OMBV.js";async function r(i){return await t.post("/api/job-requisitions",i)}async function e(){return(await t.get("/api/job-requisitions")).data}function u(){return async function(i,n){const s=await e();i(o.actions.setJobRequisitions(s.data))}}export{r as c,u as g};

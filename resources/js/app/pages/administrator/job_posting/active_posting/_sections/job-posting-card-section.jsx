@@ -11,6 +11,7 @@ import {
     TbEye,
     TbPencil,
     TbTrash,
+    TbUsers,
 } from "react-icons/tb";
 import Badge from "@/app/_components/badge";
 import ViewJobPostingDetailsSection from "./view-job-posting-details-section";
@@ -44,7 +45,7 @@ export default function JobPostingCardSection() {
         <>
             <div className="flex flex-col gap-3">
                 {job_postings.map((job) => (
-                    <ViewJobPostingDetailsSection data={job} key={job.id} >
+                    <ViewJobPostingDetailsSection data={job} key={job.id}>
                         <Card className="border rounded-xl p-6">
                             <div className="flex flex-col gap-3">
                                 <div className="flex items-center justify-between">
@@ -87,8 +88,9 @@ export default function JobPostingCardSection() {
                                             : "Salary not specified"}
                                     </div>
                                     <div className="flex items-center gap-2 text-gray-600 font-medium">
-                                        <TbCalendarEvent />{" "}
-                                        {job.applicants || 0} applicants
+                                        <TbUsers />
+                                        {job?.applications?.length ?? 0}{" "}
+                                        applicants
                                     </div>
                                 </div>
 
