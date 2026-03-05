@@ -15,7 +15,7 @@ class AppController extends Controller
         $departments = Department::with(['categories'])->get();
         $locations = Location::get();
         $sites = Site::get();
-        $user = Auth::user();
+        $user = Auth::user()->load(['account_employee']);
         return response()->json([
             'user' => $user,
             'departments' => $departments,

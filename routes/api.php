@@ -50,6 +50,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('job')->group(function () {
         Route::resource('requisitions', JobRequisitionController::class);
+        Route::post('approve_job_requisition',  [JobRequisitionController::class, 'approve_job_requisition']);
         Route::resource('requisition_logs', JobRequisitionLogController::class);
         Route::resource('postings', JobPostingController::class);
         Route::resource('application', JobApplicationController::class);

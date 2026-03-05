@@ -16,8 +16,8 @@ import {
 import { LuUser } from "react-icons/lu";
 import Modal from "@/app/_components/modal";
 import JobRequisitionLogsSection from "./job-requisition-logs-section";
-import DeleteRequisitionSection from "./delete-requisition-section";
 import CreateJobPostingSection from "./create-job-posting-section";
+import DeclinedJobRequisitionSection from "./declined-job-requisition-section";
 
 export default function JobRequisitionBodySection({ job_requisition }) {
     const [open, setOpen] = useState(false);
@@ -31,17 +31,17 @@ export default function JobRequisitionBodySection({ job_requisition }) {
     }, []);
 
     const getStatusVariant = (status) => {
-        switch (status?.toLowerCase()) {
-            case "pending":
+        switch (status) {
+            case "Pending":
                 return "warning";
-            case "approved":
+            case "Approved":
                 return "success";
-            case "rejected":
-                return "destructive";
-            case "draft":
-                return "default";
+            case "Declined":
+                return "danger";
+            case "In Progress":
+                return "info";
             default:
-                return "default";
+                return "info";
         }
     };
 
@@ -80,9 +80,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
     // Status badge color mapping
     const statusColors = {
-        pending: "bg-yellow-200 text-yellow-800",
-        approved: "bg-green-200 text-green-800",
-        rejected: "bg-red-200 text-red-800",
+        Pending: "bg-yellow-200 text-yellow-800",
+        Approved: "bg-green-200 text-green-800",
+        Declined: "bg-red-200 text-red-800",
     };
 
     return (
@@ -103,9 +103,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     showDot={false}
                                     className="rounded-md px-3 py-1 text-xs font-medium"
                                     variant={getStatusVariant(
-                                        job_requisition.status || "pending",
+                                        job_requisition.status ?? "",
                                     )}
-                                    label={job_requisition.status || "Pending"}
+                                    label={job_requisition.status ?? ""}
                                 />
 
                                 <Badge
@@ -443,15 +443,16 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                 </div>
                 <div className="flex w-full items-center justify-between border-t pt-4 gap-3">
                     <div>
-                        {!job_requisition.job_posting && (
-                            <CreateJobPostingSection
-                                initial_data={job_requisition}
-                            />
-                        )}
+                        {job_requisition.status == "Approved" &&
+                            !job_requisition.job_posting && (
+                                <CreateJobPostingSection
+                                    initial_data={job_requisition}
+                                />
+                            )}
                     </div>
                     <div className="flex gap-3">
-                        <DeleteRequisitionSection />
-                        <ApproveJobRequisitionSection />
+                        <DeclinedJobRequisitionSection data={job_requisition} />
+                        <ApproveJobRequisitionSection data={job_requisition} />
                     </div>
                 </div>
             </Modal>

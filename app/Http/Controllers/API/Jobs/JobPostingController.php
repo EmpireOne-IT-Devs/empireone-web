@@ -29,7 +29,6 @@ class JobPostingController extends Controller
             'education_required' => $request->education_required,
             'target_audience' => $request->target_audience,
             'status' => $request->status,
-
         ]);
 
         return response()->json([

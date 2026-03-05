@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Jobs;
 use App\Http\Controllers\Controller;
 use App\Models\Account\AccountEmployee;
 use App\Models\Jobs\JobRequisition;
+use App\Models\Jobs\JobRequisitionLog;
 use App\Models\User;
 use App\Notifications\JobRequisitionNotification;
 use Illuminate\Http\Request;
@@ -14,6 +15,55 @@ use Illuminate\Support\Facades\Notification;
 
 class JobRequisitionController extends Controller
 {
+    // juring approval
+    // create send to site director and the status is pending
+    // pending send to Recruitment Director and the status is In Progress
+    // In Progress send to Recruitment Staff 
+    // The Staff will Create Job Posting
+    public function approve_job_requisition(Request $request)
+    {
+
+        $auth = Auth::user()->load(['account_employee']);
+        $jr = JobRequisition::findOrFail($request->id);
+
+        // Define transition logic: [Current Status => [Next Status, Target Position]]
+        $transitions = [
+            'Pending'     => ['In Progress', 'Recruitment Director'],
+            'In Progress' => ['Approved',    'Recruitment Staff'],
+        ];
+
+        if (isset($transitions[$request->status])) {
+            [$nextStatus, $targetPosition] = $transitions[$request->status];
+            $approver = AccountEmployee::where('site_id', $auth['account_employee']->site_id)
+                ->where('position', $targetPosition)
+                ->whereNotNull('eogs_email')
+                ->first();
+            if ($approver) {
+                $approver->notify(new JobRequisitionNotification($jr));
+            }
+
+            $jr->update(['status' => $nextStatus]);
+
+            JobRequisitionLog::create([
+                'job_requisitions_id' => $request->id,
+                'user_id' => $auth->id,
+                'notes' => "The " . $jr->title . ' position is ' . $nextStatus,
+            ]);
+        } else {
+            $jr->update(['status' => 'Declined']);
+
+            JobRequisitionLog::create([
+                'job_requisitions_id' => $request->id,
+                'user_id' => $auth->id,
+                'notes' => "The " . $jr->title . ' position is Declined',
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Requisition updated successfully',
+            'status'  => 'success',
+        ]);
+    }
     public function index(Request $request)
     {
         $search = $request->query('search');
@@ -52,13 +102,18 @@ class JobRequisitionController extends Controller
     }
     public function store(Request $request)
     {
-        $auth = Auth::user();
+        $auth = Auth::user()->load(['account_employee']);
         $jobRequisition = JobRequisition::create([
             ...$request->all(),
             'user_id' =>  $auth->id,
         ]);
 
-        $approver = AccountEmployee::where('user_id', Auth::id())->first();
+        $approver = AccountEmployee::where([
+            ['user_id', '=',  $auth->id],
+            ['site_id', '=', $auth['account_employee']->site_id],
+            ['position', '=', 'Site Director'],
+        ])->first();
+
         if ($approver && $approver->eogs_email) {
             $approver->notify(new JobRequisitionNotification($jobRequisition));
         }

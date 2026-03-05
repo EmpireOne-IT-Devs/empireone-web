@@ -4,24 +4,24 @@ import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import { approve_job_requisition_service } from "@/app/services/job-requisition-service";
 import store from "@/app/store/store";
 import React, { useState } from "react";
-import { TbCheck } from "react-icons/tb";
+import { TbTrash } from "react-icons/tb";
 import { useDispatch } from "react-redux";
 
-export default function ApproveJobRequisitionSection({ data }) {
+export default function DeclinedJobRequisitionSection({ data }) {
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
-    async function approved_job_requisition(params) {
+    async function declined_job_requisition(params) {
         try {
             setLoading(true);
             await approve_job_requisition_service({
                 ...data,
-                status: "Declined" == data.status ? "Pending" : data.status,
+                status: "Declined",
             });
             await store.dispatch(get_job_requisitions_thunk());
             await dispatch(
                 setAlert({
                     type: "success",
-                    title: "Job Requisition Approved Successfully!",
+                    title: "Job Requisition has been Declined!",
                 }),
             );
             setLoading(false);
@@ -32,11 +32,11 @@ export default function ApproveJobRequisitionSection({ data }) {
     return (
         <div>
             <Button
-                variant="primary"
+                variant="danger"
                 loading={loading}
-                onClick={() => approved_job_requisition()}
+                onClick={() => declined_job_requisition()}
             >
-                <TbCheck className="w-5 h-5 mr-2" /> Approved
+                <TbTrash className="w-5 h-5 mr-2" /> Declined
             </Button>
         </div>
     );
