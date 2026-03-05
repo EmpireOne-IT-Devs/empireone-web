@@ -29,7 +29,8 @@ class AccountPersonalInformationController extends Controller
             'barangay',
             'street',
             'zip_code',
-            'highest_level_of_education'
+            'highest_level_of_education',
+            'contact'
         ]);
         $percent = '0%';
         $info = $auth->personal_information;
@@ -115,6 +116,7 @@ class AccountPersonalInformationController extends Controller
             'nationality'  => 'nullable|string|max:255',
             'birth_place'  => 'nullable|string|max:255',
             'marital_status'  => 'nullable|string|max:255',
+            'contact'  => 'nullable|string|max:255',
         ]);
 
         // 2️⃣ Update or create account information

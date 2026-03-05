@@ -1,1 +1,0 @@
-import{j as t}from"./app-CCj1WI7L.js";import{B as e}from"./button-Bc3gH-1C.js";import{T as r}from"./index-RLMep_CK.js";import"./index-BcOiUv41.js";import"./iconBase-DC1UpT4p.js";function n(){return t.jsx("div",{children:t.jsxs(e,{outlined:!0,variant:"danger",className:"w-full flex justify-start",children:[t.jsx(r,{className:"w-5 h-5 mr-2"})," Delete"]})})}export{n as default};

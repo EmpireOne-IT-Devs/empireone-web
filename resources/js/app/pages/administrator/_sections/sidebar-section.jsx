@@ -27,8 +27,6 @@ import { Clipboard, ClipboardIcon } from "lucide-react";
 import { FaClipboard } from "react-icons/fa6";
 import { FaClipboardCheck } from "react-icons/fa";
 
-
-
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
@@ -36,24 +34,104 @@ export default function SidebarSection() {
     const { desktopCollapsed, sidebarOpen } = useSelector((store) => store.app);
     const dispatch = useDispatch();
     const path = window.location.pathname.split("/")[2];
-        const navigation = [
-            { name: "Dashboard", href: "/administrator/dashboard", icon: FcBullish, current: path == "dashboard" },
-            { name: "Users", href: "/administrator/users", icon: FcConferenceCall, current: path == "users" },
-            { name: "Acivities", href: "/administrator/activities/view", icon: FcSportsMode, current: path == "activities" },
-            { name: "Ticketing", href: "/administrator/ticketing/dashboard", icon: FcCustomerSupport, current: path == "ticketing" },
-            { name: "Job Posting", href: "/administrator/job_posting/dashboard", icon: FcSurvey, current: path == "job_posting" },
-             { name: "Job Requisition", href: "/administrator/job_requisition", icon: FcDocument, current: path == "job_requisition" },
-            { name: "HR Central", href: "/administrator/hr_central/overview", icon: FcPortraitMode, current: path == "hr_central" },
-            { name: "RnR", href: "/administrator/rnr/grand_rewards", icon: FcDiploma1, current: path == "rnr" },
-            { name: "Store Admin", href: "/administrator/store_admin/rewards_item", icon: FcShop, current: path == "store_admin" },
-            { name: "Decorations", href: "/administrator/decoration/avatar_decorations", icon: FcCloseUpMode, current: path == "decoration" },
-            { name: "Time Keeping", href: "/administrator/time_keeping/dashboard", icon: FcOvertime, current: path == "time_keeping" },
-            { name: "Finance", href: "/administrator/finance/dashboard", icon: FcSalesPerformance, current: path == "finance" },
-            { name: "Reports", href: "/administrator/reports", icon: FcBarChart, current: path == "reports" },
-            { name: "Analytics", href: "/administrator/analytics", icon: FcViewDetails, current: path == "analytics" },
-            { name: "Messages", href: "/administrator/messages", icon: FcVoicePresentation, current: path == "messages" },
-            { name: "Settings", href: "/administrator/settings", icon: FcSettings, current: path == "settings" },
-        ];
+    const navigation = [
+        {
+            name: "Dashboard",
+            href: "/administrator/dashboard",
+            icon: FcBullish,
+            current: path == "dashboard",
+        },
+        {
+            name: "Users",
+            href: "/administrator/users",
+            icon: FcConferenceCall,
+            current: path == "users",
+        },
+        {
+            name: "Acivities",
+            href: "/administrator/activities/view",
+            icon: FcSportsMode,
+            current: path == "activities",
+        },
+        {
+            name: "Ticketing",
+            href: "/administrator/ticketing/dashboard",
+            icon: FcCustomerSupport,
+            current: path == "ticketing",
+        },
+        {
+            name: "Job Posting",
+            href: "/administrator/job_posting/active_posting",
+            icon: FcSurvey,
+            current: path == "job_posting",
+        },
+        {
+            name: "Job Requisition",
+            href: "/administrator/job_requisition",
+            icon: FcDocument,
+            current: path == "job_requisition",
+        },
+        {
+            name: "HR Central",
+            href: "/administrator/hr_central/overview",
+            icon: FcPortraitMode,
+            current: path == "hr_central",
+        },
+        {
+            name: "RnR",
+            href: "/administrator/rnr/grand_rewards",
+            icon: FcDiploma1,
+            current: path == "rnr",
+        },
+        {
+            name: "Store Admin",
+            href: "/administrator/store_admin/rewards_item",
+            icon: FcShop,
+            current: path == "store_admin",
+        },
+        {
+            name: "Decorations",
+            href: "/administrator/decoration/avatar_decorations",
+            icon: FcCloseUpMode,
+            current: path == "decoration",
+        },
+        {
+            name: "Time Keeping",
+            href: "/administrator/time_keeping/dashboard",
+            icon: FcOvertime,
+            current: path == "time_keeping",
+        },
+        {
+            name: "Finance",
+            href: "/administrator/finance/dashboard",
+            icon: FcSalesPerformance,
+            current: path == "finance",
+        },
+        {
+            name: "Reports",
+            href: "/administrator/reports",
+            icon: FcBarChart,
+            current: path == "reports",
+        },
+        {
+            name: "Analytics",
+            href: "/administrator/analytics",
+            icon: FcViewDetails,
+            current: path == "analytics",
+        },
+        {
+            name: "Messages",
+            href: "/administrator/messages",
+            icon: FcVoicePresentation,
+            current: path == "messages",
+        },
+        {
+            name: "Settings",
+            href: "/administrator/settings",
+            icon: FcSettings,
+            current: path == "settings",
+        },
+    ];
 
     const sidebarWidth = desktopCollapsed
         ? "w-20 flex items-center justify-center"
@@ -127,7 +205,7 @@ export default function SidebarSection() {
                                                             item.current
                                                                 ? "bg-gray-50 text-indigo-600 dark:bg-white/5 dark:text-white"
                                                                 : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white",
-                                                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold"
+                                                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold",
                                                         )}
                                                     >
                                                         <item.icon
@@ -136,7 +214,7 @@ export default function SidebarSection() {
                                                                 item.current
                                                                     ? "text-indigo-600 dark:text-white"
                                                                     : "text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white",
-                                                                "w-6 h-6 shrink-0"
+                                                                "w-6 h-6 shrink-0",
                                                             )}
                                                         />
                                                         {item.name}
@@ -177,7 +255,7 @@ export default function SidebarSection() {
                     <nav className="flex-1 overflow-y-auto p-2">
                         <ul className="space-y-1">
                             {navigation.map((item, i) => (
-                                <li key={i}  >
+                                <li key={i}>
                                     <Tooltip
                                         position="right"
                                         title={item.name}
@@ -190,7 +268,7 @@ export default function SidebarSection() {
                                                 item.current
                                                     ? "bg-blue-700 text-white dark:bg-white/5 dark:text-white"
                                                     : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white",
-                                                "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold"
+                                                "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                             )}
                                         >
                                             <div className="flex gap-3 items-start justify-start w-full">

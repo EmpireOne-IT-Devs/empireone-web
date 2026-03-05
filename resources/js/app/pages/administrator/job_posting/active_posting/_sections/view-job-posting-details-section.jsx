@@ -13,6 +13,7 @@ import {
 import { LuGraduationCap, LuBriefcase } from "react-icons/lu";
 import Badge from "@/app/_components/badge";
 import moment from "moment";
+import { router } from "@inertiajs/react";
 
 export default function ViewJobPostingDetailsSection({ data, children }) {
     const [open, setOpen] = useState(false);
@@ -35,7 +36,9 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                             variant="success"
                             label="active"
                         />
-                        <span className="text-gray-700">{data?.applications?.length??0} applicants</span>
+                        <span className="text-gray-700">
+                            {data?.applications?.length ?? 0} applicants
+                        </span>
                     </div>
 
                     <div className="  grid grid-cols-2 gap-6 mb-8 bg-gray-100 p-4 rounded-lg">
@@ -204,6 +207,11 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                             variant="primary"
                             type="button"
                             className="flex-1"
+                            onClick={() =>
+                                router.visit(
+                                    `/administrator/job_posting/active_posting/${data.id}`,
+                                )
+                            }
                         >
                             View Applicants
                         </Button>

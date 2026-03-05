@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API\Jobs;
+
 use App\Http\Controllers\Controller;
 use App\Models\Jobs\JobApplication;
 use Illuminate\Http\Request;
@@ -16,13 +17,13 @@ class JobApplicationController extends Controller
         //
     }
 
-  
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-          JobApplication::create([
+        JobApplication::create([
             'user_id' => Auth::id(),
             'job_posting_id' => $request->job_posting_id,
         ]);
@@ -34,9 +35,27 @@ class JobApplicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function show($id)
     {
-        //
+
+        // 1. Fetch all applications for this specific job once
+        $applications = JobApplication::where('id', $id)->with(['job_posting','applicants'])->first();
+
+        $stats = [
+            'total'    => $applications->count(),
+            'pending'  => $applications->where('status', 'Pending')->count(),
+            'initial'  => $applications->where('status', 'Initial Phase')->count(),
+            'final'    => $applications->where('status', 'Final Phase')->count(),
+            'passed'   => $applications->where('status', 'Passed')->count(),
+            'failed'   => $applications->where('status', 'Failed')->count(),
+        ];
+        $ja =  JobApplication::where('id', $id)->with(['applicants', 'job_posting'])->get();
+
+        return response()->json([
+            'data' => $ja,
+            'job_application' => $applications,
+            'stats'  => $stats,
+        ], 200);
     }
 
     /**

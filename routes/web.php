@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -16,11 +17,11 @@ function route_page()
 }
 
 Route::get('/', function () {
-    return route_page(); 
+    return route_page();
 })->name('login');
 
 Route::get('/dashboard', function () {
-    return route_page(); 
+    return route_page();
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -78,6 +79,9 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         });
         Route::get('/active_posting', function () {
             return Inertia::render('administrator/job_posting/active_posting/page');
+        });
+        Route::get('/active_posting/{id}', function () {
+            return Inertia::render('administrator/job_posting/active_posting/id/page');
         });
         Route::get('/applicants', function () {
             return Inertia::render('administrator/job_posting/applicants/page');

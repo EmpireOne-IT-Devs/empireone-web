@@ -22,6 +22,7 @@ class AccountPersonalInformation extends Model
         'eogs_email',
         'employee_id',
         'position',
+        'contact',
         'source', // required
 
         // personal information

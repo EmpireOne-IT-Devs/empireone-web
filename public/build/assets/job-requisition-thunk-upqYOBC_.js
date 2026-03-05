@@ -1,0 +1,1 @@
+import{b as o,l as s}from"./app-DrPwzgMD.js";async function r(t){return await o.post("/api/job/requisitions",t)}async function a(){return(await o.get(`/api/job/requisitions${window.location.search}`)).data}function c(){return async function(t,e){const i=await a();t(s.actions.setJobRequisitions(i.data)),t(s.actions.setStats(i.stats))}}export{r as c,c as g};

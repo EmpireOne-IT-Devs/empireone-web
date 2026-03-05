@@ -2,6 +2,8 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account\AccountPersonalInformation;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -25,5 +27,13 @@ class JobPosting extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(JobApplication::class, 'job_posting_id', 'id');
+    }
+     public function applicant(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+     public function personal_information(): HasOne
+    {
+        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id');
     }
 }

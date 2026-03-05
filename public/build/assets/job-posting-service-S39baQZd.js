@@ -1,0 +1,1 @@
+import{b as s}from"./app-DrPwzgMD.js";async function i(t){return await s.post("/api/job/postings",t)}async function n(){return await s.get("/api/job/postings")}async function r(t){try{return s.delete(`/api/job/postings/${t}`)}catch{}}export{i as c,r as d,n as g};
