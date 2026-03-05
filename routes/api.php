@@ -53,6 +53,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('requisition_logs', JobRequisitionLogController::class);
         Route::resource('postings', JobPostingController::class);
         Route::resource('application', JobApplicationController::class);
+        Route::get('get_applications_by_user',  [JobApplicationController::class, 'get_applications_by_user']);
     });
 
     Route::prefix('accounts')->group(function () {

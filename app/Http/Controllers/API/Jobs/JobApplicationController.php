@@ -9,9 +9,16 @@ use Illuminate\Support\Facades\Auth;
 
 class JobApplicationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    public function get_applications_by_user()
+    {
+
+        $ja = JobApplication::where('user_id', Auth::id())->with(['job_posting','applicant'])->get();
+        return response()->json([
+            'data' => $ja,
+            'status' => 'success',
+        ], 200);
+    }
     public function index()
     {
         //
@@ -39,7 +46,7 @@ class JobApplicationController extends Controller
     {
 
         // 1. Fetch all applications for this specific job once
-        $applications = JobApplication::where('id', $id)->with(['job_posting','applicants'])->first();
+        $applications = JobApplication::where('id', $id)->with(['job_posting', 'applicants'])->first();
 
         $stats = [
             'total'    => $applications->count(),
