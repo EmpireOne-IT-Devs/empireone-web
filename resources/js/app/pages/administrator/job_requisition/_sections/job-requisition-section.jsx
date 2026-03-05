@@ -450,10 +450,16 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                 />
                             )}
                     </div>
-                    <div className="flex gap-3">
-                        <DeclinedJobRequisitionSection data={job_requisition} />
-                        <ApproveJobRequisitionSection data={job_requisition} />
-                    </div>
+                    {!job_requisition.job_posting && (
+                        <div className="flex gap-3">
+                            <DeclinedJobRequisitionSection
+                                data={job_requisition}
+                            />
+                            <ApproveJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        </div>
+                    )}
                 </div>
             </Modal>
         </>
