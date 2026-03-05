@@ -4,6 +4,7 @@ use App\Http\Controllers\API\Account\AccountDocumentController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
+use App\Http\Controllers\API\Jobs\JobApplicationController;
 use App\Http\Controllers\API\Jobs\JobPostingController;
 use App\Http\Controllers\API\Jobs\JobRequisitionController;
 use App\Http\Controllers\API\Jobs\JobRequisitionLogController;
@@ -41,13 +42,14 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 
 
-Route::prefix('')->middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);
     Route::resource('job-requisitions', JobRequisitionController::class);
     Route::resource('job_requisition_logs', JobRequisitionLogController::class);
     Route::resource('job-postings', JobPostingController::class);
+    Route::resource('job_application', JobApplicationController::class);
     Route::resource('accounts_information', AccountPersonalInformationController::class);
 
     Route::prefix('accounts')->group(function () {

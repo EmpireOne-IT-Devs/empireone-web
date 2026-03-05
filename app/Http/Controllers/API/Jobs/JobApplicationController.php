@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\API\Jobs;
+use App\Http\Controllers\Controller;
 use App\Models\Jobs\JobApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobApplicationController extends Controller
 {
@@ -15,20 +16,19 @@ class JobApplicationController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+  
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+          JobApplication::create([
+            'user_id' => Auth::id(),
+            'job_posting_id' => $request->job_posting_id,
+        ]);
+        return response()->json([
+            'status' => 'success',
+        ]);
     }
 
     /**
