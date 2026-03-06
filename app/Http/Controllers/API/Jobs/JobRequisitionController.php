@@ -93,11 +93,17 @@ class JobRequisitionController extends Controller
             })
             ->orderBy('id', 'desc')
             ->get();
+            
+        $search_job_requisition = JobRequisition::where([
+            ['type', '=', 'New Position'],
+            ['status', '=', 'Approved'],
+        ])->get();
 
         return response()->json([
             'status' => 'success',
             'stats'  => $stats,
-            'data'   => $jobRequisitions
+            'data'   => $jobRequisitions,
+            'search_job_requisition' => $search_job_requisition
         ]);
     }
     public function store(Request $request)

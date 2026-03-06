@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import Input from "@/app/_components/input";
@@ -16,8 +16,12 @@ import { peso_format } from "@/app/lib/peso-format";
 
 export default function CreateJobRequisition() {
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState(0);
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
+    const { search_job_requisition } = useSelector(
+        (state) => state.job_requisitions,
+    );
 
     const [form, setForm] = useState({
         justification_for_position: "",
@@ -25,29 +29,13 @@ export default function CreateJobRequisition() {
         responsibilities: "",
     });
 
-    // Static interviewer data
-    const FINAL_INTERVIEWERS = [
-        { label: "John Doe (john.doe@example.com)", value: "1" },
-        { label: "Jane Smith (jane.smith@example.com)", value: "2" },
-        { label: "Michael Johnson (michael.j@example.com)", value: "3" },
-        { label: "Sarah Williams (sarah.w@example.com)", value: "4" },
-        { label: "Robert Brown (robert.b@example.com)", value: "5" },
-    ];
-
-    const SUB_INTERVIEWERS = [
-        { label: "Emily Davis (emily.d@example.com)", value: "6" },
-        { label: "David Wilson (david.w@example.com)", value: "7" },
-        { label: "Lisa Anderson (lisa.a@example.com)", value: "8" },
-        { label: "James Taylor (james.t@example.com)", value: "9" },
-        { label: "Maria Garcia (maria.g@example.com)", value: "10" },
-    ];
-
     const {
         register,
         handleSubmit,
         reset,
         control,
         watch,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
@@ -69,13 +57,67 @@ export default function CreateJobRequisition() {
     });
 
     const positionType = watch("type");
+    const selectedPosition = search_job_requisition?.find(
+        (res) => res.id === search,
+    );
+    console.log("selectedPosition", selectedPosition);
+
+    useEffect(() => {
+        if (positionType === "Existing Position") {
+            setValue("title", selectedPosition?.title || "");
+            setValue("department_id", selectedPosition?.department_id || "");
+            setValue("location_id", selectedPosition?.location_id || "");
+            setValue(
+                "employment_type",
+                selectedPosition?.employment_type || "",
+            );
+            setValue("priority", selectedPosition?.priority || "");
+            setValue(
+                "number_of_positions",
+                selectedPosition?.number_of_positions || "",
+            );
+            setValue(
+                "salary_range_from",
+                selectedPosition?.salary_range.split("- ")[0],
+            );
+            setValue(
+                "salary_range_to",
+                selectedPosition?.salary_range.split("- ")[1],
+            );
+
+            setValue("existing_position_id", selectedPosition?.id);
+
+            setForm({
+                justification_for_position:
+                    selectedPosition?.justification_for_position || "",
+                qualifications: selectedPosition?.qualifications || "",
+                responsibilities: selectedPosition?.responsibilities || "",
+            });
+        } else if (positionType === "New Position") {
+            setValue("title", "");
+            setValue("department_id", "");
+            setValue("location_id", "");
+            setValue("employment_type", "");
+            setValue("priority", "");
+            setValue("number_of_positions", "");
+            setValue("salary_range_from", "");
+            setValue("salary_range_to", "");
+            setValue("existing_position_id", "");
+            setForm({
+                justification_for_position: "",
+                qualifications: "",
+                responsibilities: "",
+            });
+            setSearch({});
+        }
+    }, [positionType, selectedPosition]);
 
     async function onSubmit(form_data) {
         try {
             await create_job_requisition_service({
                 ...form,
                 ...form_data,
-                salary_range: `₱${peso_format(form_data.salary_range_from)} ${form_data.salary_range_to ?` - ₱${peso_format(form_data.salary_range_to)}` : ""}`,
+                salary_range: `₱${peso_format(form_data.salary_range_from)} ${form_data.salary_range_to ? ` - ₱${peso_format(form_data.salary_range_to)}` : ""}`,
             });
             await store.dispatch(get_job_requisitions_thunk());
             dispatch(
@@ -204,12 +246,15 @@ export default function CreateJobRequisition() {
                                                     {...field}
                                                     label="Select Existing Position"
                                                     options={
-                                                        data?.positions?.map(
+                                                        search_job_requisition?.map(
                                                             (res) => ({
                                                                 label: res.title,
                                                                 value: res.id,
                                                             }),
                                                         ) || []
+                                                    }
+                                                    onChange={(e) =>
+                                                        setSearch(e)
                                                     }
                                                     error={
                                                         errors
@@ -353,19 +398,19 @@ export default function CreateJobRequisition() {
                                                 label="Priority"
                                                 options={[
                                                     {
-                                                        value: "low",
+                                                        value: "Low",
                                                         label: "Low",
                                                     },
                                                     {
-                                                        value: "medium",
+                                                        value: "Medium",
                                                         label: "Medium",
                                                     },
                                                     {
-                                                        value: "high",
+                                                        value: "High",
                                                         label: "High",
                                                     },
                                                     {
-                                                        value: "urgent",
+                                                        value: "Urgent",
                                                         label: "Urgent",
                                                     },
                                                 ]}
@@ -481,6 +526,7 @@ export default function CreateJobRequisition() {
                         <div className="px-3">
                             <Wysiwyg
                                 label="Justification For Position"
+                                value={form.justification_for_position}
                                 onChange={(e) =>
                                     setForm({
                                         ...form,
@@ -495,6 +541,7 @@ export default function CreateJobRequisition() {
                             />
                             <Wysiwyg
                                 label="Position Requirements"
+                                value={form.qualifications}
                                 onChange={(e) =>
                                     setForm({
                                         ...form,
@@ -509,6 +556,7 @@ export default function CreateJobRequisition() {
                             />
                             <Wysiwyg
                                 label="Responsibility"
+                                value={form.responsibilities}
                                 onChange={(e) =>
                                     setForm({
                                         ...form,
