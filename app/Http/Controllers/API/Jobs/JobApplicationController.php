@@ -13,9 +13,18 @@ class JobApplicationController extends Controller
     public function get_applications_by_user()
     {
 
-        $ja = JobApplication::where('user_id', Auth::id())->with(['job_posting','applicant'])->get();
+        $ja = JobApplication::where('user_id', Auth::id())->with(['job_posting', 'applicant'])->get();
         return response()->json([
             'data' => $ja,
+            'status' => 'success',
+        ], 200);
+    }
+
+    public function applicants()
+    {
+        $applicants = JobApplication::with(['job_posting', 'applicant'])->paginate();
+        return response()->json([
+            'data' => $applicants,
             'status' => 'success',
         ], 200);
     }

@@ -26,6 +26,8 @@ return new class extends Migration
                 'Initial Phase',
                 'Final Phase',
                 'Passed',
+                'Hired',
+                'Pooling',
                 'Failed',
             ])->default('Pending');
             $table->timestamps();

@@ -9,7 +9,7 @@ import { FaDownload } from "react-icons/fa6";
 import { CalendarIcon } from "@heroicons/react/20/solid";
 import { TiMortarBoard } from "react-icons/ti";
 
-export default function ViewApplicantSection() {
+export default function ViewApplicantSection({data}) {
     const [open, setOpen] = useState(false);
 
     const applicant = {
