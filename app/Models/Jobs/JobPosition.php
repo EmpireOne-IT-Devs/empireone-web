@@ -3,13 +3,17 @@
 namespace App\Models\Jobs;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class JobPosition extends Model
 {
-  protected $fillable = [
+    protected $fillable = [
         'title',
         'department_id',
-        'description',
-        'is_active'
     ];
+
+    public function job_requisition(): HasOne
+    {
+        return $this->hasOne(JobRequisition::class, 'title', 'title');
+    }
 }

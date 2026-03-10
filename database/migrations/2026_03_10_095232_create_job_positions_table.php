@@ -18,7 +18,6 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('departments')
                 ->nullOnDelete();
-            $table->text('description')->nullable();
             $table->enum('status', [
                 'Active',
                 'InActive',

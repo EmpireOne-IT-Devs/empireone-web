@@ -9,7 +9,6 @@ export function get_job_requisitions_thunk() {
         const result = await get_job_requisitions_service();
         dispatch(jobRequisitionSlice.actions.setJobRequisitions(result.data));
         dispatch(jobRequisitionSlice.actions.setStats(result.stats));
-        dispatch(jobRequisitionSlice.actions.setSearchJobRequisition(result.search_job_requisition));
         
     };
 }

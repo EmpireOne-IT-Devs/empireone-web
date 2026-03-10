@@ -11,28 +11,22 @@ const Select = forwardRef(
             iconLeft,
             iconRight,
             disabled = false,
-            required = false,
-            readOnly = false,
             className = "",
-            value, // This is the value from React Hook Form
-            onChange, // This is the change handler from React Hook Form
+            value, // from React Hook Form
+            onChange, // from React Hook Form
             ...props
         },
         ref,
     ) => {
-        // 1. Initialize search with the label matching the current value
         const [search, setSearch] = useState("");
         const [isOpen, setIsOpen] = useState(false);
         const containerRef = useRef();
 
-        // Sync search text when the external 'value' (from RHF) changes
+        // Sync search text with value
         useEffect(() => {
             const selectedOption = options.find((o) => o.value === value);
-            if (selectedOption) {
-                setSearch(selectedOption.label);
-            } else if (!value) {
-                setSearch("");
-            }
+            if (selectedOption) setSearch(selectedOption.label);
+            else setSearch("");
         }, [value, options]);
 
         const handleSelect = (option) => {
@@ -43,10 +37,10 @@ const Select = forwardRef(
         };
 
         const handleInputClick = () => {
-            setIsOpen(!isOpen);
+            if (!disabled) setIsOpen(true);
         };
 
-        // Close dropdown when clicking outside
+        // Close dropdown on outside click
         useEffect(() => {
             const handleClickOutside = (e) => {
                 if (
@@ -59,7 +53,12 @@ const Select = forwardRef(
             document.addEventListener("mousedown", handleClickOutside);
             return () =>
                 document.removeEventListener("mousedown", handleClickOutside);
-        }, [value, options]);
+        }, []);
+
+        // Filter options
+        const filteredOptions = options.filter((opt) =>
+            opt.label.toLowerCase().includes(search.toLowerCase()),
+        );
 
         return (
             <div className="w-full" ref={containerRef}>
@@ -71,34 +70,34 @@ const Select = forwardRef(
                         </div>
                     )}
 
-                    {/* Select Input */}
+                    {/* Input */}
                     <input
+                    type="search"
                         {...props}
                         autoComplete="off"
                         ref={ref}
                         id={name}
                         name={name}
                         disabled={disabled}
-                        placeholder=""
-                        readOnly={true} // Make it readonly so it behaves like a select
                         value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setIsOpen(true); // open dropdown while typing
+                        }}
                         onClick={handleInputClick}
-                        className={`
-              w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black cursor-pointer
+                        placeholder=""
+                        className={`w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black
               focus:outline-none focus:ring-2 focus:ring-blue-500
               ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : "pr-8"}
               ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
-              ${className}
-            `}
+              ${className}`}
                     />
 
                     {/* Floating Label */}
                     <label
                         htmlFor={name}
-                        className={`
-              absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out
-              ${search || isOpen ? '-top-2 text-xs text-blue-600' : 'top-2.5 text-gray-500'}
-            `}
+                        className={`absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out
+              ${search || isOpen ? "-top-2 text-xs text-blue-600" : "top-2.5 text-gray-500"}`}
                     >
                         {label}
                     </label>
@@ -106,8 +105,18 @@ const Select = forwardRef(
                     {/* Dropdown Arrow */}
                     {!iconRight && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-                            <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            <svg
+                                className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
+                                />
                             </svg>
                         </div>
                     )}
@@ -121,17 +130,18 @@ const Select = forwardRef(
 
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
-                        <ul className="absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg">
-                            {options.length > 0 ? (
-                                options.map((option, index) => (
+                        <ul className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg">
+                            {filteredOptions.length > 0 ? (
+                                filteredOptions.map((option, idx) => (
                                     <li
-                                        key={index}
+                                        key={idx}
                                         className={`cursor-pointer px-4 py-2 hover:bg-blue-100 text-black text-sm ${
-                                            value === option.value ? 'bg-blue-50 text-blue-600' : ''
+                                            value === option.value
+                                                ? "bg-blue-50 text-blue-600"
+                                                : ""
                                         }`}
                                         onMouseDown={(e) => {
-                                            // Use onMouseDown to prevent the input blur from closing list before click
-                                            e.preventDefault();
+                                            e.preventDefault(); // prevent blur
                                             handleSelect(option);
                                         }}
                                     >
@@ -147,7 +157,7 @@ const Select = forwardRef(
                     )}
                 </div>
 
-                {/* Error Message */}
+                {/* Error */}
                 {error && (
                     <p className="mt-1 text-xs text-red-500">
                         {error.message ?? error}
