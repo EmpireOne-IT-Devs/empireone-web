@@ -166,10 +166,10 @@ export default function CreateJobRequisition() {
                     className="flex flex-col max-h-[80vh]"
                 >
                     <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-                        Position Type
+                        
                         <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-300">
                             <label className="text-sm font-medium text-gray-700">
-                                <span className="text-red-500">*</span>
+                                <span className="text-black">Position Type *</span>
                             </label>
                             <div className="space-y-3">
                                 <Controller

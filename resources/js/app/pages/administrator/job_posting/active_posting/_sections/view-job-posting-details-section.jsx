@@ -135,7 +135,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 </div>
                             )}
 
-                            {data?.job_requisition.qualifications && (
+                            {data?.job_requisition?.qualifications && (
                                 <div>
                                     <h3 className="font-semibold text-lg mb-2">
                                         Qualifications
@@ -143,8 +143,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     <div
                                         className="prose max-w-none"
                                         dangerouslySetInnerHTML={{
-                                            __html: data?.job_requisition
-                                                ?.qualifications,
+                                            __html: data?.job_requisition?.qualifications,
                                         }}
                                     />
                                 </div>
