@@ -19,7 +19,7 @@ export default function CreateJobRequisition() {
     const [search, setSearch] = useState(0);
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
-   
+
     const [form, setForm] = useState({
         justification_for_position: "",
         qualifications: "",
@@ -252,10 +252,7 @@ export default function CreateJobRequisition() {
                                             control={control}
                                             rules={{
                                                 required:
-                                                    positionType ===
-                                                    "Existing Position"
-                                                        ? "Please select an existing position"
-                                                        : false,
+                                                    "Please select an existing position",
                                             }}
                                             render={({ field }) => (
                                                 <Select
@@ -281,6 +278,11 @@ export default function CreateJobRequisition() {
                                             )}
                                         />
                                     </div>
+                                )}
+                                {errors.existing_position_id && (
+                                    <p className="text-red-500 text-sm">
+                                        {errors.existing_position_id.message}
+                                    </p>
                                 )}
                             </div>
                         </div>
