@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Account\AccountEmployee;
 use App\Models\User;
-use App\Models\Department;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Account\AccountPersonalInformation;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
@@ -14,74 +15,102 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $itDepartment = Department::where('name', 'IT Department')->first();
-        $hrDepartment = Department::where('name', 'HR Department')->first();
-        $financeDepartment = Department::where('name', 'Finance Department')->first();
+        // $firstNames = ['Marlou', 'John', 'Jane', 'Mark', 'Emily', 'Paul', 'Anna'];
+        // $middleNames = ['A.', 'B.', 'C.', 'D.', 'E.', 'F.', 'G.'];
+        // $lastNames = ['Dev', 'Doe', 'Smith', 'Johnson', 'Reyes', 'Santos', 'Lopez'];
 
-        if ($itDepartment) {
-            User::create([
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'email' => 'john.doe@company.com',
-                'password' => bcrypt('password123'),
-                'department_id' => $itDepartment->id,
-                'role' => User::ROLE_EMPLOYEE,
-                'site' => 'Manila HQ'
+        // Specific users (like admin)
+        $specificUsers = [
+            [
+                'name' => 'Marlou Dev',
+                'email' => 'webdev@empireonegroup.com',
+                'role' => 1,
+                'first_name' => 'Marlou',
+                'middle_name' => 'Flores',
+                'last_name' => 'Pepito',
+                'position' => 'Web Developer',
+                'eogs_email' => "webdev@empireonegroup.com"
+            ],
+            [
+                'name' => 'Jona',
+                'email' => 'sample@empireonegroup.com',
+                'role' => 1,
+                'first_name' => 'Jona',
+                'middle_name' => '',
+                'last_name' => 'Serrano',
+                'position' => 'HR Staff',
+                'eogs_email' => "hiring@empireonegroup.com"
+            ],
+        ];
+
+        foreach ($specificUsers as $userData) {
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'password' => Hash::make('admin'),
+                'role' => $userData['role'],
+                'email_verified_at' => now(),
             ]);
 
-            User::create([
-                'first_name' => 'Sarah',
-                'last_name' => 'Chen',
-                'email' => 'sarah.chen@company.com',
-                'password' => bcrypt('password123'),
-                'department_id' => $itDepartment->id,
-                'role' => User::ROLE_MANAGER,
-                'site' => 'Manila HQ'
+            AccountPersonalInformation::create([
+                'user_id' => $user->id,
+                'contact' => (string)rand(10000000000, 99999999999),
+                'first_name' => $userData['first_name'],
+                'middle_name' => $userData['middle_name'],
+                'last_name' => $userData['last_name'],
+                'gender' => 'Not specified',
+                'date_of_birth' => now()->subYears(rand(20, 35))->format('Y-m-d'),
+                'region' => '',
+                'province' => '',
+                'city' => '',
+                'barangay' => '',
+                'street' => '',
+                'zip_code' => '',
+                'highest_level_of_education' => '',
             ]);
 
-            User::create([
-                'first_name' => 'Alex',
-                'last_name' => 'Johnson',
-                'email' => 'alex.johnson@company.com',
-                'password' => bcrypt('password123'),
-                'department_id' => $itDepartment->id,
-                'role' => User::ROLE_EMPLOYEE,
-                'site' => 'Cebu Branch'
-            ]);
-        }
-
-        if ($hrDepartment) {
-            User::create([
-                'first_name' => 'Mike',
-                'last_name' => 'Wilson',
-                'email' => 'mike.wilson@company.com',
-                'password' => bcrypt('password123'),
-                'department_id' => $hrDepartment->id,
-                'role' => User::ROLE_HR,
-                'site' => 'Manila HQ'
-            ]);
-
-            User::create([
-                'first_name' => 'Lisa',
-                'last_name' => 'Brown',
-                'email' => 'lisa.brown@company.com',
-                'password' => bcrypt('password123'),
-                'department_id' => $hrDepartment->id,
-                'role' => User::ROLE_EMPLOYEE,
-                'site' => 'Cebu Branch'
-            ]);
-        }
-
-        if ($financeDepartment) {
-            User::create([
-                'first_name' => 'Robert',
-                'last_name' => 'Martinez',
-                'email' => 'robert.martinez@company.com',
-                'password' => bcrypt('password123'),
-                'department_id' => $financeDepartment->id,
-                'role' => User::ROLE_MANAGER,
-                'site' => 'Manila HQ'
+            AccountEmployee::create([
+                'user_id' => $user->id,
+                'department_id' => 1,
+                'site_id' => 1,
+                'location_id' => 1,
+                'work_type' => 'Regular',
+                'eogs_email' => $userData['eogs_email'],
+                'employee_id' => (string)rand(100000, 9999999),
+                'position' => $userData['position'],
             ]);
         }
+
+        // Generate 5 random users
+        // for ($i = 1; $i <= 5; $i++) {
+        //     $firstName = $firstNames[array_rand($firstNames)];
+        //     $middleName = $middleNames[array_rand($middleNames)];
+        //     $lastName = $lastNames[array_rand($lastNames)];
+
+        //     $user = User::create([
+        //         'name' => "$firstName $lastName",
+        //         'email' => strtolower($firstName) . $i . '@company.com',
+        //         'password' => Hash::make('password'),
+        //         'role' => rand(1, 3),
+        //         'email_verified_at' => now(),
+        //     ]);
+
+        //     AccountPersonalInformation::create([
+        //         'user_id' => $user->id,
+        //         'contact' => (string)rand(10000000000, 99999999999),
+        //         'first_name' => $firstName,
+        //         'middle_name' => $middleName,
+        //         'last_name' => $lastName,
+        //         'gender' => 'Not specified',
+        //         'date_of_birth' => now()->subYears(rand(20, 35))->format('Y-m-d'),
+        //         'region' => '',
+        //         'province' => '',
+        //         'city' => '',
+        //         'barangay' => '',
+        //         'street' => '',
+        //         'zip_code' => '',
+        //         'highest_level_of_education' => '',
+        //     ]);
+        // }
     }
 }
