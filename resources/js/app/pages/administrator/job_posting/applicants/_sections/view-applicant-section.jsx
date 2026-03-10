@@ -104,15 +104,6 @@ export default function ViewApplicantSection({ data, children }) {
                 </div>
 
 
-                <div className="mt-4">
-                    <div className="text-gray-700 font-semibold mb-2">
-                        Cover Letter
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-gray-700">
-                        {data.applicant.cover_letter.name}
-                    </div>
-                </div>
-
                 <div>
                     <div className=" flex flex-col gap-2">
                         <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
