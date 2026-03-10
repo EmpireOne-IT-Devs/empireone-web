@@ -103,21 +103,6 @@ export default function ViewApplicantSection({ data, children }) {
                     </div>
                 </div>
 
-                {/* <div className="mt-4">
-                    <div className="text-gray-700 font-semibold mb-2">
-                        Skills
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                        {applicant.skills.map((skill) => (
-                            <span
-                                key={skill}
-                                className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
-                            >
-                                {skill}
-                            </span>
-                        ))}
-                    </div>
-                </div> */}
 
                 <div className="mt-4">
                     <div className="text-gray-700 font-semibold mb-2">
@@ -144,10 +129,14 @@ export default function ViewApplicantSection({ data, children }) {
                                 </div>
                             </div>
 
-                            <Button variant="secondary" outlined>
+                            <a
+                                href={data.applicant.cover_letter.url}
+                                target="_blank"
+                                className="p-2 border border-black rounded-md w-2/6 text-center flex items-center justify-center"
+                            >
                                 <FaDownload className="text-sm mr-2" />
                                 Download
-                            </Button>
+                            </a>
                         </div>
 
                         <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
@@ -164,10 +153,14 @@ export default function ViewApplicantSection({ data, children }) {
                                 </div>
                             </div>
 
-                            <Button variant="secondary" outlined>
+                            <a
+                                href={data.applicant.cover_letter.url}
+                                target="_blank"
+                                className="p-2 border border-black rounded-md w-2/6 text-center flex items-center justify-center"
+                            >
                                 <FaDownload className="text-sm mr-2" />
                                 Download
-                            </Button>
+                            </a>
                         </div>
 
                         <div className="flex-1 bg-gray-50 rounded-lg p-4">
