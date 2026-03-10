@@ -30,7 +30,7 @@ export default function ViewApplicantSection({ data, children }) {
                             {data?.applicant?.name}
                         </div>
                         <div className="text-gray-500">
-                            {data.job_posting.job_requisition.title}
+                            {data?.job_posting?.job_requisition?.title}
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@ export default function ViewApplicantSection({ data, children }) {
                     <div className="flex items-center gap-2">
                         <span className="text-gray-600">Current Status:</span>
                         <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                            {data.status}
+                            {data?.status}
                         </span>
                     </div>
                     <div className="justify-end">
@@ -64,14 +64,14 @@ export default function ViewApplicantSection({ data, children }) {
                         <div className="flex items-center gap-2">
                             <FiMail className="w-5 h-5 text-gray-400" />
                             <span className="text-gray-600">
-                                {data.applicant.email}
+                                {data?.applicant?.email}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <PhoneIcon className="w-5 h-5 text-gray-400" />
                             <span className="text-gray-600">
-                                {data.applicant.personal_information.contact}
+                                {data?.applicant?.personal_information?.contact}
                             </span>
                         </div>
                     </div>
@@ -88,7 +88,7 @@ export default function ViewApplicantSection({ data, children }) {
                                 Experience
                             </div>
                             <div className="text-gray-700">
-                                {data.job_posting.experience_required}
+                                {data?.job_posting?.experience_required}
                             </div>
                         </div>
                         <div className="flex-1 bg-purple-50 rounded-lg p-4">
@@ -97,7 +97,7 @@ export default function ViewApplicantSection({ data, children }) {
                                 Education
                             </div>
                             <div className="text-gray-700">
-                                {data.job_posting.education_required}
+                                {data?.job_posting?.education_required}
                             </div>
                         </div>
                     </div>
@@ -112,7 +112,7 @@ export default function ViewApplicantSection({ data, children }) {
 
                                 <div className="flex flex-col">
                                     <span className="text-blue-700 font-medium">
-                                        {data.applicant.cover_letter.name}
+                                        {data?.applicant?.cover_letter?.name}
                                     </span>
                                     <span className="text-gray-600 text-sm">
                                         Cover Letter
@@ -121,7 +121,7 @@ export default function ViewApplicantSection({ data, children }) {
                             </div>
 
                             <a
-                                href={data.applicant.cover_letter.url}
+                                href={data?.applicant?.cover_letter?.url}
                                 target="_blank"
                                 className="p-2 border border-black rounded-md w-2/6 text-center flex items-center justify-center"
                             >
@@ -136,7 +136,7 @@ export default function ViewApplicantSection({ data, children }) {
 
                                 <div className="flex flex-col">
                                     <span className="text-blue-700 font-medium">
-                                        {data.applicant.resume.name}
+                                        {data?.applicant?.resume?.name}
                                     </span>
                                     <span className="text-gray-600 text-sm">
                                         PDF Document
@@ -145,7 +145,7 @@ export default function ViewApplicantSection({ data, children }) {
                             </div>
 
                             <a
-                                href={data.applicant.cover_letter.url}
+                                href={data?.applicant?.cover_letter?.url}
                                 target="_blank"
                                 className="p-2 border border-black rounded-md w-2/6 text-center flex items-center justify-center"
                             >
@@ -157,7 +157,7 @@ export default function ViewApplicantSection({ data, children }) {
                         <div className="flex-1 bg-gray-50 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-gray-700 font-medium mb-1">
                                 <CalendarIcon className="w-5 h-5 mr-2" />
-                                {moment(data.created_at).format("LLL")}
+                                {moment(data?.created_at).format("LLL")}
                             </div>
                         </div>
                         <div className="flex justify-end gap-2 pt-4 px-2 border-t">

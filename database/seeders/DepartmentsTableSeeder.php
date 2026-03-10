@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DepartmentsTableSeeder extends Seeder
@@ -13,10 +12,27 @@ class DepartmentsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $departments = ['IT Department', 'HR Department', 'Finance Department', 'Operations Department', 'Utility Department', 'Compliance Department'];
+        $departments = [
+            'IT Department',
+            'HR Department',
+            'Finance Department',
+            'Operations Department',
+            'Compliance Department',
+            'Jtv Account',
+            'Aifi Account',
+            'Weby Account',
+            'Tog Account',
+            'Gemporia Account',
+            'Simple Tire Account',
+            'Forma Account',
+            'Curtis Account',
+
+        ];
 
         foreach ($departments as $dept) {
-            Department::create(['name' => $dept]);
+            Department::firstOrCreate([
+                'name' => $dept
+            ]);
         }
     }
 }
