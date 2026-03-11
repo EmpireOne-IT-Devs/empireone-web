@@ -13,7 +13,7 @@ export default function SearchSection() {
                 />
             </div>
             <div className="flex gap-2">
-                <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none">
+                <select className="border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none">
                     <option>All Status</option>
                     <option>Interview</option>
                     <option>Hired</option>

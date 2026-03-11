@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 export default function HeaderSection() {
     const { job_applications } = useSelector((store) => store.job_postings);
     return (
-        <div className="flex flex-col p-4 gap-2 my-3 bg-blue-800">
+        <div className="flex flex-col p-4 gap-2 rounded-md my-3 bg-blue-800">
             <div className="text-2xl font-black text-white">
                 Applications Review
             </div>

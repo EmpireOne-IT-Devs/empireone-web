@@ -44,7 +44,6 @@ export default function ViewApplicantSection({ data, children }) {
                     </div>
                     <div className="justify-end">
                         <Select
-                            iconLeft={<TbFilter className="text-xl" />}
                             label="Update Status"
                             options={[
                                 { value: "reviewing", label: "Reviewing" },
@@ -60,19 +59,38 @@ export default function ViewApplicantSection({ data, children }) {
                         Contact Information
                     </div>
 
-                    <div className="flex items-center justify-between bg-gray-50 rounded-lg p-5">
-                        <div className="flex items-center gap-2">
-                            <FiMail className="w-5 h-5 text-gray-400" />
-                            <span className="text-gray-600">
-                                {data?.applicant?.email}
-                            </span>
+                    <div className="flex items-center gap-16 bg-gray-50 rounded-lg p-5">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100">
+                                <FiMail className="w-4 h-4 text-blue-500" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                                    Email
+                                </span>
+                                <span className="text-sm text-gray-700 font-medium">
+                                    {data?.applicant?.email}
+                                </span>
+                            </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <PhoneIcon className="w-5 h-5 text-gray-400" />
-                            <span className="text-gray-600">
-                                {data?.applicant?.personal_information?.contact}
-                            </span>
+                        <div className="w-px h-10 " />
+
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-green-100">
+                                <PhoneIcon className="w-4 h-4 text-green-500" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                                    Phone
+                                </span>
+                                <span className="text-sm text-gray-700 font-medium">
+                                    {
+                                        data?.applicant?.personal_information
+                                            ?.contact
+                                    }
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -103,8 +121,10 @@ export default function ViewApplicantSection({ data, children }) {
                     </div>
                 </div>
 
-
                 <div>
+                    <div className="text-gray-700 font-semibold mb-2">
+                        Skills
+                    </div>
                     <div className=" flex flex-col gap-2">
                         <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
                             <div className="flex items-center gap-3">
@@ -157,6 +177,7 @@ export default function ViewApplicantSection({ data, children }) {
                         <div className="flex-1 bg-gray-50 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-gray-700 font-medium mb-1">
                                 <CalendarIcon className="w-5 h-5 mr-2" />
+                                Applied on :{" "}
                                 {moment(data?.created_at).format("LLL")}
                             </div>
                         </div>
@@ -167,7 +188,7 @@ export default function ViewApplicantSection({ data, children }) {
                                 outlined
                                 onClick={() => setOpen(false)}
                             >
-                                Close
+                                Close 
                             </Button>
 
                             <Button type="button">

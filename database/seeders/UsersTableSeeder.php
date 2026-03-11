@@ -41,6 +41,16 @@ class UsersTableSeeder extends Seeder
                 'position' => 'HR Staff',
                 'eogs_email' => "hiring@empireonegroup.com"
             ],
+               [
+                'name' => 'Wakin',
+                'email' => 'wackyhojilla13@gmail.com',
+                'role' => 1,
+                'first_name' => 'Wakin',
+                'middle_name' => 'D',
+                'last_name' => 'Hojilla',
+                'position' => 'IT',
+                'eogs_email' => "eogs.whojilla@gmail.com"
+            ],
         ];
 
         foreach ($specificUsers as $userData) {
