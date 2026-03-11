@@ -1,1 +1,0 @@
-import{j as o}from"./app-DrPwzgMD.js";import{B as t}from"./button-BuQECoZ-.js";import"./index-KctP2dyP.js";function n(){return o.jsx("div",{children:o.jsx(t,{outlined:!0,children:"Approved"})})}export{n as default};
