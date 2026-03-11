@@ -41,7 +41,7 @@ class UsersTableSeeder extends Seeder
                 'position' => 'HR Staff',
                 'eogs_email' => "hiring@empireonegroup.com"
             ],
-               [
+            [
                 'name' => 'Wakin',
                 'email' => 'wackyhojilla13@gmail.com',
                 'role' => 1,
@@ -50,6 +50,26 @@ class UsersTableSeeder extends Seeder
                 'last_name' => 'Hojilla',
                 'position' => 'IT',
                 'eogs_email' => "eogs.whojilla@gmail.com"
+            ],
+            [
+                'name' => 'Snickers',
+                'email' => 'jaysnickersmirafuentes@gmail.com',
+                'role' => 1,
+                'first_name' => 'Snickers',
+                'middle_name' => '',
+                'last_name' => 'Hojilla',
+                'position' => 'IT',
+                'eogs_email' => "jaysnickersmirafuentes@gmail.com"
+            ],
+            [
+                'name' => 'Snickers Jay Magbanua',
+                'email' => 'snickersjay10@gmail.com',
+                'role' => 2,
+                'first_name' => 'Snickers',
+                'middle_name' => '',
+                'last_name' => 'Magbanua',
+                'position' => 'IT',
+                'eogs_email' => "snickersjay10@gmail.com"
             ],
         ];
 
