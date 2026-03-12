@@ -4,6 +4,7 @@ import { update_job_application_status_service } from "@/app/services/job-applic
 import store from "@/app/store/store";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import Badge from "@/app/_components/badge";
 
 export default function EditStatusSection({ data, table_status }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -15,7 +16,7 @@ export default function EditStatusSection({ data, table_status }) {
         setStatus(data[table_status]);
     }, [data[table_status]]);
 
-    const screening_options = [
+    const screening_status = [
         "New",
         "Conducted",
         "Screened Passed",
@@ -23,21 +24,71 @@ export default function EditStatusSection({ data, table_status }) {
         "No Response",
     ];
 
+    const interview_status = [
+        "Scheduled",
+        "Not Scheduled",
+        "Passed",
+        "Failed",
+        "No Show",
+    ];
+
+    const final_status = [
+        "Passed",
+        "Failed",
+        "Withdrawn",
+        "Pooled",
+        "Accepted Job Offer",
+        "Hired",
+        "Rejected",
+        "No Show",
+    ];
+
+    const getStatusVariant = (status) => {
+        switch (status) {
+            case "New":
+                return "primary";
+            case "Conducted":
+            case "Scheduled":
+            case "Not Scheduled":
+            case "Pooled":
+                return "warning";
+            case "Screened Passed":
+            case "Passed":
+            case "Accepted Job Offer":
+            case "Hired":
+                return "success";
+            case "Screened Failed":
+            case "Failed":
+            case "Rejected":
+                return "danger";
+            case "No Response":
+            case "No Show":
+            case "Withdrawn":
+                return "secondary";
+            default:
+                return "secondary";
+        }
+    };
+
     const handleBlur = () => {
         setIsEditing(false);
-        console.log("Updated status to:", status);
     };
 
     async function submit_changes(e) {
         try {
             setLoading(true);
+            setStatus(e);
+
             await update_job_application_status_service({
                 ...data,
                 [table_status]: e,
             });
+
             await store.dispatch(get_job_application_by_id_thunk());
-            setIsEditing(false);
+
             setLoading(false);
+            setIsEditing(false);
+
             dispatch(
                 setAlert({
                     type: "success",
@@ -60,16 +111,32 @@ export default function EditStatusSection({ data, table_status }) {
                         value={status}
                         onChange={(e) => submit_changes(e.target.value)}
                         onBlur={handleBlur}
-                        className="block w-full px-3 py-2 text-sm text-gray-700 bg-transparent border-2 border-blue-500 rounded-md focus:outline-none appearance-none cursor-pointer"
+                        className="block w-full px-3 py-2 text-sm text-gray-700 bg-white border-2 border-blue-500 rounded-md focus:outline-none appearance-none cursor-pointer"
                     >
-                        {screening_options.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
+                        {table_status == "screening_status" &&
+                            screening_status.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+
+                        {table_status == "interview_status" &&
+                            interview_status.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+
+                        {table_status == "final_status" &&
+                            final_status.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
                     </select>
+
                     {loading && (
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-500">
+                        <div className="absolute right-2 top-2 text-xs text-blue-500">
                             Loading...
                         </div>
                     )}
@@ -77,10 +144,15 @@ export default function EditStatusSection({ data, table_status }) {
             ) : (
                 <div
                     onDoubleClick={() => setIsEditing(true)}
-                    className="text-sm text-gray-800 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded border border-transparent hover:border-gray-200 transition-all"
+                    className="cursor-pointer"
                     title="Double click to edit"
                 >
-                    {status}
+                    <Badge
+                        label={status}
+                        variant={getStatusVariant(status)}
+                        outlined={true}
+                        showDot={true}
+                    />
                 </div>
             )}
         </div>

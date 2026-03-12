@@ -10,7 +10,9 @@ export default function ShowApplicantDetailsSection({ data }) {
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Button onClick={() => setOpen(true)}>SHOW</Button>
+            <Button outlined onClick={() => setOpen(true)}>
+                SHOW
+            </Button>
             <Modal
                 width="max-w-2xl"
                 isOpen={open}
@@ -18,12 +20,11 @@ export default function ShowApplicantDetailsSection({ data }) {
                 title="Application Details "
             >
                 <div className="p-6  border-t text-gray">
-                    {/* Data Information */}
-                    <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-4">
+                    <div className="mb-6 bg-gray-50 p-4 rounded-lg">
+                        <h2 className="text-lg font-semibold p-2 mb-2 ">
                             Data Information
                         </h2>
-                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 ">
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 p-2">
                             <div className="font-medium">Name:</div>
                             <div className="font-semibold">
                                 {data?.applicant?.name}
@@ -45,9 +46,8 @@ export default function ShowApplicantDetailsSection({ data }) {
                         </div>
                     </div>
 
-                    {/* Position Details */}
-                    <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-4">
+                    <div className="mb-6 bg-gray-50 p-4 rounded-lg">
+                        <h2 className="text-lg font-semibold mb-4 ">
                             Position Details
                         </h2>
                         <div className="grid grid-cols-2 gap-x-8 gap-y-2">
@@ -69,7 +69,6 @@ export default function ShowApplicantDetailsSection({ data }) {
                         </div>
                     </div>
 
-                    {/* Cover Letter */}
                     <div>
                         <div className="flex items-center justify-between bg-gray-100 rounded-lg p-4 ">
                             <div className="flex items-center gap-3">
