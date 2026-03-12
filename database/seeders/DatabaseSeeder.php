@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             SitesTableSeeder::class,
             UsersTableSeeder::class,
             JobPositionSeeder::class,
+            JobRequisitionSeeder::class,
+            JobPostingSeeder::class,
+            JobApplicationSeeder::class,
         ]);
     }
 }
