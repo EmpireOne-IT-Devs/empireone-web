@@ -1,0 +1,1 @@
+import{b as a}from"./app-nZCNDC8X.js";async function o(){return await a.get(`/api/job/application/${window.location.pathname.split("/")[4]}`)}async function p(t){return await a.post("/api/job/update_job_application_status",t)}export{o as g,p as u};

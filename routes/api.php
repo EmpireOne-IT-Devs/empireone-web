@@ -56,6 +56,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('application', JobApplicationController::class);
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);
         Route::get('get_applications_by_user',  [JobApplicationController::class, 'get_applications_by_user']);
+        Route::post('update_job_application_status',  [JobApplicationController::class, 'update_job_application_status']);
     });
 
     Route::prefix('accounts')->group(function () {

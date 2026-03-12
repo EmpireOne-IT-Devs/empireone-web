@@ -16,8 +16,6 @@ export default function Page() {
         <Layout>
             <HeaderSection />
             <div className=" flex flex-col gap-5">
-                <CardsSection />
-
                 {/* Table Container */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     {/* Toolbar */}

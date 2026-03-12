@@ -3,6 +3,10 @@ import { useSelector } from "react-redux";
 
 export default function HeaderSection() {
     const { job_applications } = useSelector((store) => store.job_postings);
+    console.log(
+        "job_applicationsjob_applicationsjob_applications",
+        job_applications.job_posting,
+    );
     return (
         <div className="flex flex-col p-4 gap-2 rounded-md my-3 bg-blue-800">
             <div className="text-2xl font-black text-white">
@@ -11,8 +15,8 @@ export default function HeaderSection() {
             <div className=" text-white flex ">
                 <div>Position</div>:
                 <div className="text-white font-black ml-1">
-                    {job_applications?.job_application?.job_posting
-                        ?.job_requisition?.title ?? ""}
+                    {job_applications?.job_posting?.job_requisition?.title ??
+                        ""}
                 </div>
             </div>
         </div>

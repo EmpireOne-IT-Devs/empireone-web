@@ -119,13 +119,6 @@ export default function ShowApplicantDetailsSection({ data }) {
                             </a>
                         </div>
                     </div>
-
-                    {/* Close Button */}
-                    <div className="flex justify-end mt-8">
-                        <Button variant="danger" onClick={() => setOpen(false)}>
-                            Close
-                        </Button>
-                    </div>
                 </div>
             </Modal>
         </>

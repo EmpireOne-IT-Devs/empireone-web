@@ -4,12 +4,23 @@ namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
 use App\Models\Jobs\JobApplication;
+use App\Models\Jobs\JobPosting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JobApplicationController extends Controller
 {
 
+    public function update_job_application_status(Request $request)
+    {
+        $ja = JobApplication::where('id', $request->id)->first();
+        if ($ja) {
+            $ja->update($request->all());
+        }
+        return response()->json([
+            'status' => 'success',
+        ], 200);
+    }
     public function get_applications_by_user()
     {
 
@@ -64,9 +75,11 @@ class JobApplicationController extends Controller
             'passed'   => $applications->where('status', 'Passed')->count(),
             'failed'   => $applications->where('status', 'Failed')->count(),
         ];
+        $job_posting = JobPosting::where('id', $id)->with(['job_requisition'])->first();
         return response()->json([
             'job_applications' => $applications,
             'stats'  => $stats,
+            'job_posting' => $job_posting
         ], 200);
     }
 
