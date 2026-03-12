@@ -1,6 +1,8 @@
 import { setAlert } from "@/app/redux/app-slice";
+import { get_job_application_by_id_thunk } from "@/app/redux/job-posting-thunk";
 import { update_job_application_status_service } from "@/app/services/job-application-service";
-import React, { useState } from "react";
+import store from "@/app/store/store";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 export default function EditStatusSection({ data, table_status }) {
@@ -8,6 +10,11 @@ export default function EditStatusSection({ data, table_status }) {
     const [status, setStatus] = useState(data.screening_status || "New");
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        setStatus(data.screening_status);
+    }, [data.screening_status]);
+    
     const screening_options = [
         "New",
         "Conducted",
@@ -28,8 +35,8 @@ export default function EditStatusSection({ data, table_status }) {
                 ...data,
                 [table_status]: e,
             });
+            await store.dispatch(get_job_application_by_id_thunk());
             setIsEditing(false);
-            setStatus(e);
             setLoading(false);
             dispatch(
                 setAlert({
@@ -37,7 +44,6 @@ export default function EditStatusSection({ data, table_status }) {
                     title: "Applicants Updated Successfully!",
                     message:
                         "The applicants has been updated and is ready for review.",
-                    open: true,
                 }),
             );
         } catch (error) {

@@ -62,6 +62,7 @@ export default function TableSection() {
             return screeningMatch && interviewMatch && finalMatch;
         },
     );
+    
 
     const tableData = filteredApplications?.map((res) => ({
         name: res.applicant.name,
@@ -79,7 +80,7 @@ export default function TableSection() {
         ),
         action: <ShowApplicantDetailsSection data={res} />,
     }));
-
+console.log('job_applications?.job_applications',job_applications?.job_applications)
     return (
         <div>
             <Table columns={columns} data={tableData} />
