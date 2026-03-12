@@ -7,14 +7,14 @@ import { useDispatch } from "react-redux";
 
 export default function EditStatusSection({ data, table_status }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [status, setStatus] = useState(data.screening_status || "New");
+    const [status, setStatus] = useState(data[table_status] || "New");
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        setStatus(data.screening_status);
-    }, [data.screening_status]);
-    
+        setStatus(data[table_status]);
+    }, [data[table_status]]);
+
     const screening_options = [
         "New",
         "Conducted",
