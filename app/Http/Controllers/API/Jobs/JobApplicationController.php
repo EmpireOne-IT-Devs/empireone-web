@@ -55,8 +55,7 @@ class JobApplicationController extends Controller
     {
 
         // 1. Fetch all applications for this specific job once
-        $applications = JobApplication::where('id', $id)->with(['job_posting', 'applicants'])->first();
-
+        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant'])->get();
         $stats = [
             'total'    => $applications->count(),
             'pending'  => $applications->where('status', 'Pending')->count(),
@@ -65,11 +64,8 @@ class JobApplicationController extends Controller
             'passed'   => $applications->where('status', 'Passed')->count(),
             'failed'   => $applications->where('status', 'Failed')->count(),
         ];
-        $ja =  JobApplication::where('id', $id)->with(['applicants', 'job_posting'])->get();
-
         return response()->json([
-            'data' => $ja,
-            'job_application' => $applications,
+            'job_applications' => $applications,
             'stats'  => $stats,
         ], 200);
     }

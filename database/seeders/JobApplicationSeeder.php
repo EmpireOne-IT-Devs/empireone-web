@@ -22,8 +22,7 @@ class JobApplicationSeeder extends Seeder
             'Failed'
         ];
 
-        for ($i = 0; $i < 20; $i++) {
-
+        for ($i = 0; $i < 100; $i++) {
             JobApplication::create([
                 'user_id' => rand(1, 5),
                 'job_posting_id' => rand(1, 10),

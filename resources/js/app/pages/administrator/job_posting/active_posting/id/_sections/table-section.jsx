@@ -33,21 +33,22 @@ export default function TableSection() {
             accessor: "action",
         },
     ];
-console.log('job_applicationsjob_applications',job_applications)
+    console.log(
+        "job_applicationsjob_applications",
+        job_applications?.job_applications,
+    );
     return (
         <div>
             <Table
                 columns={columns}
-                data={job_applications?.job_application?.applicants?.map(
-                    (res) => ({
-                        name: res.applicant.name,
-                        email: res.applicant.email,
-                        contact: res.personal_information.contact,
-                        applied_at: moment(res.created_at).format("LLL"),
-                        status: res.status,
-                        action: <ShowApplicantDetailsSection data={res} />,
-                    }),
-                )}
+                data={job_applications?.job_applications?.map((res) => ({
+                    name: res.applicant.name,
+                    email: res.applicant.email,
+                    contact: res.applicant.personal_information.contact,
+                    applied_at: moment(res.created_at).format("LLL"),
+                    status: res.status,
+                    action: <ShowApplicantDetailsSection data={res} />,
+                }))}
             />
         </div>
     );

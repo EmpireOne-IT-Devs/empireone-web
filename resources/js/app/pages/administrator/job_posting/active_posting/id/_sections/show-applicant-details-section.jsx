@@ -8,7 +8,6 @@ import { TbEye } from "react-icons/tb";
 
 export default function ShowApplicantDetailsSection({ data }) {
     const [open, setOpen] = useState(false);
-    console.log("datadata", data.job_requisition.title);
     return (
         <>
             <Button onClick={() => setOpen(true)}>SHOW</Button>
@@ -32,7 +31,9 @@ export default function ShowApplicantDetailsSection({ data }) {
                             <div className="font-medium">Email:</div>
                             <div> {data?.applicant?.email}</div>
                             <div className="font-medium">Phone:</div>
-                            <div>{data.personal_information?.contact}</div>
+                            <div>
+                                {data.applicant.personal_information?.contact}
+                            </div>
                             <div className="font-medium">Applied Date:</div>
                             <div>{moment(data?.created_at).format("LLL")}</div>
                             <div className="font-medium">Status:</div>
@@ -52,12 +53,19 @@ export default function ShowApplicantDetailsSection({ data }) {
                         <div className="grid grid-cols-2 gap-x-8 gap-y-2">
                             <div className="font-medium">Job Title:</div>
                             <div className="font-semibold">
-                                {data.job_requisition.title}
+                                {data.job_posting.job_requisition.title}
                             </div>
                             <div className="font-medium">Department:</div>
-                            <div>{data.job_requisition.department.name}</div>
+                            <div>
+                                {
+                                    data.job_posting.job_requisition.department
+                                        .name
+                                }
+                            </div>
                             <div className="font-medium">Location:</div>
-                            <div>{data.job_requisition.location.name}</div>
+                            <div>
+                                {data.job_posting.job_requisition.location.name}
+                            </div>
                         </div>
                     </div>
 
