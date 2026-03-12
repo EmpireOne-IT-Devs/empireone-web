@@ -19,7 +19,7 @@ class JobApplication extends Model
 
     public function applicants(): HasMany
     {
-        return $this->hasMany(JobPosting::class, 'id', 'job_posting_id')->with(['applicant', 'personal_information']);
+        return $this->hasMany(JobPosting::class, 'id', 'job_posting_id')->with(['applicant', 'personal_information','job_requisition']);
     }
     public function applicant(): HasOne
     {
