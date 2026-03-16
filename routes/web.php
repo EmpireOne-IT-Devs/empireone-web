@@ -20,6 +20,10 @@ Route::get('/', function () {
     return route_page();
 })->name('login');
 
+Route::get('/talent/application', function () {
+    return Inertia::render('talent/page');
+})->name('talent');
+
 Route::get('/dashboard', function () {
     return route_page();
 })->middleware(['auth', 'verified'])->name('dashboard');
