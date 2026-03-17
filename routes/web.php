@@ -21,6 +21,9 @@ Route::get('/', function () {
 });
 
 Route::get('/auth/login', function () {
+    if (Auth::user()) {
+        return route_page();
+    }
     return Inertia::render('auth/login/page');
 })->name('login');
 
@@ -200,7 +203,7 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
 });
 
 // Employee routes (Role 2)
-Route::prefix('employee')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('account')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('employee/dashboard/page');
     });
