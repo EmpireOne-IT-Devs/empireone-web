@@ -150,8 +150,9 @@ export default function EditStatusSection({ data, table_status }) {
                     <Badge
                         label={status}
                         variant={getStatusVariant(status)}
-                        outlined={true}
-                        showDot={true}
+                        outlined
+                        showDot
+                        underline 
                     />
                 </div>
             )}

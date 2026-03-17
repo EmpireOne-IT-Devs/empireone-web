@@ -24,7 +24,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                         <h2 className="text-lg font-semibold p-2 mb-2 ">
                             Data Information
                         </h2>
-                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 p-2">
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 p-2">  
                             <div className="font-medium">Name:</div>
                             <div className="font-semibold">
                                 {data?.applicant?.name}
