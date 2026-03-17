@@ -34,7 +34,7 @@ return new class extends Migration
                 'Passed',
                 'Failed',
                 'No Show',
-            ]);
+            ])->nullable()->default(null);
             $table->enum('final_status', [
                 'Passed',
                 'Failed',
@@ -44,7 +44,7 @@ return new class extends Migration
                 'Hired',
                 'Rejected',
                 'No Show',
-            ]);
+            ])->nullable()->default(null);
             $table->timestamps();
         });
     }

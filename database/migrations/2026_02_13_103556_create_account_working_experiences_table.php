@@ -19,9 +19,9 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->string('company_name')->nullable();
             $table->string('position')->nullable();
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
-            $table->string('job_description')->nullable();
+            $table->string('start_date')->nullable();
+            $table->string('end_date')->nullable();
+            $table->longText('job_description')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });

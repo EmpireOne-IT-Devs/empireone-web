@@ -8,3 +8,8 @@ export async function get_job_application_by_id_service() {
 export async function update_job_application_status_service(data) {
     return await axios.post(`/api/job/update_job_application_status`,data);
 }
+
+
+export async function apply_job_application_service(data) {
+    return await axios.post(`/api/job/apply_job_application`,data);
+}

@@ -42,6 +42,9 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 
 
+Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
+Route::get('job/postings',  [JobPostingController::class, 'index']);
+
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
@@ -52,12 +55,13 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('requisitions', JobRequisitionController::class);
         Route::post('approve_job_requisition',  [JobRequisitionController::class, 'approve_job_requisition']);
         Route::resource('requisition_logs', JobRequisitionLogController::class);
-        Route::resource('postings', JobPostingController::class);
+        Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::resource('application', JobApplicationController::class);
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);
         Route::get('get_applications_by_user',  [JobApplicationController::class, 'get_applications_by_user']);
         Route::post('update_job_application_status',  [JobApplicationController::class, 'update_job_application_status']);
     });
+
 
     Route::prefix('accounts')->group(function () {
         Route::get('user',  [AccountPersonalInformationController::class, 'accounts_user']);
