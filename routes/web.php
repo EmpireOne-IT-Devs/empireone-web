@@ -12,13 +12,13 @@ function route_page()
     return match ($user?->role) {
         1 => redirect('/administrator/dashboard'),
         2 => redirect('/account/employee/dashboard'),
-        default => Inertia::render('auth/landing_page/page'),
+        default => Inertia::render('auth/login/page'),
     };
 }
 
 Route::get('/', function () {
     return route_page();
-})->name('landing_page');
+});
 
 Route::get('/auth/login', function () {
     return Inertia::render('auth/login/page');
