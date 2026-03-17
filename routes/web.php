@@ -17,7 +17,10 @@ function route_page()
 }
 
 Route::get('/', function () {
-    return route_page();
+    if (Auth::user()) {
+        return route_page();
+    }
+    return Inertia::render('auth/landing_page/page');
 });
 
 Route::get('/auth/login', function () {

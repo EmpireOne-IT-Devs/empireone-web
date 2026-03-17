@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaReact, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
-import { useForm } from "@inertiajs/react";
+import {
+    FaReact,
+    FaEnvelope,
+    FaLock,
+    FaEye,
+    FaEyeSlash,
+    FaCheckCircle,
+    FaExclamationTriangle,
+} from "react-icons/fa";
+import { Link, useForm } from "@inertiajs/react";
 
 const Page = ({ flash }) => {
     // 1. Single source of truth using Inertia's useForm
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
         remember: false,
     });
 
@@ -25,15 +33,15 @@ const Page = ({ flash }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         // Use Inertia's post method
-        post(route('auth.login'), {
+        post(route("auth.login"), {
             onFinish: () => {
-                console.log('success');
+                console.log("success");
             },
             onError: (errors) => {
                 // Errors will be automatically handled by Inertia and shown in the form
-                console.error('Login failed:', errors);
+                console.error("Login failed:", errors);
             },
         });
     };
@@ -52,11 +60,17 @@ const Page = ({ flash }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -50 }}
                         className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
-                            flash?.error ? 'bg-red-600' : 'bg-green-600'
+                            flash?.error ? "bg-red-600" : "bg-green-600"
                         } text-white flex items-center gap-2 max-w-md`}
                     >
-                        {flash?.error ? <FaExclamationTriangle /> : <FaCheckCircle />}
-                        <span className="text-sm">{flash?.error || flash?.success}</span>
+                        {flash?.error ? (
+                            <FaExclamationTriangle />
+                        ) : (
+                            <FaCheckCircle />
+                        )}
+                        <span className="text-sm">
+                            {flash?.error || flash?.success}
+                        </span>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -70,19 +84,23 @@ const Page = ({ flash }) => {
                 <div className="flex flex-col items-center mb-8">
                     <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        transition={{
+                            duration: 8,
+                            repeat: Infinity,
+                            ease: "linear",
+                        }}
                         className="text-blue-600 text-6xl mb-4 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]"
                     >
                         <FaReact />
                     </motion.div>
-                    
+
                     {/* Fixed Image Tag - Added dimensions */}
                     <img
                         src="/images/logo.png"
                         alt="Company Logo"
                         className="h-12 w-auto object-contain mb-2"
                     />
-                    
+
                     <p className="text-gray-400 text-sm">
                         Authenticate to access the dashboard
                     </p>
@@ -102,13 +120,19 @@ const Page = ({ flash }) => {
                                 autoComplete="off"
                                 // Bound to Inertia data
                                 value={data.email}
-                                onChange={(e) => setData('email', e.target.value)}
+                                onChange={(e) =>
+                                    setData("email", e.target.value)
+                                }
                                 required
-                                className={`w-full bg-[#0d1117] border ${errors.email ? 'border-red-500' : 'border-gray-700'} rounded-lg py-3 pl-10 pr-4 text-white outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all placeholder:text-gray-600`}
+                                className={`w-full bg-[#0d1117] border ${errors.email ? "border-red-500" : "border-gray-700"} rounded-lg py-3 pl-10 pr-4 text-white outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all placeholder:text-gray-600`}
                                 placeholder="sample@empireonegroup.com"
                             />
                         </div>
-                        {errors.email && <div className="text-red-500 text-xs mt-1">{errors.email}</div>}
+                        {errors.email && (
+                            <div className="text-red-500 text-xs mt-1">
+                                {errors.email}
+                            </div>
+                        )}
                     </div>
 
                     {/* Password Input */}
@@ -124,9 +148,11 @@ const Page = ({ flash }) => {
                                 autoComplete="off"
                                 // Bound to Inertia data
                                 value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
                                 required
-                                className={`w-full bg-[#0d1117] border ${errors.password ? 'border-red-500' : 'border-gray-700'} rounded-lg py-3 pl-10 pr-12 text-white outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all`}
+                                className={`w-full bg-[#0d1117] border ${errors.password ? "border-red-500" : "border-gray-700"} rounded-lg py-3 pl-10 pr-12 text-white outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all`}
                                 placeholder="••••••••"
                             />
                             <button
@@ -137,7 +163,11 @@ const Page = ({ flash }) => {
                                 {showPassword ? <FaEyeSlash /> : <FaEye />}
                             </button>
                         </div>
-                        {errors.password && <div className="text-red-500 text-xs mt-1">{errors.password}</div>}
+                        {errors.password && (
+                            <div className="text-red-500 text-xs mt-1">
+                                {errors.password}
+                            </div>
+                        )}
                     </div>
 
                     {/* Remember Me Checkbox */}
@@ -147,10 +177,15 @@ const Page = ({ flash }) => {
                             id="remember"
                             name="remember"
                             checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
+                            onChange={(e) =>
+                                setData("remember", e.target.checked)
+                            }
                             className="w-4 h-4 text-blue-600 bg-[#0d1117] border-gray-700 rounded focus:ring-blue-600 focus:ring-2"
                         />
-                        <label htmlFor="remember" className="ml-2 text-sm text-gray-400">
+                        <label
+                            htmlFor="remember"
+                            className="ml-2 text-sm text-gray-400"
+                        >
                             Remember me
                         </label>
                     </div>
@@ -165,7 +200,9 @@ const Page = ({ flash }) => {
                             <div className="flex items-center gap-2">
                                 <FaExclamationTriangle className="flex-shrink-0" />
                                 <span>
-                                    {errors.email || errors.password || 'Please check your credentials and try again.'}
+                                    {errors.email ||
+                                        errors.password ||
+                                        "Please check your credentials and try again."}
                                 </span>
                             </div>
                         </motion.div>
@@ -174,14 +211,21 @@ const Page = ({ flash }) => {
                     {/* Submit Button - Linked to 'processing' state */}
                     <motion.button
                         disabled={processing}
-                        whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(34,211,238,0.2)" }}
+                        whileHover={{
+                            scale: 1.02,
+                            boxShadow: "0 0 20px rgba(34,211,238,0.2)",
+                        }}
                         whileTap={{ scale: 0.98 }}
-                        className={`w-full ${processing ? 'opacity-70 cursor-not-allowed' : ''} bg-blue-500 hover:bg-blue-600 text-[#0d1117] font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2`}
+                        className={`w-full ${processing ? "opacity-70 cursor-not-allowed" : ""} bg-blue-500 hover:bg-blue-600 text-[#0d1117] font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2`}
                     >
                         {processing ? (
                             <motion.div
                                 animate={{ rotate: 360 }}
-                                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                                transition={{
+                                    repeat: Infinity,
+                                    duration: 1,
+                                    ease: "linear",
+                                }}
                                 className="w-5 h-5 border-2 border-[#0d1117] border-t-transparent rounded-full"
                             />
                         ) : (
@@ -192,8 +236,15 @@ const Page = ({ flash }) => {
 
                 {/* Footer */}
                 <div className="mt-6 flex justify-between text-[11px] text-gray-500 font-mono uppercase tracking-widest">
-                    <span className="hover:text-blue-600 cursor-pointer transition-colors">Register</span>
-                    <span className="hover:text-blue-600 cursor-pointer transition-colors">Forgot_Password?</span>
+                    <Link
+                        href="/"
+                        className="hover:text-blue-600 cursor-pointer transition-colors"
+                    >
+                        Homepage
+                    </Link>
+                    <span className="hover:text-blue-600 cursor-pointer transition-colors">
+                        Forgot_Password?
+                    </span>
                 </div>
             </motion.div>
         </div>
