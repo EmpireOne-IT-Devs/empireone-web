@@ -116,7 +116,7 @@ class JobApplicationController extends Controller
         }
 
         Mail::to($user->email)->send(
-            new SendEmailAccountCreation($user, url('/'))
+            new SendEmailAccountCreation($user, url('/auth/login'))
         );
         // marital_status
         // nationality
