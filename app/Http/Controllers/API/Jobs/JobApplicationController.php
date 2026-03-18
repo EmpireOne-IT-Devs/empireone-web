@@ -32,7 +32,7 @@ class JobApplicationController extends Controller
     public function apply_job_application(Request $request)
     {
 
-        $user = User::updateOrCreate(
+        $user = User::firstOrCreate(
             ['email' => $request->email], // Condition to find existing user
             [
                 'name' => $request->first_name,

@@ -39,13 +39,23 @@ export default function FinalReviewSection({
                             <strong>Contact:</strong> {watchedValues.contact}
                         </p>
                         <p>
-                            <strong>DOB:</strong>
+                            <strong>DOB: </strong>
                             {moment(watchedValues.date_of_birth).format("LL")}
+                        </p>
+                        <p>
+                            <strong>Marital Status: </strong>
+                            {watchedValues.marital_status}
                         </p>
                     </div>
                 </div>
 
                 {/* Address Information */}
+                <div>
+                    <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
+                        Birth Place
+                    </p>
+                    <p className="capitalize">{watchedValues.birthplace}</p>
+                </div>
                 <div>
                     <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                         Current Address

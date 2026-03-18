@@ -44,6 +44,7 @@ const TalentFormSection = () => {
             city: "",
             barangay: "",
             zip_code: "",
+            marital_status: "",
             cv: [],
             file: null,
             job_posting_id: job_posting_id ?? savedData.job_posting_id,
@@ -110,6 +111,7 @@ const TalentFormSection = () => {
                       "gender",
                       "school_name",
                       "course",
+                      "marital_status",
                       "year_graduated",
                       "degree",
                   ]
@@ -168,6 +170,7 @@ const TalentFormSection = () => {
                 zip_code: "",
                 cv: [],
                 file: null,
+                marital_status: "",
                 job_posting_id: "",
             });
             setStep(0);
@@ -207,6 +210,7 @@ const TalentFormSection = () => {
                             nextStep={nextStep}
                             register={register}
                             errors={errors}
+                            watchedValues={watchedValues}
                         />
                     )}
 

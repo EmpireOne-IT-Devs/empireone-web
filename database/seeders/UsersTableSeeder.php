@@ -33,13 +33,33 @@ class UsersTableSeeder extends Seeder
             ],
             [
                 'name' => 'Jona',
-                'email' => 'sample@empireonegroup.com',
+                'email' => 'hiring@empireonegroup.com',
                 'role' => 1,
                 'first_name' => 'Jona',
                 'middle_name' => '',
                 'last_name' => 'Serrano',
-                'position' => 'HR Staff',
+                'position' => 'Recruitment Staff',
                 'eogs_email' => "hiring@empireonegroup.com"
+            ],
+            [
+                'name' => 'Christi Ann',
+                'email' => 'christiann@empireonegroup.com',
+                'role' => 1,
+                'first_name' => 'Christi',
+                'middle_name' => '',
+                'last_name' => 'Sanchez',
+                'position' => 'Talent Acquisition Manager',
+                'eogs_email' => "christiann@empireonegroup.com"
+            ],
+            [
+                'name' => 'Mark Valencia',
+                'email' => 'mark@empireonegroup.com',
+                'role' => 1,
+                'first_name' => 'Mark',
+                'middle_name' => '',
+                'last_name' => 'Valencia',
+                'position' => 'Site Director',
+                'eogs_email' => "mark@empireonegroup.com"
             ],
             [
                 'name' => 'Wakin',

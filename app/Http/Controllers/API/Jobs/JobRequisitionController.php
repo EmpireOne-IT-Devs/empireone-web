@@ -30,7 +30,7 @@ class JobRequisitionController extends Controller
 
         // Define transition logic: [Current Status => [Next Status, Target Position]]
         $transitions = [
-            'Pending'     => ['In Progress', 'Recruitment Director'],
+            'Pending'     => ['In Progress', 'Talent Acquisition Manager'],
             'In Progress' => ['Approved',    'Recruitment Staff'],
         ];
 
@@ -116,7 +116,6 @@ class JobRequisitionController extends Controller
         ]);
 
         $approver = AccountEmployee::where([
-            ['user_id', '=',  $auth->id],
             ['site_id', '=', $auth['account_employee']->site_id],
             ['position', '=', 'Site Director'],
         ])->first();
@@ -125,7 +124,6 @@ class JobRequisitionController extends Controller
             ['title' => $request->title],
             ['department_id' => $request->department_id]
         );
-
 
         if ($approver && $approver->eogs_email) {
             $approver->notify(new JobRequisitionNotification($jobRequisition));

@@ -128,6 +128,22 @@ export default function AddressInformationSection({
                         disabled={!selectedProvince}
                     />
                 </div>
+                {/* Barangay Select */}
+                <div className="flex flex-col w-full flex-1">
+                    <Select
+                        label="Barangay"
+                        name="barangay"
+                        options={barangays.map((b) => ({
+                            value: b.code,
+                            label: b.name,
+                        }))}
+                        error={errors.barangay}
+                        value={selectedBarangay}
+                        onChange={(val) => setValue("barangay", val)}
+                        required
+                        disabled={!selectedCity}
+                    />
+                </div>
 
                 <div className="flex flex-col w-full flex-1">
                     <Input
@@ -150,23 +166,6 @@ export default function AddressInformationSection({
                                 "",
                             );
                         }}
-                    />
-                </div>
-
-                {/* Barangay Select */}
-                <div className="flex flex-col w-full flex-1">
-                    <Select
-                        label="Barangay"
-                        name="barangay"
-                        options={barangays.map((b) => ({
-                            value: b.code,
-                            label: b.name,
-                        }))}
-                        error={errors.barangay}
-                        value={selectedBarangay}
-                        onChange={(val) => setValue("barangay", val)}
-                        required
-                        disabled={!selectedCity}
                     />
                 </div>
             </div>

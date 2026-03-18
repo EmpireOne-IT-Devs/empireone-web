@@ -40,6 +40,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                 return "danger";
             case "In Progress":
                 return "info";
+            case "Posted":
+                return "purple";
             default:
                 return "info";
         }
@@ -83,6 +85,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
         Pending: "bg-yellow-200 text-yellow-800",
         Approved: "bg-green-200 text-green-800",
         Declined: "bg-red-200 text-red-800",
+        Posted: "bg-purple-200 text-purple-800",
     };
 
     return (

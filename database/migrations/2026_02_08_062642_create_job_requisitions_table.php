@@ -51,6 +51,7 @@ return new class extends Migration
                 'Pending',
                 'In Progress',
                 'Approved',
+                'Posted',
                 'Declined'
             ])->default('Pending');
             $table->timestamps();

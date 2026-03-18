@@ -8,6 +8,7 @@ export default function PersonalInformationSection({
     errors,
     nextStep,
     prevStep,
+    watchedValues,
 }) {
     return (
         <div className="space-y-6">
@@ -47,7 +48,7 @@ export default function PersonalInformationSection({
                     />
                 </div>
             </div>
-             <div className="flex flex-col flex-1 w-full">
+            <div className="flex flex-col flex-1 w-full">
                 <Input
                     label="Birthplace"
                     name="birthplace"
@@ -63,6 +64,9 @@ export default function PersonalInformationSection({
                     <Select
                         label="Marital Status"
                         name="marital_status"
+                        {...register("marital_status", {
+                            required: true,
+                        })}
                         options={[
                             { value: "Single", label: "Single" },
                             { value: "Married", label: "Married" },
@@ -73,8 +77,7 @@ export default function PersonalInformationSection({
                             { value: "Other", label: "Other" },
                         ]}
                         error={errors.marital_status}
-                        value={register("marital_status").value}
-                        onChange={register("marital_status").onChange}
+                        value={watchedValues.marital_status}
                         required
                     />
                 </div>
@@ -87,7 +90,6 @@ export default function PersonalInformationSection({
                     />
                 </div>
             </div>
-           
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col">
@@ -139,6 +141,9 @@ export default function PersonalInformationSection({
                     <Select
                         label="Gender"
                         name="gender"
+                        {...register("gender", {
+                            required: true,
+                        })}
                         options={[
                             { value: "Male", label: "Male" },
                             { value: "Female", label: "Female" },
@@ -155,8 +160,7 @@ export default function PersonalInformationSection({
                             },
                         ]}
                         error={errors.gender}
-                        value={register("gender").value}
-                        onChange={register("gender").onChange}
+                        value={watchedValues.gender}
                         required
                     />
                 </div>
@@ -210,6 +214,9 @@ export default function PersonalInformationSection({
                         <Select
                             label="Degree"
                             name="degree"
+                            {...register("degree", {
+                                required: true,
+                            })}
                             options={[
                                 { value: "Elementary", label: "Elementary" },
                                 {
@@ -225,8 +232,7 @@ export default function PersonalInformationSection({
                                 { value: "Doctoral", label: "Doctoral" },
                             ]}
                             error={errors.degree}
-                            value={register("degree").value}
-                            onChange={register("degree").onChange}
+                            value={watchedValues.degree}
                             required
                         />
                     </div>
@@ -235,6 +241,7 @@ export default function PersonalInformationSection({
                         <Input
                             label="Source"
                             name="source"
+                            value=" "
                             {...register("source")}
                             placeholder="e.g. LinkIn, Facebook, Referral"
                             disabled
