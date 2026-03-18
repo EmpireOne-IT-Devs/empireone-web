@@ -1,5 +1,7 @@
+import Button from "@/app/_components/button";
 import { Link } from "@inertiajs/react";
 
+import { Smartphone, Monitor, Download } from "lucide-react";
 const ctaButtons = [
     {
         href: "/auth/login/page",
@@ -17,7 +19,6 @@ export default function HeroSection() {
         <section className="min-h-screen flex items-center bg-gray-50 dark:bg-slate-950">
             <div className="max-w-7xl mx-auto px-6 py-20 w-full">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
-
                     {/* LEFT */}
                     <div className="space-y-6">
                         <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
@@ -28,10 +29,25 @@ export default function HeroSection() {
                         </h1>
 
                         <p className="text-slate-500 dark:text-slate-400 max-w-lg">
-                            A centralized platform designed to streamline operations,
-                            improve efficiency, and deliver a seamless digital experience.
+                            A centralized platform designed to streamline
+                            operations, improve efficiency, and deliver a
+                            seamless digital experience.
                         </p>
 
+                        <div className="flex gap-2">
+                            <Button>
+                                <Smartphone className="w-4 h-4 mr-2" />
+                                Download APK
+                            </Button>
+                            <Button>
+                                <Monitor className="w-4 h-4 mr-2" />
+                                Windows 
+                            </Button>
+                            <Button>
+                                <Download className="w-4 h-4 mr-2" />
+                                Mac
+                            </Button>
+                        </div>
                         {/* CTA */}
                         {/* <div className="flex gap-3">
                             {ctaButtons.map((btn, i) => (
@@ -57,7 +73,6 @@ export default function HeroSection() {
                             Preview Area
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>

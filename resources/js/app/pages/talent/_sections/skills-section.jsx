@@ -1,4 +1,7 @@
+import Button from "@/app/_components/button";
+import Input from "@/app/_components/input";
 import React from "react";
+import { TbTrash } from "react-icons/tb";
 
 export default function SkillsSection({
     register,
@@ -22,7 +25,7 @@ export default function SkillsSection({
                             percentage: 0,
                         })
                     }
-                    className="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md font-bold hover:bg-blue-100 transition"
+                    className="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-md font-bold hover:bg-blue-100 transition"
                 >
                     + Add Skill
                 </button>
@@ -35,19 +38,14 @@ export default function SkillsSection({
                 >
                     <div className="flex flex-wrap w-full gap-4">
                         <div className="flex flex-1 flex-col">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                                Skills
-                            </label>
-                            <input
+                            <Input
+                                label="     Skills"
+                                name={`skills.${index}.skill`}
                                 {...register(`skills.${index}.skill`, {
                                     required: "Required",
                                 })}
-                                placeholder="e.g. Software Engineer"
-                                className={`p-3 border rounded-lg outline-none focus:ring-2 ${
-                                    errors.skills?.[index]?.skill
-                                        ? "border-red-400"
-                                        : "focus:ring-blue-400"
-                                }`}
+                                error={errors.skills?.[index]?.skill}
+                                placeholder="e.g. JavaScript"
                             />
                         </div>
                     </div>
@@ -90,32 +88,37 @@ export default function SkillsSection({
                                 </p>
                             )}
                         </div>{" "}
-                        <button
-                            type="button"
+                    </div>
+                    <div className="flex justify-end">
+                        <Button
                             onClick={() => removeSkill(index)}
-                            className="text-red-500 hover:text-red-700 font-bold text-sm mb-2"
+                            variant="danger"
+                            outlined
                         >
-                            Remove
-                        </button>
+                            <TbTrash className="text-lg" />
+                        </Button>
                     </div>
                 </div>
             ))}
 
             <div className="flex gap-4">
-                <button
+                <Button
+                    outlined
                     type="button"
                     onClick={prevStep}
-                    className="w-1/2 text-gray-500 font-bold hover:bg-gray-300 bg-gray-100 py-3 rounded-lg transition"
+                    className="w-1/2"
+                    variant="secondary"
                 >
                     Back
-                </button>
-                <button
+                </Button>
+                <Button
+                    outlined
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2 bg-blue-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition"
+                    className="w-1/2"
                 >
                     Continue To Document
-                </button>
+                </Button>
             </div>
         </div>
     );

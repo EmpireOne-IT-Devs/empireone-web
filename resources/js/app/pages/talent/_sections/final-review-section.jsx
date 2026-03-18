@@ -1,3 +1,4 @@
+import Button from "@/app/_components/button";
 import moment from "moment";
 import React from "react";
 
@@ -139,14 +140,15 @@ export default function FinalReviewSection({
 
             {/* Action Buttons */}
             <div className="flex gap-4 pt-4">
-                <button
+                <Button
+                    outlined
                     type="button"
                     onClick={prevStep}
-                    className="w-1/2 text-gray-500 font-bold py-3 hover:bg-gray-100 rounded-lg transition"
+                    className="w-1/2 "
                 >
                     Edit Details
-                </button>
-                <button
+                </Button>
+                <Button
                     type="submit"
                     disabled={loading}
                     className={`w-1/2 py-3 rounded-lg font-bold shadow-lg transform active:scale-95 transition-all
@@ -180,7 +182,7 @@ export default function FinalReviewSection({
                     ) : (
                         "Submit Application"
                     )}
-                </button>
+                </Button>
             </div>
         </div>
     );

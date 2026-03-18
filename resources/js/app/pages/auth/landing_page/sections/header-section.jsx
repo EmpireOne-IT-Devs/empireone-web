@@ -23,13 +23,44 @@ export default function HeaderSection() {
                 <div className="flex items-center gap-2">
                     <a href="/" className="flex items-center gap-2">
                         <img
-                            src="/images/empireone.png"
+                            src="/images/eo-full-logo.png"
                             alt="EmpireOne Logo"
                             className="h-8 sm:h-10 w-auto object-contain"
                         />
-                        <p className="text-sm sm:text-md font-bold text-slate-900 dark:text-white tracking-tight">
-                            EmpireOne Unified System
-                        </p>
+                        {/* <p className="text-sm sm:text-md font-bold tracking-tight leading-none">
+                            <span
+                                style={{
+                                    fontFamily: "inherit",
+                                    fontWeight: 900,
+                                    letterSpacing: "-0.5px",
+                                }}
+                            >
+                                <span style={{ color: "#2B2EB4" }}>EMP</span>
+                                <span
+                                    style={{
+                                        position: "relative",
+                                        display: "inline-block",
+                                        color: "#2B2EB4",
+                                    }}
+                                >
+                                    I
+                                    <span
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: 0,
+                                            height: 0,
+                                            borderRight:
+                                                "6px solid transparent",
+                                            borderTop: "6px solid #29ABE2",
+                                        }}
+                                    />
+                                </span>
+                                <span style={{ color: "#2B2EB4" }}>RE</span>
+                                <span style={{ color: "#29ABE2" }}>ONE</span>
+                            </span>
+                        </p> */}
                     </a>
                 </div>
 
@@ -58,10 +89,10 @@ export default function HeaderSection() {
                     </Link>
 
                     <Link
-                        href="/auth/register"
-                        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500"
+                        href="/talent/application"
+                        className="rounded-md bg-purple-700 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-500"
                     >
-                        Sign up
+                        Apply Now
                     </Link>
                 </div>
 

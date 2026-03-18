@@ -1,4 +1,7 @@
+import Button from "@/app/_components/button";
+import Input from "@/app/_components/input";
 import React from "react";
+import { TbTrash } from "react-icons/tb";
 
 export default function WorkingExperienceSection({
     register,
@@ -8,7 +11,7 @@ export default function WorkingExperienceSection({
     appendExperience,
     experienceFields,
     removeExperience,
-    watchedValues 
+    watchedValues,
 }) {
     return (
         <div className="space-y-6">
@@ -27,7 +30,7 @@ export default function WorkingExperienceSection({
                             job_description: "",
                         })
                     }
-                    className="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md font-bold hover:bg-blue-100 transition"
+                    className="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-md font-bold hover:bg-blue-100 transition"
                 >
                     + Add Job
                 </button>
@@ -40,48 +43,39 @@ export default function WorkingExperienceSection({
                 >
                     <div className="flex flex-wrap w-full gap-4">
                         <div className="flex flex-1 flex-col">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                                Company Name
-                            </label>
-                            <input
+                            <Input
+                                label="Company Name"
+                                name={`experiences.${index}.company_name`}
                                 {...register(
                                     `experiences.${index}.company_name`,
                                     {
                                         required: "Required",
                                     },
                                 )}
-                                placeholder="e.g. Acme Corp"
-                                className={`p-3 border rounded-lg outline-none focus:ring-2 ${
+                                error={
                                     errors.experiences?.[index]?.company_name
-                                        ? "border-red-400"
-                                        : "focus:ring-blue-400"
-                                }`}
+                                }
+                                placeholder="e.g. Acme Corp"
                             />
                         </div>
                         <div className="flex flex-1 flex-col">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                                Position
-                            </label>
-                            <input
+                            <Input
+                                label="Position"
+                                name={`experiences.${index}.position`}
                                 {...register(`experiences.${index}.position`, {
                                     required: "Required",
                                 })}
+                                error={errors.experiences?.[index]?.position}
                                 placeholder="e.g. Developer"
-                                className={`p-3 border rounded-lg outline-none focus:ring-2 ${
-                                    errors.experiences?.[index]?.position
-                                        ? "border-red-400"
-                                        : "focus:ring-blue-400"
-                                }`}
                             />
                         </div>
                     </div>
 
                     <div className="flex flex-wrap w-full gap-4">
                         <div className="flex flex-1 flex-col">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                                Start Year
-                            </label>
-                            <input
+                            <Input
+                                label="Start Year"
+                                name={`experiences.${index}.start_at`}
                                 {...register(`experiences.${index}.start_at`, {
                                     required: "Required",
                                 })}
@@ -97,10 +91,9 @@ export default function WorkingExperienceSection({
                             />
                         </div>
                         <div className="flex flex-1 flex-col">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                                End Year
-                            </label>
-                            <input
+                            <Input
+                                label="End Year"
+                                name={`experiences.${index}.end_at`}
                                 {...register(`experiences.${index}.end_at`, {
                                     required: "Required",
                                     validate: (val) =>
@@ -144,17 +137,19 @@ export default function WorkingExperienceSection({
                                 }`}
                             />
                         </div>
-                        <button
-                            type="button"
+                    </div>
+                    <div className="flex justify-end">
+                        <Button
                             onClick={() => removeExperience(index)}
-                            className="text-red-500 hover:text-red-700 font-bold text-sm mb-2"
+                            variant="danger"
+                            outlined
                         >
-                            Remove
-                        </button>
+                            <TbTrash className="text-lg" />
+                        </Button>
                     </div>
                 </div>
             ))}
-            <button
+            {/* <button
                 type="button"
                 onClick={() =>
                     appendExperience({
@@ -167,23 +162,26 @@ export default function WorkingExperienceSection({
                 }
             >
                 + Add Job
-            </button>
+            </button> */}
 
             <div className="flex gap-4">
-                <button
+                <Button
                     type="button"
+                    outlined
+                    variant="secondary"
                     onClick={prevStep}
-                    className="w-1/2 text-gray-500 font-bold hover:bg-gray-300 bg-gray-100 py-3 rounded-lg transition"
+                    className="w-1/2"
                 >
                     Back
-                </button>
-                <button
+                </Button>
+                <Button
+                    outlined
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2 bg-blue-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition"
+                    className="w-1/2"
                 >
                     Continue To Skill
-                </button>
+                </Button>
             </div>
         </div>
     );

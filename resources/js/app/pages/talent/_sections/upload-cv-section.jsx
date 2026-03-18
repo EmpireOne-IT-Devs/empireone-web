@@ -1,3 +1,4 @@
+import Button from "@/app/_components/button";
 import React from "react";
 
 export default function UploadCvSection({
@@ -98,20 +99,18 @@ export default function UploadCvSection({
             </div>
 
             <div className="flex gap-4 pt-2">
-                <button
+                <Button
+                    outlined
+                    variant="secondary"
                     type="button"
                     onClick={prevStep}
-                    className="w-1/2 text-gray-500 font-bold hover:bg-gray-300 bg-gray-100 py-3 rounded-lg transition"
+                    className="w-1/2 "
                 >
                     Back
-                </button>
-                <button
-                    type="button"
-                    onClick={nextStep}
-                    className="w-1/2 bg-blue-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition"
-                >
+                </Button>
+                <Button outlined type="button" onClick={nextStep} className="w-1/2 ">
                     Continue To Review
-                </button>
+                </Button>
             </div>
         </div>
     );
