@@ -65,9 +65,9 @@ export default function TableSection() {
     
 
     const tableData = filteredApplications?.map((res) => ({
-        name: res.applicant.name,
-        email: res.applicant.email,
-        contact: res.applicant.personal_information.contact,
+        name: res?.applicant?.name,
+        email: res?.applicant?.email,
+        contact: res?.applicant?.personal_information?.contact,
         applied_at: moment(res.created_at).format("LLL"),
         screening_status: (
             <EditStatusSection data={res} table_status="screening_status" />
@@ -80,7 +80,6 @@ export default function TableSection() {
         ),
         action: <ShowApplicantDetailsSection data={res} />,
     }));
-console.log('job_applications?.job_applications',job_applications?.job_applications)
     return (
         <div>
             <Table columns={columns} data={tableData} />

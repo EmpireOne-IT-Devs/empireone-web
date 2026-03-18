@@ -2,7 +2,7 @@ export default function Badge({
     label = "Badge",
     variant = "primary",
     outlined = false,
-    showDot = true,
+    showDot = false,
     className = "",
     underline = false,
 }) {
@@ -11,7 +11,7 @@ export default function Badge({
 
     const variants = {
         primary: {
-            solid: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+            solid: "rounded-md border border-blue-600 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
             outline:
                 "text-blue-600 inset-ring inset-ring-blue-300 dark:text-blue-300 dark:inset-ring-blue-700",
             dot: "fill-blue-500 dark:fill-blue-400",
@@ -19,7 +19,7 @@ export default function Badge({
                 "underline decoration-blue-500 decoration-2 underline-offset-2 dark:decoration-blue-400",
         },
         secondary: {
-            solid: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+            solid: "rounded-md border border-gray-600 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
             outline:
                 "text-gray-600 inset-ring inset-ring-gray-300 dark:text-gray-300 dark:inset-ring-gray-700",
             dot: "fill-gray-500 dark:fill-gray-400",
@@ -27,7 +27,7 @@ export default function Badge({
                 "underline decoration-gray-500 decoration-2 underline-offset-2 dark:decoration-gray-400",
         },
         success: {
-            solid: "bg-green-600 text-white dark:bg-green-900/30 dark:text-green-300",
+            solid: "rounded-md border border-green-600 bg-green-600 text-white dark:bg-green-900/30 dark:text-green-300",
             outline:
                 "text-green-600 inset-ring inset-ring-green-300 dark:text-green-300 dark:inset-ring-green-700",
             dot: "fill-green-500 dark:fill-green-400",
@@ -35,7 +35,7 @@ export default function Badge({
                 "underline decoration-green-500 decoration-2 underline-offset-2 dark:decoration-green-400",
         },
         warning: {
-            solid: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+            solid: "rounded-md border border-yellow-600 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
             outline:
                 "text-yellow-600 inset-ring inset-ring-yellow-300 dark:text-yellow-300 dark:inset-ring-yellow-700",
             dot: "fill-yellow-500 dark:fill-yellow-400",
@@ -43,7 +43,7 @@ export default function Badge({
                 "underline decoration-yellow-500 decoration-2 underline-offset-2 dark:decoration-yellow-400",
         },
         danger: {
-            solid: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+            solid: "rounded-md border border-red-600 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
             outline:
                 "text-red-600 inset-ring inset-ring-red-300 dark:text-red-300 dark:inset-ring-red-700",
             dot: "fill-red-500 dark:fill-red-400",
@@ -51,7 +51,7 @@ export default function Badge({
                 "underline decoration-red-500 decoration-2 underline-offset-2 dark:decoration-red-400",
         },
         info: {
-            solid: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+            solid: "rounded-md border border-orange-600 bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
             outline:
                 "text-orange-600 inset-ring inset-ring-orange-300 dark:text-orange-300 dark:inset-ring-orange-700",
             dot: "fill-orange-500 dark:fill-orange-400",
@@ -59,7 +59,7 @@ export default function Badge({
                 "underline decoration-orange-500 decoration-2 underline-offset-2 dark:decoration-orange-400",
         },
         purple: {
-            solid: "bg-purple-200 text-purple dark:bg-purple-900/30 dark:text-purple-300",
+            solid: "rounded-md border border-purple-600 bg-purple-200 text-purple dark:bg-purple-900/30 dark:text-purple-300",
             outline:
                 "text-purple-600 inset-ring inset-ring-purple-300 dark:text-purple-300 dark:inset-ring-purple-700",
             dot: "fill-purple-500 dark:fill-purple-400",

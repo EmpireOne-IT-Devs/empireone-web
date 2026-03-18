@@ -2,12 +2,13 @@ import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import moment from "moment";
 import React, { useState } from "react";
-import { FaDownload } from "react-icons/fa6";
+import { FaDownload, FaEye } from "react-icons/fa6";
 import { FiFile } from "react-icons/fi";
 import { TbEye } from "react-icons/tb";
 
 export default function ShowApplicantDetailsSection({ data }) {
     const [open, setOpen] = useState(false);
+    console.log("datadatadata", data);
     return (
         <>
             <Button outlined onClick={() => setOpen(true)}>
@@ -24,7 +25,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                         <h2 className="text-lg font-semibold p-2 mb-2 ">
                             Data Information
                         </h2>
-                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 p-2">  
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 p-2">
                             <div className="font-medium">Name:</div>
                             <div className="font-semibold">
                                 {data?.applicant?.name}
@@ -76,7 +77,7 @@ export default function ShowApplicantDetailsSection({ data }) {
 
                                 <div className="flex flex-col">
                                     <span className="text-blue-700 font-medium">
-                                        {data?.cover_letter?.name}
+                                        {data?.applicant?.resume?.name}
                                     </span>
                                     <span className="text-gray-600 text-sm">
                                         Cover Letter
@@ -85,16 +86,16 @@ export default function ShowApplicantDetailsSection({ data }) {
                             </div>
 
                             <a
-                                href={data?.cover_letter?.url}
+                                href={data?.applicant?.resume?.url}
                                 target="_blank"
                                 className="p-2 border border-black rounded-md w-2/6 text-center flex items-center justify-center"
                             >
-                                <FaDownload className="text-sm mr-2" />
-                                Download
+                                <FaEye className="text-sm mr-2" />
+                                Show
                             </a>
                         </div>
 
-                        <div className="flex items-center justify-between bg-gray-100 rounded-lg p-4 mt-2">
+                        {/* <div className="flex items-center justify-between bg-gray-100 rounded-lg p-4 mt-2">
                             <div className="flex items-center gap-3">
                                 <FiFile className="text-blue-700 text-xl flex-shrink-0" />
 
@@ -116,7 +117,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 <FaDownload className="text-sm mr-2" />
                                 Download
                             </a>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </Modal>
