@@ -26,6 +26,10 @@ const variantStyles = {
         solid: "bg-gray-600 text-white hover:bg-gray-700",
         outlined: "border border-gray-600 text-gray-600 hover:bg-gray-50",
     },
+     light: {
+        solid: "bg-white text-black hover:bg-gray-100",
+        outlined: "border border-gray-300 text-gray-700 hover:bg-gray-50",
+    },
 };
 
 const sizeStyles = {

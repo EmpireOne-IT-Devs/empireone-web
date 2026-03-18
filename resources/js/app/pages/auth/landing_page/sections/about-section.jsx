@@ -8,7 +8,7 @@ export default function AboutSection() {
 
     return (
         <section
-            id="about"
+            id="about-us"
             className="py-20 md:py-28 bg-white dark:bg-slate-950"
         >
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
@@ -16,7 +16,7 @@ export default function AboutSection() {
                 {/* LEFT */}
                 <div className="space-y-6">
                     <span className="text-xs font-bold tracking-widest text-blue-500 uppercase">
-                        About
+                        About Us
                     </span>
 
                     <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
