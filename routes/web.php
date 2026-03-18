@@ -11,19 +11,12 @@ function route_page()
     return match ($user?->role) {
         1 => redirect('/administrator/dashboard'),
         2 => redirect('/account/employee/dashboard'),
-<<<<<<< HEAD
-        3 => redirect('/account/applicant/dashboard'),
-=======
         3 => redirect('/applicant/dashboard'),
->>>>>>> 4692d47a11446ebf457d48df97038130e1ccd450
         default => Inertia::render('auth/login/page'),
     };
 }
 
 Route::get('/', function () {
-<<<<<<< HEAD
-    return route_page(); // ✅ remove $this
-=======
     if (Auth::user()) {
         return route_page();
     }
@@ -35,7 +28,6 @@ Route::get('/auth/login', function () {
         return route_page();
     }
     return Inertia::render('auth/login/page');
->>>>>>> 4692d47a11446ebf457d48df97038130e1ccd450
 })->name('login');
 
 Route::get('/talent/application', function () {
