@@ -37,7 +37,8 @@ class JobApplicationController extends Controller
             [
                 'name' => $request->first_name,
                 'password' => Hash::make('Business12'),
-                'role' => 2,
+                'role' => 3,
+                'email_verified_at' => now()
             ]
         );
         AccountPersonalInformation::updateOrCreate(
