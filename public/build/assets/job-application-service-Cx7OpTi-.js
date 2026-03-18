@@ -1,0 +1,1 @@
+import{b as i}from"./app-CS9HVgpl.js";async function p(){return await i.get(`/api/job/application/${window.location.pathname.split("/")[4]}`)}async function o(a){return await i.post("/api/job/update_job_application_status",a)}async function n(a){return await i.post("/api/job/apply_job_application",a)}export{n as a,p as g,o as u};

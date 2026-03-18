@@ -1,0 +1,1 @@
+import{b as e,n}from"./app-CS9HVgpl.js";async function i(){return await e.get("/api/get_app_data")}function o(p){return async function(a,s){const t=await i();a(n.actions.setData(t.data))}}export{o as g};
