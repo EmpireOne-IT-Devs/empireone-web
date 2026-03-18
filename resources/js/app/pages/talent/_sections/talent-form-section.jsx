@@ -184,10 +184,18 @@ const TalentFormSection = () => {
             <div className="max-w-3xl w-full bg-white rounded-xl shadow-lg p-8 transition-all duration-500">
                 {/* Progress Bar */}
                 <div className="mb-8">
+                    <div>
+                        <button
+                            type="button"
+                            onClick={() => (window.location.href = "/")}
+                            className="mb-4 text-gray-400 hover:text-gray-900 text-sm transition-colors duration-200"
+                        >
+                            ← Back to homepage
+                        </button>
+                    </div>
                     <div className="flex justify-between mb-2">
                         <span className="text-xs font-bold text-blue-600 uppercase">
-                            Job Posting #:{watchedValues.job_posting_id} - Step{" "}
-                            {step} of 6
+                            Job Posting - Step {step} of 6
                         </span>
                         <span className="text-xs font-bold text-blue-600">
                             {Math.round((step / 6) * 100)}%

@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +35,7 @@ Route::get('/talent/application', function () {
 })->name('talent');
 
 Route::get('/dashboard', function () {
-    return route_page();
+    return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -94,9 +93,6 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         });
         Route::get('/active_posting', function () {
             return Inertia::render('administrator/job_posting/active_posting/page');
-        });
-        Route::get('/active_posting/{id}', function () {
-            return Inertia::render('administrator/job_posting/active_posting/id/page');
         });
         Route::get('/applicants', function () {
             return Inertia::render('administrator/job_posting/applicants/page');
@@ -234,39 +230,6 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
     });
 });
 
-// // HR routes (Role 3)
-// Route::prefix('hr')->middleware(['auth', 'verified'])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return Inertia::render('hr/dashboard/page');
-//     });
-//     Route::get('/employees', function () {
-//         return Inertia::render('hr/employees/page');
-//     });
-//     Route::get('/recruitment', function () {
-//         return Inertia::render('hr/recruitment/page');
-//     });
-//     Route::get('/performance', function () {
-//         return Inertia::render('hr/performance/page');
-//     });
-// });
 
-// // Manager routes (Role 4)  
-// Route::prefix('manager')->middleware(['auth', 'verified'])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return Inertia::render('manager/dashboard/page');
-//     });
-//     Route::get('/team', function () {
-//         return Inertia::render('manager/team/page');
-//     });
-//     Route::get('/reports', function () {
-//         return Inertia::render('manager/reports/page');
-//     });
-// });
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 
 require __DIR__ . '/auth.php';
