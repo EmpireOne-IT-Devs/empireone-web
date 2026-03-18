@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -12,16 +11,17 @@ function route_page()
     return match ($user?->role) {
         1 => redirect('/administrator/dashboard'),
         2 => redirect('/account/employee/dashboard'),
+        3 => redirect('/account/applicant/dashboard'),
         default => Inertia::render('auth/login/page'),
     };
 }
 
 Route::get('/', function () {
-    return route_page();
+    return route_page(); // ✅ remove $this
 })->name('login');
 
 Route::get('/dashboard', function () {
-    return route_page();
+    return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -79,9 +79,6 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         });
         Route::get('/active_posting', function () {
             return Inertia::render('administrator/job_posting/active_posting/page');
-        });
-        Route::get('/active_posting/{id}', function () {
-            return Inertia::render('administrator/job_posting/active_posting/id/page');
         });
         Route::get('/applicants', function () {
             return Inertia::render('administrator/job_posting/applicants/page');

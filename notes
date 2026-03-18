@@ -1,6 +1,4 @@
-php artisan make:model Post -mcr
-
-- add source where you find the job posting or job hiring.
+php artisan make:model Jobs/JobsApplication -mcr
 
 JobPosting
 - id
