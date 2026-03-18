@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { setJobPostings } from "./job-posting-slice";
 
 export const appSlice = createSlice({
     name: "app",
@@ -13,6 +14,7 @@ export const appSlice = createSlice({
             open: false,
         },
         data: {},
+        job_posting_id: null,
     },
     reducers: {
         setUser: (state, action) => {
@@ -30,9 +32,18 @@ export const appSlice = createSlice({
         setData: (state, action) => {
             state.data = action.payload;
         },
+        setJobPostingId: (state, action) => {
+            state.job_posting_id = action.payload;
+        },
     },
 });
-export const { setUser, setSidebarOpen, setDesktopCollapsed, setAlert,setData } =
-    appSlice.actions;
+export const {
+    setUser,
+    setSidebarOpen,
+    setDesktopCollapsed,
+    setAlert,
+    setData,
+    setJobPostingId,
+} = appSlice.actions;
 
 export default appSlice.reducer;

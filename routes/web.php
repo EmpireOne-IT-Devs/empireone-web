@@ -11,14 +11,36 @@ function route_page()
     return match ($user?->role) {
         1 => redirect('/administrator/dashboard'),
         2 => redirect('/account/employee/dashboard'),
+<<<<<<< HEAD
         3 => redirect('/account/applicant/dashboard'),
+=======
+        3 => redirect('/applicant/dashboard'),
+>>>>>>> 4692d47a11446ebf457d48df97038130e1ccd450
         default => Inertia::render('auth/login/page'),
     };
 }
 
 Route::get('/', function () {
+<<<<<<< HEAD
     return route_page(); // ✅ remove $this
+=======
+    if (Auth::user()) {
+        return route_page();
+    }
+    return Inertia::render('auth/landing_page/page');
+});
+
+Route::get('/auth/login', function () {
+    if (Auth::user()) {
+        return route_page();
+    }
+    return Inertia::render('auth/login/page');
+>>>>>>> 4692d47a11446ebf457d48df97038130e1ccd450
 })->name('login');
+
+Route::get('/talent/application', function () {
+    return Inertia::render('talent/page');
+})->name('talent');
 
 Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
@@ -189,7 +211,7 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
 });
 
 // Employee routes (Role 2)
-Route::prefix('employee')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('account')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('employee/dashboard/page');
     });
@@ -204,39 +226,18 @@ Route::prefix('employee')->middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// HR routes (Role 3)
-Route::prefix('hr')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
-        return Inertia::render('hr/dashboard/page');
+        return Inertia::render('applicant/dashboard/page');
     });
-    Route::get('/employees', function () {
-        return Inertia::render('hr/employees/page');
+    Route::get('/job_opening', function () {
+        return Inertia::render('applicant/job_opening/page');
     });
-    Route::get('/recruitment', function () {
-        return Inertia::render('hr/recruitment/page');
-    });
-    Route::get('/performance', function () {
-        return Inertia::render('hr/performance/page');
+    Route::get('/my_application', function () {
+        return Inertia::render('applicant/my_application/page');
     });
 });
 
-// Manager routes (Role 4)  
-Route::prefix('manager')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('manager/dashboard/page');
-    });
-    Route::get('/team', function () {
-        return Inertia::render('manager/team/page');
-    });
-    Route::get('/reports', function () {
-        return Inertia::render('manager/reports/page');
-    });
-});
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
 require __DIR__ . '/auth.php';

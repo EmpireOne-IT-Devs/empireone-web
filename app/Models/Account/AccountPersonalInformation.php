@@ -13,18 +13,7 @@ class AccountPersonalInformation extends Model
 {
     
     protected $fillable = [
-        // employee information
-        'user_id',
-        'department_id',
-        'site_id',  // required
-        'location_id',
-        'work_type',
-        'eogs_email',
-        'employee_id',
-        'position',
-        'contact',
-        'source', // required
-
+       
         // personal information
         'first_name', // required
         'middle_name', // required

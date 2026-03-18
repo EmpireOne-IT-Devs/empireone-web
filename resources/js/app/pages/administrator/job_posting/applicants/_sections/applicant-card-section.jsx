@@ -79,60 +79,65 @@ const STATUS_VARIANTS = {
 };
 
 export default function ApplicantCardSection() {
-    const {applicants}=useSelector((store)=>store.job_postings)
-    console.log('applicants',applicants.data)
+    const { applicants } = useSelector((store) => store.job_postings);
+    console.log("applicants", applicants.data);
     return (
         <div className="flex flex-col gap-3">
             {applicants?.data?.map((res, i) => (
-                <Card key={i} className="rounded-xl border p-5 mt-2">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-start gap-4">
-                            <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
-                              {res.applicant.name.charAt(0)}
-                            </div>
-
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2">
-                                    <h3 className="text-lg font-semibold">
-                                        {res.applicant.name}
-                                    </h3>
-                                    <Badge
-                                        label={res.status}
-                                        variant={
-                                            STATUS_VARIANTS[res.status] ||
-                                            "secondary"
-                                        }
-                                        outlined={false}
-                                        showDot={false}
-                                        className="rounded-full px-2"
-                                    />
+                <ViewApplicantSection data={res} key={i}>
+                    <Card className="rounded-xl border p-5 mt-2">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-start gap-4">
+                                <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                                    {res.applicant.name.charAt(0)}
                                 </div>
 
-                                <p className="text-sm text-gray-500">
-                                    {res.job_posting.job_requisition.title}
-                                </p>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-lg font-semibold">
+                                            {res.applicant.name}
+                                        </h3>
+                                        <Badge
+                                            label={res.status}
+                                            variant={
+                                                STATUS_VARIANTS[res.status] ||
+                                                "secondary"
+                                            }
+                                            outlined={false}
+                                            showDot={false}
+                                            className="rounded-full px-2"
+                                        />
+                                    </div>
 
-                                <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-1">
-                                    <span className="flex items-center gap-1">
-                                        <TbMail />      {res.applicant.email}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <TbPhone />  {res.applicant.personal_information.contact}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <TbCalendarEvent /> Applied:{" "}
-                                        {moment(res.created_at).format('LLL')}
-                                    </span>
+                                    <p className="text-sm text-gray-500">
+                                        {res.job_posting.job_requisition.title}
+                                    </p>
+
+                                    <div className="flex flex-wrap gap-4 text-sm text-gray-500 mt-1">
+                                        <span className="flex items-center gap-1">
+                                            <TbMail /> {res.applicant.email}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <TbPhone />{" "}
+                                            {
+                                                res.applicant
+                                                    .personal_information
+                                                    .contact
+                                            }
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <TbCalendarEvent /> Applied:{" "}
+                                            {moment(res.created_at).format(
+                                                "LLL",
+                                            )}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <ViewApplicantSection data={res}/>
-                        </div>
-                    </div>
-                </Card>
+                    </Card>
+                </ViewApplicantSection>
             ))}
-           
         </div>
     );
 }

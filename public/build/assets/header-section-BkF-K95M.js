@@ -1,0 +1,1 @@
+import{j as e}from"./app-CfNYNrSk.js";function s(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Welcome Back! 👋"}),e.jsx("div",{className:"text-gray-600",children:"Here's what's happening in your workspace today"})]})}export{s as default};

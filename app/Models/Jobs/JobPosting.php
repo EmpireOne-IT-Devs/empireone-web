@@ -2,6 +2,7 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -28,12 +29,13 @@ class JobPosting extends Model
     {
         return $this->hasMany(JobApplication::class, 'job_posting_id', 'id');
     }
-     public function applicant(): HasOne
+    public function applicant(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
-     public function personal_information(): HasOne
+    public function personal_information(): HasOne
     {
         return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id');
     }
+   
 }

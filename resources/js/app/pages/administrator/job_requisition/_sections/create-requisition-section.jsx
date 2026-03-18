@@ -19,9 +19,6 @@ export default function CreateJobRequisition() {
     const [search, setSearch] = useState(0);
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
-    const { search_job_requisition } = useSelector(
-        (state) => state.job_requisitions,
-    );
 
     const [form, setForm] = useState({
         justification_for_position: "",
@@ -57,41 +54,59 @@ export default function CreateJobRequisition() {
     });
 
     const positionType = watch("type");
-    const selectedPosition = search_job_requisition?.find(
-        (res) => res.id === search,
-    );
-    console.log("selectedPosition", selectedPosition);
-
+    const selectedPosition = data?.position?.find((res) => res.id === search);
+    console.log("searchsearchsearch", selectedPosition);
     useEffect(() => {
         if (positionType === "Existing Position") {
-            setValue("title", selectedPosition?.title || "");
-            setValue("department_id", selectedPosition?.department_id || "");
-            setValue("location_id", selectedPosition?.location_id || "");
+            setValue("title", selectedPosition?.job_requisition?.title || "");
+            setValue(
+                "department_id",
+                selectedPosition?.job_requisition?.department_id || "",
+            );
+            setValue(
+                "location_id",
+                selectedPosition?.job_requisition?.location_id || "",
+            );
             setValue(
                 "employment_type",
-                selectedPosition?.employment_type || "",
+                selectedPosition?.job_requisition?.employment_type || "",
             );
-            setValue("priority", selectedPosition?.priority || "");
+            setValue(
+                "priority",
+                selectedPosition?.job_requisition?.priority || "",
+            );
             setValue(
                 "number_of_positions",
-                selectedPosition?.number_of_positions || "",
+                selectedPosition?.job_requisition?.number_of_positions || "",
             );
             setValue(
                 "salary_range_from",
-                selectedPosition?.salary_range.split("- ")[0],
+                selectedPosition?.job_requisition?.salary_range
+                    .split("- ")[0]
+                    .replace("₱", "")
+                    .trim(),
             );
             setValue(
                 "salary_range_to",
-                selectedPosition?.salary_range.split("- ")[1],
+                selectedPosition?.job_requisition?.salary_range
+                    .split("- ")[1]
+                    .replace("₱", "")
+                    .trim(),
             );
 
-            setValue("existing_position_id", selectedPosition?.id);
+            setValue(
+                "existing_position_id",
+                selectedPosition?.job_requisition?.id,
+            );
 
             setForm({
                 justification_for_position:
-                    selectedPosition?.justification_for_position || "",
-                qualifications: selectedPosition?.qualifications || "",
-                responsibilities: selectedPosition?.responsibilities || "",
+                    selectedPosition?.job_requisition
+                        ?.justification_for_position || "",
+                qualifications:
+                    selectedPosition?.job_requisition?.qualifications || "",
+                responsibilities:
+                    selectedPosition?.job_requisition?.responsibilities || "",
             });
         } else if (positionType === "New Position") {
             setValue("title", "");
@@ -166,10 +181,11 @@ export default function CreateJobRequisition() {
                     className="flex flex-col max-h-[80vh]"
                 >
                     <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-                        Position Type
                         <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-300">
                             <label className="text-sm font-medium text-gray-700">
-                                <span className="text-red-500">*</span>
+                                <span className="text-black">
+                                    Position Type *
+                                </span>
                             </label>
                             <div className="space-y-3">
                                 <Controller
@@ -236,17 +252,14 @@ export default function CreateJobRequisition() {
                                             control={control}
                                             rules={{
                                                 required:
-                                                    positionType ===
-                                                    "Existing Position"
-                                                        ? "Please select an existing position"
-                                                        : false,
+                                                    "Please select an existing position",
                                             }}
                                             render={({ field }) => (
                                                 <Select
                                                     {...field}
                                                     label="Select Existing Position"
                                                     options={
-                                                        search_job_requisition?.map(
+                                                        data?.position?.map(
                                                             (res) => ({
                                                                 label: res.title,
                                                                 value: res.id,
@@ -265,6 +278,11 @@ export default function CreateJobRequisition() {
                                             )}
                                         />
                                     </div>
+                                )}
+                                {errors.existing_position_id && (
+                                    <p className="text-red-500 text-sm">
+                                        {errors.existing_position_id.message}
+                                    </p>
                                 )}
                             </div>
                         </div>

@@ -21,15 +21,30 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('job_postings')
                 ->nullOnDelete();
-            $table->enum('status', [
-                'Pending',
-                'Initial Phase',
-                'Final Phase',
+            $table->enum('screening_status', [
+                'New',
+                'Conducted',
+                'Screened Passed',
+                'Screened Failed',
+                'No Response',
+            ])->default('New');
+            $table->enum('interview_status', [
+                'Scheduled',
+                'Not Scheduled',
                 'Passed',
-                'Hired',
-                'Pooling',
                 'Failed',
-            ])->default('Pending');
+                'No Show',
+            ])->nullable()->default(null);
+            $table->enum('final_status', [
+                'Passed',
+                'Failed',
+                'Withdrawn',
+                'Pooled',
+                'Accepted Job Offer',
+                'Hired',
+                'Rejected',
+                'No Show',
+            ])->nullable()->default(null);
             $table->timestamps();
         });
     }

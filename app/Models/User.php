@@ -82,4 +82,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(AccountSkills::class);
     }
+
+    public function cover_letter(): HasOne
+    {
+        return $this->hasOne(AccountDocument::class, 'user_id', 'id')->where('type', 'Cover Letter');
+    }
+    public function resume(): HasOne
+    {
+        return $this->hasOne(AccountDocument::class, 'user_id', 'id')->where('type', 'Resume');
+    }
 }

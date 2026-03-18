@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Jobs;
 use App\Http\Controllers\Controller;
 
 use App\Models\Jobs\JobPosting;
+use App\Models\Jobs\JobRequisition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,7 @@ class JobPostingController extends Controller
 
     public function index()
     {
-        $jobPostings = JobPosting::where('status', 'Active')->orderBy('created_at', 'desc')->with(['job_requisition','applications'])->get();
+        $jobPostings = JobPosting::where('status', 'Active')->orderBy('created_at', 'desc')->with(['job_requisition', 'applications'])->get();
         return response()->json($jobPostings);
     }
 
@@ -31,6 +32,12 @@ class JobPostingController extends Controller
             'status' => $request->status,
         ]);
 
+        JobRequisition::updateOrCreate(
+            ['id' =>  $request->job_requisition_id], // Condition to find existing user
+            [
+                'status' => 'Posted',
+            ]
+        );
         return response()->json([
             'message' => 'Job posting created successfully!',
             'job_posting' => $jobPosting

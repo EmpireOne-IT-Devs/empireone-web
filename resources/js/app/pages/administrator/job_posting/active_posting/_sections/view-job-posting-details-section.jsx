@@ -23,7 +23,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
             <div onClick={() => setOpen(true)}>{children}</div>
 
             <Modal
-                width="max-w-2xl"
+                width="max-w-4xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title={`Position: ${data?.job_requisition?.title}`}
@@ -135,7 +135,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 </div>
                             )}
 
-                            {data?.job_requisition.qualifications && (
+                            {data?.job_requisition?.qualifications && (
                                 <div>
                                     <h3 className="font-semibold text-lg mb-2">
                                         Qualifications

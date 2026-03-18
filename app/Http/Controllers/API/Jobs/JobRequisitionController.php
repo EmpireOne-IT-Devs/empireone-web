@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account\AccountEmployee;
+use App\Models\Jobs\JobPosition;
 use App\Models\Jobs\JobRequisition;
 use App\Models\Jobs\JobRequisitionLog;
 use App\Models\User;
@@ -20,6 +21,7 @@ class JobRequisitionController extends Controller
     // pending send to Recruitment Director and the status is In Progress
     // In Progress send to Recruitment Staff 
     // The Staff will Create Job Posting
+
     public function approve_job_requisition(Request $request)
     {
 
@@ -28,7 +30,7 @@ class JobRequisitionController extends Controller
 
         // Define transition logic: [Current Status => [Next Status, Target Position]]
         $transitions = [
-            'Pending'     => ['In Progress', 'Recruitment Director'],
+            'Pending'     => ['In Progress', 'Talent Acquisition Manager'],
             'In Progress' => ['Approved',    'Recruitment Staff'],
         ];
 
@@ -93,7 +95,7 @@ class JobRequisitionController extends Controller
             })
             ->orderBy('id', 'desc')
             ->get();
-            
+
         $search_job_requisition = JobRequisition::where([
             ['type', '=', 'New Position'],
             ['status', '=', 'Approved'],
@@ -103,7 +105,6 @@ class JobRequisitionController extends Controller
             'status' => 'success',
             'stats'  => $stats,
             'data'   => $jobRequisitions,
-            'search_job_requisition' => $search_job_requisition
         ]);
     }
     public function store(Request $request)
@@ -115,10 +116,14 @@ class JobRequisitionController extends Controller
         ]);
 
         $approver = AccountEmployee::where([
-            ['user_id', '=',  $auth->id],
             ['site_id', '=', $auth['account_employee']->site_id],
             ['position', '=', 'Site Director'],
         ])->first();
+
+        JobPosition::firstOrCreate(
+            ['title' => $request->title],
+            ['department_id' => $request->department_id]
+        );
 
         if ($approver && $approver->eogs_email) {
             $approver->notify(new JobRequisitionNotification($jobRequisition));

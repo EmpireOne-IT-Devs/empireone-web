@@ -17,7 +17,6 @@ export default function SearchSection() {
             </div>
             <div>
                 <Select
-                    iconLeft={<TbCategory className="text-xl" />}
                     label="All Jobs"
                     options={[
                         { value: "all_jobs", label: "All Jobs" },
@@ -30,7 +29,6 @@ export default function SearchSection() {
             </div>
             <div>
                 <Select
-                    iconLeft={<TbFilter className="text-xl" />}
                     label="All Status"
                     options={[
                         { value: "all_status", label: "All Status" },
