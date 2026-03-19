@@ -14,9 +14,7 @@ export default function Layout({ children }) {
     return (
         <div className="h-full bg-white dark:bg-gray-900">
             <TopbarSection />
-            <main
-                className={`flex-1 p-6 bg-gray-100  ${desktopCollapsed ? "ml-20" : ""}`}
-            >
+            <main className={`flex-1 p-6   ${desktopCollapsed ? "ml-20" : ""}`}>
                 {children}
             </main>
         </div>

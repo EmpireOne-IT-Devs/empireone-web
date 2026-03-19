@@ -6,6 +6,7 @@ import ServicesSection from "./sections/services-section";
 import AboutSection from "./sections/about-section";
 import ContactSection from "./sections/contact-section";
 import FooterSection from "./sections/footer-section";
+import DividerSection from "./sections/divider-section";
 
 export default function Page() {
     return (
@@ -15,6 +16,7 @@ export default function Page() {
                 <HeroSection />
                 <CarouselSection />
                 <ServicesSection />
+                {/* <DividerSection /> */}
                 <AboutSection />
                 <ContactSection />
                 <FooterSection />

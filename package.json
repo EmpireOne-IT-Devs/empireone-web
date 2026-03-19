@@ -23,10 +23,12 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@fontsource/montserrat": "^5.2.8",
         "@headlessui/tailwindcss": "^0.2.2",
         "@heroicons/react": "^2.2.0",
         "@popperjs/core": "^2.11.8",
         "@reduxjs/toolkit": "^2.11.2",
+        "@thesvg/react": "^2.0.0",
         "antd": "^6.2.0",
         "chart.js": "^4.5.1",
         "classnames": "^2.5.1",
