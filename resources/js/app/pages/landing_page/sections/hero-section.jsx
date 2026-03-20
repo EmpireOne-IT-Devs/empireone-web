@@ -1,5 +1,5 @@
 import Button from "@/app/_components/button";
-import { Microsoft, Apple, Android } from "@thesvg/react";
+import { Android, Windows } from "@thesvg/react";
 import { TrendingUp, Shield } from "lucide-react";
 
 export default function HeroSection() {
@@ -65,7 +65,7 @@ export default function HeroSection() {
                             </Button>
                             <Button variant="light">
                                 Windows
-                                <Microsoft className="h-5 w-5 ml-2" />
+                                <Windows className="h-5 w-5 ml-2" />
                             </Button>
                             <Button variant="light">
                                 Mac
