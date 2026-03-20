@@ -128,7 +128,7 @@ function Message({ msg }) {
 
 function EmptyState() {
     return (
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 text-gray-400">
+        <div className="flex-1 flex flex-col items-center justify-center gap-3 text-gray-600">
             <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
                 <TbBriefcase className="w-8 h-8 text-gray-300" />
             </div>
@@ -183,10 +183,10 @@ export default function ChatMessagesUI() {
     }
 
     return (
-        <div className="flex h-[600px] bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 font-sans">
+        <div className="flex h-[80vh] bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 font-sans">
 
             {/* ── Sidebar ── */}
-            <div className={`w-80 flex-shrink-0 border-r border-gray-100 flex flex-col ${mobileView === "chat" ? "hidden sm:flex" : "flex"}`}>
+            <div className={`w-80 flex-shrink-0 border-r border-gray-100 flex flex-col bg-gray-100 ${mobileView === "chat" ? "hidden sm:flex" : "flex"}`}>
                 {/* Sidebar header */}
                 <div className="px-4 pt-4 pb-3 border-b border-gray-100">
                     <h2 className="text-base font-bold text-gray-900 mb-3">Messages</h2>
@@ -220,7 +220,7 @@ export default function ChatMessagesUI() {
             </div>
 
             {/* ── Chat area ── */}
-            <div className={`flex-1 flex flex-col min-w-0 ${mobileView === "list" ? "hidden sm:flex" : "flex"}`}>
+            <div className={`bg-gray-200 flex-1 flex flex-col min-w-0 ${mobileView === "list" ? "hidden sm:flex" : "flex"}`}>
                 {selected ? (
                     <>
                         {/* Chat header */}

@@ -7,7 +7,6 @@ export default function Page() {
     return (
         <div>
             <HeaderSection />
-
             <SearchSection />
             <JobPostingCardSection />
         </div>

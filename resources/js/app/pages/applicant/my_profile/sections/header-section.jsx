@@ -1,0 +1,72 @@
+import { AlertCircle, Edit2, Mail, User, X } from "lucide-react";
+import React from "react";
+
+export default function HeaderSection({ editing, setEditing }) {
+    const profileCompletion = 20;
+
+    return (
+        <div className="bg-white rounded-xl shadow-md overflow-hidden max-w-4xl mx-auto">
+            <div className="h-28 bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700" />
+
+            <div className="px-6 pb-5">
+                <div className="w-[90px] h-[90px] rounded-full bg-gray-200 border-4 border-white flex items-center justify-center -mt-11 relative z-10">
+                    <User className="w-10 h-10 text-gray-400" />
+                </div>
+
+                <div className="flex justify-between items-end mt-2">
+                    <div>
+                        <p className="text-sm font-semibold text-gray-900">Job Applicant</p>
+                        <div className="flex items-center gap-1 mt-0.5 text-gray-500 text-xs">
+                            <Mail className="w-3.5 h-3.5 text-gray-400" />
+                            maria.garcia@email.com
+                        </div>
+                    </div>
+
+                    {!editing ? (
+                        <button
+                            onClick={() => setEditing(true)}
+                            className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
+                        >
+                            <Edit2 className="w-3.5 h-3.5" />
+                            Edit Profile
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setEditing(false)}
+                            className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            Cancel Edit
+                        </button>
+                    )}
+                </div>
+
+                <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                        <AlertCircle className="w-4 h-4 text-yellow-400" />
+                        <span className="text-sm font-bold text-gray-800">Complete Your Profile</span>
+                    </div>
+
+                    <p className="text-xs text-gray-600 mb-3">
+                        Fill in your First Name, Last Name, Email, Contact Number, and upload your Resume to complete your profile.
+                    </p>
+
+                    <div className="flex items-center gap-3">
+                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-yellow-400 rounded-full transition-all duration-500"
+                                style={{ width: `${profileCompletion}%` }}
+                            />
+                        </div>
+                        <span className="text-xs font-semibold text-gray-700">{profileCompletion}%</span>
+                    </div>
+
+                    <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                        <span>💡</span>
+                        <em>Tip: Completing your profile to 100% increases your chances of getting hired!</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+}
