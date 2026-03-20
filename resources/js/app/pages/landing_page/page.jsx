@@ -6,18 +6,23 @@ import ServicesSection from "./sections/services-section";
 import AboutSection from "./sections/about-section";
 import ContactSection from "./sections/contact-section";
 import FooterSection from "./sections/footer-section";
-import DividerSection from "./sections/divider-section";
+import ProgressScrollSection from "./sections/progress-scroll-section";
 
 export default function Page() {
     return (
         <div>
+            {/* Fixed overlay — sits above everything, no layout impact */}
+            <ProgressScrollSection />
+
             <HeaderSection />
             <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-x-hidden">
-                <HeroSection />
+                <div id="hero">
+                    <HeroSection />
+                </div>
                 <CarouselSection />
-                <ServicesSection />
-                {/* <DividerSection /> */}
                 <AboutSection />
+                <ServicesSection />
+
                 <ContactSection />
                 <FooterSection />
             </div>

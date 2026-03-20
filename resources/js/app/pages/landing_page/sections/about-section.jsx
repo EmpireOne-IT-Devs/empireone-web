@@ -37,7 +37,7 @@ export default function AboutSection() {
                 />
                 <div
                     className="absolute inset-0"
-                    style={{ background: "rgba(172, 145, 95, 0.82)" }}
+                    style={{ background: "rgba(172, 145, 95, 0.40)" }}
                 />
                 <div className="absolute inset-0 bg-black/30" />
             </div>
@@ -83,7 +83,7 @@ export default function AboutSection() {
                         We Can Help Clients With
                         <span
                             className="block"
-                            style={{ color: "#f97316" }}
+                            style={{ color: "#5170ff" }}
                         >
                             The Right Solutions
                         </span>
