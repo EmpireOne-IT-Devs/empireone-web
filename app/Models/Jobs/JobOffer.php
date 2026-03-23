@@ -2,7 +2,11 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account\AccountEmployeeAllowance;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class JobOffer extends Model
 {
@@ -14,4 +18,17 @@ class JobOffer extends Model
         'role',
         'status',
     ];
+
+    public function job_application(): HasOne
+    {
+        return $this->hasOne(JobApplication::class, 'id', 'job_application_id')->with(['job_posting']);
+    }
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information']);
+    }
+    public function allowances(): HasMany
+    {
+        return $this->hasMany(AccountEmployeeAllowance::class, 'job_offer_id', 'id');
+    }
 }

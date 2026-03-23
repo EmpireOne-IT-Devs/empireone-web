@@ -12,6 +12,7 @@ export const jobPostingsSlice = createSlice({
             interview_status: "",
             final_status: "",
         },
+        job_offers: [],
     },
     reducers: {
         setJobPostings: (state, action) => {
@@ -29,6 +30,9 @@ export const jobPostingsSlice = createSlice({
         setSearchApplicantStatus: (state, action) => {
             state.search_applicant_status = action.payload;
         },
+        setJobOffers: (state, action) => {
+            state.job_offers = action.payload;
+        },
     },
 });
 export const {
@@ -36,7 +40,8 @@ export const {
     setJobApplications,
     setJobApplication,
     setApplicants,
-    setSearchApplicantStatus
+    setSearchApplicantStatus,
+    setJobOffers,
 } = jobPostingsSlice.actions;
 
 export default jobPostingsSlice.reducer;

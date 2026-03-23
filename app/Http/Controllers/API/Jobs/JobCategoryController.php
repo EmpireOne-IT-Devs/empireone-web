@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\API\Jobs;
+
 use App\Http\Controllers\Controller;
 use App\Models\Jobs\JobCategory;
 use Illuminate\Http\Request;
@@ -11,7 +13,10 @@ class JobCategoryController extends Controller
      */
     public function index()
     {
-        //
+
+        return response()->json([
+            'status' => 'success',
+        ], 200);
     }
 
     /**

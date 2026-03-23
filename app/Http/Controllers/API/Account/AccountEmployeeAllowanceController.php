@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\Account;
 
-use App\Models\Jobs\JobPosition;
+use App\Http\Controllers\Controller;
+use App\Models\Account\AccountEmployeeAllowance;
 use Illuminate\Http\Request;
 
-class JobPositionController extends Controller
+class AccountEmployeeAllowanceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class JobPositionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(JobPosition $jobPosition)
+    public function show(AccountEmployeeAllowance $accountEmployeeAllowance)
     {
         //
     }
@@ -42,7 +43,7 @@ class JobPositionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JobPosition $jobPosition)
+    public function edit(AccountEmployeeAllowance $accountEmployeeAllowance)
     {
         //
     }
@@ -50,7 +51,7 @@ class JobPositionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JobPosition $jobPosition)
+    public function update(Request $request, AccountEmployeeAllowance $accountEmployeeAllowance)
     {
         //
     }
@@ -58,7 +59,7 @@ class JobPositionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JobPosition $jobPosition)
+    public function destroy(AccountEmployeeAllowance $accountEmployeeAllowance)
     {
         //
     }

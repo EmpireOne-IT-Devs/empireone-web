@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\Jobs;
 
+use App\Http\Controllers\Controller;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,11 @@ class JobOfferController extends Controller
      */
     public function index()
     {
-        //
+        $jo = JobOffer::with(['job_application', 'user', 'allowances'])->paginate();
+        return response()->json([
+            'data' => $jo,
+            'status' => 'success',
+        ], 200);
     }
 
     /**

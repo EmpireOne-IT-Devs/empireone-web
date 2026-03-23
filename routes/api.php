@@ -5,6 +5,7 @@ use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
+use App\Http\Controllers\API\Jobs\JobOfferController;
 use App\Http\Controllers\API\Jobs\JobPostingController;
 use App\Http\Controllers\API\Jobs\JobRequisitionController;
 use App\Http\Controllers\API\Jobs\JobRequisitionLogController;
@@ -57,6 +58,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('requisition_logs', JobRequisitionLogController::class);
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::resource('application', JobApplicationController::class);
+        Route::resource('offers', JobOfferController::class);
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);
         Route::get('get_applications_by_user',  [JobApplicationController::class, 'get_applications_by_user']);
         Route::post('update_job_application_status',  [JobApplicationController::class, 'update_job_application_status']);

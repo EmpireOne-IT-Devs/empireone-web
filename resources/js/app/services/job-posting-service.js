@@ -6,6 +6,11 @@ export async function create_job_posting_service(data) {
 export async function get_job_postings_service() {
     return await axios.get("/api/job/postings");
 }
+
+export async function get_job_offers_service() {
+    return (await axios.get(`/api/job/offers${window.location.search}`)).data;
+}
+
 export async function delete_job_postings_service(id) {
     try {
         const result = axios.delete(`/api/job/postings/${id}`);
