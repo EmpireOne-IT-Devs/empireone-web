@@ -3,6 +3,8 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "@inertiajs/react";
 
 const navigation = [
+    
+    { name: "Home", id: "home" },
     { name: "About Us", id: "about-us" },
     { name: "Services", id: "services" },
     { name: "Contact", id: "contact" },

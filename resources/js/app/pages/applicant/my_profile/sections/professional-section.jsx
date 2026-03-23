@@ -1,221 +1,235 @@
-import { Building2, Award, GraduationCap } from "lucide-react";
+import { User, Calendar, Building2, Award, GraduationCap } from "lucide-react";
 import React from "react";
-import { Field, SectionCard, PersonIcon, CalendarIcon } from "./share-section";
-// import { Field, SectionCard, PersonIcon, CalendarIcon } from "./shared";
+import Input from "@/app/_components/input";
+import Select from "@/app/_components/select";
 
 export default function ProfessionalSection({ form, set, editing }) {
     return (
-        <>
-            <SectionCard
-                title="Work Experience"
-                icon={<Building2 size={16} />}
-                accent="violet"
-            >
+        <div className="flex flex-col gap-6">
+
+            <div className="flex flex-col gap-3 bg-purple-50 border border-purple-200 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <Building2 size={15} /> Work Experience
+                </span>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <Field
+                    <Input
                         label="Job Title *"
+                        name="jobTitle"
                         value={form.jobTitle}
                         onChange={set("jobTitle")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Company Name *"
+                        name="companyName"
                         value={form.companyName}
                         onChange={set("companyName")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Select
                         label="Employment Type"
+                        name="employmentType"
                         value={form.employmentType}
                         onChange={set("employmentType")}
-                        editing={editing}
+                        disabled={!editing}
                         options={[
-                            { label: "Full-time", value: "full_time" },
-                            { label: "Part-time", value: "part_time" },
-                            { label: "Contract", value: "contract" },
-                            { label: "Freelance", value: "freelance" },
+                            { label: "Full-time",  value: "full_time" },
+                            { label: "Part-time",  value: "part_time" },
+                            { label: "Contract",   value: "contract" },
+                            { label: "Freelance",  value: "freelance" },
                             { label: "Internship", value: "internship" },
                         ]}
                     />
-                    <Field
+                    <Select
                         label="Industry"
+                        name="industry"
                         value={form.industry}
                         onChange={set("industry")}
-                        editing={editing}
+                        disabled={!editing}
                         options={[
                             { label: "Information Technology", value: "it" },
-                            { label: "Healthcare", value: "healthcare" },
-                            { label: "Education", value: "education" },
-                            { label: "Finance", value: "finance" },
-                            { label: "Manufacturing", value: "manufacturing" },
-                            { label: "Retail", value: "retail" },
-                            { label: "Government", value: "government" },
-                            { label: "Other", value: "other" },
+                            { label: "Healthcare",             value: "healthcare" },
+                            { label: "Education",              value: "education" },
+                            { label: "Finance",                value: "finance" },
+                            { label: "Manufacturing",          value: "manufacturing" },
+                            { label: "Retail",                 value: "retail" },
+                            { label: "Government",             value: "government" },
+                            { label: "Other",                  value: "other" },
                         ]}
                     />
-                    <Field
+                    <Input
                         label="Start Date"
+                        name="workStartDate"
+                        type="date"
                         value={form.workStartDate}
                         onChange={set("workStartDate")}
-                        icon={<CalendarIcon />}
-                        editing={editing}
-                        type="date"
+                        iconLeft={<Calendar size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="End Date"
+                        name="workEndDate"
+                        type="date"
                         value={form.workEndDate}
                         onChange={set("workEndDate")}
-                        icon={<CalendarIcon />}
-                        editing={editing}
-                        type="date"
+                        iconLeft={<Calendar size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Years of Experience"
+                        name="yearsExp"
+                        type="number"
                         value={form.yearsExp}
                         onChange={set("yearsExp")}
-                        icon={<PersonIcon />}
-                        editing={editing}
-                        type="number"
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Monthly Salary (₱)"
+                        name="salary"
+                        type="number"
                         value={form.salary}
                         onChange={set("salary")}
-                        icon={<PersonIcon />}
-                        editing={editing}
-                        type="number"
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
                 </div>
-            </SectionCard>
+            </div>
 
-            {/* ── Skills & Expertise ── */}
-            <SectionCard
-                title="Skills & Expertise"
-                icon={<Award size={16} />}
-                accent="amber"
-            >
+            <div className="flex flex-col gap-3 bg-orange-50 border border-orange-300 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2 ">
+                    <Award size={15} /> Skills & Expertise
+                </span>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <Field
+                    <Input
                         label="Primary Skill *"
+                        name="primarySkill"
                         value={form.primarySkill}
                         onChange={set("primarySkill")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Select
                         label="Skill Level"
+                        name="skillLevel"
                         value={form.skillLevel}
                         onChange={set("skillLevel")}
-                        editing={editing}
+                        disabled={!editing}
                         options={[
-                            { label: "Beginner", value: "beginner" },
+                            { label: "Beginner",     value: "beginner" },
                             { label: "Intermediate", value: "intermediate" },
-                            { label: "Advanced", value: "advanced" },
-                            { label: "Expert", value: "expert" },
+                            { label: "Advanced",     value: "advanced" },
+                            { label: "Expert",       value: "expert" },
                         ]}
                     />
-                    <Field
+                    <Input
                         label="Secondary Skills"
+                        name="secondarySkills"
                         value={form.secondarySkills}
                         onChange={set("secondarySkills")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Certifications"
+                        name="certifications"
                         value={form.certifications}
                         onChange={set("certifications")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="License / PRC No."
+                        name="licenseNo"
                         value={form.licenseNo}
                         onChange={set("licenseNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="License Expiry"
+                        name="licenseExpiry"
+                        type="date"
                         value={form.licenseExpiry}
                         onChange={set("licenseExpiry")}
-                        icon={<CalendarIcon />}
-                        editing={editing}
-                        type="date"
+                        iconLeft={<Calendar size={14} />}
+                        disabled={!editing}
                     />
                 </div>
-            </SectionCard>
+            </div>
 
-            {/* ── Educational Background ── */}
-            <SectionCard
-                title="Educational Background"
-                icon={<GraduationCap size={16} />}
-                accent="sky"
-            >
+            <div className="flex flex-col gap-3 bg-blue-50 border border-blue-200 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <GraduationCap size={15} /> Educational Background
+                </span>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <Field
+                    <Input
                         label="School Name *"
+                        name="schoolName"
                         value={form.schoolName}
                         onChange={set("schoolName")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Select
                         label="Degree Level"
+                        name="degreeLevel"
                         value={form.degreeLevel}
                         onChange={set("degreeLevel")}
-                        editing={editing}
+                        disabled={!editing}
                         options={[
-                            { label: "High School", value: "high_school" },
-                            {
-                                label: "Vocational / TESDA",
-                                value: "vocational",
-                            },
-                            { label: "Associate", value: "associate" },
-                            { label: "Bachelor's", value: "bachelors" },
-                            { label: "Master's", value: "masters" },
-                            { label: "Doctorate", value: "doctorate" },
+                            { label: "High School",        value: "high_school" },
+                            { label: "Vocational / TESDA", value: "vocational" },
+                            { label: "Associate",          value: "associate" },
+                            { label: "Bachelor's",         value: "bachelors" },
+                            { label: "Master's",           value: "masters" },
+                            { label: "Doctorate",          value: "doctorate" },
                         ]}
                     />
-                    <Field
+                    <Input
                         label="Course / Program"
+                        name="course"
                         value={form.course}
                         onChange={set("course")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Year Graduated"
+                        name="yearGraduated"
+                        type="number"
                         value={form.yearGraduated}
                         onChange={set("yearGraduated")}
-                        icon={<CalendarIcon />}
-                        editing={editing}
-                        type="number"
+                        iconLeft={<Calendar size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Select
                         label="Award / Honors"
+                        name="awardHonors"
                         value={form.awardHonors}
                         onChange={set("awardHonors")}
-                        editing={editing}
+                        disabled={!editing}
                         options={[
-                            { label: "Summa Cum Laude", value: "summa" },
-                            { label: "Magna Cum Laude", value: "magna" },
-                            { label: "Cum Laude", value: "cum_laude" },
+                            { label: "Summa Cum Laude",  value: "summa" },
+                            { label: "Magna Cum Laude",  value: "magna" },
+                            { label: "Cum Laude",        value: "cum_laude" },
                             { label: "With Distinction", value: "distinction" },
-                            { label: "None", value: "none" },
+                            { label: "None",             value: "none" },
                         ]}
                     />
-                    <Field
+                    <Input
                         label="School Address"
+                        name="schoolAddress"
                         value={form.schoolAddress}
                         onChange={set("schoolAddress")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
                 </div>
-            </SectionCard>
-        </>
+            </div>
+
+        </div>
     );
 }

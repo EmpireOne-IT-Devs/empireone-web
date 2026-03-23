@@ -1,9 +1,9 @@
 export default function ContactSection() {
     const contactData = {
         address:
-            "Don Juan Subd., Pres. Quirino St., Brgy. II, Barangay Hall, San Carlos City, Negros Occidental, Philippines",
+            "S.Carmona Barangay 6, San Carlos City, Negros Occidental, Philippines",
         phone1: "729-8353",
-        email: "barangay_two@yahoo.com",
+        email: "hiring@empireonegroup.com",
         officeHours: [
             "Monday – Friday: 8:00 AM – 5:00 PM",
             "Saturday: 8:00 AM – 12:00 PM",

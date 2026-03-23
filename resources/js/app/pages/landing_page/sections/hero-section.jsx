@@ -5,6 +5,7 @@ import { TrendingUp, Shield } from "lucide-react";
 export default function HeroSection() {
     return (
         <section
+            id="home"
             className="flex items-center relative overflow-hidden"
             style={{ height: "100vh" }}
         >
@@ -107,7 +108,7 @@ export default function HeroSection() {
 
                         {/* ── FLOATING BADGE: Satisfied Clients (top-right) ── */}
                         <div
-                            className="absolute z-20 animate-pulse flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
+                            className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
                             style={{
                                 top: "0px",
                                 right: "-16px",
@@ -141,13 +142,13 @@ export default function HeroSection() {
 
                         {/* ── FLOATING BADGE: System Uptime (bottom-left) ── */}
                         <div
-                            className="absolute z-20 animate-pulse flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
+                            className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
                             style={{
                                 bottom: "0px",
                                 left: "-16px",
                                 background: "rgba(255,255,255,0.97)",
                                 backdropFilter: "blur(4px)",
-                                minWidth: "210px",
+                                minWidth: "220px",
                             }}
                         >
                             <div

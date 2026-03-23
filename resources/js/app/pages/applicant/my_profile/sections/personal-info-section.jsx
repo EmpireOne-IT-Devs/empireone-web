@@ -1,132 +1,143 @@
-import { UserCircle, MapPin } from "lucide-react";
+import { UserCircle, MapPin, User, Calendar } from "lucide-react";
 import React from "react";
-import { Field, SectionCard, PersonIcon, CalendarIcon } from "./share-section";
-// import { Field, SectionCard, PersonIcon, CalendarIcon } from "./shared";
+import Input from "@/app/_components/input";
+import Select from "@/app/_components/select";
 
 export default function PersonalInfoSection({ form, set, editing }) {
     return (
-        <>
-            {/* ── Basic Information ── */}
-            <SectionCard title="Basic Information" icon={<UserCircle size={16} />} accent="indigo">
+        <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3 bg-purple-50 border border-purple-200 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <UserCircle size={15} /> Basic Information
+                </span>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <Field
+                    <Input
                         label="First Name *"
+                        name="firstName"
                         value={form.firstName}
                         onChange={set("firstName")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Middle Name"
+                        name="middleName"
                         value={form.middleName}
                         onChange={set("middleName")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Last Name *"
+                        name="lastName"
                         value={form.lastName}
                         onChange={set("lastName")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Suffix"
+                        name="suffix"
                         value={form.suffix}
                         onChange={set("suffix")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Date of Birth"
+                        name="dob"
+                        type="date"
                         value={form.dob}
                         onChange={set("dob")}
-                        icon={<CalendarIcon />}
-                        editing={editing}
-                        type="date"
+                        iconLeft={<Calendar size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Select
                         label="Gender"
+                        name="gender"
                         value={form.gender}
                         onChange={set("gender")}
-                        editing={editing}
+                        disabled={!editing}
                         options={[
-                            { label: "Male",   value: "male" },
+                            { label: "Male", value: "male" },
                             { label: "Female", value: "female" },
-                            { label: "Other",  value: "other" },
+                            { label: "Other", value: "other" },
                         ]}
                     />
-                    <Field
+                    <Select
                         label="Marital Status"
+                        name="maritalStatus"
                         value={form.maritalStatus}
                         onChange={set("maritalStatus")}
-                        editing={editing}
+                        disabled={!editing}
                         options={[
-                            { label: "Single",   value: "single" },
-                            { label: "Married",  value: "married" },
+                            { label: "Single", value: "single" },
+                            { label: "Married", value: "married" },
                             { label: "Divorced", value: "divorced" },
-                            { label: "Widowed",  value: "widowed" },
+                            { label: "Widowed", value: "widowed" },
                         ]}
                     />
-
-                    {/* Nationality — always read-only */}
-                    <div className="flex flex-col gap-1">
-                        <label className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-                            Nationality
-                        </label>
-                        <div className="flex items-center gap-2 px-3 py-2.5 bg-white/60 border border-white/80 rounded-xl">
-                            <span className="text-slate-400"><PersonIcon /></span>
-                            <span className="text-sm font-semibold text-slate-700">Filipino</span>
-                            <span className="ml-auto text-[10px] bg-slate-100 text-slate-500 rounded-full px-2 py-0.5 font-medium">
-                                Fixed
-                            </span>
-                        </div>
-                    </div>
+                    <Input
+                        label="Nationality *"
+                        name="nationality"
+                        value={form.nationality}
+                        onChange={set("nationality")}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
+                    />
                 </div>
-            </SectionCard>
+            </div>
 
-            {/* ── Address Information ── */}
-            <SectionCard title="Address Information" icon={<MapPin size={16} />} accent="emerald">
+            <div className="flex flex-col gap-3 bg-green-50 border border-green-200 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <MapPin size={15} /> Address Information
+                </span>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <Field
+                    <Input
                         label="Region *"
+                        name="region"
                         value={form.region}
                         onChange={set("region")}
-                        editing={editing}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Province *"
+                        name="province"
                         value={form.province}
                         onChange={set("province")}
-                        editing={editing}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="City / Municipal *"
+                        name="city_municipal"
                         value={form.city_municipal}
                         onChange={set("city_municipal")}
-                        editing={editing}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Barangay *"
+                        name="barangay"
                         value={form.barangay}
                         onChange={set("barangay")}
-                        editing={editing}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Zip Code *"
+                        name="zip_code"
+                        type="number"
                         value={form.zip_code}
                         onChange={set("zip_code")}
-                        editing={editing}
-                        type="number"
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="House / Lot / Street / Purok"
+                        name="house_lot_street"
                         value={form.house_lot_street}
                         onChange={set("house_lot_street")}
-                        editing={editing}
+                        disabled={!editing}
                     />
                 </div>
-            </SectionCard>
-        </>
+            </div>
+        </div>
     );
 }

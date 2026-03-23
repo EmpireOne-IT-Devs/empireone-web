@@ -1,146 +1,142 @@
-import { FileBadge, FileCheck } from "lucide-react";
+import { FileBadge, FileCheck, User, Calendar } from "lucide-react";
 import React from "react";
-import { Field, FileUploadField, SectionCard, PersonIcon, CalendarIcon } from "./share-section";
-// import { Field, FileUploadField, SectionCard, PersonIcon, CalendarIcon } from "./shared";
+import Input from "@/app/_components/input";
+import ImageUpload from "@/app/_components/image-upload";
 
 export default function DocumentsSection({ form, set, editing }) {
     return (
-        <>
-            {/* ── Government-Issued IDs ── */}
-            <SectionCard title="Government-Issued IDs" icon={<FileBadge size={16} />} accent="indigo">
+        <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3 bg-purple-100 border border-purple-300 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <FileBadge size={15} /> Government-Issued IDs
+                </span>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <Field
+                    <Input
                         label="SSS Number"
+                        name="sssNo"
                         value={form.sssNo}
                         onChange={set("sssNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="PhilHealth Number"
+                        name="philhealthNo"
                         value={form.philhealthNo}
                         onChange={set("philhealthNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Pag-IBIG Number"
+                        name="pagibigNo"
                         value={form.pagibigNo}
                         onChange={set("pagibigNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="TIN Number"
+                        name="tinNo"
                         value={form.tinNo}
                         onChange={set("tinNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="UMID / National ID"
+                        name="umidNo"
                         value={form.umidNo}
                         onChange={set("umidNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Passport Number"
+                        name="passportNo"
                         value={form.passportNo}
                         onChange={set("passportNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Passport Expiry"
+                        name="passportExpiry"
+                        type="date"
                         value={form.passportExpiry}
                         onChange={set("passportExpiry")}
-                        icon={<CalendarIcon />}
-                        editing={editing}
-                        type="date"
+                        iconLeft={<Calendar size={14} />}
+                        disabled={!editing}
                     />
-                    <Field
+                    <Input
                         label="Driver's License No."
+                        name="driversLicenseNo"
                         value={form.driversLicenseNo}
                         onChange={set("driversLicenseNo")}
-                        icon={<PersonIcon />}
-                        editing={editing}
+                        iconLeft={<User size={14} />}
+                        disabled={!editing}
                     />
                 </div>
-            </SectionCard>
+            </div>
 
-            {/* ── File Uploads ── */}
-            <SectionCard title="File Uploads" icon={<FileCheck size={16} />} accent="emerald">
-                <p className="text-xs text-slate-400 mb-4">
-                    Accepted formats: PDF, JPG, PNG — max 5 MB each.
+            <div className="flex flex-col gap-3 bg-green-100 border border-green-300 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <FileCheck size={15} /> File Uploads
+                </span>
+                <p className="text-xs text-gray-400 -mt-1">
+                    Accepted formats: JPG, PNG — max 5 MB each.
                 </p>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                    <FileUploadField
+                    <ImageUpload
                         label="Resume / CV *"
-                        description="Upload your latest resume"
-                        accept=".pdf,.doc,.docx"
-                        editing={editing}
-                        fileName={form.resumeFile}
+                        name="resumeFile"
                         onChange={set("resumeFile")}
+                        disabled={!editing}
                     />
-                    <FileUploadField
+                    <ImageUpload
                         label="Valid ID (Front)"
-                        description="Upload front of valid ID"
-                        accept="image/*,.pdf"
-                        editing={editing}
-                        fileName={form.validIdFront}
+                        name="validIdFront"
                         onChange={set("validIdFront")}
+                        disabled={!editing}
                     />
-                    <FileUploadField
+                    <ImageUpload
                         label="Valid ID (Back)"
-                        description="Upload back of valid ID"
-                        accept="image/*,.pdf"
-                        editing={editing}
-                        fileName={form.validIdBack}
+                        name="validIdBack"
                         onChange={set("validIdBack")}
+                        disabled={!editing}
                     />
-                    <FileUploadField
+                    <ImageUpload
                         label="Diploma / TOR"
-                        description="Upload diploma or transcript"
-                        accept="image/*,.pdf"
-                        editing={editing}
-                        fileName={form.diplomaFile}
+                        name="diplomaFile"
                         onChange={set("diplomaFile")}
+                        disabled={!editing}
                     />
-                    <FileUploadField
+                    <ImageUpload
                         label="Certificate of Employment"
-                        description="Upload COE from previous employer"
-                        accept="image/*,.pdf"
-                        editing={editing}
-                        fileName={form.coeFile}
+                        name="coeFile"
                         onChange={set("coeFile")}
+                        disabled={!editing}
                     />
-                    <FileUploadField
+                    <ImageUpload
                         label="PRC License / Certificate"
-                        description="Upload professional license"
-                        accept="image/*,.pdf"
-                        editing={editing}
-                        fileName={form.prcFile}
+                        name="prcFile"
                         onChange={set("prcFile")}
+                        disabled={!editing}
                     />
-                    <FileUploadField
+                    <ImageUpload
                         label="NBI / Police Clearance"
-                        description="Upload clearance document"
-                        accept="image/*,.pdf"
-                        editing={editing}
-                        fileName={form.clearanceFile}
+                        name="clearanceFile"
                         onChange={set("clearanceFile")}
+                        disabled={!editing}
                     />
-                    <FileUploadField
+                    <ImageUpload
                         label="Medical Certificate"
-                        description="Upload medical certificate"
-                        accept="image/*,.pdf"
-                        editing={editing}
-                        fileName={form.medicalFile}
+                        name="medicalFile"
                         onChange={set("medicalFile")}
+                        disabled={!editing}
                     />
                 </div>
-            </SectionCard>
-        </>
+            </div>
+        </div>
     );
 }

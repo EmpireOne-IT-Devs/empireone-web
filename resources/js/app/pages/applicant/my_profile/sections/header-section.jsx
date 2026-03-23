@@ -1,3 +1,4 @@
+import Button from "@/app/_components/button";
 import { AlertCircle, Edit2, Mail, User, X } from "lucide-react";
 import React from "react";
 
@@ -15,7 +16,9 @@ export default function HeaderSection({ editing, setEditing }) {
 
                 <div className="flex justify-between items-end mt-2">
                     <div>
-                        <p className="text-sm font-semibold text-gray-900">Job Applicant</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                            Job Applicant
+                        </p>
                         <div className="flex items-center gap-1 mt-0.5 text-gray-500 text-xs">
                             <Mail className="w-3.5 h-3.5 text-gray-400" />
                             maria.garcia@email.com
@@ -23,32 +26,29 @@ export default function HeaderSection({ editing, setEditing }) {
                     </div>
 
                     {!editing ? (
-                        <button
-                            onClick={() => setEditing(true)}
-                            className="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
-                        >
-                            <Edit2 className="w-3.5 h-3.5" />
+                        <Button onClick={() => setEditing(true)}>
+                            <Edit2 className="w-3.5 h-3.5 mr-2" />
                             Edit Profile
-                        </button>
+                        </Button>
                     ) : (
-                        <button
-                            onClick={() => setEditing(false)}
-                            className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
-                        >
-                            <X className="w-3.5 h-3.5" />
+                        <Button onClick={() => setEditing(false)}>
+                            <X className="w-3.5 h-3.5 mr-2" />
                             Cancel Edit
-                        </button>
+                        </Button>
                     )}
                 </div>
 
                 <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-1">
                         <AlertCircle className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm font-bold text-gray-800">Complete Your Profile</span>
+                        <span className="text-sm font-bold text-gray-800">
+                            Complete Your Profile
+                        </span>
                     </div>
 
                     <p className="text-xs text-gray-600 mb-3">
-                        Fill in your First Name, Last Name, Email, Contact Number, and upload your Resume to complete your profile.
+                        Fill in your First Name, Last Name, Email, Contact
+                        Number, and upload your Resume to complete your profile.
                     </p>
 
                     <div className="flex items-center gap-3">
@@ -58,12 +58,17 @@ export default function HeaderSection({ editing, setEditing }) {
                                 style={{ width: `${profileCompletion}%` }}
                             />
                         </div>
-                        <span className="text-xs font-semibold text-gray-700">{profileCompletion}%</span>
+                        <span className="text-xs font-semibold text-gray-700">
+                            {profileCompletion}%
+                        </span>
                     </div>
 
                     <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
                         <span>💡</span>
-                        <em>Tip: Completing your profile to 100% increases your chances of getting hired!</em>
+                        <em>
+                            Tip: Completing your profile to 100% increases your
+                            chances of getting hired!
+                        </em>
                     </p>
                 </div>
             </div>
