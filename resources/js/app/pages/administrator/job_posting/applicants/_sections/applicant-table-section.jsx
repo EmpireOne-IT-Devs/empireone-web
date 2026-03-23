@@ -11,6 +11,8 @@ import {
 import ViewApplicantSection from "./view-applicant-section";
 import { useSelector } from "react-redux";
 import moment from "moment";
+import Table from "@/app/_components/table";
+import EditStatusSection from "./edit-status-section";
 
 // const applicants = [
 //     {
@@ -78,12 +80,90 @@ const STATUS_VARIANTS = {
     Interview: "info",
 };
 
-export default function ApplicantCardSection() {
-    const { applicants } = useSelector((store) => store.job_postings);
+export default function ApplicantTableSection() {
+    const { applicants,search_applicant_status } = useSelector((store) => store.job_postings);
     console.log("applicants", applicants.data);
+
+    const columns = [
+        {
+            header: "Applicant Name",
+            accessor: "name",
+        },
+        {
+            header: "Email",
+            accessor: "email",
+        },
+        {
+            header: "Contact #",
+            accessor: "contact",
+        },
+         {
+            header: "Position",
+            accessor: "position",
+        },
+        {
+            header: "Applied At",
+            accessor: "applied_at",
+        },
+        {
+            header: "Screening Status",
+            accessor: "screening_status",
+        },
+        {
+            header: "Interview Status",
+            accessor: "interview_status",
+        },
+        {
+            header: "Final Status",
+            accessor: "final_status",
+        },
+        {
+            header: "Action",
+            accessor: "action",
+        },
+    ];
+
+        const filteredApplications = applicants?.data?.filter(
+            (res) => {
+                const { screening_status, interview_status, final_status } =
+                    search_applicant_status;
+    
+                const screeningMatch = screening_status
+                    ? res.screening_status === screening_status
+                    : true;
+                const interviewMatch = interview_status
+                    ? res.interview_status === interview_status
+                    : true;
+                const finalMatch = final_status
+                    ? res.final_status === final_status
+                    : true;
+    
+                return screeningMatch && interviewMatch && finalMatch;
+            },
+        );
+        
+    
+        const tableData = filteredApplications?.map((res) => ({
+            name: res?.applicant?.name,
+            email: res?.applicant?.email,
+            position: res?.job_posting?.job_requisition?.title,
+            contact: res?.applicant?.personal_information?.contact,
+            applied_at: moment(res.created_at).format("LLL"),
+            screening_status: (
+                <EditStatusSection data={res} table_status="screening_status" />
+            ),
+            interview_status: (
+                <EditStatusSection data={res} table_status="interview_status" />
+            ),
+            final_status: (
+                <EditStatusSection data={res} table_status="final_status" />
+            ),
+            // action: <ShowApplicantDetailsSection data={res} />,
+        }));
     return (
         <div className="flex flex-col gap-3">
-            {applicants?.data?.map((res, i) => (
+            <Table columns={columns} data={tableData} />
+            {/* {applicants?.data?.map((res, i) => (
                 <ViewApplicantSection data={res} key={i}>
                     <Card className="rounded-xl border p-5 mt-2">
                         <div className="flex items-center justify-between">
@@ -137,7 +217,7 @@ export default function ApplicantCardSection() {
                         </div>
                     </Card>
                 </ViewApplicantSection>
-            ))}
+            ))} */}
         </div>
     );
 }
