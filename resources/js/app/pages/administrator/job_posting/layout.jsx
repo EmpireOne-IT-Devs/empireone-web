@@ -22,6 +22,11 @@ export default function JobPostingLayout({ children }) {
             path: "/administrator/job_posting/applicants",
             active: path === "applicants",
         },
+          {
+            label: "Job Offers",
+            path: "/administrator/job_posting/job_offers",
+            active: path === "job_offers",
+        },
         {
             label: "Interviews",
             path: "/administrator/job_posting/interviews",

@@ -13,6 +13,7 @@ import moment from "moment";
 import Table from "@/app/_components/table";
 import EditStatusSection from "./edit-status-section";
 import ShowApplicantDetailsSection from "./show-applicant-details-section";
+import SendJobOfferSection from "./send-job-offer-section";
 
 export default function ApplicantTableSection() {
     const { applicants, search_applicant_status } = useSelector(
@@ -33,10 +34,10 @@ export default function ApplicantTableSection() {
             header: "Contact #",
             accessor: "contact",
         },
-        {
-            header: "Position",
-            accessor: "position",
-        },
+        // {
+        //     header: "Position",
+        //     accessor: "position",
+        // },
         {
             header: "Applied At",
             accessor: "applied_at",
@@ -79,7 +80,7 @@ export default function ApplicantTableSection() {
     const tableData = filteredApplications?.map((res) => ({
         name: res?.applicant?.name,
         email: res?.applicant?.email,
-        position: res?.job_posting?.job_requisition?.title,
+        // position: res?.job_posting?.job_requisition?.title,
         contact: res?.applicant?.personal_information?.contact,
         applied_at: moment(res.created_at).format("LLL"),
         screening_status: (
@@ -91,7 +92,14 @@ export default function ApplicantTableSection() {
         final_status: (
             <EditStatusSection data={res} table_status="final_status" />
         ),
-        action: <ShowApplicantDetailsSection data={res} />,
+        action: (
+            <div className="flex gap-3">
+                {res.final_status == "Passed" && (
+                    <SendJobOfferSection data={res} />
+                )}
+                <ShowApplicantDetailsSection data={res} />
+            </div>
+        ),
     }));
     return (
         <div className="flex flex-col gap-3">

@@ -12,3 +12,10 @@ export async function delete_job_postings_service(id) {
         return result;
     } catch (error) {}
 }
+
+export async function send_job_offer_service(data) {
+    try {
+        const result = axios.post(`/api/job/send_job_offer`, data);
+        return result;
+    } catch (error) {}
+}

@@ -98,6 +98,9 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         Route::get('/active_posting/{id}', function () {
             return Inertia::render('administrator/job_posting/active_posting/id/page');
         });
+         Route::get('/job_offers', function () {
+            return Inertia::render('administrator/job_posting/job_offers/page');
+        });
         Route::get('/applicants', function () {
             return Inertia::render('administrator/job_posting/applicants/page');
         });

@@ -4,13 +4,16 @@ namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
 use App\Mail\DocumentFileInstructions;
+use App\Mail\JobOfferMail;
 use App\Mail\SendEmailAccountCreation;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
+use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
 use App\Models\Jobs\JobApplication;
+use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
 use App\Models\User;
 use Carbon\Carbon;
@@ -32,6 +35,46 @@ class JobApplicationController extends Controller
         return base64_decode($data);
     }
 
+    public function send_job_offer(Request $request)
+    {
+        $request->validate([
+            'position' => 'required|string',
+            'salary' => 'required|numeric',
+            'allowances' => 'nullable|array', // Ensure it's an array if present
+            'allowance.*.allowance' => 'nullable|numeric',
+            'allowance.*.allowance_type' => 'nullable|string',
+        ]);
+        $data = $request->all();
+        if (!isset($data['allowances'])) {
+            $data['allowances'] = [];
+        }
+        $send_to = $request->applicant['email'];
+        $jo = JobOffer::create([
+            'user_id' => $request->user_id,
+            'job_application_id' => $request->id,
+            'salary' => $request->salary,
+            'role' => $request->role,
+        ]);
+        foreach ($request->allowances as $key => $value) {
+            AccountEmployeeAllowance::create([
+                'user_id' => $request->user_id,
+                'job_offer_id' => $jo->id,
+                'allowance' => $value['allowance'],
+                'allowance_type' => $value['allowance_type'],
+            ]);
+        }
+        JobApplication::updateOrCreate(
+            ['id' => $request->id], // Match criteria
+            ['final_status' => 'Sent Job Offer'] // Data to update/create
+        );
+        Mail::to($send_to)->send(new JobOfferMail(
+            array_merge($data, ['job_offer_id' => $jo->id])
+        ));
+
+        return response()->json([
+            'status' => 'success',
+        ], 200);
+    }
     public function apply_job_application(Request $request)
     {
 
@@ -133,7 +176,7 @@ class JobApplicationController extends Controller
     public function generate_employee_id() {}
     public function update_job_application_status(Request $request)
     {
-        $ja = JobApplication::with(['job_posting.job_requisition'])
+        $ja = JobApplication::with(['job_posting.job_requisition', 'applicant'])
             ->find($request->id);
 
         if (!$ja) {
@@ -143,6 +186,20 @@ class JobApplicationController extends Controller
             ], 404);
         }
         $ja->update($request->only(['final_status', 'interview_status', 'screening_status']));
+
+        return response()->json([
+            'status' => $ja,
+            'message' => 'Job application updated successfully.'
+        ], 200);
+        // if (
+        //     $request->final_status === 'Hired' &&
+        //     $ja->interview_status === 'Passed' &&
+        //     $ja->screening_status === 'Passed'
+        // ) {
+        //     $send_to =$ja->applicant['email'];
+        //     Mail::to('webdev@empireonegroup.com')->send(new JobOfferMail($ja));
+        // } else 
+
         if (
             $request->final_status === 'Hired' &&
             $ja->interview_status === 'Passed' &&

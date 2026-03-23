@@ -8,7 +8,9 @@ export default function ShowApplicantDetailsSection({ data }) {
     console.log("datadatadata", data);
     return (
         <>
-            <Button outlined onClick={() => setOpen(true)}>
+            <Button
+            size="sm"
+            outlined onClick={() => setOpen(true)}>
                 SHOW
             </Button>
             <Modal

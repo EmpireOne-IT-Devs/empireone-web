@@ -32,17 +32,18 @@ export default function EditStatusSection({ data, table_status }) {
         "No Show",
     ];
 
-    const final_status = [
+   const final_status = [
         "Passed",
         "Failed",
         "Withdrawn",
         "Pooled",
+        "Sent Job Offer",
         "Accepted Job Offer",
+        "Declined Job Offer",
         "Hired",
         "Rejected",
         "No Show",
     ];
-
     const getStatusVariant = (status) => {
         switch (status) {
             case "New":
