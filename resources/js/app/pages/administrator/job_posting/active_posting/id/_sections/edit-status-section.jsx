@@ -148,7 +148,7 @@ export default function EditStatusSection({ data, table_status }) {
                     title="Double click to edit"
                 >
                     <Badge
-                        label={status}
+                        label={status ?? ""}
                         variant={getStatusVariant(status)}
                         solid
                     />

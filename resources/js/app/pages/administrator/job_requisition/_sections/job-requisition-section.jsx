@@ -254,6 +254,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     {job_requisition.priority ||
                                         "Medium Priority"}
                                 </span>
+                                <span className="bg-blue-100 text-green-800 px-3 py-1 rounded text-sm font-medium">
+                                    {job_requisition?.account?.name ?? "N/A"}
+                                </span>
                             </div>
                             <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-4">
                                 <div>

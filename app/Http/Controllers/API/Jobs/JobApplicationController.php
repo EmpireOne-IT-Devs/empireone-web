@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DocumentFileInstructions;
 use App\Mail\SendEmailAccountCreation;
 use App\Models\Account\AccountDocument;
+use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobPosting;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -127,14 +130,64 @@ class JobApplicationController extends Controller
             'status' => 'success',
         ], 200);
     }
+    public function generate_employee_id() {}
     public function update_job_application_status(Request $request)
     {
-        $ja = JobApplication::where('id', $request->id)->first();
-        if ($ja) {
-            $ja->update($request->all());
+        $ja = JobApplication::with(['job_posting.job_requisition'])
+            ->find($request->id);
+
+        if (!$ja) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Job application not found'
+            ], 404);
         }
+        $ja->update($request->only(['final_status', 'interview_status', 'screening_status']));
+        if (
+            $request->final_status === 'Hired' &&
+            $ja->interview_status === 'Passed' &&
+            $ja->screening_status === 'Screened Passed'
+        ) {
+            // generate employee_id
+            $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
+                ->pluck('employee_id')
+                ->toArray();
+            $todaySequences = array_map(function ($id) {
+                return (int)substr($id, -2);
+            }, $todayEmployeeIds);
+            $sequence = 1;
+            while (in_array($sequence, $todaySequences)) {
+                $sequence++;
+            }
+            $employee_id = date('y') . date('m') . date('d') . str_pad($sequence, 2, '0', STR_PAD_LEFT);
+            $position = optional($ja->job_posting->job_requisition)->title ?? 'N/A';
+            $isExist = in_array($request->applicant['account_employee']['employee_id'], $todayEmployeeIds);
+
+            if (!$isExist || $request->applicant['account_employee']['employee_id'] == null) {
+                AccountEmployee::updateOrCreate(
+                    ['user_id' => $ja->user_id],
+                    [
+                        'employee_id' => $employee_id,
+                        'account_id' => $ja->account_id,
+                        'position' => $position,
+                    ]
+                );
+                $user = User::findOrFail($request->user_id);
+                Mail::to($user->email)->send(new DocumentFileInstructions($user));
+            }
+        } else {
+            AccountEmployee::updateOrCreate(
+                ['user_id' => $ja->user_id],
+                [
+                    'employee_id' => null,
+                    'position' => null,
+                ]
+            );
+        }
+
         return response()->json([
             'status' => 'success',
+            'message' => 'Job application updated successfully.'
         ], 200);
     }
     public function get_applications_by_user()

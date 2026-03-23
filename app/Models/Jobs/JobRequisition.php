@@ -2,6 +2,7 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account;
 use App\Models\Department;
 use App\Models\Location;
 use App\Models\User;
@@ -16,6 +17,7 @@ class JobRequisition extends Model
         'department_id',
         'user_id',
         'location_id',
+        'account_id',
         'type',
         'title',
         'employment_type',
@@ -59,5 +61,9 @@ class JobRequisition extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(JobRequisitionLog::class, 'job_requisitions_id', 'id');
+    }
+     public function account(): HasOne
+    {
+        return $this->hasOne(Account::class, 'id', 'account_id');
     }
 }

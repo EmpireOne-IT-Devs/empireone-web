@@ -16,17 +16,8 @@ class DepartmentsTableSeeder extends Seeder
             'IT Department',
             'HR Department',
             'Finance Department',
-            'Operations Department',
+            'Operation Department',
             'Compliance Department',
-            'Jtv Account',
-            'Aifi Account',
-            'Weby Account',
-            'Tog Account',
-            'Gemporia Account',
-            'Simple Tire Account',
-            'Forma Account',
-            'Curtis Account',
-
         ];
 
         foreach ($departments as $dept) {

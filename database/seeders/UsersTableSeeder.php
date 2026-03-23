@@ -74,7 +74,7 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => 'Snickers',
                 'email' => 'jaysnickersmirafuentes@gmail.com',
-                'role' => 1,
+                'role' => 2,
                 'first_name' => 'Snickers',
                 'middle_name' => '',
                 'last_name' => 'Hojilla',
@@ -84,7 +84,7 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => 'Snickers Jay Magbanua',
                 'email' => 'snickersjay10@gmail.com',
-                'role' => 2,
+                'role' => 3,
                 'first_name' => 'Snickers',
                 'middle_name' => '',
                 'last_name' => 'Magbanua',

@@ -11,7 +11,7 @@ import TableSection from "./_sections/table-section";
 export default function Page() {
     useEffect(() => {
         store.dispatch(get_job_application_by_id_thunk());
-    });
+    },[]);
     return (
         <Layout>
             <HeaderSection />

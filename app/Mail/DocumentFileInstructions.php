@@ -9,15 +9,16 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EmailOtpMail extends Mailable
+class DocumentFileInstructions extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $otp;
+    public $user;
 
-    public function __construct($otp)
+    public function __construct($user)
     {
-        $this->otp = $otp;
+        // Passing the user object to the email view
+        $this->user = $user;
     }
 
     public function envelope(): Envelope
@@ -30,7 +31,7 @@ class EmailOtpMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your OTP Code')
-            ->view('emails.auth.otp');
+        return $this->subject('Action Required: Upload your 201 File')
+            ->view('emails.job_requisition.upload-instructions');
     }
 }

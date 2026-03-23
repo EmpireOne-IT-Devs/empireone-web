@@ -25,11 +25,11 @@ class JobRequisitionSeeder extends Seeder
         ];
 
         for ($i = 0; $i < 10; $i++) {
-
             JobRequisition::create([
                 'department_id' => 1,
                 'user_id' => rand(1, 5),
                 'location_id' => 1,
+                'account_id' => rand(1, 8),
                 'type' => $types[array_rand($types)],
                 'title' => $titles[array_rand($titles)],
                 'employment_type' => $employmentTypes[array_rand($employmentTypes)],

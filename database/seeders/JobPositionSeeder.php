@@ -21,93 +21,94 @@ class JobPositionSeeder extends Seeder
             $positions = [
 
                 // Management
-                ['title' => 'ceo', 'department' => 'Operations Department'],
-                ['title' => 'executive assistant', 'department' => 'Operations Department'],
-                ['title' => 'executive director', 'department' => 'Operations Department'],
-                ['title' => 'site director', 'department' => 'Operations Department'],
+                ['title' => 'CEO', 'department' => 'Operations Department'],
+                ['title' => 'Executive Assistant', 'department' => 'Operations Department'],
+                ['title' => 'Executive Director', 'department' => 'Operations Department'],
+                ['title' => 'Site Director', 'department' => 'Operations Department'],
 
                 // Operations
-                ['title' => 'operations manager', 'department' => 'Operations Department'],
-                ['title' => 'account manager', 'department' => 'Operations Department'],
-                ['title' => 'customer service representative', 'department' => 'Operations Department'],
-                ['title' => 'chat support', 'department' => 'Operations Department'],
-                ['title' => 'order processor', 'department' => 'Operations Department'],
+                ['title' => 'Operations Manager', 'department' => 'Operations Department'],
+                ['title' => 'Account Manager', 'department' => 'Operations Department'],
+                ['title' => 'Customer Service Representative', 'department' => 'Operations Department'],
+                ['title' => 'Chat Support', 'department' => 'Operations Department'],
+                ['title' => 'Order Processor', 'department' => 'Operations Department'],
 
                 // HR
-                ['title' => 'hr director', 'department' => 'HR Department'],
-                ['title' => 'talent acquisition manager', 'department' => 'HR Department'],
-                ['title' => 'hr lead', 'department' => 'HR Department'],
-                ['title' => 'hr generalist', 'department' => 'HR Department'],
-                ['title' => 'hr business associate', 'department' => 'HR Department'],
-                ['title' => 'talent acquisition associate', 'department' => 'HR Department'],
-                ['title' => 'talent acquisition specialist', 'department' => 'HR Department'],
-                ['title' => 'talent acquisition lead', 'department' => 'HR Department'],
-                ['title' => 'compensation & benefits specialist', 'department' => 'HR Department'],
-                ['title' => 'benefits associate', 'department' => 'HR Department'],
-                ['title' => 'payroll specialist', 'department' => 'HR Department'],
-                ['title' => 'payroll analyst', 'department' => 'HR Department'],
+                ['title' => 'HR Director', 'department' => 'HR Department'],
+                ['title' => 'Talent Acquisition Manager', 'department' => 'HR Department'],
+                ['title' => 'HR Lead', 'department' => 'HR Department'],
+                ['title' => 'HR Generalist', 'department' => 'HR Department'],
+                ['title' => 'HR Business Associate', 'department' => 'HR Department'],
+                ['title' => 'Talent Acquisition Associate', 'department' => 'HR Department'],
+                ['title' => 'Talent Acquisition Specialist', 'department' => 'HR Department'],
+                ['title' => 'Talent Acquisition Lead', 'department' => 'HR Department'],
+                ['title' => 'Compensation & Benefits Specialist', 'department' => 'HR Department'],
+                ['title' => 'Benefits Associate', 'department' => 'HR Department'],
+                ['title' => 'Payroll Specialist', 'department' => 'HR Department'],
+                ['title' => 'Payroll Analyst', 'department' => 'HR Department'],
 
                 // Finance
-                ['title' => 'accounting manager', 'department' => 'Finance Department'],
-                ['title' => 'accounting lead', 'department' => 'Finance Department'],
-                ['title' => 'accounting associate', 'department' => 'Finance Department'],
-                ['title' => 'accounting staff', 'department' => 'Finance Department'],
+                ['title' => 'Accounting Manager', 'department' => 'Finance Department'],
+                ['title' => 'Accounting Lead', 'department' => 'Finance Department'],
+                ['title' => 'Accounting Associate', 'department' => 'Finance Department'],
+                ['title' => 'Accounting Staff', 'department' => 'Finance Department'],
 
                 // IT
-                ['title' => 'it manager', 'department' => 'IT Department'],
-                ['title' => 'web developer', 'department' => 'IT Department'],
-                ['title' => 'network and security', 'department' => 'IT Department'],
-                ['title' => 'system analyst / ui/ux designer', 'department' => 'IT Department'],
-                ['title' => 'systems analyst', 'department' => 'IT Department'],
-                ['title' => 'sr systems analyst', 'department' => 'IT Department'],
-                ['title' => 'software engineer i', 'department' => 'IT Department'],
-                ['title' => 'software engineer ii', 'department' => 'IT Department'],
-                ['title' => 'lead software engineer', 'department' => 'IT Department'],
+                ['title' => 'IT Manager', 'department' => 'IT Department'],
+                ['title' => 'Web Developer', 'department' => 'IT Department'],
+                ['title' => 'Network and Security', 'department' => 'IT Department'],
+                ['title' => 'System Analyst / UI/UX Designer', 'department' => 'IT Department'],
+                ['title' => 'Systems Analyst', 'department' => 'IT Department'],
+                ['title' => 'Sr Systems Analyst', 'department' => 'IT Department'],
+                ['title' => 'Software Engineer I', 'department' => 'IT Department'],
+                ['title' => 'Software Engineer II', 'department' => 'IT Department'],
+                ['title' => 'Lead Software Engineer', 'department' => 'IT Department'],
 
                 // Compliance
-                ['title' => 'compliance manager', 'department' => 'Compliance Department'],
-                ['title' => 'compliance officer', 'department' => 'Compliance Department'],
+                ['title' => 'Compliance Manager', 'department' => 'Compliance Department'],
+                ['title' => 'Compliance Officer', 'department' => 'Compliance Department'],
 
                 // Operations Support
-                ['title' => 'workforce manager', 'department' => 'Operations Department'],
-                ['title' => 'workforce officer', 'department' => 'Operations Department'],
-                ['title' => 'real-time analyst (rta)', 'department' => 'Operations Department'],
+                ['title' => 'Workforce Manager', 'department' => 'Operations Department'],
+                ['title' => 'Workforce Officer', 'department' => 'Operations Department'],
+                ['title' => 'Real-Time Analyst (RTA)', 'department' => 'Operations Department'],
 
                 // Training & QA
-                ['title' => 'training and quality assurance manager', 'department' => 'Operations Department'],
-                ['title' => 'training and quality assurance officer', 'department' => 'Operations Department'],
-                ['title' => 'qa trainee', 'department' => 'Operations Department'],
-                ['title' => 'qa interim', 'department' => 'Operations Department'],
+                ['title' => 'Training and Quality Assurance Manager', 'department' => 'Operations Department'],
+                ['title' => 'Training and Quality Assurance Officer', 'department' => 'Operations Department'],
+                ['title' => 'QA Trainee', 'department' => 'Operations Department'],
+                ['title' => 'QA Interim', 'department' => 'Operations Department'],
 
                 // Facilities
-                ['title' => 'facilities and admin manager', 'department' => 'Operations Department'],
-                ['title' => 'facilities associate', 'department' => 'Operations Department'],
-                ['title' => 'utility and maintenance', 'department' => 'Operations Department'],
-                ['title' => 'company driver', 'department' => 'Operations Department'],
-                ['title' => 'security personnel', 'department' => 'Operations Department'],
+                ['title' => 'Facilities and Admin Manager', 'department' => 'Operations Department'],
+                ['title' => 'Facilities Associate', 'department' => 'Operations Department'],
+                ['title' => 'Utility and Maintenance', 'department' => 'Operations Department'],
+                ['title' => 'Company Driver', 'department' => 'Operations Department'],
+                ['title' => 'Security Personnel', 'department' => 'Operations Department'],
 
                 // Accounts
-                ['title' => 'Jtv - Chat', 'department' => 'Jtv Account'],
+                ['title' => 'JTV - Chat', 'department' => 'Jtv Account'],
                 ['title' => 'Latham Intake', 'department' => 'Aifi Account'],
                 ['title' => 'Latham Processor', 'department' => 'Aifi Account'],
-                ['title' => 'Latham Gli', 'department' => 'Aifi Account'],
+                ['title' => 'Latham GLI', 'department' => 'Aifi Account'],
                 ['title' => 'Latham Designer', 'department' => 'Aifi Account'],
             ];
 
+            $statuses = ['Pending', 'In Progress', 'Approved', 'Declined'];
             foreach ($positions as $position) {
-                $departmentId = $departments[$position['department']] ?? null;
 
                 // Create Job Position
                 $jobPosition = JobPosition::firstOrCreate([
                     'title' => ucwords($position['title']),
-                    'department_id' => $departmentId,
+                    'department_id' => rand(1, 5),
                 ]);
 
                 // Create Job Requisition
                 JobRequisition::create([
-                    'department_id' => $departmentId,
+                    'department_id' => $jobPosition->department_id,
                     'location_id' => 1,
                     'user_id' => 1,
+                    'account_id' => rand(1, 8),
                     'type' => 'New',
                     'title' => ucwords($position['title']),
                     'employment_type' => 'Full-time',
@@ -122,7 +123,7 @@ class JobPositionSeeder extends Seeder
                     'justification_for_position' => 'Seeding initial data',
                     'qualifications' => 'Seeding initial data',
                     'responsibilities' => 'Seeding initial data',
-                    'status' => 'Pending',
+                    'status' => $statuses[array_rand($statuses)]
                 ]);
             }
         });

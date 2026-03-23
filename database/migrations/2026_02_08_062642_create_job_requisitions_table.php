@@ -20,6 +20,10 @@ return new class extends Migration
             $table->foreignId('location_id')
                 ->constrained('locations')
                 ->nullOnDelete();
+            $table->foreignId('account_id')
+                ->nullable()
+                ->constrained('accounts')
+                ->nullOnDelete();
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->nullOnDelete();

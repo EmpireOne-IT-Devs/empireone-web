@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +39,7 @@ Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
+// admin routes (Role 1)
 Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('administrator/dashboard/page');
@@ -93,6 +94,9 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         });
         Route::get('/active_posting', function () {
             return Inertia::render('administrator/job_posting/active_posting/page');
+        });
+        Route::get('/active_posting/{id}', function () {
+            return Inertia::render('administrator/job_posting/active_posting/id/page');
         });
         Route::get('/applicants', function () {
             return Inertia::render('administrator/job_posting/applicants/page');
@@ -201,7 +205,6 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         return Inertia::render('administrator/settings/page');
     });
 });
-
 // Employee routes (Role 2)
 Route::prefix('account')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
@@ -217,7 +220,7 @@ Route::prefix('account')->middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('employee/attendance/page');
     });
 });
-
+// Applicant routes (Role 3)
 Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('applicant/dashboard/page');

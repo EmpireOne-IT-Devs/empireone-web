@@ -15,7 +15,7 @@ class JobPostingSeeder extends Seeder
         $targetAudiences = ['Both', 'Internal', 'External'];
         $statuses = ['Active', 'Closed', 'Draft'];
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 100; $i++) {
 
             JobPosting::create([
                 'job_requisition_id' => rand(1, 10),

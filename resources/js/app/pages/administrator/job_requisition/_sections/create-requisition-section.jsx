@@ -50,12 +50,18 @@ export default function CreateJobRequisition() {
             sub_interviewer: "",
             interview_date: "",
             interview_time: "",
+            account_id: "",
         },
     });
-
+    const watchedValues = watch();
     const positionType = watch("type");
     const selectedPosition = data?.position?.find((res) => res.id === search);
-    console.log("searchsearchsearch", selectedPosition);
+
+    useEffect(() => {
+        if (watchedValues.department_id != 4) {
+            setValue("account_id", "");
+        }
+    }, [watchedValues.department_id]);
     useEffect(() => {
         if (positionType === "Existing Position") {
             setValue("title", selectedPosition?.job_requisition?.title || "");
@@ -74,6 +80,10 @@ export default function CreateJobRequisition() {
             setValue(
                 "priority",
                 selectedPosition?.job_requisition?.priority || "",
+            );
+            setValue(
+                "account_id",
+                selectedPosition?.job_requisition?.account_id || "",
             );
             setValue(
                 "number_of_positions",
@@ -114,6 +124,7 @@ export default function CreateJobRequisition() {
             setValue("location_id", "");
             setValue("employment_type", "");
             setValue("priority", "");
+            setValue("account_id", "");
             setValue("number_of_positions", "");
             setValue("salary_range_from", "");
             setValue("salary_range_to", "");
@@ -304,7 +315,7 @@ export default function CreateJobRequisition() {
                                     placeholder="e.g. Senior Software Engineer"
                                 />
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="flex gap-4">
                                     <Controller
                                         name="department_id"
                                         control={control}
@@ -329,6 +340,33 @@ export default function CreateJobRequisition() {
                                             />
                                         )}
                                     />
+                                    {watchedValues.department_id == 4 && (
+                                        <Controller
+                                            name="account_id"
+                                            control={control}
+                                            rules={{
+                                                required:
+                                                    "Department is required",
+                                            }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    label="Select Department"
+                                                    options={data?.accounts?.map(
+                                                        (res) => ({
+                                                            ...res,
+                                                            label: res.name,
+                                                            value: res.id,
+                                                        }),
+                                                    )}
+                                                    // onSelect={(e) =>
+                                                    //     setCategories(e)
+                                                    // }
+                                                    error={errors.account_id}
+                                                    {...field} // passes value & onChange
+                                                />
+                                            )}
+                                        />
+                                    )}
 
                                     <Controller
                                         name="location_id"

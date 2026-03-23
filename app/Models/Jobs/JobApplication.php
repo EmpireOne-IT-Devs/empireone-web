@@ -23,7 +23,7 @@ class JobApplication extends Model
     }
     public function applicant(): HasOne
     {
-        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information', 'cover_letter', 'resume']);
+        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information', 'cover_letter', 'resume', 'account_employee']);
     }
     public function job_posting(): HasOne
     {
