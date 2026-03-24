@@ -8,8 +8,8 @@ import {
     FcSettings,
     FcVoicePresentation,
     FcBriefcase,
-    FcCollaboration,
     FcBusinessman,
+    FcFeedback,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import { Link } from "@inertiajs/react";
@@ -44,7 +44,7 @@ export default function SidebarSection() {
         {
             name: "Job Offers",
             href: "/applicant/job_offers",
-            icon: FcCollaboration,
+            icon: FcFeedback,
             current: path == "job_offers",
         },
         {
