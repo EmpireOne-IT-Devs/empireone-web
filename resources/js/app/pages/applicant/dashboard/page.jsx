@@ -5,6 +5,7 @@ import MyApplicationPage from "../my_application/page";
 import MessagesPage from "../messages/page";
 import MyProfilePage from "../my_profile/page";
 import SettingPage from "../settings/page";
+import JobOfferPage from "../job_offer/page";
 
 export default function Page() {
     const [activeTab, setActiveTab] = useState(0);
@@ -13,6 +14,7 @@ export default function Page() {
         "My Application",
         "Message",
         "My Profile",
+         "Job Offer",
         "Setting",
     ];
 
@@ -51,9 +53,10 @@ export default function Page() {
 
             <div className="flex justify-center">
                 <div className="w-full max-w-4xl">
-                    {activeTab === 4 && <SettingPage />}
+                    {activeTab === 5 && <SettingPage />}
                 </div>
             </div>
+             {activeTab === 4 && <JobOfferPage />}
         </Layout>
     );
 }

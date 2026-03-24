@@ -23,10 +23,8 @@ export default function HeroSection() {
             />
             <div className="absolute inset-0 bg-black/30" />
 
-            {/* Content */}
             <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
                 <div className="flex items-center justify-between gap-8">
-                    {/* ── LEFT: Text & CTA ── */}
                     <div className="space-y-6 max-w-2xl">
                         <div
                             className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
@@ -110,6 +108,7 @@ export default function HeroSection() {
                         <div
                             className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
                             style={{
+                                animationDuration: "2s",
                                 top: "0px",
                                 right: "-16px",
                                 background: "rgba(255,255,255,0.97)",
@@ -144,6 +143,7 @@ export default function HeroSection() {
                         <div
                             className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
                             style={{
+                                animationDuration: "2s",
                                 bottom: "0px",
                                 left: "-16px",
                                 background: "rgba(255,255,255,0.97)",

@@ -65,6 +65,7 @@ export default function HeaderSection({ editing, setEditing }) {
                             maria.garcia@email.com
                         </div>
                     </div>
+                   
 
                     {!editing ? (
                         <Button onClick={() => setEditing(true)}>

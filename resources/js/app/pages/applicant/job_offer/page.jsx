@@ -1,12 +1,13 @@
 import React from "react";
-import ChatMessagesUI from "./sections/message-section";
 import HeaderSection from "./sections/header-section";
+import JobOfferTableSection from "./sections/job-offer-table-section";
 
 export default function Page() {
     return (
         <div>
             <HeaderSection />
-            <ChatMessagesUI />
+
+            <JobOfferTableSection />
         </div>
     );
 }
