@@ -1,10 +1,14 @@
+import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import allowances from "@/app/lib/allowance";
 import { setAlert } from "@/app/redux/app-slice";
-import { get_applicants_thunk, get_job_offers_thunk } from "@/app/redux/job-posting-thunk";
+import {
+    get_applicants_thunk,
+    get_job_offers_thunk,
+} from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
 import React, { useEffect, useState } from "react";
@@ -12,6 +16,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 export default function ResendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
+    const params = new URLSearchParams(window.location.search);
     const dispatch = useDispatch();
     const { data: datas } = useSelector((store) => store.app);
     const {
@@ -30,12 +35,19 @@ export default function ResendJobOfferSection({ data }) {
         },
     });
 
+    const job_order_id = params.get("job_order_id");
     console.log("datadata", data);
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: "allowances",
     });
+
+    useEffect(() => {
+        if (job_order_id == data.id) {
+            setOpen(true);
+        }
+    }, []);
 
     const watchedValues = watch();
     useEffect(() => {
@@ -68,6 +80,21 @@ export default function ResendJobOfferSection({ data }) {
         } catch (error) {}
     };
 
+    const getBadgeVariant = (status) => {
+        switch (status) {
+            case "Pending":
+                return "warning"; // yellow
+            case "Accepted":
+                return "success"; // green
+            case "Re-Offered":
+                return "secondary"; // blue/orange
+            case "Declined":
+                return "danger"; // red
+            default:
+                return "primary"; // default blue
+        }
+    };
+
     return (
         <div>
             <Button onClick={() => setOpen(true)}>RESEND JOB OFFER</Button>
@@ -84,9 +111,26 @@ export default function ResendJobOfferSection({ data }) {
                     className="bg-gray-50 p-6 rounded-xl space-y-6 text-sm text-gray-700 border border-gray-100"
                 >
                     <div>
-                        <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
-                            Position Details
-                        </p>
+                        <div className="flex items-center justify-between">
+                            <p className="font-bold text-blue-600 uppercase text-xl tracking-wider mb-2">
+                                Position Details
+                            </p>
+                            <Badge
+                                variant={getBadgeVariant(data.status)}
+                                label={data.status}
+                            />
+                        </div>
+                        {data?.declined_reason && (
+                            <div className="flex flex-col my-5">
+                                <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
+                                    Reason To Declined
+                                </p>
+                                <p className="text-red-500 text-md">
+                                    {data?.declined_reason}
+                                </p>
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-2 gap-y-1">
                             <p>
                                 <strong>Full Name:</strong>{" "}

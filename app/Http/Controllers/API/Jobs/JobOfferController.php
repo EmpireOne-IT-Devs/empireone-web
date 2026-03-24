@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
+use App\Mail\JobOfferDeclinedMail;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class JobOfferController extends Controller
 {
@@ -15,7 +17,7 @@ class JobOfferController extends Controller
 
     public function submit_job_offer(Request $request)
     {
-        $jo = JobOffer::where('id', $request->id)->first();
+        $jo = JobOffer::where('id', $request->id)->with(['allowances', 'user', 'job_application'])->first();
         if ($jo) {
             $jo->update([
                 'status' => $request->status,
@@ -23,7 +25,7 @@ class JobOfferController extends Controller
             ]);
         }
         if ($request->status == 'Declined') {
-            # Send Email Here
+            Mail::to('hiring@empireonegroup.com')->send(new JobOfferDeclinedMail($jo));
         }
         return response()->json([
             'status' => 'success',
