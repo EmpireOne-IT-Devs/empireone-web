@@ -189,7 +189,6 @@ export default function AboutSection() {
                 </div>
             </div>
 
-            {/* Stats row */}
             <div className="relative z-10 max-w-7xl w-full mx-auto px-6 pb-10 grid grid-cols-2 md:grid-cols-4 gap-3">
                 {stats.map((s, i) => (
                     <StatCard key={s.label} value={s.value} label={s.label} delay={i * 100} />

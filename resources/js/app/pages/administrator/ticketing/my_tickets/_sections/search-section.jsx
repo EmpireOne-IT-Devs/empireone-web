@@ -15,7 +15,6 @@ export default function SearchSection() {
             </div>
             <div>
                 <Select
-                    iconLeft={<TbFilter className="text-xl" />}
                     label="All Status"
                     options={[
                         { value: "all", label: "All Tickets" },
@@ -23,10 +22,9 @@ export default function SearchSection() {
                         { value: "pending", label: "Pending Tickets" },
                     ]}
                 />
-            </div>
+            </div>``
             <div>
                 <Select
-                    iconLeft={<TbCategory className="text-xl" />}
                     label="Priorities"
                     options={[
                         { value: "all", label: "All Priorities" },

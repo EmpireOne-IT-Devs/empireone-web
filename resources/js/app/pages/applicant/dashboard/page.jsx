@@ -4,12 +4,21 @@ import JobOpeningPage from "../job_opening/page";
 import MyApplicationPage from "../my_application/page";
 import MessagesPage from "../messages/page";
 import MyProfilePage from "../my_profile/page";
+import SettingPage from "../settings/page";
+
 export default function Page() {
     const [activeTab, setActiveTab] = useState(0);
-    const tabs = ["Job Opening", "My Applicants", "Message", "My Profile"];
+    const tabs = [
+        "Job Opening",
+        "My Applicants",
+        "Message",
+        "My Profile",
+        "Settings",
+    ];
+
     return (
         <Layout>
-            <div className="mb-6 border-b border-gray-200">
+            <div className=" mb-6 border-b border-gray-200">
                 <div className="flex gap-0">
                     {tabs.map((tab, idx) => (
                         <button
@@ -27,6 +36,7 @@ export default function Page() {
                     ))}
                 </div>
             </div>
+
             <div className="flex justify-center">
                 <div className="w-full max-w-4xl">
                     {activeTab === 0 && <JobOpeningPage />}
@@ -38,6 +48,12 @@ export default function Page() {
             </div>
 
             {activeTab === 3 && <MyProfilePage />}
+            
+            <div className="flex justify-center">
+                <div className="w-full max-w-4xl">
+                    {activeTab === 4 && <SettingPage />}
+                </div>
+            </div>
         </Layout>
     );
 }
