@@ -5,12 +5,38 @@ namespace App\Http\Controllers\API\Jobs;
 use App\Http\Controllers\Controller;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobOfferController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    public function submit_job_offer(Request $request)
+    {
+        $jo = JobOffer::where('id', $request->id)->first();
+        if ($jo) {
+            $jo->update([
+                'status' => $request->status,
+                'declined_reason' => $request->declined_reason
+            ]);
+        }
+        if ($request->status == 'Declined') {
+            # Send Email Here
+        }
+        return response()->json([
+            'status' => 'success',
+        ], 200);
+    }
+    public function get_job_offer_by_user()
+    {
+        $jo = JobOffer::where('user_id', Auth::id())->with(['job_application', 'user', 'allowances'])->orderBy('id', 'desc')->get();
+        return response()->json([
+            'data' => $jo,
+            'status' => 'success',
+        ], 200);
+    }
     public function index(Request $request)
     {
         $query = JobOffer::with(['job_application', 'user', 'allowances']);

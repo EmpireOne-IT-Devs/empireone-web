@@ -28,6 +28,7 @@ return new class extends Migration
                 'Pending',
                 'Accepted',
                 'Declined',
+                'Re-Offered'
             ])->default('Pending');
             $table->timestamps();
         });

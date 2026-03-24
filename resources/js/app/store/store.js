@@ -5,6 +5,7 @@ import departmentSlice from "../redux/department-slice";
 import siteSlice from "../redux/site-slice";
 import  ticketsSlice  from "../redux/tickets-slice";
 import jobRequisitionSlice  from "../redux/job-requisition-slice";
+import  applicantSlice  from "../redux/applicant-slice";
 
 const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
         departments: departmentSlice,
         sites: siteSlice,
         job_requisitions: jobRequisitionSlice,
+        applicants: applicantSlice,
     },
 });
 
