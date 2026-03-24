@@ -10,10 +10,10 @@ export default function Page() {
     const [activeTab, setActiveTab] = useState(0);
     const tabs = [
         "Job Opening",
-        "My Applicants",
+        "My Application",
         "Message",
         "My Profile",
-        "Settings",
+        "Setting",
     ];
 
     return (
@@ -48,7 +48,7 @@ export default function Page() {
             </div>
 
             {activeTab === 3 && <MyProfilePage />}
-            
+
             <div className="flex justify-center">
                 <div className="w-full max-w-4xl">
                     {activeTab === 4 && <SettingPage />}

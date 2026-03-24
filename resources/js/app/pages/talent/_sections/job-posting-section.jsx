@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { setJobPostingId } from "@/app/redux/app-slice";
+import Button from "@/app/_components/button";
+import { ArrowDown, DollarSign, MapPin } from "lucide-react";
 
 export default function JobPostingSection({ onApply, setStep }) {
     const [expandedIndex, setExpandedIndex] = useState(null);
@@ -19,7 +21,6 @@ export default function JobPostingSection({ onApply, setStep }) {
 
                     return (
                         <div key={i}>
-                            {/* Header Section */}
                             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                                     <div>
@@ -35,25 +36,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                         </h1>
                                         <div className=" flex flex-wrap  text-sm text-gray-500">
                                             <span className="flex items-center gap-1">
-                                                <svg
-                                                    className="w-4 h-4"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                                    />
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                                    />
-                                                </svg>
+                                                <MapPin className="w-3.5 h-3.5" />
                                                 {
                                                     res.job_requisition.location
                                                         .name
@@ -61,19 +44,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                 &nbsp;
                                             </span>
                                             <span className="flex items-center gap-1">
-                                                <svg
-                                                    className="w-4 h-4"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                                    />
-                                                </svg>
+                                                <DollarSign className="w-3.5 h-3.5" />
                                                 {
                                                     res.job_requisition
                                                         .salary_range
@@ -82,60 +53,43 @@ export default function JobPostingSection({ onApply, setStep }) {
                                             </span>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={async () => {
-                                            dispatch(setJobPostingId(res.id));
-                                            setStep(1);
-                                        }}
-                                        type="button"
-                                        className="w-full md:w-auto px-10 py-2 flex bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 transition-all active:scale-95"
-                                    >
-                                        Apply now
-                                    </button>
+                                    <div className="flex flex-col gap-4 mt-4">
+                                        <Button
+                                            className="h-9"
+                                            outlined
+                                            onClick={async () => {
+                                                dispatch(
+                                                    setJobPostingId(res.id),
+                                                );
+                                                setStep(1);
+                                            }}
+                                            type="button"
+                                        >
+                                            Apply now
+                                        </Button>
+                                        <Button
+                                        
+                                            variant="secondary"
+                                            onClick={() => toggleExpand(i)}
+                                            type="button"
+                                            className="h-9 "
+                                        >
+                                            <span className="flex items-center">
+                                                {isExpanded
+                                                    ? "Show Less"
+                                                    : "Show More"}
+                                                <ArrowDown
+                                                    className={`ml-2 h-3.5 w-3.5 transition-transform duration-300 ${
+                                                        isExpanded
+                                                            ? "rotate-180"
+                                                            : ""
+                                                    }`}
+                                                />
+                                            </span>
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div className="flex justify-end">
-                                    <button
-                                        onClick={() => toggleExpand(i)}
-                                        type="button"
-                                        className="flex items-center gap-2 px-6 py-2 bg-white border border-gray-200 rounded-full text-blue-600 font-bold hover:bg-blue-50 transition-colors shadow-sm"
-                                    >
-                                        {isExpanded ? (
-                                            <>
-                                                Show Less{" "}
-                                                <svg
-                                                    className="w-4 h-4"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M5 15l7-7 7 7"
-                                                    />
-                                                </svg>
-                                            </>
-                                        ) : (
-                                            <>
-                                                Show More{" "}
-                                                <svg
-                                                    className="w-4 h-4"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M19 9l-7 7-7-7"
-                                                    />
-                                                </svg>
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
+
                                 <div
                                     className={`grid mt-6 grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? "max-h-[2000px]" : "max-h-[0px]"}`}
                                 >

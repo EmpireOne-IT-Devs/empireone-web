@@ -1,18 +1,59 @@
 import Button from "@/app/_components/button";
-import { AlertCircle, Edit2, Mail, User, X } from "lucide-react";
-import React from "react";
+import { AlertCircle, Edit2, Mail, User, X, Camera } from "lucide-react";
+import React, { useRef, useState } from "react";
 
 export default function HeaderSection({ editing, setEditing }) {
     const profileCompletion = 20;
+
+    const fileInputRef = useRef(null);
+    const [preview, setPreview] = useState(null);
+
+    const handleClick = () => {
+        if (editing) fileInputRef.current.click();
+    };
+
+    const handleChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPreview(URL.createObjectURL(file));
+        }
+    };
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden max-w-4xl mx-auto">
             <div className="h-28 bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700" />
 
             <div className="px-6 pb-5">
-                <div className="w-[90px] h-[90px] rounded-full bg-gray-200 border-4 border-white flex items-center justify-center -mt-11 relative z-10">
-                    <User className="w-10 h-10 text-gray-400" />
+                <div
+                    onClick={handleClick}
+                    className={`w-[90px] h-[90px] rounded-full bg-gray-200 border-4 border-white flex items-center justify-center -mt-11 relative z-10 overflow-hidden group ${
+                        editing ? "cursor-pointer" : ""
+                    }`}
+                >
+                    {preview ? (
+                        <img
+                            src={preview}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <User className="w-10 h-10 text-gray-400" />
+                    )}
+
+                    {editing && (
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                            <Camera className="w-5 h-5 text-white" />
+                        </div>
+                    )}
                 </div>
+
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleChange}
+                    accept="image/*"
+                    className="hidden"
+                />
 
                 <div className="flex justify-between items-end mt-2">
                     <div>
