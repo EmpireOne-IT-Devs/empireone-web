@@ -98,7 +98,7 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         Route::get('/active_posting/{id}', function () {
             return Inertia::render('administrator/job_posting/active_posting/id/page');
         });
-         Route::get('/job_offers', function () {
+        Route::get('/job_offers', function () {
             return Inertia::render('administrator/job_posting/job_offers/page');
         });
         Route::get('/applicants', function () {
@@ -228,11 +228,23 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
     Route::get('/dashboard', function () {
         return Inertia::render('applicant/dashboard/page');
     });
-    Route::get('/job_opening', function () {
-        return Inertia::render('applicant/job_opening/page');
+    Route::get('/job_openings', function () {
+        return Inertia::render('applicant/job_openings/page');
     });
-    Route::get('/my_application', function () {
-        return Inertia::render('applicant/my_application/page');
+    Route::get('/my_applications', function () {
+        return Inertia::render('applicant/my_applications/page');
+    });
+    Route::get('/messages', function () {
+        return Inertia::render('applicant/messages/page');
+    });
+    Route::get('/my_profile', function () {
+        return Inertia::render('applicant/my_profile/page');
+    });
+    Route::get('/job_offers', function () {
+        return Inertia::render('applicant/job_offers/page');
+    });
+    Route::get('/settings', function () {
+        return Inertia::render('applicant/settings/page');
     });
 });
 

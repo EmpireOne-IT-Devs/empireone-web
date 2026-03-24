@@ -11,57 +11,57 @@ export default function Badge({
 
     const variants = {
         primary: {
-            solid: "rounded-md border border-blue-600 bg-blue-600 text-white dark:bg-blue-900/30 dark:text-white",
+            solid: "rounded-md border border-blue-500 bg-blue-500 text-white dark:bg-blue-900/30 dark:text-white",
             outline:
-                "text-blue-600 inset-ring inset-ring-blue-300 dark:text-blue-300 dark:inset-ring-blue-700",
+                "text-blue-500 inset-ring inset-ring-blue-300 dark:text-blue-300 dark:inset-ring-blue-700",
             dot: "fill-blue-500 dark:fill-blue-400",
             underline:
                 "underline decoration-blue-500 decoration-2 underline-offset-2 dark:decoration-blue-400",
         },
         secondary: {
-            solid: "rounded-md border border-gray-600 bg-gray-600 text-white dark:bg-gray-800 dark:text-gray-300",
+            solid: "rounded-md border border-gray-500 bg-gray-500 text-white dark:bg-gray-800 dark:text-gray-300",
             outline:
-                "text-gray-600 inset-ring inset-ring-gray-300 dark:text-gray-300 dark:inset-ring-gray-700",
+                "text-gray-500 inset-ring inset-ring-gray-300 dark:text-gray-300 dark:inset-ring-gray-700",
             dot: "fill-gray-500 dark:fill-gray-400",
             underline:
                 "underline decoration-gray-500 decoration-2 underline-offset-2 dark:decoration-gray-400",
         },
         success: {
-            solid: "rounded-md border border-green-600 bg-green-600 text-white dark:bg-green-900/30 dark:text-green-300",
+            solid: "rounded-md border border-green-500 bg-green-500 text-white dark:bg-green-900/30 dark:text-green-300",
             outline:
-                "text-green-600 inset-ring inset-ring-green-300 dark:text-green-300 dark:inset-ring-green-700",
+                "text-green-500 inset-ring inset-ring-green-300 dark:text-green-300 dark:inset-ring-green-700",
             dot: "fill-green-500 dark:fill-green-400",
             underline:
                 "underline decoration-green-500 decoration-2 underline-offset-2 dark:decoration-green-400",
         },
         warning: {
-            solid: "rounded-md border border-yellow-600 bg-yellow-500 text-white dark:bg-yellow-900/30 dark:text-yellow-300",
+            solid: "rounded-md border border-yellow-500 bg-yellow-500 text-white dark:bg-yellow-900/30 dark:text-yellow-300",
             outline:
-                "text-yellow-600 inset-ring inset-ring-yellow-300 dark:text-yellow-300 dark:inset-ring-yellow-700",
+                "text-yellow-500 inset-ring inset-ring-yellow-300 dark:text-yellow-300 dark:inset-ring-yellow-700",
             dot: "fill-yellow-500 dark:fill-yellow-400",
             underline:
                 "underline decoration-yellow-500 decoration-2 underline-offset-2 dark:decoration-yellow-400",
         },
         danger: {
-            solid: "rounded-md border border-red-600 bg-red-500 text-white dark:bg-red-900 dark:text-red-300",
+            solid: "rounded-md border border-red-500 bg-red-500 text-white dark:bg-red-900 dark:text-red-300",
             outline:
-                "text-red-600 inset-ring inset-ring-red-300 dark:text-red-300 dark:inset-ring-red-700",
+                "text-red-500 inset-ring inset-ring-red-300 dark:text-red-300 dark:inset-ring-red-700",
             dot: "fill-red-500 dark:fill-red-400",
             underline:
                 "underline decoration-red-500 decoration-2 underline-offset-2 dark:decoration-red-400",
         },
         info: {
-            solid: "rounded-md border border-orange-600 bg-orange-500 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+            solid: "rounded-md border border-orange-500 bg-orange-500 text-white dark:bg-orange-900/30 dark:text-orange-300",
             outline:
-                "text-orange-600 inset-ring inset-ring-orange-300 dark:text-orange-300 dark:inset-ring-orange-700",
+                "text-orange-500 inset-ring inset-ring-orange-300 dark:text-orange-300 dark:inset-ring-orange-700",
             dot: "fill-orange-500 dark:fill-orange-400",
             underline:
                 "underline decoration-orange-500 decoration-2 underline-offset-2 dark:decoration-orange-400",
         },
         purple: {
-            solid: "rounded-md border border-purple-600 bg-purple-200 text-purple dark:bg-purple-900/30 dark:text-purple-300",
+            solid: "rounded-md border border-purple-500 bg-purple-200 text-purple dark:bg-purple-900/30 dark:text-purple-300",
             outline:
-                "text-purple-600 inset-ring inset-ring-purple-300 dark:text-purple-300 dark:inset-ring-purple-700",
+                "text-purple-500 inset-ring inset-ring-purple-300 dark:text-purple-300 dark:inset-ring-purple-700",
             dot: "fill-purple-500 dark:fill-purple-400",
             underline:
                 "underline decoration-purple-500 decoration-2 underline-offset-2 dark:decoration-purple-400",

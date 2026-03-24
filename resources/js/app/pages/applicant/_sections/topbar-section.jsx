@@ -1,161 +1,109 @@
 import { useState, Fragment } from "react";
 import { Transition, Menu } from "@headlessui/react";
-import { BellIcon } from "@heroicons/react/24/outline";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { Bars3Icon, BellIcon } from "@heroicons/react/24/outline";
+import {
+    ChevronDownIcon,
+    MagnifyingGlassIcon,
+} from "@heroicons/react/20/solid";
 import { useDispatch, useSelector } from "react-redux";
+import { setDesktopCollapsed, setSidebarOpen } from "@/app/redux/app-slice";
 import { Link } from "@inertiajs/react";
+
+const userNavigation = [
+    { name: "Your profile", href: "#" },
+    { name: "Sign out", href: "#" },
+];
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
-
 export default function TopbarSection() {
     const { data } = useSelector((store) => store.app);
     const dispatch = useDispatch();
-
+    console.log("user", data);
     return (
-        <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6 shadow-sm dark:border-white/10 dark:bg-gray-900">
-            {/* Left: Logo + Title */}
-            <div className="flex items-center gap-x-3">
-                {/* EmpireOne Logo */}
-                <div className="flex items-center">
-                   <img
-                       src="/images/eo-full-logo.png"
-                       alt="EmpireOne Logo"
-                       className="h-8 w-auto object-contain"
-                   />
-                </div>
-
-                {/* Divider */}
-                <div
-                    style={{
-                        width: "1px",
-                        height: "20px",
-                        backgroundColor: "#d1d5db",
-                    }}
-                />
-
-                {/* Job Portal text */}
-                <span
-                   className="font-bold "
+        <>
+            <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <button
+                    className="hidden lg:block p-2  items-center justify-center text-gray-900 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                    onClick={() => dispatch(setDesktopCollapsed())}
                 >
-                    Job Portal
-                </span>
-            </div>
+                    <Bars3Icon className="w-5 h-5" />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => dispatch(setSidebarOpen())}
+                    className="lg:hidden p-2 text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                >
+                    <Bars3Icon className="w-6 h-6" />
+                </button>
 
-            {/* Right: Bell + User */}
-            <div className="flex items-center gap-x-5">
-                {/* Bell Icon with red dot */}
-                <div className="relative">
-                    <BellIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                    <span
-                        style={{
-                            position: "absolute",
-                            top: "0px",
-                            right: "0px",
-                            width: "8px",
-                            height: "8px",
-                            backgroundColor: "#ef4444",
-                            borderRadius: "50%",
-                            border: "1.5px solid white",
-                        }}
-                    />
+                <div className="flex-1 flex items-center gap-x-4">
+                    <form className="flex-1 relative  mx-5">
+                        <input
+                            name="search"
+                            placeholder="Search"
+                            className="block w-full pl-8 pr-2 py-2 text-gray-900 bg-white border rounded dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
+                        />
+                        <MagnifyingGlassIcon className="absolute left-2 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
+                    </form>
+
+                    <div className="flex items-center gap-x-4">
+                        <button className="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-white">
+                            <BellIcon className="w-6 h-6" />
+                        </button>
+
+                        <Menu as="div" className="relative">
+                            <Menu.Button className="flex items-center">
+                                <img
+                                    className="w-8 h-8 rounded-full"
+                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                    alt=""
+                                />
+                                <span className="ml-2 hidden lg:block text-sm font-semibold text-gray-900 dark:text-white">
+                                    {data?.user?.name}
+                                </span>
+                                <ChevronDownIcon className="ml-1 w-5 h-5 text-gray-400 dark:text-gray-500" />
+                            </Menu.Button>
+
+                            <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-100"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-75"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
+                            >
+                                <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg dark:bg-gray-800">
+                                    <Menu.Item>
+                                        <a
+                                            as="button"
+                                            className={
+                                                "block px-3 py-1 text-sm text-gray-900 dark:text-white hover:bg-gray-100"
+                                            }
+                                        >
+                                            Profile
+                                        </a>
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        <Link
+                                            method="post"
+                                            href={route("logout")}
+                                            as="button"
+                                            className={
+                                                "block px-3 py-1 text-sm text-gray-900 dark:text-white hover:bg-gray-100"
+                                            }
+                                        >
+                                            Sign Out
+                                        </Link>
+                                    </Menu.Item>
+                                </Menu.Items>
+                            </Transition>
+                        </Menu>
+                    </div>
                 </div>
-
-                {/* User Menu */}
-                <Menu as="div" className="relative">
-                    <Menu.Button className="flex items-center gap-x-2">
-                        {/* Orange avatar */}
-                        <div
-                            style={{
-                                width: "36px",
-                                height: "36px",
-                                borderRadius: "50%",
-                                backgroundColor: "#f97316",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                color: "white",
-                                fontSize: "14px",
-                                fontWeight: "600",
-                                flexShrink: 0,
-                            }}
-                        >
-                            {data?.user?.name
-                                ? data.user.name.charAt(0).toUpperCase()
-                                : "A"}
-                        </div>
-
-                        {/* Name + Email */}
-                        <div className="hidden lg:flex flex-col items-start leading-tight">
-                            <span
-                                style={{
-                                    fontSize: "13px",
-                                    fontWeight: "600",
-                                    color: "#111827",
-                                    lineHeight: "1.3",
-                                }}
-                                className="dark:text-white"
-                            >
-                                {data?.user?.name ?? "Applicant"}
-                            </span>
-                            <span
-                                style={{
-                                    fontSize: "11px",
-                                    color: "#6b7280",
-                                    lineHeight: "1.3",
-                                }}
-                                className="dark:text-gray-400"
-                            >
-                                {data?.user?.email ?? "maria.garcia@email.com"}
-                            </span>
-                        </div>
-
-                        <ChevronDownIcon className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                    </Menu.Button>
-
-                    <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                    >
-                        <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-black/5 dark:bg-gray-800">
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <a
-                                        href="/"
-                                        className={classNames(
-                                            active ? "bg-gray-100 dark:bg-gray-700" : "",
-                                            "block px-4 py-2 text-sm text-gray-700 dark:text-white"
-                                        )}
-                                    >
-                                        Profile
-                                    </a>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <Link
-                                        method="post"
-                                        href={route("logout")}
-                                        as="button"
-                                        className={classNames(
-                                            active ? "bg-gray-100 dark:bg-gray-700" : "",
-                                            "block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-white"
-                                        )}
-                                    >
-                                        Sign Out
-                                    </Link>
-                                )}
-                            </Menu.Item>
-                        </Menu.Items>
-                    </Transition>
-                </Menu>
             </div>
-        </div>
+        </>
     );
 }

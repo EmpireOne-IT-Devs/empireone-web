@@ -3,12 +3,11 @@ import { Briefcase } from "lucide-react";
 
 export default function HeaderSection() {
     return (
-        <div className="flex items-center justify-between p-6">
+        <div className="flex items-center justify-between px-6">
             <div className="flex items-center gap-4">
                 <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
                     <Briefcase size={22} />
                 </div>
-
                 <div>
                     <h1 className="text-xl font-semibold text-gray-800">
                         Job Offers
