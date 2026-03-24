@@ -9,7 +9,6 @@ export default function ShowApplicantDetailsSection({ data }) {
     return (
         <>
             <Button
-            size="sm"
             outlined onClick={() => setOpen(true)}>
                 SHOW
             </Button>

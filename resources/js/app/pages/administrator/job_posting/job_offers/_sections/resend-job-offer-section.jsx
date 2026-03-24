@@ -4,13 +4,13 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import allowances from "@/app/lib/allowance";
 import { setAlert } from "@/app/redux/app-slice";
-import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
+import { get_applicants_thunk, get_job_offers_thunk } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-export default function SendJobOfferSection({ data }) {
+export default function ResendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const { data: datas } = useSelector((store) => store.app);
@@ -30,6 +30,8 @@ export default function SendJobOfferSection({ data }) {
         },
     });
 
+    console.log("datadata", data);
+
     const { fields, append, remove } = useFieldArray({
         control,
         name: "allowances",
@@ -37,15 +39,22 @@ export default function SendJobOfferSection({ data }) {
 
     const watchedValues = watch();
     useEffect(() => {
-        setValue("position", data.job_posting.job_requisition.title);
+        setValue(
+            "position",
+            data.job_application.job_posting.job_requisition.title,
+        );
     }, []);
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
                 ...data,
                 ...formData,
+                status: "Re-Offered",
+                applicant: {
+                    ...data.user,
+                },
             });
-            await store.dispatch(get_applicants_thunk());
+            await store.dispatch(get_job_offers_thunk(window.location.search));
             await dispatch(
                 setAlert({
                     type: "success",
@@ -61,9 +70,7 @@ export default function SendJobOfferSection({ data }) {
 
     return (
         <div>
-            <Button onClick={() => setOpen(true)} size="sm">
-                SEND JOB OFFER
-            </Button>
+            <Button onClick={() => setOpen(true)}>RESEND JOB OFFER</Button>
 
             <Modal
                 width="max-w-3xl"
@@ -83,29 +90,29 @@ export default function SendJobOfferSection({ data }) {
                         <div className="grid grid-cols-2 gap-y-1">
                             <p>
                                 <strong>Full Name:</strong>{" "}
-                                {
-                                    data?.applicant?.personal_information
-                                        ?.first_name
-                                }{" "}
-                                {
-                                    data?.applicant?.personal_information
-                                        ?.last_name
-                                }
+                                {data?.user?.personal_information?.first_name}{" "}
+                                {data?.user?.personal_information?.last_name}
                             </p>
                             <p>
                                 <strong>Department:</strong>{" "}
                                 {
-                                    data.job_posting.job_requisition.department
-                                        .name
+                                    data.job_application.job_posting
+                                        .job_requisition.department.name
                                 }
                             </p>
                             <p>
                                 <strong>Location:</strong>{" "}
-                                {data.job_posting.job_requisition.location.name}
+                                {
+                                    data.job_application.job_posting
+                                        .job_requisition.location.name
+                                }
                             </p>
                             <p>
                                 <strong>Current Title:</strong>{" "}
-                                {data.job_posting.job_requisition.title}
+                                {
+                                    data.job_application.job_posting
+                                        .job_requisition.title
+                                }
                             </p>
                         </div>
 
@@ -237,7 +244,6 @@ export default function SendJobOfferSection({ data }) {
                         </div>
                     </div>
 
-                    {/* Interactive Loading Button */}
                     <Button
                         type="submit"
                         className="w-full flex justify-center items-center"
@@ -266,7 +272,7 @@ export default function SendJobOfferSection({ data }) {
                                 PROCESSING...
                             </>
                         ) : (
-                            "SEND JOB OFFER"
+                            "RESEND JOB OFFER"
                         )}
                     </Button>
                 </form>

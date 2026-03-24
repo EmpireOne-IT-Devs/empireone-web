@@ -49,6 +49,13 @@ class JobApplicationController extends Controller
             $data['allowances'] = [];
         }
         $send_to = $request->applicant['email'];
+        if ($request->status == 'Re-Offered') {
+            JobOffer::where('id', $request->id)
+                ->update([
+                    'status' => $request->status,
+                ]);
+        }
+
         $jo = JobOffer::create([
             'user_id' => $request->user_id,
             'job_application_id' => $request->id,

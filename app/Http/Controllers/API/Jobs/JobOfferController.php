@@ -11,14 +11,40 @@ class JobOfferController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $jo = JobOffer::with(['job_application', 'user', 'allowances'])->paginate();
+        $query = JobOffer::with(['job_application', 'user', 'allowances']);
+
+        // Apply search filter
+        if ($request->filled('search') && $request->search) {
+            $search = $request->input('search');
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by role
+        if ($request->filled('role')  && $request->role) {
+            $role = $request->input('role');
+            $query->where('role', $role);
+        }
+
+        // Filter by status
+        if ($request->filled('status')  && $request->status) {
+            $status = $request->input('status');
+            $query->where('status', $status);
+        }
+
+        // Paginate results
+        $jobOffers = $query->paginate(10)->appends($request->all());
+
         return response()->json([
-            'data' => $jo,
+            'data' => $jobOffers,
             'status' => 'success',
         ], 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
