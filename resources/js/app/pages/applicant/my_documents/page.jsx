@@ -8,10 +8,12 @@ import StatsSection from "./_sections/stats-section";
 export default function Page() {
     return (
         <Layout>
-            <HeaderSection />
-            <SearchSection />
-            <StatsSection />
-            <TableSection />
+            <div className="flex flex-col gap-3 w-full">
+                <HeaderSection />
+                <SearchSection />
+                <StatsSection />
+                <TableSection />
+            </div>
         </Layout>
     );
 }
