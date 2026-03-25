@@ -18,7 +18,7 @@ export default function SearchSection() {
                     label="All Status"
                     options={[
                         { value: "all", label: "All Tickets" },
-                        { value: "open", label: "Open Tickets" },
+                        { value: "open", label: "Open Tickets" },   
                         { value: "pending", label: "Pending Tickets" },
                     ]}
                 />

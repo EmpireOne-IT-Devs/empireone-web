@@ -1,6 +1,15 @@
 import Button from "@/app/_components/button";
-import { AlertCircle, Edit2, Mail, User, X, Camera } from "lucide-react";
+import {
+    AlertCircle,
+    Edit2,
+    Mail,
+    User,
+    X,
+    Camera,
+    PencilLine,
+} from "lucide-react";
 import React, { useRef, useState } from "react";
+import ESignatureSection from "./e-signature-section";
 
 export default function HeaderSection({ editing, setEditing }) {
     const profileCompletion = 20;
@@ -18,7 +27,7 @@ export default function HeaderSection({ editing, setEditing }) {
             setPreview(URL.createObjectURL(file));
         }
     };
-
+    const [showESignature, setShowESignature] = useState(false);
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden max-w-4xl mx-auto">
             <div className="h-28 bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700" />
@@ -56,6 +65,7 @@ export default function HeaderSection({ editing, setEditing }) {
                 />
 
                 <div className="flex justify-between items-end mt-2">
+                    {/* Left: Applicant info */}
                     <div>
                         <p className="text-sm font-semibold text-gray-900">
                             Job Applicant
@@ -65,19 +75,30 @@ export default function HeaderSection({ editing, setEditing }) {
                             maria.garcia@email.com
                         </div>
                     </div>
-                   
 
-                    {!editing ? (
-                        <Button onClick={() => setEditing(true)}>
-                            <Edit2 className="w-3.5 h-3.5 mr-2" />
-                            Edit Profile
+                    <div className="flex items-center gap-2">
+                        <Button
+                            onClick={() => setShowESignature(true)}
+                            outlined
+                            variant="secondary"
+                        >
+                            <PencilLine className="w-3.5 h-3.5 mr-2" />
+                            E-Signature
                         </Button>
-                    ) : (
-                        <Button onClick={() => setEditing(false)}>
-                            <X className="w-3.5 h-3.5 mr-2" />
-                            Cancel Edit
-                        </Button>
-                    )}
+                        {showESignature && <ESignatureSection />}
+
+                        {!editing ? (
+                            <Button onClick={() => setEditing(true)}>
+                                <Edit2 className="w-3.5 h-3.5 mr-2" />
+                                Edit Profile
+                            </Button>
+                        ) : (
+                            <Button onClick={() => setEditing(false)}>
+                                <X className="w-3.5 h-3.5 mr-2" />
+                                Cancel Edit
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
