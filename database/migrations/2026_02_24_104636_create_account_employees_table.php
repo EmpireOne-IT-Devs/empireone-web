@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('with_bpo')->nullable();
             $table->string('source')->nullable();
             $table->string('position')->nullable();
+            $table->longText('signature')->nullable();
             $table->timestamps();
         });
     }

@@ -102,6 +102,11 @@
                     <h3>Document Requirements</h3>
                     <p style="margin-top: 0; font-size: 14px;">Please prepare and submit the following documents:</p>
 
+                    <h4>Add Signature</h4>
+                    <li>✔ Signature</li>
+                    <a href="{{ config('app.url') }}/applicant/my_profile/signature"
+                        class="btn-primary" style="color: white !important;">Add Signature</a>
+
                     <h4>ORIGINAL COPY (has ✔ must be prioritized)</h4>
                     <ul>
                         <li>✔ Barangay Clearance</li>

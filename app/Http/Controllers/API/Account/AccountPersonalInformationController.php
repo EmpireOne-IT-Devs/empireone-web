@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountWorkingExperience;
 use App\Models\User;
@@ -15,7 +16,7 @@ class AccountPersonalInformationController extends Controller
     public function accounts_user()
     {
 
-        $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience','account_employee'])->first();
+        $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee'])->first();
         $requiredFields = collect([
             'first_name',
             'middle_name',
@@ -50,6 +51,23 @@ class AccountPersonalInformationController extends Controller
             'data'    => array_merge($auth->toArray(), [
                 'percent' => $percent
             ])
+        ], 200);
+    }
+
+    public function accounts_save_signature(Request $request)
+    {
+        $request->validate([
+            'signature' => 'required|string',
+        ]);
+        AccountEmployee::updateOrCreate(
+            ['user_id' => Auth::id()], // unique identifier
+            [
+                'signature' => $request->signature, // save Base64 directly
+            ]
+        );
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Signature created successfully.',
         ], 200);
     }
 

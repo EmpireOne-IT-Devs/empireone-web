@@ -20,6 +20,7 @@ class AccountEmployee extends Model
         'with_bpo',
         'source',
         'position',
+        'signature'
     ];
 
     

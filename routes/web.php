@@ -240,6 +240,9 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
     Route::get('/my_profile', function () {
         return Inertia::render('applicant/my_profile/page');
     });
+     Route::get('/my_profile/signature', function () {
+        return Inertia::render('applicant/my_profile/signature/page');
+    });
     Route::get('/job_offers', function () {
         return Inertia::render('applicant/job_offers/page');
     });

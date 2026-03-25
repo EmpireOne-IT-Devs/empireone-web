@@ -75,6 +75,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('government_information',  [AccountPersonalInformationController::class, 'accounts_government_information']);
         Route::post('emergency_contact_information',  [AccountPersonalInformationController::class, 'accounts_emergency_contact_information']);
         Route::post('educational_information',  [AccountPersonalInformationController::class, 'accounts_educational_information']);
+        Route::post('save_signature',  [AccountPersonalInformationController::class, 'accounts_save_signature']);
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);

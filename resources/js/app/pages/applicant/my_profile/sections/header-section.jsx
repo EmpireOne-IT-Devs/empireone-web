@@ -9,7 +9,6 @@ import {
     PencilLine,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
-import ESignatureSection from "./e-signature-section";
 
 export default function HeaderSection({ editing, setEditing }) {
     const profileCompletion = 20;
@@ -77,15 +76,15 @@ export default function HeaderSection({ editing, setEditing }) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Button
+                        <a
+                            href="/applicant/my_profile/signature"
                             onClick={() => setShowESignature(true)}
-                            outlined
-                            variant="secondary"
+                            target="_blank"
+                            className="p-1.5 flex gap-1 border border-purple-500 bg-purple-600 rounded-md items-center justify-center text-white"
                         >
                             <PencilLine className="w-3.5 h-3.5 mr-2" />
                             E-Signature
-                        </Button>
-                        {showESignature && <ESignatureSection />}
+                        </a>
 
                         {!editing ? (
                             <Button onClick={() => setEditing(true)}>
