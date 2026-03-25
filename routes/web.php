@@ -243,6 +243,9 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
     Route::get('/job_offers', function () {
         return Inertia::render('applicant/job_offers/page');
     });
+    Route::get('/my_documents', function () {
+        return Inertia::render('applicant/my_documents/page');
+    });
     Route::get('/settings', function () {
         return Inertia::render('applicant/settings/page');
     });

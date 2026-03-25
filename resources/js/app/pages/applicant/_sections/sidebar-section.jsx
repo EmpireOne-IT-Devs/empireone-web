@@ -10,6 +10,7 @@ import {
     FcBriefcase,
     FcBusinessman,
     FcFeedback,
+    FcOpenedFolder
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import { Link } from "@inertiajs/react";
@@ -52,6 +53,13 @@ export default function SidebarSection() {
             href: "/applicant/my_profile",
             icon: FcBusinessman,
             current: path == "my_profile",
+        },
+
+          {
+            name: "My Documents",
+            href: "/applicant/my_documents",
+            icon: FcOpenedFolder,
+            current: path == "my_documents",
         },
 
         {

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
+use App\Mail\JobOfferAcceptedMail;
 use App\Mail\JobOfferDeclinedMail;
+use App\Mail\PreEmploymentMail;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +28,11 @@ class JobOfferController extends Controller
         }
         if ($request->status == 'Declined') {
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferDeclinedMail($jo));
+            // change the status of job application into Declined Job Offer
+        } else if ($request->status == 'Accepted') {
+            Mail::to('hiring@empireonegroup.com')->send(new JobOfferAcceptedMail($jo));
+            Mail::to($jo->user['email'])->send(new PreEmploymentMail($jo));
+            // change the status of job application into Accepted Job Offer
         }
         return response()->json([
             'status' => 'success',

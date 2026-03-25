@@ -10,9 +10,9 @@ import Button from "@/app/_components/button";
 const TAB_IDS = ["personal", "professional", "documents", "customization"];
 
 const TAB_LABELS = {
-    personal: "Personal",
-    professional: "Skill",
-    documents: "Documents",
+    personal: "Personal Information",
+    documents: "Government Information",
+    professional: "Talent & Skill",
     customization: "Customization",
 };
 

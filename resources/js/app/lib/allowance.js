@@ -1,19 +1,19 @@
 const allowances = [
     {
-        value: "Monthly",
-        label: "Monthly",
+        value: "Skill Allowance",
+        label: "Skill Allowance",
     },
     {
-        value: "Daily",
-        label: "Daily",
+        value: "Program Allowance",
+        label: "Program Allowance",
     },
     {
-        value: "Rice Subsidy",
-        label: "Rice Subsidy",
+        value: "Communication Allowance",
+        label: "Communication Allowance",
     },
     {
-        value: "Internet",
-        label: "Internet",
+        value: "Interim Allowance",
+        label: "Interim Allowance",
     },
 ];
 
