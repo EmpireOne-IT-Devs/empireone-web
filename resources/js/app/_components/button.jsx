@@ -7,8 +7,8 @@ const variantStyles = {
         outlined: "border border-blue-600 text-blue-600 hover:bg-blue-50",
     },
     secondary: {
-        solid: "bg-gray-600 text-white hover:bg-gray-700",
-        outlined: "border border-gray-600 text-gray-800 hover:bg-gray-50",
+        solid: "bg-purple-600 text-white hover:bg-purple-700",
+        outlined: "border border-purple-600 text-purple-800 hover:bg-purple-50",
     },
     danger: {
         solid: "bg-red-600 text-white hover:bg-red-700",
