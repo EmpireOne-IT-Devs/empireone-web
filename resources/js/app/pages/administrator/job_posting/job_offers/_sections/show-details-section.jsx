@@ -5,10 +5,11 @@ import React, { useState } from "react";
 
 export default function ShowDetailsSection({ data }) {
     const [open, setOpen] = useState(false);
+
     return (
         <div>
             <Button onClick={() => setOpen(true)} outlined>
-                DETAILS
+                VIEW DETAILS
             </Button>
             <Modal
                 width="max-w-3xl"
@@ -48,14 +49,6 @@ export default function ShowDetailsSection({ data }) {
                                         .job_requisition.department.name
                                 }{" "}
                             </p>
-                            {/* <p>
-                                <strong>Location:</strong>{" "}
-                                {data.job_posting.job_requisition.location.name}
-                            </p>
-                            <p>
-                                <strong>Source:</strong>{" "}
-                                {data.applicant.account_employee.source}
-                            </p> */}
                         </div>
                         <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2 mt-2">
                             Offers
@@ -69,6 +62,21 @@ export default function ShowDetailsSection({ data }) {
                                 <strong>Role:</strong> {data.role}{" "}
                             </p>
                         </div>
+
+                        {data?.declined_reason && (
+                            <>
+                                <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2 mt-2">
+                                    Declined Reason:
+                                </p>
+                                <div className="text-red-600">
+                                    {data?.declined_reason}
+                                </div>
+                            </>
+                        )}
+
+                        {data.allowances.length == 0 && (
+                            <div className="text-red-500">No Allowance</div>
+                        )}
                         <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2 mt-2">
                             Allowances
                         </p>
