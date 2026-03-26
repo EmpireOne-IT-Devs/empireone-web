@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
@@ -7,103 +7,183 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import onboarding_documents from "@/app/lib/onboarding-documents";
 import { UploadCloud, Trash2 } from "lucide-react";
+import { add_documents_service } from "@/app/services/documents-services";
+import { useDispatch, useSelector } from "react-redux";
+import { setAlert } from "@/app/redux/app-slice";
+import { get_documents_by_user_thunk } from "@/app/redux/applicant-thunk";
+import store from "@/app/store/store";
 
 export default function AddDocumentSection() {
     const [open, setOpen] = useState(false);
+    const { documents } = useSelector((store) => store.applicants);
 
-    const { control, register, handleSubmit } = useForm({
+    const {
+        control,
+        register,
+        handleSubmit,
+        reset,
+        watch,
+        setValue,
+        formState: { errors, isSubmitting },
+    } = useForm({
         defaultValues: {
-            documents: [
-                {
-                    type: "",
-                    file: null,
-                },
-            ],
+            documents: [{ name: "", file: null }],
         },
     });
-
+    const dispatch = useDispatch();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "documents",
     });
 
-    const onSubmit = (data) => {
-        console.log("FORM DATA:", data);
+    const selectedDocs = watch("documents");
+    console.log("selectedDocs", selectedDocs);
+    console.log("selectedDocs");
+    const watchValues = watch();
+
+    // useEffect(()=>{
+    // setValue(
+    //         "documents",""
+    //     );
+    // },[])
+    const onSubmit = async (data) => {
+        try {
+            const formData = new FormData();
+
+            data.documents.forEach((doc, index) => {
+                formData.append(`documents[${index}][name]`, doc.name);
+                formData.append(`documents[${index}][file]`, doc.file[0]);
+            });
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ", " + pair[1]);
+            }
+            await add_documents_service(formData);
+            await store.dispatch(get_documents_by_user_thunk());
+            await dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Documents added Successfully!",
+                    message:
+                        "The documents has been created and is ready for review.",
+                    open: true,
+                }),
+            );
+            setOpen(false);
+            reset();
+        } catch (error) {
+            console.error("Failed to upload documents:", error);
+        }
     };
 
     return (
         <>
             <Button
                 onClick={() => setOpen(true)}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
+                className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg"
             >
                 <UploadCloud size={20} />
                 Upload New Document
             </Button>
 
             <Modal
-                width="max-w-xl"
+                width="max-w-3xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="Add Documents"
             >
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-4">
-                        {fields.map((field, index) => (
-                            <div
-                                key={field.id}
-                                className="flex gap-3 items-end"
+                        {/* ADD BUTTON */}
+                        <div className="flex justify-end">
+                            <Button
+                                name="button"
+                                onClick={() => append({ name: "", file: null })}
+                                className="bg-blue-500 text-white"
                             >
-                                <div className="flex-1">
-                                    <Select
-                                        label="Type of Document"
-                                        options={onboarding_documents}
-                                        {...register(
-                                            `documents.${index}.type`,
-                                            {
-                                                required: true,
-                                            },
-                                        )}
-                                    />
-                                </div>
+                                + Add Another Document
+                            </Button>
+                        </div>
 
-                                <div className="flex-1">
-                                    <Input
-                                        type="file"
-                                        label="File"
-                                        {...register(
-                                            `documents.${index}.file`,
-                                            {
-                                                required: true,
-                                            },
-                                        )}
-                                    />
-                                </div>
-
-                                <Button
-                                    className="mb-2"
-                                    outlined
-                                    type="button"
-                                    onClick={() => remove(index)}
-                                    variant="danger"
+                        {/* FIELDS */}
+                        {fields.map((field, index) => {
+                            const filteredOptions = onboarding_documents.filter(
+                                (option) => {
+                                    const isSelectedInForm = selectedDocs?.some(
+                                        (doc, i) =>
+                                            doc?.name === option.value &&
+                                            i !== index,
+                                    );
+                                    const isAlreadyUploaded = (
+                                        documents?.data || []
+                                    ).some(
+                                        (uploadedDoc) =>
+                                            uploadedDoc.name === option.value,
+                                    );
+                                    return (
+                                        !isSelectedInForm && !isAlreadyUploaded
+                                    );
+                                },
+                            );
+                            return (
+                                <div
+                                    key={field.id}
+                                    className="flex gap-3 items-center"
                                 >
-                                    <Trash2 size={12} />
-                                </Button>
-                            </div>
-                        ))}
+                                    <div className="flex-1">
+                                        <Select
+                                            {...register(
+                                                `documents.${index}.name`,
+                                                {
+                                                    required: true,
+                                                },
+                                            )}
+                                            value={
+                                                watchValues.documents?.[index]
+                                                    ?.name
+                                            }
+                                            name={`documents.${index}.name`}
+                                            label="Name of Document"
+                                            options={filteredOptions}
+                                            error={
+                                                errors?.documents?.[index]?.name
+                                            }
+                                        />
+                                    </div>
 
-                        <Button
-                            outlined
-                            variant="secondary"
-                            type="button"
-                            onClick={() => append({ type: "", file: null })}
-                        >
-                            + Add Another Document
-                        </Button>
+                                    {/* FILE INPUT */}
+                                    <div className="flex-1">
+                                        <Input
+                                            name={`documents.${index}.file`}
+                                            type="file"
+                                            label="File"
+                                            {...register(
+                                                `documents.${index}.file`,
+                                                { required: true },
+                                            )}
+                                            error={
+                                                errors?.documents?.[index]?.file
+                                            }
+                                        />
+                                    </div>
 
+                                    {/* REMOVE */}
+                                    <Button
+                                        name="button"
+                                        onClick={() => remove(index)}
+                                        className="bg-red-500 text-white px-3"
+                                    >
+                                        <Trash2 size={16} />
+                                    </Button>
+                                </div>
+                            );
+                        })}
+
+                        {/* SUBMIT */}
                         <Button
+                            name="submit"
                             type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                            loading={isSubmitting}
+                            className="w-full bg-blue-600 text-white"
                         >
                             SUBMIT
                         </Button>

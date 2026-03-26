@@ -19,7 +19,12 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->string('name')->nullable();
             $table->text('reason')->nullable();
-            $table->string('status')->nullable();
+            $table->enum('status', [
+                'Pending',
+                'Approved',
+                'Declined',
+                'Re-Uploaded',
+            ])->default('Pending');
             $table->string('url')->nullable();
             $table->enum('type', [
                 'Resume',
