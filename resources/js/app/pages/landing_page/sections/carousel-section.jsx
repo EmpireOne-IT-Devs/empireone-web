@@ -31,14 +31,7 @@ export default function CarouselSection() {
           position: relative;
         }
     
-        .carousel-inner {
-          background: rgba(0,0,0,0.18);
-          backdrop-filter: blur(2px);
-          padding: 10px 0;
-          position: relative;
-          overflow: hidden;
-        }
-        .carousel-inner::before,
+    
         .carousel-inner::after {
           content: '';
           position: absolute;

@@ -58,7 +58,7 @@ export default function ApplicationStatusSection() {
             <Card padding="p-4" className="w-full gap-0">
                 {/* Header */}
                 <div className="flex items-center gap-2 pb-4 border-b border-gray-100 mb-4">
-                    <File className="w-4 h-4 text-blue-400" />
+                    <File className="w-4 h-4 " />
                     <h2 className="text-base font-semibold text-gray-900">
                         Application Status
                     </h2>

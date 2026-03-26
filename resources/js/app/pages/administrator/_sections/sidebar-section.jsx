@@ -8,7 +8,6 @@ import {
     FcDocument,
     FcOvertime,
     FcSalesPerformance,
-    FcConferenceCall,
     FcBarChart,
     FcSettings,
     FcVoicePresentation,
@@ -20,6 +19,7 @@ import {
     FcCloseUpMode,
     FcCancel,
     FcSurvey,
+    FcConferenceCall,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import { Link } from "@inertiajs/react";
@@ -70,6 +70,12 @@ export default function SidebarSection() {
             href: "/administrator/job_requisition",
             icon: FcDocument,
             current: path == "job_requisition",
+        },
+        {
+            name: "Employee Relation",
+            href: "/administrator/employee_relation",
+            icon: FcConferenceCall,
+            current: path == "employee_relation",
         },
         {
             name: "HR Central",

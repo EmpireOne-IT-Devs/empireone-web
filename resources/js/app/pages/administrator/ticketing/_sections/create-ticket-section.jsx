@@ -126,8 +126,8 @@ export default function CreateTicketSection() {
                                         label="Select Location"
                                         options={data?.locations.map(
                                             (res) => ({
-                                                label: res.name,
-                                                value: res.id,
+                                            label: res.name,
+                                            value: res.id,
                                             }),
                                         )}
                                         error={errors.location_id}

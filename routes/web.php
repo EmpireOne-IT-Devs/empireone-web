@@ -111,6 +111,9 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
     Route::get('/job_requisition', function () {
         return Inertia::render('administrator/job_requisition/page');
     });
+     Route::get('/employee_relation', function () {
+        return Inertia::render('administrator/employee_relation/page');
+    });
 
     Route::get('/job_requisition/{id}', function () {
         return Inertia::render('administrator/job_requisition/id/page');
