@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import SignatureCanvas from "react-signature-canvas";
-import { Trash2, PenTool, MousePointer2, Upload } from "lucide-react";
+import { Trash2, PenTool, MousePointer2, Upload, Pen } from "lucide-react";
 import { FaRegSave } from "react-icons/fa";
 import { save_signature_service } from "@/app/services/account-service";
 import { useDispatch, useSelector } from "react-redux";
@@ -134,13 +134,13 @@ const SignaturePad = () => {
                 </div>
             </div>
 
-            <div>
+            <div className="bg-gray-100 border ">
                 <SignatureCanvas
                     ref={sigCanvas}
                     penColor={PEN_COLOR}
                     minWidth={PEN_WEIGHT}
                     maxWidth={PEN_WEIGHT + 1}
-                    canvasProps={{
+                    canvasProps={{  
                         width: dimensions.width,
                         height: dimensions.height,
                         className: "cursor-crosshair w-full",
@@ -153,7 +153,7 @@ const SignaturePad = () => {
 
                 {!imageURL && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <MousePointer2 size={60} className="opacity-5 mb-4" />
+                        <Pen size={60} className="opacity-5 mb-4" />
                         <p className="text-slate-300 font-medium text-lg">
                             Sign Here
                         </p>

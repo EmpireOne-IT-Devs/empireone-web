@@ -42,7 +42,7 @@ export default function AddDocumentSection() {
             </Button>
 
             <Modal
-                width="max-w-3xl"
+                width="max-w-xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="Add Documents"
@@ -81,19 +81,22 @@ export default function AddDocumentSection() {
                                 </div>
 
                                 <Button
+                                    className="mb-2"
+                                    outlined
                                     type="button"
                                     onClick={() => remove(index)}
-                                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-2"
+                                    variant="danger"
                                 >
-                                    <Trash2 size={16} />
+                                    <Trash2 size={12} />
                                 </Button>
                             </div>
                         ))}
 
                         <Button
+                            outlined
+                            variant="secondary"
                             type="button"
                             onClick={() => append({ type: "", file: null })}
-                            className="bg-gray-200 hover:bg-gray-300"
                         >
                             + Add Another Document
                         </Button>
