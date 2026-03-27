@@ -350,7 +350,7 @@ export default function CreateJobRequisition() {
                                             }}
                                             render={({ field }) => (
                                                 <Select
-                                                    label="Select Department"
+                                                    label="Select Account"
                                                     options={data?.accounts?.map(
                                                         (res) => ({
                                                             ...res,
