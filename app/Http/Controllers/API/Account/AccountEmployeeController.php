@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\Account;
+
+use App\Http\Controllers\Controller;
 
 use App\Models\Account\AccountEmployee;
 use Illuminate\Http\Request;
@@ -12,7 +14,17 @@ class AccountEmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $employees = AccountEmployee::with('user','personal_information','department','account','site')
+            ->whereNotNull('employee_id')
+            ->whereHas('user', function ($query) {
+                $query->whereIn('role', [1, 2]); // use integers if possible
+            })
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $employees,
+        ], 200);
     }
 
     /**

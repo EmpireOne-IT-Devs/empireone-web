@@ -21,6 +21,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('departments')
                 ->nullOnDelete();
+            $table->foreignId('account_id')
+                ->nullable()
+                ->constrained('accounts')
+                ->nullOnDelete();
             $table->foreignId('site_id')
                 ->nullable()
                 ->constrained('sites')
@@ -36,6 +40,18 @@ return new class extends Migration
             $table->string('source')->nullable();
             $table->string('position')->nullable();
             $table->longText('signature')->nullable();
+            $table->enum('status', [
+                'Probationary',
+                'Regualr',
+                'AWOL',
+                'Contractual',
+                'End of Contract',
+                'EOPE',
+                'Extended Probationary',
+                'Resigned',
+                'Terminated',
+                'Trainee Fallout',
+            ])->default('Probationary');
             $table->timestamps();
         });
     }

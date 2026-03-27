@@ -114,9 +114,15 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
     Route::get('/employee_relation', function () {
         return Inertia::render('administrator/employee_relation/page');
     });
-
+    Route::get('/employee_relation/{id}', function () {
+        return Inertia::render('administrator/employee_relation/id/page');
+    });
     Route::get('/employee_relation/{id}/contract', function () {
         return Inertia::render('administrator/employee_relation/id/contract/page');
+    });
+
+    Route::get('/employee_relation/{id}/onboarding', function () {
+        return Inertia::render('administrator/employee_relation/id/onboarding/page');
     });
 
 

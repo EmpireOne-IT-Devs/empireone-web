@@ -1,7 +1,17 @@
 import Table from "@/app/_components/table";
 import React from "react";
+import { useSelector } from "react-redux";
 
 export default function TableSection() {
+    const { employees } = useSelector((store) => store.employee_relations);
+    console.log(
+        "employees",
+        employees?.data?.map((res) => ({
+            ...res,
+            name: `${res?.personal_information.first_name} ${res?.personal_information.middle_name} ${res?.personal_information.last_name}`,
+            department: res?.department.name,
+        })) ?? [],
+    );
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
         { header: "Fullname", accessor: "name" },
@@ -15,7 +25,29 @@ export default function TableSection() {
     ];
     return (
         <div>
-            <Table columns={columns} />
+            <Table
+                columns={columns}
+                data={
+                    employees?.data?.map((res) => ({
+                        ...res,
+                        employee_id: (
+                            <a
+                                target="_blnak"
+                                className="underline text-blue-500 hover:text-blue-600"
+                                href={`/administrator/employee_relation/${res.user_id}`}
+                            >
+                                {res.employee_id}
+                            </a>
+                        ),
+                        name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
+                        department: res?.department?.name,
+                        account: res?.account?.name,
+                        contact: res?.personal_information?.contact,
+                        site: res?.site?.name,
+                        status: res?.status,
+                    })) ?? []
+                }
+            />
         </div>
     );
 }
