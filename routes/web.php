@@ -111,9 +111,14 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
     Route::get('/job_requisition', function () {
         return Inertia::render('administrator/job_requisition/page');
     });
-     Route::get('/employee_relation', function () {
+    Route::get('/employee_relation', function () {
         return Inertia::render('administrator/employee_relation/page');
     });
+
+    Route::get('/employee_relation/{id}/contract', function () {
+        return Inertia::render('administrator/employee_relation/id/contract/page');
+    });
+
 
     Route::get('/job_requisition/{id}', function () {
         return Inertia::render('administrator/job_requisition/id/page');
@@ -243,7 +248,7 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
     Route::get('/my_profile', function () {
         return Inertia::render('applicant/my_profile/page');
     });
-     Route::get('/my_profile/signature', function () {
+    Route::get('/my_profile/signature', function () {
         return Inertia::render('applicant/my_profile/signature/page');
     });
     Route::get('/job_offers', function () {
