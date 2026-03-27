@@ -18,6 +18,7 @@ class AccountEmployee extends Model
         'department_id',
         'site_id',
         'location_id',
+        'account_id',
         'work_type',
         'eogs_email',
         'employee_id',
@@ -25,7 +26,8 @@ class AccountEmployee extends Model
         'source',
         'position',
         'signature',
-        'account_id'
+        'is_contract_agree',
+        'is_onboarding_agree'
     ];
 
 
@@ -50,7 +52,7 @@ class AccountEmployee extends Model
     {
         return $this->hasOne(Account::class, 'id', 'account_id');
     }
-       public function site(): HasOne
+    public function site(): HasOne
     {
         return $this->hasOne(Account::class, 'id', 'site_id');
     }

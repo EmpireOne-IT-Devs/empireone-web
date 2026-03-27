@@ -3,9 +3,10 @@ import { useSelector } from "react-redux";
 
 export default function StatsSection() {
     const { documents_stats } = useSelector((store) => store.applicants);
-    console.log('documents_stats',documents_stats)
+    const { data } = useSelector((store) => store.app);
+    console.log("data", data);
     return (
-        <div>
+        <div className="flex items-center justify-between">
             <div className="flex flex-wrap gap-4 mb-6">
                 <div className="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg font-medium text-blue-700 shadow-sm">
                     Total: {documents_stats?.total ?? 0}
@@ -23,6 +24,22 @@ export default function StatsSection() {
                 <div className="bg-purple-50 border border-purple-200 px-4 py-2 rounded-lg font-medium text-purple-700 shadow-sm">
                     Re-Uploaded: {documents_stats?.re_uploaded ?? 0}
                 </div>
+            </div>
+            <div className="flex gap-3">
+                <a
+                    target="_blank"
+                    href={`/applicant/my_documents/${data?.user?.id}/contract`}
+                    className="bg-blue-500 hover:bg-blue-600 rounded-md text-white p-3"
+                >
+                    EMPLOYMENT CONTRACT
+                </a>
+                <a
+                    target="_blank"
+                    href={`/applicant/my_documents/${data?.user?.id}/contract`}
+                    className="bg-purple-500 hover:bg-purple-600 rounded-md text-white p-3"
+                >
+                    ONBOARDING DOCUMENTS
+                </a>
             </div>
         </div>
     );

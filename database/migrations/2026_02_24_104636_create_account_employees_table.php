@@ -40,6 +40,14 @@ return new class extends Migration
             $table->string('source')->nullable();
             $table->string('position')->nullable();
             $table->longText('signature')->nullable();
+            $table->enum('is_contract_agree', [
+                'False',
+                'True',
+            ])->default('False');
+            $table->enum('is_onboarding_agree', [
+                'False',
+                'True',
+            ])->default('False');
             $table->enum('status', [
                 'Probationary',
                 'Regualr',
