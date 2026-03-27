@@ -1,5 +1,6 @@
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
+import Radio from "@/app/_components/radio";
 import { get_job_offers_thunk } from "@/app/redux/job-posting-thunk";
 import { send_documents_service } from "@/app/services/account-service";
 import store from "@/app/store/store";
@@ -60,6 +61,18 @@ export default function SendDocumentsSection({ data }) {
                         Are you sure you want to send onboarding documents and
                         contract signing to this candidate?
                     </p>
+                    <div className="flex flex-col gap-2 bg-gray-100 border border-gray-100 rounded-lg px-3.5 py-2.5">
+                        <Radio
+                            label="Face to Face Interview"
+                            value="face_to_face"
+                            name="interview_type"
+                        />
+                        <Radio
+                            label="Online Interview"
+                            value="online"
+                            name="interview_type"
+                        />
+                    </div>
 
                     <div className="flex items-start gap-2.5 px-3.5 py-2.5 rounded-lg bg-blue-50 border border-blue-100">
                         <span className="text-blue-500 shrink-0 mt-px">
