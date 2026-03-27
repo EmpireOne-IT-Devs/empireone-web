@@ -6,6 +6,7 @@ import ResendJobOfferSection from "./resend-job-offer-section";
 import Badge from "@/app/_components/badge"; // import your Badge component
 import SendContractSigning from "./send-contract-signing";
 import SendOnboardingDocumentsSection from "./send-onboarding-documents-section";
+import SendDocumentsSection from "./send-documents-section";
 
 export default function TableSection() {
     const { job_offers } = useSelector((store) => store.job_postings);
@@ -59,8 +60,7 @@ export default function TableSection() {
 
                             {res.status == "Accepted" && (
                                 <>
-                                    <SendOnboardingDocumentsSection />
-                                    <SendContractSigning />
+                                    <SendDocumentsSection data={res}/>
                                 </>
                             )}
                             <ShowDetailsSection data={res} />
