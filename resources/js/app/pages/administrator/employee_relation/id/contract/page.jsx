@@ -9,25 +9,25 @@ import {
     Image,
 } from "@react-pdf/renderer";
 
-// Define styles matching the actual document with optimized spacing
+// Define styles using Times New Roman fonts
 const styles = StyleSheet.create({
     page: {
         padding: 70,
         paddingTop: 35,
         paddingBottom: 50,
-        fontFamily: "Helvetica",
+        fontFamily: "Times-Roman",
         fontSize: 9,
         position: "relative",
     },
     title: {
         fontSize: 12,
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
         textAlign: "center",
         marginBottom: 15,
         color: "#1e3a8a",
     },
     sectionTitle: {
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
         fontSize: 10,
         marginTop: 8,
         marginBottom: 4,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         textAlign: "justify",
     },
     bold: {
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
     },
     center: {
         textAlign: "center",
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     },
     tableHeaderCell: {
         padding: 4,
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
         fontSize: 8,
         textAlign: "center",
         borderRightWidth: 1,
@@ -156,17 +156,17 @@ const styles = StyleSheet.create({
         marginTop: 5,
         marginBottom: 5,
     },
-    logo: {
-        width: "70%", // width in points
-        height: 80, // height in points
-        marginBottom: 20,
-    },
     logoContainer: {
         display: "flex",
-        flexDirection: "column", // stack items vertically
-        alignItems: "center", // horizontal center
-        justifyContent: "center", // vertical center
-        marginBottom: 20,
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingTop: 20,
+    },
+    logo: {
+        width: 450,
+        height: 130,
+        objectFit: "contain",
     },
 });
 
@@ -194,7 +194,7 @@ const EmploymentContract = () => (
             <View style={styles.logoContainer}>
                 <Image
                     style={styles.logo}
-                    src="/images/eo-full-logo.png" // local or remote URL
+                    src="/images/Blogo (1).png" // local or remote URL
                 />
             </View>
             <Text style={styles.title}>EMPLOYMENT CONTRACT</Text>
@@ -562,7 +562,9 @@ const EmploymentContract = () => (
                 <View style={styles.signatureBlock}>
                     <Text style={[styles.text, styles.bold]}>EMPLOYEE</Text>
                     <View style={styles.signatureLine} />
-                    <Text style={[styles.text, { marginBottom: 20 }]}>_____________________</Text>
+                    <Text style={[styles.text, { marginBottom: 20 }]}>
+                        _____________________
+                    </Text>
                 </View>
                 <View style={styles.signatureBlock}>
                     <Text style={[styles.text, styles.bold]}>EMPLOYER</Text>
@@ -570,7 +572,9 @@ const EmploymentContract = () => (
                     <Text style={[styles.text, styles.bold]}>
                         APPLE LORAINE MAG-USARA
                     </Text>
-                    <Text style={[styles.text, { marginBottom: 20 }]}>HR LEAD</Text>
+                    <Text style={[styles.text, { marginBottom: 20 }]}>
+                        HR LEAD
+                    </Text>
                 </View>
             </View>
 
@@ -580,11 +584,15 @@ const EmploymentContract = () => (
             <View style={styles.witnessRow}>
                 <View style={styles.witnessBlock}>
                     <View style={styles.witnessLine} />
-                    <Text style={[styles.text, { marginBottom: 20 }]}>_____________________</Text>
+                    <Text style={[styles.text, { marginBottom: 20 }]}>
+                        _____________________
+                    </Text>
                 </View>
                 <View style={styles.witnessBlock}>
                     <View style={styles.witnessLine} />
-                    <Text style={[styles.text, { marginBottom: 20 }]}>_____________________</Text>
+                    <Text style={[styles.text, { marginBottom: 20 }]}>
+                        _____________________
+                    </Text>
                 </View>
             </View>
 
@@ -608,8 +616,12 @@ const EmploymentContract = () => (
 
             <Text style={styles.title}>ACKNOWLEDGEMENT</Text>
 
-            <Text style={[styles.text, { marginBottom: 20 }]}>REPUBLIC OF THE PHILIPPINES)</Text>
-            <Text style={[styles.text, { marginBottom: 20 }]}>San Carlos City) S.S.</Text>
+            <Text style={[styles.text, { marginBottom: 20 }]}>
+                REPUBLIC OF THE PHILIPPINES)
+            </Text>
+            <Text style={[styles.text, { marginBottom: 20 }]}>
+                San Carlos City) S.S.
+            </Text>
 
             <Text style={[styles.text, { marginTop: 8, marginBottom: 8 }]}>
                 BEFORE ME, a Notary Public for San Carlos City, on this ______
@@ -706,10 +718,18 @@ const EmploymentContract = () => (
             </Text>
 
             <View style={{ marginTop: 12 }}>
-                <Text style={[styles.text, { marginBottom: 20 }]}>Doc.No. ____;</Text>
-                <Text style={[styles.text, { marginBottom: 20 }]}>Page No. ____;</Text>
-                <Text style={[styles.text, { marginBottom: 20 }]}>Book No. ____;</Text>
-                <Text style={[styles.text, { marginBottom: 20 }]}>Series of 2026</Text>
+                <Text style={[styles.text, { marginBottom: 20 }]}>
+                    Doc.No. ____;
+                </Text>
+                <Text style={[styles.text, { marginBottom: 20 }]}>
+                    Page No. ____;
+                </Text>
+                <Text style={[styles.text, { marginBottom: 20 }]}>
+                    Book No. ____;
+                </Text>
+                <Text style={[styles.text, { marginBottom: 20 }]}>
+                    Series of 2026
+                </Text>
             </View>
         </Page>
     </Document>
