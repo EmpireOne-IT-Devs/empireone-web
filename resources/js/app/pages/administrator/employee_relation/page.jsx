@@ -9,7 +9,7 @@ export default function Page() {
         <Layout>
             <HeaderSection />
             <SearchSection />   
-            <TableSection />
+            <TableSection    />
         </Layout>
     );
 }

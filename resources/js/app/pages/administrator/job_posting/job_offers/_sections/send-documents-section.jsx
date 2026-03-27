@@ -11,6 +11,9 @@ import { FaSpinner } from "react-icons/fa6";
 export default function SendDocumentsSection({ data }) {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [interviewType, setInterviewType] = useState("");
+    const [interviewDate, setInterviewDate] = useState("");
+    const [interviewTime, setInterviewTime] = useState("");
 
     async function send_documents(params) {
         try {
@@ -66,12 +69,77 @@ export default function SendDocumentsSection({ data }) {
                             label="Face to Face Interview"
                             value="face_to_face"
                             name="interview_type"
+                            checked={interviewType === "face_to_face"}
+                            onChange={() => {
+                                setInterviewType("face_to_face");
+                                setInterviewDate("");
+                                setInterviewTime("");
+                            }}
                         />
+
+                        {interviewType === "face_to_face" && (
+                            <div className="mt-2">
+                                <span className="text-sm text-neutral-500 block mb-1">
+                                    Schedule Interview:
+                                </span>
+
+                                <div className="flex gap-2">
+                                    <input
+                                        type="date"
+                                        className="border rounded px-2 py-1 text-sm"
+                                        value={interviewDate}
+                                        onChange={(e) =>
+                                            setInterviewDate(e.target.value)
+                                        }
+                                    />
+                                    <input
+                                        type="time"
+                                        className="border rounded px-2 py-1 text-sm"
+                                        value={interviewTime}
+                                        onChange={(e) =>
+                                            setInterviewTime(e.target.value)
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        )}
                         <Radio
                             label="Online Interview"
                             value="online"
                             name="interview_type"
+                            checked={interviewType === "online"}
+                            onChange={() => {
+                                setInterviewType("online");
+                                setInterviewDate("");
+                                setInterviewTime("");
+                            }}
                         />
+                        {interviewType === "online" && (
+                            <div className="mt-2">
+                                <span className="text-sm text-neutral-500 block mb-1">
+                                    Schedule Interview:
+                                </span>
+
+                                <div className="flex gap-2">
+                                    <input
+                                        type="date"
+                                        className="border rounded px-2 py-1 text-sm"
+                                        value={interviewDate}
+                                        onChange={(e) =>
+                                            setInterviewDate(e.target.value)
+                                        }
+                                    />
+                                    <input
+                                        type="time"
+                                        className="border rounded px-2 py-1 text-sm"
+                                        value={interviewTime}
+                                        onChange={(e) =>
+                                            setInterviewTime(e.target.value)
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-start gap-2.5 px-3.5 py-2.5 rounded-lg bg-blue-50 border border-blue-100">

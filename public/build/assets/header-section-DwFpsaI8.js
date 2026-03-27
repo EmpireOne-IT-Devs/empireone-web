@@ -1,0 +1,1 @@
+import{j as e}from"./app-CldPQyC1.js";function t(){const a={first_name:"Wacky"};return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsxs("div",{className:"text-2xl font-black",children:["Welcome Back, ","",a?.first_name,"!"]}),e.jsx("div",{className:"text-gray-600",children:"Stay updated on your application status and next steps."})]})}export{t as default};
