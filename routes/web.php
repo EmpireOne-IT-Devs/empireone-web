@@ -144,9 +144,9 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         Route::get('/performance', function () {
             return Inertia::render('administrator/hr_central/performance/page');
         });
-        Route::get('/onboarding', function () {
-            return Inertia::render('administrator/hr_central/onboarding/page');
-        });
+        // Route::get('/onboarding', function () {
+        //     return Inertia::render('administrator/hr_central/onboarding/page');
+        // });
         Route::get('/recruitment', function () {
             return Inertia::render('administrator/hr_central/recruitment/page');
         });

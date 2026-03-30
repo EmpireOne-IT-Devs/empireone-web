@@ -8,6 +8,7 @@ import {
     Image,
     PDFViewer,
 } from "@react-pdf/renderer";
+import PDFLoader from "@/app/_components/pdf-loader";
 
 const styles = StyleSheet.create({
     page: {
@@ -87,7 +88,12 @@ const styles = StyleSheet.create({
     // ── Filled bullet (page 4) ───────────────────────────────────────────────
     bulletRow: { flexDirection: "row", marginBottom: 3, paddingLeft: 15 },
     bulletDot: { width: 14, fontSize: 10 },
-    bulletText: { flex: 1, fontSize: 10, lineHeight: 1.4, textAlign: "justify" },
+    bulletText: {
+        flex: 1,
+        fontSize: 10,
+        lineHeight: 1.4,
+        textAlign: "justify",
+    },
     // ── Numbered list ────────────────────────────────────────────────────────
     numberedRow: { flexDirection: "row", marginBottom: 3, paddingLeft: 15 },
     numberedIndex: { width: 18, fontSize: 10 },
@@ -163,9 +169,7 @@ const PageHeader = ({ showTitle }) => (
         <View style={styles.logoContainer}>
             <Image style={styles.logo} src="/images/Blogo (1).png" />
         </View>
-        {showTitle && (
-            <Text style={styles.pageTitle}>Attendance Policy</Text>
-        )}
+        {showTitle && <Text style={styles.pageTitle}>Attendance Policy</Text>}
     </View>
 );
 
@@ -177,7 +181,11 @@ const PageFooter = ({ pageNum }) => (
         <View style={styles.disclaimerBlock}>
             <Text style={styles.disclaimerTitle}>Disclaimer:</Text>
             <Text style={styles.disclaimerText}>
-                This document and its contents are the property of EmpireOne BPO Solutions, Inc. and are intended for internal use only. Unauthorized reproduction, disclosure, or distribution of this material, in whole or in part, without prior written permission from the company is strictly prohibited.
+                This document and its contents are the property of EmpireOne BPO
+                Solutions, Inc. and are intended for internal use only.
+                Unauthorized reproduction, disclosure, or distribution of this
+                material, in whole or in part, without prior written permission
+                from the company is strictly prohibited.
             </Text>
         </View>
     </>
@@ -222,16 +230,17 @@ const Numbered = ({ n, text }) => (
 
 const AttendancePolicyDocument = () => (
     <Document>
-
         {/* ══ PAGE 1 ══════════════════════════════════════════════════════════ */}
         <Page size="A4" style={styles.page}>
             <PageHeader showTitle />
 
             <Text style={styles.sectionLabel}>Introduction:</Text>
             <Text style={styles.paragraph}>
-                The company EmpireOne Global Solution Inc.'s attendance policy is a set of rules that outlines the
-                expectation of the company to our employees on the importance of coming to work and punctuality; it
-                also will help us maintain our productivity in the workplace.
+                The company EmpireOne Global Solution Inc.'s attendance policy
+                is a set of rules that outlines the expectation of the company
+                to our employees on the importance of coming to work and
+                punctuality; it also will help us maintain our productivity in
+                the workplace.
             </Text>
 
             <Text style={styles.sectionLabel}>Scope:</Text>
@@ -241,22 +250,28 @@ const AttendancePolicyDocument = () => (
 
             <Text style={styles.sectionLabel}>Policy Fundamentals:</Text>
             <Text style={styles.paragraph}>
-                As a Business Process Outsourcing company, the key to the company's growth lies within our employees,
-                making sure our employees follow their shift schedule and break schedule will greatly affect the
-                productivity of the company or organization as a whole.
+                As a Business Process Outsourcing company, the key to the
+                company's growth lies within our employees, making sure our
+                employees follow their shift schedule and break schedule will
+                greatly affect the productivity of the company or organization
+                as a whole.
             </Text>
             <Text style={styles.paragraph}>
-                Being tardy, and absent at work without a valid reason will greatly impact your colleague that will
-                shoulder some of the burdens regarding the workload. As a result, you will get a bad attendance record
-                and will result in progressive disciplinary action.
+                Being tardy, and absent at work without a valid reason will
+                greatly impact your colleague that will shoulder some of the
+                burdens regarding the workload. As a result, you will get a bad
+                attendance record and will result in progressive disciplinary
+                action.
             </Text>
 
             <Text style={styles.sectionLabel}>Definition of Terms:</Text>
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Absent</Text> is defined as not being present in a place, an occasion, or as part of something.
+                <Text style={styles.bold}>Absent</Text> is defined as not being
+                present in a place, an occasion, or as part of something.
             </Text>
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Absenteeism</Text> is described as an excessive absence of an individual.
+                <Text style={styles.bold}>Absenteeism</Text> is described as an
+                excessive absence of an individual.
             </Text>
             <Text style={[styles.paragraph, { marginBottom: 4 }]}>
                 3 categories of absenteeism:
@@ -287,7 +302,8 @@ const AttendancePolicyDocument = () => (
             <L2 text="Proper and late notification to immediate superior due to medical and fortuitous events. (eg. Earthquake, fire, theft, accident)" />
             <View style={styles.noteRow}>
                 <Text style={styles.noteText}>
-                    Note: Succeeding documents must be submitted within 24 hours of the return.
+                    Note: Succeeding documents must be submitted within 24 hours
+                    of the return.
                 </Text>
             </View>
 
@@ -297,28 +313,36 @@ const AttendancePolicyDocument = () => (
 
             <View style={{ height: 6 }} />
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Tardiness</Text> refers to coming in late; or logging in not on the designated schedule as indicated. An
-                employee is tagged tardy when he/she comes in to work no later than 1 hour before the scheduled
-                employee.
+                <Text style={styles.bold}>Tardiness</Text> refers to coming in
+                late; or logging in not on the designated schedule as indicated.
+                An employee is tagged tardy when he/she comes in to work no
+                later than 1 hour before the scheduled employee.
             </Text>
             <Text style={styles.paragraph}>
-                The employee will be considered an unauthorized absence if he still reported working later than the 1-
-                hour period and must go directly to the operations management for further deliberation if he will continue
-                to work the rest of his shift.
+                The employee will be considered an unauthorized absence if he
+                still reported working later than the 1- hour period and must go
+                directly to the operations management for further deliberation
+                if he will continue to work the rest of his shift.
             </Text>
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Under time</Text> refers to the working time that is less than full time or a required minimum of 4 hours of work rendered.
+                <Text style={styles.bold}>Under time</Text> refers to the
+                working time that is less than full time or a required minimum
+                of 4 hours of work rendered.
             </Text>
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Overbreak</Text> taking a longer break than you are entitled to and frequently doing under time without any
-                valid reason.
+                <Text style={styles.bold}>Overbreak</Text> taking a longer break
+                than you are entitled to and frequently doing under time without
+                any valid reason.
             </Text>
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Presentism</Text> refers to being present beyond your working hours or doing overtime without approval or
-                even if it's not required. It will impact your productivity and efficiency towards your work.
+                <Text style={styles.bold}>Presentism</Text> refers to being
+                present beyond your working hours or doing overtime without
+                approval or even if it's not required. It will impact your
+                productivity and efficiency towards your work.
             </Text>
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Infraction System:</Text> Employees' attendance shall be based on the table of penalties below:
+                <Text style={styles.bold}>Infraction System:</Text> Employees'
+                attendance shall be based on the table of penalties below:
             </Text>
 
             <PageFooter pageNum="2" />
@@ -328,7 +352,9 @@ const AttendancePolicyDocument = () => (
         <Page size="A4" style={styles.page}>
             <PageHeader showTitle={false} />
 
-            <Text style={[styles.paragraph, { marginBottom: 6 }]}>Table of Penalties</Text>
+            <Text style={[styles.paragraph, { marginBottom: 6 }]}>
+                Table of Penalties
+            </Text>
             <View style={styles.tableWrapper}>
                 <View style={styles.tableRow}>
                     <View style={styles.colIncident}>
@@ -340,68 +366,90 @@ const AttendancePolicyDocument = () => (
                 </View>
                 <View style={styles.tableRow}>
                     <View style={styles.colIncident}>
-                        <Text style={styles.tableCellText}>1st offense/strike</Text>
+                        <Text style={styles.tableCellText}>
+                            1st offense/strike
+                        </Text>
                     </View>
                     <View style={styles.colSanction}>
-                        <Text style={styles.tableCellText}>Verbal Warning to Written warning</Text>
+                        <Text style={styles.tableCellText}>
+                            Verbal Warning to Written warning
+                        </Text>
                     </View>
                 </View>
                 <View style={styles.tableRow}>
                     <View style={styles.colIncident}>
-                        <Text style={styles.tableCellText}>2nd offense/strike</Text>
+                        <Text style={styles.tableCellText}>
+                            2nd offense/strike
+                        </Text>
                     </View>
                     <View style={styles.colSanction}>
-                        <Text style={styles.tableCellText}>Final Written Warning</Text>
+                        <Text style={styles.tableCellText}>
+                            Final Written Warning
+                        </Text>
                     </View>
                 </View>
                 <View style={[styles.tableRow, styles.tableLastRow]}>
                     <View style={styles.colIncident}>
-                        <Text style={styles.tableCellText}>3rd offense/strike</Text>
+                        <Text style={styles.tableCellText}>
+                            3rd offense/strike
+                        </Text>
                     </View>
                     <View style={styles.colSanction}>
                         <Text style={styles.tableCellText}>
-                            Endorsed to Admin Hearing and Termination{"\n"}procedure
+                            Endorsed to Admin Hearing and Termination{"\n"}
+                            procedure
                         </Text>
                     </View>
                 </View>
             </View>
 
             <Text style={styles.paragraph}>
-                All incidents that fall on Critical Working Days which include but are{" "}
-                <Text style={styles.italic}>not limited to:</Text>
+                All incidents that fall on Critical Working Days which include
+                but are <Text style={styles.italic}>not limited to:</Text>
             </Text>
             <Numbered n="1" text="Holidays" />
             <Numbered n="2" text="Before and after payday" />
             <Numbered n="3" text="Company Outing/events" />
             <View style={{ height: 6 }} />
             <Text style={styles.paragraph}>
-                Will warrant higher sanctions as a management prerogative which includes an endorsement to
-                admin hearing or termination procedure.
+                Will warrant higher sanctions as a management prerogative which
+                includes an endorsement to admin hearing or termination
+                procedure.
             </Text>
             <Text style={styles.paragraph}>
-                Three Consecutive absences without proper notification or NCNS will be tagged as{" "}
-                <Text style={styles.bold}>AWOL (absence without leave) or abandonment of work</Text>{" "}
+                Three Consecutive absences without proper notification or NCNS
+                will be tagged as{" "}
+                <Text style={styles.bold}>
+                    AWOL (absence without leave) or abandonment of work
+                </Text>{" "}
                 and will terminate his/her employment effective immediately.
             </Text>
             <Text style={styles.paragraph}>
-                <Text style={styles.bold}>Cleansing Period:</Text> Six months without incurring any penalties.
+                <Text style={styles.bold}>Cleansing Period:</Text> Six months
+                without incurring any penalties.
             </Text>
             <Text style={styles.paragraph}>
-                Management has the right to decide based on the circumstances to approve or disapprove any leave or
-                sick leave especially if the reason is not validated.
+                Management has the right to decide based on the circumstances to
+                approve or disapprove any leave or sick leave especially if the
+                reason is not validated.
             </Text>
 
             <View style={{ height: 10 }} />
 
-            <Text style={styles.sectionLabel}>Immediate Supervisors and HR role:</Text>
-            <Text style={styles.paragraph}>
-                The immediate supervisor/HR has the responsibility to monitor and manage his/her team's attendance. If
-                the supervisor notices that one of his/her team members is constantly absent, the supervisor will endorse
-                to HR any attendance issues. HR will arrange a meeting with the representative and discuss this.
+            <Text style={styles.sectionLabel}>
+                Immediate Supervisors and HR role:
             </Text>
             <Text style={styles.paragraph}>
-                If the supervisor notices that a team member is abusing the use of leave and intentionally being tardy,
-                kindly inform HR, and we will proceed with the progressive Disciplinary action.
+                The immediate supervisor/HR has the responsibility to monitor
+                and manage his/her team's attendance. If the supervisor notices
+                that one of his/her team members is constantly absent, the
+                supervisor will endorse to HR any attendance issues. HR will
+                arrange a meeting with the representative and discuss this.
+            </Text>
+            <Text style={styles.paragraph}>
+                If the supervisor notices that a team member is abusing the use
+                of leave and intentionally being tardy, kindly inform HR, and we
+                will proceed with the progressive Disciplinary action.
             </Text>
 
             <PageFooter pageNum="3" />
@@ -412,8 +460,8 @@ const AttendancePolicyDocument = () => (
             <PageHeader showTitle={false} />
 
             <Text style={styles.paragraph}>
-                Management has the right to take Disciplinary Action including Termination of employment if the
-                following still does not work:
+                Management has the right to take Disciplinary Action including
+                Termination of employment if the following still does not work:
             </Text>
             <Bullet text="Corrective coaching from the supervisor or HR" />
             <Bullet text="We find that you are deliberately tardy" />
@@ -422,26 +470,31 @@ const AttendancePolicyDocument = () => (
             <View style={{ height: 8 }} />
             <Text style={styles.sectionLabel}>Termination</Text>
             <Text style={styles.paragraph}>
-                The employee is not entitled to convert the remaining PTO/leave credits if terminated with cause.
+                The employee is not entitled to convert the remaining PTO/leave
+                credits if terminated with cause.
             </Text>
             <Text style={styles.paragraph}>
-                The following are entitled to convert their Service Incentive Leave credits to cash: (The calculation
-                will be prorated)
+                The following are entitled to convert their Service Incentive
+                Leave credits to cash: (The calculation will be prorated)
             </Text>
 
             <Text style={styles.sectionLabel}>Resignation</Text>
             <Text style={styles.paragraph}>
-                Refers to employees who have properly tendered his/her resignation and have rendered 30 days.
+                Refers to employees who have properly tendered his/her
+                resignation and have rendered 30 days.
             </Text>
 
             <Text style={styles.sectionLabel}>Involuntary Separation</Text>
             <Text style={styles.paragraph}>
-                Refers to dismissal for any just or authorized causes as indicated in the Labor Code of the Philippines,
-                Art.282 and Art 283, or failure to obtain reappointment.
+                Refers to dismissal for any just or authorized causes as
+                indicated in the Labor Code of the Philippines, Art.282 and Art
+                283, or failure to obtain reappointment.
             </Text>
 
             <View style={{ height: 16 }} />
-            <Text style={styles.paragraph}>I fully understand the Attendance Policy.</Text>
+            <Text style={styles.paragraph}>
+                I fully understand the Attendance Policy.
+            </Text>
 
             <View style={styles.signatureArea}>
                 <View style={styles.sigLine} />
@@ -451,16 +504,13 @@ const AttendancePolicyDocument = () => (
 
             <PageFooter pageNum="4" />
         </Page>
-
     </Document>
 );
 
 // ── Web wrapper ──────────────────────────────────────────────────────────────
 const AttendancePolicySection = () => (
     <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFViewer width="100%" height="100%">
-            <AttendancePolicyDocument />
-        </PDFViewer>
+        <PDFLoader pdf={<AttendancePolicyDocument />} />
     </div>
 );
 

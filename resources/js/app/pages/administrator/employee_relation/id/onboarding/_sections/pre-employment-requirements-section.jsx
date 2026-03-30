@@ -7,7 +7,9 @@ import {
     StyleSheet,
     Image,
     PDFViewer,
+    BlobProvider,
 } from "@react-pdf/renderer";
+import PDFLoader from "@/app/_components/pdf-loader";
 
 // Define styles
 const styles = StyleSheet.create({
@@ -142,10 +144,7 @@ const ChecklistDocument = () => (
             {/* Header */}
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
-                    <Image
-                        style={styles.logo}
-                        src="/images/Blogo (1).png"
-                    />
+                    <Image style={styles.logo} src="/images/Blogo (1).png" />
                 </View>
                 <Text style={styles.title}>PRE-EMPLOYMENT CHECKLIST</Text>
             </View>
@@ -333,9 +332,7 @@ const ChecklistDocument = () => (
 const PreEmploymentChecklist = () => {
     return (
         <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-            <PDFViewer width="100%" height="100%">
-                <ChecklistDocument />
-            </PDFViewer>
+            <PDFLoader pdf={<ChecklistDocument />} />
         </div>
     );
 };

@@ -7,6 +7,7 @@ import {
     StyleSheet,
     PDFViewer,
 } from "@react-pdf/renderer";
+import PDFLoader from "@/app/_components/pdf-loader";
 
 // ─── Styles ─────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
@@ -203,8 +204,8 @@ const ChecklistDocument = () => (
             <Text style={[styles.paragraph, { marginBottom: 20 }]}>
                 This agreement (the <Text style={styles.bold}>"Agreement"</Text>
                 ) is made and entered into by and between{" "}
-                <Text style={styles.bold}>EmpireOne BPO Solutions Inc. </Text> 
-                 on behalf of itself, its affiliates, and subsidiaries
+                <Text style={styles.bold}>EmpireOne BPO Solutions Inc. </Text>
+                on behalf of itself, its affiliates, and subsidiaries
                 (collectively, the "Company"), with headquarters at 250
                 Consumers Rd., Suite 810, Toronto, Ontario M2J 4V6; and S.
                 Carmona St., Brgy. VI, San Carlos City, Negros Occidental, 6127
@@ -866,9 +867,7 @@ const ChecklistDocument = () => (
 // ─── Web Wrapper ─────────────────────────────────────────────────────────────
 const ConfidentialityAndNonCompetitionAgreementSection = () => (
     <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFViewer width="100%" height="100%">
-            <ChecklistDocument />
-        </PDFViewer>
+        <PDFLoader pdf={<ChecklistDocument />} />
     </div>
 );
 

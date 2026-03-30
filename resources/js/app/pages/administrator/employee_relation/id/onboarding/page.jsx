@@ -24,12 +24,14 @@ export default function Page() {
             title: "Attendance Policy",
             content: <AttendancePolicySection />,
         },
-         {
+        {
             id: 4,
             title: "Certification of Use and Service of Electronic Data and Electronic Data Signature",
-            content: <CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection />,
+            content: (
+                <CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection />
+            ),
         },
-       {
+        {
             id: 5,
             title: "Code of Conduct and Discipline",
             content: <CodeOfConductAndDisciplineSection />,

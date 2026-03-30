@@ -1,21 +1,43 @@
-import React, { useState } from "react";
-import { Check, ChevronRight, ChevronLeft } from "lucide-react"; // Optional icons
+import React, { useEffect, useState } from "react";
+import { Check, ChevronRight, ChevronLeft } from "lucide-react";
+import { router } from "@inertiajs/react";
+import { MenuButton } from "@headlessui/react";
 
 const StepperSection = ({ steps }) => {
-    const [currentStep, setCurrentStep] = useState(1);
+    const searchParams = new URLSearchParams(window.location.search);
+    const pageParam = searchParams.get("page");
+    const [currentStep, setCurrentStep] = useState(pageParam ?? 1);
     const [complete, setComplete] = useState(false);
 
-    const nextStep = () => {
-        if (currentStep < steps.length) {
-            setCurrentStep((prev) => prev + 1);
+    // --- NEW: Read URL parameters on component mount ---
+    useEffect(() => {
+        if (pageParam) {
+            const parsedPage = Number(pageParam);
+            // Ensure the URL param is a valid number within your step range
+            if (
+                !isNaN(parsedPage) &&
+                parsedPage >= 1 &&
+                parsedPage <= steps.length
+            ) {
+                setCurrentStep(parsedPage);
+            }
+        }
+    }, []);
+    // ---------------------------------------------------
+
+    const nextStep = (value) => {
+        if (value < steps.length) {
+            const targetStep = value + 1;
+            window.location.href = `?page=${targetStep}`;
         } else {
             setComplete(true);
         }
     };
 
-    const prevStep = () => {
-        if (currentStep > 1) {
-            setCurrentStep((prev) => prev - 1);
+    const prevStep = (value) => {
+        if (value > 1) {
+            const targetStep = value - 1;
+            window.location.href = `?page=${targetStep}`;
         }
     };
 
@@ -55,12 +77,12 @@ const StepperSection = ({ steps }) => {
                         </div>
 
                         {/* Label */}
-                        <p
+                        <div
                             className={`mt-2 text-xs font-medium transition-colors duration-300
               ${currentStep >= step.id ? "text-blue-600" : "text-gray-400"}`}
                         >
                             {step.title}
-                        </p>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -70,18 +92,18 @@ const StepperSection = ({ steps }) => {
                 {!complete ? (
                     <div className="text-center animate-in fade-in slide-in-from-bottom-2 duration-500 ">
                         {/* <h2 className="text-2xl font-bold text-gray-800 mb-2">{steps[currentStep - 1].title}</h2> */}
-                        <p className="text-gray-500">
+                        <div className="text-gray-500">
                             {steps[currentStep - 1].content}
-                        </p>
+                        </div>
                     </div>
                 ) : (
                     <div className="text-center animate-bounce">
                         <h2 className="text-2xl font-bold text-green-600">
                             All Done! 🎉
                         </h2>
-                        <p className="text-gray-500">
+                        <div className="text-gray-500">
                             Your information has been successfully submitted.
-                        </p>
+                        </div>
                     </div>
                 )}
             </div>
@@ -90,7 +112,7 @@ const StepperSection = ({ steps }) => {
             {!complete && (
                 <div className="absolute bottom-0 flex justify-between w-full p-5">
                     <button
-                        onClick={prevStep}
+                        onClick={() => prevStep(currentStep)}
                         disabled={currentStep === 1}
                         className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
@@ -98,7 +120,7 @@ const StepperSection = ({ steps }) => {
                     </button>
 
                     <button
-                        onClick={nextStep}
+                        onClick={() => nextStep(currentStep)}
                         className="flex items-center px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95"
                     >
                         {currentStep === steps.length ? "Finish" : "Agree"}

@@ -8,6 +8,7 @@ import {
     Image,
     PDFViewer,
 } from "@react-pdf/renderer";
+import PDFLoader from "@/app/_components/pdf-loader";
 
 const styles = StyleSheet.create({
     page: {
@@ -129,7 +130,6 @@ const styles = StyleSheet.create({
 const CertificationDocument = () => (
     <Document>
         <Page size="A4" style={styles.page}>
-
             {/* Header - Logo */}
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
@@ -141,16 +141,23 @@ const CertificationDocument = () => (
             <Text style={styles.titleLine1}>
                 CERTIFICATION of USE and SERVICE OF ELECTRONIC DATA
             </Text>
-            <Text style={styles.titleLine2}>
-                and ELECTRONIC SIGNATURE
-            </Text>
+            <Text style={styles.titleLine2}>and ELECTRONIC SIGNATURE</Text>
 
             {/* Intro paragraph with inline blank line */}
-            <View style={{ flexDirection: "row", alignItems: "flex-end", marginBottom: 12, flexWrap: "wrap" }}>
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                    marginBottom: 12,
+                    flexWrap: "wrap",
+                }}
+            >
                 <Text style={{ fontSize: 10 }}>I </Text>
                 <View style={styles.signatureLine} />
                 <Text style={{ fontSize: 10, flex: 1 }}>
-                    {" "}(also referred to herein as SIGNEE) am an employee of EmpireOne Group Inc. hereby certify and acknowledge:
+                    {" "}
+                    (also referred to herein as SIGNEE) am an employee of
+                    EmpireOne Group Inc. hereby certify and acknowledge:
                 </Text>
             </View>
 
@@ -158,34 +165,39 @@ const CertificationDocument = () => (
             <View style={styles.numberedRow}>
                 <Text style={styles.numberedIndex}>1.</Text>
                 <Text style={styles.numberedText}>
-                    That all notifications and incoming messages using electronic data (e.g. SMS – Short Messaging
-                    Service, electronic mail, and related media) sent under the name of 'EmpireOne' and its authorized
-                    representatives, will be construed as authentic, genuine, and official in its form; content and
-                    substance;
+                    That all notifications and incoming messages using
+                    electronic data (e.g. SMS – Short Messaging Service,
+                    electronic mail, and related media) sent under the name of
+                    'EmpireOne' and its authorized representatives, will be
+                    construed as authentic, genuine, and official in its form;
+                    content and substance;
                 </Text>
             </View>
 
             <View style={styles.numberedRow}>
                 <Text style={styles.numberedIndex}>2.</Text>
                 <Text style={styles.numberedText}>
-                    That these electronic data will be interpreted and understood in their true and actual purpose
-                    indicated;
+                    That these electronic data will be interpreted and
+                    understood in their true and actual purpose indicated;
                 </Text>
             </View>
 
             <View style={styles.numberedRow}>
                 <Text style={styles.numberedIndex}>3.</Text>
                 <Text style={styles.numberedText}>
-                    That service of such electronic data has been completed thereon.
+                    That service of such electronic data has been completed
+                    thereon.
                 </Text>
             </View>
 
             <View style={styles.numberedRow}>
                 <Text style={styles.numberedIndex}>4.</Text>
                 <Text style={styles.numberedText}>
-                    That I have indicated the complete details of my personal electronic credentials as indicated in my
-                    company profile; my personal email address; social media site/s; and such related information TO
-                    BE TRUE and CORRECT, and that the company has the sole responsibility to use it in whichever
+                    That I have indicated the complete details of my personal
+                    electronic credentials as indicated in my company profile;
+                    my personal email address; social media site/s; and such
+                    related information TO BE TRUE and CORRECT, and that the
+                    company has the sole responsibility to use it in whichever
                     purpose deemed necessary;
                 </Text>
             </View>
@@ -193,49 +205,54 @@ const CertificationDocument = () => (
             <View style={styles.numberedRow}>
                 <Text style={styles.numberedIndex}>5.</Text>
                 <Text style={styles.numberedText}>
-                    That I will be made to sign via an electronic method which will be interpreted and construed as
-                    GENUINE, AUTHENTIC, and VALID in its face in all records;
+                    That I will be made to sign via an electronic method which
+                    will be interpreted and construed as GENUINE, AUTHENTIC, and
+                    VALID in its face in all records;
                 </Text>
             </View>
 
             <View style={styles.numberedRow}>
                 <Text style={styles.numberedIndex}>6.</Text>
                 <Text style={styles.numberedText}>
-                    That I KNOWINGLY AND FREELY ASSUME ALL SUCH RISKS AND LIABILITY, both
-                    known and unknown, EVEN IF ARISING FROM THE NEGLIGENCE OF THE SIGNER or others,
-                    and assume full responsibility for any future events and occurrences; and,
+                    That I KNOWINGLY AND FREELY ASSUME ALL SUCH RISKS AND
+                    LIABILITY, both known and unknown, EVEN IF ARISING FROM THE
+                    NEGLIGENCE OF THE SIGNER or others, and assume full
+                    responsibility for any future events and occurrences; and,
                 </Text>
             </View>
 
             <View style={styles.numberedRow}>
                 <Text style={styles.numberedIndex}>7.</Text>
                 <Text style={styles.numberedText}>
-                    I willingly agree to comply with all applicable terms and conditions of my employment in relation to
-                    the use of electronic data and its related resources.
+                    I willingly agree to comply with all applicable terms and
+                    conditions of my employment in relation to the use of
+                    electronic data and its related resources.
                 </Text>
             </View>
 
             {/* Acknowledgement Block 1 */}
             <View style={styles.ackBlock}>
                 <Text style={styles.ackText}>
-                    I HAVE FULLY READ AND UNDERSTAND THE CONTENTS OF THIS DOCUMENT; ITS
-                    APPLICABLE TERMS AND CONDITIONS, AND SIGN IT FREELY AND VOLUNTARILY
-                    WITHOUT ANY INDUCEMENT.
+                    I HAVE FULLY READ AND UNDERSTAND THE CONTENTS OF THIS
+                    DOCUMENT; ITS APPLICABLE TERMS AND CONDITIONS, AND SIGN IT
+                    FREELY AND VOLUNTARILY WITHOUT ANY INDUCEMENT.
                 </Text>
             </View>
 
             {/* Acknowledgement Block 2 */}
             <View style={{ marginBottom: 10 }}>
                 <Text style={styles.ackText}>
-                    I HAVE ALSO UNDERSTOOD THAT THE COMPANY CAN USE THIS CERTIFICATION
-                    FOR WHICHEVER PURPOSES IT SERVES.
+                    I HAVE ALSO UNDERSTOOD THAT THE COMPANY CAN USE THIS
+                    CERTIFICATION FOR WHICHEVER PURPOSES IT SERVES.
                 </Text>
             </View>
 
             {/* Signature block */}
             <View style={styles.sigBlock}>
                 <View style={styles.sigLine} />
-                <Text style={styles.sigLabel}>Complete Name of Employee &amp; Signature</Text>
+                <Text style={styles.sigLabel}>
+                    Complete Name of Employee &amp; Signature
+                </Text>
                 <Text style={styles.dateLabel}>DATE:</Text>
             </View>
 
@@ -243,22 +260,22 @@ const CertificationDocument = () => (
             <View style={styles.disclaimerBlock}>
                 <Text style={styles.disclaimerTitle}>Disclaimer:</Text>
                 <Text style={styles.disclaimerText}>
-                    This document and its contents are the property of EmpireOne BPO Solutions, Inc. and are intended for internal use only. Unauthorized
-                    reproduction, disclosure, or distribution of this material, in whole or in part, without prior written permission from the company is strictly
-                    prohibited.
+                    This document and its contents are the property of EmpireOne
+                    BPO Solutions, Inc. and are intended for internal use only.
+                    Unauthorized reproduction, disclosure, or distribution of
+                    this material, in whole or in part, without prior written
+                    permission from the company is strictly prohibited.
                 </Text>
             </View>
-
         </Page>
     </Document>
 );
 
-const CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection = () => (
-    <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFViewer width="100%" height="100%">
-            <CertificationDocument />
-        </PDFViewer>
-    </div>
-);
+const CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection =
+    () => (
+        <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
+            <PDFLoader pdf={<CertificationDocument />} />
+        </div>
+    );
 
 export default CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection;
