@@ -35,7 +35,7 @@ export default function StatsSection() {
                 </a>
                 <a
                     target="_blank"
-                    href={`/applicant/my_documents/${data?.user?.id}/contract`}
+                    href={`/applicant/my_documents/${data?.user?.id}/onboarding`}
                     className="bg-purple-500 hover:bg-purple-600 rounded-md text-white p-3"
                 >
                     ONBOARDING DOCUMENTS

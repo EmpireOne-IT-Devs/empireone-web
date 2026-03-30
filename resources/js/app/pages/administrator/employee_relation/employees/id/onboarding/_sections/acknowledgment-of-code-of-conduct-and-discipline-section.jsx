@@ -251,9 +251,7 @@ const AcknowledgmentDocument = () => (
 // Web Wrapper Component
 const AcknowledgmentOfCodeOfConductAndDisciplineSection = () => {
     return (
-        <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-            <PDFLoader pdf={<AcknowledgmentDocument />} />
-        </div>
+           <PDFLoader pdf={<AcknowledgmentDocument />} />
     );
 };
 

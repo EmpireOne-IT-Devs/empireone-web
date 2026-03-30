@@ -1171,9 +1171,7 @@ const CodeOfConductDocument = () => (
 
 // ── Web wrapper ──────────────────────────────────────────────────────────────
 const CodeOfConductAndDisciplineSection = () => (
-    <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFLoader pdf={<CodeOfConductDocument />} />
-    </div>
+    <PDFLoader pdf={<CodeOfConductDocument />} />
 );
 
 export default CodeOfConductAndDisciplineSection;

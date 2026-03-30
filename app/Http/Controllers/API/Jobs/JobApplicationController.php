@@ -213,32 +213,42 @@ class JobApplicationController extends Controller
             $ja->screening_status === 'Screened Passed'
         ) {
             // generate employee_id
-            $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
-                ->pluck('employee_id')
-                ->toArray();
-            $todaySequences = array_map(function ($id) {
-                return (int)substr($id, -2);
-            }, $todayEmployeeIds);
-            $sequence = 1;
-            while (in_array($sequence, $todaySequences)) {
-                $sequence++;
-            }
-            $employee_id = date('y') . date('m') . date('d') . str_pad($sequence, 2, '0', STR_PAD_LEFT);
-            $position = optional($ja->job_posting->job_requisition)->title ?? 'N/A';
-            $isExist = in_array($request->applicant['account_employee']['employee_id'], $todayEmployeeIds);
+            // $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
+            //     ->pluck('employee_id')
+            //     ->toArray();
+            // $todaySequences = array_map(function ($id) {
+            //     return (int)substr($id, -2);
+            // }, $todayEmployeeIds);
+            // $sequence = 1;
+            // while (in_array($sequence, $todaySequences)) {
+            //     $sequence++;
+            // }
+            // $employee_id = date('y') . date('m') . date('d') . str_pad($sequence, 2, '0', STR_PAD_LEFT);
+            // $position = optional($ja->job_posting->job_requisition)->title ?? 'N/A';
+            // $isExist = in_array($request->applicant['account_employee']['employee_id'], $todayEmployeeIds);
 
-            if (!$isExist || $request->applicant['account_employee']['employee_id'] == null) {
-                AccountEmployee::updateOrCreate(
-                    ['user_id' => $ja->user_id],
-                    [
-                        'employee_id' => $employee_id,
-                        'account_id' => $ja->account_id,
-                        'position' => $position,
-                    ]
-                );
-                $user = User::findOrFail($request->user_id);
-                Mail::to($user->email)->send(new DocumentFileInstructions($user));
-            }
+            // if (!$isExist || $request->applicant['account_employee']['employee_id'] == null) {
+            //     AccountEmployee::updateOrCreate(
+            //         ['user_id' => $ja->user_id],
+            //         [
+            //             'employee_id' => $employee_id,
+            //             'account_id' => $ja->account_id,
+            //             'position' => $position,
+            //         ]
+            //     );
+            //     $user = User::findOrFail($request->user_id);
+            //     Mail::to($user->email)->send(new DocumentFileInstructions($user));
+            // }
+
+
+            $position = optional($ja->job_posting->job_requisition)->title ?? 'N/A';
+            AccountEmployee::updateOrCreate(
+                ['user_id' => $ja->user_id],
+                [
+                    'account_id' => $ja->account_id,
+                    'position' => $position,
+                ]
+            );
         } else {
             AccountEmployee::updateOrCreate(
                 ['user_id' => $ja->user_id],

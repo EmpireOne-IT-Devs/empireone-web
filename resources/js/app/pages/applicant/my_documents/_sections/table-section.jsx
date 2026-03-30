@@ -3,6 +3,7 @@ import Table from "@/app/_components/table";
 import moment from "moment";
 import React from "react";
 import { useSelector } from "react-redux";
+import ReUploadDocumentSection from "./re-upload-document-section";
 
 export default function TableSection() {
     const { documents } = useSelector((store) => store.applicants);
@@ -37,7 +38,7 @@ export default function TableSection() {
             case "Approved":
                 return "success"; // green
             case "Re-Uploaded":
-                return "info"; //orange
+                return "secondary"; //gray
             case "Declined":
                 return "danger"; // red
             default:
@@ -70,7 +71,7 @@ export default function TableSection() {
                         ),
                         created_at: moment(res.created_at).format("LLL"),
                         action: res.status == "Declined" && (
-                            <div>Re-Upload</div>
+                            <ReUploadDocumentSection data={res} />
                         ),
                     })) ?? []
                 }

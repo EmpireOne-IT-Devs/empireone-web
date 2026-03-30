@@ -7,7 +7,6 @@ import {
     StyleSheet,
     Image,
     PDFViewer,
-    BlobProvider,
 } from "@react-pdf/renderer";
 import PDFLoader from "@/app/_components/pdf-loader";
 
@@ -329,12 +328,10 @@ const ChecklistDocument = () => (
 );
 
 // Web Wrapper Component
-const PreEmploymentChecklist = () => {
+const PreEmploymentChecklistSection = () => {
     return (
-        <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-            <PDFLoader pdf={<ChecklistDocument />} />
-        </div>
+         <PDFLoader pdf={<ChecklistDocument />} />
     );
 };
 
-export default PreEmploymentChecklist;
+export default PreEmploymentChecklistSection;

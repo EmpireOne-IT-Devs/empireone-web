@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import Layout from "../layout";
-import HeaderSection from "./section/header-section";
-import SearchSection from "./section/search-section";
-import TableSection from "./section/table-section";
+import Layout from "../../layout";
+import TableSection from "./_sections/table-section";
 import store from "@/app/store/store";
 import { get_employees_thunk } from "@/app/redux/employee-relation-thunk";
+import EmployeesLayout from "../layout";
+import SearchSection from "./_sections/search-section";
 
 export default function Page() {
     useEffect(() => {
@@ -12,9 +12,10 @@ export default function Page() {
     }, []);
     return (
         <Layout>
-            <HeaderSection />
-            <SearchSection />
-            <TableSection />
+            <EmployeesLayout>
+                <SearchSection />
+                <TableSection />
+            </EmployeesLayout>
         </Layout>
     );
 }

@@ -111,20 +111,30 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
     Route::get('/job_requisition', function () {
         return Inertia::render('administrator/job_requisition/page');
     });
-    Route::get('/employee_relation', function () {
-        return Inertia::render('administrator/employee_relation/page');
-    });
-    Route::get('/employee_relation/{id}', function () {
-        return Inertia::render('administrator/employee_relation/id/page');
-    });
-    Route::get('/employee_relation/{id}/contract', function () {
-        return Inertia::render('administrator/employee_relation/id/contract/page');
-    });
 
-    Route::get('/employee_relation/{id}/onboarding', function () {
-        return Inertia::render('administrator/employee_relation/id/onboarding/page');
-    });
+    Route::prefix('employee_relation')->group(function () {
+        Route::get('employees', function () {
+            return Inertia::render('administrator/employee_relation/employees/page');
+        });
+        Route::get('pooling', function () {
+            return Inertia::render('administrator/employee_relation/pooling/page');
+        });
 
+        Route::prefix('{id}')->group(function () {
+            Route::get('personal_information', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/personal_information/page');
+            });
+            Route::get('employee_details', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/employee_details/page');
+            });
+            Route::get('contract', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/contract/page');
+            });
+            Route::get('onboarding', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
+            });
+        });
+    });
 
     Route::get('/job_requisition/{id}', function () {
         return Inertia::render('administrator/job_requisition/id/page');

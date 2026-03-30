@@ -8,6 +8,7 @@ import {
     Image,
     PDFViewer,
 } from "@react-pdf/renderer";
+import PDFLoader from "@/app/_components/pdf-loader";
 
 const styles = StyleSheet.create({
     page: {
@@ -210,13 +211,7 @@ const TrainingAgreementDocument = () => (
 );
 
 const TrainingAgreementSection = () => {
-    return (
-        <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-            <PDFViewer width="100%" height="100%">
-                <TrainingAgreementDocument />
-            </PDFViewer>
-        </div>
-    );
+    return <PDFLoader pdf={<TrainingAgreementDocument />} />;
 };
 
 export default TrainingAgreementSection;

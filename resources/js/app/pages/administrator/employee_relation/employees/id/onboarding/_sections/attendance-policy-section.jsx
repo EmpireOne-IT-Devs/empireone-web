@@ -509,9 +509,7 @@ const AttendancePolicyDocument = () => (
 
 // ── Web wrapper ──────────────────────────────────────────────────────────────
 const AttendancePolicySection = () => (
-    <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFLoader pdf={<AttendancePolicyDocument />} />
-    </div>
+    <PDFLoader pdf={<AttendancePolicyDocument />} />
 );
 
 export default AttendancePolicySection;

@@ -204,9 +204,7 @@ const LockerPolicyDocument = () => (
 );
 
 const LockerPolicyAndAgreementSection = () => (
-    <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFLoader pdf={<LockerPolicyDocument />} />
-    </div>
+      <PDFLoader pdf={<LockerPolicyDocument />} />
 );
 
 export default LockerPolicyAndAgreementSection;

@@ -197,8 +197,6 @@ const OnboardingDocument = () => (
 // ── Web Wrapper ───────────────────────────────────────────────────────────────
 export default function OnboardingChecklistSection() {
     return (
-        <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-            <PDFLoader pdf={<OnboardingDocument />} />
-        </div>
+     <PDFLoader pdf={<OnboardingDocument />} />
     );
 }

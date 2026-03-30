@@ -1,5 +1,5 @@
 import React from "react";
-import PreEmploymentChecklist from "./_sections/pre-employment-requirements-section";
+import PreEmploymentChecklistSection from "./_sections/pre-employment-check-list-section";
 import StepperSection from "./_sections/stepper-section";
 import ConfidentialityAndNonCompetitionAgreementSection from "./_sections/confidentiality-and-non-competition-agreement-section";
 import AttendancePolicySection from "./_sections/attendance-policy-section";
@@ -17,7 +17,7 @@ export default function Page() {
         {
             id: 1,
             title: "Pre Employment Checklist",
-            content: <PreEmploymentChecklist />,
+            content: <PreEmploymentChecklistSection />,
         },
         {
             id: 2,

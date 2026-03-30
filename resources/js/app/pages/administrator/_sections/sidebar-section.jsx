@@ -74,7 +74,7 @@ export default function SidebarSection() {
         },
         {
             name: "Employee Relation",
-            href: "/administrator/employee_relation",
+            href: "/administrator/employee_relation/employees",
             icon: FcPodiumWithAudience,
             current: path == "employee_relation",
         },

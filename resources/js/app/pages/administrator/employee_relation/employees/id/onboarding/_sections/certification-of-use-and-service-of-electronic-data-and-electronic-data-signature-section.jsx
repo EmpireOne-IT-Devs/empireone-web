@@ -273,9 +273,7 @@ const CertificationDocument = () => (
 
 const CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection =
     () => (
-        <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-            <PDFLoader pdf={<CertificationDocument />} />
-        </div>
+       <PDFLoader pdf={<CertificationDocument />} />
         
     );
 

@@ -18,7 +18,12 @@ export default function SendDocumentsSection({ data }) {
     async function send_documents(params) {
         try {
             setLoading(true);
-            await send_documents_service(data);
+            await send_documents_service({
+                ...data,
+                interviewType: interviewType,
+                interviewDate: interviewDate,
+                interviewTime: interviewTime,
+            });
             await store.dispatch(get_job_offers_thunk(window.location.search));
             setLoading(false);
             setOpen(false);
@@ -26,6 +31,7 @@ export default function SendDocumentsSection({ data }) {
             setLoading(false);
         }
     }
+    const today = new Date().toLocaleDateString("en-CA");
     return (
         <div>
             <Button variant="success" onClick={() => setOpen(true)} outlined>
@@ -86,6 +92,7 @@ export default function SendDocumentsSection({ data }) {
                                 <div className="flex gap-2">
                                     <input
                                         type="date"
+                                        min={today}
                                         className="border rounded px-2 py-1 text-sm"
                                         value={interviewDate}
                                         onChange={(e) =>
@@ -155,6 +162,11 @@ export default function SendDocumentsSection({ data }) {
                     <div className="flex items-center justify-end gap-2 pt-1">
                         <Button
                             loading={loading}
+                            disabled={
+                                !interviewType ||
+                                !interviewDate ||
+                                !interviewTime
+                            }
                             onClick={() => send_documents()}
                             className="w-full"
                         >

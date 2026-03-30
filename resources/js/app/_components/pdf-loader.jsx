@@ -3,68 +3,71 @@ import React from "react";
 
 export default function PDFLoader({ pdf }) {
     return (
-        <BlobProvider document={pdf}>
-            {({ url, loading, error }) => {
-                // Custom Loading State
-                if (loading) {
-                    return (
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                height: "100%",
-                                gap: "16px",
-                                fontFamily:
-                                    "system-ui, -apple-system, sans-serif",
-                            }}
-                        >
-                            {/* Animated SVG Spinner */}
-                            <svg
-                                width="40"
-                                height="40"
-                                viewBox="0 0 50 50"
-                                style={{ animation: "spin 1s linear infinite" }}
-                            >
-                                {/* Background track */}
-                                <circle
-                                    cx="25"
-                                    cy="25"
-                                    r="20"
-                                    fill="none"
-                                    strokeWidth="5"
-                                    stroke="#e5e7eb"
-                                />
-                                {/* Spinning progress stroke */}
-                                <circle
-                                    cx="25"
-                                    cy="25"
-                                    r="20"
-                                    fill="none"
-                                    strokeWidth="5"
-                                    stroke="#00529B"
-                                    strokeDasharray="31.4 100"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-
-                            {/* Pulsing Text */}
-                            <p
+        <div class="w-screen md:w-[80vw] h-screen m-0 p-0">
+            <BlobProvider document={pdf}>
+                {({ url, loading, error }) => {
+                    // Custom Loading State
+                    if (loading) {
+                        return (
+                            <div
                                 style={{
-                                    animation:
-                                        "pulse 1.5s ease-in-out infinite",
-                                    color: "#4b5563",
-                                    margin: 0,
-                                    fontWeight: 500,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    height: "100%",
+                                    gap: "16px",
+                                    fontFamily:
+                                        "system-ui, -apple-system, sans-serif",
                                 }}
                             >
-                                Generating PDF, please wait...
-                            </p>
+                                {/* Animated SVG Spinner */}
+                                <svg
+                                    width="40"
+                                    height="40"
+                                    viewBox="0 0 50 50"
+                                    style={{
+                                        animation: "spin 1s linear infinite",
+                                    }}
+                                >
+                                    {/* Background track */}
+                                    <circle
+                                        cx="25"
+                                        cy="25"
+                                        r="20"
+                                        fill="none"
+                                        strokeWidth="5"
+                                        stroke="#e5e7eb"
+                                    />
+                                    {/* Spinning progress stroke */}
+                                    <circle
+                                        cx="25"
+                                        cy="25"
+                                        r="20"
+                                        fill="none"
+                                        strokeWidth="5"
+                                        stroke="#00529B"
+                                        strokeDasharray="31.4 100"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
 
-                            {/* Inline Keyframes */}
-                            <style>
-                                {`
+                                {/* Pulsing Text */}
+                                <p
+                                    style={{
+                                        animation:
+                                            "pulse 1.5s ease-in-out infinite",
+                                        color: "#4b5563",
+                                        margin: 0,
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    Generating PDF, please wait...
+                                </p>
+
+                                {/* Inline Keyframes */}
+                                <style>
+                                    {`
             @keyframes spin {
                 100% { transform: rotate(360deg); }
             }
@@ -73,40 +76,41 @@ export default function PDFLoader({ pdf }) {
                 50% { opacity: 0.5; }
             }
         `}
-                            </style>
-                        </div>
-                    );
-                }
+                                </style>
+                            </div>
+                        );
+                    }
 
-                // Error State
-                if (error) {
+                    // Error State
+                    if (error) {
+                        return (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    height: "100%",
+                                }}
+                            >
+                                <p>Error generating PDF. Please try again.</p>
+                            </div>
+                        );
+                    }
+
+                    // Render iframe when PDF is ready
                     return (
-                        <div
+                        <iframe
+                            src={url}
                             style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
+                                width: "100%",
                                 height: "100%",
+                                border: "none",
                             }}
-                        >
-                            <p>Error generating PDF. Please try again.</p>
-                        </div>
+                            title="Pre-Employment Checklist PDF"
+                        />
                     );
-                }
-
-                // Render iframe when PDF is ready
-                return (
-                    <iframe
-                        src={url}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            border: "none",
-                        }}
-                        title="Pre-Employment Checklist PDF"
-                    />
-                );
-            }}
-        </BlobProvider>
+                }}
+            </BlobProvider>
+        </div>
     );
 }

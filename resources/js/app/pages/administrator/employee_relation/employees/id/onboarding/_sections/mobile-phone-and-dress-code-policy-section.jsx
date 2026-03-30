@@ -578,9 +578,7 @@ const MobilePhoneDocument = () => (
 );
 
 const MobilePhoneAndDressCodePolicySection = () => (
-    <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFLoader pdf={<MobilePhoneDocument />} />
-    </div>
+   <PDFLoader pdf={<MobilePhoneDocument />} />
 );
 
 export default MobilePhoneAndDressCodePolicySection;

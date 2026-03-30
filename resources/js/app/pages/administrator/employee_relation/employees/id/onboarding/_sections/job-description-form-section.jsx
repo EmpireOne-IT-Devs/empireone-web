@@ -409,9 +409,7 @@ const JobDescriptionDocument = () => (
 );
 
 const JobDescriptionFormSection = () => (
-    <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFLoader pdf={<JobDescriptionDocument />} />
-    </div>
+     <PDFLoader pdf={<JobDescriptionDocument />} />
 );
 
 export default JobDescriptionFormSection;

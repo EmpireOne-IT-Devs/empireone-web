@@ -81,6 +81,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);
         Route::post('add_documents',  [AccountDocumentController::class, 'add_documents']);
+        Route::post('re_upload_documents',  [AccountDocumentController::class, 're_upload_documents']);
         Route::get('get_documents_by_user',  [AccountDocumentController::class, 'get_documents_by_user']);
         Route::post('send_documents',  [AccountDocumentController::class, 'send_documents']);
     });

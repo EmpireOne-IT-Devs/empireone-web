@@ -870,9 +870,7 @@ const ChecklistDocument = () => (
 
 // ─── Web Wrapper ─────────────────────────────────────────────────────────────
 const ConfidentialityAndNonCompetitionAgreementSection = () => (
-    <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
-        <PDFLoader pdf={<ChecklistDocument />} />
-    </div>
+    <PDFLoader pdf={<ChecklistDocument />} />
 );
 
 export default ConfidentialityAndNonCompetitionAgreementSection;
