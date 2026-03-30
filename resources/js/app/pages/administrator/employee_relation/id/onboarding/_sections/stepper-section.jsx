@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Check, ChevronRight, ChevronLeft } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { MenuButton } from "@headlessui/react";
+import Button from "@/app/_components/button";
 
 const StepperSection = ({ steps }) => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -110,24 +111,21 @@ const StepperSection = ({ steps }) => {
 
             {/* Controls */}
             {!complete && (
-                <div className="absolute bottom-0 flex justify-between w-full p-5">
-                    <button
+                <div className="absolute bottom-0 flex justify-between w-full p-20">
+                    <Button
+                    variant="outlined"
                         onClick={() => prevStep(currentStep)}
                         disabled={currentStep === 1}
-                        className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         <ChevronLeft className="w-4 h-4 mr-1" /> Back
-                    </button>
+                    </Button>
 
-                    <button
-                        onClick={() => nextStep(currentStep)}
-                        className="flex items-center px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95"
-                    >
-                        {currentStep === steps.length ? "Finish" : "Agree"}
+                    <Button onClick={() => nextStep(currentStep)}>
+                        {currentStep === steps.length ? "Finish" : "Agree & Continue"}
                         {currentStep !== steps.length && (
                             <ChevronRight className="w-4 h-4 ml-1" />
                         )}
-                    </button>
+                    </Button>
                 </div>
             )}
         </div>

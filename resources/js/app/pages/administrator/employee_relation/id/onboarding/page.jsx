@@ -8,6 +8,9 @@ import CodeOfConductAndDisciplineSection from "./_sections/code-of-conduct-and-d
 import AcknowledgmentOfCodeOfConductAndDisciplineSection from "./_sections/acknowledgment-of-code-of-conduct-and-discipline-section";
 import HouseRulesAndRegulationsGeneralRulesSection from "./_sections/house-rules-and-regulations-general-rules-section";
 import MobilePhoneAndDressCodePolicySection from "./_sections/mobile-phone-and-dress-code-policy-section";
+import JobDescriptionFormSection from "./_sections/job-description-form-section";
+import LockerPolicyAndAgreementSection from "./_sections/locker-policy-and-agreement-section";
+import OnboardingChecklistSection from "./_sections/onboarding-checklist-section";
 
 export default function Page() {
     const steps = [
@@ -54,7 +57,22 @@ export default function Page() {
             title: "Mobile Phone and Dress Code Policy",
             content: <MobilePhoneAndDressCodePolicySection />,
         },
-        { id: 9, title: "Review", content: "Confirm your details" },
+        {
+            id: 9,
+            title: "Job Description Form",
+            content: <JobDescriptionFormSection />,
+        },
+        {
+            id: 10,
+            title: "Locker Policy and Agreement",
+            content: <LockerPolicyAndAgreementSection />,
+        },
+        {
+            id: 11,
+            title: "Onboarding Checklist",
+            content: <OnboardingChecklistSection />,
+        },
+        { id: 12, title: "Review", content: "Confirm your details" },
     ];
     return (
         <div>

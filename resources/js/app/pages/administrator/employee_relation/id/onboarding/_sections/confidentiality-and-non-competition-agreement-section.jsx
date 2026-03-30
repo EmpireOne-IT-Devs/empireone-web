@@ -6,6 +6,7 @@ import {
     Document,
     StyleSheet,
     PDFViewer,
+    Image,
 } from "@react-pdf/renderer";
 import PDFLoader from "@/app/_components/pdf-loader";
 
@@ -25,15 +26,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 20,
     },
-    logoPlaceholder: {
-        border: "1px solid #00529B",
-        padding: 10,
-        borderRadius: 5,
-        color: "#00529B",
-        fontSize: 24,
-        fontFamily: "Times-Bold",
-        marginBottom: 10,
-    },
+
     title: {
         textAlign: "center",
         fontSize: 11,
@@ -142,14 +135,25 @@ const styles = StyleSheet.create({
         fontFamily: "Times-Italic",
         lineHeight: 1.2,
     },
+    logoContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    logo: {
+        width: 450,
+        height: 130,
+        objectFit: "contain",
+    },
 });
 
 // ─── Reusable sub-components ────────────────────────────────────────────────
 
 const Header = () => (
     <View style={styles.header}>
-        <View style={styles.logoPlaceholder}>
-            <Text>EmpireOne</Text>
+        <View style={styles.logoContainer}>
+            <Image style={styles.logo} src="/images/Blogo (1).png" />
         </View>
     </View>
 );
