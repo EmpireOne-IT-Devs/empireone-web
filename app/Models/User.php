@@ -9,6 +9,7 @@ use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
+use App\Models\Jobs\JobApplication;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -90,5 +91,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function resume(): HasOne
     {
         return $this->hasOne(AccountDocument::class, 'user_id', 'id')->where('type', 'Resume');
+    }
+    public function is_passed(): HasOne
+    {
+        return $this->hasOne(JobApplication::class, 'user_id', 'id')
+            ->where([
+                ['final_status', '=', 'Passed'],
+                ['interview_status', '=', 'Passed'],
+                ['screening_status', '=', 'Screened Passed']
+            ]);
     }
 }

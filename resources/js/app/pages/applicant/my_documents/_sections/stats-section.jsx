@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 export default function StatsSection() {
     const { documents_stats } = useSelector((store) => store.applicants);
     const { data } = useSelector((store) => store.app);
-    console.log("data", data);
+    console.log("data", data?.user?.is_passed);
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-wrap gap-4 mb-6">
@@ -25,22 +25,24 @@ export default function StatsSection() {
                     Re-Uploaded: {documents_stats?.re_uploaded ?? 0}
                 </div>
             </div>
-            <div className="flex gap-3">
-                <a
-                    target="_blank"
-                    href={`/applicant/my_documents/${data?.user?.id}/contract`}
-                    className="bg-blue-500 hover:bg-blue-600 rounded-md text-white p-3"
-                >
-                    EMPLOYMENT CONTRACT
-                </a>
-                <a
-                    target="_blank"
-                    href={`/applicant/my_documents/${data?.user?.id}/onboarding`}
-                    className="bg-purple-500 hover:bg-purple-600 rounded-md text-white p-3"
-                >
-                    ONBOARDING DOCUMENTS
-                </a>
-            </div>
+            {data?.user?.is_passed && (
+                <div className="flex gap-3">
+                    <a
+                        target="_blank"
+                        href={`/applicant/my_documents/${data?.user?.id}/contract`}
+                        className="bg-blue-500 hover:bg-blue-600 rounded-md text-white p-3"
+                    >
+                        EMPLOYMENT CONTRACT
+                    </a>
+                    <a
+                        target="_blank"
+                        href={`/applicant/my_documents/${data?.user?.id}/onboarding`}
+                        className="bg-purple-500 hover:bg-purple-600 rounded-md text-white p-3"
+                    >
+                        ONBOARDING DOCUMENTS
+                    </a>
+                </div>
+            )}
         </div>
     );
 }
