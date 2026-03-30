@@ -42,22 +42,8 @@ export default function VerifySection() {
                             >
                                 Verify Now
                             </a>
-                            <button
-                                onClick={() => setIsVisible(false)}
-                                className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all"
-                            >
-                                Dismiss
-                            </button>
                         </div>
                     </div>
-
-                    {/* Close Button (X) */}
-                    <button
-                        onClick={() => setIsVisible(false)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
                 </div>
             </div>
         </div>

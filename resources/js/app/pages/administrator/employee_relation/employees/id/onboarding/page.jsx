@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PreEmploymentChecklistSection from "./_sections/pre-employment-check-list-section";
 import StepperSection from "./_sections/stepper-section";
 import ConfidentialityAndNonCompetitionAgreementSection from "./_sections/confidentiality-and-non-competition-agreement-section";
@@ -11,8 +11,18 @@ import MobilePhoneAndDressCodePolicySection from "./_sections/mobile-phone-and-d
 import JobDescriptionFormSection from "./_sections/job-description-form-section";
 import LockerPolicyAndAgreementSection from "./_sections/locker-policy-and-agreement-section";
 import OnboardingChecklistSection from "./_sections/onboarding-checklist-section";
+import { useSelector } from "react-redux";
+import store from "@/app/store/store";
+import { get_user_by_id_thunk } from "@/app/redux/app-thunk";
+import VerifySection from "../_sections/verify-section";
 
 export default function Page() {
+    const { user } = useSelector((store) => store.app);
+    const user_id = window.location.pathname.split("/")[3];
+    useEffect(() => {
+        store.dispatch(get_user_by_id_thunk(user_id));
+    }, []);
+
     const steps = [
         {
             id: 1,
@@ -76,7 +86,10 @@ export default function Page() {
     ];
     return (
         <div>
-            <StepperSection steps={steps} />
+            {!user?.account_employee?.signature && <VerifySection />}
+            {user?.account_employee?.signature && (
+                <StepperSection steps={steps} />
+            )}
         </div>
     );
 }
