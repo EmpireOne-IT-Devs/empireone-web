@@ -274,10 +274,10 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
         return Inertia::render('applicant/my_documents/page');
     });
     Route::get('/my_documents/{id}/contract', function () {
-        return Inertia::render('applicant/my_documents/id/contract/page');
+        return Inertia::render('administrator/employee_relation/employees/id/contract/page');
     });
     Route::get('/my_documents/{id}/onboarding', function () {
-        return Inertia::render('applicant/my_documents/id/onboarding/page');
+        return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
     });
     Route::get('/settings', function () {
         return Inertia::render('applicant/settings/page');
