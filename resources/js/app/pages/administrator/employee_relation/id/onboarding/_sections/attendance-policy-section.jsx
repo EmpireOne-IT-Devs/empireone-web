@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     },
     pageTitle: {
         textAlign: "center",
-        fontSize: 10,
+        fontSize: 16,
         marginTop: 12,
         fontFamily: "Times-Bold",
     },

@@ -276,6 +276,7 @@ const CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSect
         <div style={{ width: "100vw", height: "88vh", margin: 0, padding: 0 }}>
             <PDFLoader pdf={<CertificationDocument />} />
         </div>
+        
     );
 
 export default CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection;

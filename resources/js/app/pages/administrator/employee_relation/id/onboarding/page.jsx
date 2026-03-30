@@ -5,6 +5,9 @@ import ConfidentialityAndNonCompetitionAgreementSection from "./_sections/confid
 import AttendancePolicySection from "./_sections/attendance-policy-section";
 import CertificationOfUseAndServiceOfElectronicDataAndElectronicDataSignatureSection from "./_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section";
 import CodeOfConductAndDisciplineSection from "./_sections/code-of-conduct-and-discipline-section";
+import AcknowledgmentOfCodeOfConductAndDisciplineSection from "./_sections/acknowledgment-of-code-of-conduct-and-discipline-section";
+import HouseRulesAndRegulationsGeneralRulesSection from "./_sections/house-rules-and-regulations-general-rules-section";
+import MobilePhoneAndDressCodePolicySection from "./_sections/mobile-phone-and-dress-code-policy-section";
 
 export default function Page() {
     const steps = [
@@ -36,7 +39,22 @@ export default function Page() {
             title: "Code of Conduct and Discipline",
             content: <CodeOfConductAndDisciplineSection />,
         },
-        { id: 6, title: "Review", content: "Confirm your details" },
+        {
+            id: 6,
+            title: "Acknowledgment of Code of Conduct and Discipline",
+            content: <AcknowledgmentOfCodeOfConductAndDisciplineSection />,
+        },
+        {
+            id: 7,
+            title: "House Rules and Regulations - General Rules",
+            content: <HouseRulesAndRegulationsGeneralRulesSection />,
+        },
+        {
+            id: 8,
+            title: "Mobile Phone and Dress Code Policy",
+            content: <MobilePhoneAndDressCodePolicySection />,
+        },
+        { id: 9, title: "Review", content: "Confirm your details" },
     ];
     return (
         <div>
