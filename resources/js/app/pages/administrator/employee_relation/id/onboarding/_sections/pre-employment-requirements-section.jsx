@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         paddingBottom: 50,
         paddingLeft: 60,
         paddingRight: 60,
-        fontFamily: "Helvetica",
+        fontFamily: "Times-Roman",
         fontSize: 10,
         height: "50vh",
     },
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: "bold",
         marginBottom: 20,
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
     },
     inputGroup: {
         flexDirection: "row",
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-end",
     },
     label: {
-        fontFamily: "Helvetica",
+        fontFamily: "Times-Roman",
         marginRight: 5,
     },
     line: {
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         width: "30%",
     },
     sectionHeader: {
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
         textDecoration: "underline",
         marginBottom: 10,
     },
@@ -96,10 +96,10 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     bold: {
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
     },
     originalHeader: {
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
         textDecoration: "underline",
         marginTop: 15,
         marginBottom: 10,
@@ -114,13 +114,24 @@ const styles = StyleSheet.create({
     },
     disclaimerTitle: {
         fontSize: 8,
-        fontFamily: "Helvetica-Bold",
+        fontFamily: "Times-Bold",
         marginBottom: 2,
     },
     disclaimerText: {
         fontSize: 8,
-        fontFamily: "Helvetica-Oblique",
+        fontFamily: "Times-Italic",
         lineHeight: 1.2,
+    },
+    logoContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    logo: {
+        width: 450,
+        height: 130,
+        objectFit: "contain",
     },
 });
 
@@ -130,9 +141,11 @@ const ChecklistDocument = () => (
         <Page size="A4" style={styles.page}>
             {/* Header */}
             <View style={styles.header}>
-                {/* Replace this View with your actual <Image src="..." /> */}
-                <View style={styles.logoPlaceholder}>
-                    <Text>EmpireOne</Text>
+                <View style={styles.logoContainer}>
+                    <Image
+                        style={styles.logo}
+                        src="/images/Blogo (1).png"
+                    />
                 </View>
                 <Text style={styles.title}>PRE-EMPLOYMENT CHECKLIST</Text>
             </View>
@@ -145,7 +158,6 @@ const ChecklistDocument = () => (
             <View style={styles.inputGroup}>
                 <Text style={styles.label}>Department:</Text>
                 <View style={styles.line} />
-                {/* FLATTENED STYLE HERE */}
                 <Text style={{ ...styles.label, marginLeft: 15 }}>
                     Position:
                 </Text>
@@ -180,7 +192,7 @@ const ChecklistDocument = () => (
                             TIN ID/Number (1901 form)
                         </Text>
                     </View>
-                    <View style={{ height: 15 }} /> {/* Spacing */}
+                    <View style={{ height: 15 }} />
                     <View style={styles.listItem}>
                         <Text style={styles.bullet}>•</Text>
                         <Text style={styles.listItemText}>
@@ -209,7 +221,7 @@ const ChecklistDocument = () => (
                     <View style={styles.listItem}>
                         <Text style={styles.bullet}>•</Text>
                         <Text style={styles.listItemText}>
-                            SSS & PAG-IBIG Loan Voucher (if applicable)
+                            SSS &amp; PAG-IBIG Loan Voucher (if applicable)
                         </Text>
                     </View>
                     <View style={styles.listItem}>
@@ -225,7 +237,7 @@ const ChecklistDocument = () => (
                         </Text>
                     </View>
                     <Text style={styles.indentedText}>
-                        if Married- spouse & children; if Single- parents
+                        if Married- spouse &amp; children; if Single- parents
                     </Text>
                     <Text style={styles.originalHeader}>
                         ORIGINAL COPY (must be prioritized)
@@ -269,7 +281,6 @@ const ChecklistDocument = () => (
 
                 {/* Right Column - Remarks Lines */}
                 <View style={styles.remarksColumn}>
-                    {/* FLATTENED STYLE HERE */}
                     <Text
                         style={{ ...styles.sectionHeader, textAlign: "center" }}
                     >
@@ -279,8 +290,7 @@ const ChecklistDocument = () => (
                     <View style={styles.remarksLine} />
                     <View style={styles.remarksLine} />
                     <View style={styles.remarksLine} />
-                    <View style={{ height: 15 }} />{" "}
-                    {/* Spacing matching left side */}
+                    <View style={{ height: 15 }} />
                     {/* Group 2 */}
                     <View style={styles.remarksLine} />
                     <View style={styles.remarksLine} />
@@ -289,8 +299,7 @@ const ChecklistDocument = () => (
                     <View style={styles.remarksLine} />
                     <View style={styles.remarksLine} />
                     <View style={{ ...styles.remarksLine, marginTop: 14 }} />
-                    <View style={{ height: 40 }} />{" "}
-                    {/* Spacing for original section */}
+                    <View style={{ height: 40 }} />
                     {/* Group 3 */}
                     <View style={styles.remarksLine} />
                     <View style={styles.remarksLine} />
