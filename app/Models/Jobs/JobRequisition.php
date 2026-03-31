@@ -52,9 +52,9 @@ class JobRequisition extends Model
     }
     public function user(): HasOne
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information']);
     }
-     public function job_posting(): HasOne
+    public function job_posting(): HasOne
     {
         return $this->hasOne(JobPosting::class, 'job_requisition_id', 'id');
     }
@@ -62,7 +62,7 @@ class JobRequisition extends Model
     {
         return $this->hasMany(JobRequisitionLog::class, 'job_requisitions_id', 'id');
     }
-     public function account(): HasOne
+    public function account(): HasOne
     {
         return $this->hasOne(Account::class, 'id', 'account_id');
     }

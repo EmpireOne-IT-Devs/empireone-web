@@ -1,5 +1,6 @@
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
+import { MailIcon } from "lucide-react";
 import moment from "moment";
 import React, { useState } from "react";
 
@@ -8,20 +9,33 @@ export default function ShowApplicantDetailsSection({ data }) {
     console.log("datadatadata", data);
     return (
         <>
-            <Button
-            outlined onClick={() => setOpen(true)}>
+            <Button outlined onClick={() => setOpen(true)}>
                 SHOW
             </Button>
             <Modal
                 width="max-w-3xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="Application Details "
-            >
-                <div className="space-y-6 animate-in fade-in duration-500">
-                    <div className="bg-gray-50 p-6 rounded-xl space-y-6 text-sm text-gray-700 border border-gray-100">
-                        {/* Personal & Contact Info */}
+                title={
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <MailIcon />
+                        </div>
                         <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                Applicant
+                            </p>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                Applicant Details
+                            </h2>
+                        </div>
+                    </div>
+                }
+            >
+                <div className="space-y-6 animate-in fade-in duration-500 overflow-auto max-h-[70vh]">
+                    <div className="  space-y-6 text-sm text-gray-700 ">
+                        {/* Personal & Contact Info */}
+                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Position Details
                             </p>
@@ -53,11 +67,11 @@ export default function ShowApplicantDetailsSection({ data }) {
                             </div>
                         </div>
                         {/* Personal & Contact Info */}
-                        <div>
+                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Personal & Contact Details
                             </p>
-                            <div className="grid grid-cols-2 gap-y-1">
+                            <div className="grid grid-cols-2 gap-y-2">
                                 <p>
                                     <strong>Name:</strong>{" "}
                                     {
@@ -91,7 +105,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                             ?.contact
                                     }
                                 </p>
-                                
+
                                 <p>
                                     <strong>BPO Experience:</strong>{" "}
                                     {data.applicant.account_employee.with_bpo}
@@ -126,7 +140,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                         </div>
 
                         {/* Address Information */}
-                        <div>
+                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Birth Place
                             </p>
@@ -138,7 +152,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 }
                             </p>
                         </div>
-                        <div>
+                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Current Address
                             </p>
@@ -162,7 +176,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                         </div>
 
                         {/* Working Experiences */}
-                        <div>
+                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Working Experience
                             </p>
@@ -195,7 +209,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                         </div>
 
                         {/* Skills & Proficiency */}
-                        <div>
+                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Skills & Proficiency
                             </p>

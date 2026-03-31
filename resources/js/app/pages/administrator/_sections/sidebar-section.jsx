@@ -8,7 +8,6 @@ import {
     FcDocument,
     FcOvertime,
     FcSalesPerformance,
-    FcConferenceCall,
     FcBarChart,
     FcSettings,
     FcVoicePresentation,
@@ -20,11 +19,13 @@ import {
     FcCloseUpMode,
     FcCancel,
     FcSurvey,
+    FcConferenceCall,
+    FcPodiumWithAudience,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import { Link } from "@inertiajs/react";
-import { Clipboard, ClipboardIcon } from "lucide-react";
-import { FaClipboard } from "react-icons/fa6";
+import { Clipboard, ClipboardIcon, UserIcon } from "lucide-react";
+import { FaCircleUser, FaClipboard, FaUser } from "react-icons/fa6";
 import { FaClipboardCheck } from "react-icons/fa";
 
 function classNames(...classes) {
@@ -70,6 +71,12 @@ export default function SidebarSection() {
             href: "/administrator/job_requisition",
             icon: FcDocument,
             current: path == "job_requisition",
+        },
+        {
+            name: "Employee Relation",
+            href: "/administrator/employee_relation/employees",
+            icon: FcPodiumWithAudience,
+            current: path == "employee_relation",
         },
         {
             name: "HR Central",

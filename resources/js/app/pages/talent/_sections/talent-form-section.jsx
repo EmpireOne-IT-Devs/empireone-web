@@ -180,7 +180,7 @@ const TalentFormSection = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans">
+        <div className="min-h-screen bg-blue-50 flex items-center justify-center p-6 font-sans">
             <div className="max-w-3xl w-full bg-white rounded-xl shadow-lg p-8 transition-all duration-500">
                 {/* Progress Bar */}
                 <div className="mb-8">

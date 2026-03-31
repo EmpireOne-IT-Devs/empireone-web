@@ -8,6 +8,7 @@ import { setAlert } from "@/app/redux/app-slice";
 import { get_my_tickets_thunk } from "@/app/redux/tickets-thunk";
 import { create_tickets_service } from "@/app/services/tickets-service";
 import store from "@/app/store/store";
+import { Ticket } from "lucide-react";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +19,7 @@ export default function CreateTicketSection() {
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
     const [categories, setCategories] = useState([]);
-    const [timeframe,setTimeframe]=useState('')
+    const [timeframe, setTimeframe] = useState("");
     const {
         register,
         handleSubmit,
@@ -68,12 +69,26 @@ export default function CreateTicketSection() {
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-            <Button  onClick={() => setOpen(true)}>CREATE TICKET</Button>
+            <Button onClick={() => setOpen(true)}>CREATE TICKET</Button>
             <Modal
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 width="max-w-4xl"
-                title="Create Ticket Section"
+                title={
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <Ticket />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                Ticket
+                            </p>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                Create New Ticket
+                            </h2>
+                        </div>
+                    </div>
+                }
             >
                 <div className="flex flex-col gap-3">
                     <div className="flex gap-3">
@@ -124,12 +139,10 @@ export default function CreateTicketSection() {
                                 render={({ field }) => (
                                     <Select
                                         label="Select Location"
-                                        options={data?.locations.map(
-                                            (res) => ({
-                                                label: res.name,
-                                                value: res.id,
-                                            }),
-                                        )}
+                                        options={data?.locations.map((res) => ({
+                                            label: res.name,
+                                            value: res.id,
+                                        }))}
                                         error={errors.location_id}
                                         {...field} // passes value & onChange
                                     />
@@ -180,14 +193,16 @@ export default function CreateTicketSection() {
                                                 timeframe: "15 Minutes",
                                             },
                                         ]}
-                                        onSelect={(e)=>setTimeframe(e.timeframe)}
+                                        onSelect={(e) =>
+                                            setTimeframe(e.timeframe)
+                                        }
                                         error={errors.urgent_type}
                                         {...field} // passes value & onChange
                                     />
                                 )}
                             />
                             <Input
-                                label={timeframe??"Resolution Timeframe"}
+                                label={timeframe ?? "Resolution Timeframe"}
                                 name="timeframe"
                                 value={timeframe}
                                 disabled

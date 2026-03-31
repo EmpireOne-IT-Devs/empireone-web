@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { setJobPostingId } from "@/app/redux/app-slice";
 import Button from "@/app/_components/button";
+import Card from "@/app/_components/card";
 import { ArrowDown, DollarSign, MapPin } from "lucide-react";
 
 export default function JobPostingSection({ onApply, setStep }) {
@@ -14,14 +15,14 @@ export default function JobPostingSection({ onApply, setStep }) {
         setExpandedIndex(expandedIndex === index ? null : index);
     };
     return (
-        <div className="min-h-[80vh] bg-gray-50 p-6 flex justify-center items-start">
+        <div className="min-h-[80vh] bg-gray-100     p-6 flex justify-center rounded-xl items-start">
             <div className="max-w-4xl w-full space-y-2">
                 {job_postings?.map((res, i) => {
                     const isExpanded = expandedIndex === i;
 
                     return (
                         <div key={i}>
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                            <Card>
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                                     <div>
                                         <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
@@ -31,10 +32,10 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                     .employment_type
                                             }
                                         </span>
-                                        <h1 className="text-3xl font-extrabold text-gray-900 leading-tight">
+                                        <h1 className="text-3xl font-extrabold text-gray-800 leading-tight">
                                             {res.job_requisition.title}
                                         </h1>
-                                        <div className=" flex flex-wrap  text-sm text-gray-500">
+                                        <div className=" flex flex-wrap  text-sm text-gray-500 mt-2 gap-2">
                                             <span className="flex items-center gap-1">
                                                 <MapPin className="w-3.5 h-3.5" />
                                                 {
@@ -68,7 +69,6 @@ export default function JobPostingSection({ onApply, setStep }) {
                                             Apply now
                                         </Button>
                                         <Button
-                                        
                                             variant="secondary"
                                             onClick={() => toggleExpand(i)}
                                             type="button"
@@ -96,7 +96,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                     {/* Main Details */}
                                     <div className="md:col-span-2 space-y-6">
                                         <div className={`relative }`}>
-                                            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+                                            <section className="bg-white rounded-2xl shadow-sm border border-gray-300 p-8 mb-6">
                                                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                                                     Job Qualifications
                                                 </h3>
@@ -108,7 +108,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                 </p>
                                             </section>
 
-                                            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                                            <section className="bg-white rounded-2xl shadow-sm border border-gray-300 p-8">
                                                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                                                     Justification for Position
                                                 </h3>
@@ -131,7 +131,7 @@ export default function JobPostingSection({ onApply, setStep }) {
 
                                     {/* Sidebar Details */}
                                     <div className="space-y-6">
-                                        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                        <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                                             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
                                                 Job Responsibility
                                             </h3>
@@ -163,7 +163,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Card>
 
                             {/* Content Section */}
                         </div>

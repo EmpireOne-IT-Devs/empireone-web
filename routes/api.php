@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\Account\AccountDocumentController;
+use App\Http\Controllers\API\Account\AccountEmployeeController as AccountAccountEmployeeController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
@@ -69,6 +70,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
 
     Route::prefix('accounts')->group(function () {
+        Route::resource('employees',  AccountAccountEmployeeController::class);
         Route::get('user',  [AccountPersonalInformationController::class, 'accounts_user']);
         Route::post('personal_information',  [AccountPersonalInformationController::class, 'accounts_personal_information']);
         Route::post('address_information',  [AccountPersonalInformationController::class, 'accounts_address_information']);
@@ -76,12 +78,14 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('emergency_contact_information',  [AccountPersonalInformationController::class, 'accounts_emergency_contact_information']);
         Route::post('educational_information',  [AccountPersonalInformationController::class, 'accounts_educational_information']);
         Route::post('save_signature',  [AccountPersonalInformationController::class, 'accounts_save_signature']);
+        Route::get('get_user_by_id/{user_id}',  [AccountPersonalInformationController::class, 'get_user_by_id']);
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);
         Route::post('add_documents',  [AccountDocumentController::class, 'add_documents']);
+        Route::post('re_upload_documents',  [AccountDocumentController::class, 're_upload_documents']);
         Route::get('get_documents_by_user',  [AccountDocumentController::class, 'get_documents_by_user']);
-        
+        Route::post('send_documents',  [AccountDocumentController::class, 'send_documents']);
     });
 });
 

@@ -3,14 +3,64 @@
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
-
+use App\Mail\ContractSigningMail;
+use App\Mail\OnboardingDocumentsMail;
 use App\Models\Account\AccountDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class AccountDocumentController extends Controller
 {
+
+   
+    public function re_upload_documents(Request $request)
+    {
+
+        if (!$request->has('documents') || !is_array($request->documents)) {
+            return response()->json(['error' => 'No documents provided.'], 400);
+        }
+
+        foreach ($request->documents as $doc) {
+            $filePath = null;
+            if (isset($doc['file']) && $doc['file']->isValid()) {
+                $filePath = $doc['file']->store('unified/account/201File', 's3');
+            }
+            AccountDocument::updateOrCreate(
+                [
+                    'id' => $request->document_id,
+                ],
+                [
+                    'status' => 'Pending',
+                ]
+            );
+            AccountDocument::create([
+                'user_id' => Auth::id(),
+                'type'    => '201 File',
+                'name'   => $doc['name'],
+                'status' => 'Pending',
+                'url'    => $filePath ? Storage::disk('s3')->url($filePath) : null,
+            ]);
+        }
+
+        return response()->json([
+            // 'data' => $request->documents,
+            'status'  => 'success',
+            'message' => 'Documents uploaded securely to S3.',
+        ], 200);
+    }
+
+    public function send_documents(Request $request)
+    {
+        Mail::to($request->user['email'])->send(new OnboardingDocumentsMail($request->all()));
+        Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'The documents to be sign are sent.',
+        ], 200);
+    }
 
     public function get_documents_by_user()
     {
@@ -38,7 +88,6 @@ class AccountDocumentController extends Controller
         foreach ($request->documents as $doc) {
             $filePath = null;
             if (isset($doc['file']) && $doc['file']->isValid()) {
-                $originalName = $doc['file']->getClientOriginalName();
                 $filePath = $doc['file']->store('unified/account/201File', 's3');
             }
             AccountDocument::updateOrCreate(
@@ -87,39 +136,5 @@ class AccountDocumentController extends Controller
             'status'  => 'success',
             'message' => 'Documents saved successfully.',
         ], 200);
-    }
-
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(AccountDocument $accountDocument)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AccountDocument $accountDocument)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, AccountDocument $accountDocument)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AccountDocument $accountDocument)
-    {
-        //
     }
 }

@@ -112,6 +112,30 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         return Inertia::render('administrator/job_requisition/page');
     });
 
+    Route::prefix('employee_relation')->group(function () {
+        Route::get('employees', function () {
+            return Inertia::render('administrator/employee_relation/employees/page');
+        });
+        Route::get('pooling', function () {
+            return Inertia::render('administrator/employee_relation/pooling/page');
+        });
+
+        Route::prefix('{id}')->group(function () {
+            Route::get('personal_information', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/personal_information/page');
+            });
+            Route::get('employee_details', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/employee_details/page');
+            });
+            Route::get('contract', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/contract/page');
+            });
+            Route::get('onboarding', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
+            });
+        });
+    });
+
     Route::get('/job_requisition/{id}', function () {
         return Inertia::render('administrator/job_requisition/id/page');
     });
@@ -130,9 +154,9 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         Route::get('/performance', function () {
             return Inertia::render('administrator/hr_central/performance/page');
         });
-        Route::get('/onboarding', function () {
-            return Inertia::render('administrator/hr_central/onboarding/page');
-        });
+        // Route::get('/onboarding', function () {
+        //     return Inertia::render('administrator/hr_central/onboarding/page');
+        // });
         Route::get('/recruitment', function () {
             return Inertia::render('administrator/hr_central/recruitment/page');
         });
@@ -240,7 +264,7 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
     Route::get('/my_profile', function () {
         return Inertia::render('applicant/my_profile/page');
     });
-     Route::get('/my_profile/signature', function () {
+    Route::get('/my_profile/signature', function () {
         return Inertia::render('applicant/my_profile/signature/page');
     });
     Route::get('/job_offers', function () {
@@ -248,6 +272,12 @@ Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () 
     });
     Route::get('/my_documents', function () {
         return Inertia::render('applicant/my_documents/page');
+    });
+    Route::get('/my_documents/{id}/contract', function () {
+        return Inertia::render('administrator/employee_relation/employees/id/contract/page');
+    });
+    Route::get('/my_documents/{id}/onboarding', function () {
+        return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
     });
     Route::get('/settings', function () {
         return Inertia::render('applicant/settings/page');
