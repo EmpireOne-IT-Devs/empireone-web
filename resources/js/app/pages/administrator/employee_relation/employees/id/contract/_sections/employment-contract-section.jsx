@@ -10,6 +10,7 @@ import {
     BlobProvider,
 } from "@react-pdf/renderer";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 // Define styles using Times New Roman fonts
 const styles = StyleSheet.create({
@@ -188,7 +189,7 @@ const PageFooter = ({ pageNumber, totalPages }) => (
     </>
 );
 
-const EmploymentContract = ({data}) => (
+const EmploymentContract = ({ data }) => (
     <Document>
         {/* PAGE 1 */}
         <Page size="A4" style={styles.page}>
@@ -202,8 +203,15 @@ const EmploymentContract = ({data}) => (
             <Text style={styles.title}>EMPLOYMENT CONTRACT</Text>
 
             <Text style={[styles.text, { marginBottom: 20 }]}>
-                THIS EMPLOYMENT CONTRACT, is made and entered into on ___ day of
-                ___________, 2026, by and between:
+                THIS EMPLOYMENT CONTRACT, is made and entered into on{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                    {moment().format("Do")}
+                </Text>{" "}
+                day of{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                    {moment().format("MMMM")}
+                </Text>
+                , {moment().format("YYYY")}, by and between:
             </Text>
 
             <Text style={[styles.text, { marginBottom: 20 }]}>
@@ -227,10 +235,36 @@ const EmploymentContract = ({data}) => (
             </Text>
 
             <Text style={[styles.text, { marginBottom: 20 }]}>
-                ____________________________, of legal age, Filipino, and a
-                resident of _______________________________________________ in
-                the Province of Negros __________________, (hereinafter referred
-                to as the "Employee")
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {data?.personal_information?.first_name}{" "}
+                    {data?.personal_information?.middle_name}{" "}
+                    {data?.personal_information?.last_name}
+                </Text>
+                , of legal age, Filipino, and a resident of{" "}
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {data?.personal_information?.barangay}{" "}
+                    {data?.personal_information?.city}{" "}
+                </Text>{" "}
+                in the Province of Negros{" "}
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {data?.personal_information?.province}
+                </Text>
+                , (hereinafter referred to as the "Employee")
             </Text>
 
             <Text
@@ -277,12 +311,39 @@ const EmploymentContract = ({data}) => (
                 1. Position and Duties
             </Text>
             <Text style={[styles.text, { marginBottom: 20 }]}>
-                The Employee shall be employed as a Customer Service
-                Representative, reporting to James Kenneth De Arce. The Employee
-                agrees to faithfully and diligently perform the duties described
-                in Annex A, and any related tasks assigned by the Employer,
-                subject to lawful changes or reassignments based on operational
-                needs.
+                The Employee shall be employed as a{" "}
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {data?.account_employee?.position}
+                </Text>
+                , reporting to{" "}
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {
+                        data?.is_passed?.job_posting?.job_requisition?.user
+                            ?.personal_information?.first_name
+                    }{" "}
+                    {
+                        data?.is_passed?.job_posting?.job_requisition?.user
+                            ?.personal_information?.middle_name
+                    }{" "}
+                    {
+                        data?.is_passed?.job_posting?.job_requisition?.user
+                            ?.personal_information?.last_name
+                    }
+                </Text>
+                . The Employee agrees to faithfully and diligently perform the
+                duties described in Annex A, and any related tasks assigned by
+                the Employer, subject to lawful changes or reassignments based
+                on operational needs.
             </Text>
 
             <Text style={[styles.sectionTitle, { marginBottom: 20 }]}>
@@ -740,8 +801,8 @@ const EmploymentContract = ({data}) => (
 // Main component for rendering
 export default function EmploymentContractSection() {
     const { user } = useSelector((store) => store.app);
-    console.log('useruser',user?.account_employee?.signature)
-    
+    console.log("useruser", user);
+
     return (
         <div style={{ height: "100vh", width: "100vw" }}>
             <BlobProvider document={<EmploymentContract data={user} />}>

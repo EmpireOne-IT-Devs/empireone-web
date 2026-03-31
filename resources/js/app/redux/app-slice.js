@@ -15,6 +15,7 @@ export const appSlice = createSlice({
         },
         data: {},
         job_posting_id: null,
+        loading: true,
     },
     reducers: {
         setUser: (state, action) => {
@@ -35,6 +36,9 @@ export const appSlice = createSlice({
         setJobPostingId: (state, action) => {
             state.job_posting_id = action.payload;
         },
+        setLoading: (state, action) => {
+            state.loading = action.payload;
+        },
     },
 });
 export const {
@@ -44,6 +48,7 @@ export const {
     setAlert,
     setData,
     setJobPostingId,
+    setLoading,
 } = appSlice.actions;
 
 export default appSlice.reducer;

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Check, ChevronRight, ChevronLeft } from "lucide-react";
 import Button from "@/app/_components/button";
+import { useSelector } from "react-redux";
 
 const StepperSection = ({ steps }) => {
+    const { loading } = useSelector((store) => store.app);
     const searchParams = new URLSearchParams(window.location.search);
     const pageParam = searchParams.get("page");
     const [currentStep, setCurrentStep] = useState(Number(pageParam) || 1);
@@ -111,12 +113,15 @@ const StepperSection = ({ steps }) => {
                         <Button
                             variant="outlined"
                             onClick={() => prevStep(currentStep)}
-                            disabled={currentStep === 1}
+                            disabled={currentStep === 1 || loading}
                         >
                             <ChevronLeft className="w-4 h-4 mr-1" /> Back
                         </Button>
 
-                        <Button onClick={() => nextStep(currentStep)}>
+                        <Button
+                            disabled={loading}
+                            onClick={() => nextStep(currentStep)}
+                        >
                             {currentStep === steps.length
                                 ? "Finish"
                                 : "Agree & Continue"}

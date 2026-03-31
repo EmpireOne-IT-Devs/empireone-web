@@ -16,7 +16,7 @@ class AccountPersonalInformationController extends Controller
     public function get_user_by_id($id)
     {
 
-        $users = User::where('id', $id)->with(['department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee'])->first();
+        $users = User::where('id', $id)->with(['department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee','is_passed'])->first();
         return response()->json([
             'data' => $users,
             'status'  => 'success',

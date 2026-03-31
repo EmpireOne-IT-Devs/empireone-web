@@ -99,6 +99,6 @@ class User extends Authenticatable implements MustVerifyEmail
                 ['final_status', '=', 'Passed'],
                 ['interview_status', '=', 'Passed'],
                 ['screening_status', '=', 'Screened Passed']
-            ]);
+            ])->with(['job_posting']);
     }
 }

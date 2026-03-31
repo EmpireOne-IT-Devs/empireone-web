@@ -84,12 +84,15 @@ export default function Page() {
         },
         { id: 12, title: "Review", content: "Confirm your details" },
     ];
-    return (
-        <div>
-            {!user?.account_employee?.signature && <VerifySection />}
-            {user?.account_employee?.signature && (
-                <StepperSection steps={steps} />
-            )}
-        </div>
-    );
+    function verified_section() {
+        if (user?.account_employee?.signature == undefined) {
+        } else if (user?.account_employee?.signature == null) {
+            return (
+                user?.account_employee?.signature == null && <VerifySection />
+            );
+        } else if (user?.account_employee?.signature != null) {
+            return <StepperSection steps={steps} />;
+        }
+    }
+    return <>{verified_section()}</>;
 }

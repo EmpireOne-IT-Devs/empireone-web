@@ -13,15 +13,21 @@ export default function Page() {
     useEffect(() => {
         store.dispatch(get_user_by_id_thunk(user_id));
     }, []);
-    return (
-        <div>
-            {!user?.account_employee?.signature && <VerifySection />}
-            {user?.account_employee?.signature && (
+
+    function verified_section() {
+        if (user?.account_employee?.signature == undefined) {
+        } else if (user?.account_employee?.signature == null) {
+            return (
+                user?.account_employee?.signature == null && <VerifySection />
+            );
+        } else if (user?.account_employee?.signature != null) {
+            return (
                 <>
                     <EmploymentContractSection />
                     <AgreeSection />
                 </>
-            )}
-        </div>
-    );
+            );
+        }
+    }
+    return <>{verified_section()}</>;
 }

@@ -1,12 +1,16 @@
 import { BlobProvider } from "@react-pdf/renderer";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../redux/app-slice";
 
 export default function PDFLoader({ pdf }) {
+    const dispatch = useDispatch();
     return (
         <div class="w-screen md:w-[80vw] h-screen m-0 p-0">
             <BlobProvider document={pdf}>
                 {({ url, loading, error }) => {
                     // Custom Loading State
+                    dispatch(setLoading(loading));
                     if (loading) {
                         return (
                             <div
