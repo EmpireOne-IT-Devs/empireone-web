@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\ContractSigningMail;
 use App\Mail\OnboardingDocumentsMail;
 use App\Models\Account\AccountDocument;
+use App\Models\Account\AccountEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 class AccountDocumentController extends Controller
 {
 
-   
+
     public function re_upload_documents(Request $request)
     {
 
@@ -53,9 +54,15 @@ class AccountDocumentController extends Controller
 
     public function send_documents(Request $request)
     {
+        $employee = AccountEmployee::where('user_id', $request->id)->first();
+        if ($employee) {
+            $employee->update([
+                'started_at' => $request->startDate
+            ]);
+        }
         Mail::to($request->user['email'])->send(new OnboardingDocumentsMail($request->all()));
         Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
-
+        // started_at
         return response()->json([
             'status'  => 'success',
             'message' => 'The documents to be sign are sent.',

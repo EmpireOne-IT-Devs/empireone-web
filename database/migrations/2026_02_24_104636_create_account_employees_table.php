@@ -45,6 +45,7 @@ return new class extends Migration
             $table->string('position')->nullable();
             $table->longText('signature')->nullable();
             $table->string('onboarding_agree_on')->nullable();
+            $table->string('started_at')->nullable();
             $table->enum('status', [
                 'Probationary',
                 'Regualr',
