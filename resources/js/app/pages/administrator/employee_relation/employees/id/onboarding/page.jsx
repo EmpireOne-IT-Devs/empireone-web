@@ -82,7 +82,6 @@ export default function Page() {
             title: "Onboarding Checklist",
             content: <OnboardingChecklistSection />,
         },
-        { id: 12, title: "Review", content: "Confirm your details" },
     ];
     function verified_section() {
         if (user?.account_employee?.signature == undefined) {

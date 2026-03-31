@@ -4,12 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\Account\AccountContract;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
 use App\Models\Jobs\JobApplication;
+use App\Models\Jobs\JobOffer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -91,6 +93,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function resume(): HasOne
     {
         return $this->hasOne(AccountDocument::class, 'user_id', 'id')->where('type', 'Resume');
+    }
+    public function salary(): HasOne
+    {
+        return $this->hasOne(JobOffer::class, 'user_id', 'id')->where('status', 'Accepted');
+    }
+    public function account_contract(): HasOne
+    {
+        return $this->hasOne(AccountContract::class, 'user_id', 'id');
     }
     public function is_passed(): HasOne
     {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Account\AccountContractController;
 use App\Http\Controllers\API\Account\AccountDocumentController;
 use App\Http\Controllers\API\Account\AccountEmployeeController as AccountAccountEmployeeController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
@@ -79,6 +80,10 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('educational_information',  [AccountPersonalInformationController::class, 'accounts_educational_information']);
         Route::post('save_signature',  [AccountPersonalInformationController::class, 'accounts_save_signature']);
         Route::get('get_user_by_id/{user_id}',  [AccountPersonalInformationController::class, 'get_user_by_id']);
+        Route::resource('contract', AccountContractController::class);
+        Route::post('agree_onboarding',  [AccountContractController::class, 'agree_onboarding']);
+
+
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);

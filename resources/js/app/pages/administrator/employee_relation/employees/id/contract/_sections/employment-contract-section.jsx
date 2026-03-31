@@ -9,8 +9,9 @@ import {
     Image,
     BlobProvider,
 } from "@react-pdf/renderer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import { setLoading } from "@/app/redux/app-slice";
 
 // Define styles using Times New Roman fonts
 const styles = StyleSheet.create({
@@ -205,13 +206,14 @@ const EmploymentContract = ({ data }) => (
             <Text style={[styles.text, { marginBottom: 20 }]}>
                 THIS EMPLOYMENT CONTRACT, is made and entered into on{" "}
                 <Text style={{ fontWeight: "bold" }}>
-                    {moment().format("Do")}
+                    {moment(data.contract_signed_at).format("Do")}
                 </Text>{" "}
                 day of{" "}
                 <Text style={{ fontWeight: "bold" }}>
-                    {moment().format("MMMM")}
+                    {moment(data.contract_signed_at).format("MMMM")}
                 </Text>
-                , {moment().format("YYYY")}, by and between:
+                , {moment(data.contract_signed_at).format("YYYY")}, by and
+                between:
             </Text>
 
             <Text style={[styles.text, { marginBottom: 20 }]}>
@@ -241,9 +243,7 @@ const EmploymentContract = ({ data }) => (
                         fontWeight: "bold",
                     }}
                 >
-                    {data?.personal_information?.first_name}{" "}
-                    {data?.personal_information?.middle_name}{" "}
-                    {data?.personal_information?.last_name}
+                    {data?.employee_name}
                 </Text>
                 , of legal age, Filipino, and a resident of{" "}
                 <Text
@@ -252,17 +252,16 @@ const EmploymentContract = ({ data }) => (
                         fontWeight: "bold",
                     }}
                 >
-                    {data?.personal_information?.barangay}{" "}
-                    {data?.personal_information?.city}{" "}
+                    {data?.residence}
                 </Text>{" "}
-                in the Province of Negros{" "}
+                in the Province of{" "}
                 <Text
                     style={{
                         textDecorationLine: "underline",
                         fontWeight: "bold",
                     }}
                 >
-                    {data?.personal_information?.province}
+                    {data?.province}
                 </Text>
                 , (hereinafter referred to as the "Employee")
             </Text>
@@ -318,7 +317,7 @@ const EmploymentContract = ({ data }) => (
                         fontWeight: "bold",
                     }}
                 >
-                    {data?.account_employee?.position}
+                    {data?.position}
                 </Text>
                 , reporting to{" "}
                 <Text
@@ -327,18 +326,7 @@ const EmploymentContract = ({ data }) => (
                         fontWeight: "bold",
                     }}
                 >
-                    {
-                        data?.is_passed?.job_posting?.job_requisition?.user
-                            ?.personal_information?.first_name
-                    }{" "}
-                    {
-                        data?.is_passed?.job_posting?.job_requisition?.user
-                            ?.personal_information?.middle_name
-                    }{" "}
-                    {
-                        data?.is_passed?.job_posting?.job_requisition?.user
-                            ?.personal_information?.last_name
-                    }
+                    {data?.reported_to}
                 </Text>
                 . The Employee agrees to faithfully and diligently perform the
                 duties described in Annex A, and any related tasks assigned by
@@ -351,10 +339,29 @@ const EmploymentContract = ({ data }) => (
             </Text>
             <Text style={[styles.text, { marginBottom: 20 }]}>
                 The Employee shall undergo a probationary period of six (6)
-                months, beginning on March 02, 2026 and ending on August 28,
-                2026 (the "probationary period"). During this period, the
-                Employee shall be evaluated based on standards made known at the
-                time of engagement, including but not limited to attendance,
+                months, beginning on{" "}
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {moment(data?.started_at).format("LL")}
+                </Text>{" "}
+                and ending on{" "}
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {moment(data?.started_at)
+                        .add(6, "months")
+                        .format("LL")}{" "}
+                </Text>
+                (the "probationary period"). During this period, the Employee
+                shall be evaluated based on standards made known at the time of
+                engagement, including but not limited to attendance,
                 performance, behavior, suitability for regular employment,
                 communication skills, productivity, and adherence to company and
                 client standards.
@@ -381,7 +388,15 @@ const EmploymentContract = ({ data }) => (
             </Text>
             <Text style={[styles.text, { marginBottom: 20 }]}>
                 The Employee, during the term of his employment, shall be paid a
-                gross monthly salary of TWELVE THOUSAND PESOS PHP 12,000.00
+                gross monthly salary of TWELVE THOUSAND PESOS PHP{" "}
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {data?.salary}
+                </Text>{" "}
                 payable in equal semi-monthly installments, subject to
                 applicable statutory deductions. Upon regularization, the
                 Employee will receive the same monthly salary or any adjustment
@@ -590,7 +605,14 @@ const EmploymentContract = ({ data }) => (
             </Text>
             <Text style={styles.indentText}>
                 a. to the Employee:
-                _________________________________________________
+                <Text
+                    style={{
+                        textDecorationLine: "underline",
+                        fontWeight: "bold",
+                    }}
+                >
+                    {data?.full_address}
+                </Text>{" "}
             </Text>
             <Text style={styles.indentText}>
                 b. to the Employer: S. Carmona St., Brgy. V, San Carlos City,
@@ -624,16 +646,32 @@ const EmploymentContract = ({ data }) => (
             <View style={styles.signatureRow}>
                 <View style={styles.signatureBlock}>
                     <Text style={[styles.text, styles.bold]}>EMPLOYEE</Text>
+                    {data?.signature && (
+                        <Image
+                            style={{
+                                position: "absolute",
+                                bottom: 30, // Positions it 5 units above the line
+                                left: 10, // Indents it slightly
+                                height: 60,
+                                width: 150,
+                                zIndex: 1, // Ensures it stays on top
+                            }}
+                            src={data?.signature} // local or remote URL
+                        />
+                    )}
+
                     <View style={styles.signatureLine} />
-                    <Text style={[styles.text, { marginBottom: 20 }]}>
-                        _____________________
+                    <Text
+                        style={[styles.text, { marginBottom: 20 }, styles.bold]}
+                    >
+                        {data?.employee_name}
                     </Text>
                 </View>
                 <View style={styles.signatureBlock}>
                     <Text style={[styles.text, styles.bold]}>EMPLOYER</Text>
                     <View style={styles.signatureLine} />
                     <Text style={[styles.text, styles.bold]}>
-                        APPLE LORAINE MAG-USARA
+                        {data?.employer_name}
                     </Text>
                     <Text style={[styles.text, { marginBottom: 20 }]}>
                         HR LEAD
@@ -799,15 +837,15 @@ const EmploymentContract = ({ data }) => (
 );
 
 // Main component for rendering
-export default function EmploymentContractSection() {
-    const { user } = useSelector((store) => store.app);
-    console.log("useruser", user);
+export default function EmploymentContractSection({ data }) {
+    const dispatch = useDispatch();
 
     return (
         <div style={{ height: "100vh", width: "100vw" }}>
-            <BlobProvider document={<EmploymentContract data={user} />}>
+            <BlobProvider document={<EmploymentContract data={data} />}>
                 {({ url, loading, error }) => {
                     // Custom Loading State
+                    dispatch(setLoading(loading));
                     if (loading) {
                         return (
                             <div

@@ -33,6 +33,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('locations')
                 ->nullOnDelete();
+            $table->foreignId('account_contract_id')
+                ->nullable()
+                ->constrained('account_contracts')
+                ->nullOnDelete();
             $table->string('work_type')->default('Full Time');
             $table->string('eogs_email')->nullable();
             $table->string('employee_id')->nullable();
@@ -40,8 +44,7 @@ return new class extends Migration
             $table->string('source')->nullable();
             $table->string('position')->nullable();
             $table->longText('signature')->nullable();
-            $table->string('is_contract_agree')->nullable();
-            $table->string('is_onboarding_agree')->nullable();
+            $table->string('onboarding_agree_on')->nullable();
             $table->enum('status', [
                 'Probationary',
                 'Regualr',

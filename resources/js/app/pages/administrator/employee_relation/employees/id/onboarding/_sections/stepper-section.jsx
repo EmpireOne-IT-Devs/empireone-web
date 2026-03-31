@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Check, ChevronRight, ChevronLeft } from "lucide-react";
 import Button from "@/app/_components/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { agree_onboarding_service } from "@/app/services/account-contract-service";
+import { setAlert } from "@/app/redux/app-slice";
+import { router } from "@inertiajs/react";
+import moment from "moment";
 
 const StepperSection = ({ steps }) => {
     const { loading } = useSelector((store) => store.app);
@@ -9,7 +13,8 @@ const StepperSection = ({ steps }) => {
     const pageParam = searchParams.get("page");
     const [currentStep, setCurrentStep] = useState(Number(pageParam) || 1);
     const [complete, setComplete] = useState(false);
-
+    const [isloading, setIsLoading] = useState(false);
+    const dispatch = useDispatch();
     useEffect(() => {
         if (pageParam) {
             const parsedPage = Number(pageParam);
@@ -39,6 +44,31 @@ const StepperSection = ({ steps }) => {
         }
     };
 
+    async function submit_function(currentStep) {
+        if (currentStep === steps.length) {
+            try {
+                setIsLoading(true);
+                await agree_onboarding_service({
+                    user_id:window.location.pathname.split("/")[3],
+                    onboarding_agree_on:moment().format('LLL')
+                });
+                dispatch(
+                    setAlert({
+                        type: "success",
+                        title: "Onboarding is successfully signed!",
+                        message: "Thank you for signing",
+                        open: true,
+                    }),
+                );
+                setIsLoading(false);
+                router.visit("/applicant/my_documents");
+            } catch (error) {
+                setIsLoading(false);
+            }
+        } else {
+            nextStep(currentStep);
+        }
+    }
     return (
         <div className="flex flex-col md:flex-row w-full h-screen ">
             {/* --- STEPPER SIDEBAR (VERTICAL) --- */}
@@ -119,11 +149,12 @@ const StepperSection = ({ steps }) => {
                         </Button>
 
                         <Button
+                            loading={isloading}
                             disabled={loading}
-                            onClick={() => nextStep(currentStep)}
+                            onClick={() => submit_function(currentStep)}
                         >
                             {currentStep === steps.length
-                                ? "Finish"
+                                ? "I Agree"
                                 : "Agree & Continue"}
                             {currentStep !== steps.length && (
                                 <ChevronRight className="w-4 h-4 ml-1" />

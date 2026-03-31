@@ -140,7 +140,7 @@ const SignaturePad = () => {
                     penColor={PEN_COLOR}
                     minWidth={PEN_WEIGHT}
                     maxWidth={PEN_WEIGHT + 1}
-                    canvasProps={{  
+                    canvasProps={{
                         width: dimensions.width,
                         height: dimensions.height,
                         className: "cursor-crosshair w-full",

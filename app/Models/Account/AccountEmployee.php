@@ -19,6 +19,7 @@ class AccountEmployee extends Model
         'site_id',
         'location_id',
         'account_id',
+        'account_contract_id',
         'work_type',
         'eogs_email',
         'employee_id',
@@ -26,8 +27,8 @@ class AccountEmployee extends Model
         'source',
         'position',
         'signature',
-        'is_contract_agree',
-        'is_onboarding_agree'
+        'onboarding_agree_on',
+        'started_at'
     ];
 
 
