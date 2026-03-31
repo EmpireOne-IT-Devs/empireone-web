@@ -20,10 +20,10 @@ class DatabaseSeeder extends Seeder
             LocationsTableSeeder::class,
             SitesTableSeeder::class,
             UsersTableSeeder::class,
-            JobPositionSeeder::class,
-            JobRequisitionSeeder::class,
-            JobPostingSeeder::class,
-            JobApplicationSeeder::class,
+            // JobPositionSeeder::class,
+            // JobRequisitionSeeder::class,
+            // JobPostingSeeder::class,
+            // JobApplicationSeeder::class,
         ]);
     }
 }
