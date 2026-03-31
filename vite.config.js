@@ -13,4 +13,7 @@ export default defineConfig({
     define: {
         global: {},
     },
+    build: {
+        chunkSizeWarningLimit: 100000, // Optional: increase limit to avoid warnings
+    },
 });
