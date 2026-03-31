@@ -7,6 +7,7 @@ import AboutSection from "./sections/about-section";
 import ContactSection from "./sections/contact-section";
 import FooterSection from "./sections/footer-section";
 import ProgressScrollSection from "./sections/progress-scroll-section";
+import CarouselHighlightSection from "./sections/carousel-highlight-section";
 
 export default function Page() {
     const images = [
@@ -37,6 +38,7 @@ export default function Page() {
                 <CarouselSection />
 
                 <AboutSection />
+                <CarouselHighlightSection />    
                 <ServicesSection />
 
                 <ContactSection />

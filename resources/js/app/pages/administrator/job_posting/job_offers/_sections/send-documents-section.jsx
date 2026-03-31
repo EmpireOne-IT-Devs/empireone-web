@@ -11,18 +11,19 @@ import { FaSpinner } from "react-icons/fa6";
 export default function SendDocumentsSection({ data }) {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [interviewType, setInterviewType] = useState("");
-    const [interviewDate, setInterviewDate] = useState("");
-    const [interviewTime, setInterviewTime] = useState("");
-
+    const [signType, setSignType] = useState("");
+    const [signDate, setSignDate] = useState("");
+    const [signTime, setSignTime] = useState("");
+    const [startDate, setStartDate] = useState("");
     async function send_documents(params) {
         try {
             setLoading(true);
             await send_documents_service({
                 ...data,
-                interviewType: interviewType,
-                interviewDate: interviewDate,
-                interviewTime: interviewTime,
+                signType: signType,
+                signDate: signDate,
+                signTime: signTime,
+                startDate: startDate,
             });
             await store.dispatch(get_job_offers_thunk(window.location.search));
             setLoading(false);
@@ -72,76 +73,111 @@ export default function SendDocumentsSection({ data }) {
                     </p>
                     <div className="flex flex-col gap-2 bg-gray-100 border border-gray-100 rounded-lg px-3.5 py-2.5">
                         <Radio
-                            label="Face to Face Interview"
+                            label="Face to Face Signing"
                             value="face_to_face"
-                            name="interview_type"
-                            checked={interviewType === "face_to_face"}
+                            name="sign_type"
+                            checked={signType === "face_to_face"}
                             onChange={() => {
-                                setInterviewType("face_to_face");
-                                setInterviewDate("");
-                                setInterviewTime("");
+                                setSignType("face_to_face");
+                                setSignDate("");
+                                setSignTime("");
+                                setStartDate("");
                             }}
                         />
 
-                        {interviewType === "face_to_face" && (
-                            <div className="mt-2">
-                                <span className="text-sm text-neutral-500 block mb-1">
-                                    Schedule Interview:
-                                </span>
-
-                                <div className="flex gap-2">
+                        {signType === "face_to_face" && (
+                            <div className="mt-2 flex flex-col gap-2">
+                                <div>
+                                    <span className="text-sm text-neutral-500 block mb-1">
+                                        Schedule Signing Session:
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="date"
+                                            min={today}
+                                            className="border rounded px-2 py-1 text-sm"
+                                            value={signDate}
+                                            onChange={(e) =>
+                                                setSignDate(e.target.value)
+                                            }
+                                        />
+                                        <input
+                                            type="time"
+                                            className="border rounded px-2 py-1 text-sm"
+                                            value={signTime}
+                                            onChange={(e) =>
+                                                setSignTime(e.target.value)
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <span className="text-sm text-neutral-500 block mb-1">
+                                        Start Date:
+                                    </span>
                                     <input
                                         type="date"
                                         min={today}
                                         className="border rounded px-2 py-1 text-sm"
-                                        value={interviewDate}
+                                        value={startDate}
                                         onChange={(e) =>
-                                            setInterviewDate(e.target.value)
-                                        }
-                                    />
-                                    <input
-                                        type="time"
-                                        className="border rounded px-2 py-1 text-sm"
-                                        value={interviewTime}
-                                        onChange={(e) =>
-                                            setInterviewTime(e.target.value)
+                                            setStartDate(e.target.value)
                                         }
                                     />
                                 </div>
                             </div>
                         )}
+
                         <Radio
-                            label="Online Interview"
+                            label="Online Signing"
                             value="online"
-                            name="interview_type"
-                            checked={interviewType === "online"}
+                            name="sign_type"
+                            checked={signType === "online"}
                             onChange={() => {
-                                setInterviewType("online");
-                                setInterviewDate("");
-                                setInterviewTime("");
+                                setSignType("online");
+                                setSignDate("");
+                                setSignTime("");
+                                setStartDate("");
                             }}
                         />
-                        {interviewType === "online" && (
-                            <div className="mt-2">
-                                <span className="text-sm text-neutral-500 block mb-1">
-                                    Schedule Interview:
-                                </span>
 
-                                <div className="flex gap-2">
+                        {signType === "online" && (
+                            <div className="mt-2 flex flex-col gap-2">
+                                <div>
+                                    <span className="text-sm text-neutral-500 block mb-1">
+                                        Schedule Signing Session:
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="date"
+                                            min={today}
+                                            className="border rounded px-2 py-1 text-sm"
+                                            value={signDate}
+                                            onChange={(e) =>
+                                                setSignDate(e.target.value)
+                                            }
+                                        />
+                                        <input
+                                            type="time"
+                                            className="border rounded px-2 py-1 text-sm"
+                                            value={signTime}
+                                            onChange={(e) =>
+                                                setSignTime(e.target.value)
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <span className="text-sm text-neutral-500 block mb-1">
+                                        Start Date:
+                                    </span>
                                     <input
                                         type="date"
+                                        min={today}
                                         className="border rounded px-2 py-1 text-sm"
-                                        value={interviewDate}
+                                        value={startDate}
                                         onChange={(e) =>
-                                            setInterviewDate(e.target.value)
-                                        }
-                                    />
-                                    <input
-                                        type="time"
-                                        className="border rounded px-2 py-1 text-sm"
-                                        value={interviewTime}
-                                        onChange={(e) =>
-                                            setInterviewTime(e.target.value)
+                                            setStartDate(e.target.value)
                                         }
                                     />
                                 </div>
@@ -163,9 +199,11 @@ export default function SendDocumentsSection({ data }) {
                         <Button
                             loading={loading}
                             disabled={
-                                !interviewType ||
-                                !interviewDate ||
-                                !interviewTime
+                                !signType ||
+                                !signDate ||
+                                !signTime ||
+                                !startDate ||
+                                loading
                             }
                             onClick={() => send_documents()}
                             className="w-full"
