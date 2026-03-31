@@ -38,10 +38,11 @@ export default function Page() {
                 <CarouselSection />
 
                 <AboutSection />
-                <CarouselHighlightSection />    
                 <ServicesSection />
 
                 <ContactSection />
+
+                <CarouselHighlightSection />
                 <FooterSection />
             </div>
         </div>
