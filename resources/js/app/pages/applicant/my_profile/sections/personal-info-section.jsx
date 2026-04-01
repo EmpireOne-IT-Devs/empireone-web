@@ -2,8 +2,12 @@ import { UserCircle, MapPin, User, Calendar } from "lucide-react";
 import React from "react";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
+import { useSelector } from "react-redux";
 
-export default function PersonalInfoSection({ form, set, editing }) {
+export default function PersonalInfoSection({ form, set, editing,register }) {
+    const { data } = useSelector((store) => store.app);
+    
+    // console.log('data',data?.user?.personal_information)
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3 bg-purple-50 border border-purple-200 rounded-xl px-6 py-4">
@@ -13,9 +17,8 @@ export default function PersonalInfoSection({ form, set, editing }) {
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                     <Input
                         label="First Name *"
-                        name="firstName"
-                        value={form.firstName}
-                        onChange={set("firstName")}
+                        name="first_name"
+                        {...register("first_name")}
                         iconLeft={<User size={14} />}
                         disabled={!editing}
                     />

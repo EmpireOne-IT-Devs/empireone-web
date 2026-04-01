@@ -19,7 +19,7 @@ class AppController extends Controller
         $position = JobPosition::with(['job_requisition'])->get();
         $sites = Site::get();
         $accounts = Account::get();
-        $user = Auth::user()->load(['account_employee','is_passed']);
+        $user = Auth::user()->load(['account_employee','is_passed','personal_information','documents','working_experience','skills']);
         return response()->json([
             'user' => $user,
             'departments' => $departments,

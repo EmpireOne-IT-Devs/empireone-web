@@ -43,26 +43,26 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 <p>
                                     <strong>Job Title:</strong>{" "}
                                     {
-                                        data.job_posting.job_requisition.title
+                                        data?.job_posting?.job_requisition?.title
                                     }{" "}
                                 </p>
                                 <p>
                                     <strong>Department:</strong>{" "}
                                     {
-                                        data.job_posting.job_requisition
+                                        data?.job_posting?.job_requisition
                                             .department.name
                                     }
                                 </p>
                                 <p>
                                     <strong>Location:</strong>{" "}
                                     {
-                                        data.job_posting.job_requisition
+                                        data?.job_posting?.job_requisition
                                             .location.name
                                     }
                                 </p>
                                 <p>
                                     <strong>Source:</strong>{" "}
-                                    {data.applicant.account_employee.source}
+                                    {data?.applicant?.account_employee?.source}
                                 </p>
                             </div>
                         </div>
@@ -108,7 +108,7 @@ export default function ShowApplicantDetailsSection({ data }) {
 
                                 <p>
                                     <strong>BPO Experience:</strong>{" "}
-                                    {data.applicant.account_employee.with_bpo}
+                                    {data.applicant.account_employee?.with_bpo}
                                 </p>
                                 <p>
                                     <strong>DOB: </strong>
