@@ -1,3 +1,18 @@
+import { motion } from "framer-motion";
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 24 },
+    visible: (delay = 0) => ({
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.68,
+            delay,
+            ease: [0.22, 1, 0.36, 1],
+        },
+    }),
+};
+
 export default function FooterSection() {
     const year = new Date().getFullYear();
 
@@ -91,7 +106,14 @@ export default function FooterSection() {
         <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 px-6">
             <div className="max-w-7xl mx-auto">
                 {/* TOP GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: false, amount: 0.2 }}
+                    variants={fadeUp}
+                    custom={0.06}
+                    className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14"
+                >
                     {/* BRAND */}
                     <div className="md:col-span-1">
                         {/* Logo */}
@@ -207,13 +229,20 @@ export default function FooterSection() {
                             </button>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* DIVIDER */}
                 <div className="border-t border-slate-700/60" />
 
                 {/* BOTTOM */}
-                <div className="pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: false, amount: 0.8 }}
+                    variants={fadeUp}
+                    custom={0.12}
+                    className="pt-6 flex flex-col md:flex-row justify-between items-center gap-3"
+                >
                     <p className="text-xs text-slate-500">
                         © {year} EmpireOne. All rights reserved.
                     </p>
@@ -231,7 +260,7 @@ export default function FooterSection() {
                             Terms of Service
                         </a>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </footer>
     );

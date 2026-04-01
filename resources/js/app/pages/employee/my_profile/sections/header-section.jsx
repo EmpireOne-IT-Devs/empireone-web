@@ -77,7 +77,7 @@ export default function HeaderSection({ editing, setEditing }) {
 
                     <div className="flex items-center gap-2">
                         <a
-                            href="/applicant/my_profile/signature"
+                            href="/employee/my_profile/signature"
                             onClick={() => setShowESignature(true)}
                             target="_blank"
                             className="p-1.5 flex gap-1 border border-purple-500 bg-purple-600 rounded-md items-center justify-center text-white"

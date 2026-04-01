@@ -1,4 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.68,
+      delay,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  }),
+};
 
 const slides = [
   "images/empireone-background.jpg",
@@ -44,7 +58,14 @@ export default function CarouselHighlightSection() {
   };
 
   return (
-    <div style={{ padding: "0.5rem 0" }}>
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, amount: 0.25 }}
+      variants={fadeUp}
+      custom={0.08}
+      style={{ padding: "0.5rem 0" }}
+    >
       {/* Carousel Track */}
       <div style={{
         position: "relative",
@@ -125,7 +146,7 @@ export default function CarouselHighlightSection() {
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

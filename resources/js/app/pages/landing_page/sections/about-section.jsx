@@ -1,5 +1,46 @@
 import { CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 28 },
+    visible: (delay = 0) => ({
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.7,
+            delay,
+            ease: [0.22, 1, 0.36, 1],
+        },
+    }),
+};
+
+const fadeLeft = {
+    hidden: { opacity: 0, x: -36, scale: 0.98 },
+    visible: (delay = 0) => ({
+        opacity: 1,
+        x: 0,
+        scale: 1,
+        transition: {
+            duration: 0.8,
+            delay,
+            ease: [0.22, 1, 0.36, 1],
+        },
+    }),
+};
+
+const fadeRight = {
+    hidden: { opacity: 0, x: 36 },
+    visible: (delay = 0) => ({
+        opacity: 1,
+        x: 0,
+        transition: {
+            duration: 0.75,
+            delay,
+            ease: [0.22, 1, 0.36, 1],
+        },
+    }),
+};
 
 function useCountUp(target, active, duration = 1600) {
     const [value, setValue] = useState("0");
@@ -115,8 +156,20 @@ export default function AboutSection() {
             <div className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-6 pt-20 pb-4 grid md:grid-cols-2 gap-10 items-center">
 
                 {/* Left — image */}
-                <div className="flex justify-center md:justify-start">
-                    <div className="relative rounded-2xl overflow-hidden shadow-2xl w-full"
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: false, amount: 0.3 }}
+                    variants={fadeLeft}
+                    custom={0.15}
+                    className="flex justify-center md:justify-start"
+                >
+                    <motion.div
+                        initial={{ opacity: 0, scale: 1.05 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: false, amount: 0.35 }}
+                        transition={{ duration: 1, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        className="relative rounded-2xl overflow-hidden shadow-2xl w-full"
                         style={{ maxWidth: 580, border: "1px solid rgba(255,255,255,0.1)" }}>
                         <img
                             src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
@@ -126,17 +179,30 @@ export default function AboutSection() {
                         />
                         <div className="absolute inset-0"
                             style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%)" }} />
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
 
                 {/* Right — text */}
                 <div className="space-y-5">
-                    <span className="text-xs font-semibold tracking-[.2em] uppercase"
+                    <motion.span
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, amount: 0.8 }}
+                        variants={fadeUp}
+                        custom={0.18}
+                        className="text-xs font-semibold tracking-[.2em] uppercase"
                         style={{ color: "rgba(255,255,255,0.45)" }}>
                         About Company
-                    </span>
+                    </motion.span>
 
-                    <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+                    <motion.h2
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, amount: 0.6 }}
+                        variants={fadeUp}
+                        custom={0.28}
+                        className="text-4xl md:text-5xl font-bold text-white leading-tight"
+                    >
                         We Help Clients With
                         <span className="block" style={{
                             background: "linear-gradient(135deg, #a78bfa, #818cf8)",
@@ -145,26 +211,49 @@ export default function AboutSection() {
                         }}>
                             The Right Solutions
                         </span>
-                    </h2>
+                    </motion.h2>
 
-                    <p className="leading-relaxed max-w-lg text-sm"
+                    <motion.p
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, amount: 0.65 }}
+                        variants={fadeUp}
+                        custom={0.38}
+                        className="leading-relaxed max-w-lg text-sm"
                         style={{ color: "rgba(255,255,255,0.6)" }}>
                         At EmpireOne, we believe in the power of technology to transform
                         businesses. Our mission is to provide scalable, secure, and
                         innovative IT solutions that drive growth and efficiency globally.
-                    </p>
+                    </motion.p>
 
                     <ul className="space-y-2.5 pt-1">
-                        {features.map((f) => (
-                            <li key={f} className="flex items-center gap-3 text-sm font-medium text-white">
+                        {features.map((f, index) => (
+                            <motion.li
+                                key={f}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: false, amount: 0.7 }}
+                                variants={fadeRight}
+                                custom={0.46 + index * 0.08}
+                                className="flex items-center gap-3 text-sm font-medium text-white"
+                            >
                                 <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: "#a78bfa" }} />
                                 {f}
-                            </li>
+                            </motion.li>
                         ))}
                     </ul>
 
-                    <div className="flex flex-wrap gap-3 pt-2">
-                        <button
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, amount: 0.7 }}
+                        variants={fadeUp}
+                        custom={0.72}
+                        className="flex flex-wrap gap-3 pt-2"
+                    >
+                        <motion.button
+                            whileHover={{ y: -3, scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                             className="px-7 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 hover:brightness-110"
                             style={{
                                 background: "rgba(255,255,255,0.08)",
@@ -173,8 +262,10 @@ export default function AboutSection() {
                             }}
                         >
                             Explore More
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ y: -3, scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                             className="px-7 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-105"
                             style={{
                                 background: "rgba(167,139,250,0.15)",
@@ -184,16 +275,23 @@ export default function AboutSection() {
                             }}
                         >
                             Contact Us
-                        </button>
-                    </div>
+                        </motion.button>
+                    </motion.div>
                 </div>
             </div>
 
-            <div className="relative z-10 max-w-7xl w-full mx-auto px-6 pb-10 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.3 }}
+                variants={fadeUp}
+                custom={0.84}
+                className="relative z-10 max-w-7xl w-full mx-auto px-6 pb-10 grid grid-cols-2 md:grid-cols-4 gap-3"
+            >
                 {stats.map((s, i) => (
                     <StatCard key={s.label} value={s.value} label={s.label} delay={i * 100} />
                 ))}
-            </div>
+            </motion.div>
         </section>
     );
 }

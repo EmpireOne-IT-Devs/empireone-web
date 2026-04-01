@@ -6,6 +6,34 @@ import {
     Cloud,
     Shield,
 } from "lucide-react";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 28 },
+    visible: (delay = 0) => ({
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.7,
+            delay,
+            ease: [0.22, 1, 0.36, 1],
+        },
+    }),
+};
+
+const fadeScale = {
+    hidden: { opacity: 0, y: 30, scale: 0.96 },
+    visible: (delay = 0) => ({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+            duration: 0.65,
+            delay,
+            ease: [0.22, 1, 0.36, 1],
+        },
+    }),
+};
 
 // ─── BACKGROUND IMAGE ───────────────────────────────────────────────────────
 const BG_IMAGE_SRC = "/images/empireone-background.jpg";
@@ -121,10 +149,24 @@ export default function ServicesSection() {
             <div className="relative z-10 max-w-7xl mx-auto px-8 w-full">
 
                 {/* HEADER ROW */}
-                <div className="flex items-start justify-between mb-10">
-                    <div style={{ maxWidth: 640 }}>
+                <div className="flex items-start justify-between mb-10 gap-6">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, amount: 0.35 }}
+                        variants={fadeUp}
+                        custom={0.05}
+                        style={{ maxWidth: 640 }}
+                    >
                         {/* eyebrow */}
-                        <div className="flex items-center gap-2 mb-3">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: false, amount: 0.6 }}
+                            variants={fadeUp}
+                            custom={0.1}
+                            className="flex items-center gap-2 mb-3"
+                        >
                             <span
                                 className="inline-block w-6 h-0.5 rounded-full"
                                 style={{ background: "#6366f1" }}
@@ -135,9 +177,14 @@ export default function ServicesSection() {
                             >
                                 What We Do
                             </p>
-                        </div>
+                        </motion.div>
 
-                        <h2
+                        <motion.h2
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: false, amount: 0.5 }}
+                            variants={fadeUp}
+                            custom={0.18}
                             className="font-extrabold leading-[1.1] whitespace-nowrap"
                             style={{
                                 color: "#0a0f1e",
@@ -146,11 +193,17 @@ export default function ServicesSection() {
                         >
                             We Solve IT Problems{" "}
                             <span style={{ color: "#6366f1" }}>With Technology</span>
-                        </h2>
-                    </div>
+                        </motion.h2>
+                    </motion.div>
 
-                    <a
+                    <motion.a
                         href="#"
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, amount: 0.7 }}
+                        variants={fadeUp}
+                        custom={0.22}
+                        whileHover={{ x: 4 }}
                         className="flex items-center gap-2 font-semibold whitespace-nowrap mt-2 group"
                         style={{ color: "#6366f1", fontSize: 15 }}
                     >
@@ -172,14 +225,20 @@ export default function ServicesSection() {
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
                         </span>
-                    </a>
+                    </motion.a>
                 </div>
 
                 {/* CARD GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {services.map(({ Icon, title, desc, accent, bg }, i) => (
-                        <div
+                        <motion.div
                             key={i}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: false, amount: 0.2 }}
+                            variants={fadeScale}
+                            custom={0.08 + i * 0.08}
+                            whileHover={{ y: -6 }}
                             className="group rounded-2xl p-7 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer"
                             style={{
                                 background: "rgba(255,255,255,0.85)",
@@ -242,7 +301,7 @@ export default function ServicesSection() {
                                     <path d="M5 12h14M12 5l7 7-7 7" />
                                 </svg>
                             </a>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>
