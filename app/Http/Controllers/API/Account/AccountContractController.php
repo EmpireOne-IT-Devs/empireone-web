@@ -35,6 +35,9 @@ class AccountContractController extends Controller
             $employee->update([
                 'onboarding_agree_on' => $request->onboarding_agree_on
             ]);
+            User::where('id', '=', $request->user_id)->update([
+                'role' => 2
+            ]);
         }
 
         if ($employee->account_contract_id && $employee->onboarding_agree_on) {
@@ -75,6 +78,13 @@ class AccountContractController extends Controller
             ['user_id' => $request->user_id],
             ['account_contract_id' => $employment->id]
         );
+
+        $user = User::where('id', '=', $request->user_id)->first();
+        if ($user) {
+            $user->update([
+                'role' => 2
+            ]);
+        }
 
         if ($employee->account_contract_id && $employee->onboarding_agree_on) {
             $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
