@@ -37,7 +37,7 @@ class JobApplicationController extends Controller
 
     public function get_job_application_by_user(Request $request)
     {
-        $applications =  JobApplication::where('user_id', Auth::id())->with(['applicant','job_posting'])->get();
+        $applications =  JobApplication::where('user_id', Auth::id())->with(['applicant', 'job_posting'])->get();
 
         return response()->json([
             'status' => 'success',
@@ -122,6 +122,7 @@ class JobApplicationController extends Controller
                 'birth_place' => $request->birth_place ?? null,
                 'nationality' => $request->nationality ?? null,
                 'marital_status' => $request->marital_status ?? null,
+                'contact' => $request->contact??null
             ]
         );
 
