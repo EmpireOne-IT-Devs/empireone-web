@@ -61,7 +61,7 @@ class JobRequisition extends Model
     }
     public function logs(): HasMany
     {
-        return $this->hasMany(JobRequisitionLog::class, 'job_requisitions_id', 'id');
+        return $this->hasMany(JobRequisitionLog::class, 'job_requisitions_id', 'id')->with(['user']);
     }
     public function account(): HasOne
     {

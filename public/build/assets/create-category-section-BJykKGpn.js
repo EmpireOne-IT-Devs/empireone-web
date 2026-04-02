@@ -1,0 +1,1 @@
+import{j as r}from"./app-B2X4ln5Z.js";import{B as t}from"./button-D-auZFmS.js";import"./index-B0CyEVIa.js";function a(){return r.jsx("div",{children:r.jsx(t,{variant:"primary",children:"Add Category"})})}export{a as default};

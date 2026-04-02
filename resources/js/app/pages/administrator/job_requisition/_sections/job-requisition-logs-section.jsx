@@ -97,6 +97,7 @@ export default function JobRequisitionLogsSection({ job_requisition }) {
             setLoading(false);
         }
     }
+    console.log('job_requisition',job_requisition)
     return (
         <div className="w-full mt-12">
             <h2 className="text-2xl font-semibold text-center mb-6">
@@ -124,7 +125,7 @@ export default function JobRequisitionLogsSection({ job_requisition }) {
                                 <div>
                                     <div className="flex justify-between items-center">
                                         <h3 className="font-medium text-lg">
-                                            Marlou Pepito
+                                           {res?.user?.name}
                                         </h3>
                                         <span className="text-sm text-gray-500 mx-3">
                                             {moment(res.created_at).format(

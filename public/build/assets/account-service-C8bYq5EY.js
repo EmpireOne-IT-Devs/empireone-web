@@ -1,0 +1,1 @@
+import{e as a}from"./app-B2X4ln5Z.js";async function n(s){return await a.post("/api/accounts/save_signature",s)}async function t(s){return await a.post("/api/accounts/send_documents",s)}export{t as a,n as s};
