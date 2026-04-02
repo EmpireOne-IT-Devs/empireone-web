@@ -51,22 +51,23 @@ export default function Modal({
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Title */}
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between py-3">
                                 {title && (
                                     <div
                                         as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900 "
+                                        className="text-lg font-medium leading-6 text-gray-900 w-full "
                                     >
                                         {title}
                                     </div>
                                 )}
-
-                                <button
-                                    onClick={() => onClose()}
-                                    className=" text-4xl text-red-600 hover:text-red-700 "
-                                >
-                                    &times;
-                                </button>
+                                <div className="flex w-full  items-end justify-end ">
+                                    <button
+                                        onClick={() => onClose()}
+                                        className=" text-xl text-red-600 hover:text-red-700  border border-red-600 hover:border-red-700 px-5 p-2 rounded-md"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
                             </div>
                             {/* Content */}
                             <div>{children}</div>

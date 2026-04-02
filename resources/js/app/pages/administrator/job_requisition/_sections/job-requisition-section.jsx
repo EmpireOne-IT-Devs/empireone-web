@@ -220,10 +220,11 @@ export default function JobRequisitionBodySection({ job_requisition }) {
             <Modal
                 width="max-w-7xl"
                 isOpen={open}
+                title="Job Requisition"
                 onClose={() => setOpen(false)}
                 className="overflow-auto h-full"
             >
-                <div className="flex overflow-auto h-[80vh]">
+                <div className="flex overflow-auto h-[75vh]">
                     <div className="flex-1 p-6 space-y-6">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
@@ -447,7 +448,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         />
                     </div>
                 </div>
-                <div className="flex w-full items-center justify-between border-t pt-4 gap-3">
+                <div className="flex w-full items-center justify-between border-t  gap-3 pt-3 ">
                     <div>
                         {job_requisition.status == "Approved" &&
                             !job_requisition.job_posting && (
