@@ -49,7 +49,9 @@ export default function AcceptJobOfferSection({ data }) {
             );
             setOpen(false);
             setLoading(false);
-        } catch (error) {}
+        } catch (error) {
+            setLoading(false);
+        }
     }
     return (
         <div>

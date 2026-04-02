@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\DocumentFileInstructions;
 use App\Models\Account\AccountContract;
 use App\Models\Account\AccountEmployee;
+use App\Models\Jobs\JobApplication;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

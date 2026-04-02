@@ -18,6 +18,7 @@ class JobRequisition extends Model
         'user_id',
         'location_id',
         'account_id',
+        'site_id',
         'type',
         'title',
         'employment_type',

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('position')->nullable();
             $table->string('started_at')->nullable();
             $table->string('ended_at')->nullable();
-            $table->decimal('salary', 15, 2)->default(0.00);
+            $table->string('salary')->default(0.00);
             $table->timestamps();
         });
     }

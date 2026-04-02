@@ -54,7 +54,7 @@ class AccountDocumentController extends Controller
 
     public function send_documents(Request $request)
     {
-        $employee = AccountEmployee::where('user_id', $request->id)->first();
+        $employee = AccountEmployee::where('user_id', $request->user_id)->first();
         if ($employee) {
             $employee->update([
                 'started_at' => $request->startDate

@@ -96,7 +96,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function salary(): HasOne
     {
-        return $this->hasOne(JobOffer::class, 'user_id', 'id')->where('status', 'Accepted');
+        return $this->hasOne(JobOffer::class, 'user_id', 'id')->where('status', 'Accepted Job Offer');
     }
     public function account_contract(): HasOne
     {
@@ -105,10 +105,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function is_passed(): HasOne
     {
         return $this->hasOne(JobApplication::class, 'user_id', 'id')
-            ->where([
-                ['final_status', '=', 'Passed'],
-                ['interview_status', '=', 'Passed'],
-                ['screening_status', '=', 'Screened Passed']
-            ])->with(['job_posting']);
+            ->where(function ($query) {
+                $query->where([
+                    ['final_status', 'Passed'],
+                    ['interview_status', 'Passed'],
+                    ['screening_status', 'Screened Passed'],
+                ])->orWhere([
+                    ['final_status', 'Passed'],
+                    ['interview_status', 'Passed'],
+                    ['screening_status', 'Accepted Job Offer'],
+                ])->orWhere([
+                    ['final_status', 'Passed'],
+                    ['interview_status', 'Passed'],
+                    ['screening_status', 'Hired'],
+                ]);
+            })
+            ->with(['job_posting']);
     }
 }

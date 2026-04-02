@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\JobOfferAcceptedMail;
 use App\Mail\JobOfferDeclinedMail;
 use App\Mail\PreEmploymentMail;
+use App\Models\Account\AccountEmployee;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class JobOfferController extends Controller
     /**
      * Display a listing of the resource.
      */
+
 
     public function submit_job_offer(Request $request)
     {
@@ -41,11 +43,16 @@ class JobOfferController extends Controller
 
         if ($request->status == 'Declined Job Offer') {
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferDeclinedMail($jo));
-            // change the status of job application into Declined Job Offer
         } else if ($request->status == 'Accepted Job Offer') {
+            AccountEmployee::where('user_id', $request->user_id)->update([
+                'department_id' => $request->job_application['job_posting']['job_requisition']['department_id'],
+                'account_id' => $request->job_application['job_posting']['job_requisition']['account_id'] ?? null,
+                'site_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
+                'location_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
+                'position' => $request->job_application['job_posting']['job_requisition']['title'],
+            ]);
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferAcceptedMail($jo));
             Mail::to($jo->user['email'])->send(new PreEmploymentMail($jo));
-            // change the status of job application into Accepted Job Offer
         }
         return response()->json([
             'status' => 'success',

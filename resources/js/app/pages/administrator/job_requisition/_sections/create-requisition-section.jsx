@@ -38,6 +38,7 @@ export default function CreateJobRequisition() {
         defaultValues: {
             department_id: "",
             location_id: "",
+            site_id: "",
             type: "",
             existing_position_id: "",
             title: "",
@@ -72,6 +73,10 @@ export default function CreateJobRequisition() {
             setValue(
                 "location_id",
                 selectedPosition?.job_requisition?.location_id || "",
+            );
+            setValue(
+                "site_id",
+                selectedPosition?.job_requisition?.site_id || "",
             );
             setValue(
                 "employment_type",
@@ -384,6 +389,26 @@ export default function CreateJobRequisition() {
                                                     }),
                                                 )}
                                                 error={errors.location_id}
+                                                {...field} // passes value & onChange
+                                            />
+                                        )}
+                                    />
+                                    <Controller
+                                        name="site_id"
+                                        control={control}
+                                        rules={{
+                                            required: "Site is required",
+                                        }}
+                                        render={({ field }) => (
+                                            <Select
+                                                label="Select Site"
+                                                options={data?.sites.map(
+                                                    (res) => ({
+                                                        label: res.name,
+                                                        value: res.id,
+                                                    }),
+                                                )}
+                                                error={errors.site}
                                                 {...field} // passes value & onChange
                                             />
                                         )}
