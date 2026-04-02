@@ -78,7 +78,7 @@
                     To review the full offer letter and sign the contract, please click the link below:
                 </p>
                 <div class="button-container">
-                    <a href="{{ config('app.url') }}/applicant/my_documents/{{$user['id']}}/onboarding"
+                    <a href="{{ config('app.url') }}/applicant/my_documents/{{$user['user']['id']}}/onboarding"
                         class="btn-primary" style="color: white !important;">Click to Sign Onboarding Documents</a>
                 </div>
             </div>

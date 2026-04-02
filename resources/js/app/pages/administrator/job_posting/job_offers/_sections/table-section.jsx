@@ -13,6 +13,7 @@ export default function TableSection() {
         { header: "Applicant Name", accessor: "name" },
         { header: "Email", accessor: "email" },
         { header: "Role", accessor: "role" },
+        { header: "Position", accessor: "position" },
         { header: "Status", accessor: "status" },
         { header: "Action", accessor: "action" },
     ];
@@ -33,6 +34,7 @@ export default function TableSection() {
         }
     };
 
+    console.log('job_offers',job_offers.data)
     return (
         <div>
             <Table
@@ -41,6 +43,7 @@ export default function TableSection() {
                     name: res.user.name,
                     email: res.user.email,
                     role: res.role,
+                    position: res?.job_application.job_posting?.job_requisition?.title,
                     status: (
                         <Badge
                             label={res.status}
@@ -50,7 +53,7 @@ export default function TableSection() {
                     ),
                     action: (
                         <div className="flex gap-3">
-                            {res.status === "Declined" && (
+                            {res.status === "Declined Job Offer" && (
                                 <>
                                     <ResendJobOfferSection data={res} />
                                 </>
