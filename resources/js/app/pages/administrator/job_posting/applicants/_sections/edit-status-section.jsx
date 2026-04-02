@@ -118,6 +118,7 @@ export default function EditStatusSection({ data, table_status }) {
                         onBlur={handleBlur}
                         className="block w-full px-3 py-2 text-sm text-gray-700 bg-white border-2 border-blue-500 rounded-md focus:outline-none appearance-none cursor-pointer"
                     >
+                        <option value=""></option>
                         {table_status == "screening_status" &&
                             screening_status.map((option) => (
                                 <option key={option} value={option}>
