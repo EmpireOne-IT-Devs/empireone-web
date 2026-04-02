@@ -14,11 +14,12 @@ class AccountEmployeeController extends Controller
      */
     public function index()
     {
-        $employees = AccountEmployee::with('user','personal_information','department','account','site')
+        $employees = AccountEmployee::with('user', 'personal_information', 'department', 'account', 'site')
             ->whereNotNull('employee_id')
             ->whereHas('user', function ($query) {
                 $query->whereIn('role', [1, 2]); // use integers if possible
             })
+            ->orderBy('id', 'desc')
             ->get();
 
         return response()->json([
