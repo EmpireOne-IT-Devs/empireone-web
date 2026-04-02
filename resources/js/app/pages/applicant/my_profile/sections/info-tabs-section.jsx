@@ -1,13 +1,13 @@
 import Tabs from "@/app/_components/tabs";
 import { Sparkles, Pencil, Check, X } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PersonalInfoSection from "./personal-info-section";
 import ProfessionalSection from "./professional-section";
 import DocumentsSection from "./document-section";
 import { usePage } from "@inertiajs/react";
 import Button from "@/app/_components/button";
 import { useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 
 const TAB_IDS = ["personal", "professional", "documents", "customization"];
 
@@ -80,14 +80,42 @@ export default function InfoTabsSection({ editing, setEditing }) {
     const activeIndex = TAB_IDS.indexOf(activeTabId);
 
     // ✅ useForm setup
-    const { register, handleSubmit, reset, watch, setValue } = useForm({
+    const {
+        register,
+        handleSubmit,
+        reset,
+        watch,
+        setValue,
+        control,
+        formState: { errors },
+    } = useForm({
         defaultValues: {},
     });
-
-    console.log('datadata',data)
-
     const formValues = watch(); // replaces form state
     const [saved, setSaved] = React.useState(INITIAL_FORM);
+
+    const [regions, setRegions] = useState([]);
+    const [provinces, setProvinces] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [barangays, setBarangays] = useState([]);
+
+    const getCode = (list, name) =>
+        list.find((item) => item.name === name)?.code || name;
+
+    const getName = (list, code) =>
+        list.find((item) => item.code === code)?.name || code;
+
+    const {
+        fields: experienceFields,
+        append: appendExperience,
+        remove: removeExperience,
+    } = useFieldArray({ control, name: "experiences" });
+
+    const {
+        fields: skillFields,
+        append: appendSkill,
+        remove: removeSkill,
+    } = useFieldArray({ control, name: "skills" });
 
     const tabs = TAB_IDS.map((id, idx) => ({
         label: TAB_LABELS[id],
@@ -95,15 +123,23 @@ export default function InfoTabsSection({ editing, setEditing }) {
         path: `?tab=${id}`,
     }));
 
+    useEffect(() => {
+        if (data?.user?.personal_information) {
+            reset(data?.user?.personal_information);
+        }
+    }, [data?.user?.personal_information]);
+
+    // console.log("provinces", provinces);
     // ✅ Save handler
     const onSubmit = (data) => {
+        const finalData = {
+            ...data,
+            region: getName(regions, data.region),
+            province: getName(provinces, data.province),
+            city: getName(cities, data.city),
+            barangay: getName(barangays, data.barangay),
+        };
         setSaved(data);
-        setEditing(false);
-    };
-
-    // ✅ Cancel handler
-    const handleCancel = () => {
-        reset(saved); // restore saved values
         setEditing(false);
     };
 
@@ -112,51 +148,47 @@ export default function InfoTabsSection({ editing, setEditing }) {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="max-w-4xl mx-auto">
+            <div className="mx-auto">
                 <div className="bg-white/70 backdrop-blur-xl border border-white rounded-3xl shadow-xl overflow-hidden">
                     <Tabs
                         tabs={tabs}
                         activeIndex={activeIndex}
                         onTabClick={() => {}}
                     />
-
                     <div className="p-6 space-y-4">
-                        {editing && (
-                            <div className="flex items-center justify-between bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-2.5">
-                                <div className="flex items-center gap-2 text-xs text-indigo-700 font-medium">
-                                    <Pencil size={12} />
-                                    You're in edit mode — make changes and save.
-                                </div>
-                                <div className="flex gap-2">
-                                    <Button
-                                        type="button"
-                                        onClick={handleCancel}
-                                    >
-                                        <X size={12} className="mr-2" /> Cancel
-                                    </Button>
-                                    <Button type="submit">
-                                        <Check size={12} className="mr-2" />{" "}
-                                        Save
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-
                         {activeTabId === "personal" && (
                             <PersonalInfoSection
                                 form={formValues}
-                                set={set}
                                 register={register}
-                                editing={editing}
+                                setValue={setValue}
+                                watch={watch}
+                                errors={errors}
+                                setRegions={setRegions}
+                                regions={regions}
+                                provinces={provinces}
+                                setProvinces={setProvinces}
+                                cities={cities}
+                                setCities={setCities}
+                                setBarangays={setBarangays}
+                                barangays={barangays}
                             />
                         )}
 
                         {activeTabId === "professional" && (
                             <ProfessionalSection
+                                watchedValues={formValues}
+                                experienceFields={experienceFields}
+                                removeExperience={removeExperience}
+                                appendExperience={appendExperience}
+                                register={register}
+                                errors={errors}
                                 form={formValues}
                                 set={set}
-                                register={register}
                                 editing={editing}
+                                skillFields={skillFields}
+                                appendSkill={appendSkill}
+                                removeSkill={removeSkill}
+                                watch={watch}
                             />
                         )}
 

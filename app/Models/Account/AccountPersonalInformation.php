@@ -14,6 +14,7 @@ class AccountPersonalInformation extends Model
     
     protected $fillable = [
        
+        'user_id',
         // personal information
         'first_name', // required
         'middle_name', // required

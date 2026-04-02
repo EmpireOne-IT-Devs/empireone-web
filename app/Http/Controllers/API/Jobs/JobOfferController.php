@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\JobOfferAcceptedMail;
 use App\Mail\JobOfferDeclinedMail;
 use App\Mail\PreEmploymentMail;
+use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,16 +21,28 @@ class JobOfferController extends Controller
     public function submit_job_offer(Request $request)
     {
         $jo = JobOffer::where('id', $request->id)->with(['allowances', 'user', 'job_application'])->first();
+
         if ($jo) {
             $jo->update([
                 'status' => $request->status,
                 'declined_reason' => $request->declined_reason
             ]);
+
+            JobApplication::updateOrCreate(
+                [
+                    'id' => $jo->job_application_id,
+                    'user_id' => $jo->user_id,
+                ],
+                [
+                    'final_status' => $request->status,
+                ]
+            );
         }
-        if ($request->status == 'Declined') {
+
+        if ($request->status == 'Declined Job Offer') {
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferDeclinedMail($jo));
             // change the status of job application into Declined Job Offer
-        } else if ($request->status == 'Accepted') {
+        } else if ($request->status == 'Accepted Job Offer') {
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferAcceptedMail($jo));
             Mail::to($jo->user['email'])->send(new PreEmploymentMail($jo));
             // change the status of job application into Accepted Job Offer

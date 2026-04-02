@@ -56,7 +56,7 @@ export default function TableSection() {
                                 </>
                             )}
 
-                            {res.status == "Accepted" && (
+                            {res.status == "Accepted Job Offer" && (
                                 <>
                                     <SendDocumentsSection data={res} />
                                 </>

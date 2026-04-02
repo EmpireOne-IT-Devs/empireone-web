@@ -8,9 +8,16 @@ export default function Page() {
 
     return (
         <Layout>
-            <HeaderSection editing={editing} setEditing={setEditing} />
-            <div className="mt-4">
-                <InfoTabsSection editing={editing} setEditing={setEditing} />
+            <div className="flex items-center justify-center w-full">
+                <div className="max-w-7xl flex-row items-center justify-center  ">
+                    <HeaderSection editing={editing} setEditing={setEditing} />
+                    <div className="mt-4">
+                        <InfoTabsSection
+                            editing={editing}
+                            setEditing={setEditing}
+                        />
+                    </div>
+                </div>
             </div>
         </Layout>
     );

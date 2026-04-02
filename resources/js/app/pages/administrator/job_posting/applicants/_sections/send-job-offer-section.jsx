@@ -61,7 +61,7 @@ export default function SendJobOfferSection({ data }) {
 
     return (
         <div>
-            <Button onClick={() => setOpen(true)} size="sm">
+            <Button onClick={() => setOpen(true)} >
                 SEND JOB OFFER
             </Button>
 

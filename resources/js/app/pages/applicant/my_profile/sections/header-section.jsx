@@ -9,8 +9,10 @@ import {
     PencilLine,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function HeaderSection({ editing, setEditing }) {
+    const { data } = useSelector((store) => store.app);
     const profileCompletion = 20;
 
     const fileInputRef = useRef(null);
@@ -28,7 +30,7 @@ export default function HeaderSection({ editing, setEditing }) {
     };
     const [showESignature, setShowESignature] = useState(false);
     return (
-        <div className="bg-white rounded-xl shadow-md overflow-hidden max-w-4xl mx-auto">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden mx-auto">
             <div className="h-28 bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700" />
 
             <div className="px-6 pb-5">
@@ -38,40 +40,19 @@ export default function HeaderSection({ editing, setEditing }) {
                         editing ? "cursor-pointer" : ""
                     }`}
                 >
-                    {preview ? (
-                        <img
-                            src={preview}
-                            alt="Profile"
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <User className="w-10 h-10 text-gray-400" />
-                    )}
+                    <User className="w-10 h-10 text-gray-400" />
 
-                    {editing && (
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-                            <Camera className="w-5 h-5 text-white" />
-                        </div>
-                    )}
                 </div>
-
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleChange}
-                    accept="image/*"
-                    className="hidden"
-                />
 
                 <div className="flex justify-between items-end mt-2">
                     {/* Left: Applicant info */}
                     <div>
                         <p className="text-sm font-semibold text-gray-900">
-                            Job Applicant
+                            {data?.user?.name}
                         </p>
                         <div className="flex items-center gap-1 mt-0.5 text-gray-500 text-xs">
                             <Mail className="w-3.5 h-3.5 text-gray-400" />
-                            maria.garcia@email.com
+                            {data?.user?.email}
                         </div>
                     </div>
 
@@ -85,18 +66,6 @@ export default function HeaderSection({ editing, setEditing }) {
                             <PencilLine className="w-3.5 h-3.5 mr-2" />
                             E-Signature
                         </a>
-
-                        {!editing ? (
-                            <Button onClick={() => setEditing(true)}>
-                                <Edit2 className="w-3.5 h-3.5 mr-2" />
-                                Edit Profile
-                            </Button>
-                        ) : (
-                            <Button onClick={() => setEditing(false)}>
-                                <X className="w-3.5 h-3.5 mr-2" />
-                                Cancel Edit
-                            </Button>
-                        )}
                     </div>
                 </div>
 

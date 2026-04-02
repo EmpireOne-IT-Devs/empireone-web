@@ -7,6 +7,7 @@ export const applicantSlice = createSlice({
         job_offers: [],
         documents: [],
         documents_stats: {},
+        applications: [],
     },
     reducers: {
         setJobOffers: (state, action) => {
@@ -18,9 +19,12 @@ export const applicantSlice = createSlice({
         setDocumentStats: (state, action) => {
             state.documents_stats = action.payload;
         },
+        setApplications: (state, action) => {
+            state.applications = action.payload;
+        },
     },
 });
-export const { setJobOffers, setDocuments, setDocumentStats } =
+export const { setJobOffers, setDocuments, setDocumentStats, setApplications } =
     applicantSlice.actions;
 
 export default applicantSlice.reducer;

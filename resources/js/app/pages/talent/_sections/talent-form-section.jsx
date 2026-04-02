@@ -130,7 +130,6 @@ const TalentFormSection = () => {
     };
 
     const prevStep = () => setStep((curr) => curr - 1);
-
     const [regions, setRegions] = useState([]);
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);

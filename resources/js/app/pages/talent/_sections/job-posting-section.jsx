@@ -100,24 +100,28 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                                                     Job Qualifications
                                                 </h3>
-                                                <p className="text-gray-600 leading-relaxed">
-                                                    {
-                                                        res.job_requisition
-                                                            .qualifications
-                                                    }
-                                                </p>
+                                                <div
+                                                    className="text-gray-600 leading-relaxed"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: res
+                                                            .job_requisition
+                                                            .qualifications,
+                                                    }}
+                                                />
                                             </section>
 
                                             <section className="bg-white rounded-2xl shadow-sm border border-gray-300 p-8">
                                                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                                                     Justification for Position
                                                 </h3>
-                                                <ul className="space-y-3">
-                                                    {
-                                                        res.job_requisition
-                                                            .justification_for_position
-                                                    }
-                                                </ul>
+                                                <div
+                                                    className="text-gray-600 leading-relaxed"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: res
+                                                            .job_requisition
+                                                            .justification_for_position,
+                                                    }}
+                                                />
                                             </section>
 
                                             {/* Gradient overlay when collapsed */}
@@ -135,12 +139,13 @@ export default function JobPostingSection({ onApply, setStep }) {
                                             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
                                                 Job Responsibility
                                             </h3>
-                                            <ul className="space-y-3">
-                                                {
-                                                    res.job_requisition
-                                                        .responsibilities
-                                                }
-                                            </ul>
+                                            <div
+                                                className="text-gray-600 leading-relaxed"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: res.job_requisition
+                                                        .responsibilities,
+                                                }}
+                                            />
                                         </section>
 
                                         <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 text-white shadow-xl shadow-blue-100">

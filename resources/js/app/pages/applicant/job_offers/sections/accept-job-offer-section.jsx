@@ -177,7 +177,7 @@ export default function AcceptJobOfferSection({ data }) {
                         {decision === "Declined" && (
                             <Button
                                 disabled={loading}
-                                onClick={() => submit_job_offer("Declined")}
+                                onClick={() => submit_job_offer("Declined Job Offer")}
                                 className="flex-1"
                                 variant="danger"
                             >
@@ -188,7 +188,7 @@ export default function AcceptJobOfferSection({ data }) {
                         {decision === "Accepted" && (
                             <Button
                                 disabled={loading}
-                                onClick={() => submit_job_offer("Accepted")}
+                                onClick={() => submit_job_offer("Accepted Job Offer")}
                                 className=" flex-1"
                             >
                                 ACCEPT JOB OFFER

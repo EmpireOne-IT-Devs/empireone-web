@@ -35,6 +35,16 @@ class JobApplicationController extends Controller
         return base64_decode($data);
     }
 
+    public function get_job_application_by_user(Request $request)
+    {
+        $applications =  JobApplication::where('user_id', Auth::id())->with(['applicant','job_posting'])->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $applications
+        ], 200);
+    }
+
     public function send_job_offer(Request $request)
     {
         $request->validate([

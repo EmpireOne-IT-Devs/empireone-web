@@ -26,8 +26,8 @@ return new class extends Migration
             $table->longText('declined_reason')->nullable();
             $table->enum('status', [
                 'Pending',
-                'Accepted',
-                'Declined',
+                'Accepted Job Offer',
+                'Declined Job Offer',
                 'Re-Offered'
             ])->default('Pending');
             $table->timestamps();
