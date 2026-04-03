@@ -6,13 +6,21 @@ import ProfessionalSection from "./professional-section";
 import DocumentsSection from "./document-section";
 import { usePage } from "@inertiajs/react";
 import Button from "@/app/_components/button";
+import EmergencyContactSection from "./emergency-contact-section";
 
-const TAB_IDS = ["personal", "professional", "documents", "customization"];
+const TAB_IDS = [
+    "personal",
+    "professional",
+    "documents",
+    "emergency",
+    "customization",
+];
 
 const TAB_LABELS = {
     personal: "Personal Information",
     documents: "Government Information",
     professional: "Talent & Skill",
+    emergency: "Emergency Contact",
     customization: "Customization",
 };
 
@@ -67,6 +75,19 @@ const INITIAL_FORM = {
     prcFile: "",
     clearanceFile: "",
     medicalFile: "",
+    emergencyContactName: "",
+    emergencyContactRelationship: "",
+    emergencyContactPhone: "",
+    emergencyContactEmail: "",
+    emergencyContactAddress: "",
+    fatherFirstName: "",
+    fatherMiddleName: "",
+    fatherLastName: "",
+    fatherContactNo: "",
+    motherFirstName: "",
+    motherMiddleName: "",
+    motherLastName: "",
+    motherContactNo: "",
 };
 
 export default function InfoTabsSection({ editing, setEditing }) {
@@ -99,11 +120,11 @@ export default function InfoTabsSection({ editing, setEditing }) {
     return (
         <div
             style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}
-            className="max-w-4xl mx-auto"
+            className="max-w-9xl mx-auto"
         >
             <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');`}</style>
 
-            <div className="bg-white/70 backdrop-blur-xl border border-white rounded-3xl shadow-xl shadow-slate-200/60 overflow-hidden">
+            <div className=" bg-white/70 backdrop-blur-xl border border-white rounded-3xl shadow-xl shadow-slate-200/60 overflow-hidden">
                 <Tabs
                     tabs={tabs}
                     activeIndex={activeIndex}
@@ -150,6 +171,14 @@ export default function InfoTabsSection({ editing, setEditing }) {
                             editing={editing}
                         />
                     )}
+                    {activeTabId === "emergency" && (
+                        <EmergencyContactSection
+                            form={form}
+                            set={set}
+                            editing={editing}
+                        />
+                    )}
+
                     {activeTabId === "customization" && (
                         <div className="flex flex-col items-center justify-center py-20">
                             <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-300">

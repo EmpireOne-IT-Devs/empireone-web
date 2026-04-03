@@ -10,13 +10,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFieldArray, useForm } from "react-hook-form";
 import { edit_information_service } from "@/app/services/account-service";
 import { setAlert } from "@/app/redux/app-slice";
+import EmergencyContactSection from "./emergency-contact-section";
 
-const TAB_IDS = ["personal", "professional", "documents", "customization"];
+const TAB_IDS = ["personal", "professional", "documents", "emergency", "customization"];
 
 const TAB_LABELS = {
     personal: "Personal Information",
     documents: "Government Information",
     professional: "Experiences & Skills",
+    emergency: "Emergency Contact",
     customization: "Customization",
 };
 
@@ -40,7 +42,7 @@ export default function InfoTabsSection() {
     } = useForm({
         defaultValues: {},
     });
-    const formValues = watch(); 
+    const formValues = watch();
     const dispatch = useDispatch();
     const [regions, setRegions] = useState([]);
     const [provinces, setProvinces] = useState([]);
@@ -155,6 +157,13 @@ export default function InfoTabsSection() {
                             <DocumentsSection
                                 register={register}
                                 errors={errors}
+                            />
+                        )}
+                        {activeTabId === "emergency" && (
+                            <EmergencyContactSection
+                                form={formValues}
+                                set={set}
+                                editing={true}
                             />
                         )}
 

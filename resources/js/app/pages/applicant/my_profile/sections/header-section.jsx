@@ -7,13 +7,23 @@ import {
     X,
     Camera,
     PencilLine,
+    Link,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function HeaderSection() {
     const { data } = useSelector((store) => store.app);
+    const [copied, setCopied] = useState(false);
     const profileCompletion = 20;
+
+    const handleCopyLink = () => {
+        const link = `${window.location.origin}/talent/application`;
+        navigator.clipboard.writeText(link).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden mx-auto">
@@ -38,7 +48,14 @@ export default function HeaderSection() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-end justify-end gap-2">
+                        <button
+                            onClick={handleCopyLink}
+                            className="p-1.5 flex gap-1 border border-blue-500 bg-blue-600 rounded-md items-center justify-center text-white"
+                        >
+                            <Link className="w-3.5 h-3.5 mr-2" />
+                            {copied ? "Copied!" : "Copy Link "}
+                        </button>
                         <a
                             href="/applicant/my_profile/signature"
                             target="_blank"

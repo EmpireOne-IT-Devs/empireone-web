@@ -8,8 +8,9 @@ export default function Page() {
 
     return (
         <Layout>
+            
             <HeaderSection editing={editing} setEditing={setEditing} />
-            <div className="mt-4">
+            <div className="mt-4 ">
                 <InfoTabsSection editing={editing} setEditing={setEditing} />
             </div>
         </Layout>

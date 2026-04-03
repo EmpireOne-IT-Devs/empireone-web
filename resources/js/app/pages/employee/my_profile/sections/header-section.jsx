@@ -7,10 +7,19 @@ import {
     X,
     Camera,
     PencilLine,
+    Link,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
 
 export default function HeaderSection({ editing, setEditing }) {
+    const [copied, setCopied] = useState(false);
+    const handleCopyLink = () => {
+        const link = `${window.location.origin}/talent/application`;
+        navigator.clipboard.writeText(link).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
     const profileCompletion = 20;
 
     const fileInputRef = useRef(null);
@@ -28,7 +37,7 @@ export default function HeaderSection({ editing, setEditing }) {
     };
     const [showESignature, setShowESignature] = useState(false);
     return (
-        <div className="bg-white rounded-xl shadow-md overflow-hidden max-w-4xl mx-auto">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden max-w-9xl mx-auto">
             <div className="h-28 bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700" />
 
             <div className="px-6 pb-5">
@@ -75,17 +84,7 @@ export default function HeaderSection({ editing, setEditing }) {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <a
-                            href="/employee/my_profile/signature"
-                            onClick={() => setShowESignature(true)}
-                            target="_blank"
-                            className="p-1.5 flex gap-1 border border-purple-500 bg-purple-600 rounded-md items-center justify-center text-white"
-                        >
-                            <PencilLine className="w-3.5 h-3.5 mr-2" />
-                            E-Signature
-                        </a>
-
+                    {/* <div className="flex items-center gap-2">
                         {!editing ? (
                             <Button onClick={() => setEditing(true)}>
                                 <Edit2 className="w-3.5 h-3.5 mr-2" />
@@ -97,7 +96,24 @@ export default function HeaderSection({ editing, setEditing }) {
                                 Cancel Edit
                             </Button>
                         )}
-                    </div>
+                    </div> */}
+                </div>
+                <div className="flex items-end justify-end gap-2">
+                    <button
+                        onClick={handleCopyLink}
+                        className="p-1.5 flex gap-1 border border-blue-500 bg-blue-600 rounded-md items-center justify-center text-white"
+                    >
+                        <Link className="w-3.5 h-3.5 mr-2" />
+                        {copied ? "Copied!" : "Copy Link "}
+                    </button>
+                    <a
+                        href="/applicant/my_profile/signature"
+                        target="_blank"
+                        className="p-1.5 flex gap-1 border border-purple-500 bg-purple-600 rounded-md items-center justify-center text-white"
+                    >
+                        <PencilLine className="w-3.5 h-3.5 mr-2" />
+                        E-Signature
+                    </a>
                 </div>
 
                 <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
