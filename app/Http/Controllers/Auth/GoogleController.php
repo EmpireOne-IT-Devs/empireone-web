@@ -79,17 +79,18 @@ class GoogleController extends Controller
             $googleUser = Socialite::driver('google')->user();
 
             $user = User::where('email', $googleUser['email'])->first();
-            $user->update(
-                [
-                    'google_id' => $googleUser['sub'],
-                    'name' => $googleUser['name'] ?? $googleUser['email'],
-                    'avatar' => $googleUser['picture'] ?? null,
-                ]
-            );
+
             if ($user) {
+                $user->update(
+                    [
+                        'google_id' => $googleUser['sub'],
+                        'name' => $googleUser['name'] ?? $googleUser['email'],
+                        'avatar' => $googleUser['picture'] ?? null,
+                    ]
+                );
                 Auth::login($user, true);
             }
-            return $this->route_page($user->role);
+            return $this->route_page($user->role ?? 0);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
