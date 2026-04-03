@@ -211,25 +211,7 @@ const Page = ({ flash }) => {
                             Forgot?
                         </button>
                     </div>
-                    {/* --- SSO LOGIN BUTTONS --- */}
-                    <div className="flex gap-4 mb-6">
-                        <a
-                            href="/api/auth/google/web" // Standard link, no /api, no Inertia
-                            className="flex-1 flex items-center justify-center gap-2 py-4 shadow-lg rounded-xl text-black font-black border border-white bg-white hover:border-white transition-all text-sm"
-                        >
-                            <FcGoogle className="text-lg" />
-                           LOGIN WITH GOOGLE
-                        </a>
-                    </div>
 
-                    {/* --- DIVIDER --- */}
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="flex-1 h-[1px] bg-white/10"></div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
-                            Or continue with email
-                        </span>
-                        <div className="flex-1 h-[1px] bg-white/10"></div>
-                    </div>
                     {/* Submit Button */}
                     <motion.button
                         disabled={processing}
@@ -255,6 +237,24 @@ const Page = ({ flash }) => {
                             </>
                         )}
                     </motion.button>
+                    {/* --- DIVIDER --- */}
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="flex-1 h-[1px] bg-white/10"></div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+                            Or continue with email
+                        </span>
+                        <div className="flex-1 h-[1px] bg-white/10"></div>
+                    </div>
+                    {/* --- SSO LOGIN BUTTONS --- */}
+                    <div className="flex gap-4 mb-6">
+                        <a
+                            href="/api/auth/google/web" // Standard link, no /api, no Inertia
+                            className="flex-1 flex items-center justify-center hover:bg-gray-200 gap-2 py-4 shadow-lg rounded-xl text-black font-black border border-white bg-white hover:border-white transition-all text-sm"
+                        >
+                            <FcGoogle className="text-lg" />
+                            LOGIN WITH GOOGLE
+                        </a>
+                    </div>
                 </form>
 
                 {/* Footer */}
