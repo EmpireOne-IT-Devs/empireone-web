@@ -25,7 +25,6 @@ export default function HeaderSection() {
             setTimeout(() => setCopied(false), 2000);
         });
     };
-
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden mx-auto">
             <div className="h-28 bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700" />
@@ -43,6 +42,12 @@ export default function HeaderSection() {
                         <p className="text-sm font-semibold text-gray-900">
                             {data?.user?.name}
                         </p>
+                        {data?.user?.account_employee?.employee_id && (
+                            <p className="text-sm font-semibold text-gray-900">
+                                Employee ID:{" "}
+                                {data?.user?.account_employee?.employee_id}
+                            </p>
+                        )}
                         <div className="flex items-center gap-1 mt-0.5 text-gray-500 text-xs">
                             <Mail className="w-3.5 h-3.5 text-gray-400" />
                             {data?.user?.email}

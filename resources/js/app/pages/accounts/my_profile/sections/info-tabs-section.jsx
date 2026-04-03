@@ -161,9 +161,7 @@ export default function InfoTabsSection() {
                         )}
                         {activeTabId === "emergency" && (
                             <EmergencyContactSection
-                                form={formValues}
-                                set={set}
-                                editing={true}
+                                register={register}
                             />
                         )}
 

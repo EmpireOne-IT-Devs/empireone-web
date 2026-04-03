@@ -19,6 +19,7 @@ class AccountEmployee extends Model
         'site_id',
         'location_id',
         'account_id',
+        'employee_id',
         'account_contract_id',
         'work_type',
         'eogs_email',

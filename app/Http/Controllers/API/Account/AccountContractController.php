@@ -46,6 +46,10 @@ class AccountContractController extends Controller
             'tin' => $request->tin,
             'philhealth' => $request->philhealth,
             'pagibig' => $request->pagibig,
+            'contact_name' => $request->contact_name,
+            'contact_address' => $request->contact_address,
+            'contact_relationship' => $request->contact_relationship,
+            'contact_number' => $request->contact_number,
         ]);
 
         $skillIds = [];

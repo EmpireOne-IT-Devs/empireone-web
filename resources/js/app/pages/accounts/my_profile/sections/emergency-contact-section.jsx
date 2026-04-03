@@ -1,9 +1,8 @@
 import { Phone, User, Heart, Users } from "lucide-react";
 import React from "react";
 import Input from "@/app/_components/input";
-import Select from "@/app/_components/select";
 
-export default function EmergencyContactSection({ form, set, editing }) {
+export default function EmergencyContactSection({ register }) {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3 bg-red-50 border border-red-200 rounded-xl px-6 py-4">
@@ -13,59 +12,32 @@ export default function EmergencyContactSection({ form, set, editing }) {
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                     <Input
                         label="Contact Name *"
-                        name="emergencyContactName"
-                        value={form.emergencyContactName}
-                        onChange={set("emergencyContactName")}
+                        name="contact_name"
+                        {...register("contact_name")}
                         iconLeft={<User size={14} />}
-                        disabled={!editing}
                     />
-                    <Select
-                        label="Relationship *"
-                        name="emergencyContactRelationship"
-                        value={form.emergencyContactRelationship}
-                        onChange={set("emergencyContactRelationship")}
-                        disabled={!editing}
-                        options={[
-                            { label: "Spouse", value: "spouse" },
-                            { label: "Parent", value: "parent" },
-                            { label: "Sibling", value: "sibling" },
-                            { label: "Child", value: "child" },
-                            { label: "Relative", value: "relative" },
-                            { label: "Friend", value: "friend" },
-                            { label: "Other", value: "other" },
-                        ]}
+                     <Input
+                        label="Contact Relationship *"
+                        name="contact_relationship"
+                        {...register("contact_relationship")}
+                        iconLeft={<User size={14} />}
+                    />
+                     <Input
+                        label="Contact Number *"
+                        name="contact_number"
+                        {...register("contact_number")}
+                        iconLeft={<User size={14} />}
                     />
                     <Input
-                        label="Phone Number *"
-                        name="emergencyContactPhone"
-                        value={form.emergencyContactPhone}
-                        onChange={set("emergencyContactPhone")}
-                        iconLeft={<Phone size={14} />}
-                        disabled={!editing}
-                    />
-                    <Input
-                        label="Email Address"
-                        name="emergencyContactEmail"
-                        type="email"
-                        value={form.emergencyContactEmail}
-                        onChange={set("emergencyContactEmail")}
+                        label="Contact Address *"
+                        name="contact_address"
+                        {...register("contact_address")}
                         iconLeft={<User size={14} />}
-                        disabled={!editing}
                     />
-                    <div className="col-span-2">
-                        <Input
-                            label="Address"
-                            name="emergencyContactAddress"
-                            value={form.emergencyContactAddress}
-                            onChange={set("emergencyContactAddress")}
-                            iconLeft={<User size={14} />}
-                            disabled={!editing}
-                        />
-                    </div>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-3 bg-amber-50 border border-amber-200 rounded-xl px-6 py-4">
+            {/* <div className="flex flex-col gap-3 bg-amber-50 border border-amber-200 rounded-xl px-6 py-4">
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <Users size={15} /> Father's Information
                 </span>
@@ -143,7 +115,7 @@ export default function EmergencyContactSection({ form, set, editing }) {
                         disabled={!editing}
                     />
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }

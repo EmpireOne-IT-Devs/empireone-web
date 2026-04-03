@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
+        $middleware->alias([
+            'role.redirect' => \App\Http\Middleware\RedirectByRole::class,
+        ]);
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {

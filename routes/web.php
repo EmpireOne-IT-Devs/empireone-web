@@ -40,7 +40,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // admin routes (Role 1)
-Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('administrator')->middleware(['auth', 'verified', 'role.redirect:1'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('administrator/dashboard/page');
     });
@@ -234,8 +234,8 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
 });
 
 Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
-    // Employee routes (Role 2)
-    Route::prefix('employee')->group(function () {
+    // Employee routes (Role 2), 'role.redirect'
+    Route::prefix('employee')->middleware(['role.redirect:2'])->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('accounts/_employee/dashboard/page');
         });
@@ -290,7 +290,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         });
     });
     // Employee routes (Role 3)
-    Route::prefix('applicant')->group(function () {
+    Route::prefix('applicant')->middleware(['role.redirect:3'])->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('accounts/_employee/dashboard/page');
         });
