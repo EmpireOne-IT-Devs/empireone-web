@@ -11,14 +11,9 @@ use Illuminate\Http\Request;
 use Google_Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
-use Inertia\Inertia;
 
 class GoogleController extends Controller
 {
-    public function webRedirectToGoogle()
-    {
-        return Socialite::driver('google')->redirect();
-    }
 
     public function route_page($role)
     {
@@ -26,8 +21,13 @@ class GoogleController extends Controller
             1 => redirect('/administrator/dashboard'),
             2 => redirect('/accounts/employee/dashboard'),
             3 => redirect('/accounts/applicant/dashboard'),
-            default => Inertia::render('auth/login/page'),
+            default => redirect('/auth/login'),
         };
+    }
+
+    public function webRedirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
     }
 
     // Step 1: Redirect to Google
@@ -50,8 +50,8 @@ class GoogleController extends Controller
 
             $googleUser = $response->json();
 
-            $user = User::where('email', $googleUser['email'])->first();
-            $user->update(
+            $user = User::updateOrCreate(
+                ['email' => $googleUser['email']],
                 [
                     'google_id' => $googleUser['sub'],
                     'name' => $googleUser['name'] ?? $googleUser['email'],
@@ -59,12 +59,13 @@ class GoogleController extends Controller
                 ]
             );
 
-            $this->route_page($user->role);
-            // $token = $user->createToken('auth_token')->plainTextToken;
+            // Laravel Sanctum token
+            $token = $user->createToken('auth_token')->plainTextToken;
+
             return response()->json([
                 'user' => $user,
-                // 'token' => $token,
-                // 'token_type' => 'Bearer',
+                'token' => $token,
+                'token_type' => 'Bearer',
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -77,21 +78,16 @@ class GoogleController extends Controller
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
 
-            $user = User::updateOrCreate(
-                ['email' => $googleUser->getEmail()],
+            $user = User::where('email', $googleUser['email'])->first();
+            $user->update(
                 [
-                    'google_id' => $googleUser->getId(),
-                    'name' => $googleUser->getName(),
+                    'google_id' => $googleUser['sub'],
+                    'name' => $googleUser['name'] ?? $googleUser['email'],
+                    'avatar' => $googleUser['picture'] ?? null,
                 ]
             );
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'user' => $user,
-                'token' => $token,
-                'token_type' => 'Bearer',
-            ]);
+            Auth::login($user, true);
+            return $this->route_page($user->role);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
