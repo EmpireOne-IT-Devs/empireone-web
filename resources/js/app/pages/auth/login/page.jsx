@@ -15,6 +15,8 @@ import { Link, router, useForm } from "@inertiajs/react";
 import { FcGoogle } from "react-icons/fc";
 
 const Page = ({ flash }) => {
+    const params = new URLSearchParams(location.search);
+    const error_message = params.get("error_message");
     const { data, setData, post, processing, errors } = useForm({
         email: "",
         password: "",
@@ -133,7 +135,12 @@ const Page = ({ flash }) => {
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-3">
+                    {error_message && (
+                        <div className="text-red-500 text-center">
+                            {error_message}
+                        </div>
+                    )}
                     {/* Email */}
                     <div className="group space-y-2">
                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#4ed1f4] transition-colors">
