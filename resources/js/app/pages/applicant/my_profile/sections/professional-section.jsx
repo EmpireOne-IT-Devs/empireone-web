@@ -6,9 +6,6 @@ import WorkingExperienceSection from "./working-experience-section";
 import SkillsSection from "./skills-section";
 
 export default function ProfessionalSection({
-    form,
-    set,
-    editing,
     watchedValues,
     register,
     appendExperience,
@@ -18,7 +15,7 @@ export default function ProfessionalSection({
     appendSkill,
     skillFields,
     removeSkill,
-    watch
+    watch,
 }) {
     return (
         <div className="flex flex-col gap-6">
@@ -48,71 +45,68 @@ export default function ProfessionalSection({
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <GraduationCap size={15} /> Educational Background
                 </span>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <Input
-                        label="School Name *"
-                        name="schoolName"
-                        value={form.schoolName}
-                        onChange={set("schoolName")}
-                        iconLeft={<User size={14} />}
-                        disabled={!editing}
+                        label="School Name"
+                        name="school_name"
+                        {...register("school_name", {
+                            required: "Required",
+                        })}
+                        error={errors.school_name}
+                        placeholder="Central Philippine State University"
                     />
                     <Select
-                        label="Degree Level"
-                        name="degreeLevel"
-                        value={form.degreeLevel}
-                        onChange={set("degreeLevel")}
-                        disabled={!editing}
+                        label="Degree"
+                        name="degree"
+                        {...register("degree", {
+                            required: true,
+                        })}
                         options={[
-                            { label: "High School", value: "high_school" },
+                            { value: "Elementary", label: "Elementary" },
                             {
-                                label: "Vocational / TESDA",
-                                value: "vocational",
+                                value: "High School Junior",
+                                label: "High School Junior",
                             },
-                            { label: "Associate", value: "associate" },
-                            { label: "Bachelor's", value: "bachelors" },
-                            { label: "Master's", value: "masters" },
-                            { label: "Doctorate", value: "doctorate" },
+                            {
+                                value: "High School Senior",
+                                label: "High School Senior",
+                            },
+                            { value: "College", label: "College" },
+                            { value: "Masteral", label: "Masteral" },
+                            { value: "Doctoral", label: "Doctoral" },
                         ]}
+                        error={errors.degree}
+                        value={watchedValues.degree}
+                        required
                     />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <Input
-                        label="Course / Program"
+                        label="Course"
                         name="course"
-                        value={form.course}
-                        onChange={set("course")}
-                        iconLeft={<User size={14} />}
-                        disabled={!editing}
+                        {...register("course", {
+                            required: "Required",
+                        })}
+                        error={errors.course}
+                        placeholder="BSIT"
                     />
+
                     <Input
                         label="Year Graduated"
-                        name="yearGraduated"
-                        type="number"
-                        value={form.yearGraduated}
-                        onChange={set("yearGraduated")}
-                        iconLeft={<Calendar size={14} />}
-                        disabled={!editing}
-                    />
-                    <Select
-                        label="Award / Honors"
-                        name="awardHonors"
-                        value={form.awardHonors}
-                        onChange={set("awardHonors")}
-                        disabled={!editing}
-                        options={[
-                            { label: "Summa Cum Laude", value: "summa" },
-                            { label: "Magna Cum Laude", value: "magna" },
-                            { label: "Cum Laude", value: "cum_laude" },
-                            { label: "With Distinction", value: "distinction" },
-                            { label: "None", value: "none" },
-                        ]}
+                        name="year_graduated"
+                        {...register("year_graduated", {
+                            required: "Required",
+                        })}
+                        error={errors.year_graduated}
+                        placeholder="2025"
                     />
                     <Input
-                        label="School Address"
-                        name="schoolAddress"
-                        value={form.schoolAddress}
-                        onChange={set("schoolAddress")}
-                        iconLeft={<User size={14} />}
-                        disabled={!editing}
+                        label="Award"
+                        name="awards"
+                        {...register("awards")}
+                        placeholder="Best In *"
+                        error={errors.awards}
                     />
                 </div>
             </div>

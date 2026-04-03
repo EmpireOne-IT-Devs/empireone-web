@@ -8,6 +8,7 @@ export default function Tabs({ tabs, activeIndex, onTabClick, children }) {
                 {tabs.map((tab, idx) => (
                     <button
                         key={idx}
+                        type="button"
                         className={`py-4 text-base font-medium transition-colors ${
                             tab.active
                                 ? "text-blue-800"

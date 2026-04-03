@@ -23,8 +23,8 @@ export default function WorkingExperienceSection({
                         appendExperience({
                             company_name: "",
                             position: "",
-                            start_at: "",
-                            end_at: "",
+                            start_date: "",
+                            end_date: "",
                             job_description: "",
                         })
                     }
@@ -73,16 +73,19 @@ export default function WorkingExperienceSection({
                         <div className="flex flex-1 flex-col">
                             <Input
                                 label="Start Year"
-                                name={`experiences.${index}.start_at`}
-                                {...register(`experiences.${index}.start_at`, {
-                                    required: "Required",
-                                })}
+                                name={`experiences.${index}.start_date`}
+                                {...register(
+                                    `experiences.${index}.start_date`,
+                                    {
+                                        required: "Required",
+                                    },
+                                )}
                                 type="number"
                                 min={1900}
                                 max={new Date().getFullYear()}
                                 placeholder="YYYY"
                                 className={`p-3 border rounded-lg outline-none focus:ring-2 ${
-                                    errors.experiences?.[index]?.start_at
+                                    errors.experiences?.[index]?.start_date
                                         ? "border-red-400"
                                         : "focus:ring-blue-400"
                                 }`}
@@ -91,8 +94,8 @@ export default function WorkingExperienceSection({
                         <div className="flex flex-1 flex-col">
                             <Input
                                 label="End Year"
-                                name={`experiences.${index}.end_at`}
-                                {...register(`experiences.${index}.end_at`, {
+                                name={`experiences.${index}.end_date`}
+                                {...register(`experiences.${index}.end_date`, {
                                     required: "Required",
                                     validate: (val) =>
                                         parseInt(val, 10) >=

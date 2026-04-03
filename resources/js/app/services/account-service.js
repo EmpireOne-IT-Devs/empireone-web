@@ -9,3 +9,7 @@ export async function send_documents_service(data) {
 }
 
 
+export async function edit_information_service(data) {
+    return await axios.post(`/api/accounts/edit_information`, data);
+}
+
