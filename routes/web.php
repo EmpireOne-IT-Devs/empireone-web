@@ -11,8 +11,8 @@ function route_page()
     $user = Auth::user();
     return match ($user?->role) {
         1 => redirect('/administrator/dashboard'),
-        2 => redirect('/employee/dashboard'),
-        3 => redirect('/applicant/dashboard'),
+        2 => redirect('/accounts/employee/dashboard'),
+        3 => redirect('/accounts/applicant/dashboard'),
         default => Inertia::render('auth/login/page'),
     };
 }
@@ -232,94 +232,104 @@ Route::prefix('administrator')->middleware(['auth', 'verified'])->group(function
         return Inertia::render('administrator/settings/page');
     });
 });
-// Employee routes (Role 2)
-Route::prefix('employee')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('employee/dashboard/page');
+
+Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
+    // Employee routes (Role 2)
+    Route::prefix('employee')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('accounts/_employee/dashboard/page');
+        });
+        Route::get('/job_openings', function () {
+            return Inertia::render('accounts/job_openings/page');
+        });
+        Route::get('/my_applications', function () {
+            return Inertia::render('accounts/my_applications/page');
+        });
+        Route::get('/messages', function () {
+            return Inertia::render('accounts/messages/page');
+        });
+        Route::prefix('my_profile')->group(function () {
+            Route::get('/', function () {
+                return Inertia::render('accounts/my_profile/page');
+            });
+            Route::get('/signature', function () {
+                return Inertia::render('accounts/my_profile/signature/page');
+            });
+        });
+        Route::get('/job_offers', function () {
+            return Inertia::render('accounts/job_offers/page');
+        });
+        Route::get('/my_documents', function () {
+            return Inertia::render('accounts/my_documents/page');
+        });
+        Route::get('/settings', function () {
+            return Inertia::render('accounts/settings/page');
+        });
+
+
+        Route::get('/activities', function () {
+            return Inertia::render('accounts/_employee/activities/page');
+        });
+
+        Route::get('/hr_services', function () {
+            return Inertia::render('accounts/_employee/hr_services/page');
+        });
+        Route::get('/rnr', function () {
+            return Inertia::render('accounts/_employee/rnr/page');
+        });
+
+        Route::get('rewards_store', function () {
+            return Inertia::render('accounts/_employee/rewards_store/page');
+        });
+
+        Route::get('loan', function () {
+            return Inertia::render('accounts/_employee/loan/page');
+        });
+        Route::get('payroll', function () {
+            return Inertia::render('accounts/_employee/payroll/page');
+        });
     });
-    Route::get('/activities', function () {
-        return Inertia::render('employee/activities/page');
+    // Employee routes (Role 3)
+    Route::prefix('applicant')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('accounts/_employee/dashboard/page');
+        });
+        Route::get('/job_openings', function () {
+            return Inertia::render('accounts/job_openings/page');
+        });
+        Route::get('/my_applications', function () {
+            return Inertia::render('accounts/my_applications/page');
+        });
+        Route::get('/messages', function () {
+            return Inertia::render('accounts/messages/page');
+        });
+        Route::prefix('my_profile')->group(function () {
+            Route::get('/', function () {
+                return Inertia::render('accounts/my_profile/page');
+            });
+            Route::get('/signature', function () {
+                return Inertia::render('accounts/my_profile/signature/page');
+            });
+        });
+        Route::get('/job_offers', function () {
+            return Inertia::render('accounts/job_offers/page');
+        });
+        Route::get('/my_documents', function () {
+            return Inertia::render('accounts/my_documents/page');
+        });
+        Route::get('/settings', function () {
+            return Inertia::render('accounts/settings/page');
+        });
     });
-     Route::get('/hr_services', function () {
-        return Inertia::render('employee/hr_services/page');
+
+    Route::get('/my_documents/{id}/contract', function () {
+        return Inertia::render('accounts/administrator/employee_relation/employees/id/contract/page');
     });
-    Route::get('/rnr', function () {
-        return Inertia::render('employee/rnr/page');
-    });
-    Route::get('rewards_store', function () {
-        return Inertia::render('employee/rewards_store/page');
-    });
-    Route::get('/job_openings', function () {
-        return Inertia::render('employee/job_openings/page');
-    });
-    Route::get('/my_applications', function () {
-        return Inertia::render('employee/my_applications/page');
-    });
-    Route::get('/messages', function () {
-        return Inertia::render('employee/messages/page');
-    });
-    Route::get('/my_profile', function () {
-        return Inertia::render('employee/my_profile/page');
+    Route::get('/my_documents/{id}/onboarding', function () {
+        return Inertia::render('accounts/administrator/employee_relation/employees/id/onboarding/page');
     });
     Route::get('/my_profile/signature', function () {
         return Inertia::render('employee/my_profile/signature/page');
-    });
-    Route::get('/job_offers', function () {
-        return Inertia::render('employee/job_offers/page');
-    });
-    Route::get('/my_documents', function () {
-        return Inertia::render('employee/my_documents/page');
-    });
-    Route::get('/my_documents/{id}/contract', function () {
-        return Inertia::render('administrator/employee_relation/employees/id/contract/page');
-    });
-    Route::get('/my_documents/{id}/onboarding', function () {
-        return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
-    });
-     Route::get('loan', function () {
-        return Inertia::render('employee/loan/page');
-    });
-    Route::get('payroll', function () {
-        return Inertia::render('employee/payroll/page');
-    });
-    Route::get('/settings', function () {
-        return Inertia::render('employee/settings/page');
-    });
-});
-// Applicant routes (Role 3)
-Route::prefix('applicant')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('applicant/dashboard/page');
-    });
-    Route::get('/job_openings', function () {
-        return Inertia::render('applicant/job_openings/page');
-    });
-    Route::get('/my_applications', function () {
-        return Inertia::render('applicant/my_applications/page');
-    });
-    Route::get('/messages', function () {
-        return Inertia::render('applicant/messages/page');
-    });
-    Route::get('/my_profile', function () {
-        return Inertia::render('applicant/my_profile/page');
-    });
-    Route::get('/my_profile/signature', function () {
-        return Inertia::render('applicant/my_profile/signature/page');
-    });
-    Route::get('/job_offers', function () {
-        return Inertia::render('applicant/job_offers/page');
-    });
-    Route::get('/my_documents', function () {
-        return Inertia::render('applicant/my_documents/page');
-    });
-    Route::get('/my_documents/{id}/contract', function () {
-        return Inertia::render('administrator/employee_relation/employees/id/contract/page');
-    });
-    Route::get('/my_documents/{id}/onboarding', function () {
-        return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
-    });
-    Route::get('/settings', function () {
-        return Inertia::render('applicant/settings/page');
     });
 });
 
