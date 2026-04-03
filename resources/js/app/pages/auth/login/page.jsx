@@ -8,8 +8,11 @@ import {
     FaEyeSlash,
     FaCheckCircle,
     FaExclamationTriangle,
+    FaGoogle,
+    FaGithub,
 } from "react-icons/fa";
-import { Link, useForm } from "@inertiajs/react";
+import { Link, router, useForm } from "@inertiajs/react";
+import { FcGoogle } from "react-icons/fc";
 
 const Page = ({ flash }) => {
     const { data, setData, post, processing, errors } = useForm({
@@ -103,7 +106,7 @@ const Page = ({ flash }) => {
                 className="relative z-10 w-full max-w-md p-10 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
             >
                 {/* Header */}
-                <div className="flex flex-col items-center mb-10">
+                <div className="flex flex-col items-center mb-8">
                     <motion.div
                         animate={{ rotate: 360 }}
                         transition={{
@@ -201,14 +204,38 @@ const Page = ({ flash }) => {
                                 Remember Me
                             </span>
                         </label>
+                        <button
+                            type="button"
+                            className="text-xs text-slate-400 hover:text-[#4ed1f4] transition-colors uppercase tracking-widest font-medium"
+                        >
+                            Forgot?
+                        </button>
+                    </div>
+                    {/* --- SSO LOGIN BUTTONS --- */}
+                    <div className="flex gap-4 mb-6">
+                        <a
+                            href="/api/auth/google/web" // Standard link, no /api, no Inertia
+                            className="flex-1 flex items-center justify-center gap-2 py-4 shadow-lg rounded-xl text-black font-black border border-white bg-white hover:border-white transition-all text-sm"
+                        >
+                            <FcGoogle className="text-lg" />
+                           LOGIN WITH GOOGLE
+                        </a>
                     </div>
 
+                    {/* --- DIVIDER --- */}
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="flex-1 h-[1px] bg-white/10"></div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+                            Or continue with email
+                        </span>
+                        <div className="flex-1 h-[1px] bg-white/10"></div>
+                    </div>
                     {/* Submit Button */}
                     <motion.button
                         disabled={processing}
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full relative py-4 rounded-xl font-black text-white uppercase tracking-[0.3em] overflow-hidden transition-all group"
+                        className="w-full relative flex items-center justify-center gap-3 py-4 rounded-xl font-black text-white uppercase tracking-[0.2em] overflow-hidden transition-all group"
                         style={{ backgroundColor: colors.electricBlue }}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -223,20 +250,21 @@ const Page = ({ flash }) => {
                                 className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mx-auto"
                             />
                         ) : (
-                            "Login"
+                            <>
+                                <span>Login </span>
+                            </>
                         )}
                     </motion.button>
                 </form>
 
                 {/* Footer */}
-                <div className="mt-10 flex justify-between text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
+                <div className="mt-8 flex justify-center text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
                     <Link
                         href="/"
                         className="hover:text-[#4ed1f4] transition-colors underline decoration-[#4ed1f4]/30 underline-offset-4"
                     >
-                        Homepage
+                        Return to Homepage
                     </Link>
-                    {/* <button className="hover:text-[#4ed1f4] transition-colors">Recover_Access?</button> */}
                 </div>
             </motion.div>
         </div>

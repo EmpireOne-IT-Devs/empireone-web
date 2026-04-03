@@ -1,1 +1,0 @@
-import{g as s}from"./app-BH4iBS_K.js";async function t(a){return await s.post("/api/accounts/save_signature",a)}async function i(a){return await s.post("/api/accounts/send_documents",a)}async function e(a){return await s.post("/api/accounts/edit_information",a)}export{t as a,e,i as s};

@@ -40,8 +40,8 @@ Route::post('auth/change_password', [EmailOtpController::class, 'change_password
 
 
 Route::get('auth/google/web', [GoogleController::class, 'webRedirectToGoogle']);
-Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 
 
 

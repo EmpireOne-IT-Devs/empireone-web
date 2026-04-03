@@ -11,12 +11,23 @@ use Illuminate\Http\Request;
 use Google_Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class GoogleController extends Controller
 {
     public function webRedirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
+    }
+
+    public function route_page($role)
+    {
+        return match ($role) {
+            1 => redirect('/administrator/dashboard'),
+            2 => redirect('/accounts/employee/dashboard'),
+            3 => redirect('/accounts/applicant/dashboard'),
+            default => Inertia::render('auth/login/page'),
+        };
     }
 
     // Step 1: Redirect to Google
@@ -39,8 +50,8 @@ class GoogleController extends Controller
 
             $googleUser = $response->json();
 
-            $user = User::updateOrCreate(
-                ['email' => $googleUser['email']],
+            $user = User::where('email', $googleUser['email'])->first();
+            $user->update(
                 [
                     'google_id' => $googleUser['sub'],
                     'name' => $googleUser['name'] ?? $googleUser['email'],
@@ -48,13 +59,12 @@ class GoogleController extends Controller
                 ]
             );
 
-            // Laravel Sanctum token
-            $token = $user->createToken('auth_token')->plainTextToken;
-
+            $this->route_page($user->role);
+            // $token = $user->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'user' => $user,
-                'token' => $token,
-                'token_type' => 'Bearer',
+                // 'token' => $token,
+                // 'token_type' => 'Bearer',
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::get('/', function () {
     return Inertia::render('landing_page/page');
 });
 
+
 Route::get('/auth/login', function () {
     if (Auth::user()) {
         return route_page();
@@ -38,6 +40,11 @@ Route::get('/talent/application', function () {
 Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Login With Google
+Route::get('auth/google/web', [GoogleController::class, 'webRedirectToGoogle']);
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 
 // admin routes (Role 1)
 Route::prefix('administrator')->middleware(['auth', 'verified', 'role.redirect:1'])->group(function () {
