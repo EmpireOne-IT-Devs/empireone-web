@@ -41,10 +41,6 @@ Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Login With Google
-Route::get('auth/google/web', [GoogleController::class, 'webRedirectToGoogle']);
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 
 // admin routes (Role 1)
 Route::prefix('administrator')->middleware(['auth', 'verified', 'role.redirect:1'])->group(function () {
