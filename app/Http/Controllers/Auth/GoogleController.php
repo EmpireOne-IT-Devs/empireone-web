@@ -86,7 +86,9 @@ class GoogleController extends Controller
                     'avatar' => $googleUser['picture'] ?? null,
                 ]
             );
-            Auth::login($user, true);
+            if ($user) {
+                Auth::login($user, true);
+            }
             return $this->route_page($user->role);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
