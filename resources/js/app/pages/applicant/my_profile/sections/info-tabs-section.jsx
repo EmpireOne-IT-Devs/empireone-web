@@ -6,72 +6,21 @@ import ProfessionalSection from "./professional-section";
 import DocumentsSection from "./document-section";
 import { usePage } from "@inertiajs/react";
 import Button from "@/app/_components/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFieldArray, useForm } from "react-hook-form";
+import { edit_information_service } from "@/app/services/account-service";
+import { setAlert } from "@/app/redux/app-slice";
 
 const TAB_IDS = ["personal", "professional", "documents", "customization"];
 
 const TAB_LABELS = {
     personal: "Personal Information",
     documents: "Government Information",
-    professional: "Talent & Skill",
+    professional: "Experiences & Skills",
     customization: "Customization",
 };
 
-const INITIAL_FORM = {
-    first_name: "",
-    middleName: "",
-    lastName: "",
-    suffix: "",
-    dob: "",
-    gender: "",
-    maritalStatus: "",
-    region: "",
-    province: "",
-    city_municipal: "",
-    barangay: "",
-    zip_code: "",
-    house_lot_street: "",
-    jobTitle: "",
-    companyName: "",
-    employmentType: "",
-    industry: "",
-    workStartDate: "",
-    workEndDate: "",
-    yearsExp: "",
-    salary: "",
-    currentlyEmployed: "",
-    primarySkill: "",
-    skillLevel: "",
-    secondarySkills: "",
-    certifications: "",
-    licenseNo: "",
-    licenseExpiry: "",
-    schoolName: "",
-    degreeLevel: "",
-    course: "",
-    yearGraduated: "",
-    awardHonors: "",
-    schoolAddress: "",
-    sssNo: "",
-    philhealthNo: "",
-    pagibigNo: "",
-    tinNo: "",
-    umidNo: "",
-    passportNo: "",
-    passportExpiry: "",
-    driversLicenseNo: "",
-    resumeFile: "",
-    validIdFront: "",
-    validIdBack: "",
-    diplomaFile: "",
-    coeFile: "",
-    prcFile: "",
-    clearanceFile: "",
-    medicalFile: "",
-};
-
-export default function InfoTabsSection({ editing, setEditing }) {
+export default function InfoTabsSection() {
     const { url } = usePage();
     const { data } = useSelector((store) => store.app);
 
@@ -87,13 +36,12 @@ export default function InfoTabsSection({ editing, setEditing }) {
         watch,
         setValue,
         control,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {},
     });
-    const formValues = watch(); // replaces form state
-    const [saved, setSaved] = React.useState(INITIAL_FORM);
-
+    const formValues = watch(); 
+    const dispatch = useDispatch();
     const [regions, setRegions] = useState([]);
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
@@ -125,13 +73,17 @@ export default function InfoTabsSection({ editing, setEditing }) {
 
     useEffect(() => {
         if (data?.user?.personal_information) {
-            reset(data?.user?.personal_information);
+            reset({
+                ...data?.user?.personal_information,
+                skills: data?.user?.skills,
+                experiences: data?.user?.working_experience,
+            });
         }
     }, [data?.user?.personal_information]);
 
-    // console.log("provinces", provinces);
+    console.log("formValuesformValues", formValues);
     // ✅ Save handler
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         const finalData = {
             ...data,
             region: getName(regions, data.region),
@@ -139,8 +91,18 @@ export default function InfoTabsSection({ editing, setEditing }) {
             city: getName(cities, data.city),
             barangay: getName(barangays, data.barangay),
         };
-        setSaved(data);
-        setEditing(false);
+        console.log("finalData", finalData);
+        try {
+            await edit_information_service(finalData);
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Information save Successfully!",
+                    message: "The Information has been saved .",
+                    open: true,
+                }),
+            );
+        } catch (error) {}
     };
 
     // helper (replacement for set function)
@@ -182,9 +144,6 @@ export default function InfoTabsSection({ editing, setEditing }) {
                                 appendExperience={appendExperience}
                                 register={register}
                                 errors={errors}
-                                form={formValues}
-                                set={set}
-                                editing={editing}
                                 skillFields={skillFields}
                                 appendSkill={appendSkill}
                                 removeSkill={removeSkill}
@@ -194,10 +153,8 @@ export default function InfoTabsSection({ editing, setEditing }) {
 
                         {activeTabId === "documents" && (
                             <DocumentsSection
-                                form={formValues}
-                                set={set}
                                 register={register}
-                                editing={editing}
+                                errors={errors}
                             />
                         )}
 
@@ -209,6 +166,15 @@ export default function InfoTabsSection({ editing, setEditing }) {
                                 </p>
                             </div>
                         )}
+                    </div>
+                    <div className="p-5">
+                        <Button
+                            type="submit"
+                            loading={isSubmitting}
+                            className="flex w-full"
+                        >
+                            SAVE
+                        </Button>
                     </div>
                 </div>
             </div>

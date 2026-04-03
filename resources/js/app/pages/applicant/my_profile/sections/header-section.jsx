@@ -11,37 +11,19 @@ import {
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function HeaderSection({ editing, setEditing }) {
+export default function HeaderSection() {
     const { data } = useSelector((store) => store.app);
     const profileCompletion = 20;
 
-    const fileInputRef = useRef(null);
-    const [preview, setPreview] = useState(null);
-
-    const handleClick = () => {
-        if (editing) fileInputRef.current.click();
-    };
-
-    const handleChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setPreview(URL.createObjectURL(file));
-        }
-    };
-    const [showESignature, setShowESignature] = useState(false);
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden mx-auto">
             <div className="h-28 bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700" />
 
             <div className="px-6 pb-5">
                 <div
-                    onClick={handleClick}
-                    className={`w-[90px] h-[90px] rounded-full bg-gray-200 border-4 border-white flex items-center justify-center -mt-11 relative z-10 overflow-hidden group ${
-                        editing ? "cursor-pointer" : ""
-                    }`}
+                    className={`w-[90px] h-[90px] rounded-full bg-gray-200 border-4 border-white flex items-center justify-center -mt-11 relative z-10 overflow-hidden group cursor-pointer `}
                 >
                     <User className="w-10 h-10 text-gray-400" />
-
                 </div>
 
                 <div className="flex justify-between items-end mt-2">
@@ -59,7 +41,6 @@ export default function HeaderSection({ editing, setEditing }) {
                     <div className="flex items-center gap-2">
                         <a
                             href="/applicant/my_profile/signature"
-                            onClick={() => setShowESignature(true)}
                             target="_blank"
                             className="p-1.5 flex gap-1 border border-purple-500 bg-purple-600 rounded-md items-center justify-center text-white"
                         >

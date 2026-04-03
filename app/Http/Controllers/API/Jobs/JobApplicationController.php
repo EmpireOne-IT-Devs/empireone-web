@@ -104,6 +104,7 @@ class JobApplicationController extends Controller
                 'email_verified_at' => now()
             ]
         );
+
         AccountPersonalInformation::updateOrCreate(
             ['user_id' => $user->id], // Condition to find the record
             [
@@ -122,7 +123,13 @@ class JobApplicationController extends Controller
                 'birth_place' => $request->birth_place ?? null,
                 'nationality' => $request->nationality ?? null,
                 'marital_status' => $request->marital_status ?? null,
-                'contact' => $request->contact??null
+                'contact' => $request->contact ?? null,
+                'school_name' => $request->school_name ?? null, //educational
+                'course' => $request->course ?? null,
+                'year_graduated' => $request->year_graduated ?? null,
+                'awards' => $request->award ?? null,
+                'degree' => $request->degree ?? null,
+
             ]
         );
 
