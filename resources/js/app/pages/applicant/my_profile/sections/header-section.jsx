@@ -18,7 +18,8 @@ export default function HeaderSection() {
     const profileCompletion = 20;
 
     const handleCopyLink = () => {
-        const link = `${window.location.origin}/talent/application`;
+        const encodedId = btoa(data?.user.id.toString());
+        const link = `${window.location.origin}/talent/application?referral_id=${encodedId}`;
         navigator.clipboard.writeText(link).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);

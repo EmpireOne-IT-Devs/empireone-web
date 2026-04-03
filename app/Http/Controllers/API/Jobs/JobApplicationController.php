@@ -161,12 +161,16 @@ class JobApplicationController extends Controller
             }
         }
 
+        $referral_id = $request->referral_id ? base64_decode($request->referral_id) : null;
+
         JobApplication::firstOrCreate(
             [
                 'user_id' => $user->id,
                 'job_posting_id' => $request->job_posting_id,
+                'referral_id' => $referral_id,
             ]
         );
+
 
         if ($request->file) {
             $fileContent = $this->base64ToFile($request->file);

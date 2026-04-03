@@ -21,6 +21,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('job_postings')
                 ->nullOnDelete();
+            $table->string('referral_id')->nullable();
             $table->enum('screening_status', [
                 'New',
                 'Conducted',

@@ -15,6 +15,7 @@ class JobApplication extends Model
         'screening_status',
         'interview_status',
         'final_status',
+        'referral_id'
     ];
 
     public function applicants(): HasMany
@@ -23,7 +24,7 @@ class JobApplication extends Model
     }
     public function applicant(): HasOne
     {
-        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information', 'cover_letter', 'resume', 'account_employee','working_experience','skills']);
+        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information', 'cover_letter', 'resume', 'account_employee', 'working_experience', 'skills']);
     }
     public function job_posting(): HasOne
     {

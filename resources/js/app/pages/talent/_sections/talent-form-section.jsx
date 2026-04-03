@@ -24,6 +24,10 @@ const TalentFormSection = () => {
     const dispatch = useDispatch();
     const [step, setStep] = useState(savedStep);
     const [loading, setLoading] = useState(false);
+    const referral_id = new URLSearchParams(window.location.search).get(
+        "referral_id",
+    );
+
     const {
         register,
         handleSubmit,
@@ -138,6 +142,7 @@ const TalentFormSection = () => {
     const onSubmit = async (data) => {
         const finalData = {
             ...data,
+            referral_id: referral_id,
             region: getName(regions, data.region),
             province: getName(provinces, data.province),
             city: getName(cities, data.city),
