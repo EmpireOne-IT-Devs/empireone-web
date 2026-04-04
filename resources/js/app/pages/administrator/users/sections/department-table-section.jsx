@@ -11,43 +11,43 @@ export default function DepartmentTableSection() {
 
     // Fetch departments from API
     useEffect(() => {
-        fetchDepartments();
+        // fetchDepartments();
     }, []);
 
-    const fetchDepartments = async () => {
-        try {
-            setLoading(true);
-            const response = await fetch("/api/departments", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    // Add any authentication headers here if needed
-                },
-            });
+    // const fetchDepartments = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const response = await fetch("/api/departments", {
+    //             method: "GET",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Accept: "application/json",
+    //                 // Add any authentication headers here if needed
+    //             },
+    //         });
 
-            if (!response.ok) {
-                throw new Error("Failed to fetch departments");
-            }
+    //         if (!response.ok) {
+    //             throw new Error("Failed to fetch departments");
+    //         }
 
-            const data = await response.json();
-            setDepartments(data);
+    //         const data = await response.json();
+    //         setDepartments(data);
 
-            // Initialize expanded state for all departments
-            const expandedState = {};
-            data.forEach((dept) => {
-                expandedState[dept.id] = false; // Start with departments collapsed
-            });
-            setExpandedDepartments(expandedState);
+    //         // Initialize expanded state for all departments
+    //         const expandedState = {};
+    //         data.forEach((dept) => {
+    //             expandedState[dept.id] = false; // Start with departments collapsed
+    //         });
+    //         setExpandedDepartments(expandedState);
 
-            // Don't fetch users immediately - wait for user to expand department
-        } catch (error) {
-            console.error("Error fetching departments:", error);
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         // Don't fetch users immediately - wait for user to expand department
+    //     } catch (error) {
+    //         console.error("Error fetching departments:", error);
+    //         setError(error.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const fetchDepartmentUsers = async (departmentId) => {
         try {
@@ -100,7 +100,7 @@ export default function DepartmentTableSection() {
 
     // Function to refresh all departments (useful after adding/deleting departments)
     const refreshDepartments = () => {
-        fetchDepartments();
+        // fetchDepartments();
     };
 
     const getRoleTypeColor = (roleType) => {
@@ -181,7 +181,7 @@ export default function DepartmentTableSection() {
                         </p>
                         <p className="text-gray-600 text-sm">{error}</p>
                         <button
-                            onClick={fetchDepartments}
+                            // onClick={fetchDepartments}
                             className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                         >
                             Try Again
