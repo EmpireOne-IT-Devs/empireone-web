@@ -29,14 +29,14 @@ export default function StatsSection() {
                 <div className="flex gap-3">
                     <a
                         target="_blank"
-                        href={`/applicant/my_documents/${data?.user?.id}/contract`}
+                        href={`/accounts/my_documents/${data?.user?.id}/contract`}
                         className="bg-blue-500 hover:bg-blue-600 rounded-md text-white p-3"
                     >
                         EMPLOYMENT CONTRACT
                     </a>
                     <a
                         target="_blank"
-                        href={`/applicant/my_documents/${data?.user?.id}/onboarding`}
+                        href={`/accounts/my_documents/${data?.user?.id}/onboarding`}
                         className="bg-purple-500 hover:bg-purple-600 rounded-md text-white p-3"
                     >
                         ONBOARDING DOCUMENTS
