@@ -15,11 +15,10 @@ export default function JobPostingSection({ onApply, setStep }) {
         setExpandedIndex(expandedIndex === index ? null : index);
     };
     return (
-        <div className="min-h-[80vh] bg-gray-100     p-6 flex justify-center rounded-xl items-start">
+        <div className="min-h-[80vh]  flex justify-center rounded-xl items-start">
             <div className="max-w-4xl w-full space-y-2">
                 {job_postings?.map((res, i) => {
                     const isExpanded = expandedIndex === i;
-
                     return (
                         <div key={i}>
                             <Card>

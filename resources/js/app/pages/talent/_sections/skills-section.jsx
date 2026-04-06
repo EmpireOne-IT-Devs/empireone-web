@@ -101,12 +101,12 @@ export default function SkillsSection({
                 </div>
             ))}
 
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
                     outlined
                     type="button"
                     onClick={prevStep}
-                    className="w-1/2"
+                    className="w-full sm:w-1/2"
                     variant="secondary"
                 >
                     Back
@@ -115,7 +115,7 @@ export default function SkillsSection({
                     outlined
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2"
+                    className="w-full sm:w-1/2"
                 >
                     Continue To Document
                 </Button>

@@ -15,7 +15,8 @@ export default function WorkingExperienceSection({
 }) {
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center border-b pb-2">
+            {/* Header: Stacks title and button on extra small screens */}
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-2 gap-2">
                 <h2 className="text-2xl font-bold text-gray-800">
                     Working Experience
                 </h2>
@@ -30,7 +31,7 @@ export default function WorkingExperienceSection({
                             job_description: "",
                         })
                     }
-                    className="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-md font-bold hover:bg-blue-100 transition"
+                    className="text-sm bg-blue-100 text-blue-600 px-3 py-2 rounded-md font-bold hover:bg-blue-200 transition w-fit"
                 >
                     + Add Job
                 </button>
@@ -41,8 +42,9 @@ export default function WorkingExperienceSection({
                     key={field.id}
                     className="p-4 border rounded-xl bg-gray-50 space-y-4 relative"
                 >
+                    {/* Row 1: Company and Position */}
                     <div className="flex flex-wrap w-full gap-4">
-                        <div className="flex flex-1 flex-col">
+                        <div className="flex flex-col w-full md:flex-1">
                             <Input
                                 label="Company Name"
                                 name={`experiences.${index}.company_name`}
@@ -58,7 +60,7 @@ export default function WorkingExperienceSection({
                                 placeholder="e.g. Acme Corp"
                             />
                         </div>
-                        <div className="flex flex-1 flex-col">
+                        <div className="flex flex-col w-full md:flex-1">
                             <Input
                                 label="Position"
                                 name={`experiences.${index}.position`}
@@ -71,8 +73,9 @@ export default function WorkingExperienceSection({
                         </div>
                     </div>
 
+                    {/* Row 2: Years */}
                     <div className="flex flex-wrap w-full gap-4">
-                        <div className="flex flex-1 flex-col">
+                        <div className="flex flex-col w-full md:flex-1">
                             <Input
                                 label="Start Year"
                                 name={`experiences.${index}.start_at`}
@@ -90,7 +93,7 @@ export default function WorkingExperienceSection({
                                 }`}
                             />
                         </div>
-                        <div className="flex flex-1 flex-col">
+                        <div className="flex flex-col w-full md:flex-1">
                             <Input
                                 label="End Year"
                                 name={`experiences.${index}.end_at`}
@@ -118,59 +121,53 @@ export default function WorkingExperienceSection({
                         </div>
                     </div>
 
-                    <div className="flex items-end gap-4">
-                        <div className="flex flex-col flex-1">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                                Job Description
-                            </label>
-                            <textarea
-                                rows={3}
-                                {...register(
-                                    `experiences.${index}.job_description`,
-                                    { required: true },
-                                )}
-                                placeholder="Job description"
-                                className={`p-3 border rounded-lg outline-none focus:ring-2 ${
-                                    errors.experiences?.[index]?.job_description
-                                        ? "border-red-400"
-                                        : "focus:ring-blue-400"
-                                }`}
-                            />
-                        </div>
+                    {/* Row 3: Description */}
+                    <div className="flex flex-col w-full">
+                        <label className="text-xs font-bold text-gray-500 uppercase ml-1 mb-1">
+                            Job Description
+                        </label>
+                        <textarea
+                            rows={3}
+                            {...register(
+                                `experiences.${index}.job_description`,
+                                {
+                                    required: "Required",
+                                },
+                            )}
+                            placeholder="Describe your responsibilities"
+                            className={`p-3 border rounded-lg outline-none focus:ring-2 w-full ${
+                                errors.experiences?.[index]?.job_description
+                                    ? "border-red-400"
+                                    : "focus:ring-blue-400"
+                            }`}
+                        />
                     </div>
-                    <div className="flex justify-end">
+
+                    {/* Action Row */}
+                    <div className="flex justify-end pt-2">
                         <Button
                             onClick={() => removeExperience(index)}
                             variant="danger"
                             outlined
+                            className="flex items-center gap-2"
                         >
                             <TbTrash className="text-lg" />
+                            <span className="md:hidden text-sm font-bold">
+                                Remove
+                            </span>
                         </Button>
                     </div>
                 </div>
             ))}
-            {/* <button
-                type="button"
-                onClick={() =>
-                    appendExperience({
-                        company_name: "",
-                        position: "",
-                        start_at: "",
-                        end_at: "",
-                        job_description: "",
-                    })
-                }
-            >
-                + Add Job
-            </button> */}
 
-            <div className="flex gap-4">
+            {/* Footer Navigation */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
                     type="button"
                     outlined
                     variant="secondary"
                     onClick={prevStep}
-                    className="w-1/2"
+                    className="w-full sm:w-1/2"
                 >
                     Back
                 </Button>
@@ -178,9 +175,9 @@ export default function WorkingExperienceSection({
                     outlined
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2"
+                    className="w-full sm:w-1/2"
                 >
-                    Continue To Skill
+                    Continue To Skills
                 </Button>
             </div>
         </div>

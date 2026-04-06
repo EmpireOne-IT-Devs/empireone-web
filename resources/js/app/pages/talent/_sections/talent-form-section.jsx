@@ -15,6 +15,7 @@ import { apply_job_application_service } from "@/app/services/job-application-se
 import { setAlert } from "@/app/redux/app-slice";
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/store/store";
+import { router } from "@inertiajs/react";
 
 const TalentFormSection = () => {
     // ✅ Load saved step + data
@@ -184,14 +185,14 @@ const TalentFormSection = () => {
     };
 
     return (
-        <div className="min-h-screen bg-blue-50 flex items-center justify-center p-6 font-sans">
-            <div className="max-w-3xl w-full bg-white rounded-xl shadow-lg p-8 transition-all duration-500">
+        <div className="min-h-screen bg-blue-50 flex items-start justify-center md:p-6 font-sans">
+            <div className="max-w-3xl w-full min-h-screen bg-white md:rounded-xl shadow-lg transition-all duration-500">
                 {/* Progress Bar */}
-                <div className="mb-8">
+                <div className="px-3 py-3 lg:px-8">
                     <div>
                         <button
                             type="button"
-                            onClick={() => (window.location.href = "/")}
+                            onClick={() => router.visit('/')}
                             className="mb-4 text-gray-400 hover:text-gray-900 text-sm transition-colors duration-200"
                         >
                             ← Back to homepage
@@ -213,7 +214,7 @@ const TalentFormSection = () => {
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form className="p-2 lg:px-8" onSubmit={handleSubmit(onSubmit)}>
                     {step === 0 && <JobPostingSection setStep={setStep} />}
 
                     {step === 1 && (

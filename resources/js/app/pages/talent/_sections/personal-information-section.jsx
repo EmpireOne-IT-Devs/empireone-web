@@ -17,7 +17,7 @@ export default function PersonalInformationSection({
             </h2>
 
             <div className="flex flex-wrap gap-4">
-                <div className="flex flex-col flex-1 w-full">
+                <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="First Name"
                         name="first_name"
@@ -28,7 +28,7 @@ export default function PersonalInformationSection({
                         placeholder="John"
                     />
                 </div>
-                <div className="flex flex-col flex-1 w-full">
+                <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="Middle Name"
                         name="middle_name"
@@ -36,7 +36,7 @@ export default function PersonalInformationSection({
                         placeholder="Quincy"
                     />
                 </div>
-                <div className="flex flex-col flex-1 w-full">
+                <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="Last Name"
                         name="last_name"
@@ -48,7 +48,7 @@ export default function PersonalInformationSection({
                     />
                 </div>
             </div>
-            <div className="flex flex-col flex-1 w-full">
+            <div className="flex flex-wrap gap-4">
                 <Input
                     label="Birthplace"
                     name="birthplace"
@@ -59,7 +59,7 @@ export default function PersonalInformationSection({
                     placeholder="San Carlos City, Philippines"
                 />
             </div>
-            <div className="flex flex-wrap gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col flex-1 w-full">
                     <Select
                         label="Marital Status"
@@ -167,29 +167,26 @@ export default function PersonalInformationSection({
             </div>
 
             <div className="flex flex-wrap gap-4">
-                <div className="flex flex-col flex-1 w-full">
+                {/* First Row: Stacked on mobile, 3 columns on medium screens+ */}
+                <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="School Name"
                         name="school_name"
-                        {...register("school_name", {
-                            required: "Required",
-                        })}
+                        {...register("school_name", { required: "Required" })}
                         error={errors.school_name}
                         placeholder="Central Philippine State University"
                     />
                 </div>
-                <div className="flex flex-col flex-1 w-full">
+                <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="Course"
                         name="course"
-                        {...register("course", {
-                            required: "Required",
-                        })}
+                        {...register("course", { required: "Required" })}
                         error={errors.course}
                         placeholder="BSIT"
                     />
                 </div>
-                <div className="flex flex-col flex-1 w-full">
+                <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="Year Graduated"
                         name="year_graduated"
@@ -200,8 +197,10 @@ export default function PersonalInformationSection({
                         placeholder="2025"
                     />
                 </div>
-                <div className="flex w-full gap-3">
-                    <div className="flex flex-col flex-1">
+
+                {/* Second Row: Stacked on mobile, 3 columns on medium screens+ */}
+                <div className="flex flex-wrap md:flex-nowrap w-full gap-4">
+                    <div className="flex flex-col w-full md:flex-1">
                         <Input
                             label="Award"
                             name="award"
@@ -210,13 +209,11 @@ export default function PersonalInformationSection({
                         />
                     </div>
 
-                    <div className="flex flex-col flex-1">
+                    <div className="flex flex-col w-full md:flex-1">
                         <Select
                             label="Degree"
                             name="degree"
-                            {...register("degree", {
-                                required: true,
-                            })}
+                            {...register("degree", { required: true })}
                             options={[
                                 { value: "Elementary", label: "Elementary" },
                                 {
@@ -237,26 +234,25 @@ export default function PersonalInformationSection({
                         />
                     </div>
 
-                    <div className="flex flex-col flex-1">
+                    <div className="flex flex-col w-full md:flex-1">
                         <Input
                             label="Source"
                             name="source"
                             value=" "
                             {...register("source")}
-                            placeholder="e.g. LinkIn, Facebook, Referral"
+                            placeholder="e.g. LinkedIn, Facebook, Referral"
                             disabled
                         />
                     </div>
                 </div>
             </div>
-
-            <div className="flex gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Button
-                    outlined
                     type="button"
-                    variant="secondary"
                     onClick={prevStep}
-                    className="w-1/2 "
+                    className="w-full sm:w-1/2"
+                    variant="secondary"
+                    outlined
                 >
                     Back
                 </Button>
@@ -264,9 +260,9 @@ export default function PersonalInformationSection({
                     outlined
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2"
+                    className="w-full sm:w-1/2"
                 >
-                    Continue to Address
+                  Continue to Address
                 </Button>
             </div>
         </div>

@@ -76,9 +76,10 @@ export default function AddressInformationSection({
                 Address Information
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Region Select */}
-                <div className="flex flex-col">
+            {/* First Row: Region and Province */}
+            <div className="flex flex-wrap gap-4">
+                {/* Region Select - Added w-full and md:flex-1 */}
+                <div className="flex flex-col w-full md:flex-1">
                     <Select
                         label="Region"
                         name="region"
@@ -93,8 +94,8 @@ export default function AddressInformationSection({
                     />
                 </div>
 
-                {/* Province Select */}
-                <div className="flex flex-col">
+                {/* Province Select - Added w-full and md:flex-1 */}
+                <div className="flex flex-col w-full md:flex-1">
                     <Select
                         label="Province"
                         name="province"
@@ -111,9 +112,9 @@ export default function AddressInformationSection({
                 </div>
             </div>
 
+            {/* Second Row: City, Barangay, and Zip */}
             <div className="flex flex-wrap gap-4">
-                {/* City Select */}
-                <div className="flex flex-col w-full flex-1">
+                <div className="flex flex-col w-full md:flex-1">
                     <Select
                         label="City / Municipality"
                         name="city"
@@ -128,8 +129,7 @@ export default function AddressInformationSection({
                         disabled={!selectedProvince}
                     />
                 </div>
-                {/* Barangay Select */}
-                <div className="flex flex-col w-full flex-1">
+                <div className="flex flex-col w-full md:flex-1">
                     <Select
                         label="Barangay"
                         name="barangay"
@@ -145,7 +145,7 @@ export default function AddressInformationSection({
                     />
                 </div>
 
-                <div className="flex flex-col w-full flex-1">
+                <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="Zip Code"
                         name="zip_code"
@@ -171,7 +171,7 @@ export default function AddressInformationSection({
             </div>
 
             {/* Manual Entry for Street/House */}
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-4">
                 <div className="flex flex-col">
                     <Input
                         label="House/Lot/Street/ Purok/Sitio etc."
@@ -182,11 +182,12 @@ export default function AddressInformationSection({
                 </div>
             </div>
 
-            <div className="flex gap-4 pt-2">
+            {/* Buttons: Fixed for mobile stacking if they get too cramped */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Button
                     type="button"
                     onClick={prevStep}
-                    className="w-1/2 "
+                    className="w-full sm:w-1/2"
                     variant="secondary"
                     outlined
                 >
@@ -196,7 +197,7 @@ export default function AddressInformationSection({
                     outlined
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2"
+                    className="w-full sm:w-1/2"
                 >
                     Continue To Working Experience
                 </Button>
