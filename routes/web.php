@@ -326,10 +326,10 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/my_documents/{id}/contract', function () {
-        return Inertia::render('accounts/administrator/employee_relation/employees/id/contract/page');
+        return Inertia::render('administrator/employee_relation/employees/id/contract/page');
     });
     Route::get('/my_documents/{id}/onboarding', function () {
-        return Inertia::render('accounts/administrator/employee_relation/employees/id/onboarding/page');
+        return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
     });
     Route::get('/my_profile/signature', function () {
         return Inertia::render('employee/my_profile/signature/page');
