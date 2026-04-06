@@ -1,29 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
-import JobRequisitionBodySection from "../../../job_requisition/_sections/job-requisition-section";
-// import ViewJobRequisitionSection from "./view-job-requisition-section";
 import {
-    TbCalendarEvent,
     TbMapPin,
     TbTag,
     TbUser,
-    TbEye,
-    TbPencil,
-    TbTrash,
     TbUsers,
 } from "react-icons/tb";
 import Badge from "@/app/_components/badge";
 import ViewJobPostingDetailsSection from "./view-job-posting-details-section";
 
 export default function JobPostingCardSection() {
-    const dispatch = useDispatch();
 
     const { job_postings, loading } = useSelector(
         (state) => state.job_postings,
     );
     console.log("job_postings", job_postings);
-    const [open, setOpen] = useState(false);
 
     if (loading) {
         return (

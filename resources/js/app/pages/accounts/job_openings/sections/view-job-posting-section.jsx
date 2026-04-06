@@ -13,45 +13,34 @@ import { LuGraduationCap, LuBriefcase } from "react-icons/lu";
 import Badge from "@/app/_components/badge";
 import moment from "moment";
 import { router } from "@inertiajs/react";
+import { apply_application_service } from "@/app/services/job-application-service";
+import { useDispatch } from "react-redux";
+import { setAlert } from "@/app/redux/app-slice";
 
 export default function ViewJobPostingDetailsSection({ data, children }) {
     const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
 
-    // ✅ STATIC FALLBACK DATA
-    const staticData = {
-        id: 1,
-        created_at: "2026-03-01",
-        application_deadline: "March 30, 2026",
-        experience_required: "At least 2 years of relevant experience",
-        education_required: "Bachelor’s Degree in Information Technology",
-        applications: [{}, {}, {}],
-
-        job_requisition: {
-            title: "Frontend Developer",
-            employment_type: "Full-time",
-            salary_range: "₱25,000 - ₱40,000",
-            justification_for_position: `
-                <p>We are looking for a skilled Frontend Developer to join our team. You will be responsible for building responsive and user-friendly web interfaces.</p>
-            `,
-            qualifications: `
-                <ul>
-                    <li>Proficient in React.js</li>
-                    <li>Strong understanding of JavaScript, HTML, CSS</li>
-                    <li>Experience with Tailwind CSS is a plus</li>
-                </ul>
-            `,
-            department: {
-                name: "IT Department",
-            },
-            location: {
-                name: "Cebu City",
-            },
-        },
-    };
-
-    // ✅ MERGE REAL DATA WITH STATIC FALLBACK
-    const job = data ?? staticData;
-
+    async function apply_job_position() {
+        try {
+            await apply_application_service({
+                job_posting_id: data.id,
+            });
+            await dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Job application submitted Successfully!",
+                }),
+            );
+        } catch (error) {
+            await dispatch(
+                setAlert({
+                    type: "error",
+                    title: "Job application submitted error!",
+                }),
+            );
+        }
+    }
     return (
         <div>
             <div onClick={() => setOpen(true)}>{children}</div>
@@ -60,7 +49,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                 width="max-w-4xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title={`Position: ${job?.job_requisition?.title}`}
+                title={`Position: ${data?.job_requisition?.title}`}
             >
                 <div className="flex flex-col max-h-[80vh] overflow-y-auto ">
                     <div className="mb-6 gap-2 flex items-center">
@@ -71,7 +60,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                             label="active"
                         />
                         <span className="text-gray-700">
-                            {job?.applications?.length ?? 0} applicants
+                            {data?.applications?.length ?? 0} applicants
                         </span>
                     </div>
 
@@ -83,7 +72,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     Department
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    {job?.job_requisition?.department?.name}
+                                    {data?.job_requisition?.department?.name}
                                 </p>
                             </div>
                         </div>
@@ -95,7 +84,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     Location
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    {job?.job_requisition?.location?.name}
+                                    {data?.job_requisition?.location?.name}
                                 </p>
                             </div>
                         </div>
@@ -107,7 +96,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     Employment Type
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    {job?.job_requisition?.employment_type}
+                                    {data?.job_requisition?.employment_type}
                                 </p>
                             </div>
                         </div>
@@ -119,8 +108,8 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     Salary Range
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    {job?.job_requisition?.salary_range
-                                        ? job?.job_requisition?.salary_range
+                                    {data?.job_requisition?.salary_range
+                                        ? data?.job_requisition?.salary_range
                                         : "Salary not specified"}
                                 </p>
                             </div>
@@ -133,7 +122,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     Posted Date
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    {moment(job?.created_at).format("LL")}
+                                    {moment(data?.created_at).format("LL")}
                                 </p>
                             </div>
                         </div>
@@ -145,7 +134,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     Deadline
                                 </p>
                                 <p className="font-medium text-gray-900">
-                                    {job?.application_deadline}
+                                    {data?.application_deadline}
                                 </p>
                             </div>
                         </div>
@@ -153,7 +142,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
 
                     <div className="mb-6">
                         <div className="mt-2 space-y-6 text-gray-800">
-                            {job?.job_requisition
+                            {data?.job_requisition
                                 ?.justification_for_position && (
                                 <div>
                                     <h3 className="font-semibold text-lg mb-2">
@@ -162,20 +151,20 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                     <div
                                         className="prose max-w-none"
                                         dangerouslySetInnerHTML={{
-                                            __html: job?.job_requisition
+                                            __html: data?.job_requisition
                                                 ?.justification_for_position,
                                         }}
                                     />
                                 </div>
                             )}
 
-                            {job?.job_requisition?.qualifications && (
+                            {data?.job_requisition?.qualifications && (
                                 <div>
                                     <h3 className="font-semibold text-lg mb-2">
                                         Requirements
                                     </h3>
                                     <ul className="space-y-2">
-                                        {job.job_requisition.qualifications
+                                        {data.job_requisition.qualifications
                                             .replace(/<\/?ul>/g, "")
                                             .split(/<\/?li>/)
                                             .map((item) =>
@@ -208,7 +197,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 </h4>
                             </div>
                             <p className="text-sm text-gray-600">
-                                {job?.experience_required}
+                                {data?.experience_required}
                             </p>
                         </div>
 
@@ -220,7 +209,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 </h4>
                             </div>
                             <p className="text-sm text-gray-600">
-                                {job?.education_required}
+                                {data?.education_required}
                             </p>
                         </div>
                     </div>
@@ -239,13 +228,12 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                             variant="primary"
                             type="button"
                             className="flex-1"
-                            onClick={() =>
-                                router.visit(
-                                    `/administrator/job_posting/active_posting/${job.id}`,
-                                )
-                            }
+                            disabled={data.is_applied}
+                            onClick={() => apply_job_position()}
                         >
-                            Apply for this Position
+                            {data.is_applied
+                                ? "Applied"
+                                : "Apply for this Position"}
                         </Button>
                     </div>
                 </div>

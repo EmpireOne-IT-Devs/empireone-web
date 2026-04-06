@@ -12,9 +12,22 @@ use Illuminate\Support\Facades\Auth;
 class JobPostingController extends Controller
 {
 
+
     public function index()
     {
-        $jobPostings = JobPosting::where('status', 'Active')->orderBy('created_at', 'desc')->with(['job_requisition', 'applications'])->get();
+        $user = Auth::user(); // Administrator
+        $query = JobPosting::where('status', 'Active')->with(['job_requisition', 'applications', 'applicant']);
+        if ($user && $user->role == 2) { // Employee 
+            $query->whereIn('target_audience', ['Internal', 'Both']);
+        } elseif ($user && $user->role == 3) { // Applicant
+            $query->whereIn('target_audience', ['External', 'Both']);
+        }
+        $query->whereIn('target_audience', ['External', 'Both']);
+        $jobPostings = $query->orderBy('created_at', 'desc')->get();
+        $jobPostings->map(function ($job) use ($user) {
+            $job->is_applied = $job->applications()->where('user_id', $user->id ?? 0)->exists();
+            return $job;
+        });
         return response()->json($jobPostings);
     }
 

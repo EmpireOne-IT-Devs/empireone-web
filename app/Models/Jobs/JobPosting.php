@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 class JobPosting extends Model
 {
@@ -37,5 +38,4 @@ class JobPosting extends Model
     {
         return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id');
     }
-   
 }
