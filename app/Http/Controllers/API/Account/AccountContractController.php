@@ -46,6 +46,7 @@ class AccountContractController extends Controller
             'tin' => $request->tin,
             'philhealth' => $request->philhealth,
             'pagibig' => $request->pagibig,
+            'contact' => $request->contact,
             'contact_name' => $request->contact_name,
             'contact_address' => $request->contact_address,
             'contact_relationship' => $request->contact_relationship,

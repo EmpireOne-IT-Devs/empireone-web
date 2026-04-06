@@ -28,7 +28,7 @@ export default function PersonalInfoSection({
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <UserCircle size={15} /> Basic Information
                 </span>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                <div className="grid grid-cols-3 gap-x-6 gap-y-4">
                     <Input
                         label="First Name *"
                         name="first_name"
@@ -83,10 +83,24 @@ export default function PersonalInfoSection({
                             { label: "Widowed", value: "Widowed" },
                         ]}
                     />
+                    <div
+                        style={{
+                            pointerEvents: form.nationality ? "none" : "auto", // disable interactions
+                        }}
+                    >
+                        <Input
+                            label="Nationality *"
+                            name="nationality"
+                            {...register("nationality")}
+                            value={form.nationality}
+                            iconLeft={<User size={14} />}
+                        />
+                    </div>
+
                     <Input
-                        label="Nationality *"
-                        name="nationality"
-                        {...register("nationality")}
+                        label="Contact #"
+                        name="contact"
+                        {...register("contact")}
                         iconLeft={<User size={14} />}
                     />
                 </div>

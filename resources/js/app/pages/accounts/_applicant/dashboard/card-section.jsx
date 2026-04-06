@@ -1,7 +1,9 @@
 import React from "react";
 import { Briefcase, Clipboard, InboxIcon, Mail } from "lucide-react";
 import Card from "@/app/_components/card";
+import { useSelector } from "react-redux";
 export default function CardSection() {
+    const { data } = useSelector((store) => store.app);
     return (
         <div className="flex gap-3 w-full mt-8">
             <Card className="w-full flex-col gap-3  p-4   lg:col-span-3 ">
@@ -9,7 +11,9 @@ export default function CardSection() {
                     <div className=" p-3  w-16">
                         <Briefcase className="inline-block mr-2 text-6xl text-blue-700 " />
                     </div>
-                    <div className="text-3xl mt-4 text-blue-900">3</div>
+                    <div className="text-3xl mt-4 text-blue-900">
+                        {data?.dashboard?.total_job_opening ?? 0}
+                    </div>
                 </div>
                 <div className="flex-col flex items-start justify-between">
                     <div className="text-gray-700 text-md -mt-2">
@@ -22,7 +26,9 @@ export default function CardSection() {
                     <div className=" p-3 rounded-xl w-16">
                         <Clipboard className="inline-block mr-2 text-6xl text-green-600    " />
                     </div>
-                    <div className="text-3xl mt-4 text-green-600   ">2</div>
+                    <div className="text-3xl mt-4 text-green-600   ">
+                        {data?.dashboard?.total_application_submitted ?? 0}
+                    </div>
                 </div>
                 <div className="flex-col flex items-start justify-between">
                     <div className="text-gray-700 text-md -mt-2">
@@ -35,7 +41,9 @@ export default function CardSection() {
                     <div className=" p-3 rounded-xl w-16">
                         <InboxIcon className="inline-block mr-2 text-6xl text-orange-300" />
                     </div>
-                    <div className="text-3xl mt-4 text-orange-500">4</div>
+                    <div className="text-3xl mt-4 text-orange-500">
+                        {data?.dashboard?.total_job_offer ?? 0}
+                    </div>
                 </div>
                 <div className="flex-col flex items-start justify-between">
                     <div className="text-gray-700 text-md -mt-2 mb-2">
@@ -48,11 +56,11 @@ export default function CardSection() {
                     <div className=" p-3 rounded-xl w-16">
                         <Mail className="inline-block mr-2 text-6xl text-orange-500" />
                     </div>
-                    <div className="text-3xl mt-4 text-red-500">7</div>
+                    <div className="text-3xl mt-4 text-red-500">0</div>
                 </div>
                 <div className="flex-col flex items-start justify-between ">
                     <div className="text-gray-700 text-md -mt-2">
-                        Unread Messages
+                        Unread Messages (comming soon)
                     </div>
                 </div>
             </Card>
