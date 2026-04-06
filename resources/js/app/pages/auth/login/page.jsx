@@ -213,6 +213,7 @@ const Page = ({ flash }) => {
                         </label>
                         <button
                             type="button"
+                            onClick={()=>router.visit('/auth/forgot_password')}
                             className="text-xs text-slate-400 hover:text-[#4ed1f4] transition-colors uppercase tracking-widest font-medium"
                         >
                             Forgot?

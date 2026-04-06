@@ -25,6 +25,10 @@ Route::get('/', function () {
     return Inertia::render('landing_page/page');
 });
 
+Route::get('/auth/forgot_password', function () {
+    return Inertia::render('auth/forgot_password/verify/page');
+});
+
 
 Route::get('/auth/login', function () {
     if (Auth::user()) {

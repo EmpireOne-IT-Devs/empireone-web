@@ -52,6 +52,11 @@ export default function Alert({
             iconColor: "text-red-400",
             barColor: "bg-red-500",
         },
+        error: {
+            icon: ExclamationCircleIcon,
+            iconColor: "text-red-400",
+            barColor: "bg-red-500",
+        },
         info: {
             icon: CheckCircleIcon,
             iconColor: "text-blue-400",
@@ -79,7 +84,7 @@ export default function Alert({
                 title: "",
                 message: "",
                 open: false,
-            })
+            }),
         );
     }, [dispatch, onClose]);
 
