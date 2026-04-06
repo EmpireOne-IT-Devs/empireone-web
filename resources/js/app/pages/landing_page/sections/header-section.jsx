@@ -147,10 +147,10 @@ export default function HeaderSection() {
                             </Link>
 
                             <Link
-                                href="/auth/register"
+                                href="/talent/application"
                                 className="text-center py-2 bg-blue-600 text-white rounded-md"
                             >
-                                Sign up
+                                Apply Now
                             </Link>
                         </div>
                     </div>
