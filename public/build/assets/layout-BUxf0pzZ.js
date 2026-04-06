@@ -1,0 +1,1 @@
+import{j as e}from"./app-DWfGoJNM.js";import r from"./header-section-CMQU2qzK.js";import s from"./tabs-section-Czj2kkGY.js";import"./tabs-BjAThr1V.js";function m({children:t}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"min-h-screen bg-gray-50 p-8 text-slate-700 font-sans",children:[e.jsx(r,{}),e.jsx(s,{}),t]})})}export{m as default};

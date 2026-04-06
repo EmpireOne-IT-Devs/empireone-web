@@ -13,10 +13,13 @@ import {
 } from "react-icons/fa";
 import { Link, router, useForm } from "@inertiajs/react";
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch } from "react-redux";
+import { setAlert } from "@/app/redux/app-slice";
 
 const Page = ({ flash }) => {
     const params = new URLSearchParams(location.search);
     const error_message = params.get("error_message");
+    const dispatch = useDispatch();
     const { data, setData, post, processing, errors } = useForm({
         email: "",
         password: "",
@@ -24,7 +27,6 @@ const Page = ({ flash }) => {
     });
 
     const [showPassword, setShowPassword] = useState(false);
-    const [showNotification, setShowNotification] = useState(false);
 
     // Color Palette Constants
     const colors = {
@@ -35,17 +37,19 @@ const Page = ({ flash }) => {
         mutedPurple: "#5e3984",
     };
 
-    useEffect(() => {
-        if (flash?.error || flash?.success) {
-            setShowNotification(true);
-            const timer = setTimeout(() => setShowNotification(false), 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [flash]);
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("auth.login"));
+        post(route("auth.login"), {
+            onSuccess: async () => {
+                reset("email"); // Clear the email input
+                await dispatch(
+                    setAlert({
+                        type: "success",
+                        title: "Login successfully!",
+                    }),
+                );
+            },
+        });
     };
 
     return (
@@ -78,34 +82,12 @@ const Page = ({ flash }) => {
                 />
             </div>
 
-            {/* Flash Notification */}
-            <AnimatePresence>
-                {showNotification && (flash?.error || flash?.success) && (
-                    <motion.div
-                        initial={{ opacity: 0, x: 100 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 100 }}
-                        className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md border border-white/10 ${
-                            flash?.error ? "bg-red-500/90" : "bg-emerald-500/90"
-                        } text-white max-w-md`}
-                    >
-                        {flash?.error ? (
-                            <FaExclamationTriangle />
-                        ) : (
-                            <FaCheckCircle />
-                        )}
-                        <span className="text-sm font-medium">
-                            {flash?.error || flash?.success}
-                        </span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* --- LOGIN CARD --- */}
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="relative z-10 w-full max-w-md p-10 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
+                // Changed border and rounded classes here for mobile responsiveness
+                className="relative z-10 w-full max-w-md p-10 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/10  md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
             >
                 {/* Header */}
                 <div className="flex flex-col items-center mb-8">
@@ -213,7 +195,9 @@ const Page = ({ flash }) => {
                         </label>
                         <button
                             type="button"
-                            onClick={()=>router.visit('/auth/forgot_password')}
+                            onClick={() =>
+                                router.visit("/auth/forgot_password")
+                            }
                             className="text-xs text-slate-400 hover:text-[#4ed1f4] transition-colors uppercase tracking-widest font-medium"
                         >
                             Forgot?

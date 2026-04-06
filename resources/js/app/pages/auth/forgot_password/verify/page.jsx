@@ -40,7 +40,7 @@ export default function ForgotPassword({ status, flash }) {
                 // Optionally, you can pass the server validation errors to your alert
                 const message =
                     errors.email || "Something went wrong. Please try again.";
-              
+
                 await dispatch(
                     setAlert({
                         type: "error",
@@ -86,7 +86,8 @@ export default function ForgotPassword({ status, flash }) {
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="relative z-10 w-full max-w-md p-10 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
+                // Changed border and rounded classes here for mobile responsiveness
+                className="relative z-10 w-full max-w-md p-10 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/10  md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
             >
                 {/* Header */}
                 <div className="flex flex-col items-center mb-8">
