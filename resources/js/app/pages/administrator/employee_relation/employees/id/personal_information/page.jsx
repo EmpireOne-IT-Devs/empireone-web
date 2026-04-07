@@ -1,18 +1,22 @@
-import React from "react";
-import { Mail, Phone, Edit2, ChevronDown } from "lucide-react";
+import React, { useEffect } from "react";
+import { Mail, Phone } from "lucide-react";
 import EmployeeLayout from "../layout";
 import Layout from "../../../../layout";
+import { useSelector } from "react-redux";
+import moment from "moment";
+import { QRCodeSVG } from "qrcode.react";
 
 const Page = () => {
+    const { user } = useSelector((store) => store.app);
+    console.log("User Data:", user);
+
     return (
         <Layout>
             <EmployeeLayout>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Fixed Grid: Changed to 3 columns to properly support a col-span-2 main card */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Basic Information Card */}
                     <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative">
-                        <button className="absolute top-6 right-6 text-gray-400 hover:text-blue-600">
-                            <Edit2 size={18} />
-                        </button>
                         <h3 className="text-lg font-bold mb-6">
                             Basic information
                         </h3>
@@ -23,22 +27,46 @@ const Page = () => {
                                     className="w-32 h-32 rounded-full bg-slate-100 object-cover"
                                     alt="Profile"
                                 />
-                                <div className="space-y-1">
-                                    <h4 className="text-xl font-bold">
-                                        John Williams
+                                <div className="space-y-1 text-center md:text-left">
+                                    <h4 className="text-xl font-bold flex gap-1 justify-center md:justify-start">
+                                        <span>
+                                            {
+                                                user?.personal_information
+                                                    ?.first_name
+                                            }
+                                        </span>
+                                        <span>
+                                            {
+                                                user?.personal_information
+                                                    ?.middle_name
+                                            }
+                                        </span>
+                                        <span>
+                                            {
+                                                user?.personal_information
+                                                    ?.last_name
+                                            }
+                                        </span>
                                     </h4>
                                     <p className="text-gray-400 text-sm">
-                                        1210372726433743682
+                                        {user?.account_employee?.employee_id}
                                     </p>
-                                    <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
-                                        <span>♂ Male</span>
+                                    <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-600 mt-2">
+                                        <span>
+                                            ♂{" "}
+                                            {user?.personal_information?.gender}
+                                        </span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                        <Mail size={14} />{" "}
-                                        johnwilliams@bicaradata.com
+                                    <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-600">
+                                        <Mail size={14} />
+                                        {user?.account_employee?.eogs_email}
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                        <Phone size={14} /> 081323323311
+                                    <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-600">
+                                        <Mail size={14} /> {user?.email}
+                                    </div>
+                                    <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-600">
+                                        <Phone size={14} />
+                                        {user?.personal_information?.contact}
                                     </div>
                                 </div>
                             </div>
@@ -48,137 +76,234 @@ const Page = () => {
                                     <p className="text-gray-500">
                                         Place of birth
                                     </p>
-                                    <p className="font-medium">Bandung</p>
+                                    <p className="font-medium">
+                                        {
+                                            user?.personal_information
+                                                ?.birth_place
+                                        }
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500">Birth date</p>
-                                    <p className="font-medium">30 Oct 1994</p>
+                                    <p className="font-medium">
+                                        {
+                                            user?.personal_information
+                                                ?.date_of_birth
+                                        }
+                                    </p>
                                 </div>
                                 <div>
-                                    <p className="text-gray-500">Blood type</p>
-                                    <p className="font-medium">AB</p>
+                                    <p className="text-gray-500">Age</p>
+                                    <p className="font-medium">
+                                        {user?.personal_information
+                                            ?.date_of_birth
+                                            ? moment().diff(
+                                                  user?.personal_information
+                                                      ?.date_of_birth,
+                                                  "years",
+                                              )
+                                            : ""}
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500">
                                         Marital Status
                                     </p>
-                                    <p className="font-medium">Married</p>
-                                </div>
-                                <div>
-                                    <p className="text-gray-500">Religion</p>
-                                    <p className="font-medium">Christian</p>
+                                    <p className="font-medium">
+                                        {
+                                            user?.personal_information
+                                                ?.marital_status
+                                        }
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Address Card */}
-                    <Card title="Address">
-                        <div className="space-y-4 text-sm">
-                            <div className="flex">
-                                <p className="w-1/3 text-gray-500">
-                                    Citizen ID address
-                                </p>
-                                <p className="w-2/3">
-                                    Jl. Wayang No.2, Burangrang, Kec. Lengkong,
-                                    Kota Bandung, Jawa Barat 40262
-                                </p>
+                    {/* Right Column / Sidebar Cards */}
+                    <div className="space-y-6">
+                        {/* Address Card */}
+                        <Card title="Address">
+                            <div className="space-y-4 text-sm">
+                                <div className="flex flex-col gap-2 w-full">
+                                    <p className="flex-none text-gray-500">
+                                        Residential address:
+                                    </p>
+                                    <div className="flex flex-1 w-full gap-1 flex-wrap font-medium">
+                                        <span>
+                                            {user?.personal_information?.street}
+                                            ,
+                                        </span>
+                                        <span>
+                                            {
+                                                user?.personal_information
+                                                    ?.barangay
+                                            }
+                                            ,
+                                        </span>
+                                        <span>
+                                            {user?.personal_information?.city},
+                                        </span>
+                                        <span>
+                                            {
+                                                user?.personal_information
+                                                    ?.province
+                                            }
+                                        </span>
+                                        <span>
+                                            {
+                                                user?.personal_information
+                                                    ?.zip_code
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex">
-                                <p className="w-1/3 text-gray-500">
-                                    Residential address
-                                </p>
-                                <p className="w-2/3">
-                                    Jl. Wayang No.2, Burangrang, Kec. Lengkong,
-                                    Kota Bandung, Jawa Barat 40262
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
+                        </Card>
 
-                    {/* Emergency Contact Card */}
-                    <Card title="Emergency contact">
-                        <div className="space-y-4 text-sm">
-                            <div className="flex">
-                                <p className="w-1/3 text-gray-500">Name</p>
-                                <p className="w-2/3 font-medium">
-                                    Olivia Bennett
-                                </p>
+                        {/* Emergency Contact Card */}
+                        <Card title="Emergency contact">
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between">
+                                    <p className="text-gray-500">Name</p>
+                                    <p className="font-medium">
+                                        {
+                                            user?.personal_information
+                                                ?.contact_name
+                                        }
+                                    </p>
+                                </div>
+                                <div className="flex justify-between">
+                                    <p className="text-gray-500">
+                                        Relationship
+                                    </p>
+                                    <p className="font-medium">
+                                        {
+                                            user?.personal_information
+                                                ?.contact_relationship
+                                        }
+                                    </p>
+                                </div>
+                                <div className="flex justify-between">
+                                    <p className="text-gray-500">Phone</p>
+                                    <p className="font-medium">
+                                        {
+                                            user?.personal_information
+                                                ?.contact_number
+                                        }
+                                    </p>
+                                </div>
                             </div>
-                            <div className="flex">
-                                <p className="w-1/3 text-gray-500">
-                                    Relationship
-                                </p>
-                                <p className="w-2/3 font-medium">Wife</p>
-                            </div>
-                            <div className="flex">
-                                <p className="w-1/3 text-gray-500">
-                                    Phone number
-                                </p>
-                                <p className="w-2/3 font-medium">
-                                    081324815250
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
+                        </Card>
+                    </div>
 
-                    {/* Education Card */}
+                    {/* Bottom Row Cards */}
                     <Card title="Education">
-                        <div className="space-y-6">
-                            <EducationItem
-                                degree="Master Degree - Bina Nusantara"
-                                major="Business"
-                                gpa="3.5"
-                                year="2016 - 2018"
-                            />
-                            <EducationItem
-                                degree="Bachelor Degree - Bina Nusantara"
-                                major="Business"
-                                gpa="3.9"
-                                year="2012 - 2016"
-                                isLast
+                        <div className="space-y-4">
+                            <TimelineItem
+                                title={user?.personal_information?.school_name}
+                                subtitle={user?.personal_information?.course}
+                                metaText={
+                                    user?.personal_information
+                                        ?.highest_level_of_education
+                                        ? `Level: ${user?.personal_information?.highest_level_of_education}`
+                                        : null
+                                }
+                                dateText={
+                                    user?.personal_information?.year_graduated
+                                }
+                                isLast={true}
                             />
                         </div>
                     </Card>
 
-                    {/* Family Card */}
-                    <Card title="Family">
-                        <table className="w-full text-sm">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="text-left p-3 font-semibold text-gray-600">
-                                        Family type
-                                    </th>
-                                    <th className="text-left p-3 font-semibold text-gray-600">
-                                        Person name
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                <tr>
-                                    <td className="p-3 text-gray-500">
-                                        Father
-                                    </td>
-                                    <td className="p-3">Benjamin Williams</td>
-                                </tr>
-                                <tr>
-                                    <td className="p-3 text-gray-500">
-                                        Mother
-                                    </td>
-                                    <td className="p-3">Evelyn Potts</td>
-                                </tr>
-                                <tr>
-                                    <td className="p-3 text-gray-500">
-                                        Siblings
-                                    </td>
-                                    <td className="p-3">
-                                        James Williams
-                                        <br />
-                                        Emily Williams
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <Card title="Skills">
+                        <div className="space-y-4">
+                            {user?.skills?.map((res, index) => (
+                                <TimelineItem
+                                    key={index} // Added Key to fix React warning
+                                    title={res.skill}
+                                    subtitle={`Proficiency: ${res.percentage}%`}
+                                    isLast={index === user.skills.length - 1}
+                                />
+                            ))}
+                        </div>
+                    </Card>
+
+                    <Card title="Working Experiences">
+                        <div className="space-y-4">
+                            {user?.working_experience?.map((res, index) => (
+                                <TimelineItem
+                                    key={index} // Added Key to fix React warning
+                                    title={res.company_name}
+                                    subtitle={res.position}
+                                    metaText={res.job_description}
+                                    dateText={`${res.start_date} to ${res.end_date}`}
+                                    isLast={
+                                        index ===
+                                        user.working_experience.length - 1
+                                    }
+                                />
+                            ))}
+                        </div>
+                    </Card>
+                    <Card title="Government Information">
+                        <div className="space-y-3 text-sm">
+                            <div className="flex justify-between">
+                                <p className="text-gray-500">
+                                    Government ID Type
+                                </p>
+                                <p className="font-medium">
+                                    {
+                                        user?.personal_information
+                                            ?.government_type
+                                    }
+                                </p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-gray-500">ID Number</p>
+                                <p className="font-medium">
+                                    {user?.personal_information?.id_number}
+                                </p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-gray-500">SSS</p>
+                                <p className="font-medium">
+                                    {user?.personal_information?.sss}
+                                </p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-gray-500">PhilHealth</p>
+                                <p className="font-medium">
+                                    {user?.personal_information?.philhealth}
+                                </p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-gray-500">Pag-Ibig</p>
+                                <p className="font-medium">
+                                    {user?.personal_information?.pagibig}
+                                </p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-gray-500">TIN #</p>
+                                <p className="font-medium">
+                                    {user?.personal_information?.tin}
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                    <Card title="QR Code">
+                        <QRCodeSVG
+                            className="w-full"
+                            value={user?.account_employee?.employee_id}
+                            size={256} // Width and height in pixels
+                            bgColor={"#ffffff"} // Background color
+                            fgColor={"#000000"} // Foreground (QR code) color
+                            level={"H"} // Error correction level (L, M, Q, H)
+                        />
+                    </Card>
+                    <Card title="E-Signature">
+                        <img src={user?.account_employee?.signature} />
                     </Card>
                 </div>
             </EmployeeLayout>
@@ -188,25 +313,26 @@ const Page = () => {
 
 // Reusable Components
 const Card = ({ title, children }) => (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative">
-        <button className="absolute top-6 right-6 text-gray-400 hover:text-blue-600">
-            <Edit2 size={16} />
-        </button>
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative ">
         <h3 className="text-lg font-bold mb-6">{title}</h3>
         {children}
     </div>
 );
 
-const EducationItem = ({ degree, major, gpa, year, isLast }) => (
-    <div className="relative pl-6">
+// Renamed from EducationItem to TimelineItem for generic reusability
+const TimelineItem = ({ title, subtitle, metaText, dateText, isLast }) => (
+    <div className="relative pl-6 pb-2">
         {!isLast && (
             <div className="absolute left-[3px] top-2 w-[2px] h-full bg-gray-200"></div>
         )}
         <div className="absolute left-0 top-2 w-2 h-2 rounded-full bg-blue-500"></div>
-        <p className="font-bold text-sm">{degree}</p>
-        <p className="text-gray-600 text-xs">{major}</p>
-        <p className="text-gray-400 text-xs">GPA ({gpa})</p>
-        <p className="text-gray-400 text-xs mt-1">{year}</p>
+
+        <p className="font-bold text-sm text-gray-800">{title}</p>
+        {subtitle && <p className="text-gray-600 text-sm">{subtitle}</p>}
+        {metaText && <p className="text-gray-500 text-xs mt-1">{metaText}</p>}
+        {dateText && (
+            <p className="text-blue-500 font-medium text-xs mt-1">{dateText}</p>
+        )}
     </div>
 );
 

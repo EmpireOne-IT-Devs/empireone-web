@@ -2,17 +2,6 @@ import Tabs from "@/app/_components/tabs";
 import React, { useState } from "react";
 
 export default function TabsSection() {
-    // const tabs = [
-    //     "Personal info",
-    //     "Employee details",
-    //     "Payroll details",
-    //     "Documents",
-    //     "Payroll history",
-    //     "Medical history",
-    //     "Leave history",
-    //     "Attendance",
-    // ];
-
     const [activeTab, setActiveTab] = useState(0);
     const user_id = window.location.pathname.split("/")[3];
     const path = window.location.pathname.split("/")[4];

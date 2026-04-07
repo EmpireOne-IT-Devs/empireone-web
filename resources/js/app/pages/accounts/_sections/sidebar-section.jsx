@@ -21,16 +21,19 @@ import Tooltip from "@/app/_components/tooltip";
 import { Link } from "@inertiajs/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
+
 export default function SidebarSection() {
     const { desktopCollapsed, sidebarOpen } = useSelector((store) => store.app);
     const dispatch = useDispatch();
     const path = window.location.pathname.split("/")[3];
     const account_role = window.location.pathname.split("/")[2];
 
-    const navigation = [
+    // 1. We split the main navigation items...
+    const mainNavigation = [
         {
             name: "Dashboard",
             href: `/accounts/${account_role}/dashboard`,
@@ -67,13 +70,6 @@ export default function SidebarSection() {
             icon: FcVoicePresentation,
             current: path == "messages",
         },
-        {
-            name: "My Profile",
-            href: `/accounts/${account_role}/my_profile`,
-            icon: FcBusinessman,
-            current: path == "my_profile",
-        },
-        // Employee-specific items
         ...(account_role === "employee"
             ? [
                   {
@@ -116,6 +112,16 @@ export default function SidebarSection() {
                   },
               ]
             : []),
+    ];
+
+    // 2. ...from the bottom navigation items.
+    const bottomNavigation = [
+        {
+            name: "My Profile",
+            href: `/accounts/${account_role}/my_profile`,
+            icon: FcBusinessman,
+            current: path == "my_profile",
+        },
         {
             name: "Settings",
             href: `/accounts/${account_role}/settings`,
@@ -135,6 +141,7 @@ export default function SidebarSection() {
 
     return (
         <>
+            {/* Mobile sidebar */}
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
                     as="div"
@@ -173,7 +180,7 @@ export default function SidebarSection() {
                                         X
                                     </button>
                                 </div>
-                                <div className="flex flex-col h-full p-6">
+                                <div className="flex flex-col h-full p-6 pb-4">
                                     <div className="flex h-16 items-center">
                                         <img
                                             alt="Logo"
@@ -186,9 +193,11 @@ export default function SidebarSection() {
                                             className="h-16 w-full hidden dark:block"
                                         />
                                     </div>
+
+                                    {/* Main Mobile Navigation */}
                                     <nav className="flex-1 mt-6 overflow-y-auto">
                                         <ul className="space-y-4">
-                                            {navigation.map((item) => (
+                                            {mainNavigation.map((item) => (
                                                 <li key={item.name}>
                                                     <Link
                                                         href={item.href}
@@ -214,6 +223,36 @@ export default function SidebarSection() {
                                             ))}
                                         </ul>
                                     </nav>
+
+                                    {/* Bottom Mobile Navigation (mt-auto pushes it down) */}
+                                    <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/10">
+                                        <ul className="space-y-4">
+                                            {bottomNavigation.map((item) => (
+                                                <li key={item.name}>
+                                                    <Link
+                                                        href={item.href}
+                                                        className={classNames(
+                                                            item.current
+                                                                ? "bg-gray-50 text-indigo-600 dark:bg-white/5 dark:text-white"
+                                                                : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white",
+                                                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold",
+                                                        )}
+                                                    >
+                                                        <item.icon
+                                                            aria-hidden="true"
+                                                            className={classNames(
+                                                                item.current
+                                                                    ? "text-indigo-600 dark:text-white"
+                                                                    : "text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white",
+                                                                "w-6 h-6 shrink-0",
+                                                            )}
+                                                        />
+                                                        {item.name}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
@@ -242,10 +281,12 @@ export default function SidebarSection() {
                             className={`h-16 w-full hidden dark:block ${sidebarText}`}
                         />
                     </div>
-                    <hr className="my-3" />
+                    <hr className="my-3 border-gray-200 dark:border-white/10" />
+
+                    {/* Main Desktop Navigation */}
                     <nav className="flex-1 overflow-y-auto p-2">
                         <ul className="space-y-1">
-                            {navigation.map((item, i) => (
+                            {mainNavigation.map((item, i) => (
                                 <li key={i}>
                                     <Tooltip
                                         position="right"
@@ -277,6 +318,42 @@ export default function SidebarSection() {
                             ))}
                         </ul>
                     </nav>
+
+                    {/* Bottom Desktop Navigation (mt-auto pushes it down) */}
+                    <div className="mt-auto p-2 pt-3 border-t border-gray-200 dark:border-white/10">
+                        <ul className="space-y-1">
+                            {bottomNavigation.map((item, i) => (
+                                <li key={i}>
+                                    <Tooltip
+                                        position="right"
+                                        title={item.name}
+                                        className="w-full"
+                                        isShow={desktopCollapsed}
+                                    >
+                                        <Link
+                                            href={item.href}
+                                            className={classNames(
+                                                item.current
+                                                    ? "bg-blue-700 text-white dark:bg-white/5 dark:text-white"
+                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white",
+                                                "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
+                                            )}
+                                        >
+                                            <div className="flex gap-3 items-start justify-start w-full">
+                                                <item.icon
+                                                    className="w-6 h-6 shrink-0"
+                                                    aria-hidden="true"
+                                                />
+                                                <span className={sidebarText}>
+                                                    {item.name}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    </Tooltip>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </>
