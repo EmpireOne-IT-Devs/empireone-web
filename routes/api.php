@@ -96,6 +96,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('re_upload_documents',  [AccountDocumentController::class, 're_upload_documents']);
         Route::get('get_documents_by_user',  [AccountDocumentController::class, 'get_documents_by_user']);
         Route::post('send_documents',  [AccountDocumentController::class, 'send_documents']);
+        Route::get('get_201_files_by_user/{user_id}',  [AccountDocumentController::class, 'get_201_files_by_user']);
     });
 });
 

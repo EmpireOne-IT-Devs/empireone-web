@@ -131,6 +131,9 @@ Route::prefix('administrator')->middleware(['auth', 'verified', 'role.redirect:1
             Route::get('personal_information', function () {
                 return Inertia::render('administrator/employee_relation/employees/id/personal_information/page');
             });
+             Route::get('201_files', function () {
+                return Inertia::render('administrator/employee_relation/employees/id/201_files/page');
+            });
             Route::get('employee_details', function () {
                 return Inertia::render('administrator/employee_relation/employees/id/employee_details/page');
             });

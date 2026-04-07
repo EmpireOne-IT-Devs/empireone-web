@@ -1,6 +1,7 @@
 import React from "react";
 import { Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import { FaRegWindowClose } from "react-icons/fa";
 
 export default function Modal({
     isOpen,
@@ -63,9 +64,10 @@ export default function Modal({
                                 <div className="flex w-full  items-end justify-end ">
                                     <button
                                         onClick={() => onClose()}
-                                        className=" text-xl text-red-600 hover:text-red-700  border border-red-600 hover:border-red-700 px-5 p-2 rounded-md"
+                                        className=" text-xl text-red-600 hover:text-red-700 px-5 p-2 "
                                     >
-                                        Close
+                                        
+                                        <FaRegWindowClose size={32} />
                                     </button>
                                 </div>
                             </div>

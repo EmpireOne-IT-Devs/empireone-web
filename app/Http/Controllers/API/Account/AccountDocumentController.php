@@ -16,6 +16,10 @@ class AccountDocumentController extends Controller
 {
 
 
+    public function get_201_files_by_user($user_id)
+    {
+        return 'dadawda';
+    }
     public function re_upload_documents(Request $request)
     {
 
@@ -99,7 +103,7 @@ class AccountDocumentController extends Controller
             }
             AccountDocument::updateOrCreate(
                 [
-                    'user_id' => Auth::id(),
+                    'user_id' => $request->user_id ?? Auth::id(),
                     'type'    => '201 File',
                     'name'   => $doc['name'],
                 ],

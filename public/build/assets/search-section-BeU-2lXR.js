@@ -1,1 +1,0 @@
-import{j as e}from"./app-DtsmHbQ7.js";import{I as r}from"./input-7RGfI4JR.js";function s(){return e.jsx("div",{className:"bg-white shadow p-4 rounded-xl flex my-3 mt-8",children:e.jsx(r,{label:"Search...",name:"search"})})}export{s as default};

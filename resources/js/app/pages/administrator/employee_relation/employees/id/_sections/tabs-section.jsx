@@ -13,25 +13,10 @@ export default function TabsSection() {
             active: path === "personal_information",
         },
         {
-            label: "Employee Details",
-            path: `/administrator/employee_relation/${user_id}/employee_details`,
-            active: path === "employee_details",
+            label: "201 Files",
+            path: `/administrator/employee_relation/${user_id}/201_files`,
+            active: path === "201_files",
         },
-        {
-            label: "Onboarding Documents",
-            path: `/administrator/employee_relation/${user_id}/onboarding`,
-            active: path === "onboarding",
-        },
-        {
-            label: "Contract Documents",
-            path: `/administrator/employee_relation/${user_id}/contract`,
-            active: path === "contract",
-        },
-        // {
-        //     label: "Reports",
-        //     path: "/administrator/finance/reports",
-        //     active: path === "reports",
-        // },
     ];
     return (
         <div>
