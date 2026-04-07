@@ -336,7 +336,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('administrator/employee_relation/employees/id/onboarding/page');
     });
     Route::get('/my_profile/signature', function () {
-        return Inertia::render('employee/my_profile/signature/page');
+        return Inertia::render('accounts/my_profile/signature/page');
     });
 });
 
