@@ -182,7 +182,7 @@ export default function SidebarSection() {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white ">
+                           <Dialog.Panel className="relative flex w-full flex-1 flex-col bg-white">
                                 <div className="flex items-end justify-end top-0 right-0 pt-4 pr-4">
                                     <button
                                         type="button"
@@ -247,7 +247,7 @@ export default function SidebarSection() {
                                     </nav>
 
                                     {/* Bottom Mobile Navigation (mt-auto pushes it down) */}
-                                    <div className="mt-auto pt-4 border-t border-gray-200">
+                                    <div className="mt-auto pt-4 border-t border-gray-200 mb-10">
                                         <ul className="space-y-4">
                                             {bottomNavigation.map((item) => (
                                                 <li key={item.name}>
@@ -278,10 +278,7 @@ export default function SidebarSection() {
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
-                        <div
-                            className="w-14 flex-shrink-0"
-                            aria-hidden="true"
-                        />
+                      
                     </div>
                 </Dialog>
             </Transition.Root>
