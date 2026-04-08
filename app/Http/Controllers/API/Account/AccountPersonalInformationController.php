@@ -23,32 +23,24 @@ class AccountPersonalInformationController extends Controller
         set_time_limit(30000);
 
         // foreach ($request->items ?? [] as $value) {
-        //     if (!empty($value['app_id'])) {
+        //     if (!empty($value['app_id']) && !empty($value['email'])) {
+
         //         $api = AccountPersonalInformation::where('app_id', $value['app_id'])->first();
-        //         if ($api && !empty($value['status'])) {
-        //             if ($value['status']  == 'Regular' || $value['status']  == 'Probationary') {
-        //                 User::updateOrCreate(
-        //                     [
-        //                         'id' => $api->user_id,
-        //                     ],
-        //                     [
-        //                         'role'     => 2,
-        //                     ]
-        //                 );
-        //             } else {
-        //                 User::updateOrCreate(
-        //                     [
-        //                         'id' => $api->user_id,
-        //                     ],
-        //                     [
-        //                         'role'     => 3,
-        //                     ]
-        //                 );
+
+        //         if ($api) {
+        //             // 1. Check if ANY other user is already using this email
+        //             $exists = User::where('email', $value['email'])
+        //                 ->where('id', '!=', $api->user_id)
+        //                 ->exists();
+
+        //             if (!$exists) {
+        //                 User::where('id', $api->user_id)->update([
+        //                     'email' => trim($value['email']),
+        //                 ]);
         //             }
         //         }
         //     }
         // }
-
         // $apis = AccountEmployee::get();
         // foreach ($apis as $key => $value) {
         //     User::updateOrCreate(
