@@ -19,7 +19,7 @@ export default function HeaderSection() {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-800">
+        <header className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-200 0">
             <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
                 {/* Logo */}
                 <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ export default function HeaderSection() {
                         <button
                             key={item.name}
                             onClick={() => scrollTo(item.id)}
-                            className="text-sm font-semibold text-slate-700 dark:text-white hover:text-blue-600 transition-colors"
+                            className="text-sm font-semibold text-slate-700  hover:text-blue-600 transition-colors"
                         >
                             {item.name}
                         </button>
@@ -85,7 +85,7 @@ export default function HeaderSection() {
 
                     <Link
                         href="/auth/login"
-                        className="text-sm font-semibold text-slate-700 dark:text-white hover:text-blue-600"
+                        className="text-sm font-semibold text-slate-700  hover:text-blue-600"
                     >
                         Log in
                     </Link>
@@ -103,7 +103,7 @@ export default function HeaderSection() {
                     {/* <DarkModeToggle /> */}
                     <button
                         onClick={() => setMobileMenuOpen(true)}
-                        className="p-2 text-gray-700 dark:text-gray-300"
+                        className="p-2 text-gray-700 "
                     >
                         <Bars3Icon className="h-6 w-6" />
                     </button>
@@ -113,12 +113,12 @@ export default function HeaderSection() {
             {/* Mobile Menu */}
             {mobileMenuOpen && (
                 <div className="lg:hidden fixed inset-0 z-50 bg-black/40">
-                    <div className="fixed right-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-lg p-6">
+                    <div className="fixed right-0 top-0 h-full w-72 bg-white  shadow-lg p-6">
                         {/* Close button */}
                         <div className="flex justify-end">
                             <button
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="p-2 text-gray-700 dark:text-gray-300"
+                                className="p-2 text-gray-700 "
                             >
                                 <XMarkIcon className="h-6 w-6" />
                             </button>
@@ -130,7 +130,7 @@ export default function HeaderSection() {
                                 <button
                                     key={item.name}
                                     onClick={() => scrollTo(item.id)}
-                                    className="text-left text-lg font-semibold text-slate-700 dark:text-white hover:text-blue-600"
+                                    className="text-left text-lg font-semibold text-slate-700  hover:text-blue-600"
                                 >
                                     {item.name}
                                 </button>
@@ -141,7 +141,7 @@ export default function HeaderSection() {
                         <div className="mt-8 flex flex-col gap-3">
                             <Link
                                 href="/auth/login"
-                                className="text-center py-2 border rounded-md text-slate-700 dark:text-white"
+                                className="text-center py-2 border rounded-md text-slate-700 "
                             >
                                 Log in
                             </Link>

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ArrowRightIcon } from "lucide-react";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 24 },
@@ -34,7 +35,7 @@ export default function FooterSection() {
     const socialLinks = [
         {
             name: "LinkedIn",
-            href: "#",
+            href: "https://ca.linkedin.com/company/empireonebposolutions",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +67,7 @@ export default function FooterSection() {
         },
         {
             name: "Facebook",
-            href: "#",
+            href: "https://www.facebook.com/empireonebposolutionsinc",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -81,7 +82,7 @@ export default function FooterSection() {
         },
         {
             name: "Instagram",
-            href: "#",
+            href: "https://www.instagram.com/empireonebposolutions",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +104,7 @@ export default function FooterSection() {
     ];
 
     return (
-        <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 px-6">
+        <footer className="bg-white text-black pt-16 pb-8 px-6">
             <div className="max-w-7xl mx-auto">
                 {/* TOP GRID */}
                 <motion.div
@@ -125,7 +126,7 @@ export default function FooterSection() {
                             />
                         </div>
 
-                        <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                        <p className="text-sm text-slate-600 leading-relaxed mb-6">
                             Empowering businesses with innovative IT solutions,
                             robust cybersecurity, and scalable cloud
                             infrastructure for the digital age.
@@ -138,7 +139,7 @@ export default function FooterSection() {
                                     key={s.name}
                                     href={s.href}
                                     aria-label={s.name}
-                                    className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:border-blue-500 hover:bg-blue-500/10 transition-all duration-200"
+                                    className="w-9 h-9 rounded-full  border border-blue-700 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-500/10 transition-all duration-200"
                                 >
                                     {s.icon}
                                 </a>
@@ -160,7 +161,7 @@ export default function FooterSection() {
                                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                                     <a
                                         href={link.href}
-                                        className="text-sm text-slate-400 hover:text-white transition-colors"
+                                        className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
                                     >
                                         {link.name}
                                     </a>
@@ -183,7 +184,7 @@ export default function FooterSection() {
                                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                                     <a
                                         href={s.href}
-                                        className="text-sm text-slate-400 hover:text-white transition-colors"
+                                        className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
                                     >
                                         {s.name}
                                     </a>
@@ -197,7 +198,7 @@ export default function FooterSection() {
                         <h4 className="text-white font-semibold text-base mb-3">
                             Newsletter
                         </h4>
-                        <p className="text-sm text-slate-400 leading-relaxed mb-5">
+                        <p className="text-sm text-slate-600 leading-relaxed mb-5">
                             Subscribe to our newsletter to get the latest
                             updates and news.
                         </p>
@@ -205,27 +206,14 @@ export default function FooterSection() {
                             <input
                                 type="email"
                                 placeholder="Email Address"
-                                className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                className="w-full px-4 py-3 rounded-lg border border-slate-700 text-slate-900 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                             />
                             <button
                                 type="button"
                                 className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-sm transition-all duration-200"
                             >
                                 Subscribe Now
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <line x1="5" y1="12" x2="19" y2="12" />
-                                    <polyline points="12 5 19 12 12 19" />
-                                </svg>
+                                <ArrowRightIcon className="h-4 w-4" />
                             </button>
                         </div>
                     </div>
@@ -249,13 +237,13 @@ export default function FooterSection() {
                     <div className="flex items-center gap-6 text-xs text-slate-500">
                         <a
                             href="/privacy-policy"
-                            className="hover:text-white transition-colors"
+                            className="hover:text-blue-600 transition-colors"
                         >
                             Privacy Policy
                         </a>
                         <a
                             href="/terms"
-                            className="hover:text-white transition-colors"
+                            className="hover:text-blue-600 transition-colors"
                         >
                             Terms of Service
                         </a>

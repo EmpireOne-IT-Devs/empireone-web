@@ -16,7 +16,7 @@ export default function MostCommonIssueSection() {
                         <div className="font-black">342</div>(28%)
                     </div>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1 p-1">
                     <Badge variant="secondary">Account Access</Badge>
                     <div className="text-md">Avg Resolution: 15 min</div>
                 </div>
@@ -35,8 +35,8 @@ export default function MostCommonIssueSection() {
                         <div className="font-black">342</div>(28%)
                     </div>
                 </div>
-                <div className="flex gap-1">
-                    <Badge outlined variant="secondary">
+                <div className="flex gap-1 p-1">
+                    <Badge  variant="secondary">
                         Account Access
                     </Badge>
                     <div className="text-md">Avg Resolution: 15 min</div>
@@ -55,8 +55,8 @@ export default function MostCommonIssueSection() {
                         <div className="font-black">342</div>(28%)
                     </div>
                 </div>
-                <div className="flex gap-1">
-                    <Badge outlined variant="secondary">
+                <div className="flex gap-1 p-1">
+                    <Badge  variant="primary">
                         Account Access
                     </Badge>
                     <div className="text-md">Avg Resolution: 15 min</div>

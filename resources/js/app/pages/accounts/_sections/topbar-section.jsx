@@ -23,9 +23,9 @@ export default function TopbarSection() {
     console.log("user", data);
     return (
         <>
-            <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm dark:border-white/10 dark:bg-gray-900">
+            <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm  ">
                 <button
-                    className="hidden lg:block p-2  items-center justify-center text-gray-900 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                    className="hidden lg:block p-2  items-center justify-center text-gray-900 hover:text-gray-700  "
                     onClick={() => dispatch(setDesktopCollapsed())}
                 >
                     <Bars3Icon className="w-5 h-5" />
@@ -33,7 +33,7 @@ export default function TopbarSection() {
                 <button
                     type="button"
                     onClick={() => dispatch(setSidebarOpen())}
-                    className="lg:hidden p-2 text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    className="lg:hidden p-2 text-gray-700 hover:text-gray-900  "
                 >
                     <Bars3Icon className="w-6 h-6" />
                 </button>
@@ -43,27 +43,27 @@ export default function TopbarSection() {
                         <input
                             name="search"
                             placeholder="Search"
-                            className="block w-full pl-8 pr-2 py-2 text-gray-900 bg-white border rounded dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
+                            className="block w-full pl-8 pr-2 py-2 text-gray-900 bg-white border rounded   "
                         />
                         <MagnifyingGlassIcon className="absolute left-2 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
                     </form>
 
                     <div className="flex items-center gap-x-4">
-                        <button className="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-white">
+                        <button className="p-2 text-gray-400 hover:text-gray-500 ">
                             <BellIcon className="w-6 h-6" />
                         </button>
 
-                        <Menu as="div" className="relative">
+                        <Menu as="iv" className="relative">
                             <Menu.Button className="flex items-center">
                                 <img
                                     className="w-8 h-8 rounded-full"
-                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepa=2&w=256&h=256&q=80"
                                     alt=""
                                 />
-                                <span className="ml-2 hidden lg:block text-sm font-semibold text-gray-900 dark:text-white">
+                                <span className="ml-2 hidden lg:block text-sm font-semibold text-gray-900 ">
                                     {data?.user?.name}
                                 </span>
-                                <ChevronDownIcon className="ml-1 w-5 h-5 text-gray-400 dark:text-gray-500" />
+                                <ChevronDownIcon className="ml-1 w-5 h-5 text-gray-400 " />
                             </Menu.Button>
 
                             <Transition
@@ -75,12 +75,12 @@ export default function TopbarSection() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                             >
-                                <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg dark:bg-gray-800">
+                                <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ">
                                     <Menu.Item>
                                         <a
                                             as="button"
                                             className={
-                                                "block px-3 py-1 text-sm text-gray-900 dark:text-white hover:bg-gray-100"
+                                                "block px-3 py-1 text-sm text-gray-900  hover:bg-gray-100"
                                             }
                                         >
                                             Profile
@@ -92,7 +92,7 @@ export default function TopbarSection() {
                                             href={route("logout")}
                                             as="button"
                                             className={
-                                                "block px-3 py-1 text-sm text-gray-900 dark:text-white hover:bg-gray-100"
+                                                "block px-3 py-1 text-sm text-gray-900  hover:bg-gray-100"
                                             }
                                         >
                                             Sign Out

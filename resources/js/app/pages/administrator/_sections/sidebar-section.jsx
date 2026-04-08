@@ -166,7 +166,7 @@ export default function SidebarSection() {
                         leaveFrom="opacity-80"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-gray-900 dark:bg-black" />
+                        <div className="fixed inset-0 bg-gray-900 " />
                     </Transition.Child>
 
                     <div className="fixed inset-0 flex">
@@ -179,12 +179,12 @@ export default function SidebarSection() {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white dark:bg-gray-900">
+                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white ">
                                 <div className="flex items-end justify-end top-0 right-0 pt-4 pr-4">
                                     <button
                                         type="button"
                                         onClick={() => open_sidebar()}
-                                        className="text-gray-700 dark:text-white font-bold text-xl"
+                                        className="text-gray-700  font-bold text-xl"
                                     >
                                         X
                                     </button>
@@ -194,12 +194,12 @@ export default function SidebarSection() {
                                         <img
                                             alt="Logo"
                                             src="/images/logo.png"
-                                            className="h-16 w-full dark:hidden"
+                                            className="h-16 w-full "
                                         />
                                         <img
                                             alt="Logo"
                                             src="/images/logo.png"
-                                            className="h-16 w-full hidden dark:block"
+                                            className="h-16 w-full hidden "
                                         />
                                     </div>
                                     <nav className="flex-1 mt-6 overflow-y-auto">
@@ -210,8 +210,8 @@ export default function SidebarSection() {
                                                         href={item.href}
                                                         className={classNames(
                                                             item.current
-                                                                ? "bg-gray-50 text-indigo-600 dark:bg-white/5 dark:text-white"
-                                                                : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white",
+                                                                ? "bg-gray-50 text-indigo-600 "
+                                                                : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600   ",
                                                             "group flex gap-x-3 rounded-md p-2 text-sm font-semibold",
                                                         )}
                                                     >
@@ -219,8 +219,8 @@ export default function SidebarSection() {
                                                             aria-hidden="true"
                                                             className={classNames(
                                                                 item.current
-                                                                    ? "text-indigo-600 dark:text-white"
-                                                                    : "text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white",
+                                                                    ? "text-indigo-600 "
+                                                                    : "text-gray-400 group-hover:text-indigo-600 ",
                                                                 "w-6 h-6 shrink-0",
                                                             )}
                                                         />
@@ -243,19 +243,19 @@ export default function SidebarSection() {
 
             {/* Desktop sidebar */}
             <div
-                className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-white/10 transition-all duration-300 ${sidebarWidth}`}
+                className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col bg-white  border-r border-gray-200 transition-all duration-300 ${sidebarWidth}`}
             >
                 <div className="flex flex-col flex-1 h-full">
                     <div className="flex items-center mt-3 justify-center h-16 p-4">
                         <img
                             alt="Logo"
                             src="/images/logo.png"
-                            className={`h-16 w-full dark:hidden ${sidebarText}`}
+                            className={`h-16 w-full  ${sidebarText}`}
                         />
                         <img
                             alt="Logo"
                             src="/images/logo.png"
-                            className={`h-16 w-full hidden dark:block ${sidebarText}`}
+                            className={`h-16 w-full hidden  ${sidebarText}`}
                         />
                     </div>
                     <hr className="my-3" />
@@ -273,8 +273,8 @@ export default function SidebarSection() {
                                             href={item.href}
                                             className={classNames(
                                                 item.current
-                                                    ? "bg-blue-700 text-white dark:bg-white/5 dark:text-white"
-                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white",
+                                                    ? "bg-blue-700 text-white "
+                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200   ",
                                                 "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                             )}
                                         >

@@ -13,7 +13,7 @@ export default function Layout({ children }) {
         store.dispatch(get_app_data_thunk());
     }, []);
     return (
-        <div className="h-full bg-white dark:bg-gray-900">
+        <div className="h-full bg-white ">
             <SidebarSection />
             <div
                 className={`${

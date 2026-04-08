@@ -3,6 +3,6 @@ import Layout from '../../layout'
 
 export default function Page() {
   return (
-    <Layout>P</Layout>
+    <Layout>Coming Soon!</Layout>
   )
 }
