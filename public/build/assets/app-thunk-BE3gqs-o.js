@@ -1,0 +1,1 @@
+import{e as i,o as n}from"./app-B-Diy3df.js";import{g as r}from"./user-service-C9fOPS6A.js";async function o(){return await i.get("/api/get_app_data")}function u(e){return async function(t,s){const a=await o();t(n.actions.setData(a.data))}}function p(e){return async function(t,s){const a=await r(e);t(n.actions.setUser(a.data))}}export{p as a,u as g};

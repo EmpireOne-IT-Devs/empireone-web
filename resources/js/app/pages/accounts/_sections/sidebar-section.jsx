@@ -183,17 +183,8 @@ export default function SidebarSection() {
                             leaveTo="-translate-x-full"
                         >
                            <Dialog.Panel className="relative flex w-full flex-1 flex-col bg-white">
-                                <div className="flex items-end justify-end top-0 right-0 pt-4 pr-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => open_sidebar()}
-                                        className="text-gray-700  font-bold text-xl"
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                                <div className="flex flex-col h-full p-6 pb-4">
-                                    <div className="flex h-16 items-center">
+                                <div className="flex items-start justify-between top-0 right-0 px-5 pt-5">
+                                      <div className="flex h-16 items-center">
                                         <img
                                             alt="Logo"
                                             src="/images/logo.png"
@@ -205,9 +196,19 @@ export default function SidebarSection() {
                                             className="h-16 w-full hidden "
                                         />
                                     </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => open_sidebar()}
+                                        className="text-gray-700  font-bold text-xl"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                                <div className="flex flex-col h-full p-6 pb-4">
+                                  
 
                                     {/* Main Mobile Navigation */}
-                                    <nav className="flex-1 mt-6 overflow-y-auto">
+                                    <nav className="flex-1 overflow-y-auto">
                                         <ul className="space-y-4">
                                             {mainNavigation.map((item) => (
                                                 <li key={item.name}>
@@ -247,7 +248,7 @@ export default function SidebarSection() {
                                     </nav>
 
                                     {/* Bottom Mobile Navigation (mt-auto pushes it down) */}
-                                    <div className="mt-auto pt-4 border-t border-gray-200 mb-10">
+                                    <div className="mt-auto pt-4 border-t border-gray-200 mb-20">
                                         <ul className="space-y-4">
                                             {bottomNavigation.map((item) => (
                                                 <li key={item.name}>
