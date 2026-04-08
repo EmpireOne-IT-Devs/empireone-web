@@ -8,6 +8,7 @@ export default function Pagination({ data }) {
     const queryParams = new URLSearchParams(window.location.search);
     const currentPage = data?.current_page;
     const lastPage = data?.last_page;
+    console.log('datadata',data)
     const maxVisiblePages = 5; // Maximum number of pages to show
     const status = queryParams.get("status") ?? "";
     const search = queryParams.get("search") ?? "";

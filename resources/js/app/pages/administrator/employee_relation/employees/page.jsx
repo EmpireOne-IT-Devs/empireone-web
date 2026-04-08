@@ -5,16 +5,21 @@ import store from "@/app/store/store";
 import { get_employees_thunk } from "@/app/redux/employee-relation-thunk";
 import EmployeesLayout from "../layout";
 import SearchSection from "./_sections/search-section";
+import PaginationSection from "./_sections/pagination-section";
 
 export default function Page() {
     useEffect(() => {
         store.dispatch(get_employees_thunk());
-    }, []);
+    }, [window.location.search]);
     return (
         <Layout>
             <EmployeesLayout>
                 <SearchSection />
-                <TableSection />
+                <div className="flex flex-col gap-3">
+                    <PaginationSection />
+                    <TableSection />
+                    <PaginationSection />
+                </div>
             </EmployeesLayout>
         </Layout>
     );

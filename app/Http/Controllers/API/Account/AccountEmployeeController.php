@@ -12,15 +12,35 @@ class AccountEmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = AccountEmployee::with('user', 'personal_information', 'department', 'account', 'site')
+        // 1. Capture the search term
+        $search = $request->input('search');
+
+        $employees = AccountEmployee::with(['user', 'personal_information', 'department', 'account', 'site'])
             ->whereNotNull('employee_id')
+            // 2. Filter by Role (as you had before)
             ->whereHas('user', function ($query) {
-                $query->whereIn('role', [1, 2]); // use integers if possible
+                $query->whereIn('role', [1, 2]);
+            })
+            // 3. Add Search Logic
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('employee_id', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('personal_information', function ($piQuery) use ($search) {
+                            $piQuery->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%");
+                        });
+                });
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(15)
+            // 4. Append search query to pagination links
+            ->withQueryString();
 
         return response()->json([
             'status' => 'success',

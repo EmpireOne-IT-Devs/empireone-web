@@ -42,19 +42,27 @@ class AccountPersonalInformationController extends Controller
         //     }
         // }
         // $apis = AccountEmployee::get();
-        // foreach ($apis as $key => $value) {
+        // foreach (AccountEmployee::whereNotNull('employee_id')->whereIn('status',['Regular','Probationary'])->pluck('user_id') as $key => $value) {
         //     User::updateOrCreate(
         //         [
-        //             'id' => $value['user_id'],
+        //             'id' => $value,
         //         ],
         //         [
-        //             'role'     => $value['status'] == 'Probationary' || $value['Regular'] ? 2 : 3,
+        //             'role'     => 2,
         //         ]
         //     );
         // }
 
+        $employees = AccountEmployee::whereNotNull('employee_id')
+            ->whereIn('status', ['Regular', 'Probationary'])
+            ->with(['user'])
+            ->get()
+            ->map(function ($employee) {
+                return $employee->user->email;
+            });
+
         return response()->json([
-            'emails' => User::where('role',2)->pluck('email'),
+            'emails' => $employees,
             'message' => 'Accounts processed successfully'
         ], 200);
     }
