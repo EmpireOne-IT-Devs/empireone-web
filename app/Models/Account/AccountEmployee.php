@@ -28,6 +28,7 @@ class AccountEmployee extends Model
         'position',
         'signature',
         'onboarding_agree_on',
+        'status',
         'started_at'
     ];
 

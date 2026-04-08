@@ -12,6 +12,7 @@ export default function Page() {
             {/* Header */}
             <HeaderSection />
             <CardSection />
+            <ImportCsv />
             <div className="flex gap-6 items-start">
                 {/* Left: Featured Jobs — takes ~65% */}
                 <div className="flex-1 min-w-0">

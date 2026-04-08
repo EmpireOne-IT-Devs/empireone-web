@@ -22,23 +22,44 @@ class AccountPersonalInformationController extends Controller
         // High limit is okay for local, but consider chunking for production
         set_time_limit(30000);
 
-        foreach ($request->items ?? [] as $value) {
-            if (!empty($value['app_id'])) {
-                $api = AccountPersonalInformation::where('app_id', $value['app_id'])->first();
-                if ($api && !empty($value['source'])) {
+        // foreach ($request->items ?? [] as $value) {
+        //     if (!empty($value['app_id'])) {
+        //         $api = AccountPersonalInformation::where('app_id', $value['app_id'])->first();
+        //         if ($api && !empty($value['status'])) {
+        //             if ($value['status']  == 'Regular' || $value['status']  == 'Probationary') {
+        //                 User::updateOrCreate(
+        //                     [
+        //                         'id' => $api->user_id,
+        //                     ],
+        //                     [
+        //                         'role'     => 2,
+        //                     ]
+        //                 );
+        //             } else {
+        //                 User::updateOrCreate(
+        //                     [
+        //                         'id' => $api->user_id,
+        //                     ],
+        //                     [
+        //                         'role'     => 3,
+        //                     ]
+        //                 );
+        //             }
+        //         }
+        //     }
+        // }
 
-                    
-                    AccountEmployee::updateOrCreate(
-                        [
-                            'user_id' => $api->user_id,
-                        ],
-                        [
-                            'source'     => $value['source'] ?? null,
-                        ]
-                    );
-                }
-            }
-        }
+        // $apis = AccountEmployee::get();
+        // foreach ($apis as $key => $value) {
+        //     User::updateOrCreate(
+        //         [
+        //             'id' => $value['user_id'],
+        //         ],
+        //         [
+        //             'role'     => $value['status'] == 'Probationary' || $value['Regular'] ? 2 : 3,
+        //         ]
+        //     );
+        // }
 
         return response()->json(['message' => 'Accounts processed successfully'], 200);
     }
