@@ -182,9 +182,9 @@ export default function SidebarSection() {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                           <Dialog.Panel className="relative flex w-full flex-1 flex-col bg-white">
-                                <div className="flex items-start justify-between top-0 right-0 px-5 pt-5">
-                                      <div className="flex h-16 items-center">
+                            <Dialog.Panel className="relative flex w-full flex-1 flex-col bg-white">
+                                <div className="flex items-start justify-between top-0 right-0 px-5 pt-5 border-b border-gray-300 pb-2">
+                                    <div className="flex h-16 items-center">
                                         <img
                                             alt="Logo"
                                             src="/images/logo.png"
@@ -205,8 +205,6 @@ export default function SidebarSection() {
                                     </button>
                                 </div>
                                 <div className="flex flex-col h-full p-6 pb-4">
-                                  
-
                                     {/* Main Mobile Navigation */}
                                     <nav className="flex-1 overflow-y-auto">
                                         <ul className="space-y-4">
@@ -226,9 +224,9 @@ export default function SidebarSection() {
                                                         }}
                                                         className={classNames(
                                                             item.current
-                                                                ? "bg-gray-50 text-indigo-600 "
-                                                                : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600   ",
-                                                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold",
+                                                                ? "bg-blue-700 text-white "
+                                                                : "text-gray-700 hover:text-blue-600 hover:bg-blue-200   ",
+                                                            "flex items-center  gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                                         )}
                                                     >
                                                         <item.icon
@@ -279,7 +277,6 @@ export default function SidebarSection() {
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
-                      
                     </div>
                 </Dialog>
             </Transition.Root>
