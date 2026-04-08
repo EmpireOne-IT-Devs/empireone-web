@@ -9,8 +9,8 @@ export default function TableSection() {
         "employees",
         employees?.data?.map((res) => ({
             ...res,
-            name: `${res?.personal_information.first_name} ${res?.personal_information.middle_name} ${res?.personal_information.last_name}`,
-            department: res?.department.name,
+            name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
+            department: res?.department?.name,
         })) ?? [],
     );
     const columns = [
@@ -35,9 +35,9 @@ export default function TableSection() {
                             <Link
                                 target="_blnak"
                                 className="underline text-blue-500 hover:text-blue-600"
-                                href={`/administrator/employee_relation/${res.user_id}/personal_information`}
+                                href={`/administrator/employee_relation/${res?.user_id}/personal_information`}
                             >
-                                {res.employee_id}
+                                {res?.employee_id}
                             </Link>
                         ),
                         name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
