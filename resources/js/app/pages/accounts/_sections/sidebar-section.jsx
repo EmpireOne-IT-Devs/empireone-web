@@ -18,7 +18,7 @@ import {
     FcShop,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
 
@@ -211,17 +211,17 @@ export default function SidebarSection() {
                                         <ul className="space-y-4">
                                             {mainNavigation.map((item) => (
                                                 <li key={item.name}>
-                                                    <Link
-                                                        href={
+                                                    <button
+                                                        disabled={
                                                             item.is_incoming
-                                                                ? "#"
-                                                                : item.href
                                                         }
                                                         onClick={(e) => {
-                                                            if (
-                                                                item.is_incoming
-                                                            )
-                                                                e.preventDefault();
+                                                            dispatch(
+                                                                setSidebarOpen(),
+                                                            );
+                                                            router.visit(
+                                                                `${item.href}`,
+                                                            );
                                                         }}
                                                         className={classNames(
                                                             item.current
@@ -240,7 +240,7 @@ export default function SidebarSection() {
                                                             )}
                                                         />
                                                         {item.name}
-                                                    </Link>
+                                                    </button>
                                                 </li>
                                             ))}
                                         </ul>

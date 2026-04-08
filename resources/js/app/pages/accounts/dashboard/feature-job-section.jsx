@@ -162,7 +162,7 @@ function JobCard({ job }) {
 export default function FeatureJobSection() {
     return (
         <section className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-5xl mx-auto">
+            <div className="w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-2">
                         <StarsIcon className="w-6 h-6 text-yellow-400 fill-yellow-400" />
