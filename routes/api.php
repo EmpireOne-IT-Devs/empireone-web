@@ -48,6 +48,7 @@ Route::middleware('web')->group(function () {
 
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
 Route::get('job/postings',  [JobPostingController::class, 'index']);
+Route::post('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
@@ -66,7 +67,6 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('submit_job_offer',  [JobOfferController::class, 'submit_job_offer']);
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);
         Route::get('get_job_application_by_user',  [JobApplicationController::class, 'get_job_application_by_user']);
-
 
         Route::get('get_applications_by_user',  [JobApplicationController::class, 'get_applications_by_user']);
         Route::post('update_job_application_status',  [JobApplicationController::class, 'update_job_application_status']);

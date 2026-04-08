@@ -1,1 +1,0 @@
-import{j as e}from"./app-DMyNbEh-.js";function a(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Job Requisition"}),e.jsx("div",{className:"text-gray-600",children:"Manage all job requisitions"})]})}export{a as default};

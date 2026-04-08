@@ -2,3 +2,7 @@ php artisan make:model Jobs/JobsApplication -mcr
 
 - add emergency contract
 - add parents name.
+
+
+
+- update the address all employees

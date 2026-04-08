@@ -4,17 +4,14 @@ import CardSection from "./card-section";
 import HeaderSection from "./header-section";
 import FeatureJobSection from "./feature-job-section";
 import ApplicationStatusSection from "./application-status-section";
+import ImportCsv from "./import-csv";
 
 export default function Page() {
     return (
         <Layout>
             {/* Header */}
             <HeaderSection />
-
-            {/* Stats Cards Row */}
             <CardSection />
-
-            {/* Bottom Two-Column Section */}
             <div className="flex gap-6 items-start">
                 {/* Left: Featured Jobs — takes ~65% */}
                 <div className="flex-1 min-w-0">

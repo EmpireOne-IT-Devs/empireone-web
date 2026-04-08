@@ -23,7 +23,6 @@ class AccountEmployee extends Model
         'account_contract_id',
         'work_type',
         'eogs_email',
-        'employee_id',
         'with_bpo',
         'source',
         'position',

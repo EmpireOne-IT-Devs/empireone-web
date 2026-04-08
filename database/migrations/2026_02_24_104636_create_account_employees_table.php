@@ -48,7 +48,7 @@ return new class extends Migration
             $table->string('started_at')->nullable();
             $table->enum('status', [
                 'Probationary',
-                'Regualr',
+                'Regular',
                 'AWOL',
                 'Contractual',
                 'End of Contract',

@@ -29,7 +29,7 @@ function classNames(...classes) {
 export default function SidebarSection() {
     const { desktopCollapsed, sidebarOpen } = useSelector((store) => store.app);
     const dispatch = useDispatch();
-    const path = window.location.pathname.split("/")[3];    
+    const path = window.location.pathname.split("/")[3];
     const account_role = window.location.pathname.split("/")[2];
 
     // 1. We split the main navigation items...
@@ -39,36 +39,42 @@ export default function SidebarSection() {
             href: `/accounts/${account_role}/dashboard`,
             icon: FcBullish,
             current: path == "dashboard",
+            is_incoming: false,
         },
         {
             name: "Job Offers",
             href: `/accounts/${account_role}/job_offers`,
             icon: FcFeedback,
             current: path == "job_offers",
+            is_incoming: false,
         },
         {
             name: "Job Openings",
             href: `/accounts/${account_role}/job_openings`,
             icon: FcBriefcase,
             current: path == "job_openings",
+            is_incoming: false,
         },
         {
             name: "My Applications",
             href: `/accounts/${account_role}/my_applications`,
             icon: FcDocument,
             current: path == "my_applications",
+            is_incoming: false,
         },
         {
             name: "My Documents",
             href: `/accounts/${account_role}/my_documents`,
             icon: FcOpenedFolder,
             current: path == "my_documents",
+            is_incoming: false,
         },
         {
             name: "Messages",
             href: `/accounts/${account_role}/messages`,
             icon: FcVoicePresentation,
             current: path == "messages",
+            is_incoming: false,
         },
         ...(account_role === "employee"
             ? [
@@ -77,30 +83,35 @@ export default function SidebarSection() {
                       href: `/accounts/${account_role}/activities`,
                       icon: FcSportsMode,
                       current: path == "activities",
+                      is_incoming: true,
                   },
                   {
                       name: "HR Services",
                       href: `/accounts/${account_role}/hr_services`,
                       icon: FcPortraitMode,
                       current: path == "hr_services",
+                      is_incoming: true,
                   },
                   {
                       name: "RNR",
                       href: `/accounts/${account_role}/rnr`,
                       icon: FcCloseUpMode,
                       current: path == "rnr",
+                      is_incoming: true,
                   },
                   {
                       name: "Reward Store",
                       href: `/accounts/${account_role}/rewards_store`,
                       icon: FcShop,
                       current: path == "rewards_store",
+                      is_incoming: true,
                   },
                   {
                       name: "Loan",
                       href: `/accounts/${account_role}/loan`,
                       icon: () => <FaMoneyBillWave className="text-blue-600" />,
                       current: path == "loan",
+                      is_incoming: true,
                   },
                   {
                       name: "Payroll",
@@ -109,6 +120,7 @@ export default function SidebarSection() {
                           <FaMoneyCheckAlt className="text-green-600" />
                       ),
                       current: path == "payroll",
+                      is_incoming: true,
                   },
               ]
             : []),
@@ -200,7 +212,17 @@ export default function SidebarSection() {
                                             {mainNavigation.map((item) => (
                                                 <li key={item.name}>
                                                     <Link
-                                                        href={item.href}
+                                                        href={
+                                                            item.is_incoming
+                                                                ? "#"
+                                                                : item.href
+                                                        }
+                                                        onClick={(e) => {
+                                                            if (
+                                                                item.is_incoming
+                                                            )
+                                                                e.preventDefault();
+                                                        }}
                                                         className={classNames(
                                                             item.current
                                                                 ? "bg-gray-50 text-indigo-600 "
@@ -295,7 +317,15 @@ export default function SidebarSection() {
                                         isShow={desktopCollapsed}
                                     >
                                         <Link
-                                            href={item.href}
+                                            href={
+                                                item.is_incoming
+                                                    ? "#"
+                                                    : item.href
+                                            }
+                                            onClick={(e) => {
+                                                if (item.is_incoming)
+                                                    e.preventDefault();
+                                            }}
                                             className={classNames(
                                                 item.current
                                                     ? "bg-blue-700 text-white "
@@ -311,6 +341,12 @@ export default function SidebarSection() {
                                                 <span className={sidebarText}>
                                                     {item.name}
                                                 </span>
+                                                {!desktopCollapsed &&
+                                                    item.is_incoming && (
+                                                        <span className="ml-auto inline-block py-0.5 px-2 text-[10px] font-medium rounded-full bg-red-500 text-white dark:bg-red-900 dark:text-red-200">
+                                                            incoming
+                                                        </span>
+                                                    )}
                                             </div>
                                         </Link>
                                     </Tooltip>

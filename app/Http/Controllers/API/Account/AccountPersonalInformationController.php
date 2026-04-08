@@ -3,16 +3,45 @@
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountWorkingExperience;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AccountPersonalInformationController extends Controller
 {
 
+    public function accounts_merge_account(Request $request)
+    {
+
+        // High limit is okay for local, but consider chunking for production
+        set_time_limit(30000);
+
+        foreach ($request->items ?? [] as $value) {
+            if (!empty($value['app_id'])) {
+                $api = AccountPersonalInformation::where('app_id', $value['app_id'])->first();
+                if ($api && !empty($value['source'])) {
+
+                    
+                    AccountEmployee::updateOrCreate(
+                        [
+                            'user_id' => $api->user_id,
+                        ],
+                        [
+                            'source'     => $value['source'] ?? null,
+                        ]
+                    );
+                }
+            }
+        }
+
+        return response()->json(['message' => 'Accounts processed successfully'], 200);
+    }
     public function get_user_by_id($id)
     {
 

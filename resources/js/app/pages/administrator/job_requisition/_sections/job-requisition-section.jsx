@@ -211,7 +211,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         <div className="flex items-center gap-2 text-sm ml-auto">
                             <TbCalendarEvent className="text-gray-600" />
                             <span className="font-medium text-gray-600">
-                                1 event
+                                Fill Rate: 80%
                             </span>
                         </div>
                     </div>
