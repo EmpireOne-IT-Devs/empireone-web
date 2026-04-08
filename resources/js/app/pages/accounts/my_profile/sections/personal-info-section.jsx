@@ -1,5 +1,5 @@
 import { UserCircle, MapPin, User, Calendar } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import { useSelector } from "react-redux";
@@ -23,12 +23,15 @@ export default function PersonalInfoSection({
     const { data } = useSelector((store) => store.app);
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex flex-1 flex-col gap-3 bg-purple-50 border border-purple-200 rounded-xl px-6 py-4">
+        <div className="flex flex-col gap-6 w-full">
+            {/* Basic Information Section */}
+            <div className="flex flex-col gap-3 bg-purple-50 border border-purple-200 rounded-xl px-4 py-4 md:px-6">
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <UserCircle size={15} /> Basic Information
                 </span>
-                <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+                
+                {/* Responsive Grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
                     <Input
                         label="First Name *"
                         name="first_name"
@@ -84,8 +87,9 @@ export default function PersonalInfoSection({
                         ]}
                     />
                     <div
+                        className="w-full"
                         style={{
-                            pointerEvents: form.nationality ? "none" : "auto", // disable interactions
+                            pointerEvents: form.nationality ? "none" : "auto",
                         }}
                     >
                         <Input
@@ -106,7 +110,8 @@ export default function PersonalInfoSection({
                 </div>
             </div>
 
-            <div className="flex flex-1 flex-col gap-3 bg-green-50 border border-green-200 rounded-xl px-6 py-4">
+            {/* Address Information Section */}
+            <div className="flex flex-col gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-4 md:px-6">
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <MapPin size={15} /> Address Information
                 </span>

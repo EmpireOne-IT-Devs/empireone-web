@@ -11,11 +11,20 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { edit_information_service } from "@/app/services/account-service";
 import { setAlert } from "@/app/redux/app-slice";
 import EmergencyContactSection from "./emergency-contact-section";
+import EmployeeInformationSection from "./employee-information-section";
 
-const TAB_IDS = ["personal", "professional", "documents", "emergency", "customization"];
+const TAB_IDS = [
+    "personal",
+    'employee',
+    "professional",
+    "documents",
+    "emergency",
+    "customization",
+];
 
 const TAB_LABELS = {
     personal: "Personal Information",
+    employee: "Employee Information",
     documents: "Government Information",
     professional: "Experiences & Skills",
     emergency: "Emergency Contact",
@@ -30,7 +39,6 @@ export default function InfoTabsSection() {
     const activeTabId = TAB_IDS.includes(urlTab) ? urlTab : "personal";
     const activeIndex = TAB_IDS.indexOf(activeTabId);
 
-    // ✅ useForm setup
     const {
         register,
         handleSubmit,
@@ -48,9 +56,6 @@ export default function InfoTabsSection() {
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
     const [barangays, setBarangays] = useState([]);
-
-    const getCode = (list, name) =>
-        list.find((item) => item.name === name)?.code || name;
 
     const getName = (list, code) =>
         list.find((item) => item.code === code)?.name || code;
@@ -81,10 +86,8 @@ export default function InfoTabsSection() {
                 experiences: data?.user?.working_experience,
             });
         }
-    }, [data?.user?.personal_information]);
+    }, [data?.user?.personal_information, data?.user?.skills, data?.user?.working_experience, reset]);
 
-    console.log("formValuesformValues", formValues);
-    // ✅ Save handler
     const onSubmit = async (data) => {
         const finalData = {
             ...data,
@@ -93,33 +96,38 @@ export default function InfoTabsSection() {
             city: getName(cities, data.city),
             barangay: getName(barangays, data.barangay),
         };
-        console.log("finalData", finalData);
         try {
             await edit_information_service(finalData);
             dispatch(
                 setAlert({
                     type: "success",
-                    title: "Information save Successfully!",
-                    message: "The Information has been saved .",
+                    title: "Information saved successfully!",
+                    message: "Your profile has been updated.",
                     open: true,
                 }),
             );
-        } catch (error) {}
+        } catch (error) {
+            console.error(error);
+        }
     };
 
-    // helper (replacement for set function)
-    const set = (key) => (val) => setValue(key, val);
-
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mx-auto">
-                <div className="bg-white/70 backdrop-blur-xl border border-white rounded-3xl shadow-xl overflow-hidden">
-                    <Tabs
-                        tabs={tabs}
-                        activeIndex={activeIndex}
-                        onTabClick={() => {}}
-                    />
-                    <div className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+            <div className="mx-auto w-full">
+                {/* Main Card Wrapper */}
+                <div className="bg-white/70 backdrop-blur-xl border border-white rounded-2xl md:rounded-3xl shadow-xl overflow-hidden">
+                    
+                    {/* Tabs Header - Ensure your Tabs component handles overflow-x-auto */}
+                    <div className="overflow-x-auto no-scrollbar">
+                         <Tabs
+                            tabs={tabs}
+                            activeIndex={activeIndex}
+                            onTabClick={() => {}}
+                        />
+                    </div>
+
+                    {/* Form Content Area */}
+                    <div className="p-4 md:p-6 space-y-4">
                         {activeTabId === "personal" && (
                             <PersonalInfoSection
                                 form={formValues}
@@ -136,6 +144,10 @@ export default function InfoTabsSection() {
                                 setBarangays={setBarangays}
                                 barangays={barangays}
                             />
+                        )}
+
+                        {activeTabId === "employee" && (
+                            <EmployeeInformationSection />
                         )}
 
                         {activeTabId === "professional" && (
@@ -159,28 +171,29 @@ export default function InfoTabsSection() {
                                 errors={errors}
                             />
                         )}
+                        
                         {activeTabId === "emergency" && (
-                            <EmergencyContactSection
-                                register={register}
-                            />
+                            <EmergencyContactSection register={register} />
                         )}
 
                         {activeTabId === "customization" && (
-                            <div className="flex flex-col items-center justify-center py-20">
-                                <Sparkles size={22} />
-                                <p className="text-sm mt-2 text-slate-500">
-                                    Customization
+                            <div className="flex flex-col items-center justify-center py-10 md:py-20">
+                                <Sparkles size={22} className="text-purple-500" />
+                                <p className="text-sm mt-2 text-slate-500 font-medium">
+                                    Customization Settings
                                 </p>
                             </div>
                         )}
                     </div>
-                    <div className="p-5">
+
+                    {/* Footer / Sticky Save Button */}
+                    <div className="p-4 md:p-5 bg-white/50 border-t border-gray-100">
                         <Button
                             type="submit"
                             loading={isSubmitting}
-                            className="flex w-full"
+                            className="w-full flex justify-center py-3 text-sm font-bold tracking-wide"
                         >
-                            SAVE
+                            SAVE CHANGES
                         </Button>
                     </div>
                 </div>

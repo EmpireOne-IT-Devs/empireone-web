@@ -117,62 +117,51 @@ export default function AddressInformationSection({
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-4">
-                {/* City Select */}
-                <div className="flex flex-col w-full flex-1">
-                    <Select
-                        label="City / Municipality"
-                        name="city"
-                        options={cities.map((c) => ({
-                            value: c.code,
-                            label: c.name,
-                        }))}
-                        error={errors.city}
-                        value={getCode(cities, selectedCity)}
-                        onChange={(val) => setValue("city", val)}
-                        required
-                        disabled={!selectedProvince}
-                    />
-                </div>
-                {/* Barangay Select */}
-                <div className="flex flex-col w-full flex-1">
-                    <Select
-                        label="Barangay"
-                        name="barangay"
-                        options={barangays.map((b) => ({
-                            value: b.code,
-                            label: b.name,
-                        }))}
-                        error={errors.barangay}
-                        value={getCode(barangays, selectedBarangay)}
-                        onChange={(val) => setValue("barangay", val)}
-                        required
-                        disabled={!selectedCity}
-                    />
-                </div>
-                <div className="flex flex-col w-full flex-1">
-                    <Input
-                        label="Zip Code"
-                        name="zip_code"
-                        type="text"
-                        maxLength={4}
-                        {...register("zip_code", {
-                            required: "Required",
-                            pattern: {
-                                value: /^\d{4}$/,
-                                message: "Must be 4 digits",
-                            },
-                        })}
-                        error={errors.zip_code}
-                        placeholder="e.g. 6127"
-                        onInput={(e) => {
-                            e.target.value = e.target.value.replace(
-                                /[^0-9]/g,
-                                "",
-                            );
-                        }}
-                    />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Select
+                    label="City / Municipality"
+                    name="city"
+                    options={cities.map((c) => ({
+                        value: c.code,
+                        label: c.name,
+                    }))}
+                    error={errors.city}
+                    value={getCode(cities, selectedCity)}
+                    onChange={(val) => setValue("city", val)}
+                    required
+                    disabled={!selectedProvince}
+                />
+                <Select
+                    label="Barangay"
+                    name="barangay"
+                    options={barangays.map((b) => ({
+                        value: b.code,
+                        label: b.name,
+                    }))}
+                    error={errors.barangay}
+                    value={getCode(barangays, selectedBarangay)}
+                    onChange={(val) => setValue("barangay", val)}
+                    required
+                    disabled={!selectedCity}
+                />
+                <Input
+                    label="Zip Code"
+                    name="zip_code"
+                    type="text"
+                    maxLength={4}
+                    {...register("zip_code", {
+                        required: "Required",
+                        pattern: {
+                            value: /^\d{4}$/,
+                            message: "Must be 4 digits",
+                        },
+                    })}
+                    error={errors.zip_code}
+                    placeholder="e.g. 6127"
+                    onInput={(e) => {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                    }}
+                />
             </div>
 
             {/* Manual Entry for Street/House */}

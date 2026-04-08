@@ -5,52 +5,56 @@ import ImageUpload from "@/app/_components/image-upload";
 
 export default function DocumentsSection({ register, errors }) {
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3 bg-purple-100 border border-purple-300 rounded-xl px-6 py-4">
-                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    <FileBadge size={15} /> Government-Issued IDs
+        <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-col gap-4 bg-purple-50 border border-purple-200 rounded-xl px-4 py-4 md:px-6 md:py-5">
+                {/* Header Section */}
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2 border-b border-purple-200 pb-2">
+                    <FileBadge size={15} className="text-purple-600" />{" "}
+                    Government-Issued IDs
                 </span>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+
+                {/* Responsive Grid: 1 column on mobile, 2 columns on tablet/desktop */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <Input
                         label="Government ID Type"
                         name="government_type"
                         {...register("government_type")}
-                        placeholder="*"
+                        placeholder="e.g. Passport, Driver's License"
                         error={errors.government_type}
                     />
                     <Input
                         label="Government ID Number"
                         name="id_number"
                         {...register("id_number")}
-                        placeholder="*"
+                        placeholder="Enter ID number"
                         error={errors.id_number}
                     />
                     <Input
                         label="PhilHealth Number"
                         name="philhealth"
                         {...register("philhealth")}
-                        placeholder="*"
+                        placeholder="XX-XXXXXXXXX-X"
                         error={errors.philhealth}
                     />
                     <Input
                         label="SSS Number"
                         name="sss"
                         {...register("sss")}
-                        placeholder="*"
+                        placeholder="XX-XXXXXXX-X"
                         error={errors.sss}
                     />
                     <Input
                         label="Pag-IBIG Number"
                         name="pagibig"
                         {...register("pagibig")}
-                        placeholder="*"
+                        placeholder="XXXX-XXXX-XXXX"
                         error={errors.pagibig}
                     />
                     <Input
                         label="TIN Number"
                         name="tin"
                         {...register("tin")}
-                        placeholder="*"
+                        placeholder="XXX-XXX-XXX-000"
                         error={errors.tin}
                     />
                 </div>

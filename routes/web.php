@@ -247,7 +247,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
     // Employee routes (Role 2), 'role.redirect'
     Route::prefix('employee')->middleware(['role.redirect:2'])->group(function () {
         Route::get('/dashboard', function () {
-            return Inertia::render('accounts/_employee/dashboard/page');
+            return Inertia::render('accounts/dashboard/page');
         });
         Route::get('/job_openings', function () {
             return Inertia::render('accounts/job_openings/page');
@@ -302,7 +302,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
     // Employee routes (Role 3)
     Route::prefix('applicant')->middleware(['role.redirect:3'])->group(function () {
         Route::get('/dashboard', function () {
-            return Inertia::render('accounts/_employee/dashboard/page');
+            return Inertia::render('accounts/dashboard/page');
         });
         Route::get('/job_openings', function () {
             return Inertia::render('accounts/job_openings/page');
