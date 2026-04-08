@@ -20,7 +20,7 @@ class AccountPersonalInformationController extends Controller
     {
 
         // High limit is okay for local, but consider chunking for production
-        set_time_limit(30000);
+        // set_time_limit(30000);
 
         // foreach ($request->items ?? [] as $value) {
         //     if (!empty($value['app_id']) && !empty($value['email'])) {
@@ -53,7 +53,10 @@ class AccountPersonalInformationController extends Controller
         //     );
         // }
 
-        return response()->json(['message' => 'Accounts processed successfully'], 200);
+        return response()->json([
+            'emails' => User::where('role',2)->pluck('email'),
+            'message' => 'Accounts processed successfully'
+        ], 200);
     }
     public function get_user_by_id($id)
     {

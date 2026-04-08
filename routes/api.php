@@ -48,7 +48,7 @@ Route::middleware('web')->group(function () {
 
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
 Route::get('job/postings',  [JobPostingController::class, 'index']);
-Route::post('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
+Route::get('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
