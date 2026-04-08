@@ -250,13 +250,23 @@ export default function SidebarSection() {
                                         <ul className="space-y-4">
                                             {bottomNavigation.map((item) => (
                                                 <li key={item.name}>
-                                                    <Link
-                                                        href={item.href}
+                                                    <button
+                                                        disabled={
+                                                            item.is_incoming
+                                                        }
+                                                        onClick={(e) => {
+                                                            dispatch(
+                                                                setSidebarOpen(),
+                                                            );
+                                                            router.visit(
+                                                                `${item.href}`,
+                                                            );
+                                                        }}
                                                         className={classNames(
                                                             item.current
-                                                                ? "bg-gray-50 text-indigo-600 "
-                                                                : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600   ",
-                                                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold",
+                                                                ? "bg-blue-700 text-white "
+                                                                : "text-gray-700 hover:text-blue-600 hover:bg-blue-200   ",
+                                                            "flex items-center  gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                                         )}
                                                     >
                                                         <item.icon
@@ -269,7 +279,7 @@ export default function SidebarSection() {
                                                             )}
                                                         />
                                                         {item.name}
-                                                    </Link>
+                                                    </button>
                                                 </li>
                                             ))}
                                         </ul>
