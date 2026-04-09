@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Clock, Mail, Map, MapPin, Phone, Pin } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { useState } from "react";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 26 },
@@ -28,17 +29,76 @@ const fadeSide = {
 };
 
 export default function ContactSection() {
-    const contactData = {
-        address:
-            "S.Carmona Barangay 6, San Carlos City, Negros Occidental, Philippines",
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+    });
 
-        phone1: "729-8353",
-        email: "hiring@empireonegroup.com",
-        officeHours: [
-            "Monday – Friday: 8:00 AM – 5:00 PM",
-            "Saturday: 8:00 AM – 12:00 PM",
-            "Sunday & Holidays: Closed",
+    const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const contactData = {
+        addresses: [
+            {
+                name: "Negros Occidental Office",
+                address: "S.Carmona Barangay 6, San Carlos City, Negros Occidental, Philippines",
+            },
+            {
+                name: "Carcar, Cebu Office",
+                address: "Carcar City, Cebu, Philippines",
+            },
+            {
+                name: "Cebu City Office",
+                address: "Cebu City, Philippines",
+            },
         ],
+        phone: "729-8353",
+        emails: [
+            "hiring@empireonegroup.com",
+            "career@empireonegroup.com",
+        ],
+        officeHours: [
+            "Open 24 Hours a Day, 7 Days a Week",
+        ],
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            setErrors((prev) => ({ ...prev, [name]: "" }));
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.name.trim()) newErrors.name = "Name is required";
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = "Email is invalid";
+        }
+        if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+        if (!formData.message.trim()) newErrors.message = "Message is required";
+        return newErrors;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newErrors = validateForm();
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        setIsSubmitting(true);
+        // TODO: Implement form submission logic
+        console.log("Form submitted:", formData);
+        setTimeout(() => {
+            setIsSubmitting(false);
+            setFormData({ name: "", email: "", subject: "", message: "" });
+        }, 1000);
     };
 
     return (
@@ -92,7 +152,7 @@ export default function ContactSection() {
                             to you within 24 hours.
                         </motion.p>
 
-                        <div className="space-y-5">
+                        <form onSubmit={handleSubmit} className="space-y-5">
                             {/* Name + Email Row */}
                             <motion.div
                                 initial="hidden"
@@ -103,24 +163,56 @@ export default function ContactSection() {
                                 className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                             >
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                        Your Name
+                                    <label
+                                        htmlFor="name"
+                                        className="block text-sm font-medium text-slate-700 mb-1.5"
+                                    >
+                                        Your Name <span className="text-red-500">*</span>
                                     </label>
                                     <input
+                                        id="name"
+                                        name="name"
                                         type="text"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
                                         placeholder="Juan dela Cruz"
-                                        className="w-full px-4 py-3 rounded-lg border border-slate-200  bg-white  text-slate-800  placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+                                        className={`w-full px-4 py-3 rounded-lg border bg-white text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition ${
+                                            errors.name
+                                                ? "border-red-300 focus:ring-red-400"
+                                                : "border-slate-200 focus:ring-purple-400"
+                                        }`}
                                     />
+                                    {errors.name && (
+                                        <p className="mt-1 text-xs text-red-600">
+                                            {errors.name}
+                                        </p>
+                                    )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700  mb-1.5">
-                                        Email Address
+                                    <label
+                                        htmlFor="email"
+                                        className="block text-sm font-medium text-slate-700 mb-1.5"
+                                    >
+                                        Email Address <span className="text-red-500">*</span>
                                     </label>
                                     <input
+                                        id="email"
+                                        name="email"
                                         type="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
                                         placeholder="juan@example.com"
-                                        className="w-full px-4 py-3 rounded-lg border border-slate-200  bg-white  text-slate-800  placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+                                        className={`w-full px-4 py-3 rounded-lg border bg-white text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition ${
+                                            errors.email
+                                                ? "border-red-300 focus:ring-red-400"
+                                                : "border-slate-200 focus:ring-purple-400"
+                                        }`}
                                     />
+                                    {errors.email && (
+                                        <p className="mt-1 text-xs text-red-600">
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
                             </motion.div>
 
@@ -132,14 +224,30 @@ export default function ContactSection() {
                                 variants={fadeUp}
                                 custom={0.3}
                             >
-                                <label className="block text-sm font-medium text-slate-700  mb-1.5">
-                                    Subject
+                                <label
+                                    htmlFor="subject"
+                                    className="block text-sm font-medium text-slate-700 mb-1.5"
+                                >
+                                    Subject <span className="text-red-500">*</span>
                                 </label>
                                 <input
+                                    id="subject"
+                                    name="subject"
                                     type="text"
+                                    value={formData.subject}
+                                    onChange={handleInputChange}
                                     placeholder="How can we help you?"
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-200  bg-white  text-slate-800  placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition"
+                                    className={`w-full px-4 py-3 rounded-lg border bg-white text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition ${
+                                        errors.subject
+                                            ? "border-red-300 focus:ring-red-400"
+                                            : "border-slate-200 focus:ring-purple-400"
+                                    }`}
                                 />
+                                {errors.subject && (
+                                    <p className="mt-1 text-xs text-red-600">
+                                        {errors.subject}
+                                    </p>
+                                )}
                             </motion.div>
 
                             {/* Message */}
@@ -150,31 +258,48 @@ export default function ContactSection() {
                                 variants={fadeUp}
                                 custom={0.36}
                             >
-                                <label className="block text-sm font-medium text-slate-700  mb-1.5">
-                                    Message
+                                <label
+                                    htmlFor="message"
+                                    className="block text-sm font-medium text-slate-700 mb-1.5"
+                                >
+                                    Message <span className="text-red-500">*</span>
                                 </label>
                                 <textarea
+                                    id="message"
+                                    name="message"
                                     rows={5}
+                                    value={formData.message}
+                                    onChange={handleInputChange}
                                     placeholder="Write your message here..."
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-200  bg-white  text-slate-800  placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition resize-none"
+                                    className={`w-full px-4 py-3 rounded-lg border bg-white text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition resize-none ${
+                                        errors.message
+                                            ? "border-red-300 focus:ring-red-400"
+                                            : "border-slate-200 focus:ring-purple-400"
+                                    }`}
                                 />
+                                {errors.message && (
+                                    <p className="mt-1 text-xs text-red-600">
+                                        {errors.message}
+                                    </p>
+                                )}
                             </motion.div>
 
                             {/* Submit */}
                             <motion.button
-                                type="button"
+                                type="submit"
+                                disabled={isSubmitting}
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: false, amount: 0.8 }}
                                 variants={fadeUp}
                                 custom={0.42}
-                                whileHover={{ y: -2, scale: 1.01 }}
-                                whileTap={{ scale: 0.99 }}
-                                className="w-full py-4 bg-purple-700 hover:bg-purple-900 text-white font-bold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 text-sm tracking-wide"
+                                whileHover={!isSubmitting ? { y: -2, scale: 1.01 } : {}}
+                                whileTap={!isSubmitting ? { scale: 0.99 } : {}}
+                                className="w-full py-4 bg-purple-700 hover:bg-purple-900 text-white font-bold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/25 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Send Message
+                                {isSubmitting ? "Sending..." : "Send Message"}
                             </motion.button>
-                        </div>
+                        </form>
                     </motion.div>
 
                     {/* RIGHT: Contact Information */}
@@ -208,16 +333,25 @@ export default function ContactSection() {
                                 custom={0.26}
                                 className="flex items-start gap-4"
                             >
-                                <div className="w-11 h-11 rounded-full bg-blue-50  border border-blue-100  flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                                     <MapPin size={18} color="#3b82f6" />
                                 </div>
-                                <div>
-                                    <div className="font-bold text-slate-900  text-sm mb-1">
-                                        Our Location
+                                <div className="flex-1">
+                                    <div className="font-bold text-slate-900 text-sm mb-2">
+                                        Our Locations
                                     </div>
-                                    <address className="not-italic text-slate-500 text-sm leading-relaxed">
-                                        {contactData.address}
-                                    </address>
+                                    <div className="space-y-3">
+                                        {contactData.addresses.map((location, i) => (
+                                            <address key={i} className="not-italic">
+                                                <div className="font-semibold text-slate-700 text-xs mb-0.5">
+                                                    {location.name}
+                                                </div>
+                                                <div className="text-slate-500 text-sm leading-relaxed">
+                                                    {location.address}
+                                                </div>
+                                            </address>
+                                        ))}
+                                    </div>
                                 </div>
                             </motion.div>
 
@@ -230,21 +364,19 @@ export default function ContactSection() {
                                 custom={0.34}
                                 className="flex items-start gap-4"
                             >
-                                <div className="w-11 h-11 rounded-full bg-blue-50  border border-blue-100  flex items-center justify-center flex-shrink-0">
+                                <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
                                     <Phone size={18} color="#3b82f6" />
                                 </div>
                                 <div>
-                                    <div className="font-bold text-slate-900  text-sm mb-1">
+                                    <div className="font-bold text-slate-900 text-sm mb-1">
                                         Phone Number
                                     </div>
-                                    <div className="space-y-0.5">
-                                        <a
-                                            href="tel:729-8353"
-                                            className="text-slate-500 hover:text-blue-600 transition-colors text-sm"
-                                        >
-                                            {contactData.phone1}
-                                        </a>
-                                    </div>
+                                    <a
+                                        href={`tel:${contactData.phone}`}
+                                        className="text-slate-500 hover:text-blue-600 transition-colors text-sm"
+                                    >
+                                        {contactData.phone}
+                                    </a>
                                 </div>
                             </motion.div>
 
@@ -257,19 +389,24 @@ export default function ContactSection() {
                                 custom={0.42}
                                 className="flex items-start gap-4"
                             >
-                                <div className="w-11 h-11 rounded-full bg-blue-50  border border-blue-100  flex items-center justify-center flex-shrink-0">
+                                <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
                                     <Mail size={18} color="#3b82f6" />
                                 </div>
                                 <div>
-                                    <div className="font-bold text-slate-900  text-sm mb-1">
+                                    <div className="font-bold text-slate-900 text-sm mb-1">
                                         Email Address
                                     </div>
-                                    <a
-                                        href="mailto:hiring@empireonegroup.com"
-                                        className="text-slate-500 hover:text-blue-600 transition-colors text-sm"
-                                    >
-                                        {contactData.email}
-                                    </a>
+                                    <div className="space-y-0.5">
+                                        {contactData.emails.map((email, i) => (
+                                            <a
+                                                key={i}
+                                                href={`mailto:${email}`}
+                                                className="block text-slate-500 hover:text-blue-600 transition-colors text-sm"
+                                            >
+                                                {email}
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
                             </motion.div>
 
@@ -282,24 +419,22 @@ export default function ContactSection() {
                                 custom={0.5}
                                 className="flex items-start gap-4"
                             >
-                                <div className="w-11 h-11 rounded-full bg-blue-50  border border-blue-100  flex items-center justify-center flex-shrink-0">
+                                <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
                                     <Clock size={18} color="#3b82f6" />
                                 </div>
                                 <div>
-                                    <div className="font-bold text-slate-900  text-sm mb-1">
+                                    <div className="font-bold text-slate-900 text-sm mb-1">
                                         Office Hours
                                     </div>
                                     <div className="space-y-0.5">
-                                        {contactData.officeHours.map(
-                                            (hour, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="text-slate-500 text-sm"
-                                                >
-                                                    {hour}
-                                                </div>
-                                            ),
-                                        )}
+                                        {contactData.officeHours.map((hour, i) => (
+                                            <div
+                                                key={i}
+                                                className="text-slate-500 text-sm"
+                                            >
+                                                {hour}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </motion.div>

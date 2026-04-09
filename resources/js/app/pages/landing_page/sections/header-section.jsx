@@ -6,8 +6,8 @@ const navigation = [
     { name: "Home", id: "home" },
     { name: "About Us", id: "about-us" },
     { name: "Services", id: "services" },
-    { name: "Contact", id: "contact" },
     { name: "Testimonials", id: "testimonial" },
+    { name: "Contact", id: "contact" },
 ];
 
 export default function HeaderSection() {
@@ -25,9 +25,9 @@ export default function HeaderSection() {
                 <div className="flex items-center gap-2">
                     <a href="/" className="flex items-center gap-2">
                         <img
-                            src="/images/eo-full-logo.png"
+                            src="/images/logo.png"
                             alt="EmpireOne Logo"
-                            className="h-8 sm:h-10 w-auto object-contain"
+                            className="h-8 sm:h-12 w-auto object-contain"
                         />
                         {/* <p className="text-sm sm:text-md font-bold tracking-tight leading-none">
                             <span

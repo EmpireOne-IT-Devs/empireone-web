@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Layout from "../layout";
 import CardSection from "./card-section";
 import HeaderSection from "./header-section";
-// import ApplicationStatusSection from "./recent-activity-card";
-// import ImportCsv from "./import-csv";
 import QuickActionSection from "./quick-action-section";
 import AnnouncementCardSection from "./anncouncement-card-section";
 import UpcomingCardSection from "./upcoming-card-section";
@@ -15,7 +13,7 @@ export default function Page() {
         <Layout>
             {/* Header and Stats */}
             <HeaderSection />
-            <div className=" mx-auto w-full mt-4">
+            <div className="mx-auto w-full mt-4">
                 <CardSection />
 
                 <div className="mt-2">
@@ -30,7 +28,7 @@ export default function Page() {
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-6 items-start mt-6">
+                <div className="flex flex-col lg:flex-row gap-6 items-start mt-4">
                     <div className="w-full lg:flex-[2] min-w-0">
                         <RecentActivityCardSection />
                     </div>

@@ -57,7 +57,7 @@ export default function TopbarSection() {
                             <Menu.Button className="flex items-center">
                                 <img
                                     className="w-8 h-8 rounded-full"
-                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepa=2&w=256&h=256&q=80"
+                                    src="/images/empireone.png.png"
                                     alt=""
                                 />
                                 <span className="ml-2 hidden lg:block text-sm font-semibold text-gray-900 ">
