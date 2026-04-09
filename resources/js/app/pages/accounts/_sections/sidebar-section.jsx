@@ -74,7 +74,7 @@ export default function SidebarSection() {
             href: `/accounts/${account_role}/messages`,
             icon: FcVoicePresentation,
             current: path == "messages",
-            is_incoming: false,
+            is_incoming: true,
         },
         ...(account_role === "employee"
             ? [

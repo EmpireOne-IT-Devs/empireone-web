@@ -1,0 +1,1 @@
+import{j as e}from"./app-HPyja5Yy.js";function a(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"HR Central"}),e.jsx("div",{className:"text-gray-600",children:"Comprehensive human resources managements"})]})}export{a as default};

@@ -1,12 +1,12 @@
 import React from "react";
 import Layout from "../layout";
-import CardSection from "./card-section";
-import HeaderSection from "./header-section";
-import QuickActionSection from "./quick-action-section";
-import AnnouncementCardSection from "./anncouncement-card-section";
-import UpcomingCardSection from "./upcoming-card-section";
-import RecentActivityCardSection from "./recent-activity-card-section";
-import TopNewsCardSection from "./top-news-card-section";
+import CardSection from "./_sections/card-section";
+import HeaderSection from "./_sections/header-section";
+import QuickActionSection from "./_sections/quick-action-section";
+import AnnouncementCardSection from "./_sections/anncouncement-card-section";
+import UpcomingCardSection from "./_sections/upcoming-card-section";
+import RecentActivityCardSection from "./_sections/recent-activity-card-section";
+import TopNewsCardSection from "./_sections/top-news-card-section";
 
 export default function Page() {
     return (

@@ -10,6 +10,7 @@ use App\Models\Jobs\JobPosition;
 use App\Models\Jobs\JobPosting;
 use App\Models\Location;
 use App\Models\Site;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +18,37 @@ class AppController extends Controller
 {
     public function index()
     {
+
+        $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee'])->first();
+        $requiredFields = collect([
+            'first_name',
+            'middle_name',
+            'last_name',
+            'gender',
+            'date_of_birth',
+            'birth_place',
+            'region',
+            'province',
+            'city',
+            'barangay',
+            'street',
+            'zip_code',
+            'highest_level_of_education',
+            'contact'
+        ]);
+        $percent = '0%';
+        $info = $auth->personal_information;
+
+        // 2. Only calculate if personal_information actually exists
+        if ($info) {
+            // Use the collection's filter method to count how many fields are NOT empty
+            $filledCount = $requiredFields->filter(function ($field) use ($info) {
+                return !empty($info->{$field});
+            })->count();
+            // Calculate percentage
+            $percent = round(($filledCount / $requiredFields->count()) * 100);
+        }
+
         $departments = Department::with(['categories'])->get();
         $locations = Location::get();
         $position = JobPosition::with(['job_requisition'])->get();
@@ -29,6 +61,7 @@ class AppController extends Controller
         $total_job_offer = JobOffer::where('user_id', $user->id)->count();
         return response()->json([
             'user' => $user,
+            'profile_percent' => $percent, // Renamed slightly for clarity
             'departments' => $departments,
             'locations' => $locations,
             'sites' => $sites,

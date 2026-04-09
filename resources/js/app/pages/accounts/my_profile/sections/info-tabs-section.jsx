@@ -12,6 +12,8 @@ import { edit_information_service } from "@/app/services/account-service";
 import { setAlert } from "@/app/redux/app-slice";
 import EmergencyContactSection from "./emergency-contact-section";
 import EmployeeInformationSection from "./employee-information-section";
+import store from "@/app/store/store";
+import { get_app_data_thunk } from "@/app/redux/app-thunk";
 
 const TAB_IDS = [
     "personal",
@@ -111,6 +113,7 @@ export default function InfoTabsSection() {
         };
         try {
             await edit_information_service(finalData);
+            await store.dispatch(get_app_data_thunk());
             dispatch(
                 setAlert({
                     type: "success",
