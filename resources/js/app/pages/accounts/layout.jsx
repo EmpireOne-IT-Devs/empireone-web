@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import TopbarSection from "./_sections/topbar-section";
-
 import store from "@/app/store/store";
 import { get_app_data_thunk } from "@/app/redux/app-thunk";
 import { useEffect, useState } from "react";
