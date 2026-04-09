@@ -33,7 +33,7 @@ class AppController extends Controller
             'barangay',
             'street',
             'zip_code',
-            'highest_level_of_education',
+            'degree',
             'contact'
         ]);
         $percent = '0%';

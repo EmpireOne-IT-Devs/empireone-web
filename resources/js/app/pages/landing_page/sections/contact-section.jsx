@@ -47,7 +47,7 @@ export default function ContactSection() {
             },
             {
                 name: "Carcar, Cebu Office",
-                address: "Carcar City, Cebu, Philippines",
+                address: "EmpireOne Building, Gen. Luna St., Poblacion II, Carcar City, Cebu, 6019.",
             },
             {
                 name: "Cebu City Office",
@@ -311,16 +311,22 @@ export default function ContactSection() {
                         custom={0.12}
                         className="space-y-6"
                     >
-                        <motion.h2
+                        <motion.div
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: false, amount: 0.6 }}
                             variants={fadeUp}
                             custom={0.2}
-                            className="text-3xl font-bold text-slate-900"
+                            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-[.12em] uppercase mb-2"
+                            style={{
+                                background: "rgba(99,102,241,0.08)",
+                                border: "1px solid rgba(99,102,241,0.2)",
+                                color: "#6366f1",
+                            }}
                         >
+                            <span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" style={{ boxShadow: "0 0 8px rgba(99,102,241,0.6)" }} />
                             Contact Information
-                        </motion.h2>
+                        </motion.div>
 
                         {/* Info Items */}
                         <div className="space-y-5">

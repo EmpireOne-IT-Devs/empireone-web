@@ -165,18 +165,15 @@ export default function ServicesSection() {
                             viewport={{ once: false, amount: 0.6 }}
                             variants={fadeUp}
                             custom={0.1}
-                            className="flex items-center gap-2 mb-3"
+                            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-[.12em] uppercase mb-4"
+                            style={{
+                                background: "rgba(99,102,241,0.08)",
+                                border: "1px solid rgba(99,102,241,0.2)",
+                                color: "#6366f1",
+                            }}
                         >
-                            <span
-                                className="inline-block w-6 h-0.5 rounded-full"
-                                style={{ background: "#6366f1" }}
-                            />
-                            <p
-                                className="text-sm font-bold tracking-[0.18em] uppercase"
-                                style={{ color: "#6366f1" }}
-                            >
-                                What We Do
-                            </p>
+                            <span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" style={{ boxShadow: "0 0 8px rgba(99,102,241,0.6)" }} />
+                            Our Services
                         </motion.div>
 
                         <motion.h2

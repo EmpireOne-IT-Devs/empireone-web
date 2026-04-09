@@ -85,6 +85,11 @@ export default function AddressInformationSection({
     }, [getCode(cities, selectedCity), setValue]);
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
+             <Input
+                        label="Birth Place"
+                        name="birth_place"
+                        {...register("birth_place")}
+                    />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Region Select */}
                 <div className="flex flex-col">

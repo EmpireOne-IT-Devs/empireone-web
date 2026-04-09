@@ -81,28 +81,27 @@ function StatCard({ value, label, delay }) {
                     border-radius: 18px;
                     padding: 26px 16px 22px;
                     text-align: center;
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid rgba(255,255,255,0.07);
-                    backdrop-filter: blur(16px);
-                    -webkit-backdrop-filter: blur(16px);
+                    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                    border: 1px solid rgba(0,0,0,0.08);
                     overflow: hidden;
                     transition: transform .35s cubic-bezier(.34,1.56,.64,1),
                                 border-color .3s ease,
                                 background .3s ease,
                                 box-shadow .3s ease;
                     animation: sc-in .6s cubic-bezier(.22,1,.36,1) both;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
                 }
                 .sc::before {
                     content: '';
                     position: absolute;
                     inset: 0;
                     border-radius: inherit;
-                    background: radial-gradient(ellipse at 50% 0%, rgba(168,85,247,.1) 0%, transparent 70%);
+                    background: radial-gradient(ellipse at 50% 0%, rgba(168,85,247,.08) 0%, transparent 70%);
                     opacity: 0;
                     transition: opacity .3s ease;
                     pointer-events: none;
                 }
-                .sc:hover { transform: translateY(-5px); border-color: rgba(255,255,255,.13); background: rgba(255,255,255,.055); box-shadow: 0 16px 48px rgba(0,0,0,.45), 0 0 0 1px rgba(168,85,247,.1); }
+                .sc:hover { transform: translateY(-5px); border-color: rgba(168,85,247,0.3); background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); box-shadow: 0 16px 32px rgba(0,0,0,.15), 0 0 0 1px rgba(168,85,247,.15); }
                 .sc:hover::before { opacity: 1; }
                 .sc-accent {
                     position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -111,8 +110,8 @@ function StatCard({ value, label, delay }) {
                     transition: width .3s ease, opacity .3s ease; opacity: 0;
                 }
                 .sc:hover .sc-accent { width: 52px; opacity: 1; }
-                .sc-val { font-size: clamp(1.6rem, 2.5vw, 2.4rem); font-weight: 700; color: #fff; letter-spacing: -.02em; line-height: 1; margin-bottom: 7px; }
-                .sc-lbl { font-size: .68rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.36); }
+                .sc-val { font-size: clamp(1.6rem, 2.5vw, 2.4rem); font-weight: 700; color: #1e293b; letter-spacing: -.02em; line-height: 1; margin-bottom: 7px; }
+                .sc-lbl { font-size: .68rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #64748b; }
                 @keyframes sc-in { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
             `}</style>
             <div className="sc" style={{ animationDelay: `${delay}ms` }}>
@@ -125,16 +124,16 @@ function StatCard({ value, label, delay }) {
 }
 
 const stats = [
-    { value: "6,500+", label: "Satisfied Clients" },
-    { value: "600+",   label: "Finished Projects" },
+    { value: "100+", label: "Satisfied Clients" },
+    { value: "10+",   label: "Finished Projects" },
     { value: "250+",   label: "Skilled Experts"   },
     { value: "1,000+", label: "Media Posts"        },
 ];
 
 const features = [
-    "Innovative Technology Solutions",
-    "Expert Team of Professionals",
-    "Guaranteed Business Growth",
+    "24/7 Customer Support Services",
+    "Expert BPO & Back-Office Solutions",
+    "Scalable Business Process Management",
 ];
 
 export default function AboutSection() {
@@ -172,10 +171,10 @@ export default function AboutSection() {
                         className="relative rounded-2xl overflow-hidden shadow-2xl w-full"
                         style={{ maxWidth: 580, border: "1px solid rgba(255,255,255,0.1)" }}>
                         <img
-                            src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
+                            src="/images/image-200.png"
                             alt="Team collaborating"
                             className="w-full object-cover"
-                            style={{ height: "46vh", minHeight: 260 }}
+                            style={{ height: "48vh", minHeight: 260 }}
                         />
                         <div className="absolute inset-0"
                             style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%)" }} />
@@ -184,16 +183,23 @@ export default function AboutSection() {
 
                 {/* Right — text */}
                 <div className="space-y-5">
-                    <motion.span
+                    <motion.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: false, amount: 0.8 }}
                         variants={fadeUp}
                         custom={0.18}
-                        className="text-xs font-semibold tracking-[.2em] uppercase"
-                        style={{ color: "rgba(255,255,255,0.45)" }}>
-                        About Company
-                    </motion.span>
+                        className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-[.12em] uppercase"
+                        style={{
+                            background: "rgba(255,255,255,0.1)",
+                            border: "1px solid rgba(255,255,255,0.2)",
+                            color: "#ffffff",
+                            backdropFilter: "blur(8px)",
+                        }}
+                    >
+                        <span className="w-2 h-2 rounded-full bg-purple-400 inline-block" style={{ boxShadow: "0 0 8px rgba(168,85,247,0.6)" }} />
+                        About EmpireOne BPO
+                    </motion.div>
 
                     <motion.h2
                         initial="hidden"
@@ -202,14 +208,15 @@ export default function AboutSection() {
                         variants={fadeUp}
                         custom={0.28}
                         className="text-4xl md:text-5xl font-bold text-white leading-tight"
+                        style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900 }}
                     >
-                        We Help Clients With
+                        <span style={{ whiteSpace: "nowrap" }}>Your Trusted Partner in</span>
                         <span className="block" style={{
                             background: "linear-gradient(135deg, #a78bfa, #818cf8)",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
                         }}>
-                            The Right Solutions
+                            Business Excellence
                         </span>
                     </motion.h2>
 
@@ -221,9 +228,10 @@ export default function AboutSection() {
                         custom={0.38}
                         className="leading-relaxed max-w-lg text-sm"
                         style={{ color: "rgba(255,255,255,0.6)" }}>
-                        At EmpireOne, we believe in the power of technology to transform
-                        businesses. Our mission is to provide scalable, secure, and
-                        innovative IT solutions that drive growth and efficiency globally.
+                        At EmpireOne, we deliver world-class BPO solutions that help businesses
+                        optimize operations, reduce costs, and scale efficiently. From customer
+                        support to back-office operations, we're your partner in achieving
+                        operational excellence across the globe.
                     </motion.p>
 
                     <ul className="space-y-2.5 pt-1">
@@ -256,26 +264,25 @@ export default function AboutSection() {
                             whileTap={{ scale: 0.98 }}
                             className="px-7 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 hover:brightness-110"
                             style={{
-                                background: "rgba(255,255,255,0.08)",
-                                border: "1px solid rgba(255,255,255,0.12)",
-                                backdropFilter: "blur(8px)",
+                                background: "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
+                                border: "1px solid rgba(255,255,255,0.15)",
                             }}
                         >
                             Explore More
                         </motion.button>
-                        <motion.button
+                        <motion.a
+                            href="#contact"
                             whileHover={{ y: -3, scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="px-7 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-105"
+                            className="inline-flex items-center justify-center px-7 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-105"
                             style={{
-                                background: "rgba(167,139,250,0.15)",
-                                border: "1px solid rgba(167,139,250,0.35)",
-                                color: "#c4b5fd",
-                                backdropFilter: "blur(8px)",
+                                background: "linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)",
+                                border: "1px solid rgba(167,139,250,0.3)",
+                                color: "#ffffff",
                             }}
                         >
                             Contact Us
-                        </motion.button>
+                        </motion.a>
                     </motion.div>
                 </div>
             </div>
@@ -286,7 +293,7 @@ export default function AboutSection() {
                 viewport={{ once: false, amount: 0.3 }}
                 variants={fadeUp}
                 custom={0.84}
-                className="relative z-10 max-w-7xl w-full mx-auto px-6 pb-10 grid grid-cols-2 md:grid-cols-4 gap-3"
+                className="relative z-10 max-w-7xl w-full mx-auto px-6 pb-10 grid grid-cols-2 md:grid-cols-4 gap-3 "
             >
                 {stats.map((s, i) => (
                     <StatCard key={s.label} value={s.value} label={s.label} delay={i * 100} />

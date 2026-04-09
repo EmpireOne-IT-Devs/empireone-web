@@ -17,24 +17,24 @@ const fadeUp = {
 };
 
 const testimonials = [
-    {
-        text: "EmpireOne transformed our legacy systems into a modern, scalable infrastructure. Their team's expertise and dedication are unmatched in the industry.",
-        name: "Sarah Jenkins",
-        title: "CTO, TechFlow Inc.",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    },
-    {
-        text: "The cybersecurity solutions provided by EmpireOne gave us peace of mind. We haven't had a single breach since partnering with them two years ago.",
-        name: "Michael Chen",
-        title: "Director of IT, GlobalBank",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    {
-        text: "Outstanding service and support. They don't just fix problems; they anticipate them and provide strategic guidance for our future growth.",
-        name: "Emily Rodriguez",
-        title: "Operations Manager, NexaCorp",
-        avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-    },
+  {
+    text: "EmpireOne's IT team worked seamlessly with ours to modernize our entire infrastructure. Their technical depth and hands-on approach made a complex migration feel effortless.",
+    name: "Amado C. Serrano",
+    title: "IT Specialist.",
+    avatar: "/images/image-3.png",
+  },
+  {
+    text: "Partnering with EmpireOne has been a game-changer for our hiring process. Their platform helped us attract top-tier talent faster and smarter than ever before.",
+    name: "Jona Mae Tanchico",
+    title: "Talent Acquisition",
+    avatar: "/images/image-2.png",
+  },
+  {
+    text: "EmpireOne truly understands the creative process. They gave our team the tools and space to bring bold ideas to life — our campaigns have never looked better.",
+    name: "Cyrus Sy",
+    title: "Creative Team",
+    avatar: "/images/image-1.png",
+  },
 ];
 
 function StarIcon() {
@@ -59,9 +59,15 @@ export default function TestimonialSection() {
                         viewport={{ once: false, amount: 0.8 }}
                         variants={fadeUp}
                         custom={0.05}
-                        className="mb-3 text-sm font-semibold tracking-wide text-blue-600 sm:text-base"
+                        className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold tracking-[.12em] uppercase mb-4"
+                        style={{
+                            background: "rgba(59,130,246,0.08)",
+                            border: "1px solid rgba(59,130,246,0.2)",
+                            color: "#2563eb",
+                        }}
                     >
-                        Testimonials
+                        <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" style={{ boxShadow: "0 0 8px rgba(59,130,246,0.6)" }} />
+                        Client Testimonials
                     </motion.div>
                     <motion.h2
                         initial="hidden"
@@ -75,7 +81,7 @@ export default function TestimonialSection() {
                     </motion.h2>
                 </div>
 
-                <div className="mt-12 gap-4 flex flex-col md:flex-row">
+                <div className="mt-12 gap-4 flex flex-col md:flex-row md:items-stretch">
                     {testimonials.map((testimonial, index) => (
                         <motion.div
                             key={testimonial.name}
@@ -84,9 +90,9 @@ export default function TestimonialSection() {
                             viewport={{ once: false, amount: 0.25 }}
                             variants={fadeUp}
                             custom={0.16 + index * 0.08}
-                            className="flex-1"
+                            className="flex-1 flex"
                         >
-                            <Card padding="p-8">
+                            <Card padding="p-8" className="w-full flex flex-col">
                                 <div className="mb-8 flex items-start justify-between gap-4">
                                     <div className="flex items-center">
                                         {[...Array(5)].map((_, index) => (

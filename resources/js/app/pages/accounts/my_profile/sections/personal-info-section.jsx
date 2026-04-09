@@ -28,7 +28,6 @@ export default function PersonalInfoSection({
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <UserCircle size={15} /> Basic Information
                 </span>
-                
                 {/* Responsive Grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
                     <Input

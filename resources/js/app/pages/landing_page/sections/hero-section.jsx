@@ -35,7 +35,7 @@ export default function HeroSection() {
         <section
             id="home"
             className="flex items-center relative overflow-hidden"
-            style={{ height: "100vh" }}
+            style={{ height: "100vh", minHeight: "700px" }}
         >
             <video
                 src="/video/landing-page.mp4"
@@ -51,15 +51,15 @@ export default function HeroSection() {
             />
             <div className="absolute inset-0 bg-black/30" />
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-                <div className="flex items-center justify-between gap-8">
-                    <div className="space-y-6 max-w-2xl">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8 lg:px-10 w-full">
+                <div className="flex items-center justify-between gap-12 lg:gap-16">
+                    <div className="space-y-7 max-w-2xl">
                         <motion.div
                             initial="hidden"
                             animate="visible"
                             variants={fadeUp}
                             custom={0.1}
-                            className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
+                            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
                             style={{
                                 background: "rgba(255,255,255,0.15)",
                                 color: "#fff",
@@ -76,14 +76,27 @@ export default function HeroSection() {
                             animate="visible"
                             variants={fadeUp}
                             custom={0.2}
-                            className="text-7xl font-extrabold drop-shadow-lg leading-tight"
+                            className="text-5xl md:text-6xl lg:text-7xl font-extrabold drop-shadow-lg leading-tight"
                         >
-                            <span style={{ color: "#5170ff" }}>
+                            <span
+                                style={{
+                                    color: "#5170ff",
+                                    fontFamily: "Montserrat, sans-serif",
+                                    fontWeight: 900,
+                                    display: "block",
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
                                 Empowering Your
                             </span>
                             <span
-                                className="block "
-                                style={{ color: "#e35619" }}
+                                className="block mt-4"
+                                style={{
+                                    color: "#e35619",
+                                    fontFamily: "Montserrat, sans-serif",
+                                    fontWeight: 900,
+                                    whiteSpace: "nowrap",
+                                }}
                             >
                                 Business Future
                             </span>
@@ -94,11 +107,12 @@ export default function HeroSection() {
                             animate="visible"
                             variants={fadeUp}
                             custom={0.32}
-                            className="text-white/80 max-w-xl text-xl leading-relaxed"
+                            className="text-white/90 max-w-xl text-base md:text-lg lg:text-lg leading-relaxed"
                         >
-                            We provide cutting-edge technology solutions to help
-                            your business scale, secure its data, and streamline
-                            operations for the modern digital landscape.
+                            We provide scalable outsourcing solutions that
+                            improve efficiency, reduce costs, and enhance
+                            customer experience—powered by skilled teams and
+                            modern technology.
                         </motion.p>
 
                         <motion.div
@@ -106,33 +120,42 @@ export default function HeroSection() {
                             animate="visible"
                             variants={fadeUp}
                             custom={0.42}
-                            className="flex gap-4 flex-wrap pt-1"
+                            className="flex gap-3 md:gap-4 flex-wrap pt-2"
                         >
-                            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
-                            <Button variant="light">
-                                Download APK
-                                <Android className="h-5 w-5 ml-2" />
-                            </Button>
+                            <motion.div
+                                whileHover={{ y: -3 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Button variant="light">
+                                    Download APK
+                                    <Android className="h-5 w-5 ml-2" />
+                                </Button>
                             </motion.div>
-                            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
-                            <Button variant="light">
-                                Windows
-                                <Windows className="h-5 w-5 ml-2" />
-                            </Button>
+                            <motion.div
+                                whileHover={{ y: -3 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Button variant="light">
+                                    Windows
+                                    <Windows className="h-5 w-5 ml-2" />
+                                </Button>
                             </motion.div>
-                            <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
-                            <Button variant="light">
-                                Mac
-                                <svg
-                                    role="img"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-5 w-5 ml-2 fill-current"
-                                >
-                                    <title>Apple</title>
-                                    <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
-                                </svg>
-                            </Button>
+                            <motion.div
+                                whileHover={{ y: -3 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Button variant="light">
+                                    Mac
+                                    <svg
+                                        role="img"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5 ml-2 fill-current"
+                                    >
+                                        <title>Apple</title>
+                                        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
+                                    </svg>
+                                </Button>
                             </motion.div>
                         </motion.div>
                     </div>
@@ -144,23 +167,27 @@ export default function HeroSection() {
                         variants={fadeInRight}
                         custom={0.28}
                         className="relative flex-shrink-0 hidden lg:block"
-                        style={{ width: "600px", height: "520px" }}
+                        style={{ width: "550px", height: "500px" }}
                     >
                         <motion.div
                             initial={{ opacity: 0, scale: 1.08 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1, delay: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{
+                                duration: 1,
+                                delay: 0.42,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
                             className="absolute rounded-3xl overflow-hidden shadow-2xl"
                             style={{
-                                top: "44px",
-                                left: "30px",
+                                top: "40px",
+                                left: "24px",
                                 right: "0",
-                                bottom: "44px",
+                                bottom: "40px",
                                 border: "4px solid rgba(255,255,255,0.15)",
                             }}
                         >
                             <img
-                                src="/images/test-image.jpg"
+                                src="/images/us.png"
                                 alt="Team working"
                                 className="w-full h-full object-cover"
                                 style={{ filter: "brightness(0.95)" }}
@@ -171,27 +198,31 @@ export default function HeroSection() {
                         <motion.div
                             initial={{ opacity: 0, y: -24, x: 20 }}
                             animate={{ opacity: 1, y: 0, x: 0 }}
-                            transition={{ duration: 0.7, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                            className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
+                            transition={{
+                                duration: 0.7,
+                                delay: 0.7,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-4 py-3 shadow-xl"
                             style={{
                                 animationDuration: "2s",
-                                top: "0px",
-                                right: "-16px",
+                                top: "-8px",
+                                right: "-12px",
                                 background: "rgba(255,255,255,0.97)",
                                 backdropFilter: "blur(4px)",
-                                minWidth: "210px",
+                                minWidth: "200px",
                             }}
                         >
                             <div
                                 className="rounded-xl flex items-center justify-center flex-shrink-0"
                                 style={{
                                     background: "rgba(99,102,241,0.12)",
-                                    width: 52,
-                                    height: 52,
+                                    width: 48,
+                                    height: 48,
                                 }}
                             >
                                 <TrendingUp
-                                    className="w-7 h-7"
+                                    className="w-6 h-6"
                                     style={{ color: "#6366f1" }}
                                 />
                             </div>
@@ -199,8 +230,8 @@ export default function HeroSection() {
                                 <p className="text-xs text-gray-500 font-medium">
                                     Satisfied Clients
                                 </p>
-                                <p className="text-3xl font-bold text-gray-900">
-                                    6,500+
+                                <p className="text-2xl md:text-3xl font-bold text-gray-900">
+                                    100+
                                 </p>
                             </div>
                         </motion.div>
@@ -209,27 +240,31 @@ export default function HeroSection() {
                         <motion.div
                             initial={{ opacity: 0, y: 24, x: -20 }}
                             animate={{ opacity: 1, y: 0, x: 0 }}
-                            transition={{ duration: 0.7, delay: 0.82, ease: [0.22, 1, 0.36, 1] }}
-                            className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-5 py-4 shadow-xl"
+                            transition={{
+                                duration: 0.7,
+                                delay: 0.82,
+                                ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className="absolute z-20 animate-bounce flex items-center gap-3 rounded-2xl px-4 py-3 shadow-xl"
                             style={{
                                 animationDuration: "2s",
-                                bottom: "0px",
-                                left: "-16px",
+                                bottom: "-8px",
+                                left: "-12px",
                                 background: "rgba(255,255,255,0.97)",
                                 backdropFilter: "blur(4px)",
-                                minWidth: "220px",
+                                minWidth: "210px",
                             }}
                         >
                             <div
                                 className="rounded-xl flex items-center justify-center flex-shrink-0"
                                 style={{
                                     background: "rgba(34,197,94,0.12)",
-                                    width: 52,
-                                    height: 52,
+                                    width: 48,
+                                    height: 48,
                                 }}
                             >
                                 <Shield
-                                    className="w-7 h-7"
+                                    className="w-6 h-6"
                                     style={{ color: "#16a34a" }}
                                 />
                             </div>
@@ -237,7 +272,7 @@ export default function HeroSection() {
                                 <p className="text-xs text-gray-500 font-medium">
                                     System Uptime
                                 </p>
-                                <p className="text-3xl font-bold text-gray-900">
+                                <p className="text-2xl md:text-3xl font-bold text-gray-900">
                                     99.99%
                                 </p>
                             </div>

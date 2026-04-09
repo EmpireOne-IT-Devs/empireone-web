@@ -18,9 +18,9 @@ export default function FooterSection() {
     const year = new Date().getFullYear();
 
     const quickLinks = [
-        { name: "Home", href: "/" },
-        { name: "About Us", href: "/about" },
-        { name: "Services", href: "/services" },
+        { name: "Home", href: "#home" },
+        { name: "About Us", href: "#about-us" },
+        { name: "Services", href: "#services" },
         { name: "Contact", href: "#contact" },
     ];
 
@@ -149,7 +149,7 @@ export default function FooterSection() {
 
                     {/* QUICK LINKS */}
                     <div>
-                        <h4 className="text-white font-semibold text-base mb-5">
+                        <h4 className="text-gray-800 font-semibold text-base mb-2">
                             Quick Links
                         </h4>
                         <ul className="space-y-3">
