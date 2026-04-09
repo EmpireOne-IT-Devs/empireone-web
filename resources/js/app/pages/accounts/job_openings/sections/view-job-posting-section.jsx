@@ -22,9 +22,10 @@ import store from "@/app/store/store";
 export default function ViewJobPostingDetailsSection({ data, children }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
-
+    const [loading,setLoading]=useState(false)
     async function apply_job_position() {
         try {
+            setLoading(true)
             await apply_application_service({
                 job_posting_id: data.id,
             });
@@ -35,7 +36,10 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                     title: "Job application submitted Successfully!",
                 }),
             );
+            setLoading(false)
+            setOpen(false)
         } catch (error) {
+            setLoading(false)
             await dispatch(
                 setAlert({
                     type: "error",
@@ -229,6 +233,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                         </Button>
                         <Button
                             variant="primary"
+                            loading={loading}
                             type="button"
                             className="flex-1"
                             disabled={data.is_applied}
