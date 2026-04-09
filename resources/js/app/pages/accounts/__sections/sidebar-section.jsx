@@ -38,8 +38,9 @@ export default function SidebarSection() {
     const path = window.location.pathname.split("/")[3];
     const account_role = window.location.pathname.split("/")[2];
 
-    // 1. We split the main navigation items...
+    // 1. We split the main navigation items and include labels...
     const mainNavigation = [
+        { is_label: true, name: "Main Menu" },
         {
             name: "Dashboard",
             href: `/accounts/${account_role}/dashboard`,
@@ -82,8 +83,9 @@ export default function SidebarSection() {
             current: path == "messages",
             is_incoming: true,
         },
-        ...(account_role === "administrator"
+        ...(account_role == "administrator"
             ? [
+                  { is_label: true, name: "Administration" },
                   {
                       name: "Users",
                       href: `/accounts/${account_role}/users`,
@@ -105,7 +107,6 @@ export default function SidebarSection() {
                       current: path == "ticketing",
                       is_incoming: true,
                   },
-
                   {
                       name: "Job Posting",
                       href: `/accounts/${account_role}/job_posting/active_posting`,
@@ -157,8 +158,9 @@ export default function SidebarSection() {
                   },
               ]
             : []),
-        ...(account_role === "employee"
+        ...(account_role == "employee"
             ? [
+                  { is_label: true, name: "Employee Hub" },
                   {
                       name: "Activities",
                       href: `/accounts/${account_role}/activities`,
@@ -271,16 +273,11 @@ export default function SidebarSection() {
                                             src="/images/logo.png"
                                             className="h-16 w-full "
                                         />
-                                        <img
-                                            alt="Logo"
-                                            src="/images/logo.png"
-                                            className="h-16 w-full hidden "
-                                        />
                                     </div>
                                     <button
                                         type="button"
                                         onClick={() => open_sidebar()}
-                                        className="text-gray-700  font-bold text-xl"
+                                        className="text-gray-700 font-bold text-xl"
                                     >
                                         X
                                     </button>
@@ -289,44 +286,62 @@ export default function SidebarSection() {
                                     {/* Main Mobile Navigation */}
                                     <nav className="flex-1 overflow-y-auto">
                                         <ul className="space-y-4">
-                                            {mainNavigation.map((item) => (
-                                                <li key={item.name}>
-                                                    <button
-                                                        disabled={
-                                                            item.is_incoming
-                                                        }
-                                                        onClick={(e) => {
-                                                            dispatch(
-                                                                setSidebarOpen(),
-                                                            );
-                                                            router.visit(
-                                                                `${item.href}`,
-                                                            );
-                                                        }}
-                                                        className={classNames(
-                                                            item.current
-                                                                ? "bg-blue-700 text-white "
-                                                                : "text-gray-700 hover:text-blue-600 hover:bg-blue-200   ",
-                                                            "flex items-center  gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
-                                                        )}
+                                            {mainNavigation.map((item, i) =>
+                                                item.is_label ? (
+                                                    <li
+                                                        key={`label-${i}`}
+                                                        className="flex items-center justify-center"
                                                     >
-                                                        <item.icon
-                                                            aria-hidden="true"
+                                                        <span className="px-3 text-xs font-black text-red-400 uppercase tracking-wider">
+                                                            ----- {item.name}
+                                                            -----
+                                                        </span>
+                                                    </li>
+                                                ) : (
+                                                    <li key={item.name}>
+                                                        <button
+                                                            disabled={
+                                                                item.is_incoming
+                                                            }
+                                                            onClick={(e) => {
+                                                                dispatch(
+                                                                    setSidebarOpen(),
+                                                                );
+                                                                router.visit(
+                                                                    `${item.href}`,
+                                                                );
+                                                            }}
                                                             className={classNames(
                                                                 item.current
-                                                                    ? "text-indigo-600 "
-                                                                    : "text-gray-400 group-hover:text-indigo-600 ",
-                                                                "w-6 h-6 shrink-0",
+                                                                    ? "bg-blue-700 text-white "
+                                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
+                                                                "flex items-center gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                                             )}
-                                                        />
-                                                        {item.name}
-                                                    </button>
-                                                </li>
-                                            ))}
+                                                        >
+                                                            <item.icon
+                                                                aria-hidden="true"
+                                                                className={classNames(
+                                                                    item.current
+                                                                        ? "text-indigo-600 "
+                                                                        : "text-gray-400 group-hover:text-indigo-600 ",
+                                                                    "w-6 h-6 shrink-0",
+                                                                )}
+                                                            />
+                                                            {item.name}
+                                                            {!desktopCollapsed &&
+                                                                item.is_incoming && (
+                                                                    <span className="ml-auto inline-block py-0.5 px-2 text-[10px] font-medium rounded-full bg-red-500 text-white dark:bg-red-900 dark:text-red-200">
+                                                                        incoming
+                                                                    </span>
+                                                                )}
+                                                        </button>
+                                                    </li>
+                                                ),
+                                            )}
                                         </ul>
                                     </nav>
 
-                                    {/* Bottom Mobile Navigation (mt-auto pushes it down) */}
+                                    {/* Bottom Mobile Navigation */}
                                     <div className="mt-auto pt-4 border-t border-gray-200 mb-20">
                                         <ul className="space-y-4">
                                             {bottomNavigation.map((item) => (
@@ -346,8 +361,8 @@ export default function SidebarSection() {
                                                         className={classNames(
                                                             item.current
                                                                 ? "bg-blue-700 text-white "
-                                                                : "text-gray-700 hover:text-blue-600 hover:bg-blue-200   ",
-                                                            "flex items-center  gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
+                                                                : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
+                                                            "flex items-center gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                                         )}
                                                     >
                                                         <item.icon
@@ -374,19 +389,19 @@ export default function SidebarSection() {
 
             {/* Desktop sidebar */}
             <div
-                className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col bg-white  border-r border-gray-200 transition-all duration-300 ${sidebarWidth}`}
+                className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col bg-white border-r border-gray-200 transition-all duration-300 ${sidebarWidth}`}
             >
                 <div className="flex flex-col flex-1 h-full">
                     <div className="flex items-center mt-3 justify-center h-16 p-4">
                         <img
                             alt="Logo"
                             src="/images/logo.png"
-                            className={`h-16 w-full  ${sidebarText}`}
+                            className={`h-16 w-full ${sidebarText}`}
                         />
                         <img
                             alt="Logo"
                             src="/images/logo.png"
-                            className={`h-16 w-full hidden  ${sidebarText}`}
+                            className={`h-16 w-full hidden ${sidebarText}`}
                         />
                     </div>
                     <hr className="my-3 border-gray-200" />
@@ -394,54 +409,71 @@ export default function SidebarSection() {
                     {/* Main Desktop Navigation */}
                     <nav className="flex-1 overflow-y-auto p-2">
                         <ul className="space-y-1">
-                            {mainNavigation.map((item, i) => (
-                                <li key={i}>
-                                    <Tooltip
-                                        position="right"
-                                        title={item.name}
-                                        className="w-full"
-                                        isShow={desktopCollapsed}
+                            {mainNavigation.map((item, i) =>
+                                item.is_label ? (
+                                    <li
+                                        key={`label-${i}`}
+                                        className="flex items-center justify-center"
                                     >
-                                        <Link
-                                            href={
-                                                item.is_incoming
-                                                    ? "#"
-                                                    : item.href
-                                            }
-                                            onClick={(e) => {
-                                                if (item.is_incoming)
-                                                    e.preventDefault();
-                                            }}
-                                            className={classNames(
-                                                item.current
-                                                    ? "bg-blue-700 text-white "
-                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200   ",
-                                                "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
-                                            )}
+                                        {desktopCollapsed ? (
+                                            <hr className="border-gray-200 mx-2" />
+                                        ) : (
+                                            <span className="px-3 text-xs font-black text-red-400 uppercase tracking-wider">
+                                                ----- {item.name} -----
+                                            </span>
+                                        )}
+                                    </li>
+                                ) : (
+                                    <li key={i}>
+                                        <Tooltip
+                                            position="right"
+                                            title={item.name}
+                                            className="w-full"
+                                            isShow={desktopCollapsed}
                                         >
-                                            <div className="flex gap-3 items-start justify-start w-full">
-                                                <item.icon
-                                                    className="w-6 h-6 shrink-0"
-                                                    aria-hidden="true"
-                                                />
-                                                <span className={sidebarText}>
-                                                    {item.name}
-                                                </span>
-                                                {!desktopCollapsed &&
-                                                    item.is_incoming && (
-                                                        <span className="ml-auto inline-block py-0.5 px-2 text-[10px] font-medium rounded-full bg-red-500 text-white dark:bg-red-900 dark:text-red-200">
-                                                            incoming
-                                                        </span>
-                                                    )}
-                                            </div>
-                                        </Link>
-                                    </Tooltip>
-                                </li>
-                            ))}
+                                            <Link
+                                                href={
+                                                    item.is_incoming
+                                                        ? "#"
+                                                        : item.href
+                                                }
+                                                onClick={(e) => {
+                                                    if (item.is_incoming)
+                                                        e.preventDefault();
+                                                }}
+                                                className={classNames(
+                                                    item.current
+                                                        ? "bg-blue-700 text-white "
+                                                        : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
+                                                    "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
+                                                )}
+                                            >
+                                                <div className="flex gap-3 items-start justify-start w-full">
+                                                    <item.icon
+                                                        className="w-6 h-6 shrink-0"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span
+                                                        className={sidebarText}
+                                                    >
+                                                        {item.name}
+                                                    </span>
+                                                    {!desktopCollapsed &&
+                                                        item.is_incoming && (
+                                                            <span className="ml-auto inline-block py-0.5 px-2 text-[10px] font-medium rounded-full bg-red-500 text-white dark:bg-red-900 dark:text-red-200">
+                                                                incoming
+                                                            </span>
+                                                        )}
+                                                </div>
+                                            </Link>
+                                        </Tooltip>
+                                    </li>
+                                ),
+                            )}
                         </ul>
                     </nav>
 
-                    {/* Bottom Desktop Navigation (mt-auto pushes it down) */}
+                    {/* Bottom Desktop Navigation */}
                     <div className="mt-auto p-2 pt-3 border-t border-gray-200">
                         <ul className="space-y-1">
                             {bottomNavigation.map((item, i) => (
@@ -457,7 +489,7 @@ export default function SidebarSection() {
                                             className={classNames(
                                                 item.current
                                                     ? "bg-blue-700 text-white "
-                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200   ",
+                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
                                                 "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                             )}
                                         >
