@@ -11,7 +11,7 @@ function route_page()
 {
     $user = Auth::user();
     return match ($user?->role) {
-        1 => redirect('/administrator/dashboard'),
+        1 => redirect('/accounts/administrator/dashboard'),
         2 => redirect('/accounts/employee/dashboard'),
         3 => redirect('/accounts/applicant/dashboard'),
         default => Inertia::render('auth/login/page'),
