@@ -4,6 +4,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import EditStatusSection from "./edit-status-section";
+import SendJobOfferSection from "../../../applicants/_sections/send-job-offer-section";
 
 export default function TableSection() {
     const { job_applications, search_applicant_status } = useSelector(
@@ -62,7 +63,6 @@ export default function TableSection() {
             return screeningMatch && interviewMatch && finalMatch;
         },
     );
-    
 
     const tableData = filteredApplications?.map((res) => ({
         name: res?.applicant?.name,
@@ -78,7 +78,14 @@ export default function TableSection() {
         final_status: (
             <EditStatusSection data={res} table_status="final_status" />
         ),
-        action: <ShowApplicantDetailsSection data={res} />,
+        action: (
+            <div className="flex gap-3">
+                {res.final_status == "Passed" && (
+                    <SendJobOfferSection data={res} />
+                )}
+                <ShowApplicantDetailsSection data={res} />
+            </div>
+        ),
     }));
     return (
         <div>
