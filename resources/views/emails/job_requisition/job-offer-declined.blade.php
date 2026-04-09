@@ -88,7 +88,7 @@
                 <p style="margin-top: 20px;">To review the full offer letter and signify your acceptance, please click the interactive portal link below:</p>
 
                 <div class="button-container">
-                    <a href="{{ config('app.url') }}/administrator/job_posting/job_offers?job_order_id={{$user['id']}}"
+                    <a href="{{ config('app.url') }}/accounts/administrator/job_posting/job_offers?job_order_id={{$user['id']}}"
                         class="btn-primary" style="color: white !important;">Visit More</a>
                 </div>
 

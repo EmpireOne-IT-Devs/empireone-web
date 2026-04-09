@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
-import TopbarSection from "./_sections/topbar-section";
+import TopbarSection from "./__sections/topbar-section";
 import store from "@/app/store/store";
 import { get_app_data_thunk } from "@/app/redux/app-thunk";
 import { useEffect, useState } from "react";
-import SidebarSection from "./_sections/sidebar-section";
+import SidebarSection from "./__sections/sidebar-section";
 
 export default function Layout({ children }) {
     const { desktopCollapsed } = useSelector((store) => store.app);
