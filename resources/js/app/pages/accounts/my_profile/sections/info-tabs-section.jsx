@@ -15,7 +15,7 @@ import EmployeeInformationSection from "./employee-information-section";
 
 const TAB_IDS = [
     "personal",
-    'employee',
+    "employee",
     "professional",
     "documents",
     "emergency",
@@ -56,6 +56,7 @@ export default function InfoTabsSection() {
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
     const [barangays, setBarangays] = useState([]);
+    console.log("formValues", data);
 
     const getName = (list, code) =>
         list.find((item) => item.code === code)?.name || code;
@@ -82,11 +83,23 @@ export default function InfoTabsSection() {
         if (data?.user?.personal_information) {
             reset({
                 ...data?.user?.personal_information,
+                employee_id: data?.user?.account_employee?.employee_id,
+                department_id: data?.user?.account_employee?.department_id,
+                account_id: data?.user?.account_employee?.account_id,
+                site_id: data?.user?.account_employee?.site_id,
+                position: data?.user?.account_employee?.position,
+                eogs_email: data?.user?.account_employee?.eogs_email,
+                status: data?.user?.account_employee?.status,
                 skills: data?.user?.skills,
                 experiences: data?.user?.working_experience,
             });
         }
-    }, [data?.user?.personal_information, data?.user?.skills, data?.user?.working_experience, reset]);
+    }, [
+        data?.user?.personal_information,
+        data?.user?.skills,
+        data?.user?.working_experience,
+        reset,
+    ]);
 
     const onSubmit = async (data) => {
         const finalData = {
@@ -115,11 +128,10 @@ export default function InfoTabsSection() {
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <div className="mx-auto w-full">
                 {/* Main Card Wrapper */}
-                <div className="bg-white/70 backdrop-blur-xl border border-white rounded-2xl md:rounded-3xl shadow-xl overflow-hidden">
-                    
+                <div className="bg-white/70 backdrop-blur-xl border border-white rounded-2xl md:rounded-3xl shadow-xl ">
                     {/* Tabs Header - Ensure your Tabs component handles overflow-x-auto */}
                     <div className="overflow-x-auto no-scrollbar">
-                         <Tabs
+                        <Tabs
                             tabs={tabs}
                             activeIndex={activeIndex}
                             onTabClick={() => {}}
@@ -150,6 +162,7 @@ export default function InfoTabsSection() {
                             <EmployeeInformationSection
                                 form={formValues}
                                 register={register}
+                                setValue={setValue}
                             />
                         )}
 
@@ -174,14 +187,17 @@ export default function InfoTabsSection() {
                                 errors={errors}
                             />
                         )}
-                        
+
                         {activeTabId === "emergency" && (
                             <EmergencyContactSection register={register} />
                         )}
 
                         {activeTabId === "customization" && (
                             <div className="flex flex-col items-center justify-center py-10 md:py-20">
-                                <Sparkles size={22} className="text-purple-500" />
+                                <Sparkles
+                                    size={22}
+                                    className="text-purple-500"
+                                />
                                 <p className="text-sm mt-2 text-slate-500 font-medium">
                                     Customization Settings
                                 </p>

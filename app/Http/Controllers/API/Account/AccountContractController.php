@@ -88,10 +88,20 @@ class AccountContractController extends Controller
                     'status' => $value['status'] ?? null,
                 ]
             );
-
             $experienceIds[] = $exp->id;
         }
 
+        AccountEmployee::updateOrCreate(
+            ['user_id' => $request->id],
+            [
+                'employee_id' => $request->employee_id ?? null,
+                'account_id' => $request->account_id ?? null,
+                'department_id' => $request->department_id ?? null,
+                'position' => $request->position ?? null,
+                'eogs_email' => $request->eogs_email ?? null,
+                'status' => $request->status ?? null,
+            ]
+        );
         // 🔥 Delete experiences not in request
         AccountWorkingExperience::where('user_id', $request->id)
             ->whereNotIn('id', $experienceIds)

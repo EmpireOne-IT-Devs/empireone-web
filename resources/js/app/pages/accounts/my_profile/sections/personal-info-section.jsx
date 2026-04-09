@@ -20,7 +20,6 @@ export default function PersonalInfoSection({
     barangays,
     setBarangays,
 }) {
-    const { data } = useSelector((store) => store.app);
 
     return (
         <div className="flex flex-col gap-6 w-full">

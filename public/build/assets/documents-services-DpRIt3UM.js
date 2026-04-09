@@ -1,1 +1,0 @@
-import{e as t}from"./app-WIyjH2xO.js";async function s(a){return await t.post("/api/accounts/add_documents",a)}async function c(a){return await t.post("/api/accounts/re_upload_documents",a)}async function n(a){return await t.get("/api/accounts/get_documents_by_user",a)}export{s as a,n as g,c as r};
