@@ -53,7 +53,6 @@ export default function TableSection() {
                             {res.status === "Pending" && (
                                 <AcceptJobOfferSection data={res} />
                             )}
-                            <AcceptJobOfferSection data={res} />
 
                             {/* {res.status === "Declined" && (
                                 <ResendJobOfferSection data={res} />
