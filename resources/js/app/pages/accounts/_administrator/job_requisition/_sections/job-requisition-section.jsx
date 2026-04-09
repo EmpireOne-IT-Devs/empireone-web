@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import ApproveJobRequisitionSection from "./approve-job-requisition-section";
 import Badge from "@/app/_components/badge";
 import moment from "moment";
@@ -28,7 +27,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
         if (id == job_requisition.id) {
             setOpen(true);
         }
-    }, []);
+    }, [id, job_requisition.id]);
 
     const getStatusVariant = (status) => {
         switch (status) {
@@ -80,7 +79,6 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
     if (!job_requisition) return <div>Loading...</div>;
 
-    // Status badge color mapping
     const statusColors = {
         Pending: "bg-yellow-200 text-yellow-800",
         Approved: "bg-green-200 text-green-800",
@@ -90,18 +88,19 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
     return (
         <>
+            {/* Added w-full and text-left so the button behaves like a block container */}
             <button
                 onClick={() => setOpen(true)}
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-4 w-full text-left"
             >
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
                     <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                             <h3 className="text-lg font-semibold text-gray-900">
                                 {job_requisition.title}
                             </h3>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
                                 <Badge
                                     showDot={false}
                                     className="rounded-md px-3 py-1 text-xs font-medium"
@@ -145,37 +144,43 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
                         <div className="text-sm text-gray-700 font-medium justify-start items-center flex gap-2">
                             JRID-
-                            {moment(job_requisition.created_at).format("mdyhs")}
+                            {moment(job_requisition.created_at).format(
+                                "MMDDYYHHmm",
+                            )}
                             {job_requisition.id}
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="hidden sm:flex items-center gap-2 shrink-0">
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={() => setOpen(true)}
+                            onClick={(e) => {
+                                e.stopPropagation(); // Prevent double-triggering the outer button
+                                setOpen(true);
+                            }}
                         >
                             <TbEye className="w-5 h-5" />
                         </Button>
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-6 text-sm text-black">
-                    <div className="flex items-center gap-2">
-                        <TbBuilding className="text-gray-600" />
+                {/* Removed mr-20 to prevent weird gaps on mobile */}
+                <div className="flex flex-wrap items-center justify-start gap-4 sm:gap-6 text-sm text-black w-full">
+                    <div className="flex items-center gap-2 shrink-0">
+                        <TbBuilding className="text-gray-600 w-4 h-4" />
                         <span>{job_requisition?.department?.name}</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <TbMapPin className="text-gray-600" />
+                    <div className="flex items-center gap-2 shrink-0">
+                        <TbMapPin className="text-gray-600 w-4 h-4" />
                         <span className="capitalize">
                             {job_requisition?.location?.name}
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <TbUsers className="text-gray-600" />
+                    <div className="flex items-center gap-2 shrink-0">
+                        <TbUsers className="text-gray-600 w-4 h-4" />
                         <span>
                             0/
                             {job_requisition.number_of_positions} position
@@ -186,63 +191,66 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-2 mr-20">
-                        <TbCurrencyDollar className="text-gray-600" />
+                    <div className="flex items-center gap-2 shrink-0">
+                        <TbCurrencyDollar className="text-gray-600 w-4 h-4" />
                         <span>{job_requisition.salary_range}</span>
                     </div>
                 </div>
 
-                <hr className="border-gray-200" />
+                <hr className="border-gray-200 w-full" />
 
-                <div className="flex flex-col gap-1 w-full">
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <div className="flex items-center gap-2">
-                            <LuUser />
-                            <span>{job_requisition?.user?.name || "N/A"}</span>
-                        </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 text-sm text-gray-600 w-full">
+                    <div className="flex items-center gap-2">
+                        <LuUser className="shrink-0" />
+                        <span>{job_requisition?.user?.name || "N/A"}</span>
+                    </div>
 
-                        <div className="flex items-center gap-2">
-                            <TbCalendar />
-                            <span className="capitalize">
-                                {formatDate(job_requisition.created_at)}
-                            </span>
-                        </div>
+                    <div className="flex items-center gap-2">
+                        <TbCalendar className="shrink-0" />
+                        <span className="capitalize">
+                            {formatDate(job_requisition.created_at)}
+                        </span>
+                    </div>
 
-                        <div className="flex items-center gap-2 text-sm ml-auto">
-                            <TbCalendarEvent className="text-gray-600" />
-                            <span className="font-medium text-gray-600">
-                                Fill Rate: 80%
-                            </span>
-                        </div>
+                    <div className="flex items-center gap-2 text-sm sm:ml-auto">
+                        <TbCalendarEvent className="text-gray-600 shrink-0" />
+                        <span className="font-medium text-gray-600">
+                            Fill Rate: 80%
+                        </span>
                     </div>
                 </div>
             </button>
+
             <Modal
                 width="max-w-7xl"
                 isOpen={open}
-                title="Job Requisition"
+                title="Job Requisition Details"
                 onClose={() => setOpen(false)}
-                className="overflow-auto h-full"
             >
-                <div className="flex overflow-auto h-[75vh]">
-                    <div className="flex-1 p-6 space-y-6">
+                {/* Responsive split: stack on small screens, row on large screens */}
+                <div className="flex flex-col lg:flex-row overflow-auto max-h-[75vh]">
+                    <div className="flex-1 p-4 sm:p-6 space-y-6">
                         <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold text-gray-900">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                                     {job_requisition.title || "N/A"}
                                 </h1>
-                                <span className="bg-blue-50 text-blue-600 text-sm font-medium px-3 py-1 rounded flex items-center gap-1">
-                                    ✨ New Position
-                                </span>
+                                {job_requisition.type === "New Position" && (
+                                    <span className="bg-blue-50 text-blue-600 text-xs sm:text-sm font-medium px-3 py-1 rounded flex items-center gap-1">
+                                        ✨ New Position
+                                    </span>
+                                )}
                             </div>
+
                             <div className="text-gray-900 text-sm">
                                 JRID-
                                 {moment(job_requisition.created_at).format(
-                                    "mdyhs",
+                                    "MMDDYYHHmm",
                                 )}
                                 {job_requisition.id}
                             </div>
-                            <div className="flex gap-2 border-t pt-4">
+
+                            <div className="flex flex-wrap gap-2 border-t pt-4">
                                 <span
                                     className={`px-3 py-1 rounded text-sm font-medium ${
                                         statusColors[job_requisition.status] ||
@@ -259,14 +267,16 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     {job_requisition?.account?.name ?? "N/A"}
                                 </span>
                             </div>
-                            <div className="grid grid-cols-4 gap-x-8 gap-y-4 pt-4">
+
+                            {/* Responsive Grid: 1 col on mobile, 2 on tablet, 4 on large screens */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4 pt-4">
                                 <div>
                                     <div className="text-gray-500 text-sm mb-1">
                                         Department
                                     </div>
                                     <div className="font-semibold text-gray-900">
                                         {job_requisition?.department?.name ||
-                                            "Marketing"}
+                                            "N/A"}
                                     </div>
                                 </div>
                                 <div>
@@ -275,7 +285,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     </div>
                                     <div className="font-semibold text-gray-900">
                                         {job_requisition?.location?.name ||
-                                            "Manila HQ"}
+                                            "N/A"}
                                     </div>
                                 </div>
                                 <div>
@@ -284,7 +294,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     </div>
                                     <div className="font-semibold text-gray-900">
                                         {job_requisition.employment_type ||
-                                            "Full-time"}
+                                            "N/A"}
                                     </div>
                                 </div>
                                 <div>
@@ -302,8 +312,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         Salary Range
                                     </div>
                                     <div className="font-semibold text-gray-900">
-                                        {job_requisition?.salary_range ||
-                                            "₱30,000 - ₱40,000"}
+                                        {job_requisition?.salary_range || "N/A"}
                                     </div>
                                 </div>
                                 <div>
@@ -311,10 +320,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         Requested By
                                     </div>
                                     <div className="font-semibold text-gray-900">
-                                        <span>
-                                            {job_requisition?.user?.name ||
-                                                "N/A"}
-                                        </span>
+                                        {job_requisition?.user?.name || "N/A"}
                                     </div>
                                 </div>
                                 <div>
@@ -342,18 +348,20 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     </div>
                                 </div>
                             </div>
+
                             <div className="mb-5 pb-5 pt-5">
                                 <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <TbCalendarEvent className="text-blue-600" />
+                                    <TbCalendarEvent className="text-blue-600 shrink-0" />
                                     Interview Schedule
                                 </h3>
 
-                                <div className="grid grid-cols-2 gap-5">
+                                {/* Stack on mobile, side-by-side on tablet/desktop */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="bg-gray-50 rounded-lg p-4">
                                         <p className="text-sm text-gray-600 mb-2">
                                             Final Interviewer
                                         </p>
-                                        <p className="font-semibold text-gray-900 mb-1">
+                                        <p className="font-semibold text-gray-900">
                                             {job_requisition.interviewer ||
                                                 "Not Assigned"}
                                         </p>
@@ -363,14 +371,14 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         <p className="text-sm text-gray-600 mb-2">
                                             Sub-Interviewer
                                         </p>
-                                        <p className="font-semibold text-gray-900 mb-1">
+                                        <p className="font-semibold text-gray-900">
                                             {job_requisition.sub_interviewer ||
                                                 "Not Assigned"}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-5 mt-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                                     <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                                         <p className="text-sm text-gray-600 mb-1">
                                             Interview Date
@@ -397,7 +405,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                 </div>
                             </div>
 
-                            <div className="mt-4 space-y-6 pt-4 text-gray-800">
+                            {/* Text blocks: added text-sm for better mobile readability */}
+                            <div className="mt-4 space-y-6 pt-4 text-gray-800 text-sm sm:text-base">
                                 {job_requisition.justification_for_position && (
                                     <div>
                                         <h3 className="font-semibold text-lg mb-2">
@@ -411,7 +420,6 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         />
                                     </div>
                                 )}
-
                                 {job_requisition.qualifications && (
                                     <div>
                                         <h3 className="font-semibold text-lg mb-2">
@@ -425,7 +433,6 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         />
                                     </div>
                                 )}
-
                                 {job_requisition.responsibilities && (
                                     <div>
                                         <h3 className="font-semibold text-lg mb-2">
@@ -442,14 +449,21 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                             </div>
                         </div>
                     </div>
-                    <div className="w-1/3">
+
+                    {/* Logs Section: 100% width on mobile, 1/3 width on desktop */}
+                    <div className="w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l bg-gray-50/50 p-4 sm:p-6 shrink-0">
+                        <h3 className="font-semibold text-lg mb-4">
+                            Activity Logs
+                        </h3>
                         <JobRequisitionLogsSection
                             job_requisition={job_requisition}
                         />
                     </div>
                 </div>
-                <div className="flex w-full items-center justify-between border-t  gap-3 pt-3 ">
-                    <div>
+
+                {/* Footer Action Buttons: Stack on mobile, row on tablet/desktop */}
+                <div className="flex flex-col sm:flex-row w-full items-center justify-between border-t gap-3 p-4 bg-white sticky bottom-0">
+                    <div className="w-full sm:w-auto">
                         {job_requisition.status == "Approved" &&
                             !job_requisition.job_posting && (
                                 <CreateJobPostingSection
@@ -457,8 +471,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                 />
                             )}
                     </div>
+
                     {!job_requisition.job_posting && (
-                        <div className="flex gap-3">
+                        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
                             <DeclinedJobRequisitionSection
                                 data={job_requisition}
                             />

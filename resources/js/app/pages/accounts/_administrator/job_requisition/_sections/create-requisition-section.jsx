@@ -63,6 +63,7 @@ export default function CreateJobRequisition() {
             setValue("account_id", "");
         }
     }, [watchedValues.department_id]);
+
     useEffect(() => {
         if (positionType === "Existing Position") {
             setValue("title", selectedPosition?.job_requisition?.title || "");
@@ -302,7 +303,7 @@ export default function CreateJobRequisition() {
                                 )}
                             </div>
                         </div>
-                        <div className="px-3">
+                        <div className="px-1 sm:px-3">
                             <h3 className="text-sm font-semibold text-gray-700 mb-4">
                                 Position Details
                             </h3>
@@ -320,34 +321,11 @@ export default function CreateJobRequisition() {
                                     placeholder="e.g. Senior Software Engineer"
                                 />
 
-                                <div className="flex gap-4">
-                                    <Controller
-                                        name="department_id"
-                                        control={control}
-                                        rules={{
-                                            required: "Department is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                label="Select Department"
-                                                options={data?.departments?.map(
-                                                    (res) => ({
-                                                        ...res,
-                                                        label: res.name,
-                                                        value: res.id,
-                                                    }),
-                                                )}
-                                                // onSelect={(e) =>
-                                                //     setCategories(e)
-                                                // }
-                                                error={errors.department_id}
-                                                {...field} // passes value & onChange
-                                            />
-                                        )}
-                                    />
-                                    {watchedValues.department_id == 4 && (
+                                {/* Stacked on mobile: flex-col md:flex-row */}
+                                <div className="flex flex-col md:flex-row gap-4">
+                                    <div className="flex-1 w-full">
                                         <Controller
-                                            name="account_id"
+                                            name="department_id"
                                             control={control}
                                             rules={{
                                                 required:
@@ -355,67 +333,95 @@ export default function CreateJobRequisition() {
                                             }}
                                             render={({ field }) => (
                                                 <Select
-                                                    label="Select Account"
-                                                    options={data?.accounts?.map(
+                                                    label="Select Department"
+                                                    options={data?.departments?.map(
                                                         (res) => ({
                                                             ...res,
                                                             label: res.name,
                                                             value: res.id,
                                                         }),
                                                     )}
-                                                    // onSelect={(e) =>
-                                                    //     setCategories(e)
-                                                    // }
-                                                    error={errors.account_id}
-                                                    {...field} // passes value & onChange
+                                                    error={
+                                                        errors.department_id
+                                                            ?.message
+                                                    }
+                                                    {...field}
                                                 />
                                             )}
                                         />
+                                    </div>
+                                    {watchedValues.department_id == 4 && (
+                                        <div className="flex-1 w-full">
+                                            <Controller
+                                                name="account_id"
+                                                control={control}
+                                                rules={{
+                                                    required:
+                                                        "Account is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        label="Select Account"
+                                                        options={data?.accounts?.map(
+                                                            (res) => ({
+                                                                ...res,
+                                                                label: res.name,
+                                                                value: res.id,
+                                                            }),
+                                                        )}
+                                                        error={
+                                                            errors.account_id
+                                                                ?.message
+                                                        }
+                                                        {...field}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
                                     )}
-
-                                    <Controller
-                                        name="location_id"
-                                        control={control}
-                                        rules={{
-                                            required: "Location is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                label="Select Location"
-                                                options={data?.locations.map(
-                                                    (res) => ({
-                                                        label: res.name,
-                                                        value: res.id,
-                                                    }),
-                                                )}
-                                                error={errors.location_id}
-                                                {...field} // passes value & onChange
-                                            />
-                                        )}
-                                    />
-                                    <Controller
-                                        name="site_id"
-                                        control={control}
-                                        rules={{
-                                            required: "Site is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                label="Select Site"
-                                                options={data?.sites.map(
-                                                    (res) => ({
-                                                        label: res.name,
-                                                        value: res.id,
-                                                    }),
-                                                )}
-                                                error={errors.site}
-                                                {...field} // passes value & onChange
-                                            />
-                                        )}
-                                    />
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-4">
+                                <Controller
+                                    name="location_id"
+                                    control={control}
+                                    rules={{
+                                        required: "Location is required",
+                                    }}
+                                    render={({ field }) => (
+                                        <Select
+                                            label="Select Location"
+                                            options={data?.locations.map(
+                                                (res) => ({
+                                                    label: res.name,
+                                                    value: res.id,
+                                                }),
+                                            )}
+                                            error={errors.location_id?.message}
+                                            {...field}
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    name="site_id"
+                                    control={control}
+                                    rules={{
+                                        required: "Site is required",
+                                    }}
+                                    render={({ field }) => (
+                                        <Select
+                                            label="Select Site"
+                                            options={data?.sites.map((res) => ({
+                                                label: res.name,
+                                                value: res.id,
+                                            }))}
+                                            error={errors.site_id?.message}
+                                            {...field}
+                                        />
+                                    )}
+                                />
+
+                                {/* Responsive Grid: 1 col on mobile, 3 on md screens */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <Controller
                                         name="employment_type"
                                         control={control}
@@ -464,7 +470,7 @@ export default function CreateJobRequisition() {
                                         }
                                         type="number"
                                         label="Number of Positions"
-                                        placeholder="Number of Positions"
+                                        placeholder="e.g. 2"
                                     />
 
                                     <Controller
@@ -502,30 +508,39 @@ export default function CreateJobRequisition() {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="flex gap-3">
-                                        <Input
-                                            {...register("salary_range_from", {
-                                                required:
-                                                    "Salary Range is required",
-                                            })}
-                                            error={
-                                                errors.salary_range_from
-                                                    ?.message
-                                            }
-                                            iconLeft="₱"
-                                            label="Salary Range From"
-                                            placeholder="e.g. 50,000"
-                                        />
-                                        <Input
-                                            {...register("salary_range_to")}
-                                            error={
-                                                errors.salary_range_to?.message
-                                            }
-                                            iconLeft="₱"
-                                            label="Salary Range To"
-                                            placeholder="e.g. 70,000"
-                                        />
+                                {/* Responsive Grid: 1 col on mobile, 2 on lg screens */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <div className="flex-1">
+                                            <Input
+                                                {...register(
+                                                    "salary_range_from",
+                                                    {
+                                                        required:
+                                                            "Salary Range is required",
+                                                    },
+                                                )}
+                                                error={
+                                                    errors.salary_range_from
+                                                        ?.message
+                                                }
+                                                iconLeft="₱"
+                                                label="Salary Range From"
+                                                placeholder="e.g. 50,000"
+                                            />
+                                        </div>
+                                        <div className="flex-1">
+                                            <Input
+                                                {...register("salary_range_to")}
+                                                error={
+                                                    errors.salary_range_to
+                                                        ?.message
+                                                }
+                                                iconLeft="₱"
+                                                label="Salary Range To"
+                                                placeholder="e.g. 70,000"
+                                            />
+                                        </div>
                                     </div>
                                     <Input
                                         type="date"
@@ -541,27 +556,27 @@ export default function CreateJobRequisition() {
                                 </div>
                             </div>
                         </div>
-                        <div className="px-3">
+                        <div className="px-1 sm:px-3">
                             <h3 className="text-sm font-semibold text-gray-700 mb-4">
                                 Interview Schedule
                             </h3>
 
                             <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
+                                {/* Responsive Grid: 1 col on mobile, 2 on md screens */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <Input
                                         {...register("interviewer", {
-                                            required:
-                                                "Interview date is required",
+                                            required: "Interviewer is required",
                                         })}
                                         error={errors.interviewer?.message}
-                                        label="Interview"
+                                        label="Interviewer"
                                         placeholder="e.g. John Doe"
                                     />
 
                                     <Input
                                         {...register("sub_interviewer", {
                                             required:
-                                                "Interview time is required",
+                                                "Sub Interviewer is required",
                                         })}
                                         error={errors.sub_interviewer?.message}
                                         label="Sub Interviewer"
@@ -569,7 +584,8 @@ export default function CreateJobRequisition() {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                {/* Responsive Grid: 1 col on mobile, 2 on md screens */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <Input
                                         type="date"
                                         {...register("interview_date", {
@@ -604,7 +620,7 @@ export default function CreateJobRequisition() {
                                 </div>
                             </div>
                         </div>
-                        <div className="px-3">
+                        <div className="px-1 sm:px-3 space-y-4">
                             <Wysiwyg
                                 label="Justification For Position"
                                 value={form.justification_for_position}
@@ -653,17 +669,23 @@ export default function CreateJobRequisition() {
                         </div>
                     </div>
 
-                    <div className="sticky bottom-0 bg-white border-t pt-4 mt-6 flex justify-end gap-3">
+                    {/* Responsive Actions: stacked on mobile, row on tablet/desktop */}
+                    <div className="sticky bottom-0 bg-white border-t pt-4 mt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 pb-2 px-1 sm:px-3">
                         <Button
                             variant="secondary"
                             type="button"
                             outlined
+                            className="w-full sm:w-auto"
                             onClick={() => setOpen(false)}
                         >
                             Cancel
                         </Button>
 
-                        <Button type="submit" disabled={isSubmitting}>
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full sm:w-auto"
+                        >
                             {isSubmitting
                                 ? "Submitting..."
                                 : "Submit Requisition"}

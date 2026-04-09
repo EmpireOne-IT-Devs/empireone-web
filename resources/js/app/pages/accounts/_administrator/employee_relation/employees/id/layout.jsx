@@ -12,7 +12,7 @@ export default function EmployeeLayout({ children }) {
     }, []);
     return (
         <>
-            <div className="min-h-screen bg-gray-50 p-8 text-slate-700 font-sans">
+            <div className="min-h-screen  text-slate-700 font-sans">
                 <HeaderSection />
                 <TabsSection />
                 {children}
