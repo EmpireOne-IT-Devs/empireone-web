@@ -147,7 +147,10 @@ export default function InfoTabsSection() {
                         )}
 
                         {activeTabId === "employee" && (
-                            <EmployeeInformationSection />
+                            <EmployeeInformationSection
+                                form={formValues}
+                                register={register}
+                            />
                         )}
 
                         {activeTabId === "professional" && (

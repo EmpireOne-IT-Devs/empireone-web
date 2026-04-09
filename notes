@@ -6,3 +6,10 @@ php artisan make:model Jobs/JobsApplication -mcr
 
 
 - update the address all employees
+
+
+Employee Section: 
+- Department
+- Position
+- Update Email to EOGS
+- Employee ID 
