@@ -26,10 +26,10 @@ export default function AcceptJobOfferSection({ data }) {
 
     function close_modal(params) {
         setOpen(false);
-        router.visit("/accounts/applicant/job_offers");
+        router.visit("/accounts/employee/job_offers");
     }
     function open_modal(id) {
-        router.visit(`/accounts/applicant/job_offers?job_order_id=${id}`);
+        router.visit(`/accounts/employee/job_offers?job_order_id=${id}`);
     }
 
     async function submit_job_offer(status) {

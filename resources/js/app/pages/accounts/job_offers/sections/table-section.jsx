@@ -37,7 +37,7 @@ export default function TableSection() {
         <div>
             <Table
                 columns={columns}
-                data={job_offers?.data?.map((res) => ({
+                data={job_offers?.data?.map((res, i) => ({
                     name: res.user.name,
                     email: res.user.email,
                     role: res.role,
@@ -53,6 +53,7 @@ export default function TableSection() {
                             {res.status === "Pending" && (
                                 <AcceptJobOfferSection data={res} />
                             )}
+                            <AcceptJobOfferSection data={res} />
 
                             {/* {res.status === "Declined" && (
                                 <ResendJobOfferSection data={res} />
