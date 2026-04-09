@@ -113,6 +113,7 @@ export default function SendJobOfferSection({ data }) {
                                 {...register("position", {
                                     required: "Required",
                                 })}
+                                disabled
                                 options={
                                     datas?.position?.map((res) => ({
                                         label: res.title,

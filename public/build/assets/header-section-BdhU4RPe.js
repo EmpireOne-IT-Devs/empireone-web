@@ -1,1 +1,0 @@
-import{j as e}from"./app-DNVN0l_C.js";function s(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3 p-6 bg-white shadow-xl border-2 rounded-xl",children:[e.jsx("div",{className:"text-2xl font-black",children:"My Applications"}),e.jsx("div",{className:"text-gray-600",children:"Track the status of your job applications"})]})}export{s as default};
