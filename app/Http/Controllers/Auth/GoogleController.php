@@ -18,7 +18,7 @@ class GoogleController extends Controller
     public function route_page($role)
     {
         return match ($role) {
-            1 => redirect('/administrator/dashboard'),
+            1 => redirect('/accounts/administrator/dashboard'),
             2 => redirect('/accounts/employee/dashboard'),
             3 => redirect('/accounts/applicant/dashboard'),
             default => redirect('/auth/login?error_message=Email is not registered!'),
