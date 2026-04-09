@@ -16,6 +16,8 @@ import { router } from "@inertiajs/react";
 import { apply_application_service } from "@/app/services/job-application-service";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
+import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
+import store from "@/app/store/store";
 
 export default function ViewJobPostingDetailsSection({ data, children }) {
     const [open, setOpen] = useState(false);
@@ -26,6 +28,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
             await apply_application_service({
                 job_posting_id: data.id,
             });
+            store.dispatch(get_job_posting_thunk());
             await dispatch(
                 setAlert({
                     type: "success",
