@@ -58,7 +58,7 @@ const Page = ({ flash }) => {
         <div
             className={`min-h-screen flex items-center justify-center font-sans overflow-hidden relative`}
             style={{
-                background: `linear-gradient(135deg, ${colors.darkNavy} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
+                background: `linear-gradient(135deg, ${colors.deepPurple} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
             }}
         >
             {/* --- INTERACTIVE BACKGROUND --- */}
