@@ -34,7 +34,7 @@ export default function TableSection() {
         }
     };
 
-    console.log('job_offers',job_offers.data)
+    console.log("job_offers", job_offers.data);
     return (
         <div>
             <Table
@@ -43,7 +43,9 @@ export default function TableSection() {
                     name: res.user.name,
                     email: res.user.email,
                     role: res.role,
-                    position: res?.job_application.job_posting?.job_requisition?.title,
+                    position:
+                        res?.job_application.job_posting?.job_requisition
+                            ?.title,
                     status: (
                         <Badge
                             label={res.status}
@@ -53,7 +55,8 @@ export default function TableSection() {
                     ),
                     action: (
                         <div className="flex gap-3">
-                            {res.status === "Declined Job Offer" && (
+                            {res?.job_application?.interview_status ==
+                                "Declined Job Offer" && (
                                 <>
                                     <ResendJobOfferSection data={res} />
                                 </>
