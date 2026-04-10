@@ -14,7 +14,7 @@ import Badge from "@/app/_components/badge";
 import moment from "moment";
 import { router } from "@inertiajs/react";
 import { apply_application_service } from "@/app/services/job-application-service";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import store from "@/app/store/store";
@@ -22,10 +22,16 @@ import store from "@/app/store/store";
 export default function ViewJobPostingDetailsSection({ data, children }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
-    const [loading,setLoading]=useState(false)
+    const [loading, setLoading] = useState(false);
+    const { data: account } = useSelector((store) => store.app);
+    const user_role = window.location.pathname.split("/")[2];
+    const profileCompletion = account?.profile_percent
+        ? Number(account.profile_percent)
+        : 0;
+
     async function apply_job_position() {
         try {
-            setLoading(true)
+            setLoading(true);
             await apply_application_service({
                 job_posting_id: data.id,
             });
@@ -36,10 +42,10 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                     title: "Job application submitted Successfully!",
                 }),
             );
-            setLoading(false)
-            setOpen(false)
+            setLoading(false);
+            setOpen(false);
         } catch (error) {
-            setLoading(false)
+            setLoading(false);
             await dispatch(
                 setAlert({
                     type: "error",
@@ -48,9 +54,41 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
             );
         }
     }
+    async function open_modal(params) {
+        if (profileCompletion != 100) {
+            return dispatch(
+                setAlert({
+                    type: "error",
+                    title: (
+                        <button
+                            onClick={() =>
+                                router.visit(
+                                    `/accounts/${user_role}/my_profile`,
+                                )
+                            }
+                        >
+                            You need to finish your profile!
+                        </button>
+                    ),
+                    message: (
+                        <button
+                            onClick={() =>
+                                router.visit(
+                                    `/accounts/${user_role}/my_profile`,
+                                )
+                            }
+                        >
+                            Tap this notification to continue!
+                        </button>
+                    ),
+                }),
+            );
+        }
+        return setOpen(true);
+    }
     return (
         <div>
-            <div onClick={() => setOpen(true)}>{children}</div>
+            <div onClick={() => open_modal()}>{children}</div>
 
             <Modal
                 width="max-w-4xl"

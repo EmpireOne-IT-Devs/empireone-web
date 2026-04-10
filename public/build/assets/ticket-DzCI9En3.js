@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/ticket-DzCI9En3.js
-import{c as a}from"./createLucideIcon-BIp92SnY.js";const t=[["path",{d:"M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z",key:"qn84l0"}],["path",{d:"M13 5v2",key:"dyzc3o"}],["path",{d:"M13 17v2",key:"1ont0d"}],["path",{d:"M13 11v2",key:"1wjjxi"}]],c=a("ticket",t);export{c as T};
-========
-import{c as a}from"./createLucideIcon-C_t_yve2.js";const t=[["path",{d:"M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z",key:"qn84l0"}],["path",{d:"M13 5v2",key:"dyzc3o"}],["path",{d:"M13 17v2",key:"1ont0d"}],["path",{d:"M13 11v2",key:"1wjjxi"}]],c=a("ticket",t);export{c as T};
->>>>>>>> b8a9feccc75346b65c38fc7d3764430d8a71d0c3:public/build/assets/ticket-jzlUtl9E.js

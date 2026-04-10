@@ -85,16 +85,26 @@ export default function AddressInformationSection({
     }, [getCode(cities, selectedCity), setValue]);
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
-             <Input
-                        label="Birth Place"
-                        name="birth_place"
-                        {...register("birth_place")}
-                    />
+            <Input
+                label={
+                    <div className="flex">
+                        Birth Place
+                        <div className="text-red-500 font-black">*</div>
+                    </div>
+                }
+                name="birth_place"
+                {...register("birth_place")}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Region Select */}
                 <div className="flex flex-col">
                     <Select
-                        label="Region"
+                        label={
+                            <div className="flex">
+                                Region
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
                         name="region"
                         options={regions.map((r) => ({
                             value: r.code,
@@ -109,7 +119,12 @@ export default function AddressInformationSection({
                 {/* Province Select */}
                 <div className="flex flex-col">
                     <Select
-                        label="Province"
+                        label={
+                            <div className="flex">
+                                Province
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
                         name="province"
                         options={provinces.map((p) => ({
                             value: p.code,
@@ -124,7 +139,12 @@ export default function AddressInformationSection({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Select
-                    label="City / Municipality"
+                    label={
+                        <div className="flex">
+                            City / Municipality
+                            <div className="text-red-500 font-black">*</div>
+                        </div>
+                    }
                     name="city"
                     options={cities.map((c) => ({
                         value: c.code,
@@ -137,7 +157,12 @@ export default function AddressInformationSection({
                     disabled={!selectedProvince}
                 />
                 <Select
-                    label="Barangay"
+                    label={
+                        <div className="flex">
+                            Barangay
+                            <div className="text-red-500 font-black">*</div>
+                        </div>
+                    }
                     name="barangay"
                     options={barangays.map((b) => ({
                         value: b.code,
@@ -150,7 +175,12 @@ export default function AddressInformationSection({
                     disabled={!selectedCity}
                 />
                 <Input
-                    label="Zip Code"
+                    label={
+                        <div className="flex">
+                            Zip Code
+                            <div className="text-red-500 font-black">*</div>
+                        </div>
+                    }
                     name="zip_code"
                     type="text"
                     maxLength={4}
@@ -173,7 +203,12 @@ export default function AddressInformationSection({
             <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div className="flex flex-col">
                     <Input
-                        label="House/Lot/Street/ Purok/Sitio etc."
+                        label={
+                            <div className="flex">
+                                House/Lot/Street/ Purok/Sitio etc.
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
                         name="street"
                         {...register("street")}
                         placeholder="Blk 1 Lot 2"

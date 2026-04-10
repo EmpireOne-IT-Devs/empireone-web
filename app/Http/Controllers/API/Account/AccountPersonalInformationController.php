@@ -85,6 +85,8 @@ class AccountPersonalInformationController extends Controller
             'last_name',
             'gender',
             'date_of_birth',
+            'year_graduated',
+            'contact',
             'birth_place',
             'region',
             'province',
@@ -92,8 +94,9 @@ class AccountPersonalInformationController extends Controller
             'barangay',
             'street',
             'zip_code',
-            'highest_level_of_education',
-            'contact'
+            'degree',
+            'school_name',
+            'course',
         ]);
         $percent = '0%';
         $info = $auth->personal_information;

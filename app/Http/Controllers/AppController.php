@@ -26,6 +26,8 @@ class AppController extends Controller
             'last_name',
             'gender',
             'date_of_birth',
+            'year_graduated',
+            'contact',
             'birth_place',
             'region',
             'province',
@@ -34,7 +36,8 @@ class AppController extends Controller
             'street',
             'zip_code',
             'degree',
-            'contact'
+            'school_name',
+            'course',
         ]);
         $percent = '0%';
         $info = $auth->personal_information;

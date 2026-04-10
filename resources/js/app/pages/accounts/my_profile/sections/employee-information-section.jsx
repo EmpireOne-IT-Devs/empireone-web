@@ -21,13 +21,13 @@ export default function EmployeeInformationSection({
                     <Input
                         label="Employee ID"
                         name="employee_id"
-                        disabled={form.department_id}
+                        disabled={data?.user?.account_employee?.employee_id}
                         {...register("employee_id")}
                         iconLeft={<Hash size={14} />}
                     />
 
                     <Select
-                        disabled={form.account_id}
+                        disabled={data?.user?.account_employee?.account_id}
                         label="Account"
                         name="account_id"
                         value={form.account_id}
@@ -41,7 +41,7 @@ export default function EmployeeInformationSection({
                     <Select
                         label="Select Department"
                         name="department_id"
-                        disabled={form.department_id}
+                        disabled={data?.user?.account_employee?.department_id}
                         value={form.department_id}
                         options={data?.departments?.map((res) => ({
                             ...res,
@@ -54,14 +54,14 @@ export default function EmployeeInformationSection({
                     <Input
                         label="Position"
                         name="position"
-                        disabled={form.position}
+                        disabled={data?.user?.account_employee?.position}
                         {...register("position")}
                         iconLeft={<Briefcase size={14} />}
                     />
                     <Input
                         label="EOGS Email"
                         name="eogs_email"
-                        disabled={form.eogs_email}
+                        disabled={data?.user?.account_employee?.eogs_email}
                         placeholder="eogs.yourname@gmail.com"
                         type="email"
                         {...register("eogs_email")}
@@ -69,7 +69,7 @@ export default function EmployeeInformationSection({
                     />
 
                     <Select
-                        disabled={form.status}
+                        disabled={data?.user?.account_employee?.status}
                         label="Employment Status"
                         name="status"
                         {...register("status")}

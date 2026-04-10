@@ -1,9 +1,0 @@
-<<<<<<< HEAD:public/build/assets/PrimaryButton-m7FEtla_.js
-import{j as n}from"./app-ykE7iJsp.js";function s({className:r="",disabled:t,children:e,...o}){return n.jsx("button",{...o,className:`inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${t&&"opacity-25"} `+r,disabled:t,children:e})}export{s as P};
-=======
-<<<<<<<< HEAD:public/build/assets/PrimaryButton-ROPJYpAU.js
-import{j as n}from"./app-DXvfVoFy.js";function s({className:r="",disabled:t,children:e,...o}){return n.jsx("button",{...o,className:`inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${t&&"opacity-25"} `+r,disabled:t,children:e})}export{s as P};
-========
-import{j as n}from"./app-D2Xb7bAV.js";function s({className:r="",disabled:t,children:e,...o}){return n.jsx("button",{...o,className:`inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${t&&"opacity-25"} `+r,disabled:t,children:e})}export{s as P};
->>>>>>>> b8a9feccc75346b65c38fc7d3764430d8a71d0c3:public/build/assets/PrimaryButton-CrfVTGHP.js
->>>>>>> 31d483b4a85a4fee4fe861f019205d87bda5b889:public/build/assets/PrimaryButton-CrfVTGHP.js

@@ -158,6 +158,7 @@ export default function InfoTabsSection() {
                                 setCities={setCities}
                                 setBarangays={setBarangays}
                                 barangays={barangays}
+                                watchedValues={formValues}
                             />
                         )}
 
@@ -186,6 +187,7 @@ export default function InfoTabsSection() {
 
                         {activeTabId === "documents" && (
                             <DocumentsSection
+                                form={formValues}
                                 register={register}
                                 errors={errors}
                             />

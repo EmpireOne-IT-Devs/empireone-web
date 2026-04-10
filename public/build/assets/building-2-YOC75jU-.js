@@ -1,9 +1,0 @@
-<<<<<<< HEAD:public/build/assets/building-2-YOC75jU-.js
-import{c as a}from"./createLucideIcon-CDaaf2C6.js";const e=[["path",{d:"M10 12h4",key:"a56b0p"}],["path",{d:"M10 8h4",key:"1sr2af"}],["path",{d:"M14 21v-3a2 2 0 0 0-4 0v3",key:"1rgiei"}],["path",{d:"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2",key:"secmi2"}],["path",{d:"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16",key:"16ra0t"}]],h=a("building-2",e);export{h as B};
-=======
-<<<<<<<< HEAD:public/build/assets/building-2-CwFOqTWU.js
-import{c as a}from"./createLucideIcon-BIp92SnY.js";const e=[["path",{d:"M10 12h4",key:"a56b0p"}],["path",{d:"M10 8h4",key:"1sr2af"}],["path",{d:"M14 21v-3a2 2 0 0 0-4 0v3",key:"1rgiei"}],["path",{d:"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2",key:"secmi2"}],["path",{d:"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16",key:"16ra0t"}]],h=a("building-2",e);export{h as B};
-========
-import{c as a}from"./createLucideIcon-C_t_yve2.js";const e=[["path",{d:"M10 12h4",key:"a56b0p"}],["path",{d:"M10 8h4",key:"1sr2af"}],["path",{d:"M14 21v-3a2 2 0 0 0-4 0v3",key:"1rgiei"}],["path",{d:"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2",key:"secmi2"}],["path",{d:"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16",key:"16ra0t"}]],h=a("building-2",e);export{h as B};
->>>>>>>> b8a9feccc75346b65c38fc7d3764430d8a71d0c3:public/build/assets/building-2-HmL78PP4.js
->>>>>>> 31d483b4a85a4fee4fe861f019205d87bda5b889:public/build/assets/building-2-HmL78PP4.js

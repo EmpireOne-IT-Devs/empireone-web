@@ -1,4 +1,10 @@
-import { UserCircle, MapPin, User, Calendar } from "lucide-react";
+import {
+    UserCircle,
+    MapPin,
+    User,
+    Calendar,
+    GraduationCap,
+} from "lucide-react";
 import React from "react";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
@@ -19,8 +25,8 @@ export default function PersonalInfoSection({
     setCities,
     barangays,
     setBarangays,
+    watchedValues,
 }) {
-
     return (
         <div className="flex flex-col gap-6 w-full">
             {/* Basic Information Section */}
@@ -31,19 +37,35 @@ export default function PersonalInfoSection({
                 {/* Responsive Grid: 1 column on mobile, 2 on tablet, 3 on desktop */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
                     <Input
-                        label="First Name *"
+                        label={
+                            <div className="flex">
+                                First Name
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
                         name="first_name"
                         {...register("first_name")}
                         iconLeft={<User size={14} />}
                     />
                     <Input
-                        label="Middle Name"
+                        label={
+                            <div className="flex">
+                                Middle Name
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
+                        placeholder="Middlename || NA"
                         name="middle_name"
                         {...register("middle_name")}
                         iconLeft={<User size={14} />}
                     />
                     <Input
-                        label="Last Name *"
+                        label={
+                            <div className="flex">
+                                Last Name
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
                         name="last_name"
                         {...register("last_name")}
                         iconLeft={<User size={14} />}
@@ -55,14 +77,24 @@ export default function PersonalInfoSection({
                         iconLeft={<User size={14} />}
                     />
                     <Input
-                        label="Date of Birth"
+                        label={
+                            <div className="flex">
+                                Date of Birth
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
                         name="date_of_birth"
                         type="date"
                         {...register("date_of_birth")}
                         iconLeft={<Calendar size={14} />}
                     />
                     <Select
-                        label="Gender"
+                        label={
+                            <div className="flex">
+                                Gender
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
                         name="gender"
                         {...register("gender")}
                         value={form.gender}
@@ -127,6 +159,96 @@ export default function PersonalInfoSection({
                     cities={cities}
                     setCities={setCities}
                 />
+            </div>
+
+            <div className="flex flex-col gap-3 bg-blue-50 border border-blue-200 rounded-xl px-6 py-4">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <GraduationCap size={15} /> Educational Background
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Input
+                        label={
+                            <div className="flex">
+                                School Name
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
+                        name="school_name"
+                        {...register("school_name", {
+                            required: "Required",
+                        })}
+                        error={errors.school_name}
+                        placeholder="Name of School *"
+                    />
+                    <Select
+                        label={
+                            <div className="flex">
+                                Degree
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
+                        name="degree"
+                        {...register("degree", {
+                            required: true,
+                        })}
+                        options={[
+                            { value: "Elementary", label: "Elementary" },
+                            {
+                                value: "High School Junior",
+                                label: "High School Junior",
+                            },
+                            {
+                                value: "High School Senior",
+                                label: "High School Senior",
+                            },
+                            { value: "College", label: "College" },
+                            { value: "Masteral", label: "Masteral" },
+                            { value: "Doctoral", label: "Doctoral" },
+                        ]}
+                        error={errors.degree}
+                        value={watchedValues.degree}
+                        required
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Input
+                        label={
+                            <div className="flex">
+                                Course
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
+                        name="course"
+                        {...register("course", {
+                            required: "Required",
+                        })}
+                        error={errors.course}
+                        placeholder="BSIT"
+                    />
+
+                    <Input
+                        label={
+                            <div className="flex">
+                                Year Graduated
+                                <div className="text-red-500 font-black">*</div>
+                            </div>
+                        }
+                        name="year_graduated"
+                        {...register("year_graduated", {
+                            required: "Required",
+                        })}
+                        error={errors.year_graduated}
+                        placeholder="2025"
+                    />
+                    <Input
+                        label="Award"
+                        name="awards"
+                        {...register("awards")}
+                        placeholder="Best In *"
+                        error={errors.awards}
+                    />
+                </div>
             </div>
         </div>
     );
