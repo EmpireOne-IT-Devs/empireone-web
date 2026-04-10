@@ -104,8 +104,11 @@
 
                     <h4>Add Signature</h4>
                     <li>✔ Signature</li>
-                    <a href="{{ config('app.url') }}/accounts/applicant/my_profile/signature"
-                        class="btn-primary" style="color: white !important;">Add Signature</a>
+                    <a href="{{ config('app.url') }}/accounts/{{ $user['user']['role'] == 2 ? 'employee' : 'applicant' }}/my_profile/signature"
+                        class="btn-primary"
+                        style="color: white !important;">
+                        Add Signature
+                    </a>
 
                     <h4>ORIGINAL COPY (has ✔ must be prioritized)</h4>
                     <ul>
@@ -146,7 +149,7 @@
                 <p style="margin-top: 20px;">To review the full offer letter and signify your acceptance, please click the interactive portal link below:</p>
                 <p style="margin-top: 10px;">Please click <strong>Submit Documents</strong> and upload all the requirements:</p>
                 <div class="button-container">
-                    <a href="{{ config('app.url') }}/accounts/applicant/my_documents"
+                    <a href="{{ config('app.url') }}/accounts/{{ $user['user']['role'] == 2 ? 'employee' : 'applicant' }}/my_documents"
                         class="btn-primary" style="color: white !important;">Submit Documents</a>
                 </div>
             </div>
