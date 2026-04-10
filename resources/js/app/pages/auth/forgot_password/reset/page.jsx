@@ -27,10 +27,13 @@ export default function ResetPassword({ token, email, flash }) {
 
     // Color Palette Constants
     const colors = {
-        darkNavy: "#04042c",
-        electricBlue: "#5170ff",
-        cyan: "#4ed1f4",
-        deepPurple: "#4b0082",
+        darkNavy: "#1a0b3b",
+        electricBlue: "#e85c0d",
+        cyan: "#00FFFF",
+        deepPurple: "#5a3d9a",
+        mutedPurple: "#7b52c8",
+        blue: "#3b82f6",
+        orange: "#e85c0d",
     };
 
     const submit = (e) => {
@@ -61,8 +64,10 @@ export default function ResetPassword({ token, email, flash }) {
 
     return (
         <div
-            className="min-h-screen flex items-center justify-center font-sans overflow-hidden relative py-12"
-            style={{ backgroundColor: colors.darkNavy }}
+            className={`min-h-screen flex items-center justify-center font-sans overflow-hidden relative`}
+            style={{
+                background: `linear-gradient(135deg, ${colors.darkNavy} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
+            }}
         >
             <Head title="Reset Password" />
 
@@ -109,8 +114,8 @@ export default function ResetPassword({ token, email, flash }) {
                         }}
                         className="text-5xl mb-6"
                         style={{
-                            color: colors.cyan,
-                            filter: `drop-shadow(0 0 15px ${colors.cyan}66)`,
+                            color: colors.orange,
+                            filter: `drop-shadow(0 0 15px ${colors.orange}66)`,
                         }}
                     >
                         <FaShieldAlt />
@@ -127,11 +132,11 @@ export default function ResetPassword({ token, email, flash }) {
                 <form onSubmit={submit} className="space-y-5">
                     {/* Email (Usually Read-only in Reset context, but kept editable as per standard Breeze) */}
                     <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#4ed1f4] transition-colors">
+                          <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
                             Email Address
                         </label>
                         <div className="relative">
-                            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#4ed1f4] transition-colors" />
+                            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
                             <input
                                 id="email"
                                 type="email"
@@ -140,8 +145,7 @@ export default function ResetPassword({ token, email, flash }) {
                                 onChange={(e) =>
                                     setData("email", e.target.value)
                                 }
-                                className={`w-full bg-white/5 border ${errors.email ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#5170ff] focus:ring-4 focus:ring-[#5170ff]/10 transition-all placeholder:text-slate-600`}
-                                placeholder="sample@empireonegroup.com"
+                                  className={`w-full bg-white/5 border ${errors.email ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                                 readOnly // Optional: Usually you don't want them changing the email on the reset token page
                             />
                         </div>
@@ -238,7 +242,9 @@ export default function ResetPassword({ token, email, flash }) {
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.98 }}
                         className="w-full relative flex items-center justify-center gap-3 py-4 rounded-xl font-black text-white uppercase tracking-[0.2em] overflow-hidden transition-all group mt-6"
-                        style={{ backgroundColor: colors.electricBlue }}
+                           style={{
+                            background: `linear-gradient(135deg, ${colors.electricBlue}, #7c3aed, ${colors.blue})`,
+                        }}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                         {processing ? (
@@ -258,10 +264,10 @@ export default function ResetPassword({ token, email, flash }) {
                 </form>
 
                 {/* Return Link */}
-                <div className="mt-8 flex justify-center text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
+                <div className="mt-8 flex justify-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
                     <Link
                         href={route("login")}
-                        className="hover:text-[#4ed1f4] transition-colors underline decoration-[#4ed1f4]/30 underline-offset-4"
+                        className="hover:text-[#e85c0d] transition-colors underline decoration-[#e85c0d]/30 underline-offset-4"
                     >
                         Return to Login
                     </Link>
