@@ -171,7 +171,7 @@ export default function ResetPassword({ token, email, flash }) {
                                 onChange={(e) =>
                                     setData("password", e.target.value)
                                 }
-                                className={`w-full bg-white/5 border ${errors.password ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-14 text-white outline-none focus:border-[#5170ff] focus:ring-4 focus:ring-[#5170ff]/10 transition-all placeholder:text-slate-600`}
+                               className={`w-full bg-white/5 border ${errors.password ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                                 placeholder="••••••••"
                                 autoFocus
                             />
@@ -212,7 +212,7 @@ export default function ResetPassword({ token, email, flash }) {
                                         e.target.value,
                                     )
                                 }
-                                className={`w-full bg-white/5 border ${errors.password_confirmation ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-14 text-white outline-none focus:border-[#5170ff] focus:ring-4 focus:ring-[#5170ff]/10 transition-all placeholder:text-slate-600`}
+                            className={`w-full bg-white/5 border ${errors.password_confirmation ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                                 placeholder="••••••••"
                             />
                             <button
