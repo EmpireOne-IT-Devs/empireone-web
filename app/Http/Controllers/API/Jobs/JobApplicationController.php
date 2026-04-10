@@ -76,6 +76,7 @@ class JobApplicationController extends Controller
                 'role' => $request->role,
             ]
         );
+        $jo->load('user');
         foreach ($request->allowances as $key => $value) {
             AccountEmployeeAllowance::updateOrCreate(
                 [
