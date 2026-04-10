@@ -8,7 +8,7 @@ import { router } from "@inertiajs/react";
 import moment from "moment";
 
 const StepperSection = ({ steps }) => {
-    const { loading } = useSelector((store) => store.app);
+    const { loading, user } = useSelector((store) => store.app);
     const searchParams = new URLSearchParams(window.location.search);
     const pageParam = searchParams.get("page");
     const [currentStep, setCurrentStep] = useState(Number(pageParam) || 1);
@@ -36,6 +36,7 @@ const StepperSection = ({ steps }) => {
             setComplete(true);
         }
     };
+    console.log("useruser", user);
 
     const prevStep = (value) => {
         if (value > 1) {
@@ -49,8 +50,8 @@ const StepperSection = ({ steps }) => {
             try {
                 setIsLoading(true);
                 await agree_onboarding_service({
-                    user_id:window.location.pathname.split("/")[3],
-                    onboarding_agree_on:moment().format('LLL')
+                    user_id: window.location.pathname.split("/")[3],
+                    onboarding_agree_on: moment().format("LLL"),
                 });
                 dispatch(
                     setAlert({
@@ -61,7 +62,9 @@ const StepperSection = ({ steps }) => {
                     }),
                 );
                 setIsLoading(false);
-                router.visit("/accounts/my_documents");
+                router.visit(
+                    `/accounts/${user?.role == 1 ? "administrator" : user?.role == 2 ? "employee" : "applicant"}/my_documents`,
+                );
             } catch (error) {
                 setIsLoading(false);
             }

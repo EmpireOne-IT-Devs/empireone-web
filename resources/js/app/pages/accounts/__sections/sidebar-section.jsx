@@ -71,7 +71,7 @@ export default function SidebarSection() {
         },
         {
             name: "My Documents",
-            href: `/accounts/my_documents`,
+            href: `/accounts/${account_role}/my_documents`,
             icon: FcOpenedFolder,
             current: path == "my_documents",
             is_incoming: false,

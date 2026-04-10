@@ -73,7 +73,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         Route::get('/job_offers', function () {
             return Inertia::render('accounts/job_offers/page');
         });
-
+        Route::get('/my_documents', function () {
+            return Inertia::render('accounts/my_documents/page');
+        });
         Route::get('/settings', function () {
             return Inertia::render('accounts/settings/page');
         });
@@ -257,7 +259,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         Route::get('/job_offers', function () {
             return Inertia::render('accounts/job_offers/page');
         });
-
+        Route::get('/my_documents', function () {
+            return Inertia::render('accounts/my_documents/page');
+        });
         Route::get('/settings', function () {
             return Inertia::render('accounts/settings/page');
         });
@@ -310,15 +314,14 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         Route::get('/job_offers', function () {
             return Inertia::render('accounts/job_offers/page');
         });
-
+        Route::get('/my_documents', function () {
+            return Inertia::render('accounts/my_documents/page');
+        });
         Route::get('/settings', function () {
             return Inertia::render('accounts/settings/page');
         });
     });
 
-    Route::get('/my_documents', function () {
-        return Inertia::render('accounts/my_documents/page');
-    });
     Route::get('/my_documents/{id}/contract', function () {
         return Inertia::render('accounts/_administrator/employee_relation/employees/id/contract/page');
     });
