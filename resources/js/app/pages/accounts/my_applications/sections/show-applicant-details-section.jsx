@@ -5,7 +5,7 @@ import React, { useState } from "react";
 
 export default function ShowApplicantDetailsSection({ data }) {
     const [open, setOpen] = useState(false);
-    console.log("datadatadata", data);
+
     return (
         <>
             <Button outlined onClick={() => setOpen(true)}>
@@ -17,7 +17,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                 onClose={() => setOpen(false)}
                 title="Application Details "
             >
-                <div className="space-y-6 animate-in fade-in duration-500">
+                <div className="max-h-[72vh] space-y-6 overflow-y-auto pr-2 animate-in fade-in duration-500">
                     <div className="bg-gray-50 p-6 rounded-xl space-y-6 text-sm text-gray-700 border border-gray-100">
                         {/* Personal & Contact Info */}
                         <div>

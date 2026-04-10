@@ -35,7 +35,7 @@ export default function Modal({
 
                 {/* Modal Panel */}
                 <div
-                    className="fixed inset-0 flex items-center justify-center p-4"
+                    className="fixed inset-0 overflow-y-auto p-4"
                     onClick={handleOverlayClick}
                 >
                     <Transition.Child
@@ -48,11 +48,11 @@ export default function Modal({
                         leaveTo="opacity-0 scale-95 translate-y-2"
                     >
                         <div
-                            className={`relative w-full ${width} overflow-visible max-h-[95vh] px-6 transform rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all`}
+                            className={`relative mx-auto flex w-full ${width} max-h-[90vh] transform flex-col overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all sm:my-8`}
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Title */}
-                            <div className="flex items-center justify-between py-3">
+                            <div className="flex flex-none items-center justify-between py-3">
                                 {title && (
                                     <div
                                         as="h3"
@@ -72,7 +72,7 @@ export default function Modal({
                                 </div>
                             </div>
                             {/* Content */}
-                            <div>{children}</div>
+                            <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
 
                             {/* Close button (optional) */}
                         </div>
