@@ -1,6 +1,7 @@
 import Tabs from "@/app/_components/tabs";
 import { router } from "@inertiajs/react";
 import React, { useState } from "react";
+import QrcodeSection from "./_sections/qrcode-section";
 
 export default function JobPostingLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
@@ -35,6 +36,7 @@ export default function JobPostingLayout({ children }) {
     ];
     return (
         <div>
+            <QrcodeSection />
             <Tabs tabs={tabs} activeIndex={activeTab} />
             <div className="p-3">{children}</div>
         </div>
