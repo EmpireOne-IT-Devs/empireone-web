@@ -124,7 +124,7 @@ const Page = ({ flash }) => {
                     <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
                         Welcome Back
                     </h2>
-                    <p className="text-slate-400 text-md flex items-center gap-1">
+                    <p className="text-slate-300 text-md flex items-center gap-1">
                         Log in to your{" "}
                         <span className="inline-flex items-center">
                             <img
@@ -144,8 +144,8 @@ const Page = ({ flash }) => {
                         </div>
                     )}
                     {/* Email */}
-                    <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
+                    <div className="group space-y-2 mb-8">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
                             Email Address
                         </label>
                         <div className="relative">
@@ -164,7 +164,7 @@ const Page = ({ flash }) => {
 
                     {/* Password */}
                     <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
                             Secure Password
                         </label>
                         <div className="relative">
