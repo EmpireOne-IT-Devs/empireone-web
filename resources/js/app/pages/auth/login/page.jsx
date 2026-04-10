@@ -56,7 +56,7 @@ const Page = ({ flash }) => {
 
     return (
         <div
-            className={`min-h-screen flex items-center justify-center font-sans overflow-hidden relative`}
+            className={`min-h-screen flex flex-col gap-3 items-center justify-center font-sans overflow-hidden relative`}
             style={{
                 background: `linear-gradient(135deg, ${colors.deepPurple} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
             }}
@@ -281,6 +281,12 @@ const Page = ({ flash }) => {
                     </Link>
                 </div>
             </motion.div>
+
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+                Built with{" "}
+                <span className="text-[#e85c0d] font-bold">EmpireOne Dev Team</span>{" "}
+                &copy; {new Date().getFullYear()}
+            </div>
         </div>
     );
 };
