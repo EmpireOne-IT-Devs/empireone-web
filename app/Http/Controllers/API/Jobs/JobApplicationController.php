@@ -54,7 +54,6 @@ class JobApplicationController extends Controller
             'allowance.*.allowance' => 'nullable|numeric',
             'allowance.*.allowance_type' => 'nullable|string',
         ]);
-        $data = $request->all();
         if (!isset($data['allowances'])) {
             $data['allowances'] = [];
         }
@@ -89,13 +88,21 @@ class JobApplicationController extends Controller
                 ]
             );
         }
+
         JobApplication::updateOrCreate(
             ['id' => $request->id], // Match criteria
             ['final_status' => 'Sent Job Offer'] // Data to update/create
         );
-        Mail::to($send_to)->send(new JobOfferMail(
-            array_merge($data, ['job_offer_id' => $jo->id])
-        ));
+
+        $data = [
+            'name'           => $jo->user->name, // Assuming 'name' is on User
+            'position'       => $request->role, // The job title being offered
+            'salary'         => $request->salary,
+            'allowances'     => $request->allowances,
+            'job_offer_id'   => $jo->id,
+            'user_role'      => $jo->user->role, // Accessing role from the User model
+        ];
+        Mail::to($send_to)->send(new JobOfferMail($data));
 
         return response()->json([
             'status' => 'success',
