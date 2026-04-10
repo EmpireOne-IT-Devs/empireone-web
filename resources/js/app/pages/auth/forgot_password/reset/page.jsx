@@ -158,11 +158,11 @@ export default function ResetPassword({ token, email, flash }) {
 
                     {/* New Password */}
                     <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#4ed1f4] transition-colors">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
                             New Password
                         </label>
                         <div className="relative">
-                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#4ed1f4] transition-colors" />
+                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
                             <input
                                 id="password"
                                 type={showPassword ? "text" : "password"}
@@ -196,11 +196,11 @@ export default function ResetPassword({ token, email, flash }) {
 
                     {/* Confirm Password */}
                     <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#4ed1f4] transition-colors">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
                             Confirm Password
                         </label>
                         <div className="relative">
-                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#4ed1f4] transition-colors" />
+                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
                             <input
                                 id="password_confirmation"
                                 type={showConfirmPassword ? "text" : "password"}
