@@ -81,7 +81,7 @@ export default function TestimonialSection() {
                     </motion.h2>
                 </div>
 
-                <div className="mt-12 gap-4 flex flex-col md:flex-row md:items-stretch">
+                <div className="mt-12 flex flex-col gap-4 md:flex-row md:items-stretch">
                     {testimonials.map((testimonial, index) => (
                         <motion.div
                             key={testimonial.name}
@@ -92,7 +92,7 @@ export default function TestimonialSection() {
                             custom={0.16 + index * 0.08}
                             className="flex-1 flex"
                         >
-                            <Card padding="p-8" className="w-full flex flex-col">
+                            <Card padding="p-6 sm:p-8" className="flex w-full flex-col">
                                 <div className="mb-8 flex items-start justify-between gap-4">
                                     <div className="flex items-center">
                                         {[...Array(5)].map((_, index) => (
@@ -102,7 +102,7 @@ export default function TestimonialSection() {
                                     <QuoteIcon />
                                 </div>
 
-                                <p className="mb-10 flex-1 text-lg leading-9 text-slate-500">
+                                <p className="mb-8 flex-1 text-base leading-8 text-slate-500 sm:mb-10 sm:text-lg sm:leading-9">
                                     "{testimonial.text}"
                                 </p>
 
@@ -113,7 +113,7 @@ export default function TestimonialSection() {
                                         className="h-14 w-14 rounded-full object-cover shadow-md"
                                     />
                                     <div>
-                                        <div className="text-xl font-semibold text-slate-800">
+                                        <div className="text-lg font-semibold text-slate-800 sm:text-xl">
                                             {testimonial.name}
                                         </div>
                                         <div className="text-sm text-slate-500">

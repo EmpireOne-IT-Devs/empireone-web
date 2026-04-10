@@ -140,8 +140,7 @@ export default function AboutSection() {
     return (
         <section
             id="about-us"
-            className="relative overflow-hidden"
-            style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+            className="relative overflow-hidden py-16 sm:py-20 lg:min-h-screen"
         >
             {/* Background */}
             <div className="absolute inset-0 z-0">
@@ -152,7 +151,7 @@ export default function AboutSection() {
             </div>
 
             {/* Main content */}
-            <div className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-6 pt-20 pb-4 grid md:grid-cols-2 gap-10 items-center">
+            <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 sm:px-6 md:grid-cols-2 md:items-center md:px-8 lg:px-10">
 
                 {/* Left — image */}
                 <motion.div
@@ -161,20 +160,20 @@ export default function AboutSection() {
                     viewport={{ once: false, amount: 0.3 }}
                     variants={fadeLeft}
                     custom={0.15}
-                    className="flex justify-center md:justify-start"
+                    className="order-2 flex justify-center md:order-1 md:justify-start"
                 >
                     <motion.div
                         initial={{ opacity: 0, scale: 1.05 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: false, amount: 0.35 }}
                         transition={{ duration: 1, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative rounded-2xl overflow-hidden shadow-2xl w-full"
+                        className="relative w-full overflow-hidden rounded-2xl shadow-2xl"
                         style={{ maxWidth: 580, border: "1px solid rgba(255,255,255,0.1)" }}>
                         <img
                             src="/images/image-200.png"
                             alt="Team collaborating"
                             className="w-full object-cover"
-                            style={{ height: "48vh", minHeight: 260 }}
+                            style={{ height: "clamp(260px, 42vw, 520px)" }}
                         />
                         <div className="absolute inset-0"
                             style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%)" }} />
@@ -182,7 +181,7 @@ export default function AboutSection() {
                 </motion.div>
 
                 {/* Right — text */}
-                <div className="space-y-5">
+                <div className="order-1 space-y-5 md:order-2">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
@@ -207,10 +206,10 @@ export default function AboutSection() {
                         viewport={{ once: false, amount: 0.6 }}
                         variants={fadeUp}
                         custom={0.28}
-                        className="text-4xl md:text-5xl font-bold text-white leading-tight"
+                        className="text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl"
                         style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 900 }}
                     >
-                        <span style={{ whiteSpace: "nowrap" }}>Your Trusted Partner in</span>
+                        <span>Your Trusted Partner in</span>
                         <span className="block" style={{
                             background: "linear-gradient(135deg, #a78bfa, #818cf8)",
                             WebkitBackgroundClip: "text",
@@ -226,7 +225,7 @@ export default function AboutSection() {
                         viewport={{ once: false, amount: 0.65 }}
                         variants={fadeUp}
                         custom={0.38}
-                        className="leading-relaxed max-w-lg text-sm"
+                        className="max-w-lg text-sm leading-relaxed sm:text-base"
                         style={{ color: "rgba(255,255,255,0.6)" }}>
                         At EmpireOne, we deliver world-class BPO solutions that help businesses
                         optimize operations, reduce costs, and scale efficiently. From customer
@@ -257,12 +256,12 @@ export default function AboutSection() {
                         viewport={{ once: false, amount: 0.7 }}
                         variants={fadeUp}
                         custom={0.72}
-                        className="flex flex-wrap gap-3 pt-2"
+                        className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap"
                     >
                         <motion.button
                             whileHover={{ y: -3, scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="px-7 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 hover:brightness-110"
+                            className="w-full rounded-xl px-7 py-3 text-sm font-semibold text-white transition-all hover:scale-105 hover:brightness-110 sm:w-auto"
                             style={{
                                 background: "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
                                 border: "1px solid rgba(255,255,255,0.15)",
@@ -274,7 +273,7 @@ export default function AboutSection() {
                             href="#contact"
                             whileHover={{ y: -3, scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="inline-flex items-center justify-center px-7 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-105"
+                            className="inline-flex w-full items-center justify-center rounded-xl px-7 py-3 text-sm font-semibold transition-all hover:scale-105 sm:w-auto"
                             style={{
                                 background: "linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)",
                                 border: "1px solid rgba(167,139,250,0.3)",
@@ -293,7 +292,7 @@ export default function AboutSection() {
                 viewport={{ once: false, amount: 0.3 }}
                 variants={fadeUp}
                 custom={0.84}
-                className="relative z-10 max-w-7xl w-full mx-auto px-6 pb-10 grid grid-cols-2 md:grid-cols-4 gap-3 "
+                className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-2 gap-3 px-5 pt-10 sm:px-6 md:grid-cols-4 md:px-8 lg:px-10"
             >
                 {stats.map((s, i) => (
                     <StatCard key={s.label} value={s.value} label={s.label} delay={i * 100} />

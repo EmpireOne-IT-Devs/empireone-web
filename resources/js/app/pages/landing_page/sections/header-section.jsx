@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "@inertiajs/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navigation = [
     { name: "Home", id: "home" },
@@ -25,7 +26,7 @@ export default function HeaderSection() {
                 <div className="flex items-center gap-2">
                     <a href="/" className="flex items-center gap-2">
                         <img
-                            src="/images/logo.png"
+                            src="/images/eologo.png"
                             alt="EmpireOne Logo"
                             className="h-8 sm:h-12 w-auto object-contain"
                         />
@@ -111,51 +112,79 @@ export default function HeaderSection() {
             </nav>
 
             {/* Mobile Menu */}
-            {mobileMenuOpen && (
-                <div className="lg:hidden fixed inset-0 z-50 bg-black/40">
-                    <div className="fixed right-0 top-0 h-full w-72 bg-white  shadow-lg p-6">
-                        {/* Close button */}
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="p-2 text-gray-700 "
-                            >
-                                <XMarkIcon className="h-6 w-6" />
-                            </button>
-                        </div>
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <div className="lg:hidden fixed inset-0 z-50">
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="absolute inset-0 bg-black/40"
+                            onClick={() => setMobileMenuOpen(false)}
+                        />
 
-                        {/* Navigation */}
-                        <div className="mt-6 flex flex-col gap-4">
-                            {navigation.map((item) => (
-                                <button
-                                    key={item.name}
-                                    onClick={() => scrollTo(item.id)}
-                                    className="text-left text-lg font-semibold text-slate-700  hover:text-blue-600"
+                        {/* Drawer */}
+                        <motion.div
+                            initial={{ x: "100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "100%" }}
+                            transition={{ type: "spring", damping: 26, stiffness: 300 }}
+                            className="fixed right-0 top-0 h-full w-72 max-w-[85vw] bg-white shadow-lg p-6 overflow-y-auto"
+                        >
+                            {/* Close button */}
+                            <div className="flex justify-end">
+                                <motion.button
+                                    whileTap={{ scale: 0.9, rotate: 90 }}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="p-2 text-gray-700"
                                 >
-                                    {item.name}
-                                </button>
-                            ))}
-                        </div>
+                                    <XMarkIcon className="h-6 w-6" />
+                                </motion.button>
+                            </div>
 
-                        {/* Auth Buttons */}
-                        <div className="mt-8 flex flex-col gap-3">
-                            <Link
-                                href="/auth/login"
-                                className="text-center py-2 border rounded-md text-slate-700 "
-                            >
-                                Log in
-                            </Link>
+                            {/* Navigation */}
+                            <div className="mt-6 flex flex-col gap-4">
+                                {navigation.map((item, i) => (
+                                    <motion.button
+                                        key={item.name}
+                                        initial={{ opacity: 0, x: 24 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.1 + i * 0.06, duration: 0.35 }}
+                                        onClick={() => scrollTo(item.id)}
+                                        className="text-left text-lg font-semibold text-slate-700 hover:text-blue-600 transition-colors"
+                                    >
+                                        {item.name}
+                                    </motion.button>
+                                ))}
+                            </div>
 
-                            <Link
-                                href="/talent/application"
-                                className="text-center py-2 bg-blue-600 text-white rounded-md"
+                            {/* Auth Buttons */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.35, duration: 0.4 }}
+                                className="mt-8 flex flex-col gap-3"
                             >
-                                Apply Now
-                            </Link>
-                        </div>
+                                <Link
+                                    href="/auth/login"
+                                    className="text-center py-2 border rounded-md text-slate-700"
+                                >
+                                    Log in
+                                </Link>
+
+                                <Link
+                                    href="/talent/application"
+                                    className="text-center py-2 bg-blue-600 text-white rounded-md"
+                                >
+                                    Apply Now
+                                </Link>
+                            </motion.div>
+                        </motion.div>
                     </div>
-                </div>
-            )}
+                )}
+            </AnimatePresence>
         </header>
     );
 }
