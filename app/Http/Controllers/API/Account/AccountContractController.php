@@ -8,6 +8,8 @@ use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
+use App\Models\Jobs\JobApplication;
+use App\Models\Jobs\JobOffer;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -153,6 +155,16 @@ class AccountContractController extends Controller
                     $account->update([
                         'employee_id' => $employee_id
                     ]);
+
+                    $ja = JobApplication::where([
+                        ['user_id', '=', $request->user_id],
+                        ['final_status', '=', 'Accepted Job Offer'],
+                    ])->first();
+                    if ($ja) {
+                        $ja->update([
+                            'final_status' => 'Hired'
+                        ]);
+                    }
                 }
             }
         }
@@ -199,6 +211,16 @@ class AccountContractController extends Controller
                     $account->update([
                         'employee_id' => $employee_id
                     ]);
+
+                    $ja = JobApplication::where([
+                        ['user_id', '=', $request->user_id],
+                        ['final_status', '=', 'Accepted Job Offer'],
+                    ])->first();
+                    if ($ja) {
+                        $ja->update([
+                            'final_status' => 'Hired'
+                        ]);
+                    }
                 }
             }
         }
