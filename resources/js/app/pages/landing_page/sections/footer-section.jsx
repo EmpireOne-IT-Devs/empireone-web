@@ -104,8 +104,8 @@ export default function FooterSection() {
     ];
 
     return (
-        <footer className="bg-white text-black pt-16 pb-8 px-6">
-            <div className="max-w-7xl mx-auto">
+        <footer className="bg-white px-5 pb-8 pt-16 text-black sm:px-6">
+            <div className="mx-auto max-w-7xl">
                 {/* TOP GRID */}
                 <motion.div
                     initial="hidden"
@@ -113,7 +113,7 @@ export default function FooterSection() {
                     viewport={{ once: false, amount: 0.2 }}
                     variants={fadeUp}
                     custom={0.06}
-                    className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-14"
+                    className="mb-14 grid grid-cols-1 gap-10 md:grid-cols-2 xl:grid-cols-4"
                 >
                     {/* BRAND */}
                     <div className="md:col-span-1">
@@ -172,7 +172,7 @@ export default function FooterSection() {
 
                     {/* OUR SERVICES */}
                     <div>
-                        <h4 className="text-white font-semibold text-base mb-5">
+                        <h4 className="mb-5 text-base font-semibold text-gray-800">
                             Our Services
                         </h4>
                         <ul className="space-y-3">
@@ -195,7 +195,7 @@ export default function FooterSection() {
 
                     {/* NEWSLETTER */}
                     <div>
-                        <h4 className="text-white font-semibold text-base mb-3">
+                        <h4 className="mb-3 text-base font-semibold text-gray-800">
                             Newsletter
                         </h4>
                         <p className="text-sm text-slate-600 leading-relaxed mb-5">
@@ -229,12 +229,12 @@ export default function FooterSection() {
                     viewport={{ once: false, amount: 0.8 }}
                     variants={fadeUp}
                     custom={0.12}
-                    className="pt-6 flex flex-col md:flex-row justify-between items-center gap-3"
+                    className="flex flex-col items-start justify-between gap-3 pt-6 sm:flex-row sm:items-center"
                 >
                     <p className="text-xs text-slate-500">
                         © {year} EmpireOne. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-6 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 sm:gap-6">
                         <a
                             href="/privacy-policy"
                             className="hover:text-blue-600 transition-colors"

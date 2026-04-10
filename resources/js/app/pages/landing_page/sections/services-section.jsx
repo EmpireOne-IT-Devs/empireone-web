@@ -92,9 +92,8 @@ export default function ServicesSection() {
     return (
         <section
             id="services"
-            className="relative overflow-hidden flex flex-col justify-center"
+            className="relative flex flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
             style={{
-                height: "100vh",
                 fontFamily: "'Segoe UI', system-ui, sans-serif",
                 backgroundImage: `url('${BG_IMAGE_SRC}')`,
                 backgroundSize: "cover",
@@ -133,7 +132,7 @@ export default function ServicesSection() {
                 src={CENTER_IMAGE_SRC}
                 alt=""
                 aria-hidden="true"
-                className="absolute z-0 pointer-events-none select-none"
+                className="absolute z-0 hidden pointer-events-none select-none md:block"
                 style={{
                     top: "50%",
                     left: "50%",
@@ -146,10 +145,10 @@ export default function ServicesSection() {
             />
 
             {/* ── CONTENT ── */}
-            <div className="relative z-10 max-w-7xl mx-auto px-8 w-full">
+            <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-6 md:px-8">
 
                 {/* HEADER ROW */}
-                <div className="flex items-start justify-between mb-10 gap-6">
+                <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-6">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
@@ -182,7 +181,7 @@ export default function ServicesSection() {
                             viewport={{ once: false, amount: 0.5 }}
                             variants={fadeUp}
                             custom={0.18}
-                            className="font-extrabold leading-[1.1] whitespace-nowrap"
+                            className="font-extrabold leading-[1.1]"
                             style={{
                                 color: "#0a0f1e",
                                 fontSize: "clamp(2rem, 3.5vw, 3.2rem)",
@@ -201,7 +200,7 @@ export default function ServicesSection() {
                         variants={fadeUp}
                         custom={0.22}
                         whileHover={{ x: 4 }}
-                        className="flex items-center gap-2 font-semibold whitespace-nowrap mt-2 group"
+                        className="group mt-1 inline-flex items-center gap-2 self-start font-semibold md:mt-2"
                         style={{ color: "#6366f1", fontSize: 15 }}
                     >
                         See All Services

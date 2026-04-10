@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/tabs-section-Cj8G6iYG.js
+import{r as s,j as e}from"./app-DXvfVoFy.js";import{T as i}from"./tabs-BpwCjvaH.js";function l(){const[a,n]=s.useState(0),t=window.location.pathname.split("/")[4],o=[{label:"Employees",path:"/accounts/administrator/employee_relation/employees",active:t==="employees"},{label:"Pooling",path:"/accounts/administrator/employee_relation/pooling",active:t==="pooling"}];return e.jsx("div",{children:e.jsx(i,{tabs:o,activeIndex:a})})}export{l as default};
+========
+import{r as s,j as e}from"./app-D2Xb7bAV.js";import{T as i}from"./tabs-DD9u6-df.js";function l(){const[a,n]=s.useState(0),t=window.location.pathname.split("/")[4],o=[{label:"Employees",path:"/accounts/administrator/employee_relation/employees",active:t==="employees"},{label:"Pooling",path:"/accounts/administrator/employee_relation/pooling",active:t==="pooling"}];return e.jsx("div",{children:e.jsx(i,{tabs:o,activeIndex:a})})}export{l as default};
+>>>>>>>> b8a9feccc75346b65c38fc7d3764430d8a71d0c3:public/build/assets/tabs-section-Cp-cFkQw.js

@@ -12,7 +12,20 @@ export default function ProgressScrollSection() {
     const [activeId, setActiveId] = useState("hero");
     const [visible, setVisible] = useState(false);
     const [dotHover, setDotHover] = useState(null);
+    const [isDesktop, setIsDesktop] = useState(false);
     const rafRef = useRef(null);
+
+    useEffect(() => {
+        const media = window.matchMedia("(min-width: 1024px)");
+        const updateViewport = (event) => {
+            setIsDesktop(event.matches);
+        };
+
+        updateViewport(media);
+        media.addEventListener("change", updateViewport);
+
+        return () => media.removeEventListener("change", updateViewport);
+    }, []);
 
     /* ── scroll handler ── */
     useEffect(() => {
@@ -106,96 +119,96 @@ export default function ProgressScrollSection() {
             {/* ══════════════════════════════════════════
                 SIDE DOT NAVIGATOR
             ══════════════════════════════════════════ */}
-            <nav
-                aria-label="Page sections"
-                style={{
-                    position: "fixed",
-                    right: 24,
-                    top: "50%",
-                    transform: `translateY(-50%) translateX(${visible ? 0 : 48}px)`,
-                    zIndex: 9000,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 10,
-                    alignItems: "flex-end",
-                    transition:
-                        "transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s",
-                    opacity: visible ? 1 : 0,
-                    pointerEvents: visible ? "auto" : "none",
-                }}
-            >
-                {SECTIONS.map((sec) => {
-                    const isActive = activeId === sec.id;
-                    const isHovered = dotHover === sec.id;
+            {isDesktop && (
+                <nav
+                    aria-label="Page sections"
+                    style={{
+                        position: "fixed",
+                        right: 24,
+                        top: "50%",
+                        transform: `translateY(-50%) translateX(${visible ? 0 : 48}px)`,
+                        zIndex: 9000,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 10,
+                        alignItems: "flex-end",
+                        transition:
+                            "transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s",
+                        opacity: visible ? 1 : 0,
+                        pointerEvents: visible ? "auto" : "none",
+                    }}
+                >
+                    {SECTIONS.map((sec) => {
+                        const isActive = activeId === sec.id;
+                        const isHovered = dotHover === sec.id;
 
-                    return (
-                        <button
-                            key={sec.id}
-                            onClick={() => scrollTo(sec.id)}
-                            onMouseEnter={() => setDotHover(sec.id)}
-                            onMouseLeave={() => setDotHover(null)}
-                            aria-label={`Go to ${sec.label}`}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 10,
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                                padding: "2px 0",
-                                flexDirection: "row",
-                            }}
-                        >
-                            {/* label */}
-                            <span
+                        return (
+                            <button
+                                key={sec.id}
+                                onClick={() => scrollTo(sec.id)}
+                                onMouseEnter={() => setDotHover(sec.id)}
+                                onMouseLeave={() => setDotHover(null)}
+                                aria-label={`Go to ${sec.label}`}
                                 style={{
-                                    fontSize: 11,
-                                    fontWeight: 600,
-                                    letterSpacing: "0.08em",
-                                    textTransform: "uppercase",
-                                    color: isActive
-                                        ? "#fff"
-                                        : "rgba(255,255,255,0.55)",
-                                    whiteSpace: "nowrap",
-                                    opacity: isHovered || isActive ? 1 : 0,
-                                    transform:
-                                        isHovered || isActive
-                                            ? "translateX(0)"
-                                            : "translateX(6px)",
-                                    transition: "all 0.22s ease",
-                                    textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-                                    pointerEvents: "none",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 10,
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    padding: "2px 0",
+                                    flexDirection: "row",
                                 }}
                             >
-                                {sec.label}
-                            </span>
+                                <span
+                                    style={{
+                                        fontSize: 11,
+                                        fontWeight: 600,
+                                        letterSpacing: "0.08em",
+                                        textTransform: "uppercase",
+                                        color: isActive
+                                            ? "#fff"
+                                            : "rgba(255,255,255,0.55)",
+                                        whiteSpace: "nowrap",
+                                        opacity: isHovered || isActive ? 1 : 0,
+                                        transform:
+                                            isHovered || isActive
+                                                ? "translateX(0)"
+                                                : "translateX(6px)",
+                                        transition: "all 0.22s ease",
+                                        textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+                                        pointerEvents: "none",
+                                    }}
+                                >
+                                    {sec.label}
+                                </span>
 
-                            {/* dot / pill */}
-                            <div
-                                style={{
-                                    flexShrink: 0,
-                                    width: isActive ? 8 : isHovered ? 7 : 6,
-                                    height: isActive ? 24 : isHovered ? 9 : 6,
-                                    borderRadius: isActive ? 4 : "50%",
-                                    background: isActive
-                                        ? `linear-gradient(180deg, ${sec.color}, #3B82F6)`
-                                        : isHovered
-                                          ? "rgba(255,255,255,0.6)"
-                                          : "rgba(255,255,255,0.3)",
-                                    boxShadow: isActive
-                                        ? `0 0 10px ${sec.color}80`
-                                        : "none",
-                                    transition:
-                                        "all 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-                                    border: isActive
-                                        ? "none"
-                                        : "1px solid rgba(255,255,255,0.2)",
-                                }}
-                            />
-                        </button>
-                    );
-                })}
-            </nav>
+                                <div
+                                    style={{
+                                        flexShrink: 0,
+                                        width: isActive ? 8 : isHovered ? 7 : 6,
+                                        height: isActive ? 24 : isHovered ? 9 : 6,
+                                        borderRadius: isActive ? 4 : "50%",
+                                        background: isActive
+                                            ? `linear-gradient(180deg, ${sec.color}, #3B82F6)`
+                                            : isHovered
+                                              ? "rgba(255,255,255,0.6)"
+                                              : "rgba(255,255,255,0.3)",
+                                        boxShadow: isActive
+                                            ? `0 0 10px ${sec.color}80`
+                                            : "none",
+                                        transition:
+                                            "all 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                                        border: isActive
+                                            ? "none"
+                                            : "1px solid rgba(255,255,255,0.2)",
+                                    }}
+                                />
+                            </button>
+                        );
+                    })}
+                </nav>
+            )}
 
             {/* ══════════════════════════════════════════
                 BOTTOM STATUS BAR

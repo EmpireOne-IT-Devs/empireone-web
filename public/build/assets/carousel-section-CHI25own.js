@@ -1,4 +1,12 @@
+<<<<<<< HEAD:public/build/assets/carousel-section-CHI25own.js
 import{r as c,j as e}from"./app-ykE7iJsp.js";import{m as a}from"./proxy-_6Tfqnd-.js";const t={hidden:{opacity:0,y:26},visible:(s=0)=>({opacity:1,y:0,transition:{duration:.68,delay:s,ease:[.22,1,.36,1]}})},i=[{id:1,name:"BBB",src:"/images/BBB-logo.png"},{id:2,name:"SOC2",src:"/images/SOC2-Logo.png"},{id:3,name:"PCI",src:"/images/PCI-Logo.png"},{id:4,name:"ISO",src:"/images/ISO-Logo.png"},{id:5,name:"HIPAA",src:"/images/HIPAA-Logo.png"},{id:6,name:"GDPR",src:"/images/GDPR-Logo.png"}],d=[...i,...i,...i],l=38;function f(){const[s,n]=c.useState(!1);return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
+=======
+<<<<<<<< HEAD:public/build/assets/carousel-section-D3chsSjv.js
+import{r as c,j as e}from"./app-DXvfVoFy.js";import{m as a}from"./proxy-CZfdkBk8.js";const t={hidden:{opacity:0,y:26},visible:(s=0)=>({opacity:1,y:0,transition:{duration:.68,delay:s,ease:[.22,1,.36,1]}})},i=[{id:1,name:"BBB",src:"/images/BBB-logo.png"},{id:2,name:"SOC2",src:"/images/SOC2-Logo.png"},{id:3,name:"PCI",src:"/images/PCI-Logo.png"},{id:4,name:"ISO",src:"/images/ISO-Logo.png"},{id:5,name:"HIPAA",src:"/images/HIPAA-Logo.png"},{id:6,name:"GDPR",src:"/images/GDPR-Logo.png"}],d=[...i,...i,...i],l=38;function f(){const[s,n]=c.useState(!1);return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
+========
+import{r as c,j as e}from"./app-D2Xb7bAV.js";import{m as a}from"./proxy-CUezHrY_.js";const t={hidden:{opacity:0,y:26},visible:(s=0)=>({opacity:1,y:0,transition:{duration:.68,delay:s,ease:[.22,1,.36,1]}})},i=[{id:1,name:"BBB",src:"/images/BBB-logo.png"},{id:2,name:"SOC2",src:"/images/SOC2-Logo.png"},{id:3,name:"PCI",src:"/images/PCI-Logo.png"},{id:4,name:"ISO",src:"/images/ISO-Logo.png"},{id:5,name:"HIPAA",src:"/images/HIPAA-Logo.png"},{id:6,name:"GDPR",src:"/images/GDPR-Logo.png"}],d=[...i,...i,...i],l=38;function f(){const[s,n]=c.useState(!1);return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
+>>>>>>>> b8a9feccc75346b65c38fc7d3764430d8a71d0c3:public/build/assets/carousel-section-BxXh15nf.js
+>>>>>>> 31d483b4a85a4fee4fe861f019205d87bda5b889:public/build/assets/carousel-section-BxXh15nf.js
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=DM+Sans:wght@400;500;600&display=swap');
 
         .cs-root {

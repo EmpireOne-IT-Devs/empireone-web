@@ -1,4 +1,12 @@
+<<<<<<< HEAD:public/build/assets/input-DqQmuDiC.js
 import{r as c,j as e}from"./app-ykE7iJsp.js";const h=c.forwardRef(({label:o,name:s,type:a="text",disabled:p=!1,required:d=!1,iconLeft:l,iconRight:r,error:t,readOnly:n=!1,className:x="",...u},i)=>e.jsxs("div",{className:"w-full",children:[e.jsxs("div",{className:"relative",children:[l&&e.jsx("div",{className:"absolute left-3 top-1/2 -translate-y-1/2 text-gray-500",children:l}),e.jsx("input",{autoComplete:"off",ref:i,id:s,name:s,type:a,disabled:p,required:d,readOnly:n,step:a==="number"?"any":void 0,placeholder:" ",...u,className:`
+=======
+<<<<<<<< HEAD:public/build/assets/input-sg3sk4T0.js
+import{r as c,j as e}from"./app-DXvfVoFy.js";const h=c.forwardRef(({label:o,name:s,type:a="text",disabled:p=!1,required:d=!1,iconLeft:l,iconRight:r,error:t,readOnly:n=!1,className:x="",...u},i)=>e.jsxs("div",{className:"w-full",children:[e.jsxs("div",{className:"relative",children:[l&&e.jsx("div",{className:"absolute left-3 top-1/2 -translate-y-1/2 text-gray-500",children:l}),e.jsx("input",{autoComplete:"off",ref:i,id:s,name:s,type:a,disabled:p,required:d,readOnly:n,step:a==="number"?"any":void 0,placeholder:" ",...u,className:`
+========
+import{r as c,j as e}from"./app-D2Xb7bAV.js";const h=c.forwardRef(({label:o,name:s,type:a="text",disabled:p=!1,required:d=!1,iconLeft:l,iconRight:r,error:t,readOnly:n=!1,className:x="",...u},i)=>e.jsxs("div",{className:"w-full",children:[e.jsxs("div",{className:"relative",children:[l&&e.jsx("div",{className:"absolute left-3 top-1/2 -translate-y-1/2 text-gray-500",children:l}),e.jsx("input",{autoComplete:"off",ref:i,id:s,name:s,type:a,disabled:p,required:d,readOnly:n,step:a==="number"?"any":void 0,placeholder:" ",...u,className:`
+>>>>>>>> b8a9feccc75346b65c38fc7d3764430d8a71d0c3:public/build/assets/input-D2oLZrwg.js
+>>>>>>> 31d483b4a85a4fee4fe861f019205d87bda5b889:public/build/assets/input-D2oLZrwg.js
               peer w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black transition-colors
               focus:outline-none focus:ring-2 focus:ring-blue-500 
              
