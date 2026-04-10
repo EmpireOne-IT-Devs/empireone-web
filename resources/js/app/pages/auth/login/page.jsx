@@ -30,11 +30,13 @@ const Page = ({ flash }) => {
 
     // Color Palette Constants
     const colors = {
-        darkNavy: "#04042c",
-        electricBlue: "#5170ff",
-        cyan: "#4ed1f4",
-        deepPurple: "#4b0082",
-        mutedPurple: "#5e3984",
+        darkNavy: "#1a0b3b",
+        electricBlue: "#e85c0d",
+        cyan: "#00FFFF",
+        deepPurple: "#5a3d9a",
+        mutedPurple: "#7b52c8",
+        blue: "#3b82f6",
+        orange: "#e85c0d",
     };
 
     const handleSubmit = (e) => {
@@ -55,7 +57,9 @@ const Page = ({ flash }) => {
     return (
         <div
             className={`min-h-screen flex items-center justify-center font-sans overflow-hidden relative`}
-            style={{ backgroundColor: colors.darkNavy }}
+            style={{
+                background: `linear-gradient(135deg, ${colors.darkNavy} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
+            }}
         >
             {/* --- INTERACTIVE BACKGROUND --- */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -80,6 +84,16 @@ const Page = ({ flash }) => {
                     className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[130px] opacity-20"
                     style={{ backgroundColor: colors.electricBlue }}
                 />
+                <motion.div
+                    animate={{ x: [0, 30, 0], y: [0, -50, 0] }}
+                    transition={{
+                        duration: 12,
+                        repeat: Infinity,
+                        ease: "linear",
+                    }}
+                    className="absolute top-1/2 right-1/3 w-80 h-80 rounded-full blur-[120px] opacity-30"
+                    style={{ backgroundColor: colors.blue }}
+                />
             </div>
 
             {/* --- LOGIN CARD --- */}
@@ -87,11 +101,11 @@ const Page = ({ flash }) => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 // Changed border and rounded classes here for mobile responsiveness
-                className="relative z-10 w-full max-w-md p-10 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/10  md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
+                className="relative z-10 w-full max-w-md p-9 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/50 md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(59,130,246,0.3)]"
             >
                 {/* Header */}
                 <div className="flex flex-col items-center mb-8">
-                    <motion.div
+                    {/* <motion.div
                         animate={{ rotate: 360 }}
                         transition={{
                             duration: 15,
@@ -105,14 +119,20 @@ const Page = ({ flash }) => {
                         }}
                     >
                         <FaReact />
-                    </motion.div>
+                    </motion.div> */}
 
                     <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
                         Welcome Back
                     </h2>
-                    <p className="text-slate-400 text-sm">
+                    <p className="text-slate-400 text-md flex items-center gap-1">
                         Log in to your{" "}
-                        <span style={{ color: colors.cyan }}>EmpireOne</span>{" "}
+                        <span className="inline-flex items-center">
+                            <img
+                                src="/images/eologo.png"
+                                alt="EmpireOne Logo"
+                                className="h-5 w-auto mt-0.5 object-contain"
+                            />
+                        </span>{" "}
                         account
                     </p>
                 </div>
@@ -125,18 +145,18 @@ const Page = ({ flash }) => {
                     )}
                     {/* Email */}
                     <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#4ed1f4] transition-colors">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
                             Email Address
                         </label>
                         <div className="relative">
-                            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#4ed1f4] transition-colors" />
+                            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
                             <input
                                 type="email"
                                 value={data.email}
                                 onChange={(e) =>
                                     setData("email", e.target.value)
                                 }
-                                className={`w-full bg-white/5 border ${errors.email ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#5170ff] focus:ring-4 focus:ring-[#5170ff]/10 transition-all placeholder:text-slate-600`}
+                                className={`w-full bg-white/5 border ${errors.email ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                                 placeholder="sample@empireonegroup.com"
                             />
                         </div>
@@ -144,18 +164,18 @@ const Page = ({ flash }) => {
 
                     {/* Password */}
                     <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#4ed1f4] transition-colors">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
                             Secure Password
                         </label>
                         <div className="relative">
-                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#4ed1f4] transition-colors" />
+                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
                             <input
                                 type={showPassword ? "text" : "password"}
                                 value={data.password}
                                 onChange={(e) =>
                                     setData("password", e.target.value)
                                 }
-                                className={`w-full bg-white/5 border ${errors.password ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-14 text-white outline-none focus:border-[#5170ff] focus:ring-4 focus:ring-[#5170ff]/10 transition-all placeholder:text-slate-600`}
+                                className={`w-full bg-white/5 border ${errors.password ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-14 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                                 placeholder="••••••••"
                             />
                             <button
@@ -183,7 +203,7 @@ const Page = ({ flash }) => {
                                 className="hidden"
                             />
                             <div
-                                className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${data.remember ? "bg-[#5170ff] border-[#5170ff]" : "border-white/20 bg-white/5"}`}
+                                className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${data.remember ? "bg-[#e85c0d] border-[#e85c0d]" : "border-white/20 bg-white/5"}`}
                             >
                                 {data.remember && (
                                     <div className="w-2 h-2 bg-white rounded-full" />
@@ -198,7 +218,7 @@ const Page = ({ flash }) => {
                             onClick={() =>
                                 router.visit("/auth/forgot_password")
                             }
-                            className="text-xs text-slate-400 hover:text-[#4ed1f4] transition-colors uppercase tracking-widest font-medium"
+                            className="text-xs text-slate-400 hover:text-[#e85c0d] transition-colors uppercase tracking-widest font-medium"
                         >
                             Forgot?
                         </button>
@@ -210,7 +230,9 @@ const Page = ({ flash }) => {
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.98 }}
                         className="w-full relative flex items-center justify-center gap-3 py-4 rounded-xl font-black text-white uppercase tracking-[0.2em] overflow-hidden transition-all group"
-                        style={{ backgroundColor: colors.electricBlue }}
+                        style={{
+                            background: `linear-gradient(135deg, ${colors.electricBlue}, #7c3aed, ${colors.blue})`,
+                        }}
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                         {processing ? (
@@ -232,7 +254,7 @@ const Page = ({ flash }) => {
                     {/* --- DIVIDER --- */}
                     <div className="flex items-center gap-3 mb-6">
                         <div className="flex-1 h-[1px] bg-white/10"></div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
                             Or continue with email
                         </span>
                         <div className="flex-1 h-[1px] bg-white/10"></div>
@@ -250,10 +272,10 @@ const Page = ({ flash }) => {
                 </form>
 
                 {/* Footer */}
-                <div className="mt-8 flex justify-center text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
+                <div className="mt-8 flex justify-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
                     <Link
                         href="/"
-                        className="hover:text-[#4ed1f4] transition-colors underline decoration-[#4ed1f4]/30 underline-offset-4"
+                        className="hover:text-[#e85c0d] transition-colors underline decoration-[#e85c0d]/30 underline-offset-4"
                     >
                         Return to Homepage
                     </Link>
