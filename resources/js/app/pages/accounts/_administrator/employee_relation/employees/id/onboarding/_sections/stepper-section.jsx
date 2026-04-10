@@ -61,7 +61,7 @@ const StepperSection = ({ steps }) => {
                     }),
                 );
                 setIsLoading(false);
-                router.visit("/applicant/my_documents");
+                router.visit("/accounts/my_documents");
             } catch (error) {
                 setIsLoading(false);
             }
