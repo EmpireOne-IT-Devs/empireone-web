@@ -66,19 +66,27 @@ class JobApplicationController extends Controller
                 ]);
         }
 
-        $jo = JobOffer::create([
-            'user_id' => $request->user_id,
-            'job_application_id' => $request->id,
-            'salary' => $request->salary,
-            'role' => $request->role,
-        ]);
-        foreach ($request->allowances as $key => $value) {
-            AccountEmployeeAllowance::create([
+        $jo = JobOffer::updateOrCreate(
+            [
                 'user_id' => $request->user_id,
-                'job_offer_id' => $jo->id,
-                'allowance' => $value['allowance'],
-                'allowance_type' => $value['allowance_type'],
-            ]);
+                'job_application_id' => $request->id,
+            ],
+            [
+                'salary' => $request->salary,
+                'role' => $request->role,
+            ]
+        );
+        foreach ($request->allowances as $key => $value) {
+            AccountEmployeeAllowance::updateOrCreate(
+                [
+                    'user_id' => $request->user_id,
+                    'job_offer_id' => $jo->id,
+                    'allowance_type' => $value['allowance_type'],
+                ],
+                [
+                    'allowance' => $value['allowance'],
+                ]
+            );
         }
         JobApplication::updateOrCreate(
             ['id' => $request->id], // Match criteria
