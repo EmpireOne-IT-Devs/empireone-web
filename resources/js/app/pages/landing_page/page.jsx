@@ -9,6 +9,7 @@ import FooterSection from "./sections/footer-section";
 import ProgressScrollSection from "./sections/progress-scroll-section";
 import CarouselHighlightSection from "./sections/carousel-highlight-section";
 import TestimonialSection from "./sections/testimonial-section";
+import DeveloperSection from "./sections/developer-section";
 
 export default function Page() {
     return (
@@ -27,6 +28,7 @@ export default function Page() {
                 <ServicesSection />
                 <TestimonialSection />
                 <ContactSection />
+                <DeveloperSection />
 {/* 
                 <CarouselHighlightSection /> */}
                 <FooterSection />
