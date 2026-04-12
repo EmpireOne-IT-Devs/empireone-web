@@ -41,7 +41,6 @@ return new class extends Migration
             $table->string('eogs_email')->nullable();
             $table->string('employee_id')->nullable();
             $table->string('with_bpo')->nullable();
-            $table->string('source')->nullable();
             $table->string('position')->nullable();
             $table->longText('signature')->nullable();
             $table->string('onboarding_agree_on')->nullable();

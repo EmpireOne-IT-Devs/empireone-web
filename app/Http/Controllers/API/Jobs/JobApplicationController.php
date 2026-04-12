@@ -181,7 +181,10 @@ class JobApplicationController extends Controller
             [
                 'user_id' => $user->id,
                 'job_posting_id' => $request->job_posting_id,
+            ],
+            [
                 'referral_id' => $referral_id,
+                'source'      => $request->source ?? null,
             ]
         );
 

@@ -144,6 +144,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('/interviews', function () {
                 return Inertia::render('accounts/_administrator/job_posting/interviews/page');
             });
+              Route::get('/qr_code', function () {
+                return Inertia::render('accounts/_administrator/job_posting/qr_code/page');
+            });
         });
         Route::get('/job_requisition', function () {
             return Inertia::render('accounts/_administrator/job_requisition/page');
