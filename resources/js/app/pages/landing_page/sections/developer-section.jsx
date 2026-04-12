@@ -32,7 +32,7 @@ const teamMembers = [
     },
     {
         name: "Marlou Pepito",
-        role: "Senior Full-Stack Developer",
+        role: "Web Developer",
         bio: "Specializing in crafting robust, scalable applications from end to end. I combine technical expertise with thoughtful design to deliver systems that are fast, reliable, and built for real-world impact.",
         img: "/images/1.png",
         initials: "MP",
