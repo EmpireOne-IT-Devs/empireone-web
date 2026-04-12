@@ -1,0 +1,1 @@
+import{f as i,o as n}from"./app-C9Nn3InE.js";import{g as r}from"./user-service-B1EiVP_F.js";async function o(){return await i.get("/api/get_app_data")}function u(e){return async function(t,s){const a=await o();t(n.actions.setData(a.data))}}function p(e){return async function(t,s){const a=await r(e);t(n.actions.setUser(a.data))}}export{u as a,p as g};

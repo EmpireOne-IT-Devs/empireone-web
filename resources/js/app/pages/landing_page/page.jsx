@@ -14,7 +14,6 @@ import DeveloperSection from "./sections/developer-section";
 export default function Page() {
     return (
         <div>
-            {/* Fixed overlay — sits above everything, no layout impact */}
             <ProgressScrollSection />
 
             <HeaderSection />
@@ -25,11 +24,11 @@ export default function Page() {
                 <CarouselSection />
 
                 <AboutSection />
+                <DeveloperSection />
                 <ServicesSection />
                 <TestimonialSection />
                 <ContactSection />
-                <DeveloperSection />
-{/* 
+                {/* 
                 <CarouselHighlightSection /> */}
                 <FooterSection />
             </div>
