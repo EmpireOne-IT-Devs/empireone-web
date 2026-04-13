@@ -28,7 +28,7 @@ const TalentFormSection = () => {
     const referral_id = new URLSearchParams(window.location.search).get(
         "referral_id",
     );
-
+    const source = new URLSearchParams(window.location.search).get("source");
     const {
         register,
         handleSubmit,
@@ -144,6 +144,7 @@ const TalentFormSection = () => {
         const finalData = {
             ...data,
             referral_id: referral_id,
+            source:source,
             region: getName(regions, data.region),
             province: getName(provinces, data.province),
             city: getName(cities, data.city),
@@ -192,7 +193,7 @@ const TalentFormSection = () => {
                     <div>
                         <button
                             type="button"
-                            onClick={() => router.visit('/')}
+                            onClick={() => router.visit("/")}
                             className="mb-4 text-gray-400 hover:text-gray-900 text-sm transition-colors duration-200"
                         >
                             ← Back to homepage

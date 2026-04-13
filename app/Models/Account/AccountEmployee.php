@@ -24,7 +24,6 @@ class AccountEmployee extends Model
         'work_type',
         'eogs_email',
         'with_bpo',
-        'source',
         'position',
         'signature',
         'onboarding_agree_on',

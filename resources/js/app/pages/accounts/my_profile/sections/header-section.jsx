@@ -15,13 +15,15 @@ import { useSelector } from "react-redux";
 export default function HeaderSection() {
     const { data } = useSelector((store) => store.app);
     const [copied, setCopied] = useState(false);
-    
+
     // 1. Make the completion percentage dynamic, default to 0
-    const profileCompletion = data?.profile_percent ? Number(data.profile_percent) : 0;
+    const profileCompletion = data?.profile_percent
+        ? Number(data.profile_percent)
+        : 0;
 
     const handleCopyLink = () => {
         const encodedId = btoa(data?.user?.id?.toString() || "");
-        const link = `${window.location.origin}/talent/application?referral_id=${encodedId}`;
+        const link = `${window.location.origin}/talent/application?referral_id=${encodedId}&source=facebook`;
         navigator.clipboard.writeText(link).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
@@ -41,9 +43,9 @@ export default function HeaderSection() {
                         >
                             {/* 2. Dynamic Avatar Image */}
                             {data?.user?.profile_picture ? (
-                                <img 
-                                    src={data.user.profile_picture} 
-                                    alt="Profile" 
+                                <img
+                                    src={data.user.profile_picture}
+                                    alt="Profile"
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
@@ -58,7 +60,8 @@ export default function HeaderSection() {
                             </p>
                             {data?.user?.account_employee?.employee_id && (
                                 <p className="text-sm font-semibold text-gray-600">
-                                    ID: {data?.user?.account_employee?.employee_id}
+                                    ID:{" "}
+                                    {data?.user?.account_employee?.employee_id}
                                 </p>
                             )}
                             <div className="flex items-center justify-center md:justify-start gap-1 mt-0.5 text-gray-500 text-xs">
@@ -102,8 +105,9 @@ export default function HeaderSection() {
                         </div>
 
                         <p className="text-xs leading-relaxed text-gray-600 mb-4">
-                            Fill in your First Name, Last Name, Email, Contact Number,
-                            and upload your Resume to complete your profile.
+                            Fill in your First Name, Last Name, Email, Contact
+                            Number, and upload your Resume to complete your
+                            profile.
                         </p>
 
                         <div className="flex items-center gap-3">
@@ -121,8 +125,8 @@ export default function HeaderSection() {
                         <div className="mt-3 py-2 px-3 bg-white/50 rounded border border-yellow-100 text-[10px] md:text-xs text-gray-500 flex items-start gap-2">
                             <span>💡</span>
                             <em className="not-italic">
-                                <strong>Tip:</strong> Completing your profile to 100%
-                                increases your chances of getting hired!
+                                <strong>Tip:</strong> Completing your profile to
+                                100% increases your chances of getting hired!
                             </em>
                         </div>
                     </div>

@@ -15,7 +15,8 @@ class JobApplication extends Model
         'screening_status',
         'interview_status',
         'final_status',
-        'referral_id'
+        'referral_id',
+        'source',
     ];
 
     public function applicants(): HasMany
