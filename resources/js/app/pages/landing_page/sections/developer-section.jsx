@@ -32,7 +32,7 @@ const teamMembers = [
     },
     {
         name: "Marlou Pepito",
-        role: "Web Developer",
+        role: "Senior Full-Stack Developer",
         bio: "Specializing in crafting robust, scalable applications from end to end. I combine technical expertise with thoughtful design to deliver systems that are fast, reliable, and built for real-world impact.",
         img: "/images/1.png",
         initials: "MP",
@@ -167,7 +167,7 @@ function TeamCard({ member, index }) {
                 )}
 
                 <div className="pt-1">
-                    <p className="m-0 font-black text-base text-white leading-tight">
+                    <p className="m-0 font-black text-base leading-tight" style={{ color: "#ffffff" }}>
                         {member.name}
                     </p>
                     <span

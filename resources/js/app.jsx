@@ -31,7 +31,7 @@ function AppShell({ App, props }) {
 }
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => `${title} ${appName}`,
 
     resolve: (name) =>
         resolvePageComponent(
