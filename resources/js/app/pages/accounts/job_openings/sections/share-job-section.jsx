@@ -16,111 +16,131 @@ export default function ShareJobSection({ data }) {
     const [open, setOpen] = useState(false);
     const [copied, setCopied] = useState(false);
     const { data: account } = useSelector((store) => store.app);
-    const jobUrl = `${window.location.host}/talent/application?job_posting_id=${data.id}&referral_id=${btoa(account?.user?.id?.toString() || "")}`;
-    console.log("window.location");
+    
+    // Safety check for window object in SSR
+    const host = typeof window !== "undefined" ? window.location.host : "";
+    const jobUrl = `${host}/talent/application?job_posting_id=${data.id}&referral_id=${btoa(account?.user?.id?.toString() || "")}`;
     const jobTitle = data?.job_requisition?.title;
-    // Handles the "Copy Link" button logic
-    const handleCopyLink = () => {
-        navigator.clipboard.writeText(jobUrl).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        });
+
+    const getTrackedUrl = (url, sourceName) => {
+        try {
+            const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+            urlObj.searchParams.set("source", sourceName);
+            return urlObj.toString();
+        } catch (e) {
+            return url.includes("?")
+                ? `${url}&source=${sourceName}`
+                : `${url}?source=${sourceName}`;
+        }
     };
 
-    // Pre-formatted social sharing URLs
-    const shareLinks = {
-        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(jobUrl)}`,
-        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out this job: ${jobTitle}`)}&url=${encodeURIComponent(jobUrl)}`,
-        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(jobUrl)}`,
-        email: `mailto:?subject=${encodeURIComponent(`Job Opportunity: ${jobTitle}`)}&body=${encodeURIComponent(`I thought you might be interested in this job posting:\n\n${jobUrl}`)}`,
-        messenger: `fb-messenger://share/?link=${encodeURIComponent(jobUrl)}`,
+    const handleCopyLink = () => {
+        navigator.clipboard
+            .writeText(getTrackedUrl(jobUrl, "EmpireOne App"))
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            });
     };
+
+    const shareLinks = {
+        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getTrackedUrl(jobUrl, "linkedin"))}`,
+        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out this job: ${jobTitle}`)}&url=${encodeURIComponent(getTrackedUrl(jobUrl, "twitter"))}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getTrackedUrl(jobUrl, "facebook"))}`,
+        email: `mailto:?subject=${encodeURIComponent(`Job Opportunity: ${jobTitle}`)}&body=${encodeURIComponent(`I thought you might be interested in this job posting:\n\n${getTrackedUrl(jobUrl, "email")}`)}`,
+        messenger: `fb-messenger://share/?link=${encodeURIComponent(getTrackedUrl(jobUrl, "messenger"))}`,
+    };
+
     return (
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-label="Share Job"
             >
-                <FcShare className="text-2xl" />
+                <FcShare className="text-2xl md:text-3xl" />
             </button>
 
             <Modal
-                width="max-w-md" // Swapped to md for a tighter, cleaner share UI
+                width="max-w-[95vw] md:max-w-md" 
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title="Share Job Posting"
             >
-                <div className="flex flex-col gap-6 py-4">
-                    {/* Social Share Icon Buttons */}
-                    <div className="flex justify-center gap-4">
+                <div className="flex flex-col gap-6 py-2 md:py-4">
+                    
+                    {/* Social Share Icon Grid - Responsive wrap */}
+                    <div className="grid grid-cols-3 sm:flex sm:justify-center gap-3 md:gap-4 px-2">
                         <a
                             href={shareLinks.linkedin}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-4 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 hover:scale-105 transition-all"
+                            className="flex flex-col items-center justify-center p-3 md:p-4 bg-blue-50 text-blue-700 rounded-2xl md:rounded-full hover:bg-blue-100 transition-all active:scale-95"
                             aria-label="Share on LinkedIn"
                         >
-                            <FaLinkedin className="text-2xl" />
+                            <FaLinkedin className="text-xl md:text-2xl" />
                         </a>
                         <a
                             href={shareLinks.twitter}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-4 bg-sky-50 text-sky-500 rounded-full hover:bg-sky-100 hover:scale-105 transition-all"
+                            className="flex flex-col items-center justify-center p-3 md:p-4 bg-sky-50 text-sky-500 rounded-2xl md:rounded-full hover:bg-sky-100 transition-all active:scale-95"
                             aria-label="Share on Twitter"
                         >
-                            <FaTwitter className="text-2xl" />
+                            <FaTwitter className="text-xl md:text-2xl" />
                         </a>
                         <a
                             href={shareLinks.facebook}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-4 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 hover:scale-105 transition-all"
+                            className="flex flex-col items-center justify-center p-3 md:p-4 bg-blue-50 text-blue-600 rounded-2xl md:rounded-full hover:bg-blue-100 transition-all active:scale-95"
                             aria-label="Share on Facebook"
                         >
-                            <FaFacebook className="text-2xl" />
+                            <FaFacebook className="text-xl md:text-2xl" />
                         </a>
                         <a
                             href={shareLinks.email}
-                            className="p-4 bg-gray-50 text-gray-600 rounded-full hover:bg-gray-200 hover:scale-105 transition-all"
+                            className="flex flex-col items-center justify-center p-3 md:p-4 bg-gray-50 text-gray-600 rounded-2xl md:rounded-full hover:bg-gray-200 transition-all active:scale-95"
                             aria-label="Share via Email"
                         >
-                            <FaEnvelope className="text-2xl" />
+                            <FaEnvelope className="text-xl md:text-2xl" />
                         </a>
+                        {/* Messenger often needs more space, so it handles the 5th spot or wraps */}
                         <a
                             href={shareLinks.messenger}
-                            className="p-4 bg-blue-50 text-blue-500 rounded-full hover:bg-blue-100 hover:scale-105 transition-all"
+                            className="flex flex-col items-center justify-center p-3 md:p-4 bg-blue-50 text-blue-500 rounded-2xl md:rounded-full hover:bg-blue-100 transition-all active:scale-95 col-span-1"
                             aria-label="Share on Messenger"
                         >
-                            <FaFacebookMessenger className="text-2xl" />
+                            <FaFacebookMessenger className="text-xl md:text-2xl" />
                         </a>
                     </div>
 
                     {/* Divider */}
-                    <div className="relative flex items-center">
+                    <div className="relative flex items-center px-2">
                         <div className="flex-grow border-t border-gray-200"></div>
-                        <span className="flex-shrink-0 px-4 text-sm text-gray-500 font-medium">
+                        <span className="flex-shrink-0 px-4 text-xs md:text-sm text-gray-400 font-medium uppercase tracking-wider">
                             or copy link
                         </span>
                         <div className="flex-grow border-t border-gray-200"></div>
                     </div>
 
-                    {/* Copy Link Input Bar */}
-                    <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-200 focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 transition-all">
-                        <FaLink className="text-gray-400 ml-2" />
-                        <input
-                            type="text"
-                            readOnly
-                            value={jobUrl}
-                            className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-600 px-2 outline-none truncate"
-                        />
+                    {/* Copy Link Input Bar - Responsive Layout */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-gray-50 p-1.5 md:p-2 rounded-xl border border-gray-200 focus-within:border-blue-400 transition-all mx-2">
+                        <div className="flex items-center flex-1 min-w-0 px-2 py-2 sm:py-0">
+                            <FaLink className="text-gray-400 flex-shrink-0" />
+                            <input
+                                type="text"
+                                readOnly
+                                value={jobUrl}
+                                className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-600 px-2 outline-none truncate"
+                            />
+                        </div>
                         <button
                             onClick={handleCopyLink}
-                            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                            className={`px-6 py-2.5 sm:py-2 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
                                 copied
-                                    ? "bg-green-600 hover:bg-green-700 text-white"
-                                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                                    ? "bg-green-600 text-white"
+                                    : "bg-blue-600 hover:bg-blue-700 text-white active:bg-blue-800"
                             }`}
                         >
                             {copied ? (
@@ -128,7 +148,7 @@ export default function ShareJobSection({ data }) {
                                     <FaCheck /> Copied
                                 </>
                             ) : (
-                                "Copy"
+                                "Copy Link"
                             )}
                         </button>
                     </div>
