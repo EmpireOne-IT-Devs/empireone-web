@@ -15,24 +15,23 @@ export default function MarkCompleteSection({ isOpen, onClose }) {
 
     return (
         <div>
-            <Modal width="max-w-3xl" isOpen={isOpen} onClose={onClose}>
-                <div className="flex justify-between items-start border-b pb-4">
-                    <div>
-                        <h3 className="text-2xl font-bold">
-                            Interview Feedback
-                        </h3>
-                        <div className="text-lg text-gray-600 mt-1">
-                            {applicant.name} – {applicant.position}
-                        </div>
-                    </div>
+            <Modal
+                width="max-w-3xl"
+                isOpen={isOpen}
+                onClose={onClose}
+                title="Interview Feedback"
+            >
+                <div className="text-lg text-gray-600 mt-1 border-b pb-4">
+                    {applicant.name} – {applicant.position}
                 </div>
 
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
                     }}
+                    className="p-2"
                 >
-                    <div className="mt-6">
+                    <div className="mt-6 p">
                         <div className="font-medium text-gray-700 mb-3">
                             Overall Rating *
                         </div>
@@ -122,27 +121,26 @@ export default function MarkCompleteSection({ isOpen, onClose }) {
                             className="w-full h-24 px-3 py-3 text-sm leading-normal border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                         />
                     </div>
-
-                    <div className="mt-8 border-t pt-4">
-                        <div className="flex justify-end gap-2">
-                            <Button
-                                variant="secondary"
-                                outlined
-                                type="button"
-                                className="h-11 inline-flex items-center gap-2 px-4 min-w-[350px]"
-                                onClick={() => setOpen(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                type="submit"
-                                className="h-11 inline-flex items-center gap-2 px-4 min-w-[350px]"
-                            >
-                                Submit Feedback
-                            </Button>
-                        </div>
-                    </div>
                 </form>
+                <div className="mt-8 border-t pt-4">
+                    <div className="flex justify-end gap-2">
+                        <Button
+                            variant="secondary"
+                            outlined
+                            type="button"
+                            className="h-11 inline-flex items-center gap-2 px-4 min-w-[350px]"
+                            onClick={() => setOpen(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            className="h-11 inline-flex items-center gap-2 px-4 min-w-[350px]"
+                        >
+                            Submit Feedback
+                        </Button>
+                    </div>
+                </div>
             </Modal>
         </div>
     );

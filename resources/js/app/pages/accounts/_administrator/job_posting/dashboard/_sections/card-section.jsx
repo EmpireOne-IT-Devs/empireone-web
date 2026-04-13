@@ -7,8 +7,8 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 export default function CardSection() {
     return (
-        <div className="flex gap-3 w-full">
-            <Card className="w-full flex-col gap-3 ">
+        <div className="flex flex-col md:flex-row gap-3 w-full">
+            <Card className="w-full md:w-1/4 flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-blue-600 p-3 rounded-xl w-16">
                         <FiBriefcase className="inline-block mr-2 text-4xl text-white" />
@@ -21,7 +21,7 @@ export default function CardSection() {
                     <div className="text-green-500 mt-2">+ 2 this week</div>
                 </div>
             </Card>
-            <Card className="w-full flex-col gap-3">
+            <Card className="w-full md:w-1/4 flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-green-600 p-3 rounded-xl w-16">
                         <LuUsers className="inline-block mr-2 text-4xl text-white" />
@@ -34,7 +34,7 @@ export default function CardSection() {
                     <div className="text-green-500 mt-2">+ 18% this week</div>
                 </div>
             </Card>
-            <Card className="w-full flex-col gap-3">
+            <Card className="w-full md:w-1/4 flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-purple-700 p-3 rounded-xl w-16">
                         <CalendarIcon className="inline-block mr-2 text-4xl text-white" />
@@ -47,7 +47,7 @@ export default function CardSection() {
                     <div className="text-green-500 mt-2">8 this week</div>
                 </div>
             </Card>
-            <Card className="w-full flex-col gap-3">
+            <Card className="w-full md:w-1/4 flex-col gap-3">
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-orange-600 p-3 rounded-xl w-16">
                         <CheckCircleIcon className="inline-block mr-2 text-4xl text-white" />

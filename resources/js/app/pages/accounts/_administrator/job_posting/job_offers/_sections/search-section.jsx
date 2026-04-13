@@ -1,7 +1,7 @@
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
-import { router, usePage } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { TbSearch } from "react-icons/tb";
@@ -17,6 +17,7 @@ export default function SearchSection() {
         },
     });
     const watchedValues = watch();
+
     const onSubmit = (data) => {
         const query = new URLSearchParams(data).toString();
         router.visit(`/administrator/job_posting/job_offers?${query}`);
@@ -25,9 +26,9 @@ export default function SearchSection() {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="bg-white shadow-sm p-5 border-2 rounded-2xl flex gap-2 my-3"
+            className="bg-white shadow-sm p-4 sm:p-5 border-2 rounded-2xl flex flex-col sm:flex-row gap-2 my-3"
         >
-            <div className="flex-1">
+            <div className="w-full sm:flex-1">
                 <Input
                     iconLeft={<TbSearch className="text-xl" />}
                     label="Search applicants..."
@@ -35,7 +36,7 @@ export default function SearchSection() {
                 />
             </div>
 
-            <div>
+            <div className="w-full sm:w-auto">
                 <Select
                     label="All Role"
                     options={[
@@ -49,7 +50,7 @@ export default function SearchSection() {
                 />
             </div>
 
-            <div>
+            <div className="w-full sm:w-auto">
                 <Select
                     label="All Status"
                     options={[
@@ -64,8 +65,8 @@ export default function SearchSection() {
                 />
             </div>
 
-            <div className="flex items-end">
-                <Button type="submit">Search</Button>
+            <div className="flex items-end w-full sm:w-auto">
+                <Button type="submit" className="w-full sm:w-auto">Search</Button>
             </div>
         </form>
     );

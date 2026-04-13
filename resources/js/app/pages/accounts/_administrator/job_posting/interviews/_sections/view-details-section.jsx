@@ -41,19 +41,19 @@ export default function ViewDetailSection({ isOpen, onClose }) {
 
     return (
         <div>
-            <Modal 
-            width="max-w-3xl" 
-            isOpen={isOpen} 
-            onClose={onClose}>
-
-                <div className="flex flex-col items-start border-b pb-4 gap-1">
-                    <h3 className="text-2xl font-bold">Interview Details</h3>
-                    <div className="text-lg text-gray-600">
-                        {applicant.name}
-                    </div>
+            <Modal
+                width="max-w-3xl"
+                isOpen={isOpen}
+                onClose={onClose}
+                title="Interview Details"
+            >
+                {/* Subtitle */}
+                <div className="text-base sm:text-lg text-gray-600 border-b pb-2">
+                    {applicant.name}
                 </div>
 
-                <div className="flex flex-col items-start gap-1 mt-6">
+                {/* Status */}
+                <div className="flex flex-col items-start gap-1 mt-5 sm:mt-6">
                     <span className="text-sm font-medium text-black">
                         Status
                     </span>
@@ -62,14 +62,15 @@ export default function ViewDetailSection({ isOpen, onClose }) {
                     </span>
                 </div>
 
-                <div className="mt-6">
-                    <div className="text-black  mb-4">
+                {/* Candidate Information */}
+                <div className="mt-5 sm:mt-6">
+                    <div className="text-black font-medium mb-3 sm:mb-4">
                         Candidate Information
                     </div>
 
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-6">
                         <div className="flex items-start gap-3">
-                            <LuUser className="w-5 h-5 text-gray-400 mt-1" />
+                            <LuUser className="w-5 h-5 text-gray-400 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm text-gray-600">
                                     Name
@@ -81,19 +82,19 @@ export default function ViewDetailSection({ isOpen, onClose }) {
                         </div>
 
                         <div className="flex items-start gap-3">
-                            <FiMail className="w-5 h-5 text-gray-400 mt-1" />
+                            <FiMail className="w-5 h-5 text-gray-400 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm text-gray-600">
                                     Email
                                 </span>
-                                <span className="text-gray-800">
+                                <span className="text-gray-800 break-all">
                                     {applicant.email}
                                 </span>
                             </div>
                         </div>
 
                         <div className="flex items-start gap-3">
-                            <PhoneIcon className="w-5 h-5 text-gray-400 mt-1" />
+                            <PhoneIcon className="w-5 h-5 text-gray-400 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm text-gray-600">
                                     Phone
@@ -105,7 +106,7 @@ export default function ViewDetailSection({ isOpen, onClose }) {
                         </div>
 
                         <div className="flex items-start gap-3">
-                            <FiBriefcase className="w-5 h-5 text-gray-400 mt-1" />
+                            <FiBriefcase className="w-5 h-5 text-gray-400 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm text-gray-600">
                                     Position
@@ -118,38 +119,27 @@ export default function ViewDetailSection({ isOpen, onClose }) {
                     </div>
                 </div>
 
-                <div className="mt-8">
-                    <div className="text-black  mb-4">Interview Schedule</div>
+                {/* Interview Schedule */}
+                <div className="mt-6 sm:mt-8">
+                    <div className="text-black font-medium mb-3 sm:mb-4">
+                        Interview Schedule
+                    </div>
 
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-                        <div className="flex flex-col gap-6">
-                            <div className="flex items-start gap-3">
-                                <LuUser className="w-5 h-5 text-gray-400 mt-1" />
-                                <div className="flex flex-col gap-0.5">
-                                    <span className="text-sm text-gray-600">
-                                        Type
-                                    </span>
-                                    <span className="text-gray-800">
-                                        {applicant.type}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3">
-                                <FiVideo className="w-5 h-5 text-gray-400 mt-1" />
-                                <div className="flex flex-col gap-0.5">
-                                    <span className="text-sm text-gray-600">
-                                        Meeting Link
-                                    </span>
-                                    <span className="text-blue-600 underline break-all">
-                                        {applicant.meetingLink}
-                                    </span>
-                                </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-6">
+                        <div className="flex items-start gap-3">
+                            <LuUser className="w-5 h-5 text-gray-400 mt-1 shrink-0" />
+                            <div className="flex flex-col gap-0.5">
+                                <span className="text-sm text-gray-600">
+                                    Type
+                                </span>
+                                <span className="text-gray-800">
+                                    {applicant.type}
+                                </span>
                             </div>
                         </div>
 
                         <div className="flex items-start gap-3">
-                            <CalendarIcon className="w-5 h-5 text-gray-400 mt-1" />
+                            <CalendarIcon className="w-5 h-5 text-gray-400 mt-1 shrink-0" />
                             <div className="flex flex-col gap-0.5">
                                 <span className="text-sm text-gray-600">
                                     Date & Time
@@ -159,55 +149,68 @@ export default function ViewDetailSection({ isOpen, onClose }) {
                                 </span>
                             </div>
                         </div>
+
+                        <div className="flex items-start gap-3 sm:col-span-2">
+                            <FiVideo className="w-5 h-5 text-gray-400 mt-1 shrink-0" />
+                            <div className="flex flex-col gap-0.5 min-w-0">
+                                <span className="text-sm text-gray-600">
+                                    Meeting Link
+                                </span>
+                                <span className="text-blue-600 underline break-all">
+                                    {applicant.meetingLink}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="mt-8">
-                    <div className="text-black  mb-3">Notes</div>
-                    <div className="bg-gray-50 rounded-lg px-4 py-3 text-black">
+                {/* Notes */}
+                <div className="mt-6 sm:mt-8">
+                    <div className="text-black font-medium mb-3">Notes</div>
+                    <div className="bg-gray-50 rounded-lg px-4 py-3 text-black text-sm sm:text-base">
                         {applicant.coverLetter}
                     </div>
                 </div>
 
-                <div className="mt-8 border-t pt-4">
-                    <div className="flex justify-end gap-1">
-                        <Button
-                            variant="secondary"
-                            type="button"
-                            outlined
-                            className="h-11 inline-flex items-center gap-2 px-6 min-w-[300px]"
-                            onClick={() => {
-                                setOpen(false);
-                                setOpenReschedule(true);
-                            }}
-                        >
-                            <FiClock className="w-5 h-5" />
-                            <span>Reschedule</span>
-                        </Button>
-
+                {/* Action Buttons */}
+                <div className="mt-6 sm:mt-8 border-t pt-4">
+                    <div className="flex flex-col sm:flex-row sm:justify-end gap-2">
                         <Button
                             variant="primary"
                             type="button"
-                            className="h-11 inline-flex items-center gap-2 px-4"
+                            className="h-11 inline-flex items-center justify-center gap-2 px-4 w-full sm:w-auto"
                             onClick={() => {
                                 setOpen(false);
                                 setOpenMarkComplete(true);
                             }}
                         >
-                            <CheckCircleIcon className="w-5 h-5" />
+                            <CheckCircleIcon className="w-5 h-5 shrink-0" />
                             <span>Mark Completed & Add Feedback</span>
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            type="button"
+                            outlined
+                            className="h-11 inline-flex items-center justify-center gap-2 px-4 w-full sm:w-auto"
+                            onClick={() => {
+                                setOpen(false);
+                                setOpenReschedule(true);
+                            }}
+                        >
+                            <FiClock className="w-5 h-5 shrink-0" />
+                            <span>Reschedule</span>
                         </Button>
 
                         <Button
                             variant="danger"
                             type="button"
-                            className="h-11 inline-flex items-center gap-2 px-4"
+                            className="h-11 inline-flex items-center justify-center gap-2 px-4 w-full sm:w-auto"
                             onClick={() => {
                                 setOpen(false);
                                 setOpenCancel(true);
                             }}
                         >
-                            <XCircleIcon className="w-5 h-5" />
+                            <XCircleIcon className="w-5 h-5 shrink-0" />
                             <span>Cancel</span>
                         </Button>
                     </div>

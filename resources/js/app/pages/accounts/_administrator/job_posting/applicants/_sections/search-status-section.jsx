@@ -3,11 +3,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const StatusSelect = ({ label, value, options, onChange }) => (
-    <div className="relative min-w-[180px]">
+    <div className="relative w-full sm:min-w-[160px] sm:w-auto">
         <label className="absolute -top-2 left-2 bg-white px-1 text-[11px] font-medium text-blue-600 z-10">
             {label}
         </label>
-
         <div className="relative">
             <select
                 value={value || "All"}
@@ -68,8 +67,8 @@ export default function SearchStatusSection() {
     };
 
     return (
-        <div className="p-6 border-b border-gray-100 flex justify-end items-center bg-white">
-            <div className="flex flex-wrap gap-4">
+        <div className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-4">
                 <StatusSelect
                     label="Screening Status"
                     value={search_applicant_status.screening_status}
@@ -78,7 +77,6 @@ export default function SearchStatusSection() {
                         handleStatusChange("screening_status", e.target.value)
                     }
                 />
-
                 <StatusSelect
                     label="Interview Status"
                     value={search_applicant_status.interview_status}
@@ -87,7 +85,6 @@ export default function SearchStatusSection() {
                         handleStatusChange("interview_status", e.target.value)
                     }
                 />
-
                 <StatusSelect
                     label="Final Status"
                     value={search_applicant_status.final_status}
