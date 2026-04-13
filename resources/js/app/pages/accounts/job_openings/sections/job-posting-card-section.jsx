@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TbMapPin, TbTag, TbUser, TbUsers } from "react-icons/tb";
 import Badge from "@/app/_components/badge";
 import ViewJobPostingDetailsSection from "./view-job-posting-section";
+import ShareJobSection from "./share-job-section";
 
 export default function JobPostingCardSection() {
     const { job_postings, loading } = useSelector(
@@ -31,30 +32,33 @@ export default function JobPostingCardSection() {
         <>
             <div className="flex flex-col gap-3">
                 {job_postings.map((job) => (
-                    <ViewJobPostingDetailsSection data={job} key={job.id}>
-                        <Card className="border rounded-xl p-6">
+                    <Card className="border rounded-xl p-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <h3 className="text-lg font-semibold">
+                                    {job?.job_requisition?.title}
+                                </h3>
+                                <Badge
+                                    showDot={false}
+                                    className="rounded-md"
+                                    variant={
+                                        job.status === "Active"
+                                            ? "success"
+                                            : job.status === "Draft"
+                                              ? "warning"
+                                              : job.status === "Closed"
+                                                ? "primary"
+                                                : "default"
+                                    }
+                                    label={job.status}
+                                />
+                            </div>
+                            <div>
+                                <ShareJobSection data={job} />
+                            </div>
+                        </div>
+                        <ViewJobPostingDetailsSection data={job} key={job.id}>
                             <div className="flex flex-col gap-3">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <h3 className="text-lg font-semibold">
-                                            {job?.job_requisition?.title}
-                                        </h3>
-                                        <Badge
-                                            showDot={false}
-                                            className="rounded-md"
-                                            variant={
-                                                job.status === "Active"
-                                                    ? "success"
-                                                    : job.status === "Draft"
-                                                      ? "warning"
-                                                      : job.status === "Closed"
-                                                        ? "primary"
-                                                        : "default"
-                                            }
-                                            label={job.status}
-                                        />
-                                    </div>
-                                </div>
                                 <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
                                     <div className="flex items-center gap-2">
                                         <TbTag />{" "}
@@ -94,8 +98,8 @@ export default function JobPostingCardSection() {
                                     </div>
                                 </div>
                             </div>
-                        </Card>
-                    </ViewJobPostingDetailsSection>
+                        </ViewJobPostingDetailsSection>
+                    </Card>
                 ))}
             </div>
         </>

@@ -96,7 +96,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                 onClose={() => setOpen(false)}
                 title={`Position: ${data?.job_requisition?.title}`}
             >
-                <div className="flex flex-col max-h-[80vh] overflow-y-auto ">
+                <div className="flex flex-col max-h-[75vh] overflow-y-auto ">
                     <div className="mb-6 gap-2 flex items-center">
                         <Badge
                             showDot={false}

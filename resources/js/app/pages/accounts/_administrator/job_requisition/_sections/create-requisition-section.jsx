@@ -195,7 +195,7 @@ export default function CreateJobRequisition() {
             >
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col max-h-[80vh]"
+                    className="flex flex-col max-h-[75vh]"
                 >
                     <div className="flex-1 overflow-y-auto space-y-6 pr-2">
                         <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-300">

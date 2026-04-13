@@ -81,7 +81,7 @@ export default function CreateJobPostingSection({ initial_data }) {
             >
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col max-h-[80vh]"
+                    className="flex flex-col max-h-[75vh]"
                 >
                     <div className="flex-1 overflow-y-auto space-y-6 pr-2 px-3">
 

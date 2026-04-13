@@ -12,7 +12,7 @@ import UploadCvSection from "./upload-cv-section";
 import FinalReviewSection from "./final-review-section";
 import file_convert_blob from "@/app/lib/file-convert-blob";
 import { apply_job_application_service } from "@/app/services/job-application-service";
-import { setAlert } from "@/app/redux/app-slice";
+import { setAlert, setJobPostingId } from "@/app/redux/app-slice";
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
@@ -27,6 +27,9 @@ const TalentFormSection = () => {
     const [loading, setLoading] = useState(false);
     const referral_id = new URLSearchParams(window.location.search).get(
         "referral_id",
+    );
+    const job_post_id = new URLSearchParams(window.location.search).get(
+        "job_posting_id",
     );
     const source = new URLSearchParams(window.location.search).get("source");
     const {
@@ -100,6 +103,13 @@ const TalentFormSection = () => {
         localStorage.setItem("talent_step", step);
     }, [step]);
 
+    useEffect(() => {
+        if (job_post_id && step <= 0) {
+            dispatch(setJobPostingId(job_post_id));
+            setStep(1);
+        }
+    }, [step]);
+
     const getName = (list, code) =>
         list.find((item) => item.code === code)?.name || code;
 
@@ -144,7 +154,7 @@ const TalentFormSection = () => {
         const finalData = {
             ...data,
             referral_id: referral_id,
-            source:source,
+            source: source,
             region: getName(regions, data.region),
             province: getName(provinces, data.province),
             city: getName(cities, data.city),
