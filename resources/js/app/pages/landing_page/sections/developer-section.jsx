@@ -223,23 +223,36 @@ export default function DeveloperSection() {
     useGlobalStyles();
 
     return (
+        // ✅ colorScheme: "dark" forces this section to always render in dark mode
+        // regardless of the user's system or browser preference.
         <section
-            className="py-16 px-10 min-h-10 font-['Montserrat'] bg-gradient-to-bl from-purple-400/100 via-blue-400/50 to-transparent"
-           
+            className="py-16 px-10 min-h-10 font-['Montserrat']"
+            style={{
+                colorScheme: "dark",
+                background: "linear-gradient(to bottom left, #c084fc, rgba(96,165,250,0.5), transparent)",
+                backgroundColor: "#0f172a",
+            }}
         >
             {/* Section header */}
             <div className="text-center mb-12">
-                <p className="mb-2.5 text-[11px] font-black tracking-[0.18em] uppercase animate-[ds-fadeDown_0.6s_ease_both]"
-                    style={{ color: "rgba(255,255,255,0.75)" }}>
+                <p
+                    className="mb-2.5 text-[11px] font-black tracking-[0.18em] uppercase animate-[ds-fadeDown_0.6s_ease_both]"
+                    style={{ color: "rgba(255,255,255,0.75)" }}
+                >
                     Developer Team
                 </p>
 
-                <h2 className="m-0 mb-4 font-black text-[clamp(26px,4vw,42px)] leading-[1.15] animate-[ds-fadeDown_0.65s_ease_0.1s_both]  ">
+                <h2
+                    className="m-0 mb-4 font-black text-[clamp(26px,4vw,42px)] leading-[1.15] animate-[ds-fadeDown_0.65s_ease_0.1s_both]"
+                    style={{ color: "#ffffff" }}
+                >
                     Meet the people behind the unified system
                 </h2>
 
-                <p className="mx-auto font-normal text-sm max-w-[500px] leading-relaxed animate-[ds-fadeIn_0.7s_ease_0.25s_both]"
-                    style={{ color: "rgba(255,255,255,0.7)" }}>
+                <p
+                    className="mx-auto font-normal text-sm max-w-[500px] leading-relaxed animate-[ds-fadeIn_0.7s_ease_0.25s_both]"
+                    style={{ color: "rgba(255,255,255,0.7)" }}
+                >
                     A diverse team of specialists who bring deep expertise
                     across the full development lifecycle.
                 </p>
