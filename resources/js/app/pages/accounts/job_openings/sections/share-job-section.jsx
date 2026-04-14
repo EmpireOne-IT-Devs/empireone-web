@@ -91,6 +91,9 @@ export default function ShareJobSection({ data }) {
 
                 <div className="flex flex-col gap-6 py-2 md:py-4 ">
                     {/* Social Share Icon Grid - Responsive wrap */}
+                    <p className=" ml-4 text-[10px] font-semibold tracking-[0.1em] uppercase text-gray-400 font-mono">
+                        Share via
+                    </p>
                     <div className="grid grid-cols-3 sm:flex sm:justify-center gap-3 md:gap-4 px-2">
                         <a
                             href={shareLinks.linkedin}
