@@ -9,14 +9,17 @@ import {
     FaLink,
     FaCheck,
     FaFacebookMessenger,
+    FaBriefcase,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { Gmail } from "@thesvg/react";
+import { MailIcon } from "lucide-react";
 
 export default function ShareJobSection({ data }) {
     const [open, setOpen] = useState(false);
     const [copied, setCopied] = useState(false);
     const { data: account } = useSelector((store) => store.app);
-    
+
     // Safety check for window object in SSR
     const host = typeof window !== "undefined" ? window.location.host : "";
     const jobUrl = `${host}/talent/application?job_posting_id=${data.id}&referral_id=${btoa(account?.user?.id?.toString() || "")}`;
@@ -24,7 +27,9 @@ export default function ShareJobSection({ data }) {
 
     const getTrackedUrl = (url, sourceName) => {
         try {
-            const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+            const urlObj = new URL(
+                url.startsWith("http") ? url : `https://${url}`,
+            );
             urlObj.searchParams.set("source", sourceName);
             return urlObj.toString();
         } catch (e) {
@@ -62,13 +67,29 @@ export default function ShareJobSection({ data }) {
             </button>
 
             <Modal
-                width="max-w-[95vw] md:max-w-md" 
+                width="max-w-[95vw] md:max-w-md"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="Share Job Posting"
+                title={
+                    <div className="flex items-center gap-3 ">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <FaBriefcase />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-blue-700 font-mono">
+                                Share this role
+                            </p>
+                            <h2 className="text-[15px] font-bold text-gray-900 leading-tight ">
+                                {jobTitle}
+                                <br />
+                            </h2>
+                        </div>
+                    </div>
+                }
             >
-                <div className="flex flex-col gap-6 py-2 md:py-4">
-                    
+                <div className="border-t border-gray-200 "></div>
+
+                <div className="flex flex-col gap-6 py-2 md:py-4 ">
                     {/* Social Share Icon Grid - Responsive wrap */}
                     <div className="grid grid-cols-3 sm:flex sm:justify-center gap-3 md:gap-4 px-2">
                         <a
@@ -100,10 +121,10 @@ export default function ShareJobSection({ data }) {
                         </a>
                         <a
                             href={shareLinks.email}
-                            className="flex flex-col items-center justify-center p-3 md:p-4 bg-gray-50 text-gray-600 rounded-2xl md:rounded-full hover:bg-gray-200 transition-all active:scale-95"
+                            className="flex flex-col items-center justify-center p-3 md:p-4 bg-blue-50 text-blue-600 rounded-2xl md:rounded-full hover:bg-blue-200 transition-all active:scale-95"
                             aria-label="Share via Email"
                         >
-                            <FaEnvelope className="text-xl md:text-2xl" />
+                            <Gmail className="h-6 w-6 " />
                         </a>
                         {/* Messenger often needs more space, so it handles the 5th spot or wraps */}
                         <a
@@ -151,6 +172,13 @@ export default function ShareJobSection({ data }) {
                                 "Copy Link"
                             )}
                         </button>
+                    </div>
+                    <div className="flex items-center gap-2 border-t border-gray-200 pt-2 mx-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                        <p className="text-[11px] text-gray-500 leading-snug">
+                            Referral link — you'll get credit when someone
+                            applies through this link
+                        </p>
                     </div>
                 </div>
             </Modal>

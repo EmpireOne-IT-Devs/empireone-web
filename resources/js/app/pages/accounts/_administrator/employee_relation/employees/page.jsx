@@ -16,7 +16,7 @@ export default function Page() {
             <EmployeesLayout>
                 <SearchSection />
                 <div className="flex flex-col gap-3">
-                    <PaginationSection />
+                    {/* <PaginationSection /> */}
                     <TableSection />
                     <PaginationSection />
                 </div>
