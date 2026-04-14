@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountAccess;
 use App\Models\Account\AccountEmployee;
 use App\Models\Jobs\JobPosition;
 use App\Models\Jobs\JobRequisition;
@@ -26,38 +27,48 @@ class JobRequisitionController extends Controller
     {
 
         $auth = Auth::user()->load(['account_employee']);
-        $jr = JobRequisition::findOrFail($request->id);
-
-        // Define transition logic: [Current Status => [Next Status, Target Position]]
+        $jobRequisition = JobRequisition::findOrFail($request->id);
         $transitions = [
-            'Pending'     => ['In Progress', 'Talent Acquisition Manager'],
+            'Pending'     => ['In Progress', 2],
             'In Progress' => ['Approved',    'Recruitment Staff'],
         ];
 
         if (isset($transitions[$request->status])) {
-            [$nextStatus, $targetPosition] = $transitions[$request->status];
-            $approver = AccountEmployee::where('site_id', $auth['account_employee']->site_id)
-                ->where('position', $targetPosition)
-                ->whereNotNull('eogs_email')
-                ->first();
-            if ($approver) {
-                $approver->notify(new JobRequisitionNotification($jr));
+            [$nextStatus, $order] = $transitions[$request->status];
+            if ($order == 2) {
+                $account = AccountAccess::where([
+                    ['order', '=', $order],
+                    ['type', '=', 'Job Requisition Approval']
+                ])->whereHas('user.account_employee', function ($query) use ($auth) {
+                    $query->where('location_id', $auth['account_employee']->location_id);
+                })->with(['user'])->first();
+
+                if ($account->user['account_employee'] && $account->user['account_employee']['eogs_email']) {
+                    $account->user['account_employee']->notify(new JobRequisitionNotification($jobRequisition));
+                }
+            } else {
+                if ($request->recruiter_id) {
+                    $account_employee = AccountEmployee::where('user_id', $request->recruiter_id)->first();
+                    if ($account_employee) {
+                        $jobRequisition->update(['recruiter_id' => $request->recruiter_id]);
+                        $account_employee->notify(new JobRequisitionNotification($jobRequisition));
+                    }
+                }
             }
 
-            $jr->update(['status' => $nextStatus]);
-
+            $jobRequisition->update(['status' => $nextStatus]);
             JobRequisitionLog::create([
                 'job_requisitions_id' => $request->id,
                 'user_id' => $auth->id,
-                'notes' => "The " . $jr->title . ' position is ' . $nextStatus,
+                'notes' => "The " . $jobRequisition->title . ' position is ' . $nextStatus,
             ]);
         } else {
-            $jr->update(['status' => 'Declined']);
+            $jobRequisition->update(['status' => 'Declined']);
 
             JobRequisitionLog::create([
                 'job_requisitions_id' => $request->id,
                 'user_id' => $auth->id,
-                'notes' => "The " . $jr->title . ' position is Declined',
+                'notes' => "The " . $jobRequisition->title . ' position is Declined',
             ]);
         }
 
@@ -79,7 +90,7 @@ class JobRequisitionController extends Controller
         ];
 
         // 2. Build the query for the table (Filtered Data)
-        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting','account'])
+        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting', 'account'])
             ->when($search, function ($q) use ($search) {
                 // Use a nested where to group the 'OR' logic
                 $q->where(function ($subQuery) use ($search) {
@@ -96,15 +107,17 @@ class JobRequisitionController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $search_job_requisition = JobRequisition::where([
-            ['type', '=', 'New Position'],
-            ['status', '=', 'Approved'],
-        ])->get();
+        $users = User::where('role', 1)->get();
+        $access = AccountAccess::where('type', 'Job Requisition Approval')->get();
 
         return response()->json([
             'status' => 'success',
             'stats'  => $stats,
             'data'   => $jobRequisitions,
+            'users' => [
+                'users' => $users,
+                'access' => $access
+            ]
         ]);
     }
     public function store(Request $request)
@@ -115,18 +128,20 @@ class JobRequisitionController extends Controller
             'user_id' =>  $auth->id,
         ]);
 
-        $approver = AccountEmployee::where([
-            ['site_id', '=', $auth['account_employee']->site_id],
-            ['position', '=', 'Site Director'],
-        ])->first();
+        $account = AccountAccess::where([
+            ['order', '=', 1],
+            ['type', '=', 'Job Requisition Approval']
+        ])->whereHas('user.account_employee', function ($query) use ($auth) {
+            $query->where('location_id', $auth['account_employee']->location_id);
+        })->with(['user'])->first();
 
         JobPosition::firstOrCreate(
             ['title' => $request->title],
             ['department_id' => $request->department_id]
         );
 
-        if ($approver && $approver->eogs_email) {
-            $approver->notify(new JobRequisitionNotification($jobRequisition));
+        if ($account->user['account_employee'] && $account->user['account_employee']['eogs_email']) {
+            $account->user['account_employee']->notify(new JobRequisitionNotification($jobRequisition));
         }
         return response()->json([
             'status' => 'success',

@@ -22,17 +22,17 @@ export default function JobPostingLayout({ children }) {
             path: "/accounts/administrator/job_posting/applicants",
             active: path === "applicants",
         },
-          {
+        {
             label: "Job Offers",
             path: "/accounts/administrator/job_posting/job_offers",
             active: path === "job_offers",
         },
+        // {
+        //     label: "Interviews",
+        //     path: "/accounts/administrator/job_posting/interviews",
+        //     active: path === "interviews",
+        // },
         {
-            label: "Interviews",
-            path: "/accounts/administrator/job_posting/interviews",
-            active: path === "interviews",
-        },
-          {
             label: "QR Codes",
             path: "/accounts/administrator/job_posting/qr_code",
             active: path === "qr_code",

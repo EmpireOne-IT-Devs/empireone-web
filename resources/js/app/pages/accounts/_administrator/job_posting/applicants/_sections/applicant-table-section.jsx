@@ -27,21 +27,17 @@ export default function ApplicantTableSection() {
             accessor: "name",
         },
         {
-            header: "Email",
-            accessor: "email",
+            header: "Position",
+            accessor: "position",
         },
         {
-            header: "Contact #",
-            accessor: "contact",
+            header: "Recruiter",
+            accessor: "recruiter",
         },
         // {
-        //     header: "Position",
-        //     accessor: "position",
+        //     header: "Applied At",
+        //     accessor: "applied_at",
         // },
-        {
-            header: "Applied At",
-            accessor: "applied_at",
-        },
         {
             header: "Screening Status",
             accessor: "screening_status",
@@ -79,9 +75,8 @@ export default function ApplicantTableSection() {
 
     const tableData = filteredApplications?.map((res) => ({
         name: res?.applicant?.name,
-        email: res?.applicant?.email,
-        // position: res?.job_posting?.job_requisition?.title,
-        contact: res?.applicant?.personal_information?.contact,
+        position: res?.job_posting?.job_requisition?.title,
+        recruiter:  res?.job_posting?.job_requisition?.recruiter?.name,
         applied_at: moment(res.created_at).format("LLL"),
         screening_status: (
             <EditStatusSection data={res} table_status="screening_status" />

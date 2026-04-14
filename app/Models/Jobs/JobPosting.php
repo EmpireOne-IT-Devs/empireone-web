@@ -24,7 +24,7 @@ class JobPosting extends Model
 
     public function job_requisition(): HasOne
     {
-        return $this->hasOne(JobRequisition::class, 'id', 'job_requisition_id')->with(['location', 'department', 'user']);
+        return $this->hasOne(JobRequisition::class, 'id', 'job_requisition_id')->with(['location', 'department', 'user','recruiter']);
     }
     public function applications(): HasMany
     {

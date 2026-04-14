@@ -9,6 +9,10 @@ export async function approve_job_requisition_service(data) {
 }
 
 
+export async function add_account_access_service(data) {
+    return await axios.post("/api/job/account_access", data);
+}
+
 export async function get_job_requisitions_service() {
     return (await axios.get(`/api/job/requisitions${window.location.search}`)).data;
 }

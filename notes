@@ -13,3 +13,12 @@ Employee Section:
 - Position
 - Update Email to EOGS
 - Employee ID 
+
+
+
+
+Account Access
+- user_id
+- order
+- type (job_requisition_approval)
+

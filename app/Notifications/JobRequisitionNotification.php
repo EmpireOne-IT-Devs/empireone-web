@@ -35,7 +35,7 @@ class JobRequisitionNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $url = url('/administrator/job_requisition?id=' . $this->jobRequisition->id);
+        $url = url('/accounts/administrator/job_requisition?id=' . $this->jobRequisition->id);
 
         return (new MailMessage)
             ->subject('Job Requisition Request')

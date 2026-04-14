@@ -19,6 +19,7 @@ class JobRequisition extends Model
         'location_id',
         'account_id',
         'site_id',
+        'recruiter_id',
         'type',
         'title',
         'employment_type',
@@ -42,6 +43,10 @@ class JobRequisition extends Model
         'number_of_positions' => 'integer',
     ];
 
+    public function recruiter(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'recruiter_id');
+    }
     public function department()
     {
         return $this->belongsTo(Department::class);

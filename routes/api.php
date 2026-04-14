@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
 use App\Http\Controllers\API\Account\AccountDocumentController;
 use App\Http\Controllers\API\Account\AccountEmployeeController as AccountAccountEmployeeController;
@@ -63,6 +64,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
+        Route::resource('account_access', AccountAccessController::class);
         Route::get('get_job_offer_by_user',  [JobOfferController::class, 'get_job_offer_by_user']);
         Route::post('submit_job_offer',  [JobOfferController::class, 'submit_job_offer']);
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);

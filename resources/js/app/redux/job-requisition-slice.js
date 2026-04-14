@@ -13,6 +13,7 @@ export const jobRequisitionSlice = createSlice({
             declined: 0,
         },
         search_job_requisition: [],
+        users:[]
     },
     reducers: {
         setJobRequisitions: (state, action) => {
@@ -27,6 +28,9 @@ export const jobRequisitionSlice = createSlice({
         setSearchJobRequisition: (state, action) => {
             state.search_job_requisition = action.payload;
         },
+        setUsers: (state, action) => {
+            state.users = action.payload;
+        },
     },
 });
 export const {
@@ -34,6 +38,7 @@ export const {
     setJobRequisition,
     setStats,
     setSearchJobRequisition,
+    setUsers
 } = jobRequisitionSlice.actions;
 
 export default jobRequisitionSlice.reducer;

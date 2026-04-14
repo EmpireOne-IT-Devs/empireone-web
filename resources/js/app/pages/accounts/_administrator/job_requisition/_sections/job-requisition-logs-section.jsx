@@ -97,11 +97,11 @@ export default function JobRequisitionLogsSection({ job_requisition }) {
             setLoading(false);
         }
     }
-    console.log('job_requisition',job_requisition)
+    console.log("job_requisition", job_requisition);
     return (
         <div className="w-full mt-12">
             <h2 className="text-2xl font-semibold text-center mb-6">
-              <TbTimeline className="inline-block text-green-700" /> Timeline
+                <TbTimeline className="inline-block text-green-700" /> Timeline
             </h2>
 
             <div className="relative">
@@ -118,14 +118,14 @@ export default function JobRequisitionLogsSection({ job_requisition }) {
                                 transition={{ delay: index * 0.1 }}
                                 className="flex items-start gap-4 cursor-pointer"
                             >
-                                <div className="relative z-10 bg-white">
+                                <div className="relative  bg-white">
                                     <CheckCircle className="w-6 h-6 text-green-500" />
                                 </div>
 
                                 <div>
                                     <div className="flex justify-between items-center">
                                         <h3 className="font-medium text-lg">
-                                           {res?.user?.name}
+                                            {res?.user?.name}
                                         </h3>
                                         <span className="text-sm text-gray-500 mx-3">
                                             {moment(res.created_at).format(

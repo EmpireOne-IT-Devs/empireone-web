@@ -458,6 +458,11 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         <JobRequisitionLogsSection
                             job_requisition={job_requisition}
                         />
+                        <div className="mt-16 pb-16">
+                            <DeclinedJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -472,16 +477,12 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                             )}
                     </div>
 
-                    {!job_requisition.job_posting && (
-                        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
-                            <DeclinedJobRequisitionSection
-                                data={job_requisition}
-                            />
+                    {!job_requisition.job_posting &&
+                        job_requisition.status != "Approved" && (
                             <ApproveJobRequisitionSection
                                 data={job_requisition}
                             />
-                        </div>
-                    )}
+                        )}
                 </div>
             </Modal>
         </>

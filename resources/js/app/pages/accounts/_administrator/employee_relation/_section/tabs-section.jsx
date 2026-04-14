@@ -20,6 +20,16 @@ export default function TabsSection() {
             path: "/accounts/administrator/employee_relation/separation",
             active: currentPath === "separation",
         },
+        {
+            label: "Disciplinary Records",
+            path: "/accounts/administrator/employee_relation/disciplinary_records",
+            active: currentPath === "disciplinary_records",
+        },
+        {
+            label: "Regularization",
+            path: "/accounts/administrator/employee_relation/regularization",
+            active: currentPath === "regularization",
+        },
     ];
     return (
         <div>

@@ -52,6 +52,16 @@ export default function JobPostingCardSection() {
                                     }
                                     label={job.status}
                                 />
+
+                                <Badge
+                                    showDot={false}
+                                    className="rounded-md"
+                                    variant="primary"
+                                    label={
+                                        job?.job_requisition?.recruiter?.name ??
+                                        "NA"
+                                    }
+                                />
                             </div>
                             <div>
                                 <ShareJobSection data={job} />
