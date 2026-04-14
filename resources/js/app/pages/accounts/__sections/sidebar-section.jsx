@@ -86,12 +86,27 @@ export default function SidebarSection() {
         ...(account_role == "administrator"
             ? [
                   { is_label: true, name: "Administration" },
+                //   {
+                //       name: "Users",
+                //       href: `/accounts/${account_role}/users`,
+                //       icon: FcConferenceCall,
+                //       current: path == "users",
+                //       is_incoming: true,
+                //   },
+                   {
+                      name: "Talent Acquisition",
+                      href: `/accounts/${account_role}/talent_acquisition/dashboard`,
+                      icon: FcPortraitMode,
+                      current: path == "talent_acquisition",
+                      is_incoming: false,
+                  },
+                 
                   {
-                      name: "Users",
-                      href: `/accounts/${account_role}/users`,
-                      icon: FcConferenceCall,
-                      current: path == "users",
-                      is_incoming: true,
+                      name: "Employee Relation",
+                      href: `/accounts/${account_role}/employee_relation/employees`,
+                      icon: FcPodiumWithAudience,
+                      current: path == "employee_relation",
+                      is_incoming: false,
                   },
                   {
                       name: "Activities",
@@ -107,27 +122,7 @@ export default function SidebarSection() {
                       current: path == "ticketing",
                       is_incoming: true,
                   },
-                  {
-                      name: "Job Posting",
-                      href: `/accounts/${account_role}/job_posting/active_posting`,
-                      icon: FcSurvey,
-                      current: path == "job_posting",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "Job Requisition",
-                      href: `/accounts/${account_role}/job_requisition`,
-                      icon: FcDocument,
-                      current: path == "job_requisition",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "Employee Relation",
-                      href: `/accounts/${account_role}/employee_relation/employees`,
-                      icon: FcPodiumWithAudience,
-                      current: path == "employee_relation",
-                      is_incoming: false,
-                  },
+                  
                   {
                       name: "R & R",
                       href: `/accounts/${account_role}/rnr/grand_rewards`,

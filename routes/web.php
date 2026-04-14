@@ -125,37 +125,32 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             });
         });
 
-        Route::prefix('job_posting')->group(function () {
-            Route::get('/', function () {
-                return Inertia::render('accounts/_administrator/job_posting/dashboard/page');
+        Route::prefix('talent_acquisition')->group(function () {
+            Route::get('/dashboard', function () {
+                return Inertia::render('accounts/_administrator/talent_acquisition/dashboard/page');
+            });
+            Route::get('/job_requisition', function () {
+                return Inertia::render('accounts/_administrator/talent_acquisition/job_requisition/page');
             });
             Route::get('/active_posting', function () {
-                return Inertia::render('accounts/_administrator/job_posting/active_posting/page');
+                return Inertia::render('accounts/_administrator/talent_acquisition/active_posting/page');
             });
             Route::get('/active_posting/{id}', function () {
-                return Inertia::render('accounts/_administrator/job_posting/active_posting/id/page');
+                return Inertia::render('accounts/_administrator/talent_acquisition/active_posting/id/page');
             });
             Route::get('/job_offers', function () {
-                return Inertia::render('accounts/_administrator/job_posting/job_offers/page');
+                return Inertia::render('accounts/_administrator/talent_acquisition/job_offers/page');
             });
             Route::get('/applicants', function () {
-                return Inertia::render('accounts/_administrator/job_posting/applicants/page');
+                return Inertia::render('accounts/_administrator/talent_acquisition/applicants/page');
             });
             Route::get('/interviews', function () {
-                return Inertia::render('accounts/_administrator/job_posting/interviews/page');
+                return Inertia::render('accounts/_administrator/talent_acquisition/interviews/page');
             });
               Route::get('/qr_code', function () {
-                return Inertia::render('accounts/_administrator/job_posting/qr_code/page');
+                return Inertia::render('accounts/_administrator/talent_acquisition/qr_code/page');
             });
         });
-        Route::get('/job_requisition', function () {
-            return Inertia::render('accounts/_administrator/job_requisition/page');
-        });
-
-        // Route::get('/job_requisition/{id}', function () {
-        //     return Inertia::render('accounts/_administrator/job_requisition/id/page');
-        // });
-
         Route::prefix('employee_relation')->group(function () {
             Route::get('employees', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/employees/page');
