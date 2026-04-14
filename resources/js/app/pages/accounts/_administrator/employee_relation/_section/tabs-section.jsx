@@ -15,6 +15,11 @@ export default function TabsSection() {
             path: "/accounts/administrator/employee_relation/pooling",
             active: currentPath === "pooling",
         },
+        {
+            label: "Separation",
+            path: "/accounts/administrator/employee_relation/separation",
+            active: currentPath === "separation",
+        },
     ];
     return (
         <div>

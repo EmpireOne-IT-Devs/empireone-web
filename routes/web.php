@@ -163,6 +163,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('pooling', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/pooling/page');
             });
+             Route::get('separation', function () {
+                return Inertia::render('accounts/_administrator/employee_relation/separation/page');
+            });
 
             Route::prefix('{id}')->group(function () {
                 Route::get('personal_information', function () {
