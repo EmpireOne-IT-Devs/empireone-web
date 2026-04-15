@@ -558,7 +558,7 @@ export default function CreateJobRequisition() {
                         </div>
                         <div className="px-1 sm:px-3">
                             <h3 className="text-sm font-semibold text-gray-700 mb-4">
-                                Interview Schedule
+                                Interviewer Detail
                             </h3>
 
                             <div className="space-y-4">

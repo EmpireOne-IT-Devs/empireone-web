@@ -120,9 +120,9 @@ export default function FooterSection() {
                         {/* Logo */}
                         <div className="flex items-center gap-2 mb-5">
                             <img
-                                src="/images/eo-full-logo.png"
+                                src="/images/eologo.png"
                                 alt="EmpireOne Logo"
-                                className="h-8 sm:h-10 w-auto object-contain"
+                                className="h-12 sm:h-12 w-auto object-contain"
                             />
                         </div>
 

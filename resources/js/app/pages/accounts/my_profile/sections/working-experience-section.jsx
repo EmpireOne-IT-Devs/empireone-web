@@ -53,7 +53,8 @@ export default function WorkingExperienceSection({
                         Working Experience
                     </h2>
                     <p className="text-sm text-gray-400 mt-0.5">
-                        {experienceFields.length} work experience{experienceFields.length !== 1 ? "s" : ""}
+                        {experienceFields.length} work experience
+                        {experienceFields.length !== 1 ? "s" : ""}
                     </p>
                 </div>
                 <button
@@ -78,19 +79,26 @@ export default function WorkingExperienceSection({
                                 <div className="flex items-start gap-4 p-4 bg-white border border-purple-100 rounded-2xl hover:border-purple-200 hover:shadow-sm transition-all group">
                                     {/* Icon */}
                                     <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center mt-0.5">
-                                        <TbBuilding size={18} className="text-purple-500" />
+                                        <TbBuilding
+                                            size={18}
+                                            className="text-purple-500"
+                                        />
                                     </div>
 
                                     {/* Info */}
                                     <div className="flex-1 min-w-0">
                                         <p className="font-semibold text-gray-900 truncate">
                                             {exp?.position || (
-                                                <span className="text-gray-400 font-normal italic">No position</span>
+                                                <span className="text-gray-400 font-normal italic">
+                                                    No position
+                                                </span>
                                             )}
                                         </p>
                                         <p className="text-sm text-gray-500 truncate">
                                             {exp?.company_name || (
-                                                <span className="italic">No company</span>
+                                                <span className="italic">
+                                                    No company
+                                                </span>
                                             )}
                                         </p>
                                         {exp?.job_description && (
@@ -101,7 +109,8 @@ export default function WorkingExperienceSection({
                                         {(exp?.start_date || exp?.end_date) && (
                                             <span className="inline-flex items-center gap-1 mt-1.5 text-xs font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
                                                 <TbCalendar size={11} />
-                                                {exp?.start_date} – {exp?.end_date || "Present"}
+                                                {exp?.start_date} –{" "}
+                                                {exp?.end_date || "Present"}
                                             </span>
                                         )}
                                     </div>
@@ -110,7 +119,9 @@ export default function WorkingExperienceSection({
                                     <div className="flex gap-1.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button
                                             type="button"
-                                            onClick={() => setExpandedIndex(index)}
+                                            onClick={() =>
+                                                setExpandedIndex(index)
+                                            }
                                             className="w-8 h-8 rounded-lg flex items-center justify-center text-purple-400 bg-purple-50 hover:bg-purple-100 hover:text-purple-600 transition"
                                             title="Edit"
                                         >
@@ -132,9 +143,14 @@ export default function WorkingExperienceSection({
                                     {/* Form header bar */}
                                     <div className="flex items-center gap-2.5 px-5 py-3.5 bg-white border-b border-violet-100">
                                         <div className="w-6 h-6 rounded-md bg-violet-100 flex items-center justify-center">
-                                            <TbBriefcase size={13} className="text-violet-600" />
+                                            <TbBriefcase
+                                                size={13}
+                                                className="text-violet-600"
+                                            />
                                         </div>
-                                        <span className="text-sm font-medium text-violet-700">Editing job</span>
+                                        <span className="text-sm font-medium text-violet-700">
+                                            Editing job
+                                        </span>
                                         <span className="ml-auto text-xs text-violet-400 bg-violet-100 px-2.5 py-0.5 rounded-full font-medium">
                                             Entry {index + 1}
                                         </span>
@@ -149,7 +165,10 @@ export default function WorkingExperienceSection({
                                                     `experiences.${index}.company_name`,
                                                     { required: "Required" },
                                                 )}
-                                                error={errors.experiences?.[index]?.company_name}
+                                                error={
+                                                    errors.experiences?.[index]
+                                                        ?.company_name
+                                                }
                                                 placeholder="e.g. Acme Corp"
                                             />
                                             <Input
@@ -159,7 +178,10 @@ export default function WorkingExperienceSection({
                                                     `experiences.${index}.position`,
                                                     { required: "Required" },
                                                 )}
-                                                error={errors.experiences?.[index]?.position}
+                                                error={
+                                                    errors.experiences?.[index]
+                                                        ?.position
+                                                }
                                                 placeholder="e.g. Developer"
                                             />
                                         </div>
@@ -176,7 +198,10 @@ export default function WorkingExperienceSection({
                                                 min={1900}
                                                 max={new Date().getFullYear()}
                                                 placeholder="YYYY"
-                                                error={errors.experiences?.[index]?.start_date}
+                                                error={
+                                                    errors.experiences?.[index]
+                                                        ?.start_date
+                                                }
                                             />
                                             <Input
                                                 label="End Year"
@@ -188,16 +213,25 @@ export default function WorkingExperienceSection({
                                                         validate: (val) =>
                                                             parseInt(val, 10) >=
                                                                 parseInt(
-                                                                    watchedValues?.experiences?.[index]?.start_date || 0,
+                                                                    watchedValues
+                                                                        ?.experiences?.[
+                                                                        index
+                                                                    ]
+                                                                        ?.start_date ||
+                                                                        0,
                                                                     10,
-                                                                ) || "Must be after Start year",
+                                                                ) ||
+                                                            "Must be after Start year",
                                                     },
                                                 )}
                                                 type="number"
                                                 min={1900}
                                                 max={new Date().getFullYear()}
                                                 placeholder="YYYY"
-                                                error={errors.experiences?.[index]?.end_date}
+                                                error={
+                                                    errors.experiences?.[index]
+                                                        ?.end_date
+                                                }
                                             />
                                         </div>
 
@@ -213,13 +247,17 @@ export default function WorkingExperienceSection({
                                                 )}
                                                 placeholder="Describe your role and key achievements..."
                                                 className={`p-3 border rounded-xl outline-none focus:ring-2 transition-all resize-none text-sm ${
-                                                    errors.experiences?.[index]?.job_description
+                                                    errors.experiences?.[index]
+                                                        ?.job_description
                                                         ? "border-red-300 focus:ring-red-100 bg-red-50/30"
                                                         : "border-gray-200 focus:ring-violet-200 focus:border-violet-400 bg-white"
                                                 }`}
                                             />
-                                            {errors.experiences?.[index]?.job_description && (
-                                                <span className="text-xs text-red-500 ml-0.5">Required</span>
+                                            {errors.experiences?.[index]
+                                                ?.job_description && (
+                                                <span className="text-xs text-red-500 ml-0.5">
+                                                    Required
+                                                </span>
                                             )}
                                         </div>
 
@@ -227,7 +265,9 @@ export default function WorkingExperienceSection({
                                         <div className="flex justify-between items-center pt-2 border-t border-violet-100">
                                             <button
                                                 type="button"
-                                                onClick={() => handleRemove(index)}
+                                                onClick={() =>
+                                                    handleRemove(index)
+                                                }
                                                 className="flex items-center gap-1.5 text-sm text-rose-500 hover:text-rose-700 px-3 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 transition"
                                             >
                                                 <TbTrash size={14} /> Remove
@@ -254,8 +294,12 @@ export default function WorkingExperienceSection({
                     <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mb-3">
                         <TbBriefcase size={22} className="text-purple-300" />
                     </div>
-                    <p className="text-gray-400 text-sm">No work experience added yet.</p>
-                    <p className="text-gray-300 text-xs mt-1">Click "Add job" to get started.</p>
+                    <p className="text-gray-400 text-sm">
+                        No work experience added yet.
+                    </p>
+                    <p className="text-gray-300 text-xs mt-1">
+                        Click "Add job" to get started.
+                    </p>
                 </div>
             )}
         </div>

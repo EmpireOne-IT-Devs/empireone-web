@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 
 const SECTIONS = [
-    { id: "hero", label: "Home", color: "#7C3AED" },
-    { id: "about-us", label: "About", color: "#3B82F6" },
-    { id: "services", label: "Services", color: "#F97316" },
-    { id: "contact", label: "Contact", color: "#7C3AED" },
+    { id: "hero", label: "Home", color: "#7C3AED" },       // violet
+    { id: "about-us", label: "About", color: "#3B82F6" },  // blue
+    { id: "services", label: "Services", color: "#F97316" }, // orange base
+    { id: "testimonial", label: "Testimonials", color: "#FB923C" }, // lighter orange
+    { id: "careers", label: "Careers", color: "#EA580C" }, // darker orange
+    { id: "contact", label: "Contact", color: "#C2410C" }, // deep orange
 ];
 
 export default function ProgressScrollSection() {
@@ -187,7 +189,11 @@ export default function ProgressScrollSection() {
                                     style={{
                                         flexShrink: 0,
                                         width: isActive ? 8 : isHovered ? 7 : 6,
-                                        height: isActive ? 24 : isHovered ? 9 : 6,
+                                        height: isActive
+                                            ? 24
+                                            : isHovered
+                                              ? 9
+                                              : 6,
                                         borderRadius: isActive ? 4 : "50%",
                                         background: isActive
                                             ? `linear-gradient(180deg, ${sec.color}, #3B82F6)`
