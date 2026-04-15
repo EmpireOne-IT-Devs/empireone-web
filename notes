@@ -22,3 +22,41 @@ Account Access
 - order
 - type (job_requisition_approval)
 
+
+create job requisition
+- Site 1 add subname - (pantalan dunganon)
+- priority type (low medium high) only
+- remove from and to from the salary
+- sub interviewer add optional
+- remove interview date. and change time availability
+- interview schedule change to interviewer details.
+- interviewer 1, availability (monday to sunday) day and time
+- interviewer 2, availability (monday to sunday) day and time
+- remove justification,positon requirments and responsibility
+- add position erf clasification dropdown.
+- add sourcing method 
+- add job discription
+- add job requirments
+- 1row (position title,department)
+- 2row (employment type,number of position priority )
+- 3row (position type,sourcing method)
+- send first= supervisor, final=gio last: pinaka last = ms chingay
+- automatic create job posting after ms chingay approval.
+
+
+Create New Job Posting
+-remove Target Audience
+-remove application deadline
+-remove year of experience
+-remove bachelors degree
+
+-Add my request ERF
+
+active job posting add recruiter. here https://empireone-bpo.com/accounts/administrator/talent_acquisition/active_posting
+
+
+JOB POSTING Landing Page
+- Basic Personal Information only
+- 
+
+Applicant Portal

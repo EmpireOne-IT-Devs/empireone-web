@@ -16,7 +16,7 @@ export default function AcceptJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
     const [decision, setDecision] = useState(""); // Accepted | Declined
     const [reason, setReason] = useState("");
-
+    const role = window.location.pathname.split('/')[2]
     const dispatch = useDispatch();
     useEffect(() => {
         if (data.id == job_order_id) {
@@ -26,10 +26,10 @@ export default function AcceptJobOfferSection({ data }) {
 
     function close_modal(params) {
         setOpen(false);
-        router.visit("/accounts/employee/job_offers");
+        router.visit(`/accounts/${role}/job_offers`);
     }
     function open_modal(id) {
-        router.visit(`/accounts/employee/job_offers?job_order_id=${id}`);
+        router.visit(`/accounts/${role}/job_offers?job_order_id=${id}`);
     }
 
     async function submit_job_offer(status) {
