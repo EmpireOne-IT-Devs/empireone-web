@@ -8,6 +8,7 @@ const navigation = [
     { name: "About Us", id: "about-us" },
     { name: "Services", id: "services" },
     { name: "Testimonials", id: "testimonial" },
+    { name: "Careers", id: "careers" },
     { name: "Contact", id: "contact" },
 ];
 
@@ -130,7 +131,11 @@ export default function HeaderSection() {
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
-                            transition={{ type: "spring", damping: 26, stiffness: 300 }}
+                            transition={{
+                                type: "spring",
+                                damping: 26,
+                                stiffness: 300,
+                            }}
                             className="fixed right-0 top-0 h-full w-72 max-w-[85vw] bg-white shadow-lg p-6 overflow-y-auto"
                         >
                             {/* Close button */}
@@ -151,7 +156,10 @@ export default function HeaderSection() {
                                         key={item.name}
                                         initial={{ opacity: 0, x: 24 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.1 + i * 0.06, duration: 0.35 }}
+                                        transition={{
+                                            delay: 0.1 + i * 0.06,
+                                            duration: 0.35,
+                                        }}
                                         onClick={() => scrollTo(item.id)}
                                         className="text-left text-lg font-semibold text-slate-700 hover:text-blue-600 transition-colors"
                                     >
