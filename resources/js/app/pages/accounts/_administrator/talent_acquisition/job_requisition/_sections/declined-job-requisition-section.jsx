@@ -31,14 +31,16 @@ export default function DeclinedJobRequisitionSection({ data }) {
     }
     return (
         <div>
-            <Button
-                variant="danger"
-                loading={loading}
-                className="w-full"
-                onClick={() => declined_job_requisition()}
-            >
-                <TbTrash className="w-5 h-5 mr-2" /> Declined
-            </Button>
+            {data.status != "Final Approved" && (
+                <Button
+                    variant="danger"
+                    loading={loading}
+                    className="w-full"
+                    onClick={() => declined_job_requisition()}
+                >
+                    <TbTrash className="w-5 h-5 mr-2" /> Declined
+                </Button>
+            )}
         </div>
     );
 }

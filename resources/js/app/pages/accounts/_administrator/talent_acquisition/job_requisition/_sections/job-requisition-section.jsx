@@ -15,12 +15,14 @@ import {
 import { LuUser } from "react-icons/lu";
 import Modal from "@/app/_components/modal";
 import JobRequisitionLogsSection from "./job-requisition-logs-section";
-import CreateJobPostingSection from "./create-job-posting-section";
 import DeclinedJobRequisitionSection from "./declined-job-requisition-section";
+import { useSelector } from "react-redux";
 
 export default function JobRequisitionBodySection({ job_requisition }) {
     const [open, setOpen] = useState(false);
     const queryParams = new URLSearchParams(window.location.search);
+    const { data } = useSelector((store) => store.app);
+    console.log("data", data?.user?.id);
     const id = queryParams.get("id");
 
     useEffect(() => {
@@ -33,7 +35,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
         switch (status) {
             case "Pending":
                 return "warning";
-            case "Approved":
+            case "Director Approved":
+            case "Final Approved":
                 return "success";
             case "Declined":
                 return "danger";
@@ -81,7 +84,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
     const statusColors = {
         Pending: "bg-yellow-200 text-yellow-800",
-        Approved: "bg-green-200 text-green-800",
+        "Director Approved": "bg-green-200 text-green-800",
+        "Final Approved": "bg-green-200 text-green-800",
         Declined: "bg-red-200 text-red-800",
         Posted: "bg-purple-200 text-purple-800",
     };
@@ -117,6 +121,13 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         job_requisition.priority,
                                     )}
                                     label={job_requisition.priority}
+                                />
+
+                                 <Badge
+                                    showDot={false}
+                                    variant="purple"
+                                    
+                                    label={`Recruiter: ${job_requisition?.recruiter?.name}`}
                                 />
 
                                 {job_requisition.type === "New Position" && (
@@ -468,17 +479,24 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
                 {/* Footer Action Buttons: Stack on mobile, row on tablet/desktop */}
                 <div className="flex flex-col sm:flex-row w-full items-center justify-between border-t gap-3 p-4 bg-white sticky bottom-0">
-                    <div className="w-full sm:w-auto">
-                        {job_requisition.status == "Approved" &&
-                            !job_requisition.job_posting && (
-                                <CreateJobPostingSection
-                                    initial_data={job_requisition}
-                                />
-                            )}
-                    </div>
+                   
 
-                    {!job_requisition.job_posting &&
-                        job_requisition.status != "Approved" && (
+                    {job_requisition.status == "Pending" &&
+                        job_requisition.approver1_id == data?.user?.id && (
+                            <ApproveJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        )}
+
+                    {job_requisition.status == "In Progress" &&
+                        job_requisition.approver2_id == data?.user?.id && (
+                            <ApproveJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        )}
+
+                    {job_requisition.status == "Director Approved" &&
+                        job_requisition.approver2_id == data?.user?.id && (
                             <ApproveJobRequisitionSection
                                 data={job_requisition}
                             />

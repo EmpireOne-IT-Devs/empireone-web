@@ -15,8 +15,8 @@ export default function ApproveJobRequisitionSection({ data }) {
     const { users } = useSelector((state) => state.job_requisitions);
 
     async function approved_job_requisition() {
-        // --- ADDED: Validation to ensure recruiter is selected if In Progress ---
-        if (data.status === "In Progress" && !recruiter) {
+        // --- ADDED: Validation to ensure recruiter is selected if Director Approved ---
+        if (data.status === "Director Approved" && !recruiter) {
             dispatch(
                 setAlert({
                     type: "error",
@@ -35,7 +35,6 @@ export default function ApproveJobRequisitionSection({ data }) {
             });
             await store.dispatch(get_job_requisitions_thunk());
             dispatch(
-                // Replaced `await dispatch` with `dispatch` as setAlert is synchronous
                 setAlert({
                     type: "success",
                     title: "Job Requisition Approved Successfully!",
@@ -56,7 +55,7 @@ export default function ApproveJobRequisitionSection({ data }) {
 
     return (
         <div className="flex gap-3 flex-col w-full">
-            {data.status == "In Progress" && (
+            {data.status == "Director Approved" && (
                 <>
                     <Select
                         className="w-full"
@@ -72,7 +71,7 @@ export default function ApproveJobRequisitionSection({ data }) {
             <Button
                 variant="primary"
                 loading={loading}
-                disabled={data.status === "In Progress" && !recruiter} // --- ADDED: Disables button if missing ---
+                disabled={data.status === "Director Approved" && !recruiter} // --- ADDED: Disables button if missing ---
                 onClick={() => approved_job_requisition()}
             >
                 Approved

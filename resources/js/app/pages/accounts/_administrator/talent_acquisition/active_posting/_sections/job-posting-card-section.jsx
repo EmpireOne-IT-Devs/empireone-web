@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    TbMapPin,
-    TbTag,
-    TbUser,
-    TbUsers,
-} from "react-icons/tb";
+import { TbMapPin, TbTag, TbUser, TbUsers } from "react-icons/tb";
 import Badge from "@/app/_components/badge";
 import ViewJobPostingDetailsSection from "./view-job-posting-details-section";
 
 export default function JobPostingCardSection() {
-
     const { job_postings, loading } = useSelector(
         (state) => state.job_postings,
     );
@@ -58,6 +52,12 @@ export default function JobPostingCardSection() {
                                                         : "default"
                                             }
                                             label={job.status}
+                                        />
+
+                                        <Badge
+                                            showDot={false}
+                                            variant="purple"
+                                            label={`Recruiter: ${job?.job_requisition?.recruiter?.name}`}
                                         />
                                     </div>
                                 </div>

@@ -3,7 +3,8 @@ php artisan make:model Jobs/JobsApplication -mcr
 - add emergency contract
 - add parents name.
 
-
+1342 - gio
+3-chingay
 
 - update the address all employees
 
@@ -22,6 +23,7 @@ Account Access
 - order
 - type (job_requisition_approval)
 
+remove access account
 
 create job requisition
 - Site 1 add subname - (pantalan dunganon)
@@ -60,3 +62,7 @@ JOB POSTING Landing Page
 - 
 
 Applicant Portal
+
+
+Admin Portal
+- Accepted Job offer > Schedule for Orientation > Send Documents

@@ -55,12 +55,8 @@ export default function JobPostingCardSection() {
 
                                 <Badge
                                     showDot={false}
-                                    className="rounded-md"
-                                    variant="primary"
-                                    label={
-                                        job?.job_requisition?.recruiter?.name ??
-                                        "NA"
-                                    }
+                                    variant="purple"
+                                    label={`Recruiter: ${job?.job_requisition?.recruiter?.name}`}
                                 />
                             </div>
                             <div>

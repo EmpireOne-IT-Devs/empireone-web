@@ -26,9 +26,6 @@ return new class extends Migration
                 'Closed',
                 'Draft',
             ])->default('Active');
-            $table->date('application_deadline')->nullable();
-            $table->string('experience_required')->nullable();
-            $table->string('education_required')->nullable();
             $table->enum('target_audience', [
                 'Both',
                 'Internal',
