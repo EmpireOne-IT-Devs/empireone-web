@@ -1,7 +1,5 @@
-import { User, Calendar, Building2, Award, GraduationCap } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import React from "react";
-import Input from "@/app/_components/input";
-import Select from "@/app/_components/select";
 import WorkingExperienceSection from "./working-experience-section";
 import SkillsSection from "./skills-section";
 
@@ -16,6 +14,7 @@ export default function ProfessionalSection({
     skillFields,
     removeSkill,
     watch,
+    submitForm,
 }) {
     return (
         <div className="flex flex-col gap-6">
@@ -27,6 +26,7 @@ export default function ProfessionalSection({
                     experienceFields={experienceFields}
                     removeExperience={removeExperience}
                     watchedValues={watchedValues}
+                    submitForm={submitForm}
                 />
             </div>
 
@@ -38,9 +38,9 @@ export default function ProfessionalSection({
                     skillFields={skillFields}
                     watch={watch}
                     removeSkill={removeSkill}
+                    submitForm={submitForm}
                 />
             </div>
-
         </div>
     );
 }

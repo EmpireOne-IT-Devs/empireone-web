@@ -1,5 +1,5 @@
 import Tabs from "@/app/_components/tabs";
-import { Sparkles, Pencil, Check, X } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import PersonalInfoSection from "./personal-info-section";
 import ProfessionalSection from "./professional-section";
@@ -49,16 +49,14 @@ export default function InfoTabsSection() {
         setValue,
         control,
         formState: { errors, isSubmitting },
-    } = useForm({
-        defaultValues: {},
-    });
+    } = useForm({ defaultValues: {} });
+
     const formValues = watch();
     const dispatch = useDispatch();
     const [regions, setRegions] = useState([]);
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
     const [barangays, setBarangays] = useState([]);
-    console.log("formValues", data);
 
     const getName = (list, code) =>
         list.find((item) => item.code === code)?.name || code;
@@ -127,12 +125,12 @@ export default function InfoTabsSection() {
         }
     };
 
+    const submitForm = handleSubmit(onSubmit);
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <div className="mx-auto w-full">
-                {/* Main Card Wrapper */}
-                <div className="bg-white/70 backdrop-blur-xl border border-white rounded-2xl md:rounded-3xl shadow-xl ">
-                    {/* Tabs Header - Ensure your Tabs component handles overflow-x-auto */}
+                <div className="bg-white/70 backdrop-blur-xl border border-white rounded-2xl md:rounded-3xl shadow-xl">
                     <div className="overflow-x-auto no-scrollbar">
                         <Tabs
                             tabs={tabs}
@@ -141,7 +139,6 @@ export default function InfoTabsSection() {
                         />
                     </div>
 
-                    {/* Form Content Area */}
                     <div className="p-4 md:p-6 space-y-4">
                         {activeTabId === "personal" && (
                             <PersonalInfoSection
@@ -182,6 +179,7 @@ export default function InfoTabsSection() {
                                 appendSkill={appendSkill}
                                 removeSkill={removeSkill}
                                 watch={watch}
+                                submitForm={submitForm}
                             />
                         )}
 
@@ -199,10 +197,7 @@ export default function InfoTabsSection() {
 
                         {activeTabId === "customization" && (
                             <div className="flex flex-col items-center justify-center py-10 md:py-20">
-                                <Sparkles
-                                    size={22}
-                                    className="text-purple-500"
-                                />
+                                <Sparkles size={22} className="text-purple-500" />
                                 <p className="text-sm mt-2 text-slate-500 font-medium">
                                     Customization Settings
                                 </p>
@@ -210,7 +205,6 @@ export default function InfoTabsSection() {
                         )}
                     </div>
 
-                    {/* Footer / Sticky Save Button */}
                     <div className="p-4 md:p-5 bg-white/50 border-t border-gray-100">
                         <Button
                             type="submit"
