@@ -64,7 +64,7 @@ export default function CreateJobRequisition() {
     const existingPositionId = watch("existing_position_id");
 
     const selectedPosition = data?.position?.find(
-        (res) => String(res.id) === String(existingPositionId),
+        (res) => String(res.title) === String(existingPositionId),
     );
 
     useEffect(() => {
@@ -78,6 +78,7 @@ export default function CreateJobRequisition() {
             const req = selectedPosition?.job_requisition;
             const salaryRange = req?.salary_range || "";
             const [salaryFrom = "", salaryTo = ""] = salaryRange.split("-");
+            console.log("reqreq", req);
 
             setValue("title", req?.title || "");
             setValue("approver1_id", req?.approver1_id || "");
@@ -88,12 +89,22 @@ export default function CreateJobRequisition() {
             setValue("location_id", req?.location_id || "");
             setValue("site_id", req?.site_id || "");
             setValue("employment_type", req?.employment_type || "");
+            setValue("erf_classification", req?.erf_classification || "");
+            setValue("target_audience", req?.target_audience || "");
+
+            setValue("interviewer1", req?.interviewer1 || "");
+            setValue("availability1", req?.availability1 || "");
+            setValue("interview_time1", req?.interview_time1 || "");
+            setValue("interviewer2", req?.interviewer2 || "");
+            setValue("availability2", req?.availability2 || "");
+            setValue("interview_time2", req?.interview_time2 || "");
+
             setValue("priority", req?.priority || "");
             setValue("account_id", req?.account_id || "");
             setValue("number_of_positions", req?.number_of_positions || "");
             setValue("salary_range_from", salaryFrom.replace("₱", "").trim());
             setValue("salary_range_to", salaryTo.replace("₱", "").trim());
-            setValue("existing_position_id", req?.id || "");
+            setValue("existing_position_id", req?.title || "");
 
             setValue("qualifications", req?.qualifications || "");
             setValue("responsibilities", req?.responsibilities || "");
@@ -110,6 +121,17 @@ export default function CreateJobRequisition() {
             setValue("existing_position_id", "");
             setValue("qualifications", "");
             setValue("responsibilities", "");
+            setValue("approver2_id", 1342);
+            setValue("approver3_id", 3);
+
+            setValue("interviewer1", "");
+            setValue("availability1", "");
+            setValue("interview_time1", "");
+            setValue("interviewer2", "");
+            setValue("availability2", "");
+            setValue("interview_time2", "");
+            setValue("erf_classification", "");
+            setValue("target_audience", "");
         }
     }, [positionType, selectedPosition, setValue]);
 
@@ -251,7 +273,7 @@ export default function CreateJobRequisition() {
                                                         data?.position?.map(
                                                             (res) => ({
                                                                 label: res.title,
-                                                                value: res.id,
+                                                                value: res.title,
                                                             }),
                                                         ) || []
                                                     }
