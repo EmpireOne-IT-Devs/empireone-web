@@ -53,7 +53,7 @@ class AppController extends Controller
         }
 
         $departments = Department::with(['categories'])->get();
-        $locations = Location::get();
+        $locations = Location::with(['sites'])->get();
         $position = JobPosition::with(['job_requisition'])->get();
         $sites = Site::get();
         $accounts = Account::get();

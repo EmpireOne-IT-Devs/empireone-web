@@ -1,1 +1,0 @@
-import{j as t}from"./app-M7SC3Pa7.js";import{E as e}from"./eye-JrRAkhe_.js";import"./createLucideIcon-3zhRC2Zf.js";function r(){return t.jsx("button",{children:t.jsx(e,{className:"w-6 h-6 inline-block text-blue-500"})})}export{r as default};

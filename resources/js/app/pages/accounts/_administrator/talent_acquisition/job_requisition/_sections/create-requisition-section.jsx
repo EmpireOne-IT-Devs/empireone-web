@@ -172,6 +172,10 @@ export default function CreateJobRequisition() {
         }
     }
 
+    const sites = data?.locations?.find(
+        (res) => res.id == watchedValues.location_id,
+    )?.sites;
+
     return (
         <div>
             <Button type="button" onClick={() => setOpen(true)}>
@@ -551,12 +555,10 @@ export default function CreateJobRequisition() {
                                             <Select
                                                 {...field}
                                                 label="Select Site"
-                                                options={data?.sites?.map(
-                                                    (res) => ({
-                                                        label: res.name,
-                                                        value: res.id,
-                                                    }),
-                                                )}
+                                                options={sites?.map((res) => ({
+                                                    label: `${res.name} (${res.address})`,
+                                                    value: res.id,
+                                                }))}
                                                 error={errors.site_id?.message}
                                             />
                                         )}

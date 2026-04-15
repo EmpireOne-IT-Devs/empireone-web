@@ -1,1 +1,0 @@
-import{j as r}from"./app-M7SC3Pa7.js";import{B as t}from"./button-DTYlgms5.js";import"./index-50GFaRl_.js";function a(){return r.jsx("div",{children:r.jsx(t,{variant:"primary",children:"Add Category"})})}export{a as default};

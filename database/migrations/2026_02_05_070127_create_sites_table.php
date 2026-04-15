@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('location_id')
+                ->nullable()
+                ->constrained('locations')
+                ->nullOnDelete();
             $table->string('name')->nullable();
             $table->string('address')->nullable();
             $table->string('status')->nullable();
