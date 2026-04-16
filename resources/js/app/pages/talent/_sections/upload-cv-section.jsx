@@ -12,7 +12,7 @@ export default function UploadCvSection({
     const fileName = watchedValues?.cv?.[0]?.name ?? "";
 
     return (
-        <div className="space-y-4 animate-in fade-in duration-300">
+        <div className="space-y-4 animate-in fade-in duration-300 my-3">
             <div className="flex flex-col">
                 <label className="font-bold text-gray-700 mb-2">
                     Upload Your CV

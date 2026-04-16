@@ -246,25 +246,6 @@ export default function PersonalInformationSection({
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <Button
-                    type="button"
-                    onClick={prevStep}
-                    className="w-full sm:w-1/2"
-                    variant="secondary"
-                    outlined
-                >
-                    Back
-                </Button>
-                <Button
-                    outlined
-                    type="button"
-                    onClick={nextStep}
-                    className="w-full sm:w-1/2"
-                >
-                  Continue to Address
-                </Button>
-            </div>
         </div>
     );
 }

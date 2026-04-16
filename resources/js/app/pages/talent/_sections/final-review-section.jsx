@@ -71,7 +71,7 @@ export default function FinalReviewSection({
                 </div>
 
                 {/* Working Experiences */}
-                <div>
+                {/* <div>
                     <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                         Working Experience
                     </p>
@@ -98,10 +98,10 @@ export default function FinalReviewSection({
                             No experience listed
                         </p>
                     )}
-                </div>
+                </div> */}
 
                 {/* Skills & Proficiency */}
-                <div>
+                {/* <div>
                     <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                         Skills & Proficiency
                     </p>
@@ -120,7 +120,7 @@ export default function FinalReviewSection({
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 {/* Document Review */}
                 <div className="bg-blue-50 p-3 rounded-lg flex items-center justify-between">
