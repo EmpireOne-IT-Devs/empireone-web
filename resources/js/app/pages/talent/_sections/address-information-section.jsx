@@ -71,7 +71,7 @@ export default function AddressInformationSection({
     }, [selectedCity, setValue]);
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-300">
+        <div className="space-y-6 animate-in fade-in duration-300 mt-3">
             <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
                 Address Information
             </h2>
@@ -180,27 +180,6 @@ export default function AddressInformationSection({
                         placeholder="Blk 1 Lot 2"
                     />
                 </div>
-            </div>
-
-            {/* Buttons: Fixed for mobile stacking if they get too cramped */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <Button
-                    type="button"
-                    onClick={prevStep}
-                    className="w-full sm:w-1/2"
-                    variant="secondary"
-                    outlined
-                >
-                    Back
-                </Button>
-                <Button
-                    outlined
-                    type="button"
-                    onClick={nextStep}
-                    className="w-full sm:w-1/2"
-                >
-                    Continue To Working Experience
-                </Button>
             </div>
         </div>
     );

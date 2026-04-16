@@ -44,7 +44,7 @@ export default function TableSection() {
                     email: res.user.email,
                     role: res.role,
                     position:
-                        res?.job_application.job_posting?.job_requisition
+                        res?.job_application?.job_posting?.job_requisition
                             ?.title,
                     status: (
                         <Badge

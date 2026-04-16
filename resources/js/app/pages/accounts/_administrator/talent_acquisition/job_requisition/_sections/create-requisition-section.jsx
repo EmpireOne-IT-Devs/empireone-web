@@ -17,7 +17,6 @@ export default function CreateJobRequisition() {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
-
     const { users } = useSelector((state) => state.job_requisitions);
 
     const {
