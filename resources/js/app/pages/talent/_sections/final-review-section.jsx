@@ -5,11 +5,6 @@ import React from "react";
 export default function FinalReviewSection({
     prevStep,
     watchedValues,
-    getName,
-    barangays,
-    cities,
-    provinces,
-    regions,
     loading,
 }) {
     return (
@@ -61,12 +56,9 @@ export default function FinalReviewSection({
                         Current Address
                     </p>
                     <p className="capitalize">
-                        {watchedValues.street},{" "}
-                        {getName(barangays, watchedValues.barangay)}{" "}
-                        {getName(cities, watchedValues.city)}{" "}
-                        {getName(provinces, watchedValues.province)}{" "}
-                        {getName(regions, watchedValues.regions)}{" "}
-                        {watchedValues.zip_code}
+                        {watchedValues.street}, {watchedValues.barangay}{" "}
+                        {watchedValues.city} {watchedValues.province}{" "}
+                        {watchedValues.regions} {watchedValues.zip_code}
                     </p>
                 </div>
 

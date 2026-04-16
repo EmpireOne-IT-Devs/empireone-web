@@ -133,7 +133,7 @@ class JobApplicationController extends Controller
                 'last_name' => $request->last_name ?? null,
                 'suffix' => $request->suffix ?? null,
                 'gender' => $request->gender ?? null,
-                'date_of_birth' => $request->date_of_birth,
+                'date_of_birth' => $request->date_of_birth ?? null,
                 'birth_place' => $request->birth_place ?? null,
                 'nationality' => $request->nationality ?? null,
                 'marital_status' => $request->marital_status ?? null,
@@ -147,33 +147,31 @@ class JobApplicationController extends Controller
             ]
         );
 
-        foreach ($request->experiences as $key => $value) {
-            if ($value) {
-                AccountWorkingExperience::updateOrCreate(
-                    ['user_id' => $user->id], // Condition to find the record
-                    [
-                        'company_name' => $value['company_name'],
-                        'position' => $value['position'],
-                        'start_date' => $value['start_at'],
-                        'end_date' => $value['end_at'],
-                        'job_description' => $value['job_description'],
-                    ]
-                );
-            }
-        }
-
-
-        foreach ($request->skills as $key => $value) {
-            if ($value) {
-                AccountSkills::updateOrCreate(
-                    ['user_id' => $user->id], // Condition to find the record
-                    [
-                        'skill' => $value['skill'],
-                        'percentage' => $value['percentage'],
-                    ]
-                );
-            }
-        }
+        // foreach ($request->experiences as $key => $value) {
+        //     if ($value) {
+        //         AccountWorkingExperience::updateOrCreate(
+        //             ['user_id' => $user->id], // Condition to find the record
+        //             [
+        //                 'company_name' => $value['company_name'],
+        //                 'position' => $value['position'],
+        //                 'start_date' => $value['start_at'],
+        //                 'end_date' => $value['end_at'],
+        //                 'job_description' => $value['job_description'],
+        //             ]
+        //         );
+        //     }
+        // }
+        // foreach ($request->skills as $key => $value) {
+        //     if ($value) {
+        //         AccountSkills::updateOrCreate(
+        //             ['user_id' => $user->id], // Condition to find the record
+        //             [
+        //                 'skill' => $value['skill'],
+        //                 'percentage' => $value['percentage'],
+        //             ]
+        //         );
+        //     }
+        // }
 
         $referral_id = $request->referral_id ? base64_decode($request->referral_id) : null;
 
@@ -211,10 +209,6 @@ class JobApplicationController extends Controller
         Mail::to($user->email)->send(
             new SendEmailAccountCreation($user, url('/auth/login'))
         );
-        // marital_status
-        // nationality
-        // birth_place
-        //suffix
         return response()->json([
             'status' => 'success',
         ], 200);

@@ -1,158 +1,259 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
-import Button from "@/app/_components/button";
+import React, { useState, useEffect } from "react";
+import {
+    regions,
+    provinces,
+    cities,
+    barangays,
+} from "select-philippines-address";
 
-export default function AddressInformationSection({
+const AddressInformationSection = ({
     register,
     errors,
-    nextStep,
-    prevStep,
+    watchedValues,
     setValue,
-    watch,
-    barangays,
-    cities,
-    provinces,
-    regions,
-    setRegions,
-    setProvinces,
-    setCities,
-    setBarangays,
-}) {
-    // Watch the values of the dropdowns to trigger dependent fetches
-    const selectedRegion = watch("region");
-    const selectedProvince = watch("province");
-    const selectedCity = watch("city");
-    const selectedBarangay = watch("barangay");
+}) => {
+    const [data, setData] = useState({
+        regions: [],
+        provinces: [],
+        cities: [],
+        barangays: [],
+    });
 
-    const API_BASE = "https://psgc.gitlab.io/api";
+    const [selected, setSelected] = useState({
+        region: "",
+        province: "",
+        city: "",
+        barangay: "",
+    });
 
-    // 1. Fetch Regions on Mount
+    const [isInitialLoaded, setIsInitialLoaded] = useState(false);
+
+    // 1. Initial Load: Get Regions
     useEffect(() => {
-        axios.get(`${API_BASE}/regions`).then((res) => setRegions(res.data));
+        regions().then((res) => setData((prev) => ({ ...prev, regions: res })));
     }, []);
-    // console.log('provinces',provinces)
-    // 2. Fetch Provinces when Region changes
-    useEffect(() => {
-        if (selectedRegion) {
-            axios
-                .get(`${API_BASE}/regions/${selectedRegion}/provinces`)
-                .then((res) => {
-                    setProvinces(res.data);
-                });
-        }
-    }, [selectedRegion, setValue]);
 
-    // 3. Fetch Cities when Province changes
+    // 2. Handle Default Values (Cascading Load)
     useEffect(() => {
-        if (selectedProvince) {
-            axios
-                .get(
-                    `${API_BASE}/provinces/${selectedProvince}/cities-municipalities`,
-                )
-                .then((res) => {
-                    setCities(res.data);
-                });
-        }
-    }, [selectedProvince, setValue]);
+        const loadDefaultData = async () => {
+            setSelected({
+                region: watchedValues?.region || "",
+                province: watchedValues?.province || "",
+                city: watchedValues?.city || "",
+                barangay: watchedValues?.barangay || "",
+            });
 
-    // 4. Fetch Barangays when City changes
-    useEffect(() => {
-        if (selectedCity) {
-            axios
-                .get(
-                    `${API_BASE}/cities-municipalities/${selectedCity}/barangays`,
-                )
-                .then((res) => {
-                    setBarangays(res.data);
-                });
+            if (watchedValues?.region) {
+                // Find the region code based on the region name
+                const regionObj = data.regions.find(
+                    (r) => r.region_name === watchedValues.region,
+                );
+
+                if (regionObj) {
+                    const provRes = await provinces(regionObj.region_code);
+                    setData((prev) => ({ ...prev, provinces: provRes }));
+
+                    if (watchedValues?.province) {
+                        // Find the province code based on the province name
+                        const provObj = provRes.find(
+                            (p) => p.province_name === watchedValues.province,
+                        );
+
+                        if (provObj) {
+                            const cityRes = await cities(provObj.province_code);
+                            setData((prev) => ({ ...prev, cities: cityRes }));
+
+                            if (watchedValues?.city) {
+                                // Find the city code based on the city name
+                                const cityObj = cityRes.find(
+                                    (c) => c.city_name === watchedValues.city,
+                                );
+
+                                if (cityObj) {
+                                    const brgyRes = await barangays(
+                                        cityObj.city_code,
+                                    );
+                                    setData((prev) => ({
+                                        ...prev,
+                                        barangays: brgyRes,
+                                    }));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Run only if we have a region, haven't loaded yet, AND regions array is populated
+        if (
+            watchedValues?.region &&
+            !isInitialLoaded &&
+            data.regions.length > 0
+        ) {
+            loadDefaultData();
+            setIsInitialLoaded(true);
         }
-    }, [selectedCity, setValue]);
+    }, [watchedValues, isInitialLoaded, data.regions]);
+
+    // 3. Handle Region Change
+    const handleRegionChange = (regionName) => {
+        setSelected({
+            region: regionName,
+            province: "",
+            city: "",
+            barangay: "",
+        });
+
+        if (setValue) {
+            setValue("region", regionName, { shouldValidate: true });
+            setValue("province", "", { shouldValidate: true });
+            setValue("city", "", { shouldValidate: true });
+            setValue("barangay", "", { shouldValidate: true });
+        }
+
+        setData((prev) => ({
+            ...prev,
+            provinces: [],
+            cities: [],
+            barangays: [],
+        }));
+
+        // Look up the code to fetch provinces
+        const regionObj = data.regions.find(
+            (r) => r.region_name === regionName,
+        );
+        if (regionObj) {
+            provinces(regionObj.region_code).then((res) =>
+                setData((prev) => ({ ...prev, provinces: res })),
+            );
+        }
+    };
+
+    // 4. Handle Province Change
+    const handleProvinceChange = (provinceName) => {
+        setSelected((prev) => ({
+            ...prev,
+            province: provinceName,
+            city: "",
+            barangay: "",
+        }));
+
+        if (setValue) {
+            setValue("province", provinceName, { shouldValidate: true });
+            setValue("city", "", { shouldValidate: true });
+            setValue("barangay", "", { shouldValidate: true });
+        }
+
+        setData((prev) => ({ ...prev, cities: [], barangays: [] }));
+
+        // Look up the code to fetch cities
+        const provObj = data.provinces.find(
+            (p) => p.province_name === provinceName,
+        );
+        if (provObj) {
+            cities(provObj.province_code).then((res) =>
+                setData((prev) => ({ ...prev, cities: res })),
+            );
+        }
+    };
+
+    // 5. Handle City Change
+    const handleCityChange = (cityName) => {
+        setSelected((prev) => ({ ...prev, city: cityName, barangay: "" }));
+
+        if (setValue) {
+            setValue("city", cityName, { shouldValidate: true });
+            setValue("barangay", "", { shouldValidate: true });
+        }
+
+        setData((prev) => ({ ...prev, barangays: [] }));
+
+        // Look up the code to fetch barangays
+        const cityObj = data.cities.find((c) => c.city_name === cityName);
+        if (cityObj) {
+            barangays(cityObj.city_code).then((res) =>
+                setData((prev) => ({ ...prev, barangays: res })),
+            );
+        }
+    };
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300 mt-3">
             <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
                 Address Information
             </h2>
-
-            {/* First Row: Region and Province */}
             <div className="flex flex-wrap gap-4">
-                {/* Region Select - Added w-full and md:flex-1 */}
                 <div className="flex flex-col w-full md:flex-1">
                     <Select
                         label="Region"
-                        name="region"
-                        options={regions.map((r) => ({
-                            value: r.code,
-                            label: r.name,
+                        {...register("region", { required: true })}
+                        options={data.regions.map((res) => ({
+                            value: res.region_name, // Changed to name
+                            label: res.region_name,
                         }))}
                         error={errors.region}
-                        value={selectedRegion}
-                        onChange={(val) => setValue("region", val)}
-                        required
+                        value={selected.region}
+                        onChange={(value) => handleRegionChange(value)}
                     />
                 </div>
-
-                {/* Province Select - Added w-full and md:flex-1 */}
                 <div className="flex flex-col w-full md:flex-1">
                     <Select
                         label="Province"
-                        name="province"
-                        options={provinces.map((p) => ({
-                            value: p.code,
-                            label: p.name,
+                        {...register("province", { required: true })}
+                        value={selected.province}
+                        options={data.provinces.map((res) => ({
+                            value: res.province_name, // Changed to name
+                            label: res.province_name,
                         }))}
+                        onChange={(value) => handleProvinceChange(value)}
                         error={errors.province}
-                        value={selectedProvince}
-                        onChange={(val) => setValue("province", val)}
-                        required
-                        disabled={!selectedRegion}
                     />
                 </div>
             </div>
 
-            {/* Second Row: City, Barangay, and Zip */}
             <div className="flex flex-wrap gap-4">
                 <div className="flex flex-col w-full md:flex-1">
                     <Select
-                        label="City / Municipality"
-                        name="city"
-                        options={cities.map((c) => ({
-                            value: c.code,
-                            label: c.name,
+                        label="City"
+                        {...register("city", { required: true })}
+                        options={data.cities.map((res) => ({
+                            value: res.city_name, // Changed to name
+                            label: res.city_name,
                         }))}
                         error={errors.city}
-                        value={selectedCity}
-                        onChange={(val) => setValue("city", val)}
-                        required
-                        disabled={!selectedProvince}
+                        value={selected.city}
+                        onChange={(value) => handleCityChange(value)}
                     />
                 </div>
                 <div className="flex flex-col w-full md:flex-1">
                     <Select
                         label="Barangay"
-                        name="barangay"
-                        options={barangays.map((b) => ({
-                            value: b.code,
-                            label: b.name,
+                        {...register("barangay", { required: true })}
+                        options={data.barangays.map((res) => ({
+                            value: res.brgy_name, // Changed to name
+                            label: res.brgy_name,
                         }))}
                         error={errors.barangay}
-                        value={selectedBarangay}
-                        onChange={(val) => setValue("barangay", val)}
-                        required
-                        disabled={!selectedCity}
+                        value={selected.barangay}
+                        onChange={(value) => {
+                            setSelected({ ...selected, barangay: value });
+                            if (setValue)
+                                setValue("barangay", value, {
+                                    shouldValidate: true,
+                                });
+                        }}
                     />
                 </div>
-
                 <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="Zip Code"
-                        name="zip_code"
                         type="text"
                         maxLength={4}
                         {...register("zip_code", {
-                            required: "Required",
+                            required: true,
                             pattern: {
                                 value: /^\d{4}$/,
                                 message: "Must be 4 digits",
@@ -160,27 +261,21 @@ export default function AddressInformationSection({
                         })}
                         error={errors.zip_code}
                         placeholder="e.g. 6127"
-                        onInput={(e) => {
-                            e.target.value = e.target.value.replace(
-                                /[^0-9]/g,
-                                "",
-                            );
-                        }}
                     />
                 </div>
             </div>
-
-            {/* Manual Entry for Street/House */}
             <div className="grid grid-cols-1 gap-4">
                 <div className="flex flex-col">
                     <Input
                         label="House/Lot/Street/ Purok/Sitio etc."
-                        name="street"
-                        {...register("street")}
+                        {...register("street", { required: true })}
+                        error={errors.street}
                         placeholder="Blk 1 Lot 2"
                     />
                 </div>
             </div>
         </div>
     );
-}
+};
+
+export default AddressInformationSection;

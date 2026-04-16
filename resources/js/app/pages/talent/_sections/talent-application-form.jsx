@@ -20,6 +20,7 @@ const TalentApplicationForm = () => {
     const savedData = JSON.parse(localStorage.getItem("talent_data") || "{}");
     const savedStep = parseInt(localStorage.getItem("talent_step") || "0");
     const { job_posting_id } = useSelector((store) => store.app);
+    const { job_postings } = useSelector((store) => store.job_postings);
     const dispatch = useDispatch();
     const [step, setStep] = useState(savedStep);
     const [loading, setLoading] = useState(false);
@@ -29,7 +30,9 @@ const TalentApplicationForm = () => {
     const job_post_id = new URLSearchParams(window.location.search).get(
         "job_posting_id",
     );
-    const source = new URLSearchParams(window.location.search).get("source");
+    const source =
+        new URLSearchParams(window.location.search).get("source") ??
+        "Online Application";
     const {
         register,
         handleSubmit,
@@ -57,22 +60,14 @@ const TalentApplicationForm = () => {
             ...savedData, // ✅ restore saved values
         },
     });
-    // alert(localStorage.getItem("job_posting_id"))
-    const {
-        fields: experienceFields,
-        append: appendExperience,
-        remove: removeExperience,
-    } = useFieldArray({ control, name: "experiences" });
-
-    const {
-        fields: skillFields,
-        append: appendSkill,
-        remove: removeSkill,
-    } = useFieldArray({ control, name: "skills" });
 
     const watchedValues = watch();
     let cvFile = watchedValues.cv?.[0];
     let base64File = file_convert_blob(cvFile);
+    const position = job_postings.find(
+        (res) => res.id == watchedValues.job_posting_id,
+    )?.job_requisition?.title;
+
     useEffect(() => {
         async function load_data() {
             if (cvFile?.name) {
@@ -83,6 +78,9 @@ const TalentApplicationForm = () => {
                     "job_posting_id",
                     job_posting_id ?? savedData.job_posting_id,
                 );
+            }
+            if (source) {
+                setValue("source", source);
             }
         }
         load_data();
@@ -108,55 +106,42 @@ const TalentApplicationForm = () => {
         }
     }, [step]);
 
-    const getName = (list, code) =>
-        list.find((item) => item.code === code)?.name || code;
-
     const nextStep = async () => {
-        const fieldsToValidate =
-            step == 1
-                ? [
-                      "first_name",
-                      "last_name",
-                      "middle_name",
-                      "email",
-                      "contact",
-                      "date_of_birth",
-                      "gender",
-                      "school_name",
-                      "course",
-                      "marital_status",
-                      "year_graduated",
-                      "degree",
-                  ]
-                : step == 2
-                  ? ["region", "province", "city", "barangay", "zip_code"]
-                  : step == 3
-                    ? ["experiences"]
-                    : step == 4
-                      ? ["skills"]
-                      : watchedValues
-                        ? ""
-                        : ["cv"];
+        const fieldsToValidate = [
+            "first_name",
+            "last_name",
+            "middle_name",
+            "email",
+            "contact",
+            "date_of_birth",
+            "gender",
+            "school_name",
+            "nationality",
+            "birth_place",
+            "course",
+            "marital_status",
+            "year_graduated",
+            "degree",
+            "cv",
+            "region",
+            "province",
+            "city",
+            "barangay",
+            "zip_code",
+            "street",
+        ];
 
         const isValid = await trigger(fieldsToValidate);
         if (isValid) setStep((curr) => curr + 1);
     };
 
     const prevStep = () => setStep((curr) => curr - 1);
-    const [regions, setRegions] = useState([]);
-    const [provinces, setProvinces] = useState([]);
-    const [cities, setCities] = useState([]);
-    const [barangays, setBarangays] = useState([]);
 
     const onSubmit = async (data) => {
         const finalData = {
             ...data,
             referral_id: referral_id,
             source: source,
-            region: getName(regions, data.region),
-            province: getName(provinces, data.province),
-            city: getName(cities, data.city),
-            barangay: getName(barangays, data.barangay),
         };
         try {
             setLoading(true);
@@ -225,6 +210,9 @@ const TalentApplicationForm = () => {
 
                 <form className="p-2 lg:px-8" onSubmit={handleSubmit(onSubmit)}>
                     {step === 0 && <JobPostingSection setStep={setStep} />}
+                    <div className="text-center cursor-pointer font-black text-3xl text-blue-500">
+                       {position}
+                    </div>
                     {step === 1 && (
                         <>
                             <PersonalInformationSection
@@ -235,20 +223,9 @@ const TalentApplicationForm = () => {
                                 watchedValues={watchedValues}
                             />
                             <AddressInformationSection
-                                prevStep={prevStep}
-                                nextStep={nextStep}
+                                watchedValues={watchedValues}
                                 register={register}
                                 errors={errors}
-                                setValue={setValue}
-                                watch={watch}
-                                barangays={barangays}
-                                setBarangays={setBarangays}
-                                regions={regions}
-                                setRegions={setRegions}
-                                provinces={provinces}
-                                setProvinces={setProvinces}
-                                cities={cities}
-                                setCities={setCities}
                             />
                             <UploadCvSection
                                 prevStep={prevStep}
@@ -264,11 +241,6 @@ const TalentApplicationForm = () => {
                         <FinalReviewSection
                             prevStep={prevStep}
                             watchedValues={watchedValues}
-                            getName={getName}
-                            barangays={barangays}
-                            regions={regions}
-                            provinces={provinces}
-                            cities={cities}
                             loading={loading}
                         />
                     )}

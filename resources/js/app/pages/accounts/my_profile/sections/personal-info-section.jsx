@@ -145,19 +145,12 @@ export default function PersonalInfoSection({
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <MapPin size={15} /> Address Information
                 </span>
+
                 <AddressInformationSection
                     register={register}
                     errors={errors}
+                    watchedValues={watchedValues}
                     setValue={setValue}
-                    watch={watch}
-                    barangays={barangays}
-                    setBarangays={setBarangays}
-                    regions={regions}
-                    setRegions={setRegions}
-                    provinces={provinces}
-                    setProvinces={setProvinces}
-                    cities={cities}
-                    setCities={setCities}
                 />
             </div>
 

@@ -6,7 +6,7 @@ export default function Page() {
     useEffect(() => {
         store.dispatch(get_job_posting_thunk());
     }, []);
-
+    // localStorage.clear();
     return (
         <>
             <TalentApplicationForm />

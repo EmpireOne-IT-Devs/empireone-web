@@ -6,8 +6,6 @@ import React from "react";
 export default function PersonalInformationSection({
     register,
     errors,
-    nextStep,
-    prevStep,
     watchedValues,
 }) {
     return (
@@ -22,7 +20,7 @@ export default function PersonalInformationSection({
                         label="First Name"
                         name="first_name"
                         {...register("first_name", {
-                            required: "Required",
+                            required: true,
                         })}
                         error={errors.first_name}
                         placeholder="John"
@@ -41,7 +39,7 @@ export default function PersonalInformationSection({
                         label="Last Name"
                         name="last_name"
                         {...register("last_name", {
-                            required: "Required",
+                            required: true,
                         })}
                         error={errors.last_name}
                         placeholder="Doe"
@@ -51,11 +49,11 @@ export default function PersonalInformationSection({
             <div className="flex flex-wrap gap-4">
                 <Input
                     label="Birthplace"
-                    name="birthplace"
-                    {...register("birthplace", {
-                        required: "Required",
+                    name="birth_place"
+                    {...register("birth_place", {
+                        required: true,
                     })}
-                    error={errors.birthplace}
+                    error={errors.birth_place}
                     placeholder="San Carlos City, Philippines"
                 />
             </div>
@@ -85,7 +83,10 @@ export default function PersonalInformationSection({
                     <Input
                         label="Nationality"
                         name="nationality"
-                        {...register("nationality")}
+                        {...register("nationality", {
+                            required: true,
+                        })}
+                        error={errors.nationality}
                         placeholder="Filipino"
                     />
                 </div>
@@ -98,7 +99,7 @@ export default function PersonalInformationSection({
                         name="email"
                         type="email"
                         {...register("email", {
-                            required: "Required",
+                            required: true,
                             pattern: {
                                 value: /^\S+@\S+$/i,
                                 message: "Invalid email",
@@ -113,7 +114,7 @@ export default function PersonalInformationSection({
                         label="Contact Number"
                         name="contact"
                         {...register("contact", {
-                            required: "Required",
+                            required: true,
                             pattern: {
                                 value: /^(09|\+639)\d{9}$/,
                                 message: "Invalid PH Number",
@@ -132,7 +133,7 @@ export default function PersonalInformationSection({
                         name="date_of_birth"
                         type="date"
                         {...register("date_of_birth", {
-                            required: "Required",
+                            required: true,
                         })}
                         error={errors.date_of_birth}
                     />
@@ -161,7 +162,6 @@ export default function PersonalInformationSection({
                         ]}
                         error={errors.gender}
                         value={watchedValues.gender}
-                        required
                     />
                 </div>
             </div>
@@ -172,7 +172,7 @@ export default function PersonalInformationSection({
                     <Input
                         label="School Name"
                         name="school_name"
-                        {...register("school_name", { required: "Required" })}
+                        {...register("school_name", { required: true })}
                         error={errors.school_name}
                         placeholder="Central Philippine State University"
                     />
@@ -181,7 +181,7 @@ export default function PersonalInformationSection({
                     <Input
                         label="Course"
                         name="course"
-                        {...register("course", { required: "Required" })}
+                        {...register("course", { required: true })}
                         error={errors.course}
                         placeholder="BSIT"
                     />
@@ -191,7 +191,7 @@ export default function PersonalInformationSection({
                         label="Year Graduated"
                         name="year_graduated"
                         {...register("year_graduated", {
-                            required: "Required",
+                            required: true,
                         })}
                         error={errors.year_graduated}
                         placeholder="2025"
@@ -200,15 +200,6 @@ export default function PersonalInformationSection({
 
                 {/* Second Row: Stacked on mobile, 3 columns on medium screens+ */}
                 <div className="flex flex-wrap md:flex-nowrap w-full gap-4">
-                    <div className="flex flex-col w-full md:flex-1">
-                        <Input
-                            label="Award"
-                            name="award"
-                            {...register("award")}
-                            placeholder="Best In *"
-                        />
-                    </div>
-
                     <div className="flex flex-col w-full md:flex-1">
                         <Select
                             label="Degree"
@@ -230,7 +221,6 @@ export default function PersonalInformationSection({
                             ]}
                             error={errors.degree}
                             value={watchedValues.degree}
-                            required
                         />
                     </div>
 
@@ -238,7 +228,7 @@ export default function PersonalInformationSection({
                         <Input
                             label="Source"
                             name="source"
-                            value=" "
+                            value={watchedValues.source}
                             {...register("source")}
                             placeholder="e.g. LinkedIn, Facebook, Referral"
                             disabled

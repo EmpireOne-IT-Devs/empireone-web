@@ -58,7 +58,7 @@ export default function CreateJobRequisition() {
         },
     });
 
-    console.log( "approver2" , watch("approver2_id") );
+    console.log("approver2", watch("approver2_id"));
 
     const watchedValues = watch();
     const positionType = watch("type");
@@ -109,6 +109,11 @@ export default function CreateJobRequisition() {
 
             setValue("qualifications", req?.qualifications || "");
             setValue("responsibilities", req?.responsibilities || "");
+
+            setValue("week_from1", req?.availability1.split("-")[0] || "");
+            setValue("week_to1", req?.availability1.split("-")[1]) || "";
+            setValue("week_from2", req?.availability2.split("-")[0] || "");
+            setValue("week_to2", req?.availability2.split("-")[1]) || "";
         } else if (positionType === "New Position") {
             setValue("title", "");
             setValue("department_id", "");
@@ -140,6 +145,8 @@ export default function CreateJobRequisition() {
         try {
             await create_job_requisition_service({
                 ...form_data,
+                availability1: `${form_data.week_from1}-${form_data.week_to1} `,
+                availability2: `${form_data.week_from2}-${form_data.week_to2} `,
                 salary_range: `₱${peso_format(form_data.salary_range_from)} ${
                     form_data.salary_range_to
                         ? ` - ₱${peso_format(form_data.salary_range_to)}`
@@ -177,6 +184,36 @@ export default function CreateJobRequisition() {
         (res) => res.id == watchedValues.location_id,
     )?.sites;
 
+    const weeks = [
+        {
+            value: "Sunday",
+            label: "Sunday",
+        },
+        {
+            value: "Monday",
+            label: "Monday",
+        },
+        {
+            value: "Tuesday",
+            label: "Tuesday",
+        },
+        {
+            value: "Wednesday",
+            label: "Wednesday",
+        },
+        {
+            value: "Thursday",
+            label: "Thursday",
+        },
+        {
+            value: "Friday",
+            label: "Friday",
+        },
+        {
+            value: "Saturday",
+            label: "Saturday",
+        },
+    ];
     return (
         <div>
             <Button type="button" onClick={() => setOpen(true)}>
@@ -632,62 +669,53 @@ export default function CreateJobRequisition() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <Input
                                         {...register("interviewer1", {
-                                            required:
-                                                "Interviewer 1 is required",
+                                            required: "Interviewer is required",
                                         })}
                                         error={errors.interviewer1?.message}
-                                        label="Interviewer 1"
+                                        label="Interviewer "
                                         placeholder="e.g. John Doe"
                                     />
 
-                                    <Controller
-                                        name="availability1"
-                                        control={control}
-                                        rules={{
-                                            required:
-                                                "Availability 1 is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Availability 1"
-                                                options={[
-                                                    {
-                                                        value: "Sunday",
-                                                        label: "Sunday",
-                                                    },
-                                                    {
-                                                        value: "Monday",
-                                                        label: "Monday",
-                                                    },
-                                                    {
-                                                        value: "Tuesday",
-                                                        label: "Tuesday",
-                                                    },
-                                                    {
-                                                        value: "Wednesday",
-                                                        label: "Wednesday",
-                                                    },
-                                                    {
-                                                        value: "Thursday",
-                                                        label: "Thursday",
-                                                    },
-                                                    {
-                                                        value: "Friday",
-                                                        label: "Friday",
-                                                    },
-                                                    {
-                                                        value: "Saturday",
-                                                        label: "Saturday",
-                                                    },
-                                                ]}
-                                                error={
-                                                    errors.availability1
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
-                                    />
+                                    <div className="flex gap-2">
+                                        <Controller
+                                            name="week_from1"
+                                            control={control}
+                                            rules={{
+                                                required: "From is required",
+                                            }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    {...field}
+                                                    label="From"
+                                                    options={weeks}
+                                                    error={
+                                                        errors.week_from1
+                                                            ?.message
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                        <div className="text-center flex items-center justify-center">
+                                            -
+                                        </div>
+                                        <Controller
+                                            name="week_to1"
+                                            control={control}
+                                            rules={{
+                                                required: "To is required",
+                                            }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    {...field}
+                                                    label="To "
+                                                    options={weeks}
+                                                    error={
+                                                        errors.week_to1?.message
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                    </div>
 
                                     <Input
                                         type="time"
@@ -708,50 +736,47 @@ export default function CreateJobRequisition() {
                                         placeholder="e.g. John Doe"
                                     />
 
-                                    <Controller
-                                        name="availability2"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Availability 2 (optional)"
-                                                options={[
-                                                    {
-                                                        value: "Sunday",
-                                                        label: "Sunday",
-                                                    },
-                                                    {
-                                                        value: "Monday",
-                                                        label: "Monday",
-                                                    },
-                                                    {
-                                                        value: "Tuesday",
-                                                        label: "Tuesday",
-                                                    },
-                                                    {
-                                                        value: "Wednesday",
-                                                        label: "Wednesday",
-                                                    },
-                                                    {
-                                                        value: "Thursday",
-                                                        label: "Thursday",
-                                                    },
-                                                    {
-                                                        value: "Friday",
-                                                        label: "Friday",
-                                                    },
-                                                    {
-                                                        value: "Saturday",
-                                                        label: "Saturday",
-                                                    },
-                                                ]}
-                                                error={
-                                                    errors.availability2
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
-                                    />
+                                    <div className="flex gap-2">
+                                        <Controller
+                                            name="week_from2"
+                                            control={control}
+                                            rules={{
+                                                required:
+                                                    "From 1 1 is required",
+                                            }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    {...field}
+                                                    label="From"
+                                                    options={weeks}
+                                                    error={
+                                                        errors.week_from2
+                                                            ?.message
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                        <div className="text-center flex items-center justify-center">
+                                            -
+                                        </div>
+                                        <Controller
+                                            name="week_to2"
+                                            control={control}
+                                            rules={{
+                                                required: "To is required",
+                                            }}
+                                            render={({ field }) => (
+                                                <Select
+                                                    {...field}
+                                                    label="To"
+                                                    options={weeks}
+                                                    error={
+                                                        errors.week_to2?.message
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                    </div>
 
                                     <Input
                                         type="time"
