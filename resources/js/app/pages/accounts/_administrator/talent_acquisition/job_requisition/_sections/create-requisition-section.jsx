@@ -59,6 +59,8 @@ export default function CreateJobRequisition() {
         },
     });
 
+    console.log( "approver2" , watch("approver2_id") );
+
     const watchedValues = watch();
     const positionType = watch("type");
     const existingPositionId = watch("existing_position_id");
@@ -566,7 +568,7 @@ export default function CreateJobRequisition() {
                                 </div>
 
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                    <div className="flex flex-col sm:flex-row gap-3">
+                                    <div className="flex flex-col sm:flex-row gap-3 bg-gray-50 border border-gray-200 rounded-lg p-2">
                                         <div className="flex-1">
                                             <Input
                                                 {...register(
@@ -599,22 +601,25 @@ export default function CreateJobRequisition() {
                                                         ?.message
                                                 }
                                                 iconLeft="₱"
-                                                label="Salary Range To"
+                                                label="To"
                                                 placeholder="e.g. 70,000"
                                             />
                                         </div>
                                     </div>
-                                    <Input
-                                        type="date"
-                                        {...register("target_start_date", {
-                                            required:
-                                                "Target Start Date is required",
-                                        })}
-                                        error={
-                                            errors.target_start_date?.message
-                                        }
-                                        label="Target Start Date"
-                                    />
+                                    <div className="flex mt-2">
+                                        <Input
+                                            type="date"
+                                            {...register("target_start_date", {
+                                                required:
+                                                    "Target Start Date is required",
+                                            })}
+                                            error={
+                                                errors.target_start_date
+                                                    ?.message
+                                            }
+                                            label="Target Start Date"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -95,7 +95,7 @@ class JobRequisition extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id')->with(['personal_information']);
+        return $this->belongsTo(User::class, 'user_id', 'id')->with(['personal_information']);
     }
 
     public function account(): BelongsTo

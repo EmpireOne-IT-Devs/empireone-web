@@ -14,6 +14,8 @@ export default function ApproveJobRequisitionSection({ data }) {
     const [recruiter, setRecruiter] = useState(null);
     const { users } = useSelector((state) => state.job_requisitions);
 
+    console.log("data recruiter", recruiter);
+
     async function approved_job_requisition() {
         // --- ADDED: Validation to ensure recruiter is selected if Director Approved ---
         if (data.status === "Director Approved" && !recruiter) {
