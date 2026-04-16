@@ -210,9 +210,11 @@ const TalentApplicationForm = () => {
 
                 <form className="p-2 lg:px-8" onSubmit={handleSubmit(onSubmit)}>
                     {step === 0 && <JobPostingSection setStep={setStep} />}
-                    <div className="text-center cursor-pointer font-black text-3xl text-blue-500">
-                       {position}
-                    </div>
+                    {step != 0 && (
+                        <div className="text-center cursor-pointer font-black text-3xl text-blue-500">
+                            {position}
+                        </div>
+                    )}
                     {step === 1 && (
                         <>
                             <PersonalInformationSection
