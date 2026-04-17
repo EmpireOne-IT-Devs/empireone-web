@@ -75,6 +75,46 @@ class JobApplicationController extends Controller
                     'role' => 3
                 ]
             );
+
+            if ($user->wasRecentlyCreated) {
+                Mail::to($user->email)->send(
+                    new SendEmailAccountCreation($user, url('/auth/login'))
+                );
+            }
+
+            if (!empty($emailData['attachments'])) {
+                foreach ($emailData['attachments'] as $attachment) {
+
+                    // Decode the base64 string from Google Apps Script
+                    $fileContent = base64_decode($attachment['base64']);
+
+                    // Create a unique filename utilizing the original extension and user ID
+                    $extension = pathinfo($attachment['name'], PATHINFO_EXTENSION);
+                    $fileName = 'resume_' . $user->id . '_' . time() . '.' . $extension;
+
+                    // MUST append the filename to the S3 path!
+                    $path = "unified/account/resume/" . $fileName;
+
+                    Storage::disk('s3')->put($path, $fileContent);
+                    $url = Storage::disk('s3')->url($path);
+
+                    AccountDocument::updateOrCreate(
+                        [
+                            'user_id' => $user->id,
+                            'type'    => 'Resume',
+                        ],
+                        [
+                            'name'   => $attachment['name'], // Keep original name for display purposes
+                            'url'    => $url,
+                            'status' => 'Approved',
+                        ]
+                    );
+                }
+            }
+
+            Mail::to($user->email)->send(
+                new SendEmailAccountCreation($user, url('/auth/login'))
+            );
             // 3. Find the Active Job Requisition
             $job_requisition = JobRequisition::where('title', $jobTitle)
                 ->with(['job_posting'])
@@ -89,7 +129,7 @@ class JobApplicationController extends Controller
                     'user_id' => $user->id,
                     'threadId' => $request->threadId,
                     'job_posting_id' => $job_requisition->job_posting->id,
-                    'source'=>$request->source
+                    'source' => $request->source
                 ]);
             }
 
