@@ -76,7 +76,7 @@ class JobApplicationController extends Controller
                 ]
             );
 
-            if ($user->wasRecentlyCreated) {
+            if ($user->created_at->isToday()) {
                 Mail::to($user->email)->send(
                     new SendEmailAccountCreation($user, url('/auth/login'))
                 );
