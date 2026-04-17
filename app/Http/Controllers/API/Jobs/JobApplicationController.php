@@ -15,6 +15,7 @@ use App\Models\Account\AccountWorkingExperience;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
+use App\Models\Jobs\JobRequisition;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,6 +34,77 @@ class JobApplicationController extends Controller
 
         // Decode Base64
         return base64_decode($data);
+    }
+
+    public function get_job_application_from_email(Request $request)
+    {
+        // The Google Apps Script sends an array of email objects
+        $emails = $request->all();
+
+        if (empty($emails)) {
+            return response()->json(['status' => 'ignored', 'message' => 'No data received.']);
+        }
+
+        foreach ($emails as $emailData) {
+            // 1. Extract raw data from the JS payload
+            $rawSubject = $emailData['subject'] ?? '';
+            $applicantEmail = $emailData['from'] ?? null;
+
+            // Initialize defaults
+            $applicantName = 'Unknown Applicant';
+            $jobTitle = null;
+
+            // Parse the subject to extract Job Title and Applicant Name
+            // This Regex looks for "Application: [Job Title] - [Name]" (is flexible with spaces)
+            if (preg_match('/Application:\s*(.*?)\s*-\s*(.*)/i', $rawSubject, $matches)) {
+                $jobTitle = trim($matches[1]);       // Extracts: "Web Developer"
+                $applicantName = trim($matches[2]);  // Extracts: "Marlou Flores Pepito"
+            }
+
+            // Ensure we have the minimum required data to proceed
+            if (!$applicantEmail || !$jobTitle) {
+                continue;
+            }
+
+            // 2. Create or find the User (prevents duplicate email crashes)
+            $user = User::firstOrCreate(
+                ['email' => $applicantEmail],
+                [
+                    'name' => $applicantName,
+                    'password' => Hash::make('Business12'), // Always hash passwords!
+                    'role' => 3
+                ]
+            );
+            // 3. Find the Active Job Requisition
+            $job_requisition = JobRequisition::where('title', $jobTitle)
+                ->with(['job_posting'])
+                ->whereHas('job_posting', function ($query) {
+                    $query->where('status', 'Active');
+                })
+                ->first();
+
+            // 4. Create the Job Application (if the posting exists)
+            if ($job_requisition && $job_requisition->job_posting) {
+                JobApplication::firstOrCreate([
+                    'user_id' => $user->id,
+                    'threadId' => $request->threadId,
+                    'job_posting_id' => $job_requisition->job_posting->id,
+                ]);
+            }
+
+            // 5. (Optional) Handle Attachments
+            // You have Base64 encoded PDFs coming in $emailData['attachments']!
+            // Example:
+            // foreach($emailData['attachments'] as $attachment) {
+            //     $decodedFile = base64_decode($attachment['base64']);
+            //     // Storage::put('resumes/' . $attachment['name'], $decodedFile);
+            // }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'processed' => count($emails)
+        ]);
     }
 
     public function get_job_application_by_user(Request $request)

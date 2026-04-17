@@ -9,15 +9,10 @@ function checkNewEmails() {
       messages.forEach(message => {
         if (!message.isUnread()) return;
         
-        var rawSubject = message.getSubject().replace(/^Re:\s*/i, "").trim();
-        
-        // --- NEW: Filter out emails right here ---
-        // If the subject doesn't match our Application standard, skip it immediately.
-        var matchedSubject = findTheApplicant(rawSubject);
-        if (!matchedSubject) return; 
-        
         var fromEmail = message.getFrom();
         var toEmail = message.getTo();
+
+        var subject = message.getSubject().replace(/^Re:\s*/i, "");
         var body = message.getPlainBody(); 
         
         var fromMatch = fromEmail.match(/<([^>]*)>/);
@@ -27,29 +22,29 @@ function checkNewEmails() {
         var to = toMatch ? toMatch[1] : toEmail;
         var date = message.getDate();
         
-        // Extract Attachments and Encode to Base64
+        // --- NEW: Extract Attachments and Encode to Base64 ---
         var attachments = message.getAttachments();
         var attachmentData = attachments.map(attachment => {
-          var blob = attachment.copyBlob(); 
-          var base64String = Utilities.base64Encode(blob.getBytes()); 
+          var blob = attachment.copyBlob(); // Get the raw file data
+          var base64String = Utilities.base64Encode(blob.getBytes()); // Convert to Base64
           
           return {
             name: attachment.getName(),
             contentType: attachment.getContentType(),
             size: attachment.getSize(),
-            base64: base64String 
+            base64: base64String // This is the actual file data to send
           };
         });
         
         const result = {
-          subject: matchedSubject, // Uses the validated subject string
+          subject: subject,
           from: from,
           to: to,
           date: date,
           messageId: message.getId(),
           threadId: thread.getId(), 
           count: messages.length,
-          attachments: attachmentData 
+          attachments: attachmentData // Includes the base64 encoded files
         };
         
         data.push(result);
@@ -68,8 +63,9 @@ function checkNewEmails() {
       
       console.log('count:', uniqueEmails);
 
-      // --- Upload to API ---
-      // var apiUrl = "https://your-api-endpoint.com/api/webhook"; 
+      // --- NEW: Upload to API ---
+      // var apiUrl = "https://your-api-endpoint.com/api/webhook"; // Replace with your actual API URL
+      
       // var options = {
       //   method: "post",
       //   contentType: "application/json",
@@ -81,6 +77,7 @@ function checkNewEmails() {
       //   var res = UrlFetchApp.fetch(apiUrl, options);
       //   Logger.log("API Response Code: " + res.getResponseCode());
       //   Logger.log("API Response Body: " + res.getContentText());
+        
       // } catch (e) {
       //   Logger.log("Error sending to API: " + e.message);
       // }
@@ -92,13 +89,9 @@ function checkNewEmails() {
     Logger.log("No new emails.");
   }
 }
+
+
 function findTheApplicant(applicant) {
-  // Regex looks for "Application: [Anything] -[Name]" or "Application: [Anything] - [Name]"
-  // The \s*-\s* ensures it matches the hyphen whether there are spaces around it or not.
-  const regex = /Application:.*?\s*-\s*(.+)/i;
-  
-  const match = applicant.match(regex);
-  
-  // Returns just the extracted name (e.g., "Marlou Flores Pepito"), or null if it doesn't match
-  return match ? match[1].trim() : null;
+  const regex = /\b(Application:)\w\b/gi; // Matches sequences that start with CF or PS and have 14 total characters
+  return applicant.match(regex) || [];
 }

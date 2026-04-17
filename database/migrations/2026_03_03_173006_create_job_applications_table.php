@@ -22,6 +22,7 @@ return new class extends Migration
                 ->constrained('job_postings')
                 ->nullOnDelete();
             $table->string('referral_id')->nullable();
+            $table->string('threadId')->nullable();
             $table->enum('screening_status', [
                 'New',
                 'Conducted',

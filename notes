@@ -3,6 +3,11 @@ php artisan make:model Jobs/JobsApplication -mcr
 - add emergency contract
 - add parents name.
 
+Application: [Job Title] - [First Name] [Last Name]
+
+
+
+
 1342 - gio
 3-chingay
 
