@@ -67,21 +67,33 @@ class JobApplicationController extends Controller
             }
 
             // 2. Create or find the User (prevents duplicate email crashes)
-            $user = User::firstOrCreate(
-                ['email' => $applicantEmail],
-                [
-                    'name' => $applicantName,
-                    'password' => Hash::make('Business12'), // Always hash passwords!
-                    'role' => 3
-                ]
-            );
+            // $user = User::firstOrCreate(
+            //     ['email' => $applicantEmail],
+            //     [
+            //         'name' => $applicantName,
+            //         'password' => Hash::make('Business12'), // Always hash passwords!
+            //         'role' => 3
+            //     ]
+            // );
 
-            if ($user->wasRecentlyCreated) {
+            // if ($user->wasRecentlyCreated) {
+            //     Mail::to($user->email)->send(
+            //         new SendEmailAccountCreation($user, url('/auth/login'))
+            //     );
+            // }
+            $user = User::where('email', $applicantEmail)->first();
+            if (!$user) {
+                $user = User::create([
+                    'email' => $applicantEmail,
+                    'name' => $applicantName,
+                    'password' => Hash::make('Business12'),
+                    'role' => 3
+                ]);
+                // This is the ONLY place the email should be sent!
                 Mail::to($user->email)->send(
                     new SendEmailAccountCreation($user, url('/auth/login'))
                 );
             }
-
             if (!empty($emailData['attachments'])) {
                 foreach ($emailData['attachments'] as $attachment) {
 
