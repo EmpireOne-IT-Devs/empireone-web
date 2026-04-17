@@ -14,6 +14,7 @@ import { setAlert, setJobPostingId } from "@/app/redux/app-slice";
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
+import { BriefcaseIcon } from "lucide-react";
 
 const TalentApplicationForm = () => {
     // ✅ Load saved step + data
@@ -179,8 +180,8 @@ const TalentApplicationForm = () => {
     };
 
     return (
-        <div className="min-h-screen bg-blue-50 flex items-start justify-center md:p-6 font-sans">
-            <div className="max-w-3xl w-full min-h-screen bg-white md:rounded-xl shadow-lg transition-all duration-500">
+        <div className="min-h-screen bg-blue-50 flex items-start justify-center md:p-6 font-sans    ">
+            <div className="max-w-4xl w-full min-h-screen bg-white md:rounded-xl shadow-lg transition-all duration-500 p-4 lg:p-8 my-6">
                 {/* Progress Bar */}
                 <div className="px-3 py-3 lg:px-8">
                     <div>
@@ -210,9 +211,19 @@ const TalentApplicationForm = () => {
 
                 <form className="p-2 lg:px-8" onSubmit={handleSubmit(onSubmit)}>
                     {step === 0 && <JobPostingSection setStep={setStep} />}
-                    {step != 0 && (
-                        <div className="text-center cursor-pointer font-black text-3xl text-blue-500">
-                            {position}
+                    {step !== 0 && (
+                        <div className="flex items-center gap-3 pb-4 mb-6 border-b border-gray-200">
+                            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                                <BriefcaseIcon className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div className="leading-tight">
+                                <p className="text-xs text-gray-500">
+                                    Applying for
+                                </p>
+                                <p className="text-xl font-semibold text-blue-500">
+                                    {position}
+                                </p>
+                            </div>
                         </div>
                     )}
                     {step === 1 && (

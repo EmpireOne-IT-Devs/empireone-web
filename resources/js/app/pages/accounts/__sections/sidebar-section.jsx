@@ -279,7 +279,7 @@ export default function SidebarSection() {
                                 </div>
                                 <div className="flex flex-col h-full p-6 pb-4">
                                     {/* Main Mobile Navigation */}
-                                    <nav className="flex-1 overflow-y-auto">
+                                    <nav className="flex-1 overflow-y-auto no-scrollbar">
                                         <ul className="space-y-4">
                                             {mainNavigation.map((item, i) =>
                                                 item.is_label ? (
@@ -402,7 +402,7 @@ export default function SidebarSection() {
                     <hr className="my-3 border-gray-200" />
 
                     {/* Main Desktop Navigation */}
-                    <nav className="flex-1 overflow-y-auto p-2">
+                    <nav className="flex-1 overflow-y-auto no-scrollbar  p-2">
                         <ul className="space-y-1">
                             {mainNavigation.map((item, i) =>
                                 item.is_label ? (

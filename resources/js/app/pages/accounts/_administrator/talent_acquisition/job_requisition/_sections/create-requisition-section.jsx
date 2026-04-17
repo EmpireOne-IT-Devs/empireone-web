@@ -12,6 +12,7 @@ import Wysiwyg from "@/app/_components/wysiwyg";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import Radio from "@/app/_components/radio";
 import { peso_format } from "@/app/lib/peso-format";
+import { BriefcaseIcon } from "lucide-react";
 
 export default function CreateJobRequisition() {
     const [open, setOpen] = useState(false);
@@ -227,13 +228,27 @@ export default function CreateJobRequisition() {
                 width="max-w-4xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="New Job Requisition"
+                title={
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <BriefcaseIcon />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                Talent Acquisition
+                            </p>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                Create Job Requisition
+                            </h2>
+                        </div>
+                    </div>
+                }
             >
                 <form
                     onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col max-h-[75vh]"
                 >
-                    <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+                    <div className="flex-1 h-[400px] overflow-y-auto space-y-6 pr-2">
                         <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-300">
                             <label className="text-sm font-medium text-gray-700">
                                 <span className="text-black">

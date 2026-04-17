@@ -93,7 +93,7 @@ export default function UploadCvSection({
 
                 {errors.cv && (
                     <p className="text-red-500 text-xs mt-2 font-medium flex items-center">
-                        <span className="mr-1">⚠️</span> CV is required!.
+                        <span className="mr-1">⚠️</span> CV is required!
                     </p>
                 )}
             </div>

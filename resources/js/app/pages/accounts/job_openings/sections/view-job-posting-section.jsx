@@ -2,6 +2,7 @@ import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
 import React, { useState } from "react";
 import {
+    Briefcase,
     Building,
     Calendar,
     CheckCircle,
@@ -94,7 +95,26 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                 width="max-w-4xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title={`Position: ${data?.job_requisition?.title}`}
+                title={
+                    <div className="flex items-center gap-3 p-2">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <Briefcase className="w-5 h-5" />
+                        </div>
+
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                Job Opening
+                            </p>
+
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                <span className="text-gray-700 mr-1">
+                                    Position:
+                                </span>
+                                {data?.job_requisition?.title}
+                            </h2>
+                        </div>
+                    </div>
+                }
             >
                 <div className="flex flex-col max-h-[75vh] overflow-y-auto ">
                     <div className="mb-6 gap-2 flex items-center">

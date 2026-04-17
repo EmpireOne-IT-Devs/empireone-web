@@ -1,14 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
-/* ─── Hide native scrollbar (all browsers) ─── */
+
+/* ─── Subtle Gray Scrollbar ─── */
+
+/* Firefox */
 * {
-    scrollbar-width: none;        /* Firefox */
-    -ms-overflow-style: none;     /* IE / Edge */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent; /* thumb | track */
 }
- 
+
+/* Chrome, Edge, Safari */
 *::-webkit-scrollbar {
-    display: none;                /* Chrome / Safari / Opera */
+  width: 6px;
+  height: 6px;
 }
- 
+
+*::-webkit-scrollbar-track {
+  background: transparent; /* makes it less visible */
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* soft gray */
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* slightly darker on hover */
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari */
+}

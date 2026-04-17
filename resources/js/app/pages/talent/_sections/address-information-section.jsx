@@ -182,7 +182,7 @@ const AddressInformationSection = ({
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300 mt-3">
-            <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
+            <h2 className="text-2xl font-bold text-gray-800  pb-2">
                 Address Information
             </h2>
             <div className="flex flex-wrap gap-4">

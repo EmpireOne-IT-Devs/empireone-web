@@ -17,6 +17,7 @@ import Modal from "@/app/_components/modal";
 import JobRequisitionLogsSection from "./job-requisition-logs-section";
 import DeclinedJobRequisitionSection from "./declined-job-requisition-section";
 import { useSelector } from "react-redux";
+import { BriefcaseIcon } from "lucide-react";
 
 export default function JobRequisitionBodySection({ job_requisition }) {
     const [open, setOpen] = useState(false);
@@ -123,10 +124,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     label={job_requisition.priority}
                                 />
 
-                                 <Badge
+                                <Badge
                                     showDot={false}
                                     variant="purple"
-                                    
                                     label={`Recruiter: ${job_requisition?.recruiter?.name}`}
                                 />
 
@@ -235,11 +235,25 @@ export default function JobRequisitionBodySection({ job_requisition }) {
             <Modal
                 width="max-w-7xl"
                 isOpen={open}
-                title="Job Requisition Details"
+                title={
+                    <div className="flex items-center gap-3 p-2">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <BriefcaseIcon />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                Confirm Action
+                            </p>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                Job Requisition Details
+                            </h2>
+                        </div>
+                    </div>
+                }
                 onClose={() => setOpen(false)}
             >
                 {/* Responsive split: stack on small screens, row on large screens */}
-                <div className="flex flex-col lg:flex-row overflow-auto max-h-[75vh]">
+                <div className="flex flex-col lg:flex-row overflow-auto max-h-[75vh] no-scrollbar">
                     <div className="flex-1 p-4 sm:p-6 space-y-6">
                         <div className="space-y-4">
                             <div className="flex flex-wrap items-center gap-3">
@@ -479,8 +493,6 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
                 {/* Footer Action Buttons: Stack on mobile, row on tablet/desktop */}
                 <div className="flex flex-col sm:flex-row w-full items-center justify-between border-t gap-3 p-4 bg-white sticky bottom-0">
-                   
-
                     {job_requisition.status == "Pending" &&
                         job_requisition.approver1_id == data?.user?.id && (
                             <ApproveJobRequisitionSection

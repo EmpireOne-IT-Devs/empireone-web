@@ -1,5 +1,6 @@
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
+import { Clipboard } from "lucide-react";
 import moment from "moment";
 import React, { useState } from "react";
 
@@ -15,7 +16,21 @@ export default function ShowApplicantDetailsSection({ data }) {
                 width="max-w-3xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="Application Details "
+                title={
+                    <div className="flex items-center gap-3 p-2">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <Clipboard />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                My Application
+                            </p>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                Application Details
+                            </h2>
+                        </div>
+                    </div>
+                }
             >
                 <div className="max-h-[72vh] space-y-6 overflow-y-auto pr-2 animate-in fade-in duration-500">
                     <div className="bg-gray-50 p-6 rounded-xl space-y-6 text-sm text-gray-700 border border-gray-100">
@@ -28,7 +43,8 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 <p>
                                     <strong>Job Title:</strong>{" "}
                                     {
-                                        data?.job_posting?.job_requisition?.title
+                                        data?.job_posting?.job_requisition
+                                            ?.title
                                     }{" "}
                                 </p>
                                 <p>
@@ -90,7 +106,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                             ?.contact
                                     }
                                 </p>
-                                
+
                                 <p>
                                     <strong>BPO Experience:</strong>{" "}
                                     {data?.applicant.account_employee?.with_bpo}

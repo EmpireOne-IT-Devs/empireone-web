@@ -5,7 +5,7 @@ export default function Tabs({ tabs, children }) {
     return (
         <div className="border-b px-4 sm:px-6 lg:px-8">
             {/* Added horizontal scroll for mobile screens to prevent squishing */}
-            <nav className="flex justify-start space-x-8 sm:space-x-12 overflow-x-auto whitespace-nowrap no-scrollbar">
+            <nav className="flex justify-start space-x-8 sm:space-x-12  whitespace-nowrap no-scrollbar">
                 {tabs.map((tab, idx) => (
                     <Link
                         key={idx}

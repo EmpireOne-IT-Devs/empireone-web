@@ -18,7 +18,7 @@ export default function Page() {
             <ProgressScrollSection />
 
             <HeaderSection />
-            <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-x-hidden">
+            <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-200 ">
                 <div id="hero">
                     <HeroSection />
                 </div>

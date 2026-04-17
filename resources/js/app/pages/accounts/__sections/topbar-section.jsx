@@ -23,7 +23,7 @@ export default function TopbarSection() {
     console.log("user", data);
     return (
         <>
-            <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm  ">
+            <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm ">
                 <button
                     className="hidden lg:block p-2  items-center justify-center text-gray-900 hover:text-gray-700  "
                     onClick={() => dispatch(setDesktopCollapsed())}

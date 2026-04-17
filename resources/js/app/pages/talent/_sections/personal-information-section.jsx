@@ -10,7 +10,7 @@ export default function PersonalInformationSection({
 }) {
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
+            <h2 className="text-2xl font-bold text-gray-800  pb-2">
                 Personal Details
             </h2>
 
@@ -199,7 +199,7 @@ export default function PersonalInformationSection({
                 </div>
 
                 {/* Second Row: Stacked on mobile, 3 columns on medium screens+ */}
-                <div className="flex flex-wrap md:flex-nowrap w-full gap-4">
+                <div className="flex flex-wrap md:flex-nowrap w-full gap-4 mb-4">
                     <div className="flex flex-col w-full md:flex-1">
                         <Select
                             label="Degree"
