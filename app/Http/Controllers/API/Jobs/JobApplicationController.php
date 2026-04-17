@@ -76,7 +76,7 @@ class JobApplicationController extends Controller
                 ]
             );
 
-            if ($user->created_at->isToday()) {
+            if ($user->created_at->isSameDay(Carbon::today())) {
                 Mail::to($user->email)->send(
                     new SendEmailAccountCreation($user, url('/auth/login'))
                 );
