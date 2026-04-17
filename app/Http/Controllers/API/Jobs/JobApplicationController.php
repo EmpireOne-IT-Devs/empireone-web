@@ -76,10 +76,11 @@ class JobApplicationController extends Controller
                 ]
             );
 
+
             if ($user->wasRecentlyCreated) {
-                // Mail::to($user->email)->send(
-                //     new SendEmailAccountCreation($user, url('/auth/login'))
-                // );
+                Mail::to($user->email)->send(
+                    new SendEmailAccountCreation($user, url('/auth/login'))
+                );
             }
 
             if (!empty($emailData['attachments'])) {
@@ -112,9 +113,7 @@ class JobApplicationController extends Controller
                 }
             }
 
-            Mail::to($user->email)->send(
-                new SendEmailAccountCreation($user, url('/auth/login'))
-            );
+
             // 3. Find the Active Job Requisition
             $job_requisition = JobRequisition::where('title', $jobTitle)
                 ->with(['job_posting'])
