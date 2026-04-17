@@ -66,20 +66,21 @@ class JobApplicationController extends Controller
                 continue;
             }
 
-            $user = User::where('email', $applicantEmail)->first();
-            if (!$user) {
-                $user = User::create([
-                    'email' => $applicantEmail,
-                    'name' => $applicantName,
-                    'password' => Hash::make('Business12'),
-                    'role' => 3
-                ]);
-                if ($user) {
-                    Mail::to($user->email)->send(
-                        new SendEmailAccountCreation($user, url('/auth/login'))
-                    );
-                }
+            $is_created = User::where('email', $applicantEmail)->first();
+            if (!$is_created) {
+                Mail::to($applicantEmail)->send(
+                    new SendEmailAccountCreation($user, url('/auth/login'))
+                );
             }
+            // 2. Create or find the User (prevents duplicate email crashes)
+            $user = User::firstOrCreate(
+                ['email' => $applicantEmail],
+                [
+                    'name' => $applicantName,
+                    'password' => Hash::make('Business12'), // Always hash passwords!
+                    'role' => 3
+                ]
+            );
 
 
 
@@ -145,7 +146,7 @@ class JobApplicationController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'processed' => $emails
+            'processed' => count($emails)
         ]);
     }
 
