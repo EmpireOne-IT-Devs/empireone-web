@@ -66,21 +66,20 @@ class JobApplicationController extends Controller
                 continue;
             }
 
-            // 2. Create or find the User (prevents duplicate email crashes)
-            $user = User::firstOrCreate(
-                ['email' => $applicantEmail],
-                [
+            $user = User::where('email', $applicantEmail)->first();
+            if (!$user) {
+                $user = User::create([
+                    'email' => $applicantEmail,
                     'name' => $applicantName,
-                    'password' => Hash::make('Business12'), // Always hash passwords!
+                    'password' => Hash::make('Business12'),
                     'role' => 3
-                ]
-            );
-
-            if ($user->created_at->isSameDay(Carbon::today())) {
+                ]);
                 Mail::to($user->email)->send(
                     new SendEmailAccountCreation($user, url('/auth/login'))
                 );
             }
+
+
 
             if (!empty($emailData['attachments'])) {
                 foreach ($emailData['attachments'] as $attachment) {
