@@ -55,10 +55,9 @@ class JobApplicationController extends Controller
             $jobTitle = null;
 
             // Parse the subject to extract Job Title and Applicant Name
-            // This Regex looks for "Application: [Job Title] - [Name]" (is flexible with spaces)
             if (preg_match('/Application:\s*(.*?)\s*-\s*(.*)/i', $rawSubject, $matches)) {
-                $jobTitle = trim($matches[1]);       // Extracts: "Web Developer"
-                $applicantName = trim($matches[2]);  // Extracts: "Marlou Flores Pepito"
+                $jobTitle = trim($matches[1]);
+                $applicantName = trim($matches[2]);
             }
 
             // Ensure we have the minimum required data to proceed
@@ -66,68 +65,57 @@ class JobApplicationController extends Controller
                 continue;
             }
 
-            // 2. Create or find the User (prevents duplicate email crashes)
-            // $user = User::firstOrCreate(
-            //     ['email' => $applicantEmail],
-            //     [
-            //         'name' => $applicantName,
-            //         'password' => Hash::make('Business12'), // Always hash passwords!
-            //         'role' => 3
-            //     ]
-            // );
+            // Clean the email to prevent invisible spaces/capitalization from creating duplicates
+            $cleanEmail = strtolower(trim($applicantEmail));
 
-            // if ($user->wasRecentlyCreated) {
-            //     Mail::to($user->email)->send(
-            //         new SendEmailAccountCreation($user, url('/auth/login'))
-            //     );
-            // }
-            $user = User::where('email', $applicantEmail)->first();
+            // 2. Check if the user already exists
+            $user = User::where('email', $cleanEmail)->first();
+
+            // 3. If they DO NOT exist, create them AND send the email once
             if (!$user) {
                 $user = User::create([
-                    'email' => $applicantEmail,
+                    'email' => $cleanEmail,
                     'name' => $applicantName,
                     'password' => Hash::make('Business12'),
                     'role' => 3
                 ]);
+
                 // This is the ONLY place the email should be sent!
                 Mail::to($user->email)->send(
                     new SendEmailAccountCreation($user, url('/auth/login'))
                 );
             }
+
+            // 4. Handle Attachments
             if (!empty($emailData['attachments'])) {
                 foreach ($emailData['attachments'] as $attachment) {
 
                     // Decode the base64 string from Google Apps Script
                     $fileContent = base64_decode($attachment['base64']);
 
-                    // Create a unique filename utilizing the original extension and user ID
+                    // Create a unique filename (using uniqid instead of time to prevent overwrites)
                     $extension = pathinfo($attachment['name'], PATHINFO_EXTENSION);
-                    $fileName = 'resume_' . $user->id . '_' . time() . '.' . $extension;
+                    $fileName = 'resume_' . $user->id . '_' . uniqid() . '.' . $extension;
 
-                    // MUST append the filename to the S3 path!
                     $path = "unified/account/resume/" . $fileName;
 
                     Storage::disk('s3')->put($path, $fileContent);
                     $url = Storage::disk('s3')->url($path);
 
-                    AccountDocument::updateOrCreate(
-                        [
-                            'user_id' => $user->id,
-                            'type'    => 'Resume',
-                        ],
-                        [
-                            'name'   => $attachment['name'], // Keep original name for display purposes
-                            'url'    => $url,
-                            'status' => 'Approved',
-                        ]
-                    );
+                    // Use create() instead of updateOrCreate() so multiple attachments are all saved
+                    AccountDocument::create([
+                        'user_id' => $user->id,
+                        'type'    => 'Resume',
+                        'name'    => $attachment['name'],
+                        'url'     => $url,
+                        'status'  => 'Approved',
+                    ]);
                 }
             }
 
-            Mail::to($user->email)->send(
-                new SendEmailAccountCreation($user, url('/auth/login'))
-            );
-            // 3. Find the Active Job Requisition
+            // (I DELETED THE ROGUE EMAIL COMMAND THAT WAS SITTING HERE!)
+
+            // 5. Find the Active Job Requisition
             $job_requisition = JobRequisition::where('title', $jobTitle)
                 ->with(['job_posting'])
                 ->whereHas('job_posting', function ($query) {
@@ -135,23 +123,15 @@ class JobApplicationController extends Controller
                 })
                 ->first();
 
-            // 4. Create the Job Application (if the posting exists)
+            // 6. Create the Job Application (if the posting exists)
             if ($job_requisition && $job_requisition->job_posting) {
                 JobApplication::firstOrCreate([
                     'user_id' => $user->id,
-                    'threadId' => $request->threadId,
+                    'threadId' => $emailData['threadId'] ?? null,
                     'job_posting_id' => $job_requisition->job_posting->id,
-                    'source' => $request->source
+                    'source' => $emailData['source'] ?? 'Careers'
                 ]);
             }
-
-            // 5. (Optional) Handle Attachments
-            // You have Base64 encoded PDFs coming in $emailData['attachments']!
-            // Example:
-            // foreach($emailData['attachments'] as $attachment) {
-            //     $decodedFile = base64_decode($attachment['base64']);
-            //     // Storage::put('resumes/' . $attachment['name'], $decodedFile);
-            // }
         }
 
         return response()->json([
@@ -159,7 +139,6 @@ class JobApplicationController extends Controller
             'processed' => count($emails)
         ]);
     }
-
     public function get_job_application_by_user(Request $request)
     {
         $applications =  JobApplication::where('user_id', Auth::id())->with(['applicant', 'job_posting'])->get();
