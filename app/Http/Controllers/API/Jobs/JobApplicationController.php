@@ -74,9 +74,11 @@ class JobApplicationController extends Controller
                     'password' => Hash::make('Business12'),
                     'role' => 3
                 ]);
-                Mail::to($user->email)->send(
-                    new SendEmailAccountCreation($user, url('/auth/login'))
-                );
+                if ($user) {
+                    Mail::to($user->email)->send(
+                        new SendEmailAccountCreation($user, url('/auth/login'))
+                    );
+                }
             }
 
 
@@ -143,7 +145,7 @@ class JobApplicationController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'processed' => count($emails)
+            'processed' => $emails
         ]);
     }
 
