@@ -89,6 +89,7 @@ class JobApplicationController extends Controller
                     'user_id' => $user->id,
                     'threadId' => $request->threadId,
                     'job_posting_id' => $job_requisition->job_posting->id,
+                    'source'=>$request->source
                 ]);
             }
 
