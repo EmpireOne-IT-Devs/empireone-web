@@ -20,13 +20,17 @@ class RegisteredUserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::with('department')->orderBy('id', 'desc')->paginate(10);
+        // $users = User::with('department')->orderBy('id', 'desc')->paginate(10);
 
-        if ($request->expectsJson()) {
-            return response()->json($users);
-        }
+        // if ($request->expectsJson()) {
+        //     return response()->json($users);
+        // }
 
-        return Inertia::render('Users/Index', ['users' => $users]);
+        // return Inertia::render('Users/Index', ['users' => $users]);
+        $users = User::get();
+        return response()->json([
+            'status' => $users,
+        ], 200);
     }
 
     /**
