@@ -66,16 +66,17 @@ class JobApplicationController extends Controller
                 continue;
             }
 
-            $user = User::where('email', $applicantEmail)->first();
-
-            // 3. If they DO NOT exist...
-            if (!$user) {
-                $user = User::create([
-                    'email' => $applicantEmail,
+            // 2. Create or find the User (prevents duplicate email crashes)
+            $user = User::firstOrCreate(
+                ['email' => $applicantEmail],
+                [
                     'name' => $applicantName,
-                    'password' => Hash::make('Business12'),
+                    'password' => Hash::make('Business12'), // Always hash passwords!
                     'role' => 3
-                ]);
+                ]
+            );
+
+            if ($user->wasRecentlyCreated) {
                 Mail::to($user->email)->send(
                     new SendEmailAccountCreation($user, url('/auth/login'))
                 );
