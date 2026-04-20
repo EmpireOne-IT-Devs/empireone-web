@@ -168,7 +168,6 @@ export default function HeaderSection() {
                     </div>
                 </div>
 
-                {/* Profile Completion Card */}
                 {profileCompletion < 100 && (
                     <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 transition-all">
                         <div className="flex items-center gap-2 mb-2">

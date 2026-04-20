@@ -23,12 +23,13 @@ export default function Page() {
                     <HeroSection />
                 </div>
                 <CarouselSection />
-
-                <AboutSection />
-                <DeveloperSection />
                 <ServicesSection />
+                <AboutSection />
                 <TestimonialSection />
                 <CareerSection />
+
+                <DeveloperSection />
+
                 <ContactSection />
                 {/* 
                 <CarouselHighlightSection /> */}
