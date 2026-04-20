@@ -32,4 +32,8 @@ class JobApplication extends Model
     {
         return $this->hasOne(JobPosting::class, 'id', 'job_posting_id')->with(['job_requisition']);
     }
+    public function job_offers(): HasMany
+    {
+        return $this->hasMany(JobOffer::class, 'job_application_id', 'id')->with(['user', 'allowances', 'job_application']);
+    }
 }

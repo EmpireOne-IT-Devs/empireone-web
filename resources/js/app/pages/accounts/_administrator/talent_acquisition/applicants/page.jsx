@@ -8,6 +8,7 @@ import store from "../../../../../store/store";
 import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
 import ApplicantTableSection from "./_sections/applicant-table-section";
 import SearchStatusSection from "./_sections/search-status-section";
+import PaginationSection from "./_sections/pagination-section";
 
 export default function Page() {
     useEffect(() => {
@@ -17,17 +18,13 @@ export default function Page() {
     return (
         <Layout>
             <JobPostingLayout>
-                <div>
+                <div className="flex flex-col gap-3">
                     <HeaderSection />
                     <CardSection />
-                    {/* <div className="mt-6">
-                        <SearchSection />
-                    </div> */}
 
-                    <div className="mt-6">
-                        <SearchStatusSection />
-                        <ApplicantTableSection />
-                    </div>
+                    <SearchStatusSection />
+                    <ApplicantTableSection />
+                    <PaginationSection />
                 </div>
             </JobPostingLayout>
         </Layout>

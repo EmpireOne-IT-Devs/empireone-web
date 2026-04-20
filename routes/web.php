@@ -132,11 +132,14 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('/job_requisition', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/job_requisition/page');
             });
-            Route::get('/active_posting', function () {
-                return Inertia::render('accounts/_administrator/talent_acquisition/active_posting/page');
+            Route::get('/job_posting', function () {
+                return Inertia::render('accounts/_administrator/talent_acquisition/job_posting/page');
             });
-            Route::get('/active_posting/{id}', function () {
-                return Inertia::render('accounts/_administrator/talent_acquisition/active_posting/id/page');
+            Route::get('/job_posting/{id}/applicants', function () {
+                return Inertia::render('accounts/_administrator/talent_acquisition/job_posting/id/applicants/page');
+            });
+            Route::get('/job_posting/{id}/job_offers', function () {
+                return Inertia::render('accounts/_administrator/talent_acquisition/job_posting/id/job_offers/page');
             });
             Route::get('/job_offers', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/job_offers/page');

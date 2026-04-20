@@ -461,18 +461,9 @@ class JobApplicationController extends Controller
 
         // 1. Fetch all applications for this specific job once
         $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant'])->get();
-        // $stats = [
-        //     'total'    => $applications->count(),
-        //     'pending'  => $applications->where('screening_status', 'Pending')->count(),
-        //     'initial'  => $applications->where('screening_status', 'Initial Phase')->count(),
-        //     'final'    => $applications->where('screening_status', 'Final Phase')->count(),
-        //     'passed'   => $applications->where('screening_status', 'Passed')->count(),
-        //     'failed'   => $applications->where('screening_status', 'Failed')->count(),
-        // ];
-        $job_posting = JobPosting::where('id', $id)->with(['job_requisition'])->first();
+        $job_posting = JobPosting::where('id', $id)->with(['job_requisition','job_application'])->first();
         return response()->json([
             'job_applications' => $applications,
-            // 'stats'  => $stats,
             'job_posting' => $job_posting
         ], 200);
     }

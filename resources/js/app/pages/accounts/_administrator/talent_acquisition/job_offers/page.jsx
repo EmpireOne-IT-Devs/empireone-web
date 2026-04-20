@@ -5,6 +5,7 @@ import TableSection from "./_sections/table-section";
 import store from "@/app/store/store";
 import { get_job_offers_thunk } from "@/app/redux/job-posting-thunk";
 import SearchSection from "./_sections/search-section";
+import PaginationSection from "./_sections/pagination-section";
 
 export default function Page() {
     useEffect(() => {
@@ -14,8 +15,11 @@ export default function Page() {
     return (
         <Layout>
             <JobPostingLayout>
-                <SearchSection />
-                <TableSection />
+                <div className="flex flex-col gap-3">
+                    <SearchSection />
+                    <TableSection />
+                    <PaginationSection />
+                </div>
             </JobPostingLayout>
         </Layout>
     );

@@ -19,9 +19,9 @@ export default function JobPostingLayout({ children }) {
             active: path === "job_requisition",
         },
         {
-            label: "Active Postings",
-            path: "/accounts/administrator/talent_acquisition/active_posting",
-            active: path === "active_posting",
+            label: "Job Postings",
+            path: "/accounts/administrator/talent_acquisition/job_posting",
+            active: path === "job_posting",
         },
         {
             label: "Applicants",

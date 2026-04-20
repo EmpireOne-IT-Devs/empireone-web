@@ -21,7 +21,7 @@ class JobPosting extends Model
 
     public function job_requisition(): HasOne
     {
-        return $this->hasOne(JobRequisition::class, 'id', 'job_requisition_id')->with(['location', 'department', 'user','recruiter']);
+        return $this->hasOne(JobRequisition::class, 'id', 'job_requisition_id')->with(['location', 'department', 'user', 'recruiter']);
     }
     public function applications(): HasMany
     {
@@ -30,6 +30,10 @@ class JobPosting extends Model
     public function applicant(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+    public function job_application(): HasOne
+    {
+        return $this->hasOne(JobApplication::class, 'job_posting_id', 'id')->with(['job_offers']);
     }
     public function personal_information(): HasOne
     {

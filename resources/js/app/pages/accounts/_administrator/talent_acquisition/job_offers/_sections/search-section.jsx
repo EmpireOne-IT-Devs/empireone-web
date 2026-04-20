@@ -20,7 +20,7 @@ export default function SearchSection() {
 
     const onSubmit = (data) => {
         const query = new URLSearchParams(data).toString();
-        router.visit(`/administrator/job_posting/job_offers?${query}`);
+        router.visit(`/accounts/administrator/talent_acquisition/job_offers?${query}`);
     };
 
     return (
