@@ -181,7 +181,7 @@ const TalentApplicationForm = () => {
 
     return (
         <div className="min-h-screen bg-blue-50 flex items-start justify-center md:p-6 font-sans    ">
-            <div className="max-w-4xl w-full min-h-screen bg-white md:rounded-xl shadow-lg transition-all duration-500 p-4 lg:p-8 my-6">
+            <div className="max-w-4xl w-full min-h-screen bg-white md:rounded-xl shadow-lg transition-all duration-500 p-4 lg:p-8">
                 {/* Progress Bar */}
                 <div className="px-3 py-3 lg:px-8">
                     <div>
