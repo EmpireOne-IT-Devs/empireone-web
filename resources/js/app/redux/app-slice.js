@@ -16,6 +16,10 @@ export const appSlice = createSlice({
         data: {},
         job_posting_id: null,
         loading: true,
+        document: {
+            name: "",
+            type: "",
+        },
     },
     reducers: {
         setUser: (state, action) => {
@@ -39,6 +43,9 @@ export const appSlice = createSlice({
         setLoading: (state, action) => {
             state.loading = action.payload;
         },
+        setDocument: (state, action) => {
+            state.document = action.payload;
+        },
     },
 });
 export const {
@@ -49,6 +56,7 @@ export const {
     setData,
     setJobPostingId,
     setLoading,
+    setDocument,
 } = appSlice.actions;
 
 export default appSlice.reducer;

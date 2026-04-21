@@ -2,6 +2,7 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\User;
@@ -35,5 +36,9 @@ class JobOffer extends Model
     public function allowances(): HasMany
     {
         return $this->hasMany(AccountEmployeeAllowance::class, 'job_offer_id', 'id');
+    }
+     public function documents(): HasMany
+    {
+        return $this->hasMany(AccountDocument::class, 'user_id', 'user_id');
     }
 }

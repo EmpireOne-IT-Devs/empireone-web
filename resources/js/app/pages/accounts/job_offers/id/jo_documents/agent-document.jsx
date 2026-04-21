@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Document,
     Page,
@@ -8,9 +8,10 @@ import {
     PDFViewer,
     Image,
 } from "@react-pdf/renderer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import PDFLoader from "@/app/_components/pdf-loader";
+import { setDocument } from "@/app/redux/app-slice";
 
 const styles = StyleSheet.create({
     page: {
@@ -397,8 +398,19 @@ const OfferLetterPDF = ({
 );
 
 // Example wrapper for preViewing
-const AgentOfferLetterPreview = () => {
+const AgentOfferLetterPreview = ({ name, type }) => {
     const { job_offer } = useSelector((store) => store.applicants);
+    const { document } = useSelector((store) => store.app);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(
+            setDocument({
+                ...document,
+                name: name,
+                type: type,
+            }),
+        );
+    }, []);
 
     // Clean data object. NO HTML TAGS here.
     const rawData = {

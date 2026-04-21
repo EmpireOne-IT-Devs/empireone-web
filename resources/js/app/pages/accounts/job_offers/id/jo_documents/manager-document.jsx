@@ -1,17 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Document,
     Page,
     Text,
     View,
     StyleSheet,
-    PDFViewer,
     Image,
-    BlobProvider,
 } from "@react-pdf/renderer";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import { setLoading } from "@/app/redux/app-slice";
+import { setDocument } from "@/app/redux/app-slice";
 import PDFLoader from "@/app/_components/pdf-loader";
 
 const styles = StyleSheet.create({
@@ -21,10 +19,20 @@ const styles = StyleSheet.create({
         fontSize: 10,
         lineHeight: 1.5,
     },
+    logoContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    logo: {
+        width: 450,
+        height: 130,
+        objectFit: "contain",
+    },
     bold: {
         fontFamily: "Helvetica-Bold",
     },
-    // Added underline style here
     underline: {
         textDecoration: "underline",
     },
@@ -68,11 +76,11 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     signatureLine: {
-        marginTop: 30,
-        borderTopWidth: 1,
-        borderTopColor: "#000",
-        width: 250,
-        paddingTop: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: "#000000",
+        marginTop: 20,
+        marginBottom: 5,
+        width: "100%",
     },
     centerTitle: {
         fontFamily: "Helvetica-Bold",
@@ -110,7 +118,9 @@ const ManagerOfferLetterPDF = ({
         {/* MAIN LETTER PAGE */}
         <Page size="A4" style={styles.page}>
             <View style={styles.header}>
-                {/* Wrap the dynamic values in a nested Text component with the underline style */}
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} src="/images/Blogo (1).png" />
+                </View>
                 <Text style={styles.bold}>
                     DATE: <Text style={styles.underline}>{date}</Text>
                 </Text>
@@ -132,7 +142,6 @@ const ManagerOfferLetterPDF = ({
 
             <View style={styles.row}>
                 <Text style={styles.label}>Designation:</Text>
-                {/* Apply underline to value */}
                 <Text style={[styles.value, styles.underline]}>
                     {designation}
                 </Text>
@@ -349,7 +358,7 @@ const ManagerOfferLetterPDF = ({
                 Note:
             </Text>
             <ListItem>
-                All benefits are subject to annual reView and may be amended,
+                All benefits are subject to annual review and may be amended,
                 abrogated, modified, rescinded/reinstated by the Company from
                 time to time
             </ListItem>
@@ -364,28 +373,32 @@ const ManagerOfferLetterPDF = ({
                     and conditions outlined.
                 </Text>
                 <View style={{ marginTop: 20 }}>
-                    <Text style={{ marginBottom: 15 }}>
+                    <Text style={{ marginBottom: 30 }}>
                         Name: {applicantName}
                     </Text>
-                    <Text style={{ marginBottom: 15 }}>
-                        {signature && (
+
+                    {/* Signature Container */}
+                    <View style={{ position: "relative", marginBottom: 20 }}>
+                        {/* CRITICAL FIX: Ternary avoids rendering empty string nodes */}
+                        {signature ? (
                             <Image
                                 style={{
                                     position: "absolute",
-                                    bottom: 30, // Positions it 5 units above the line
-                                    left: 10, // Indents it slightly
-                                    height: 60,
+                                    bottom: -50,
+                                    left: 65,
+                                    height: 120,
                                     width: 150,
-                                    zIndex: 1, // Ensures it stays on top
+                                    zIndex: 1,
                                 }}
-                                src={signature} // local or remote URL
+                                src={signature}
                             />
-                        )}
-                    </Text>
+                        ) : null}
+                        <Text>Signature: _____________________________</Text>
+                    </View>
+
                     <Text>Date: _____________________________</Text>
                 </View>
             </View>
-
             <Text style={styles.footnote}>[1] Varies</Text>
         </Page>
 
@@ -428,34 +441,54 @@ const ManagerOfferLetterPDF = ({
                 of identifying me.
             </Text>
 
-            <View style={{ marginTop: 40 }}>
-                <Text style={{ marginBottom: 15 }}>Name: {applicantName}</Text>
-                <Text style={{ marginBottom: 15 }}>
-                    {signature && (
+            <View style={{ marginTop: 20 }}>
+                <Text style={{ marginBottom: 30 }}>
+                    Name: {applicantName}
+                </Text>
+
+                {/* Signature Container */}
+                <View style={{ position: "relative", marginBottom: 20 }}>
+                    {/* CRITICAL FIX: Ternary avoids rendering empty string nodes */}
+                    {signature ? (
                         <Image
                             style={{
                                 position: "absolute",
-                                bottom: 30, // Positions it 5 units above the line
-                                left: 10, // Indents it slightly
-                                height: 60,
+                                bottom: -50,
+                                left: 65,
+                                height: 120,
                                 width: 150,
-                                zIndex: 1, // Ensures it stays on top
+                                zIndex: 1,
                             }}
-                            src={signature} // local or remote URL
+                            src={signature}
                         />
-                    )}
-                </Text>
+                    ) : null}
+                    <Text>Signature: _____________________________</Text>
+                </View>
+
                 <Text>Date: _____________________________</Text>
             </View>
         </Page>
     </Document>
 );
 
-// Example wrapper for preViewing
-const ManagerOfferLetterPreView = () => {
+const ManagerOfferLetterPreView = ({ name, type }) => {
     const { job_offer } = useSelector((store) => store.applicants);
+    const { document } = useSelector((store) => store.app);
+    const dispatch = useDispatch();
 
-    // Clean data object. NO HTML TAGS here.
+    // CRITICAL FIX: Add condition to prevent infinite re-rendering loops
+    useEffect(() => {
+        if (document?.name !== name || document?.type !== type) {
+            dispatch(
+                setDocument({
+                    ...document,
+                    name: name,
+                    type: type,
+                }),
+            );
+        }
+    }, [dispatch, document, name, type]);
+
     const rawData = {
         date: moment().format("LL"),
         dateOfJoining: moment().format("LL"),
@@ -468,7 +501,6 @@ const ManagerOfferLetterPreView = () => {
         placeOfPosition:
             job_offer?.job_application?.job_posting?.job_requisition?.location
                 ?.name || "Any EmpireOne office as business requires",
-        // Format these dynamically if available in your Redux store
         annualFixedPay: "1,000.00",
         totalCompensation: "1,000.00",
         basicPay: "1,000.00",

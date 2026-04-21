@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Document,
     Page,
@@ -7,9 +7,10 @@ import {
     StyleSheet,
     PDFViewer,
 } from "@react-pdf/renderer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import PDFLoader from "@/app/_components/pdf-loader";
+import { setDocument } from "@/app/redux/app-slice";
 
 const styles = StyleSheet.create({
     page: {
@@ -17,6 +18,17 @@ const styles = StyleSheet.create({
         fontFamily: "Helvetica",
         fontSize: 10,
         lineHeight: 1.5,
+    },
+    logoContainer: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    logo: {
+        width: 450,
+        height: 130,
+        objectFit: "contain",
     },
     bold: {
         fontFamily: "Helvetica-Bold",
@@ -444,8 +456,19 @@ const SupportOfferLetterPDF = ({
 
 // export default SupportOfferLetterPreview;
 
-const SupportOfferLetterPreview = () => {
+const SupportOfferLetterPreview = ({ name, type }) => {
     const { job_offer } = useSelector((store) => store.applicants);
+    const { document } = useSelector((store) => store.app);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(
+            setDocument({
+                ...document,
+                name: name,
+                type: type,
+            }),
+        );
+    }, []);
 
     // Clean data object. NO HTML TAGS here.
     const rawData = {
@@ -460,7 +483,6 @@ const SupportOfferLetterPreview = () => {
         placeOfPosition:
             job_offer?.job_application?.job_posting?.job_requisition?.location
                 ?.name || "Any EmpireOne office as business requires",
-        // Format these dynamically if available in your Redux store
         annualFixedPay: "1,000.00",
         totalCompensation: "1,000.00",
         basicPay: "1,000.00",

@@ -108,7 +108,7 @@ class AccountDocumentController extends Controller
                     'name'   => $doc['name'],
                 ],
                 [
-                    'status' => 'Pending',
+                    'status' => $doc['status'] ?? 'Pending',
                     'url'    => $filePath ? Storage::disk('s3')->url($filePath) : null,
                 ]
             );

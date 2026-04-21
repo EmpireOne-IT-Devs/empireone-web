@@ -14,13 +14,27 @@ export default function Page() {
             get_job_offer_by_id_thunk(window.location.pathname.split("/")[4]),
         );
     }, []);
-    console.log("job_offer", job_offer);
+    const validOffers = ["Managerial Offer", "Agent Offer", "Support Offer"];
+
+    const hasOffer = job_offer?.documents?.some((res) =>
+        validOffers.includes(res.name),
+    );
+    console.log("job_offer", hasOffer);
     return (
         <>
-            {job_offer?.role == "Manager" && <ManagerOfferLetterPreview />}
-            {job_offer?.role == "Agent" && <AgentOfferLetterPreview />}
-            {job_offer?.role == "Support" && <SupportOfferLetterPreview />}
-            <JobOfferAgreeSection />
+            {job_offer?.role == "Manager" && (
+                <ManagerOfferLetterPreview
+                    name="Managerial Offer"
+                    type="offer"
+                />
+            )}
+            {job_offer?.role == "Agent" && (
+                <AgentOfferLetterPreview name="Agent Offer" type="offer" />
+            )}
+            {job_offer?.role == "Support" && (
+                <SupportOfferLetterPreview name="Support Offer" type="offer" />
+            )}
+            {job_offer?.role && !hasOffer && <JobOfferAgreeSection />}
         </>
     );
 }
