@@ -454,31 +454,31 @@ const ManagerOfferLetterPDF = ({
 // Example wrapper for preViewing
 const ManagerOfferLetterPreView = () => {
     const { job_offer } = useSelector((store) => store.applicants);
-    const dispatch = useDispatch();
 
     // Clean data object. NO HTML TAGS here.
     const rawData = {
         date: moment().format("LL"),
         dateOfJoining: moment().format("LL"),
-        designation: "Manager",
-        applicantName: `${job_offer?.user?.personal_information?.first_name || ""} ${job_offer?.user?.personal_information?.last_name || ""}`,
-        address: `${job_offer?.user?.personal_information?.street || ""} ${job_offer?.user?.personal_information?.city || ""} ${job_offer?.user?.personal_information?.province || ""} ${job_offer?.user?.personal_information?.zip_code || ""}`,
-        signature: `${job_offer?.employee?.signature || ""}`,
-        role: job_offer?.role,
-        salary: job_offer?.salary,
-        place_of_positon:
+        designation: job_offer?.role || "Manager",
+        applicantName:
+            `${job_offer?.user?.personal_information?.first_name || ""} ${job_offer?.user?.personal_information?.last_name || ""}`.trim(),
+        address:
+            `${job_offer?.user?.personal_information?.street || ""} ${job_offer?.user?.personal_information?.city || ""} ${job_offer?.user?.personal_information?.province || ""} ${job_offer?.user?.personal_information?.zip_code || ""}`.trim(),
+        signature: job_offer?.employee?.signature || "",
+        placeOfPosition:
             job_offer?.job_application?.job_posting?.job_requisition?.location
-                ?.name,
-        annualFixedPay: "1000",
-        totalCompensation: "1000",
-        basicPay: "1000",
-        allowance: "1000",
+                ?.name || "Any EmpireOne office as business requires",
+        // Format these dynamically if available in your Redux store
+        annualFixedPay: "1,000.00",
+        totalCompensation: "1,000.00",
+        basicPay: "1,000.00",
+        allowance: "1,000.00",
     };
 
     return (
         <PDFLoader
-            width="w-full"
             pdf={<ManagerOfferLetterPDF {...rawData} />}
+            width="w-full"
         />
     );
 };

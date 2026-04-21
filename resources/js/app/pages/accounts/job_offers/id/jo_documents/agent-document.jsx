@@ -8,6 +8,9 @@ import {
     PDFViewer,
     Image,
 } from "@react-pdf/renderer";
+import { useSelector } from "react-redux";
+import moment from "moment";
+import PDFLoader from "@/app/_components/pdf-loader";
 
 const styles = StyleSheet.create({
     page: {
@@ -393,13 +396,31 @@ const OfferLetterPDF = ({
     </Document>
 );
 
-// Example wrapper for easy rendering in a React application
-const AgentOfferLetterPreview = () => (
-    <div className="h-screen">
-        <PDFViewer width="100%" height="100%">
-            <OfferLetterPDF />
-        </PDFViewer>
-    </div>
-);
+// Example wrapper for preViewing
+const AgentOfferLetterPreview = () => {
+    const { job_offer } = useSelector((store) => store.applicants);
+
+    // Clean data object. NO HTML TAGS here.
+    const rawData = {
+        date: moment().format("LL"),
+        dateOfJoining: moment().format("LL"),
+        designation: job_offer?.role || "Manager",
+        applicantName:
+            `${job_offer?.user?.personal_information?.first_name || ""} ${job_offer?.user?.personal_information?.last_name || ""}`.trim(),
+        address:
+            `${job_offer?.user?.personal_information?.street || ""} ${job_offer?.user?.personal_information?.city || ""} ${job_offer?.user?.personal_information?.province || ""} ${job_offer?.user?.personal_information?.zip_code || ""}`.trim(),
+        signature: job_offer?.employee?.signature || "",
+        placeOfPosition:
+            job_offer?.job_application?.job_posting?.job_requisition?.location
+                ?.name || "Any EmpireOne office as business requires",
+        // Format these dynamically if available in your Redux store
+        annualFixedPay: "1,000.00",
+        totalCompensation: "1,000.00",
+        basicPay: "1,000.00",
+        allowance: "1,000.00",
+    };
+
+    return <PDFLoader pdf={<OfferLetterPDF {...rawData} />} width="w-full" />;
+};
 
 export default AgentOfferLetterPreview;

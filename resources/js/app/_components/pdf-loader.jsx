@@ -9,8 +9,9 @@ export default function PDFLoader({ pdf, width = "sm:w-[80vw]" }) {
         <div className={`w-screen ${width} h-screen m-0 p-0`}>
             <BlobProvider document={pdf}>
                 {({ url, loading, error }) => {
-                    // Custom Loading State
-                    dispatch(setLoading(loading));
+                    // // Custom Loading State
+                    // console.log('loading',loading)
+                    // dispatch(setLoading(loading));
                     if (loading) {
                         return (
                             <div
