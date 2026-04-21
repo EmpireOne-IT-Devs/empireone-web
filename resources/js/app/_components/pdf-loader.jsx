@@ -3,10 +3,10 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../redux/app-slice";
 
-export default function PDFLoader({ pdf }) {
+export default function PDFLoader({ pdf, width = "sm:w-[80vw]" }) {
     const dispatch = useDispatch();
     return (
-        <div class="w-screen md:w-[80vw] h-screen m-0 p-0">
+        <div className={`w-screen ${width} h-screen m-0 p-0`}>
             <BlobProvider document={pdf}>
                 {({ url, loading, error }) => {
                     // Custom Loading State

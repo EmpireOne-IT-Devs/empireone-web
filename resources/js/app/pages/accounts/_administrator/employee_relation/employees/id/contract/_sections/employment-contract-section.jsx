@@ -842,7 +842,10 @@ export default function EmploymentContractSection({ data }) {
 
     return (
         <div style={{ height: "100vh", width: "100vw" }}>
-            <BlobProvider document={<EmploymentContract data={data} />}>
+            <BlobProvider 
+            
+            width="w-full"
+            document={<EmploymentContract data={data} />}>
                 {({ url, loading, error }) => {
                     // Custom Loading State
                     dispatch(setLoading(loading));

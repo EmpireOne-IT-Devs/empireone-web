@@ -8,7 +8,7 @@ import AcceptJobOfferSection from "./accept-job-offer-section";
 
 export default function TableSection() {
     const { job_offers } = useSelector((store) => store.applicants);
-
+const role_path = window.location.pathname.split('/')[2]
     const columns = [
         { header: "Applicant Name", accessor: "name" },
         { header: "Email", accessor: "email" },
@@ -50,14 +50,15 @@ export default function TableSection() {
                     ),
                     action: (
                         <div className="flex gap-3">
-                            {res.status === "Pending" && (
+                            {/* {res.status === "Pending" && (
                                 <AcceptJobOfferSection data={res} />
-                            )}
+                            )} */}
 
                             {/* {res.status === "Declined" && (
                                 <ResendJobOfferSection data={res} />
                             )} */}
                             {/* <ShowDetailsSection data={res} /> */}
+                            <a href={`/accounts/${role_path}/job_offers/${res.id}`} target="_blank">Show Job Offer</a>
                         </div>
                     ),
                 }))}

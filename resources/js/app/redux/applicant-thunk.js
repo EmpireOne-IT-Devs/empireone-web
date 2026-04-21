@@ -1,12 +1,25 @@
-import { get_201_files_by_user_service, get_documents_by_user_service } from "../services/documents-services";
+import {
+    get_201_files_by_user_service,
+    get_documents_by_user_service,
+} from "../services/documents-services";
 import { get_job_application_by_user_service } from "../services/job-application-service";
-import { get_job_offer_by_user_service } from "../services/job-offer-service";
+import {
+    get_job_offer_by_id_service,
+    get_job_offer_by_user_service,
+} from "../services/job-offer-service";
 import { applicantSlice } from "./applicant-slice";
 
 export function get_job_offer_by_user_thunk() {
     return async function (dispatch, getState) {
         const result = await get_job_offer_by_user_service();
         dispatch(applicantSlice.actions.setJobOffers(result.data));
+    };
+}
+
+export function get_job_offer_by_id_thunk(id) {
+    return async function (dispatch, getState) {
+        const result = await get_job_offer_by_id_service(id);
+        dispatch(applicantSlice.actions.setJobOffer(result.data));
     };
 }
 

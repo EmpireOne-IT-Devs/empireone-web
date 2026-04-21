@@ -2,6 +2,7 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,10 @@ class JobOffer extends Model
     public function user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information']);
+    }
+     public function employee(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'id', 'user_id');
     }
     public function allowances(): HasMany
     {

@@ -100,52 +100,15 @@ class JobOfferController extends Controller
         ], 200);
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
     /**
      * Display the specified resource.
      */
-    public function show(JobOffer $jobOffer)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(JobOffer $jobOffer)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, JobOffer $jobOffer)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(JobOffer $jobOffer)
-    {
-        //
+       $jobOffers = JobOffer::where('id',$id)->with(['job_application','user','employee'])->first();
+         return response()->json([
+            'data' => $jobOffers,
+            'status' => 'success',
+        ], 200);
     }
 }

@@ -73,6 +73,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         Route::get('/job_offers', function () {
             return Inertia::render('accounts/job_offers/page');
         });
+        Route::get('/job_offers/{id}', function () {
+            return Inertia::render('accounts/job_offers/id/page');
+        });
         Route::get('/my_documents', function () {
             return Inertia::render('accounts/my_documents/page');
         });
@@ -150,7 +153,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('/interviews', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/interviews/page');
             });
-              Route::get('/qr_code', function () {
+            Route::get('/qr_code', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/qr_code/page');
             });
         });
@@ -161,7 +164,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('pooling', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/pooling/page');
             });
-             Route::get('separation', function () {
+            Route::get('separation', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/separation/page');
             });
 
@@ -263,6 +266,10 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         Route::get('/job_offers', function () {
             return Inertia::render('accounts/job_offers/page');
         });
+
+        Route::get('/job_offers/{id}', function () {
+            return Inertia::render('accounts/job_offers/id/page');
+        });
         Route::get('/my_documents', function () {
             return Inertia::render('accounts/my_documents/page');
         });
@@ -317,6 +324,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         });
         Route::get('/job_offers', function () {
             return Inertia::render('accounts/job_offers/page');
+        });
+        Route::get('/job_offers/{id}', function () {
+            return Inertia::render('accounts/job_offers/id/page');
         });
         Route::get('/my_documents', function () {
             return Inertia::render('accounts/my_documents/page');
