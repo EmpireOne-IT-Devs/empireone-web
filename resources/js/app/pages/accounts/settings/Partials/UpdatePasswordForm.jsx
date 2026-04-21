@@ -1,13 +1,13 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Transition } from '@headlessui/react';
-import { useForm } from '@inertiajs/react';
-import { Eye, EyeOff } from 'lucide-react';
-import { useRef, useState } from 'react';
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import TextInput from "@/Components/TextInput";
+import { Transition } from "@headlessui/react";
+import { useForm } from "@inertiajs/react";
+import { Eye, EyeOff } from "lucide-react";
+import { useRef, useState } from "react";
 
-export default function UpdatePasswordForm({ className = '' }) {
+export default function UpdatePasswordForm({ className = "" }) {
     const passwordInput = useRef();
     const currentPasswordInput = useRef();
     const [showPasswords, setShowPasswords] = useState({
@@ -25,25 +25,25 @@ export default function UpdatePasswordForm({ className = '' }) {
         processing,
         recentlySuccessful,
     } = useForm({
-        current_password: '',
-        password: '',
-        password_confirmation: '',
+        current_password: "",
+        password: "",
+        password_confirmation: "",
     });
 
     const updatePassword = (e) => {
         e.preventDefault();
 
-        put(route('password.update'), {
+        put(route("password.update"), {
             preserveScroll: true,
             onSuccess: () => reset(),
             onError: (errors) => {
                 if (errors.password) {
-                    reset('password', 'password_confirmation');
+                    reset("password", "password_confirmation");
                     passwordInput.current.focus();
                 }
 
                 if (errors.current_password) {
-                    reset('current_password');
+                    reset("current_password");
                     currentPasswordInput.current.focus();
                 }
             },
@@ -83,21 +83,21 @@ export default function UpdatePasswordForm({ className = '' }) {
                             ref={currentPasswordInput}
                             value={data.current_password}
                             onChange={(e) =>
-                                setData('current_password', e.target.value)
+                                setData("current_password", e.target.value)
                             }
-                            type={showPasswords.current ? 'text' : 'password'}
+                            type={showPasswords.current ? "text" : "password"}
                             className="block w-full pr-10"
                             autoComplete="current-password"
                         />
 
                         <button
                             type="button"
-                            onClick={() => togglePasswordVisibility('current')}
+                            onClick={() => togglePasswordVisibility("current")}
                             className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 transition hover:text-gray-700 focus:outline-none"
                             aria-label={
                                 showPasswords.current
-                                    ? 'Hide current password'
-                                    : 'Show current password'
+                                    ? "Hide current password"
+                                    : "Show current password"
                             }
                         >
                             {showPasswords.current ? (
@@ -122,20 +122,22 @@ export default function UpdatePasswordForm({ className = '' }) {
                             id="password"
                             ref={passwordInput}
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
-                            type={showPasswords.next ? 'text' : 'password'}
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                            type={showPasswords.next ? "text" : "password"}
                             className="block w-full pr-10"
                             autoComplete="new-password"
                         />
 
                         <button
                             type="button"
-                            onClick={() => togglePasswordVisibility('next')}
+                            onClick={() => togglePasswordVisibility("next")}
                             className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 transition hover:text-gray-700 focus:outline-none"
                             aria-label={
                                 showPasswords.next
-                                    ? 'Hide new password'
-                                    : 'Show new password'
+                                    ? "Hide new password"
+                                    : "Show new password"
                             }
                         >
                             {showPasswords.next ? (
@@ -160,9 +162,11 @@ export default function UpdatePasswordForm({ className = '' }) {
                             id="password_confirmation"
                             value={data.password_confirmation}
                             onChange={(e) =>
-                                setData('password_confirmation', e.target.value)
+                                setData("password_confirmation", e.target.value)
                             }
-                            type={showPasswords.confirmation ? 'text' : 'password'}
+                            type={
+                                showPasswords.confirmation ? "text" : "password"
+                            }
                             className="block w-full pr-10"
                             autoComplete="new-password"
                         />
@@ -170,13 +174,13 @@ export default function UpdatePasswordForm({ className = '' }) {
                         <button
                             type="button"
                             onClick={() =>
-                                togglePasswordVisibility('confirmation')
+                                togglePasswordVisibility("confirmation")
                             }
                             className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 transition hover:text-gray-700 focus:outline-none"
                             aria-label={
                                 showPasswords.confirmation
-                                    ? 'Hide password confirmation'
-                                    : 'Show password confirmation'
+                                    ? "Hide password confirmation"
+                                    : "Show password confirmation"
                             }
                         >
                             {showPasswords.confirmation ? (
@@ -203,9 +207,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">
-                            Saved.
-                        </p>
+                        <p className="text-sm text-gray-600">Saved.</p>
                     </Transition>
                 </div>
             </form>

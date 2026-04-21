@@ -166,7 +166,7 @@ export default function HeaderSection() {
                             E-Signature
                         </a>
                     </div>
-                </div>
+                </div>                                                                                                                                                                                                                              
 
                 {profileCompletion < 100 && (
                     <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 transition-all">
