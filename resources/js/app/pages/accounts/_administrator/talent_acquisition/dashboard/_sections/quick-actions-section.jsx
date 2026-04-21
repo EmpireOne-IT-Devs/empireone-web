@@ -14,7 +14,7 @@ export default function QuickActionsSection() {
                 >
                     <PlusCircleIcon className="w-5 h-5 text-gray-700" />
                     <span className="font-semibold text-gray-700">
-                        Create New Job Post
+                        Create Job  Requisition
                     </span>
                 </Button>
 

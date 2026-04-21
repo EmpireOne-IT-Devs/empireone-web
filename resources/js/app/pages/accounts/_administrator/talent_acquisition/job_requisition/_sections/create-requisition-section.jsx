@@ -882,10 +882,9 @@ export default function CreateJobRequisition() {
                                         <span className="font-medium">
                                             Note:
                                         </span>{" "}
-                                        The final interviewer will conduct the
-                                        last round of interviews, while the
-                                        sub-interviewer will assist in the
-                                        initial screening process.
+                                        The request is approved by the 1st
+                                        approver, Director, and TA Manager, then
+                                        assigned to a recruiter.
                                     </p>
                                 </div>
                             </div>
