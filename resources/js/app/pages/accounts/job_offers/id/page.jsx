@@ -4,8 +4,9 @@ import ManagerOfferLetterPreview from "./jo_documents/manager-document";
 import SupportOfferLetterPreview from "./jo_documents/support-document";
 import store from "@/app/store/store";
 import { get_job_offer_by_id_thunk } from "@/app/redux/applicant-thunk";
-import JobOfferAgreeSection from "./jo_documents/job-offer-agree-section";
+// import JobOfferAgreeSection from "./jo_documents/job-offer-agree-section";
 import { useSelector } from "react-redux";
+import AcceptJobOfferSection from "./jo_documents/accept-job-offer-section";
 
 export default function Page() {
     const { job_offer } = useSelector((store) => store.applicants);
@@ -14,12 +15,12 @@ export default function Page() {
             get_job_offer_by_id_thunk(window.location.pathname.split("/")[4]),
         );
     }, []);
-    const validOffers = ["Managerial Offer", "Agent Offer", "Support Offer"];
+    // const validOffers = ["Managerial Offer", "Agent Offer", "Support Offer"];
 
-    const hasOffer = job_offer?.documents?.some((res) =>
-        validOffers.includes(res.name),
-    );
-    console.log("job_offer", hasOffer);
+    // const hasOffer = job_offer?.documents?.some((res) =>
+    //     validOffers.includes(res.name),
+    // );
+    console.log("job_offer", job_offer.status);
     return (
         <>
             {job_offer?.role == "Manager" && (
@@ -34,7 +35,7 @@ export default function Page() {
             {job_offer?.role == "Support" && (
                 <SupportOfferLetterPreview name="Support Offer" type="offer" />
             )}
-            {job_offer?.role && !hasOffer && <JobOfferAgreeSection />}
+            {job_offer?.status == "Pending" && <AcceptJobOfferSection />}
         </>
     );
 }

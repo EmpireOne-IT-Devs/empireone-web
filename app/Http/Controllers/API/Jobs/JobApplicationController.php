@@ -178,28 +178,21 @@ class JobApplicationController extends Controller
                 ]);
         }
 
-        $jo = JobOffer::updateOrCreate(
-            [
-                'user_id' => $request->user_id,
-                'job_application_id' => $request->id,
-            ],
-            [
-                'salary' => $request->salary,
-                'role' => $request->role,
-            ]
-        );
+        $jo = JobOffer::create([
+            'user_id' => $request->user_id,
+            'job_application_id' => $request->id,
+            'status' => 'Pending',
+            'salary' => $request->salary,
+            'role' => $request->role,
+        ]);
         $jo->load('user');
         foreach ($request->allowances as $key => $value) {
-            AccountEmployeeAllowance::updateOrCreate(
-                [
-                    'user_id' => $request->user_id,
-                    'job_offer_id' => $jo->id,
-                    'allowance_type' => $value['allowance_type'],
-                ],
-                [
-                    'allowance' => $value['allowance'],
-                ]
-            );
+            AccountEmployeeAllowance::create([
+                'user_id' => $request->user_id,
+                'job_offer_id' => $jo->id,
+                'allowance_type' => $value['allowance_type'],
+                'allowance' => $value['allowance'],
+            ]);
         }
 
         JobApplication::updateOrCreate(
@@ -461,7 +454,7 @@ class JobApplicationController extends Controller
 
         // 1. Fetch all applications for this specific job once
         $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant'])->get();
-        $job_posting = JobPosting::where('id', $id)->with(['job_requisition','job_application'])->first();
+        $job_posting = JobPosting::where('id', $id)->with(['job_requisition', 'job_application'])->first();
         return response()->json([
             'job_applications' => $applications,
             'job_posting' => $job_posting

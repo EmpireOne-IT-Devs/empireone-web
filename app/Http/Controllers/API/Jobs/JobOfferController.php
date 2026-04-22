@@ -105,7 +105,7 @@ class JobOfferController extends Controller
      */
     public function show($id)
     {
-        $jobOffers = JobOffer::where('id', $id)->with(['job_application', 'user', 'employee', 'documents'])->first();
+        $jobOffers = JobOffer::where('id', $id)->with(['job_application', 'user', 'employee', 'documents','allowances'])->first();
         return response()->json([
             'data' => $jobOffers,
             'status' => 'success',

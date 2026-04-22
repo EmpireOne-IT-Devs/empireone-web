@@ -23,11 +23,11 @@ export default function TableSection() {
         switch (status) {
             case "Pending":
                 return "warning"; // yellow
-            case "Accepted":
+            case "Accepted Job Offer":
                 return "success"; // green
             case "Re-Offered":
                 return "secondary"; // blue/orange
-            case "Declined":
+            case "Declined Job Offer":
                 return "danger"; // red
             default:
                 return "primary"; // default blue

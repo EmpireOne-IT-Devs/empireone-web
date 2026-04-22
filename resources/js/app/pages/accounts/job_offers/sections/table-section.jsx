@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 // import ShowDetailsSection from "./show-details-section";
 // import ResendJobOfferSection from "./resend-job-offer-section";
 import Badge from "@/app/_components/badge"; // import your Badge component
-import AcceptJobOfferSection from "./accept-job-offer-section";
+// import AcceptJobOfferSection from "../id/jo_documents/accept-job-offer-section";
 
 export default function TableSection() {
     const { job_offers } = useSelector((store) => store.applicants);
-const role_path = window.location.pathname.split('/')[2]
+    const role_path = window.location.pathname.split("/")[2];
     const columns = [
         { header: "Applicant Name", accessor: "name" },
         { header: "Email", accessor: "email" },
@@ -32,6 +32,7 @@ const role_path = window.location.pathname.split('/')[2]
                 return "primary"; // default blue
         }
     };
+    console.log("job_offersjob_offers", job_offers?.data);
 
     return (
         <div>
@@ -58,7 +59,14 @@ const role_path = window.location.pathname.split('/')[2]
                                 <ResendJobOfferSection data={res} />
                             )} */}
                             {/* <ShowDetailsSection data={res} /> */}
-                            <a href={`/accounts/${role_path}/job_offers/${res.id}`} target="_blank">Show Job Offer</a>
+                            {res.status !== "Declined Job Offer" && (
+                                <a
+                                    href={`/accounts/${role_path}/job_offers/${res.id}`}
+                                    target="_blank"
+                                >
+                                    Show Job Offer
+                                </a>
+                            )}
                         </div>
                     ),
                 }))}
