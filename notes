@@ -8,13 +8,13 @@ Application: [Job Title] - [First Name] [Last Name]
 
 
 Need to remove when reset
-- account_contracts
 - job_offers
 - job_applications
 
 Need to Delete 
 -government_i_d_s
 -e_signatures
+-account_contracts
 -employees
 
 

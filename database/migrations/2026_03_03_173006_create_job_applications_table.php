@@ -17,6 +17,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+            $table->foreignId('transferred_to')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->foreignId('job_posting_id')
                 ->nullable()
                 ->constrained('job_postings')
@@ -48,6 +52,7 @@ return new class extends Migration
                 'Hired',
                 'Rejected',
                 'No Show',
+                'Transferred'
             ])->nullable()->default(null);
             $table->timestamps();
         });

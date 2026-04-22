@@ -26,13 +26,14 @@ const variantStyles = {
         solid: "bg-gray-600 text-white hover:bg-gray-700",
         outlined: "border border-gray-600 text-gray-600 hover:bg-gray-50",
     },
-     light: {
+    light: {
         solid: "bg-white text-black hover:bg-gray-100",
         outlined: "border border-gray-300 text-gray-700 hover:bg-gray-50",
     },
 };
 
 const sizeStyles = {
+    xs: "px-3 text-xs py-1",
     sm: "px-3 py-1 text-sm",
     md: "px-4 py-2 text-base",
     lg: "px-5 py-3 text-lg",
@@ -57,7 +58,7 @@ export default function Button({
         baseStyle,
         variantStyles[variant]?.[styleType],
         sizeStyles[size],
-        className
+        className,
     );
 
     return (

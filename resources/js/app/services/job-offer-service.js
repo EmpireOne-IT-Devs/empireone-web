@@ -11,3 +11,9 @@ export async function submit_job_offer_service(data) {
 export async function get_job_offer_by_id_service(id) {
     return (await axios.get(`/api/job/offers/${id}`)).data;
 }
+
+export async function transfer_job_offer_service(data) {
+    return await axios.post("/api/job/transfer_job_offer",data);
+}
+
+

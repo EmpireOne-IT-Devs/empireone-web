@@ -19,6 +19,23 @@ class JobOfferController extends Controller
      * Display a listing of the resource.
      */
 
+    public function transfer_job_offer(Request $request)
+    {
+        $job_application = JobApplication::where('id', $request->id)->first();
+        if ($job_application) {
+            $job_application->update([
+                'final_status' => 'Transferred',
+                'transferred_to' => Auth::id()
+            ]);
+        }
+        JobApplication::create([
+            ...$request->all(),
+            'job_posting_id' => $request->new_job_posting_id
+        ]);
+        return response()->json([
+            'status' => 'success',
+        ], 200);
+    }
 
     public function submit_job_offer(Request $request)
     {
@@ -105,7 +122,7 @@ class JobOfferController extends Controller
      */
     public function show($id)
     {
-        $jobOffers = JobOffer::where('id', $id)->with(['job_application', 'user', 'employee', 'documents','allowances'])->first();
+        $jobOffers = JobOffer::where('id', $id)->with(['job_application', 'user', 'employee', 'documents', 'allowances'])->first();
         return response()->json([
             'data' => $jobOffers,
             'status' => 'success',

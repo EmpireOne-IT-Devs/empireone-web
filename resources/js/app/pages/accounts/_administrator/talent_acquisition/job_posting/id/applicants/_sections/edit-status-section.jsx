@@ -102,7 +102,7 @@ export default function EditStatusSection({ data, table_status }) {
             setLoading(false);
         }
     }
-
+    const isTransferred = data.final_status === "Transferred";
     return (
         <div className="min-h-[50px] flex items-center">
             {isEditing ? (
@@ -145,7 +145,11 @@ export default function EditStatusSection({ data, table_status }) {
                 </div>
             ) : (
                 <div
-                    onDoubleClick={() => setIsEditing(true)}
+                    onDoubleClick={() => {
+                        if (!isTransferred) {
+                            setIsEditing(true);
+                        }
+                    }}
                     className="cursor-pointer"
                     title="Double click to edit"
                 >

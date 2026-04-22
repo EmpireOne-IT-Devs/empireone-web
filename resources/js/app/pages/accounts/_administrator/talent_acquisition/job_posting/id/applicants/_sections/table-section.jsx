@@ -8,6 +8,7 @@ import SendJobOfferSection from "../../../../applicants/_sections/send-job-offer
 import Button from "@/app/_components/button";
 import AddInterviewSchedule from "./add-interview-schedule";
 import { Calendar } from "lucide-react";
+import TransferApplicant from "./transfer-applicant";
 
 export default function TableSection() {
     const [openModal, setOpenModal] = useState(false);
@@ -95,6 +96,7 @@ export default function TableSection() {
                 >
                     Schedule Interview
                 </Button>
+                <TransferApplicant data={res} />
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),
