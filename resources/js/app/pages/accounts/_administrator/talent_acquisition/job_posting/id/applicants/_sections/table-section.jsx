@@ -1,12 +1,16 @@
 import Table from "@/app/_components/table";
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import EditStatusSection from "./edit-status-section";
 import SendJobOfferSection from "../../../../applicants/_sections/send-job-offer-section";
+import Button from "@/app/_components/button";
+import AddInterviewSchedule from "./add-interview-schedule";
+import { Calendar } from "lucide-react";
 
 export default function TableSection() {
+    const [openModal, setOpenModal] = useState(false);
     const { job_applications, search_applicant_status } = useSelector(
         (store) => store.job_postings,
     );
@@ -83,6 +87,14 @@ export default function TableSection() {
                 {res.final_status == "Passed" && (
                     <SendJobOfferSection data={res} />
                 )}
+                <Button
+                    className="text-xs px-3 py-1"
+                    variant="success"
+                    outlined
+                    onClick={() => setOpenModal(true)}
+                >
+                    Schedule Interview
+                </Button>
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),
@@ -90,6 +102,11 @@ export default function TableSection() {
     return (
         <div>
             <Table columns={columns} data={tableData} />
+
+            <AddInterviewSchedule
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+            />
         </div>
     );
 }
