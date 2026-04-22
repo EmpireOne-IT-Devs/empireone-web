@@ -61,12 +61,13 @@ export default function TableSection() {
                                 </>
                             )}
 
-                            {res?.job_application?.final_status ==
-                                "Accepted Job Offer" && (
-                                <>
-                                    <SendDocumentsSection data={res} />
-                                </>
-                            )}
+                            {res.status == "Accepted Job Offer" &&
+                                res?.job_application?.final_status ==
+                                    "Accepted Job Offer" && (
+                                    <>
+                                        <SendDocumentsSection data={res} />
+                                    </>
+                                )}
                             <ShowDetailsSection data={res} />
                         </div>
                     ),

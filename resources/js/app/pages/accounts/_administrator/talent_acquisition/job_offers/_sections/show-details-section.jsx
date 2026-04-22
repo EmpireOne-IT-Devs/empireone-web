@@ -89,8 +89,7 @@ export default function ShowDetailsSection({ data }) {
                                 </p>
                                 <p className="font-medium text-neutral-800">
                                     {
-                                        data.job_application?.job_posting
-                                            .job_requisition.title
+                                        data.job_application?.job_posting?.job_requisition?.title
                                     }
                                 </p>
                             </div>
@@ -100,8 +99,7 @@ export default function ShowDetailsSection({ data }) {
                                 </p>
                                 <p className="font-medium text-neutral-800">
                                     {
-                                        data.job_application?.job_posting
-                                            .job_requisition.department.name
+                                        data.job_application?.job_posting?.job_requisition?.department?.name
                                     }
                                 </p>
                             </div>

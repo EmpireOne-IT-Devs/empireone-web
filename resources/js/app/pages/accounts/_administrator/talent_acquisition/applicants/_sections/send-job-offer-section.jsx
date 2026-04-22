@@ -7,6 +7,7 @@ import { setAlert } from "@/app/redux/app-slice";
 import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
+import { AwsResAwsDatasyncDiscovery } from "@thesvg/react";
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,6 +45,8 @@ export default function SendJobOfferSection({ data }) {
             await send_job_offer_service({
                 ...data,
                 ...formData,
+                start_date: formData.start_date,
+                job_application_id: data.id,
             });
             await store.dispatch(get_applicants_thunk());
             await dispatch(
@@ -61,7 +64,9 @@ export default function SendJobOfferSection({ data }) {
 
     return (
         <div>
-            <Button onClick={() => setOpen(true)}>SEND&nbsp;JOB&nbsp;OFFER</Button>
+            <Button onClick={() => setOpen(true)}>
+                SEND&nbsp;JOB&nbsp;OFFER
+            </Button>
 
             <Modal
                 width="max-w-3xl"
@@ -107,7 +112,7 @@ export default function SendJobOfferSection({ data }) {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-y-1 gap-5 mt-6">
+                        <div className="grid grid-cols-2 gap-y-5 gap-5 mt-6">
                             <Select
                                 label="Offer Position"
                                 {...register("position", {
@@ -124,15 +129,6 @@ export default function SendJobOfferSection({ data }) {
                                 error={errors.position}
                                 required
                             />
-                            <Input
-                                label="Monthly Salary"
-                                type="number"
-                                {...register("salary", {
-                                    required: true,
-                                })}
-                                error={errors.salary}
-                                placeholder="e.g. 50000"
-                            />
 
                             <Select
                                 label="Role"
@@ -147,6 +143,25 @@ export default function SendJobOfferSection({ data }) {
                                 ]}
                                 error={errors.role}
                                 value={watchedValues.role}
+                            />
+                            <Input
+                                label="Monthly Salary"
+                                type="number"
+                                {...register("salary", {
+                                    required: true,
+                                })}
+                                error={errors.salary}
+                                placeholder="e.g. 50000"
+                            />
+                            <Input
+                                label="Start Date"
+                                type="date"
+                                {...register("start_date", {
+                                    required: true,
+                                })}
+                                min={new Date().toISOString().split("T")[0]}
+                                error={errors.start_date}
+                                placeholder="e.g. March *"
                             />
                         </div>
                     </div>

@@ -21,7 +21,6 @@ export default function SendDocumentsSection({ data }) {
             signType: "",
             signDate: "",
             signTime: "",
-            startDate: "",
         },
     });
 
@@ -103,7 +102,6 @@ export default function SendDocumentsSection({ data }) {
                                                 signType: "face_to_face",
                                                 signDate: "",
                                                 signTime: "",
-                                                startDate: "",
                                             },
                                             { keepValues: true },
                                         );
@@ -165,7 +163,6 @@ export default function SendDocumentsSection({ data }) {
                                                 signType: "online",
                                                 signDate: "",
                                                 signTime: "",
-                                                startDate: "",
                                             },
                                             { keepValues: true },
                                         );
@@ -174,26 +171,6 @@ export default function SendDocumentsSection({ data }) {
                             )}
                         />
 
-                        <div className="mt-2 flex flex-col gap-2">
-                            <div>
-                                <span className="text-sm text-neutral-500 block mb-1">
-                                    Start Date:
-                                </span>
-                                <Controller
-                                    control={control}
-                                    name="startDate"
-                                    render={({ field }) => (
-                                        <input
-                                            type="date"
-                                            min={today}
-                                            className="border rounded px-2 py-1 text-sm"
-                                            {...field}
-                                            required
-                                        />
-                                    )}
-                                />
-                            </div>
-                        </div>
                     </div>
 
                     <div className="flex items-start gap-2 px-3.5 py-2.5 rounded-lg bg-blue-50 border border-blue-100">

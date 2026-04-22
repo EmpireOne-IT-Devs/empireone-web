@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import PDFLoader from "@/app/_components/pdf-loader";
 import { setDocument } from "@/app/redux/app-slice";
+import { peso_format } from "@/app/lib/peso-format";
 
 const styles = StyleSheet.create({
     page: {
@@ -55,6 +56,41 @@ const styles = StyleSheet.create({
         width: 150,
         fontFamily: "Helvetica-Bold",
     },
+    fieldRow: {
+        flexDirection: "row",
+        alignItems: "flex-end", // Aligns the text to the bottom of the line
+        marginBottom: 10,
+    },
+    labelContrainer: {
+        marginRight: 10,
+        fontSize: 10,
+    },
+    underlineContainer: {
+        borderBottomWidth: 1, // Creates the physical line
+        borderBottomColor: "#000",
+        width: "30%",
+    },
+    signature: {
+        position: "absolute",
+        bottom: -50,
+        left: -10,
+        height: 120,
+        width: 150,
+        zIndex: 1,
+    },
+    signature_over_printed_name: {
+        position: "absolute",
+        bottom: -20,
+        left: 50,
+        height: 120,
+        width: 150,
+        zIndex: 1,
+    },
+    inputText: {
+        fontSize: 10,
+        paddingBottom: 2,
+        textAlign: "center",
+    },
     value: {
         flex: 1,
     },
@@ -73,12 +109,13 @@ const styles = StyleSheet.create({
     signatureContainer: {
         marginTop: 30,
     },
-    signatureLine: {
+    signature_over_printed_name_line: {
         marginTop: 30,
         borderTopWidth: 1,
         borderTopColor: "#000",
         width: 250,
         paddingTop: 5,
+        textAlign: "center",
     },
     centerTitle: {
         fontFamily: "Helvetica-Bold",
@@ -95,11 +132,7 @@ const ListItem = ({ children }) => (
     </View>
 );
 
-const OfferLetterPDF = ({
-    applicantName = "_________________",
-    date = "_________________",
-    address = "_________________",
-}) => (
+const OfferLetterPDF = (data) => (
     <Document>
         {/* MAIN LETTER PAGE */}
         <Page size="A4" style={styles.page}>
@@ -107,9 +140,11 @@ const OfferLetterPDF = ({
                 <Image style={styles.logo} src="/images/Blogo (1).png" />
             </View>
             <View style={styles.header}>
-                <Text style={styles.bold}>DATE: {date}</Text>
-                <Text style={styles.bold}>NAME: {applicantName}</Text>
-                <Text style={styles.bold}>HOME ADDRESS: {address}</Text>
+                <Text style={styles.bold}>DATE: {data?.date}</Text>
+                <Text style={styles.bold}>NAME: {data?.applicant_name}</Text>
+                <Text style={styles.bold}>
+                    HOME ADDRESS: {data?.applicant_address}
+                </Text>
             </View>
 
             <Text style={styles.paragraph}>Dear Mr. Bautista,</Text>
@@ -121,9 +156,7 @@ const OfferLetterPDF = ({
 
             <View style={styles.row}>
                 <Text style={styles.label}>Designation:</Text>
-                <Text style={styles.value}>
-                    CUSTOMER SERVICE REPRESENTATIVE
-                </Text>
+                <Text style={styles.value}>{data?.designation}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Company:</Text>
@@ -131,21 +164,23 @@ const OfferLetterPDF = ({
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Place of Posting:</Text>
-                <Text style={styles.value}>San C</Text>
+                <Text style={styles.value}>{data?.place_of_posting}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Date of Joining:</Text>
-                <Text style={styles.value}></Text>
+                <Text style={styles.value}>{data?.date_of_joining}</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Compensation and Benefits:</Text>
                 <View style={styles.value}>
-                    <Text>Annual Fixed Pay: PHP144,000.00</Text>
+                    <Text>Annual Fixed Pay: PHP{data?.annual_fixed_pay}</Text>
                     <Text>Night Shift Differential: 10%</Text>
                     <Text style={styles.bold}>
-                        Total Compensation (TC): PHP156,000.00
+                        Total Compensation (TC): PHP{data?.total_compensation}
                     </Text>
-                    <Text>(Basic Pay PHP144,000.00 + 13th month pay)</Text>
+                    <Text>
+                        (Basic Pay PHP{data?.annual_fixed_pay} + 13th month pay)
+                    </Text>
                 </View>
             </View>
 
@@ -256,18 +291,27 @@ const OfferLetterPDF = ({
 
             <View style={styles.signatureContainer}>
                 <Text>Very truly yours,</Text>
-                <Text style={[styles.bold, { marginTop: 30 }]}>
+                <Text style={[styles.bold, { marginTop: 10 }]}>
                     CHRISTI ANN SANCHEZ
                 </Text>
                 <Text>Talent Acquisition Manager</Text>
             </View>
 
-            <View style={{ marginTop: 30 }}>
+            <View style={{ marginTop: 10 }}>
                 <Text style={styles.paragraph}>
                     I hereby accept the above offer on the terms and conditions
                     outlined.
                 </Text>
-                <View style={styles.signatureLine}>
+                <View style={styles.signature_over_printed_name_line}>
+                    {data?.applicant_signature && (
+                        <Image
+                            style={styles.signature_over_printed_name}
+                            src={data?.talent_acquisition_manager_signature}
+                        />
+                    )}
+                    <Text style={{ marginTop: -20 }}>
+                        {data?.talent_acquisition_manager} {data?.date}
+                    </Text>
                     <Text>Signature over Printed Name / Date</Text>
                 </View>
             </View>
@@ -312,7 +356,15 @@ const OfferLetterPDF = ({
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Allowances</Text>
-                <Text style={styles.value}>NA</Text>
+                <View style={{ flexDirection: "column", gap: 1 }}>
+                    {data?.allowances?.map((res, index) => {
+                        return (
+                            <Text key={res.id || index}>
+                                {`${res.allowance_type} - ${res.allowance}`}
+                            </Text>
+                        );
+                    })}
+                </View>
             </View>
 
             <Text style={[styles.bold, { marginTop: 20, marginBottom: 5 }]}>
@@ -333,14 +385,39 @@ const OfferLetterPDF = ({
                     I hereby accept the above schedule of benefits on the terms
                     and conditions outlined.
                 </Text>
-                <View style={{ marginTop: 20 }}>
-                    <Text style={{ marginBottom: 15 }}>
-                        Name: ____________________________
-                    </Text>
-                    <Text style={{ marginBottom: 15 }}>
-                        Signature: _________________________
-                    </Text>
-                    <Text>Date: _____________________________</Text>
+                <View style={{ marginTop: 10 }}>
+                    {/* Name Field */}
+                    <View style={styles.fieldRow}>
+                        <Text style={styles.labelContrainer}>Name:</Text>
+                        <View style={styles.underlineContainer}>
+                            <Text style={styles.inputText}>
+                                {data?.applicant_name || " "}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* Signature Field */}
+                    <View style={[styles.fieldRow]}>
+                        <Text style={styles.labelContrainer}>Signature:</Text>
+                        <View style={styles.underlineContainer}>
+                            {data?.applicant_signature && (
+                                <Image
+                                    style={styles.signature}
+                                    src={data?.applicant_signature}
+                                />
+                            )}
+                        </View>
+                    </View>
+
+                    {/* Date Field */}
+                    <View style={styles.fieldRow}>
+                        <Text style={styles.labelContrainer}>Date:</Text>
+                        <View style={styles.underlineContainer}>
+                            <Text style={styles.inputText}>
+                                {data?.date || " "}
+                            </Text>
+                        </View>
+                    </View>
                 </View>
             </View>
         </Page>
@@ -384,14 +461,39 @@ const OfferLetterPDF = ({
                 of identifying me.
             </Text>
 
-            <View style={{ marginTop: 40 }}>
-                <Text style={{ marginBottom: 15 }}>
-                    Name: ____________________________
-                </Text>
-                <Text style={{ marginBottom: 15 }}>
-                    Signature: _________________________
-                </Text>
-                <Text>Date: _____________________________</Text>
+            <View style={{ marginTop: 10 }}>
+                {/* Name Field */}
+                <View style={styles.fieldRow}>
+                    <Text style={styles.labelContrainer}>Name:</Text>
+                    <View style={styles.underlineContainer}>
+                        <Text style={styles.inputText}>
+                            {data?.applicant_name || " "}
+                        </Text>
+                    </View>
+                </View>
+
+                {/* Signature Field */}
+                <View style={[styles.fieldRow]}>
+                    <Text style={styles.labelContrainer}>Signature:</Text>
+                    <View style={styles.underlineContainer}>
+                        {data?.applicant_signature && (
+                            <Image
+                                style={styles.signature}
+                                src={data?.applicant_signature}
+                            />
+                        )}
+                    </View>
+                </View>
+
+                {/* Date Field */}
+                <View style={styles.fieldRow}>
+                    <Text style={styles.labelContrainer}>Date:</Text>
+                    <View style={styles.underlineContainer}>
+                        <Text style={styles.inputText}>
+                            {data?.date || " "}
+                        </Text>
+                    </View>
+                </View>
             </View>
         </Page>
     </Document>
@@ -415,22 +517,26 @@ const AgentOfferLetterPreview = ({ name, type }) => {
     // Clean data object. NO HTML TAGS here.
     const rawData = {
         date: moment().format("LL"),
-        dateOfJoining: moment().format("LL"),
-        designation: job_offer?.role || "Manager",
-        applicantName:
+        date_of_joining: moment(job_offer?.start_date).format("LL"),
+        designation:
+            job_offer?.job_application?.job_posting?.job_requisition?.title ||
+            "Manager",
+        applicant_name:
             `${job_offer?.user?.personal_information?.first_name || ""} ${job_offer?.user?.personal_information?.last_name || ""}`.trim(),
-        address:
+        applicant_address:
             `${job_offer?.user?.personal_information?.street || ""} ${job_offer?.user?.personal_information?.city || ""} ${job_offer?.user?.personal_information?.province || ""} ${job_offer?.user?.personal_information?.zip_code || ""}`.trim(),
-        signature: job_offer?.employee?.signature || "",
-        placeOfPosition:
-            job_offer?.job_application?.job_posting?.job_requisition?.location
-                ?.name || "Any EmpireOne office as business requires",
-        // Format these dynamically if available in your Redux store
-        annualFixedPay: "1,000.00",
-        totalCompensation: "1,000.00",
-        basicPay: "1,000.00",
-        allowance: "1,000.00",
+        applicant_signature: job_offer?.employee?.signature || "",
+        place_of_posting: `${job_offer?.job_application?.job_posting?.job_requisition?.location?.name} City`,
+        annual_fixed_pay: peso_format(`${Number(job_offer?.salary) * 12}`),
+        total_compensation: peso_format(
+            `${Number(job_offer?.salary) * 12 + Number(job_offer?.salary)}`,
+        ),
+        allowances: job_offer?.allowances,
+        talent_acquisition_manager: "CHRISTI ANN SANCHEZ",
+        talent_acquisition_manager_signature:
+            "/images/talent_acquisition_manager_signature.png",
     };
+    console.log("job_offer", job_offer);
 
     return <PDFLoader pdf={<OfferLetterPDF {...rawData} />} width="w-full" />;
 };

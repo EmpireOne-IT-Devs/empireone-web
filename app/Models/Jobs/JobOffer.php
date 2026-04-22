@@ -18,6 +18,7 @@ class JobOffer extends Model
         'salary',
         'declined_reason',
         'role',
+        'start_date',
         'status',
     ];
 

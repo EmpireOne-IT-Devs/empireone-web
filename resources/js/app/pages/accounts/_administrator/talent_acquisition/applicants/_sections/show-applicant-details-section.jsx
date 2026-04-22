@@ -108,7 +108,7 @@ export default function ShowApplicantDetailsSection({ data }) {
 
                                 <p>
                                     <strong>BPO Experience:</strong>{" "}
-                                    {data.applicant.account_employee?.with_bpo}
+                                    {data?.applicant?.account_employee?.with_bpo}
                                 </p>
                                 <p>
                                     <strong>DOB: </strong>

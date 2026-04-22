@@ -161,6 +161,8 @@ class JobApplicationController extends Controller
     {
         $request->validate([
             'position' => 'required|string',
+            'job_application_id' => 'required',
+            'start_date' => 'required|string',
             'salary' => 'required|numeric',
             'allowances' => 'nullable|array', // Ensure it's an array if present
             'allowance.*.allowance' => 'nullable|numeric',
@@ -180,8 +182,9 @@ class JobApplicationController extends Controller
 
         $jo = JobOffer::create([
             'user_id' => $request->user_id,
-            'job_application_id' => $request->id,
+            'job_application_id' => $request->job_application_id,
             'status' => 'Pending',
+            'start_date' => $request->start_date,
             'salary' => $request->salary,
             'role' => $request->role,
         ]);
@@ -194,11 +197,8 @@ class JobApplicationController extends Controller
                 'allowance' => $value['allowance'],
             ]);
         }
-
-        JobApplication::updateOrCreate(
-            ['id' => $request->id], // Match criteria
-            ['final_status' => 'Sent Job Offer'] // Data to update/create
-        );
+        JobApplication::where('id', $request->job_application_id)
+            ->update(['final_status' => 'Sent Job Offer']);
 
         Mail::to($send_to)->send(new JobOfferMail(
             array_merge($data, [
