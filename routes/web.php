@@ -138,6 +138,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('/job_posting', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/job_posting/page');
             });
+             Route::get('/calendar', function () {
+                return Inertia::render('accounts/_administrator/talent_acquisition/calendar/page');
+            });
             Route::get('/job_posting/{id}/applicants', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/job_posting/id/applicants/page');
             });

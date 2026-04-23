@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
 import { BriefcaseIcon } from "lucide-react";
+import SetScheduleSection from "./set-schedule-section";
 
 const TalentApplicationForm = () => {
     // ✅ Load saved step + data
@@ -195,16 +196,16 @@ const TalentApplicationForm = () => {
                     </div>
                     <div className="flex justify-between mb-2">
                         <span className="text-xs font-bold text-blue-600 uppercase">
-                            Job Posting - Step {step} of 2
+                            Job Posting - Step {step} of 3
                         </span>
                         <span className="text-xs font-bold text-blue-600">
-                            {Math.round((step / 2) * 100)}%
+                            {Math.round((step / 3) * 100)}%
                         </span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
                         <div
                             className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
-                            style={{ width: `${(step / 2) * 100}%` }}
+                            style={{ width: `${(step / 3) * 100}%` }}
                         />
                     </div>
                 </div>
@@ -251,6 +252,12 @@ const TalentApplicationForm = () => {
                     )}
 
                     {step === 2 && (
+                        <SetScheduleSection
+                            prevStep={prevStep}
+                            nextStep={nextStep}
+                        />
+                    )}
+                    {step === 3 && (
                         <FinalReviewSection
                             prevStep={prevStep}
                             watchedValues={watchedValues}

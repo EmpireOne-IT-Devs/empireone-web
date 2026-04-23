@@ -108,8 +108,13 @@ export default function UploadCvSection({
                 >
                     Back
                 </Button>
-                <Button outlined type="button" onClick={nextStep} className="w-1/2 ">
-                    Continue To Review
+                <Button
+                    outlined
+                    type="button"
+                    onClick={nextStep}
+                    className="w-1/2 "
+                >
+                    Continue to set interview
                 </Button>
             </div>
         </div>

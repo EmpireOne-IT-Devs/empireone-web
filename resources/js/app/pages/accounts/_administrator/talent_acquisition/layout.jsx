@@ -23,6 +23,11 @@ export default function JobPostingLayout({ children }) {
             path: "/accounts/administrator/talent_acquisition/job_posting",
             active: path === "job_posting",
         },
+         {
+            label: "Calendar",
+            path: "/accounts/administrator/talent_acquisition/calendar",
+            active: path === "calendar",
+        },
         // {
         //     label: "Applicants",
         //     path: "/accounts/administrator/talent_acquisition/applicants",
