@@ -108,14 +108,16 @@ export default function TableSection() {
         final_status: getStatusBadge(res.final_status),
         action: (
             <div className="flex items-center gap-2">
-                <Button
-                    className="text-md"
-                    variant="success"
-                    outlined
-                    onClick={() => setOpenModal(true)}
-                >
-                    Select Interview
-                </Button>
+                {res?.screening_status?.toLowerCase() === "screened passed" && (
+                    <Button
+                        className="text-md"
+                        variant="success"
+                        outlined
+                        onClick={() => setOpenModal(true)}
+                    >
+                        Select Interview
+                    </Button>
+                )}
 
                 <ShowApplicantDetailsSection data={res} />
             </div>
