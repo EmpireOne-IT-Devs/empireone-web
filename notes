@@ -10,6 +10,8 @@ Application: [Job Title] - [First Name] [Last Name]
 Need to remove when reset
 - job_offers
 - job_applications
+- job_requisition
+- job_requisition_logs
 
 Need to Delete 
 -government_i_d_s
