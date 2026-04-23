@@ -19,6 +19,7 @@ use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
 use App\Models\Jobs\JobRequisition;
 use App\Models\User;
+use App\Services\GoogleCalendarService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -213,11 +214,14 @@ class JobApplicationController extends Controller
             'status' => 'success',
         ], 200);
     }
-    public function apply_job_application(Request $request)
-    {
 
+
+
+    public function apply_job_application(Request $request, GoogleCalendarService $calendarService)
+    {
+        // 1. Create or Find User
         $user = User::firstOrCreate(
-            ['email' => $request->email], // Condition to find existing user
+            ['email' => $request->email],
             [
                 'name' => $request->first_name,
                 'password' => Hash::make('Business12'),
@@ -226,8 +230,9 @@ class JobApplicationController extends Controller
             ]
         );
 
+        // 2. Save Personal Info
         AccountPersonalInformation::updateOrCreate(
-            ['user_id' => $user->id], // Condition to find the record
+            ['user_id' => $user->id],
             [
                 'street' => $request->street ?? null,
                 'region' => $request->region ?? null,
@@ -245,41 +250,15 @@ class JobApplicationController extends Controller
                 'nationality' => $request->nationality ?? null,
                 'marital_status' => $request->marital_status ?? null,
                 'contact' => $request->contact ?? null,
-                'school_name' => $request->school_name ?? null, //educational
+                'school_name' => $request->school_name ?? null,
                 'course' => $request->course ?? null,
                 'year_graduated' => $request->year_graduated ?? null,
                 'awards' => $request->award ?? null,
                 'degree' => $request->degree ?? null,
-
             ]
         );
 
-        // foreach ($request->experiences as $key => $value) {
-        //     if ($value) {
-        //         AccountWorkingExperience::updateOrCreate(
-        //             ['user_id' => $user->id], // Condition to find the record
-        //             [
-        //                 'company_name' => $value['company_name'],
-        //                 'position' => $value['position'],
-        //                 'start_date' => $value['start_at'],
-        //                 'end_date' => $value['end_at'],
-        //                 'job_description' => $value['job_description'],
-        //             ]
-        //         );
-        //     }
-        // }
-        // foreach ($request->skills as $key => $value) {
-        //     if ($value) {
-        //         AccountSkills::updateOrCreate(
-        //             ['user_id' => $user->id], // Condition to find the record
-        //             [
-        //                 'skill' => $value['skill'],
-        //                 'percentage' => $value['percentage'],
-        //             ]
-        //         );
-        //     }
-        // }
-
+        // 3. Save Job Application
         $referral_id = $request->referral_id ? base64_decode($request->referral_id) : null;
 
         $application = JobApplication::firstOrCreate(
@@ -293,30 +272,58 @@ class JobApplicationController extends Controller
             ]
         );
 
+        // 4. Format Times (DB vs Google Calendar)
+        // DB needs H:i:s
         $formattedStartTime = Carbon::parse($request->start_time)->format('H:i:s');
         $formattedEndTime   = Carbon::parse($request->end_time)->format('H:i:s');
 
-        JobApplicantSchedule::updateOrCreate(
+        // Google needs ISO8601
+        $googleStartTime = Carbon::parse($request->scheduled_date . ' ' . $request->start_time)->toIso8601String();
+        $googleEndTime   = Carbon::parse($request->scheduled_date . ' ' . $request->end_time)->toIso8601String();
+
+        // 5. Save Schedule to Database
+        $schedule = JobApplicantSchedule::updateOrCreate(
             [
                 'application_id' => $application->id,
             ],
             [
-                'interviewer_id'     => $request->interviewer_id,
-                'scheduled_date'     => $request->scheduled_date,
-                'start_time'         => $formattedStartTime, // Use the converted time
-                'end_time'           => $formattedEndTime,   // Use the converted time
-                'status'             => 'Pending',
+                'interviewer_id' => $request->interviewer_id,
+                'scheduled_date' => $request->scheduled_date,
+                'start_time'     => $formattedStartTime,
+                'end_time'       => $formattedEndTime,
+                'status'         => 'Pending',
             ]
         );
 
+        // 6. Generate Google Meet Link
+        // Fetch the interviewer to get their email address
+        $interviewer = User::find($request->interviewer_id);
 
+        if ($interviewer) {
+            $googleEvent = $calendarService->createInterviewEvent([
+                'title'             => 'Interview: ' . $user->name,
+                'description'       => 'Technical screen for the role.',
+                'start_time'        => $googleStartTime,
+                'end_time'          => $googleEndTime,
+                'applicant_email'   => $user->email,
+                'interviewer_email' => $interviewer->email,
+            ]);
 
+            // Update the schedule with the generated Meet link
+            $schedule->update([
+                'meeting_link' => $googleEvent['meet_link'],
+                'status'       => 'Scheduled' // Change status since it is officially booked
+            ]);
+        }
+
+        // 7. Handle Resume Upload
         if ($request->file) {
             $fileContent = $this->base64ToFile($request->file);
             $fileName = 'resume_' . time();
             $path = "unified/account/resume";
             Storage::disk('s3')->put($path, $fileContent);
             $url = Storage::disk('s3')->url($path);
+
             AccountDocument::updateOrCreate(
                 [
                     'user_id' => $user->id,
@@ -330,9 +337,11 @@ class JobApplicationController extends Controller
             );
         }
 
+        // 8. Send Email & Return Response
         Mail::to($user->email)->send(
             new SendEmailAccountCreation($user, url('/auth/login'))
         );
+
         return response()->json([
             'status' => 'success',
         ], 200);
