@@ -64,7 +64,7 @@ export default function SendJobOfferSection({ data }) {
 
     return (
         <div>
-            <Button onClick={() => setOpen(true)}>
+            <Button className="h-full text-sm" onClick={() => setOpen(true)}>
                 SEND&nbsp;JOB&nbsp;OFFER
             </Button>
 
