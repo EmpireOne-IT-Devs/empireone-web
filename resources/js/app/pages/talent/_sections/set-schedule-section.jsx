@@ -1,21 +1,132 @@
 import Button from "@/app/_components/button";
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSelector } from "react-redux";
 
-export default function SetScheduleSection({ prevStep, nextStep }) {
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedTime, setSelectedTime] = useState(null);
+export default function SetScheduleSection({
+    prevStep,
+    nextStep,
+    setValue,
+    watchedValues,
+}) {
+    const { interviewer } = useSelector((store) => store.app);
+
+    // ---------------------------------------------------------
+    // Initialize State with Default Values
+    // ---------------------------------------------------------
+    const [currentDate, setCurrentDate] = useState(() => {
+        if (watchedValues?.scheduled_date) {
+            // Safely parse YYYY-MM-DD into local time to avoid UTC timezone shifts
+            const [y, m, d] = watchedValues.scheduled_date.split("-");
+            return new Date(y, m - 1, d);
+        }
+        return new Date();
+    });
+
+    const [selectedDate, setSelectedDate] = useState(() => {
+        if (watchedValues?.scheduled_date) {
+            const [y, m, d] = watchedValues.scheduled_date.split("-");
+            return new Date(y, m - 1, d);
+        }
+        return null;
+    });
+
+    const [selectedTime, setSelectedTime] = useState(
+        watchedValues?.start_time || null,
+    );
+
+    // ---------------------------------------------------------
+    // Sync React State with Form State (react-hook-form)
+    // ---------------------------------------------------------
+    const calculateEndTime = (timeStr) => {
+        if (!timeStr) return null;
+
+        const [time, modifier] = timeStr.split(" ");
+        let [hours, minutes] = time.split(":").map(Number);
+
+        if (hours === 12) {
+            hours = modifier === "AM" ? 0 : 12;
+        } else if (modifier === "PM") {
+            hours += 12;
+        }
+
+        const totalMinutes = hours * 60 + minutes + 20;
+
+        const h = Math.floor(totalMinutes / 60);
+        const m = totalMinutes % 60;
+        const ampm = h >= 12 ? "PM" : "AM";
+        const formattedH = h % 12 === 0 ? 12 : h % 12;
+        const formattedM = m.toString().padStart(2, "0");
+
+        return `${formattedH.toString().padStart(2, "0")}:${formattedM} ${ampm}`;
+    };
+
+    useEffect(() => {
+        if (selectedDate) {
+            const tzOffset = selectedDate.getTimezoneOffset() * 60000;
+            const formattedDate = new Date(selectedDate - tzOffset)
+                .toISOString()
+                .split("T")[0];
+
+            setValue("scheduled_date", formattedDate);
+        }
+    }, [selectedDate, setValue]);
+
+    useEffect(() => {
+        if (selectedTime) {
+            setValue("start_time", selectedTime);
+            setValue("end_time", calculateEndTime(selectedTime));
+        }
+    }, [selectedTime, setValue]);
+
+    // ---------------------------------------------------------
+    // Dynamic Time Slot Generator (20-minute gaps as Ranges)
+    // ---------------------------------------------------------
+    const timeSlots = useMemo(() => {
+        if (!interviewer?.start_time || !interviewer?.end_time) return [];
+
+        const parseTime = (timeStr) => {
+            if (!timeStr) return null;
+            const [hours, minutes] = timeStr.split(":").map(Number);
+            return hours * 60 + minutes;
+        };
+
+        const formatTime = (minutes) => {
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            const ampm = h >= 12 ? "PM" : "AM";
+            const formattedH = h % 12 === 0 ? 12 : h % 12;
+            const formattedM = m.toString().padStart(2, "0");
+            return `${formattedH.toString().padStart(2, "0")}:${formattedM} ${ampm}`;
+        };
+
+        const startMin = parseTime(interviewer.start_time);
+        const endMin = parseTime(interviewer.end_time);
+        const breakStartMin = parseTime(interviewer.break_time_start);
+        const breakEndMin = parseTime(interviewer.break_time_end);
+
+        const slots = [];
+
+        for (let current = startMin; current + 20 <= endMin; current += 20) {
+            if (breakStartMin && breakEndMin) {
+                if (current >= breakStartMin && current < breakEndMin) {
+                    continue;
+                }
+            }
+
+            // Format start and end times for the UI
+            const startLabel = formatTime(current);
+            const endLabel = formatTime(current + 20);
+
+            slots.push({
+                start: startLabel,
+                display: `${startLabel} -${endLabel}`,
+            });
+        }
+
+        return slots;
+    }, [interviewer]);
 
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const timeSlots = [
-        "09:00 AM",
-        "10:00 AM",
-        "11:00 AM",
-        "01:00 PM",
-        "02:00 PM",
-        "03:00 PM",
-        "04:00 PM",
-    ];
 
     // Calendar Helpers
     const getDaysInMonth = (year, month) =>
@@ -29,17 +140,14 @@ export default function SetScheduleSection({ prevStep, nextStep }) {
     const daysInMonth = getDaysInMonth(currentYear, currentMonth);
     const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
 
-    // Get today's date with the time stripped out for accurate comparison
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Check if previous month navigation should be disabled
     const isPrevMonthDisabled =
         currentYear < today.getFullYear() ||
         (currentYear === today.getFullYear() &&
             currentMonth <= today.getMonth());
 
-    // Handlers for month navigation
     const handlePrevMonth = () => {
         if (isPrevMonthDisabled) return;
         setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
@@ -53,28 +161,15 @@ export default function SetScheduleSection({ prevStep, nextStep }) {
 
     const handleDateClick = (day) => {
         setSelectedDate(new Date(currentYear, currentMonth, day));
-        setSelectedTime(null); // Reset time when new date is selected
+        setSelectedTime(null);
     };
 
-    const handleConfirm = () => {
-        if (selectedDate && selectedTime) {
-            alert(
-                `Booking confirmed for ${selectedDate.toDateString()} at ${selectedTime}`,
-            );
-            // Add your API submission logic here
-        }
-    };
-
-    // Generate blank spaces for the first week
     const blanks = Array.from({ length: firstDay }, (_, i) => (
         <div key={`blank-${i}`} className="p-2 border border-transparent"></div>
     ));
 
-    // Generate actual days
     const days = Array.from({ length: daysInMonth }, (_, i) => {
         const day = i + 1;
-
-        // Calculate the exact date of the loop iteration to compare with today
         const loopDate = new Date(currentYear, currentMonth, day);
         const isPast = loopDate < today;
 
@@ -112,7 +207,7 @@ export default function SetScheduleSection({ prevStep, nextStep }) {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row gap-8 mt-10">
+            <div className="flex flex-col lg:flex-row gap-8 mt-10">
                 {/* Left Column: Calendar */}
                 <div className="flex-1">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">
@@ -192,7 +287,7 @@ export default function SetScheduleSection({ prevStep, nextStep }) {
                 </div>
 
                 {/* Right Column: Time Slots */}
-                <div className="flex-1 flex flex-col border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-8">
+                <div className="flex-1 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-100 pt-6 lg:pt-0 lg:pl-8">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">
                         {selectedDate
                             ? "Available Times"
@@ -207,42 +302,33 @@ export default function SetScheduleSection({ prevStep, nextStep }) {
                                     {selectedDate.toLocaleDateString()}
                                 </span>
                             </p>
-                            <div className="grid grid-cols-2 gap-3 mb-8">
-                                {timeSlots.map((time) => (
-                                    <button
-                                        key={time}
-                                        type="button"
-                                        onClick={() => setSelectedTime(time)}
-                                        className={`py-3 px-4 rounded-xl font-medium border transition-all duration-200
-                                        ${
-                                            selectedTime === time
-                                                ? "bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]"
-                                                : "border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600"
-                                        }
-                                    `}
-                                    >
-                                        {time}
-                                    </button>
-                                ))}
-                            </div>
 
-                            {/* Sticky Action Button */}
-                            {/* <div className="mt-auto pt-4">
-                                <button
-                                    type="button"
-                                    onClick={handleConfirm}
-                                    disabled={!selectedTime}
-                                    className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200
-                                    ${
-                                        selectedTime
-                                            ? "bg-gray-900 text-white hover:bg-black shadow-lg hover:shadow-xl"
-                                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                    }
-                                `}
-                                >
-                                    Confirm Booking
-                                </button>
-                            </div> */}
+                            {timeSlots.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
+                                    {timeSlots.map((slot) => (
+                                        <button
+                                            key={slot.start}
+                                            type="button"
+                                            onClick={() =>
+                                                setSelectedTime(slot.start)
+                                            }
+                                            className={`py-3 px-4 rounded-xl font-medium text-sm border transition-all duration-200 
+                                            ${
+                                                selectedTime === slot.start
+                                                    ? "bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]"
+                                                    : "border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600"
+                                            }
+                                        `}
+                                        >
+                                            {slot.display}
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center text-gray-500 mt-10">
+                                    No available times for this date.
+                                </div>
+                            )}
                         </>
                     ) : (
                         <div className="flex-1 flex items-center justify-center text-center">
@@ -277,7 +363,7 @@ export default function SetScheduleSection({ prevStep, nextStep }) {
                     variant="secondary"
                     type="button"
                     onClick={prevStep}
-                    className="w-1/2 "
+                    className="w-1/2"
                 >
                     Back
                 </Button>
@@ -285,7 +371,8 @@ export default function SetScheduleSection({ prevStep, nextStep }) {
                     outlined
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2 "
+                    disabled={!selectedDate || !selectedTime}
+                    className="w-1/2"
                 >
                     Continue To Review
                 </Button>

@@ -7,11 +7,13 @@ use App\Http\Controllers\API\Account\AccountEmployeeController as AccountAccount
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
+use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
 use App\Http\Controllers\API\Jobs\JobOfferController;
 use App\Http\Controllers\API\Jobs\JobPostingController;
 use App\Http\Controllers\API\Jobs\JobRequisitionController;
 use App\Http\Controllers\API\Jobs\JobRequisitionLogController;
+use App\Http\Controllers\API\Jobs\JobInterviewerScheduleController;
 use App\Http\Controllers\Auth\AuthorizationController;
 use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\GoogleController;
@@ -50,6 +52,7 @@ Route::middleware('web')->group(function () {
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
 Route::post('job/get_job_application_from_email',  [JobApplicationController::class, 'get_job_application_from_email']);
 Route::get('job/postings',  [JobPostingController::class, 'index']);
+Route::resource('job/job_interviewer_schedules', JobInterviewerScheduleController::class);
 Route::get('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
 
 
@@ -66,6 +69,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
+        Route::resource('job_applicant_schedules', JobApplicantScheduleController::class);
         Route::resource('account_access', AccountAccessController::class);
         Route::get('get_job_offer_by_user',  [JobOfferController::class, 'get_job_offer_by_user']);
         Route::post('submit_job_offer',  [JobOfferController::class, 'submit_job_offer']);

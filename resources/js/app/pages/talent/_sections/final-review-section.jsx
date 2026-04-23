@@ -43,13 +43,22 @@ export default function FinalReviewSection({
                         </p>
                     </div>
                 </div>
-
+                <div>
+                    <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
+                        Interview Details
+                    </p>
+                    <p>
+                        {moment(watchedValues.scheduled_date).format("LL")}
+                        {" - "}({watchedValues.start_time} to{" "}
+                        {watchedValues.end_time})
+                    </p>
+                </div>
                 {/* Address Information */}
                 <div>
                     <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                         Birth Place
                     </p>
-                    <p className="capitalize">{watchedValues.birthplace}</p>
+                    <p className="capitalize">{watchedValues.birth_place}</p>
                 </div>
                 <div>
                     <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">

@@ -12,7 +12,9 @@ use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
+use App\Models\Jobs\JobApplicantSchedule;
 use App\Models\Jobs\JobApplication;
+use App\Models\Jobs\JobInterviewerSchedule;
 use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
 use App\Models\Jobs\JobRequisition;
@@ -280,16 +282,33 @@ class JobApplicationController extends Controller
 
         $referral_id = $request->referral_id ? base64_decode($request->referral_id) : null;
 
-        JobApplication::firstOrCreate(
+        $application = JobApplication::firstOrCreate(
             [
-                'user_id' => $user->id,
+                'user_id'        => $user->id,
                 'job_posting_id' => $request->job_posting_id,
             ],
             [
-                'referral_id' => $referral_id,
-                'source'      => $request->source ?? null,
+                'referral_id'    => $referral_id,
+                'source'         => $request->source ?? null,
             ]
         );
+
+        $formattedStartTime = Carbon::parse($request->start_time)->format('H:i:s');
+        $formattedEndTime   = Carbon::parse($request->end_time)->format('H:i:s');
+
+        JobApplicantSchedule::updateOrCreate(
+            [
+                'application_id' => $application->id,
+            ],
+            [
+                'interviewer_id'     => $request->interviewer_id,
+                'scheduled_date'     => $request->scheduled_date,
+                'start_time'         => $formattedStartTime, // Use the converted time
+                'end_time'           => $formattedEndTime,   // Use the converted time
+                'status'             => 'Pending',
+            ]
+        );
+
 
 
         if ($request->file) {
