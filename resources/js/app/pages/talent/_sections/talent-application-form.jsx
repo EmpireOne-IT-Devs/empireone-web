@@ -26,6 +26,7 @@ const TalentApplicationForm = () => {
     const dispatch = useDispatch();
     const [step, setStep] = useState(savedStep);
     const [loading, setLoading] = useState(false);
+    const { interviewer } = useSelector((store) => store.app);
     const referral_id = new URLSearchParams(window.location.search).get(
         "referral_id",
     );
@@ -87,14 +88,18 @@ const TalentApplicationForm = () => {
         }
         load_data();
     }, [cvFile?.name, job_posting_id]);
-
+    useEffect(() => {
+        if (watchedValues.job_posting_id) {
+            dispatch(setJobPostingId(watchedValues.job_posting_id));
+        }
+    }, [watchedValues.job_posting_id]);
+    
     useEffect(() => {
         const timeout = setTimeout(async () => {
             localStorage.setItem("talent_data", JSON.stringify(watchedValues));
         }, 500);
         return () => clearTimeout(timeout);
     }, [watchedValues, cvFile?.name, job_posting_id]);
-    console.log("watchedValuesssssssss", watchedValues);
 
     // ✅ Save current step
     useEffect(() => {
@@ -144,6 +149,7 @@ const TalentApplicationForm = () => {
             ...data,
             referral_id: referral_id,
             source: source,
+            interviewer_id: interviewer.interviewer_id,
         };
         try {
             setLoading(true);
@@ -255,6 +261,8 @@ const TalentApplicationForm = () => {
                         <SetScheduleSection
                             prevStep={prevStep}
                             nextStep={nextStep}
+                            setValue={setValue}
+                            watchedValues={watchedValues}
                         />
                     )}
                     {step === 3 && (

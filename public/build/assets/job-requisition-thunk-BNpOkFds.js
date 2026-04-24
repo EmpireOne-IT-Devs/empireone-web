@@ -1,0 +1,1 @@
+import{g as e}from"./job-requisition-service-K0Wjx1-e.js";import{l as i}from"./app-Bfg-1jgA.js";function a(){return async function(t,o){const s=await e();t(i.actions.setJobRequisitions(s.data)),t(i.actions.setStats(s.stats)),t(i.actions.setUsers(s.users))}}export{a as g};
