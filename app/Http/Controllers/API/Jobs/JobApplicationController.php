@@ -277,10 +277,9 @@ class JobApplicationController extends Controller
         $formattedStartTime = Carbon::parse($request->start_time)->format('H:i:s');
         $formattedEndTime   = Carbon::parse($request->end_time)->format('H:i:s');
 
-        // Google needs ISO8601
-        $googleStartTime = Carbon::parse($request->scheduled_date . ' ' . $request->start_time)->toIso8601String();
-        $googleEndTime   = Carbon::parse($request->scheduled_date . ' ' . $request->end_time)->toIso8601String();
-
+      
+        $googleStartTime = Carbon::parse($request->scheduled_date . ' ' . $request->start_time, 'Asia/Manila')->toIso8601String();
+        $googleEndTime   = Carbon::parse($request->scheduled_date . ' ' . $request->end_time, 'Asia/Manila')->toIso8601String();
         // 5. Save Schedule to Database
         $schedule = JobApplicantSchedule::updateOrCreate(
             [
@@ -302,16 +301,17 @@ class JobApplicationController extends Controller
         if ($interviewer) {
             $googleEvent = $calendarService->createInterviewEvent([
                 'title'             => 'Interview: ' . $user->name,
-                'description'       => 'Technical screen for the role.',
+                'description'       => 'Schedule for Initial Interview.',
                 'start_time'        => $googleStartTime,
                 'end_time'          => $googleEndTime,
                 'applicant_email'   => $user->email,
                 'interviewer_email' => $interviewer->email,
+                'calendar_id'       => 'empireone@august-snowfall-443613-r4.iam.gserviceaccount.com',
             ]);
 
             // Update the schedule with the generated Meet link
             $schedule->update([
-                'meeting_link' => $googleEvent['meet_link'],
+                // 'meeting_link' => $googleEvent['meet_link'],
                 'status'       => 'Scheduled' // Change status since it is officially booked
             ]);
         }

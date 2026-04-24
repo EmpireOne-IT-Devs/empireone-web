@@ -36,7 +36,9 @@ class GoogleCalendarService
                 'timeZone' => 'Asia/Manila',
             ],
         ]);
-        $calendarId = 'empireone@august-snowfall-443613-r4.iam.gserviceaccount.com';
+
+        // 🛑 WE ARE HARDCODING THIS TO THE ROBOT TO BYPASS THE ERROR 🛑
+        $calendarId = 'webdev@empireonegroup.com';
 
         $createdEvent = $this->calendarService->events->insert($calendarId, $event, [
             'sendUpdates' => 'none'
@@ -44,7 +46,7 @@ class GoogleCalendarService
 
         return [
             'event_id' => $createdEvent->getId(),
-            'meet_link' => $createdEvent->getHangoutLink(),
+            // No meet link here, we are just proving the event saves!
         ];
     }
 }
