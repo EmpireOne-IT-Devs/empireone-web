@@ -2,10 +2,10 @@ import React from "react";
 import Layout from "../../../layout";
 import EmployeeRelationLayout from "../layout";
 
-export default function Page() {
+export default function page() {
     return (
         <Layout>
-            <EmployeeRelationLayout>SeparationSection</EmployeeRelationLayout>
+            <EmployeeRelationLayout>RegularizationSection</EmployeeRelationLayout>
         </Layout>
     );
 }
