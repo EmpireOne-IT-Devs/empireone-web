@@ -16,9 +16,9 @@ export default function TabsSection() {
             active: currentPath === "pooling",
         },
         {
-            label: "Separation",
-            path: "/accounts/administrator/employee_relation/separation",
-            active: currentPath === "separation",
+            label: "Regularization",
+            path: "/accounts/administrator/employee_relation/regularization",
+            active: currentPath === "regularization",
         },
         {
             label: "Disciplinary Records",
@@ -26,9 +26,9 @@ export default function TabsSection() {
             active: currentPath === "disciplinary_records",
         },
         {
-            label: "Regularization",
-            path: "/accounts/administrator/employee_relation/regularization",
-            active: currentPath === "regularization",
+            label: "Separation / Attrition ",
+            path: "/accounts/administrator/employee_relation/separation",
+            active: currentPath === "separation",
         },
     ];
     return (
