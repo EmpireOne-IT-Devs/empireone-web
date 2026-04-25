@@ -25,28 +25,29 @@ class GoogleCalendarService
     public function createInterviewEvent($interviewDetails)
     {
         $event = new Event([
-            'summary' => $interviewDetails['title'],
+            'summary'     => $interviewDetails['title'],
             'description' => $interviewDetails['description'],
-            'start' => [
+            'start'       => [
                 'dateTime' => $interviewDetails['start_time'],
                 'timeZone' => 'Asia/Manila',
             ],
-            'end' => [
+            'end'         => [
                 'dateTime' => $interviewDetails['end_time'],
                 'timeZone' => 'Asia/Manila',
-            ],
+            ]
+            // Attendees must remain removed when using a Service Account!
         ]);
 
-        // 🛑 WE ARE HARDCODING THIS TO THE ROBOT TO BYPASS THE ERROR 🛑
-        $calendarId = 'webdev@empireonegroup.com';
+        // Set this to your actual personal Google Calendar email
+        $calendarId = 'ce764e3392da86d58050b4aa89f7dc8005e0c352f0e308e30dacc31280347ee9@group.calendar.google.com';
 
+        // Insert the event
         $createdEvent = $this->calendarService->events->insert($calendarId, $event, [
             'sendUpdates' => 'none'
         ]);
 
         return [
             'event_id' => $createdEvent->getId(),
-            // No meet link here, we are just proving the event saves!
         ];
     }
 }

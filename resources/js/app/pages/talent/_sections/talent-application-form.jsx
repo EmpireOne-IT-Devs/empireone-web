@@ -152,7 +152,7 @@ const TalentApplicationForm = () => {
             interviewer_id: interviewer.interviewer_id,
         };
         try {
-            setLoading(true);
+            // setLoading(true);
             await apply_job_application_service(finalData);
 
             await dispatch(
@@ -163,7 +163,7 @@ const TalentApplicationForm = () => {
                     open: true,
                 }),
             );
-            setLoading(false);
+            // setLoading(false);
             // localStorage.clear();
             // reset({
             //     position: "",
@@ -180,7 +180,7 @@ const TalentApplicationForm = () => {
             //     marital_status: "",
             //     job_posting_id: "",
             // });
-            setStep(0);
+            // setStep(0);
         } catch (error) {
             setLoading(true);
         }

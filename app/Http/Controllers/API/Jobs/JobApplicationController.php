@@ -306,7 +306,6 @@ class JobApplicationController extends Controller
                 'end_time'          => $googleEndTime,
                 'applicant_email'   => $user->email,
                 'interviewer_email' => $interviewer->email,
-                'calendar_id'       => 'empireone@august-snowfall-443613-r4.iam.gserviceaccount.com',
             ]);
 
             // Update the schedule with the generated Meet link

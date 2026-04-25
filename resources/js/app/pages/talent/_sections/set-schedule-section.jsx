@@ -1,11 +1,6 @@
 import Button from "@/app/_components/button";
-<<<<<<< HEAD
-import { Clock } from "lucide-react";
-import React, { useState } from "react";
-=======
 import React, { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
->>>>>>> defb5f9d43b425ef873a816b01f622c8f5db3cf5
 
 export default function SetScheduleSection({
     prevStep,
@@ -212,16 +207,7 @@ export default function SetScheduleSection({
 
     return (
         <>
-<<<<<<< HEAD
-            <div className="text-xl font-semibold text-gray-800 mb-4 md:mb-0 ">
-                Please select your preferred date and time for the initial
-                interview.
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-8 mt-12">
-=======
             <div className="flex flex-col lg:flex-row gap-8 mt-10">
->>>>>>> defb5f9d43b425ef873a816b01f622c8f5db3cf5
                 {/* Left Column: Calendar */}
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-6">
@@ -306,20 +292,6 @@ export default function SetScheduleSection({
                 </div>
 
                 {/* Right Column: Time Slots */}
-<<<<<<< HEAD
-                <div className="flex-1 flex flex-col border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-8">
-                    <div className="flex items-center gap-2 mb-6 min-h-[2.5rem]">
-                        {selectedDate ? (
-                            <>
-                                <Clock className="w-6 h-6 text-blue-600 " />
-                                <h2 className="text-xl font-bold text-gray-800">Available Times</h2>
-                            </>
-                        ) : (
-                            <h2 className="text-xl font-bold text-gray-800">Select a date first</h2>
-                        )}
-                    </div>
-                            
-=======
                 <div className="flex-1 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-100 pt-6 lg:pt-0 lg:pl-8">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">
                         {selectedDate
@@ -327,7 +299,6 @@ export default function SetScheduleSection({
                             : "Select a date first"}
                     </h2>
 
->>>>>>> defb5f9d43b425ef873a816b01f622c8f5db3cf5
                     {selectedDate ? (
                         <>
                             <p className="text-gray-500 mb-4">
