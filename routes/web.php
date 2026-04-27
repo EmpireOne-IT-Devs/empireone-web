@@ -138,7 +138,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('/job_posting', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/job_posting/page');
             });
-             Route::get('/calendar', function () {
+            Route::get('/calendar', function () {
                 return Inertia::render('accounts/_administrator/talent_acquisition/calendar/page');
             });
             Route::get('/job_posting/{id}/applicants', function () {
@@ -166,6 +166,12 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             });
             Route::get('pooling', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/pooling/page');
+            });
+            Route::get('regularization', function () {
+                return Inertia::render('accounts/_administrator/employee_relation/regularization/page');
+            });
+            Route::get('disciplinary_records', function () {
+                return Inertia::render('accounts/_administrator/employee_relation/disciplinary_records/page');
             });
             Route::get('separation', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/separation/page');

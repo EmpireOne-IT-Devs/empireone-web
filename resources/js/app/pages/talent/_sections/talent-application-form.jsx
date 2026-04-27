@@ -152,7 +152,7 @@ const TalentApplicationForm = () => {
             interviewer_id: interviewer.interviewer_id,
         };
         try {
-            setLoading(true);
+            // setLoading(true);
             await apply_job_application_service(finalData);
 
             await dispatch(
@@ -163,24 +163,24 @@ const TalentApplicationForm = () => {
                     open: true,
                 }),
             );
-            setLoading(false);
-            localStorage.clear();
-            reset({
-                position: "",
-                gender: "",
-                experiences: [],
-                skills: [{ name: "", percentage: 0 }],
-                region: "",
-                province: "",
-                city: "",
-                barangay: "",
-                zip_code: "",
-                cv: [],
-                file: null,
-                marital_status: "",
-                job_posting_id: "",
-            });
-            setStep(0);
+            // setLoading(false);
+            // localStorage.clear();
+            // reset({
+            //     position: "",
+            //     gender: "",
+            //     experiences: [],
+            //     skills: [{ name: "", percentage: 0 }],
+            //     region: "",
+            //     province: "",
+            //     city: "",
+            //     barangay: "",
+            //     zip_code: "",
+            //     cv: [],
+            //     file: null,
+            //     marital_status: "",
+            //     job_posting_id: "",
+            // });
+            // setStep(0);
         } catch (error) {
             setLoading(true);
         }

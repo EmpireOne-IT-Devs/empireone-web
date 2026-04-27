@@ -25,6 +25,7 @@ return new class extends Migration
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
             $table->string('status')->default('Pending');
+            $table->string('meeting_link')->nullable();
             $table->timestamps();
         });
     }

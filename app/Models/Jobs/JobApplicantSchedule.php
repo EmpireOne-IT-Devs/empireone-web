@@ -14,6 +14,7 @@ class JobApplicantSchedule extends Model
         'scheduled_date',
         'start_time',
         'end_time',
+        'meeting_link',
         'status'
     ];
 
