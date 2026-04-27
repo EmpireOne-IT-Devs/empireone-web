@@ -1,1 +1,0 @@
-import{r,s as o,j as t}from"./app-CoO6DWJx.js";import i from"./tabs-section-DQUCKkFc.js";import{c as a,b as e}from"./job-posting-thunk-CFSIrCwa.js";import"./tabs-eRvW333_.js";import"./job-application-service-Dv57qKBc.js";function _({children:s}){return r.useEffect(()=>{o.dispatch(a()),o.dispatch(e())},[]),t.jsxs(t.Fragment,{children:[t.jsx(i,{}),s]})}export{_ as default};

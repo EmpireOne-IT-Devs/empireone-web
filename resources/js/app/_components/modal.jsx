@@ -19,7 +19,7 @@ export default function Modal({
 
     return (
         <Transition show={isOpen} as={Fragment}>
-            <div className="relative z-40">
+            <div className="fixed z-40">
                 {/* Overlay */}
                 <Transition.Child
                     as={Fragment}
@@ -66,13 +66,14 @@ export default function Modal({
                                         onClick={() => onClose()}
                                         className=" text-xl text-red-600 hover:text-red-700 px-5 p-2 "
                                     >
-                                        
                                         <FaRegWindowClose size={32} />
                                     </button>
                                 </div>
                             </div>
                             {/* Content */}
-                            <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+                            <div className="min-h-0 flex-1 overflow-y-auto">
+                                {children}
+                            </div>
 
                             {/* Close button (optional) */}
                         </div>
