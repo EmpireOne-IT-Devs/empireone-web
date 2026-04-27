@@ -20,7 +20,7 @@ class JobApplicantSchedule extends Model
 
     public function application(): HasOne
     {
-        return $this->hasOne(JobApplication::class, 'id', 'application_id');
+        return $this->hasOne(JobApplication::class, 'id', 'application_id')->with(['applicant']);
     }
     public function interviewer(): HasOne
     {

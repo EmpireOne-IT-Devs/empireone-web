@@ -13,9 +13,15 @@ class JobInterviewerScheduleController extends Controller
      */
     public function index()
     {
-        $interviewers = JobInterviewerSchedule::get();
+        $interviewers = JobInterviewerSchedule::with(['interviewer'])
+            ->get()
+            ->sortBy(function ($schedule) {
+                return $schedule->interviewer->name ?? '';
+            })
+            ->values(); // Reset keys to maintain a clean JSON array
+
         return response()->json([
-            'data' =>  $interviewers,
+            'data' => $interviewers,
         ], 200);
     }
 
@@ -32,7 +38,10 @@ class JobInterviewerScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        JobInterviewerSchedule::create($request->all());
+        return response()->json([
+            'data' =>  'sucess',
+        ], 200);
     }
 
     /**

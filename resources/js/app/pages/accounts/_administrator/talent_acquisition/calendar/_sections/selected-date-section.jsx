@@ -1,63 +1,79 @@
 import React from "react";
+import { useSelector } from "react-redux";
+
+// Helper to format "HH:MM:SS" to "hh:mm AM/PM"
+const formatTime = (timeString) => {
+    if (!timeString) return "";
+    const [hourString, minute] = timeString.split(":");
+    const hour = parseInt(hourString, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour.toString().padStart(2, "0")}:${minute} ${ampm}`;
+};
+
+// Helper to calculate duration between "HH:MM:SS" and "HH:MM:SS"
+const calculateDuration = (startTime, endTime) => {
+    if (!startTime || !endTime) return "";
+    const start = new Date(`1970-01-01T${startTime}Z`);
+    const end = new Date(`1970-01-01T${endTime}Z`);
+    const diffMins = Math.round((end - start) / 60000);
+
+    if (diffMins >= 60) {
+        const hours = Math.floor(diffMins / 60);
+        const mins = diffMins % 60;
+        return `${hours} hr${hours > 1 ? "s" : ""} ${mins > 0 ? `${mins} mins` : ""}`.trim();
+    }
+    return `${diffMins} mins`;
+};
+
+// Helper to assign a color based on the interview status
+const getColorByStatus = (status) => {
+    switch (status?.toLowerCase()) {
+        case "scheduled":
+            return "bg-green-100 text-green-700 border-green-200";
+        case "pending":
+            return "bg-orange-100 text-orange-700 border-orange-200";
+        default:
+            return "bg-blue-100 text-blue-700 border-blue-200";
+    }
+};
 
 export default function SelectedDateSection({ selectedDate, setSelectedDate }) {
-
-        const today = new Date();
-    const mockSchedules = [
-        {
-            id: 1,
-            title: "UI/UX Interview",
-            date: new Date(today.getFullYear(), today.getMonth(), 5),
-            time: "10:00 AM",
-            duration: "1 hour",
-            color: "bg-blue-100 text-blue-700 border-blue-200",
-        },
-        {
-            id: 2,
-            title: "Team Sync",
-            date: new Date(today.getFullYear(), today.getMonth(), 12),
-            time: "09:30 AM",
-            duration: "30 mins",
-            color: "bg-purple-100 text-purple-700 border-purple-200",
-        },
-        {
-            id: 3,
-            title: "Candidate Review",
-            date: new Date(today.getFullYear(), today.getMonth(), 12),
-            time: "02:00 PM",
-            duration: "1.5 hours",
-            color: "bg-green-100 text-green-700 border-green-200",
-        },
-        {
-            id: 4,
-            title: "Frontend Tech Screen",
-            date: new Date(today.getFullYear(), today.getMonth(), 22),
-            time: "11:00 AM",
-            duration: "1 hour",
-            color: "bg-blue-100 text-blue-700 border-blue-200",
-        },
-        {
-            id: 5,
-            title: "Offer Negotiation",
-            date: new Date(today.getFullYear(), today.getMonth(), 28),
-            time: "04:00 PM",
-            duration: "30 mins",
-            color: "bg-orange-100 text-orange-700 border-orange-200",
-        },
-    ];
+    const { schedules } = useSelector((store) => store.talent_acquisitions);
+    console.log("schedules", schedules);
+    // Filter and transform Redux schedules based on the selected date
     const selectedDateSchedules = selectedDate
-        ? mockSchedules.filter(
-              (s) =>
-                  s.date.getDate() === selectedDate.getDate() &&
-                  s.date.getMonth() === selectedDate.getMonth() &&
-                  s.date.getFullYear() === selectedDate.getFullYear(),
-          )
+        ? (schedules || [])
+              .filter((sched) => {
+                  // Split to avoid UTC timezone offset issues
+                  const [year, month, day] = sched.scheduled_date.split("-");
+                  return (
+                      parseInt(year, 10) === selectedDate.getFullYear() &&
+                      parseInt(month, 10) - 1 === selectedDate.getMonth() &&
+                      parseInt(day, 10) === selectedDate.getDate()
+                  );
+              })
+              .map((sched) => ({
+                  id: sched.id,
+                  title: `${sched?.application?.applicant?.personal_information?.first_name} ${sched?.application?.applicant?.personal_information?.last_name}`,
+                  time: `${formatTime(sched.start_time)} - ${formatTime(sched.end_time)}`,
+                  duration: calculateDuration(sched.start_time, sched.end_time),
+                  color: getColorByStatus(sched.status),
+                  meeting_link: sched.meeting_link,
+                  interviewer: sched?.interviewer?.name,
+              }))
+              // Optional: Sort chronologically by start_time
+              .sort((a, b) => {
+                  const timeA = new Date(`1970/01/01 ${a.time}`);
+                  const timeB = new Date(`1970/01/01 ${b.time}`);
+                  return timeA - timeB;
+              })
         : [];
+
     return (
         <>
             {selectedDate && (
-            
-                    <>
+                <>
                     <div className="w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-auto self-start sticky top-6">
                         <div className="flex justify-between items-center mb-6">
                             <div>
@@ -119,7 +135,7 @@ export default function SelectedDateSection({ selectedDate, setSelectedDate }) {
                                                 <div
                                                     className={`p-3 rounded-lg border shadow-sm ${schedule.color}`}
                                                 >
-                                                    <h4 className="font-semibold text-sm mb-1">
+                                                    <h4 className="font-semibold text-md mb-1">
                                                         {schedule.title}
                                                     </h4>
                                                     <p className="text-xs opacity-80 flex items-center gap-1">
@@ -138,6 +154,48 @@ export default function SelectedDateSection({ selectedDate, setSelectedDate }) {
                                                         </svg>
                                                         {schedule.duration}
                                                     </p>
+
+                                                    <a className="text-xs opacity-80 flex items-center gap-1.5 transition-opacity hover:opacity-100 mt-1 cursor-pointer">
+                                                        {/* User Icon */}
+                                                        <svg
+                                                            className="w-3 h-3"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                            />
+                                                        </svg>
+                                                        Interviewer:{" "}
+                                                        {schedule.interviewer}
+                                                    </a>
+                                                    <a
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        href={
+                                                            schedule.meeting_link
+                                                        }
+                                                        className="text-xs opacity-80 flex items-center gap-1 hover:opacity-100 hover:underline transition-opacity mt-1"
+                                                    >
+                                                        <svg
+                                                            className="w-3 h-3"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth="2"
+                                                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                                            ></path>
+                                                        </svg>
+                                                        Google Meet
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -167,7 +225,7 @@ export default function SelectedDateSection({ selectedDate, setSelectedDate }) {
                             )}
                         </div>
                     </div>
-                    </>
+                </>
             )}
         </>
     );

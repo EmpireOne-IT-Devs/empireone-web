@@ -1,57 +1,50 @@
 import React, { useState } from "react";
-import InterviewerSection from "./interviewer-section";
+import { useSelector } from "react-redux";
+// import InterviewerSection from "./interviewer-section"; // Uncomment if used in this file
 
-export default function CalendarSection({selectedDate, setSelectedDate}) {
+// Helper to format "HH:MM:SS" to "hh:mm AM/PM"
+const formatTime = (timeString) => {
+    if (!timeString) return "";
+    const [hourString, minute] = timeString.split(":");
+    const hour = parseInt(hourString, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour.toString().padStart(2, "0")}:${minute} ${ampm}`;
+};
+
+// Helper to assign a color based on the interview status
+const getColorByStatus = (status) => {
+    switch (status?.toLowerCase()) {
+        case "scheduled":
+            return "bg-green-100 text-green-700 border-green-200";
+        case "pending":
+            return "bg-orange-100 text-orange-700 border-orange-200";
+        default:
+            return "bg-blue-100 text-blue-700 border-blue-200";
+    }
+};
+
+export default function CalendarSection({ selectedDate, setSelectedDate }) {
+    const { schedules } = useSelector((store) => store.talent_acquisitions);
     const [currentDate, setCurrentDate] = useState(new Date());
 
-
-    // Mock Data: Schedules for the current month with added times
     const today = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
+console.log('schedules',schedules)
+    // Transform Redux schedules to match calendar requirements
+    const calendarSchedules = (schedules || []).map((sched) => {
+        // Split to avoid UTC timezone offset issues when creating the Date object
+        const [year, month, day] = sched.scheduled_date.split("-");
 
-    const mockSchedules = [
-        {
-            id: 1,
-            title: "UI/UX Interview",
-            date: new Date(today.getFullYear(), today.getMonth(), 5),
-            time: "10:00 AM",
-            duration: "1 hour",
-            color: "bg-blue-100 text-blue-700 border-blue-200",
-        },
-        {
-            id: 2,
-            title: "Team Sync",
-            date: new Date(today.getFullYear(), today.getMonth(), 12),
-            time: "09:30 AM",
-            duration: "30 mins",
-            color: "bg-purple-100 text-purple-700 border-purple-200",
-        },
-        {
-            id: 3,
-            title: "Candidate Review",
-            date: new Date(today.getFullYear(), today.getMonth(), 12),
-            time: "02:00 PM",
-            duration: "1.5 hours",
-            color: "bg-green-100 text-green-700 border-green-200",
-        },
-        {
-            id: 4,
-            title: "Frontend Tech Screen",
-            date: new Date(today.getFullYear(), today.getMonth(), 22),
-            time: "11:00 AM",
-            duration: "1 hour",
-            color: "bg-blue-100 text-blue-700 border-blue-200",
-        },
-        {
-            id: 5,
-            title: "Offer Negotiation",
-            date: new Date(today.getFullYear(), today.getMonth(), 28),
-            time: "04:00 PM",
-            duration: "30 mins",
-            color: "bg-orange-100 text-orange-700 border-orange-200",
-        },
-    ];
+        return {
+            id: sched.id,
+            title:`${sched?.application?.applicant?.personal_information?.first_name} ${sched?.application?.applicant?.personal_information?.last_name}`,
+            date: new Date(year, month - 1, day),
+            time: formatTime(sched.start_time),
+            color: getColorByStatus(sched.status),
+        };
+    });
 
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -75,9 +68,6 @@ export default function CalendarSection({selectedDate, setSelectedDate}) {
         setSelectedDate(new Date(currentYear, currentMonth, day));
     };
 
-    // Filter schedules for the currently selected date in the side panel
-  
-
     // Generate blank spaces for the first week
     const blanks = Array.from({ length: firstDay }, (_, i) => (
         <div
@@ -90,8 +80,8 @@ export default function CalendarSection({selectedDate, setSelectedDate}) {
     const days = Array.from({ length: daysInMonth }, (_, i) => {
         const day = i + 1;
 
-        // Find schedules for this specific day
-        const daySchedules = mockSchedules.filter(
+        // Find transformed schedules for this specific day
+        const daySchedules = calendarSchedules.filter(
             (schedule) =>
                 schedule.date.getDate() === day &&
                 schedule.date.getMonth() === currentMonth &&
@@ -140,7 +130,7 @@ export default function CalendarSection({selectedDate, setSelectedDate}) {
                             className={`text-[10px] leading-tight px-1.5 py-0.5 rounded border truncate ${schedule.color}`}
                             title={`${schedule.time} - ${schedule.title}`}
                         >
-                            {schedule.title}
+                            {schedule.time} - {schedule.title}
                         </div>
                     ))}
                 </div>
@@ -149,7 +139,7 @@ export default function CalendarSection({selectedDate, setSelectedDate}) {
     });
 
     return (
-            <>
+        <>
             <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 {/* Header: Title & Controls */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
@@ -234,7 +224,6 @@ export default function CalendarSection({selectedDate, setSelectedDate}) {
                     </div>
                 </div>
             </div>
-            </>
-
+        </>
     );
 }

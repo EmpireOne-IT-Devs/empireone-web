@@ -13,7 +13,11 @@ class JobApplicantScheduleController extends Controller
      */
     public function index()
     {
-        //
+        $schedules = JobApplicantSchedule::with(['application','interviewer'])->get();
+        return response()->json([
+            'data' => $schedules,
+            'status' => 'success',
+        ], 200);
     }
 
     /**
