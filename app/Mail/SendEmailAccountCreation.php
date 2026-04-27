@@ -15,14 +15,16 @@ class SendEmailAccountCreation extends Mailable
     // 1. Define public properties so they are automatically available in the view
     public $user;
     public $url;
+    public $schedule;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $url)
+    public function __construct($user, $url, $schedule)
     {
         $this->user = $user;
         $this->url = $url;
+        $this->schedule = $schedule;
     }
 
     /**

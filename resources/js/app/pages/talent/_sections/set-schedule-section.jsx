@@ -10,6 +10,7 @@ export default function SetScheduleSection({
     watchedValues,
 }) {
     const { interviewer } = useSelector((store) => store.app);
+    console.log("interviewer", interviewer.upcoming_schedules);
 
     // ---------------------------------------------------------
     // Initialize State with Default Values
@@ -105,6 +106,29 @@ export default function SetScheduleSection({
         const breakStartMin = parseTime(interviewer.break_time_start);
         const breakEndMin = parseTime(interviewer.break_time_end);
 
+        // Get the formatted date string for matching with the schedule
+        const formattedSelectedDate = selectedDate
+            ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+            : null;
+
+        // Find booked slots for the selected date
+        const bookedStartMinutes = (interviewer.upcoming_schedules || [])
+            .filter(
+                (schedule) => schedule.scheduled_date === formattedSelectedDate,
+            )
+            .map((schedule) => parseTime(schedule.start_time))
+            .filter((val) => val !== null);
+
+        // Check if selectedDate is today to disable past times
+        const now = new Date();
+        const isToday =
+            selectedDate &&
+            selectedDate.getDate() === now.getDate() &&
+            selectedDate.getMonth() === now.getMonth() &&
+            selectedDate.getFullYear() === now.getFullYear();
+
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
         const slots = [];
 
         for (let current = startMin; current + 20 <= endMin; current += 20) {
@@ -114,18 +138,24 @@ export default function SetScheduleSection({
                 }
             }
 
+            // Flag slot if it's today and the time has already passed
+            const isPast = isToday && current < currentMinutes;
+            // Flag slot if it exists in upcoming_schedules
+            const isBooked = bookedStartMinutes.includes(current);
+
             // Format start and end times for the UI
             const startLabel = formatTime(current);
             const endLabel = formatTime(current + 20);
 
             slots.push({
                 start: startLabel,
-                display: `${startLabel} -${endLabel}`,
+                display: `${startLabel} - ${endLabel}`,
+                isDisabled: isPast || isBooked,
             });
         }
 
         return slots;
-    }, [interviewer]);
+    }, [interviewer, selectedDate]);
 
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -172,7 +202,7 @@ export default function SetScheduleSection({
     const days = Array.from({ length: daysInMonth }, (_, i) => {
         const day = i + 1;
         const loopDate = new Date(currentYear, currentMonth, day);
-        const isPast = loopDate < today;
+        const isPast = loopDate <= today;
 
         const isSelected =
             selectedDate?.getDate() === day &&
@@ -344,11 +374,15 @@ export default function SetScheduleSection({
                                             onClick={() =>
                                                 setSelectedTime(slot.start)
                                             }
+                                            disabled={slot.isDisabled}
                                             className={`py-3 px-4 rounded-xl font-medium text-sm border transition-all duration-200 
                                             ${
-                                                selectedTime === slot.start
-                                                    ? "bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]"
-                                                    : "border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600"
+                                                slot.isDisabled
+                                                    ? "bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
+                                                    : selectedTime ===
+                                                        slot.start
+                                                      ? "bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]"
+                                                      : "border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600"
                                             }
                                         `}
                                         >

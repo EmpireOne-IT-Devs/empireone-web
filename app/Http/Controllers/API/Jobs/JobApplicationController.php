@@ -277,22 +277,18 @@ class JobApplicationController extends Controller
         $formattedStartTime = Carbon::parse($request->start_time)->format('H:i:s');
         $formattedEndTime   = Carbon::parse($request->end_time)->format('H:i:s');
 
-      
+
         $googleStartTime = Carbon::parse($request->scheduled_date . ' ' . $request->start_time, 'Asia/Manila')->toIso8601String();
         $googleEndTime   = Carbon::parse($request->scheduled_date . ' ' . $request->end_time, 'Asia/Manila')->toIso8601String();
         // 5. Save Schedule to Database
-        $schedule = JobApplicantSchedule::updateOrCreate(
-            [
-                'application_id' => $application->id,
-            ],
-            [
-                'interviewer_id' => $request->interviewer_id,
-                'scheduled_date' => $request->scheduled_date,
-                'start_time'     => $formattedStartTime,
-                'end_time'       => $formattedEndTime,
-                'status'         => 'Pending',
-            ]
-        );
+        $schedule = JobApplicantSchedule::create([
+            'application_id' => $application->id,
+            'interviewer_id' => $request->interviewer_id,
+            'scheduled_date' => $request->scheduled_date,
+            'start_time'     => $formattedStartTime,
+            'end_time'       => $formattedEndTime,
+            'status'         => 'Pending',
+        ]);
 
         // 6. Generate Google Meet Link
         // Fetch the interviewer to get their email address
@@ -310,9 +306,18 @@ class JobApplicationController extends Controller
 
             // Update the schedule with the generated Meet link
             $schedule->update([
-                // 'meeting_link' => $googleEvent['meet_link'],
+                'meeting_link' => $googleEvent['meet_link'],
                 'status'       => 'Scheduled' // Change status since it is officially booked
             ]);
+
+            Mail::to($user->email)->send(
+                new SendEmailAccountCreation($user, url('/auth/login'), [
+                    ...$googleEvent,
+                    'start_time'        => $googleStartTime,
+                    'end_time'          => $googleEndTime,
+                    'meet_link' => $googleEvent['meet_link']
+                ])
+            );
         }
 
         // 7. Handle Resume Upload
@@ -337,9 +342,7 @@ class JobApplicationController extends Controller
         }
 
         // 8. Send Email & Return Response
-        Mail::to($user->email)->send(
-            new SendEmailAccountCreation($user, url('/auth/login'))
-        );
+
 
         return response()->json([
             'status' => 'success',

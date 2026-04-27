@@ -40,7 +40,7 @@ class JobInterviewerScheduleController extends Controller
      */
     public function show($interviewer_id)
     {
-        $interviewer = JobInterviewerSchedule::where('interviewer_id', $interviewer_id)->first();
+        $interviewer = JobInterviewerSchedule::where('interviewer_id', $interviewer_id)->with(['upcoming_schedules'])->first();
         return response()->json([
             'data' =>  $interviewer,
         ], 200);

@@ -24,9 +24,12 @@ class GoogleCalendarService
 
     public function createInterviewEvent($interviewDetails)
     {
+        $staticMeetLink = 'https://meet.google.com/kwi-mrdx-fqa';
+
         $event = new Event([
             'summary'     => $interviewDetails['title'],
-            'description' => $interviewDetails['description'],
+            'description' => $interviewDetails['description'] . "\n\nJoin the interview here: " . $staticMeetLink,
+            'location'    => $staticMeetLink, // Puts it in the location field!
             'start'       => [
                 'dateTime' => $interviewDetails['start_time'],
                 'timeZone' => 'Asia/Manila',
@@ -35,19 +38,17 @@ class GoogleCalendarService
                 'dateTime' => $interviewDetails['end_time'],
                 'timeZone' => 'Asia/Manila',
             ]
-            // Attendees must remain removed when using a Service Account!
         ]);
 
-        // Set this to your actual personal Google Calendar email
         $calendarId = 'ce764e3392da86d58050b4aa89f7dc8005e0c352f0e308e30dacc31280347ee9@group.calendar.google.com';
 
-        // Insert the event
         $createdEvent = $this->calendarService->events->insert($calendarId, $event, [
             'sendUpdates' => 'none'
         ]);
 
         return [
             'event_id' => $createdEvent->getId(),
+            'meet_link' => $staticMeetLink
         ];
     }
 }
