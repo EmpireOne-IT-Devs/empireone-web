@@ -15,7 +15,7 @@ export default function Page() {
                     {/* <HeaderSection /> */}
 
                     <CardSection />
-
+                    <QuickActionsSection />
                     <div className="flex flex-col md:flex-row gap-3">
                         <div className="flex-1">
                             <RecentActivitySection />
@@ -24,7 +24,6 @@ export default function Page() {
                             <TopPerformingJobSection />
                         </div>
                     </div>
-                    <QuickActionsSection />
                 </div>
             </JobPostingLayout>
         </Layout>
