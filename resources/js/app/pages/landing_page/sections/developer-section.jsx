@@ -258,7 +258,7 @@ export default function DeveloperSection() {
                 </p>
             </div>
 
-            {/* Cards Grid */}z
+            {/* Cards Grid */}
             <div className="flex flex-wrap gap-5 justify-center">
                 {teamMembers.map((member, i) => (
                     <TeamCard key={member.name} member={member} index={i} />

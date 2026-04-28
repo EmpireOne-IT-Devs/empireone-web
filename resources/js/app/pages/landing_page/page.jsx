@@ -1,13 +1,11 @@
 import React from "react";
 import HeaderSection from "./sections/header-section";
 import HeroSection from "./sections/hero-section";
-import CarouselSection from "./sections/carousel-section";
 import ServicesSection from "./sections/services-section";
 import AboutSection from "./sections/about-section";
 import ContactSection from "./sections/contact-section";
 import FooterSection from "./sections/footer-section";
 import ProgressScrollSection from "./sections/progress-scroll-section";
-import CarouselHighlightSection from "./sections/carousel-highlight-section";
 import TestimonialSection from "./sections/testimonial-section";
 import DeveloperSection from "./sections/developer-section";
 import CareerSection from "./sections/career-section";
@@ -22,17 +20,14 @@ export default function Page() {
                 <div id="hero">
                     <HeroSection />
                 </div>
-                <CarouselSection />
-                <ServicesSection />
+
+                <CareerSection />
+                <DeveloperSection />
+                {/* <ServicesSection /> */}
                 <AboutSection />
                 <TestimonialSection />
-                <CareerSection />
-
-                <DeveloperSection />
 
                 <ContactSection />
-                {/* 
-                <CarouselHighlightSection /> */}
                 <FooterSection />
             </div>
         </div>

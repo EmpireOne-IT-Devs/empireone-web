@@ -1,250 +1,303 @@
-import React, { useState } from "react";
-import { Briefcase, MapPin, DollarSign, Clock, ArrowRight } from "lucide-react";
+import Card from "@/app/_components/card";
+import React from "react";
 
-const jobs = [
-    {
-        title: "Frontend Developer",
-        location: "Remote",
-        type: "Full-time",
-        salary: "$1,500–$2,000/mo",
-        description:
-            "Build and maintain modern web interfaces using React and Tailwind CSS.",
-        posted: "2 days ago",
+/* =========================
+   DATA
+========================= */
+const jobListings = {
+    "Customer Experience & Operations": {
+        subtitle:
+            "Deliver exceptional support and streamline our global operations.",
+        jobs: [
+            {
+                title: "Senior Customer Success Manager (Bilingual)",
+                tags: ["Remote", "Full-time"],
+            },
+            {
+                title: "Technical Support Specialist (L2)",
+                tags: ["Remote", "Full-time", "24/7 Shift"],
+            },
+            { title: "Operations Team Lead", tags: ["Hybrid", "Full-time"] },
+            { title: "QA Specialist Manager", tags: ["Remote", "Full-time"] },
+            {
+                title: "Product Support Specialist (L3)",
+                tags: ["Remote", "Full-time", "24/7 Shift"],
+            },
+            { title: "Account Lead", tags: ["Hybrid", "Full-time"] },
+        ],
     },
-    {
-        title: "Backend Developer",
-        location: "Makati, PH",
-        type: "Full-time",
-        salary: "$1,800–$2,500/mo",
-        description:
-            "Develop robust APIs and backend services with Laravel and Node.js.",
-        posted: "5 days ago",
-    },
-    {
-        title: "UI/UX Designer",
-        location: "Remote",
-        type: "Contract",
-        salary: "$1,000–$1,500/mo",
-        description:
-            "Design user-centric interfaces and experiences for web and mobile apps.",
-        posted: "1 week ago",
-    },
-    {
-        title: "IT Support Specialist",
-        location: "Cebu, PH",
-        type: "Full-time",
-        salary: "$900–$1,200/mo",
-        description:
-            "Provide technical support and troubleshooting for internal teams.",
-        posted: "3 days ago",
-    },
-];
-
-const TYPE_STYLES = {
-    "Full-time": "bg-green-100 text-green-800 border border-green-200",
-    Contract: "bg-indigo-100 text-indigo-800 border border-indigo-200",
-    "Part-time": "bg-amber-100 text-amber-800 border border-amber-200",
 };
 
-const FILTERS = ["All roles", "Full-time", "Contract", "Remote"];
+const featuredJobs = [
+    { title: "Senior Customer Success Manager", tags: ["Remote", "Full-time"] },
+    { title: "Senior UX Designer", tags: ["Hybrid - San Carlos", "Full-time"] },
+    { title: "IT Staff (Tier 2)", tags: ["Full-time", "On-Site"] },
+    { title: "Operations Team Lead", tags: ["Hybrid", "Full-time"] },
+    { title: "QA Specialist Manager", tags: ["Full-time", "On-Site"] },
+];
+
+/* =========================
+   ICON
+========================= */
+const briefcaseIcon = (
+    <svg width="14" height="14" fill="white" viewBox="0 0 24 24">
+        <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10-2h4v2h-4V4z" />
+    </svg>
+);
+
+/* =========================
+   TAG STYLE LOGIC
+========================= */
+const getTagStyle = (tag) =>
+    tag === "24/7 Shift"
+        ? {
+              color: "rgba(251,146,60,0.9)",
+              background: "rgba(251,146,60,0.1)",
+              border: "1px solid rgba(251,146,60,0.3)",
+          }
+        : {
+              color: "rgba(147,197,253,0.85)",
+              background: "rgba(59,130,246,0.1)",
+              border: "1px solid rgba(59,130,246,0.3)",
+          };
+
+/* =========================
+   COMPONENTS
+========================= */
+function JobCard({ title, tags }) {
+    return (
+        <Card
+            outlined
+            padding="p-6"
+            className="!flex-row items-center justify-between gap-10 !rounded-2xl !border-l-[3px] !border-l-orange-400 !border-purple-800/30 !bg-[rgba(20,8,40,0.6)] !text-white hover:!bg-purple-900/20 hover:!border-purple-500/50 transition-all duration-200"
+        >
+            {/* LEFT CONTENT */}
+            <div className="flex flex-col gap-3">
+                <p className="text-base font-semibold text-purple-100 leading-snug">
+                    {title}
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                        <span
+                            key={tag}
+                            className="text-xs rounded-full px-3 py-1"
+                            style={
+                                tag === "24/7 Shift"
+                                    ? {
+                                          color: "rgba(251,146,60,0.9)",
+                                          background: "rgba(251,146,60,0.1)",
+                                          border: "1px solid rgba(251,146,60,0.3)",
+                                      }
+                                    : {
+                                          color: "rgba(147,197,253,0.85)",
+                                          background: "rgba(59,130,246,0.1)",
+                                          border: "1px solid rgba(59,130,246,0.3)",
+                                      }
+                            }
+                        >
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            {/* RIGHT BUTTON */}
+            <button
+                className="flex-shrink-0 text-sm font-bold rounded-xl px-4 py-2 whitespace-nowrap hover:scale-105 transition-transform"
+                style={{
+                    color: "#c084fc",
+                    background: "rgba(168,85,247,0.12)",
+                    border: "1px solid rgba(168,85,247,0.3)",
+                }}
+            >
+                Apply Now →
+            </button>
+        </Card>
+    );
+}
 
 export default function CareerSection() {
-    const [active, setActive] = useState("All roles");
-    const [hovered, setHovered] = useState(null);
-
-    const filtered = jobs.filter((j) => {
-        if (active === "All roles") return true;
-        if (active === "Remote") return j.location === "Remote";
-        return j.type === active;
-    });
-
     return (
         <section
             id="careers"
-            className="relative min-h-screen overflow-hidden"
+            className="relative w-full"
             style={{
-                fontFamily:
-                    "'Plus Jakarta Sans', 'Nunito', system-ui, sans-serif",
+                background:
+                    "linear-gradient(135deg,#0d0520 0%,#130830 50%,#0a0f1f 100%)",
             }}
         >
+            {/* Ambient background */}
             <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: `url("images/careers.png")` }}
-            />
-            <div
-                className="absolute inset-0"
+                className="pointer-events-none absolute inset-0"
                 style={{
-                    background:
-                        "linear-gradient(135deg, rgba(234,88,12,0.35) 0%, rgba(251,146,60,0.25) 45%, rgba(0,0,0,0.4) 100%)",
+                    background: `
+                        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(168,85,247,0.13) 0%, transparent 70%),
+                        radial-gradient(ellipse 40% 50% at 90% 20%, rgba(59,130,246,0.1) 0%, transparent 70%),
+                        radial-gradient(ellipse 30% 35% at 60% 90%, rgba(251,146,60,0.09) 0%, transparent 70%)
+                    `,
                 }}
             />
 
-            <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8 py-16 sm:py-20 lg:py-24">
-                <div className="mb-12 text-center">
-                    <span
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.18em] uppercase px-4 py-2 rounded-full mb-5"
+            <div className="relative z-10 max-w-[1300px] mx-auto px-6 py-16 lg:py-24 w-full flex flex-col gap-10">
+                {/* HEADER */}
+                <div className="flex flex-col gap-3">
+                    <div
+                        className="inline-flex items-center gap-2 self-start rounded-full px-4 py-1.5"
                         style={{
-                            background: "rgba(255,255,255,0.18)",
-                            color: "#fff",
-                            border: "1px solid rgba(255,255,255,0.3)",
-                            backdropFilter: "blur(8px)",
+                            background: "rgba(168,85,247,0.12)",
+                            border: "1px solid rgba(168,85,247,0.3)",
                         }}
                     >
-                        <Briefcase size={13} />
-                        We&apos;re Hiring
-                    </span>
-                    <h2
-                        className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4 tracking-tight"
-                        style={{ textShadow: "0 2px 24px rgba(0,0,0,0.18)" }}
-                    >
-                        Join Our Growing Team
-                    </h2>
-                    <p className="text-white     text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-                        Be part of something great at EmpireOne. We&apos;re
-                        looking for passionate people to help shape the future.
-                    </p>
-                </div>
-
-                <div className="flex flex-wrap justify-center gap-2 mb-10">
-                    {FILTERS.map((f) => (
-                        <button
-                            key={f}
-                            onClick={() => setActive(f)}
-                            className="text-xs font-semibold px-5 py-2 rounded-full transition-all duration-200"
+                        <div
+                            className="w-2 h-2 rounded-full"
                             style={{
-                                background:
-                                    active === f
-                                        ? "rgba(255,255,255,1)"
-                                        : "rgba(255,255,255,0.15)",
-                                color:
-                                    active === f
-                                        ? "#ea580c"
-                                        : "rgba(255,255,255,0.9)",
-                                border:
-                                    active === f
-                                        ? "1.5px solid rgba(255,255,255,0.9)"
-                                        : "1.5px solid rgba(255,255,255,0.3)",
-                                backdropFilter: "blur(8px)",
+                                background: "#a855f7",
+                                boxShadow: "0 0 8px #a855f7",
                             }}
-                        >
-                            {f}
-                        </button>
-                    ))}
+                        />
+                        <span className="text-xs font-bold tracking-widest uppercase text-purple-300">
+                            We're Hiring
+                        </span>
+                    </div>
+
+                    <h2
+                        className="text-4xl sm:text-5xl font-extrabold"
+                        style={{
+                            background:
+                                "linear-gradient(90deg,#c084fc 0%,#93c5fd 55%,#fb923c 100%)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                        }}
+                    >
+                        Build Your Career With Us
+                    </h2>
+
+                    <p
+                        className="text-sm"
+                        style={{ color: "rgba(200,180,255,0.5)" }}
+                    >
+                        Join a world-class team delivering exceptional outcomes
+                        across the globe.
+                    </p>
                 </div>
 
-                {filtered.length === 0 ? (
-                    <p className="text-white/60 text-sm py-16 text-center">
-                        No openings match this filter right now.
-                    </p>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {filtered.map((job, i) => (
-                            <div
-                                key={i}
-                                onMouseEnter={() => setHovered(i)}
-                                onMouseLeave={() => setHovered(null)}
-                                className="group flex flex-col gap-4 rounded-2xl p-6 cursor-pointer transition-all duration-300"
-                                style={{
-                                    background:
-                                        hovered === i
-                                            ? "rgba(255,255,255,0.98)"
-                                            : "rgba(255,255,255,0.90)",
-                                    backdropFilter: "blur(16px)",
-                                    border:
-                                        hovered === i
-                                            ? "1.5px solid rgba(234,88,12,0.4)"
-                                            : "1.5px solid rgba(255,255,255,0.6)",
-                                    boxShadow:
-                                        hovered === i
-                                            ? "0 20px 48px rgba(0,0,0,0.18)"
-                                            : "0 4px 24px rgba(0,0,0,0.10)",
-                                    transform:
-                                        hovered === i
-                                            ? "translateY(-3px)"
-                                            : "translateY(0)",
-                                }}
-                            >
-                                <div className="flex items-start gap-3">
+                {/* GRID */}
+                <div
+                    className="grid"
+                    style={{
+                        gridTemplateColumns: "1fr 400px",
+                        gap: 80,
+                        alignItems: "start",
+                    }}
+                >
+                    {/* LEFT */}
+                    <div className="flex flex-col gap-10">
+                        {Object.entries(jobListings).map(
+                            ([category, { subtitle, jobs }]) => (
+                                <div
+                                    key={category}
+                                    className="flex flex-col gap-1"
+                                >
+                                    <p className="text-xs font-bold tracking-widest uppercase mb-1 text-orange-400">
+                                        {category}
+                                    </p>
+
                                     <div
-                                        className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        className="inline-flex self-start rounded-full px-4 py-1 mb-4 text-xs text-purple-300"
                                         style={{
-                                            background:
-                                                "linear-gradient(135deg, #fed7aa 0%, #fb923c 100%)",
+                                            background: "rgba(168,85,247,0.1)",
+                                            border: "1px solid rgba(168,85,247,0.25)",
                                         }}
                                     >
-                                        <Briefcase
-                                            size={18}
-                                            className="text-white"
-                                        />
+                                        {subtitle}
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <h3 className="text-sm font-bold text-gray-900">
-                                                {job.title}
-                                            </h3>
-                                            <span
-                                                className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${TYPE_STYLES[job.type] ?? TYPE_STYLES["Full-time"]}`}
-                                            >
-                                                {job.type}
-                                            </span>
+
+                                    <div className="flex flex-col gap-6">
+                                        {jobs.map((job) => (
+                                            <JobCard key={job.title} {...job} />
+                                        ))}
+                                    </div>
+                                </div>
+                            ),
+                        )}
+                    </div>
+
+                    {/* RIGHT */}
+                    <div
+                        className="sticky top-6 flex flex-col"
+                        style={{ alignSelf: "start" }}
+                    >
+                        <div className="relative flex justify-center items-end h-[260px] mb-[-16px]">
+                            <div
+                                className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full"
+                                style={{
+                                    width: 190,
+                                    height: 190,
+                                    background:
+                                        "linear-gradient(135deg,#7c3aed,#a855f7)",
+                                    boxShadow: "0 0 40px rgba(168,85,247,0.4)",
+                                }}
+                            />
+
+                            <img
+                                src="/images/mm.png"
+                                alt="Career"
+                                className="relative z-20"
+                                style={{
+                                    height: 255,
+                                    objectFit: "cover",
+                                    objectPosition: "top",
+                                }}
+                            />
+                        </div>
+
+                        {/* FEATURED */}
+                        <Card
+                            outlined
+                            padding="p-5"
+                            className="!rounded-2xl !border-purple-700/30 !bg-[rgba(20,8,40,0.75)] !text-white gap-6 backdrop-blur-md"
+                        >
+                            <h3 className="text-sm font-bold text-purple-300 mb-2">
+                                Featured Opportunities
+                            </h3>
+
+                            {featuredJobs.map((job, i) => (
+                                <div
+                                    key={job.title}
+                                    className="flex items-start gap-3 pb-3"
+                                    style={{
+                                        borderBottom:
+                                            i < featuredJobs.length - 1
+                                                ? "1px solid rgba(168,85,247,0.12)"
+                                                : "none",
+                                    }}
+                                >
+                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-600 to-indigo-600">
+                                        {briefcaseIcon}
+                                    </div>
+
+                                    <div>
+                                        <p className="text-xs font-semibold text-purple-100 mb-1">
+                                            {job.title}
+                                        </p>
+
+                                        <div className="flex flex-wrap gap-1">
+                                            {job.tags.map((tag) => (
+                                                <span
+                                                    key={tag}
+                                                    className="text-xs rounded-full px-2 py-0.5 text-purple-300 bg-purple-500/10 border border-purple-500/20"
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
-
-                                <p className="text-xs text-gray-500 leading-relaxed">
-                                    {job.description}
-                                </p>
-
-                                <div className="flex flex-wrap gap-2">
-                                    <span className="inline-flex items-center gap-1 text-[11px] text-gray-600 bg-orange-50 border border-orange-100 px-2.5 py-1 rounded-lg font-medium">
-                                        <MapPin
-                                            size={11}
-                                            className="text-orange-400"
-                                        />{" "}
-                                        {job.location}
-                                    </span>
-                                    <span className="inline-flex items-center gap-1 text-[11px] text-gray-600 bg-orange-50 border border-orange-100 px-2.5 py-1 rounded-lg font-medium">
-                                        <DollarSign
-                                            size={11}
-                                            className="text-orange-400"
-                                        />{" "}
-                                        {job.salary}
-                                    </span>
-                                    <span className="inline-flex items-center gap-1 text-[11px] text-gray-600 bg-orange-50 border border-orange-100 px-2.5 py-1 rounded-lg font-medium">
-                                        <Clock
-                                            size={11}
-                                            className="text-orange-400"
-                                        />{" "}
-                                        {job.posted}
-                                    </span>
-                                </div>
-
-                                <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-                                    <a
-                                        href="/talent/application"
-                                        className="inline-flex items-center gap-2 text-xs font-bold text-orange-600 hover:text-orange-700 transition-all"
-                                    >
-                                        Apply Now
-                                        <ArrowRight
-                                            size={13}
-                                            className="transition-transform group-hover:translate-x-1"
-                                        />
-                                    </a>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </Card>
                     </div>
-                )}
-
-                <p className="text-center text-white/60 text-xs mt-10">
-                    Don&apos;t see a fit? Email us at{" "}
-                    <a
-                        href="mailto:career@empireonegroup.com"
-                        className="text-white underline underline-offset-2"
-                    >
-                        career@empireonegroup.com
-                    </a>
-                </p>
+                </div>
             </div>
         </section>
     );

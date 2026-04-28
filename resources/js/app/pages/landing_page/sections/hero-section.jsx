@@ -1,288 +1,344 @@
 import Button from "@/app/_components/button";
-import { Android, Windows, Apple } from "@thesvg/react";
-import { motion } from "framer-motion";
-import { TrendingUp, Shield } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 
-const fadeUp = {
-    hidden: { opacity: 0, y: 32 },
-    visible: (delay = 0) => ({
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.7,
-            delay,
-            ease: [0.22, 1, 0.36, 1],
-        },
-    }),
-};
+/* ---------------- DATA ---------------- */
+const jobCards = [
+    {
+        role: "UI/UX Designer",
+        company: "TechCorp",
+        pay: "$45/hr",
+        type: "Remote",
+        color: "#7c3aed",
+    },
+    {
+        role: "Customer Support",
+        company: "HelperHub",
+        pay: "$22/hr",
+        type: "Full-time",
+        color: "#0ea5e9",
+    },
+    {
+        role: "Data Analyst",
+        company: "InsightCo",
+        pay: "$38/hr",
+        type: "Contract",
+        color: "#10b981",
+    },
+    {
+        role: "Sales Rep",
+        company: "GrowthLabs",
+        pay: "$30/hr",
+        type: "Remote",
+        color: "#f97316",
+    },
+    {
+        role: "Virtual Assistant",
+        company: "AssistPro",
+        pay: "$25/hr",
+        type: "Part-time",
+        color: "#ec4899",
+    },
+    {
+        role: "Content Writer",
+        company: "MediaX",
+        pay: "$28/hr",
+        type: "Freelance",
+        color: "#f59e0b",
+    },
+    {
+        role: "Account Manager",
+        company: "SalesForce",
+        pay: "$42/hr",
+        type: "Remote",
+        color: "#6366f1",
+    },
+    {
+        role: "IT Support",
+        company: "TechSolve",
+        pay: "$35/hr",
+        type: "Full-time",
+        color: "#14b8a6",
+    },
+];
 
-const fadeInRight = {
-    hidden: { opacity: 0, x: 48, scale: 0.96 },
-    visible: (delay = 0) => ({
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        transition: {
-            duration: 0.8,
-            delay,
-            ease: [0.22, 1, 0.36, 1],
-        },
-    }),
-};
-
+/* ---------------- MAIN ---------------- */
 export default function HeroSection() {
+    const [activeJobs, setActiveJobs] = useState(12483);
+
+    useEffect(() => {
+        const t = setInterval(() => {
+            setActiveJobs((p) => p + Math.floor(Math.random() * 3));
+        }, 3000);
+        return () => clearInterval(t);
+    }, []);
+
     return (
         <section
+            className="relative min-h-screen w-full overflow-hidden bg-[#0a0a14] text-white"
             id="home"
-            className="relative flex min-h-[100svh] items-center overflow-hidden px-0 py-0 lg:min-h-screen"
         >
-            <video
-                src="/video/landing-page.mp4"
-                autoPlay
-                loop
-                muted
-                className="absolute inset-0 w-full h-full object-cover"
-            />
-            {/* Purple overlay */}
-            <div
-                className="absolute inset-0"
-                style={{ background: "rgba(109,40,217,0.55)" }}
-            />
-            <div className="absolute inset-0 bg-black/30" />
+            {/* ---------------- STYLES ---------------- */}
+            <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
-            <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl items-center px-6 sm:px-6 md:px-8 lg:min-h-0 lg:px-10">
-                <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-center lg:gap-16">
-                    <div className="max-w-2xl space-y-7 sm:space-y-7 md:space-y-8 text-center sm:text-left">
-                        <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeUp}
-                            custom={0.1}
-                            className="mx-auto inline-flex max-w-full items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold sm:mx-0 sm:text-sm"
-                            style={{
-                                background: "rgba(255,255,255,0.15)",
-                                color: "#fff",
-                                backdropFilter: "blur(8px)",
-                                border: "1px solid rgba(255,255,255,0.25)",
-                            }}
-                        >
-                            <span className="w-2.5 h-2.5 rounded-full bg-blue-400 inline-block" />
-                            Leading BPO Solutions Company
-                        </motion.div>
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .font-dm { font-family: 'DM Sans', sans-serif; }
 
-                        <motion.h1
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeUp}
-                            custom={0.2}
-                            className="text-[clamp(1.75rem,8vw,2.25rem)] font-extrabold leading-[1.15] drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl"
-                        >
-                            <span
-                                className="whitespace-nowrap"
-                                style={{
-                                    color: "#5170ff",
-                                    fontFamily: "Montserrat, sans-serif",
-                                    fontWeight: 900,
-                                    display: "block",
-                                }}
-                            >
-                                Empowering Your
-                            </span>
-                            <span
-                                className="block mt-3 sm:mt-4 whitespace-nowrap"
-                                style={{
-                                    color: "#e35619",
-                                    fontFamily: "Montserrat, sans-serif",
-                                    fontWeight: 900,
-                                }}
-                            >
-                                Business Future
-                            </span>
-                        </motion.h1>
+        @keyframes scrollLeft {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
 
-                        <motion.p
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeUp}
-                            custom={0.32}
-                            className="mx-auto max-w-xl text-[15px] leading-relaxed text-white/85 sm:mx-0 sm:text-base md:text-lg"
-                        >
-                            We provide scalable outsourcing solutions that
-                            improve efficiency, reduce costs, and enhance
-                            customer experience—powered by skilled teams and
-                            modern technology.
-                        </motion.p>
+        @keyframes scrollRight {
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
+        }
 
-                        <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeUp}
-                            custom={0.42}
-                            className="grid grid-cols-3 gap-3 pt-3 sm:flex sm:flex-row sm:flex-wrap sm:gap-4 sm:pt-2"
-                        >
-                            <motion.div
-                                whileHover={{ y: -3 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <Button
-                                    variant="light"
-                                    className="w-full whitespace-nowrap text-xs sm:w-auto sm:text-sm"
-                                >
-                                    Mobile App
-                                    <Android className="h-4 w-4 ml-1 sm:h-5 sm:w-5 sm:ml-2" />
-                                </Button>
-                            </motion.div>
-                            <motion.div
-                                whileHover={{ y: -3 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <Button
-                                    variant="light"
-                                    className="w-full whitespace-nowrap text-xs sm:w-auto sm:text-sm"
-                                >
-                                    Windows
-                                    <Windows className="h-4 w-4 ml-1 sm:h-5 sm:w-5 sm:ml-2" />
-                                </Button>
-                            </motion.div>
-                            <motion.div
-                                whileHover={{ y: -3 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <Button
-                                    variant="light"
-                                    className="w-full whitespace-nowrap text-xs sm:w-auto sm:text-sm"
-                                >
-                                    macOS
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 814 1000"
-                                        className="h-4 w-4 ml-1 sm:h-5 sm:w-5 sm:ml-2 fill-black"
-                                    >
-                                        <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z" />
-                                    </svg>
-                                </Button>
-                            </motion.div>
-                        </motion.div>
+        .ticker-left { animation: scrollLeft 35s linear infinite; }
+        .ticker-right { animation: scrollRight 28s linear infinite; }
+
+        .ticker-left:hover,
+        .ticker-right:hover { animation-play-state: paused; }
+
+        @keyframes float {
+          0%,100% { transform: translateY(0); }
+          50% { transform: translateY(-12px); }
+        }
+
+        .float { animation: float 4s ease-in-out infinite; }
+      `}</style>
+
+            {/* ---------------- BACKGROUND ---------------- */}
+            <div className="absolute inset-0 bg-[#0a0a14]" />
+            <div className="absolute w-[700px] h-[700px] bg-purple-600/30 blur-3xl rounded-full -top-40 -left-32" />
+            <div className="absolute w-[600px] h-[600px] bg-orange-500/20 blur-3xl rounded-full top-20 -right-24" />
+            <div className="absolute w-[400px] h-[400px] bg-sky-500/20 blur-3xl rounded-full bottom-10 left-1/3" />
+
+            {/* ---------------- HERO ---------------- */}
+            <div className="relative z-10 max-w-[1600px] mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center gap-10 pt-10">
+                {/* LEFT */}
+                <div className="lg:w-[55%] font-dm space-y-6 mt-14">
+                    {/* BADGES */}
+                    <div className="flex gap-3 flex-wrap">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-400 text-xs font-semibold">
+                            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-ping" />
+                            {activeJobs.toLocaleString()} Employees
+                        </div>
+
+                        <div className="px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-400 text-xs font-semibold">
+                            🔥 500+ new this week
+                        </div>
                     </div>
 
-                    {/* ── RIGHT: Image + Floating Badges ── */}
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeInRight}
-                        custom={0.28}
-                        className="relative hidden w-full max-w-[550px] flex-shrink-0 self-center md:block"
-                        style={{ height: "clamp(320px, 52vw, 500px)" }}
-                    >
-                        <motion.div
-                            initial={{ opacity: 0, scale: 1.08 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{
-                                duration: 1,
-                                delay: 0.42,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="absolute rounded-3xl overflow-hidden shadow-2xl"
-                            style={{
-                                top: "40px",
-                                left: "16px",
-                                right: "0",
-                                bottom: "40px",
-                                border: "4px solid rgba(255,255,255,0.15)",
-                            }}
-                        >
-                            <img
-                                src="/images/us.png"
-                                alt="Team working"
-                                className="w-full h-full object-cover"
-                                style={{ filter: "brightness(0.95)" }}
-                            />
-                        </motion.div>
+                    {/* TITLE */}
+                    <h1 className="font-syne text-[clamp(48px,6vw,88px)] leading-[1.02]">
+                        Your Next <br />
+                        <span className="bg-gradient-to-r from-purple-400 to-orange-400 text-transparent bg-clip-text">
+                            Dream Career
+                        </span>
+                        <br /> Starts Here.
+                    </h1>
 
-                        {/* ── FLOATING BADGE: Satisfied Clients (top-right) ── */}
-                        <motion.div
-                            initial={{ opacity: 0, y: -24, x: 20 }}
-                            animate={{ opacity: 1, y: 0, x: 0 }}
-                            transition={{
-                                duration: 0.7,
-                                delay: 0.7,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="absolute right-0 top-0 z-20 hidden animate-bounce items-center gap-3 rounded-2xl px-4 py-3 shadow-xl md:flex"
-                            style={{
-                                animationDuration: "2s",
-                                top: "-8px",
-                                right: "-8px",
-                                background: "rgba(255,255,255,0.97)",
-                                backdropFilter: "blur(4px)",
-                                minWidth: "200px",
-                            }}
-                        >
-                            <div
-                                className="rounded-xl flex items-center justify-center flex-shrink-0"
-                                style={{
-                                    background: "rgba(99,102,241,0.12)",
-                                    width: 48,
-                                    height: 48,
-                                }}
+                    <p className="text-white/60 max-w-md text-lg">
+                        Join the leading BPO platform of independent
+                        professionals. Get hired faster, work smarter, earn
+                        more.
+                    </p>
+
+                    {/* SEARCH */}
+                    <div className="flex items-center bg-white/10 border border-white/10 rounded-xl px-4 py-3 max-w-md">
+                        <input
+                            placeholder='Try "Virtual Assistant"...'
+                            className="bg-transparent outline-none flex-1 text-sm text-white/80 placeholder:text-white/30"
+                        />
+                        <Button className="ml-3 px-4 py-1.5 rounded-md bg-gradient-to-r from-purple-500 to-orange-500 text-sm font-semibold hover:from-purple-400 hover:to-orange-400">
+                            Search
+                        </Button>
+                    </div>
+
+                    {/* TAGS */}
+                    <div className="flex gap-2 flex-wrap">
+                        {["Remote", "Full-time", "Tech"].map((t) => (
+                            <span
+                                key={t}
+                                className="px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-white/60"
                             >
-                                <TrendingUp
-                                    className="w-6 h-6"
-                                    style={{ color: "#6366f1" }}
-                                />
+                                {t}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* CTA */}
+                    <div className="flex gap-4">
+                        <Button className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg">
+                            Browse Jobs
+                        </Button>
+                        <Button className="px-6 py-3 rounded-xl bg-white/5 border border-white/20">
+                            Watch Demo
+                        </Button>
+                    </div>
+                </div>
+
+                {/* RIGHT */}
+                {/* RIGHT SIDE */}
+                <div className="lg:w-[45%] relative flex items-end justify-center z-10">
+                    {/* IMAGE (BEHIND LAYER) */}
+                    <div className="relative z-10 flex items-end justify-center translate-y-24">
+                        <img
+                            src="/images/mmm.png"
+                            className="max-w-[820px] object-contain z-10"
+                            alt=""
+                        />
+                    </div>
+
+                    {/* ===================== FLOATING CARD 1 ===================== */}
+                    <div className="absolute top-[8%] right-[-2%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-4 shadow-xl float">
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    fill="white"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                                </svg>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 font-medium">
-                                    Satisfied Clients
+                                <p className="text-xs text-white/40">
+                                    New Offer!
                                 </p>
-                                <p className="text-2xl md:text-3xl font-bold text-gray-900">
-                                    100+
+                                <p className="font-bold">🎉 Congratulations!</p>
+                                <p className="text-sm text-purple-400">
+                                    You've been hired
                                 </p>
                             </div>
-                        </motion.div>
+                        </div>
+                    </div>
 
-                        {/* ── FLOATING BADGE: System Uptime (bottom-left) ── */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 24, x: -20 }}
-                            animate={{ opacity: 1, y: 0, x: 0 }}
-                            transition={{
-                                duration: 0.7,
-                                delay: 0.82,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="absolute bottom-0 left-0 z-20 hidden animate-bounce items-center gap-3 rounded-2xl px-4 py-3 shadow-xl md:flex"
-                            style={{
-                                animationDuration: "2s",
-                                bottom: "-8px",
-                                left: "-8px",
-                                background: "rgba(255,255,255,0.97)",
-                                backdropFilter: "blur(4px)",
-                                minWidth: "210px",
-                            }}
-                        >
-                            <div
-                                className="rounded-xl flex items-center justify-center flex-shrink-0"
-                                style={{
-                                    background: "rgba(34,197,94,0.12)",
-                                    width: 48,
-                                    height: 48,
-                                }}
-                            >
-                                <Shield
-                                    className="w-6 h-6"
-                                    style={{ color: "#16a34a" }}
-                                />
+                    {/* ===================== FLOATING CARD 2 ===================== */}
+                    <div className="absolute top-[20%] left-[-8%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-4 shadow-xl float">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    fill="white"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M12 2L2 12h7v8l10-10h-7z" />
+                                </svg>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 font-medium">
-                                    System Uptime
+                                <p className="text-xs text-white/40">
+                                    Quick Apply
                                 </p>
-                                <p className="text-2xl md:text-3xl font-bold text-gray-900">
-                                    99.99%
+                                <p className="font-bold">Apply Now!</p>
+                                <p className="text-xs text-green-400">
+                                    Fast hiring process
                                 </p>
                             </div>
-                        </motion.div>
-                    </motion.div>
+                        </div>
+                    </div>
+
+                    {/* ===================== FLOATING CARD 3 ===================== */}
+                    <div className="absolute bottom-[2%] right-[-22%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-4 shadow-xl float">
+                        <p className="text-xs text-white/40 mb-2">
+                            Recent applicants
+                        </p>
+
+                        <div className="flex -space-x-2 mb-2">
+                            {["JL", "SK", "MR", "AK"].map((a) => (
+                                <div
+                                    key={a}
+                                    className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[10px] font-bold border-2 border-[#0a0a14]"
+                                >
+                                    {a}
+                                </div>
+                            ))}
+                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] text-white/60 border-2 border-[#0a0a14]">
+                                +48
+                            </div>
+                        </div>
+
+                        <p className="text-xs text-white/60">
+                            Applied in the last hour
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* ---------------- CAROUSEL ---------------- */}
+            <div className="relative z-10 mt-10 py-4 border-y border-white/10">
+                {/* ROW 1 */}
+                <div className="overflow-hidden mb-2">
+                    <div className="flex w-max ticker-left gap-4">
+                        {[...jobCards, ...jobCards].map((job, i) => (
+                            <div
+                                key={i}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 whitespace-nowrap"
+                            >
+                                <div
+                                    className="w-2.5 h-2.5 rounded"
+                                    style={{ background: job.color }}
+                                />
+                                <span className="text-sm font-semibold text-white/85">
+                                    {job.role}
+                                </span>
+                                <span className="text-xs text-white/40">
+                                    {job.company}
+                                </span>
+                                <span
+                                    className="text-xs font-semibold px-2 py-0.5 rounded"
+                                    style={{
+                                        color: job.color,
+                                        background: `${job.color}22`,
+                                    }}
+                                >
+                                    {job.pay}
+                                </span>
+                                <span className="text-[11px] text-white/40 bg-white/5 px-2 py-0.5 rounded">
+                                    {job.type}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* ROW 2 */}
+                <div className="overflow-hidden">
+                    <div className="flex w-max ticker-right gap-4">
+                        {[
+                            ...jobCards.slice(4),
+                            ...jobCards,
+                            ...jobCards.slice(0, 4),
+                        ].map((job, i) => (
+                            <div
+                                key={i}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 whitespace-nowrap"
+                            >
+                                <div
+                                    className="w-2.5 h-2.5 rounded"
+                                    style={{ background: job.color }}
+                                />
+                                <span className="text-sm font-semibold text-white/85">
+                                    {job.role}
+                                </span>
+                                <span className="text-xs text-white/40">
+                                    {job.company}
+                                </span>
+                                <span
+                                    className="text-xs font-semibold px-2 py-0.5 rounded"
+                                    style={{
+                                        color: job.color,
+                                        background: `${job.color}22`,
+                                    }}
+                                >
+                                    {job.pay}
+                                </span>
+                            </div> 
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>

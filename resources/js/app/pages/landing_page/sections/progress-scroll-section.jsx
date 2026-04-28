@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 
 const SECTIONS = [
-    { id: "hero", label: "Home", color: "#7C3AED" },       // violet
-    { id: "about-us", label: "About", color: "#3B82F6" },  // blue
-    { id: "services", label: "Services", color: "#F97316" }, // orange base
-    { id: "testimonial", label: "Testimonials", color: "#FB923C" }, // lighter orange
+    { id: "home", label: "Home", color: "#7C3AED" }, // violet
     { id: "careers", label: "Careers", color: "#EA580C" }, // darker orange
+    { id: "about-us", label: "About", color: "#3B82F6" }, // blue
+    { id: "testimonial", label: "Testimonials", color: "#FB923C" }, // lighter orange
     { id: "contact", label: "Contact", color: "#C2410C" }, // deep orange
 ];
 
