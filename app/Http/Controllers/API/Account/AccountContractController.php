@@ -152,7 +152,8 @@ class AccountContractController extends Controller
                 $account =  AccountEmployee::where('user_id', '=', $request->user_id)->first();
                 if ($account) {
                     $account->update([
-                        'employee_id' => $employee_id
+                        'employee_id' => $employee_id,
+                        'status' => 'Probationary'
                     ]);
 
                     $ja = JobApplication::where([
@@ -204,7 +205,8 @@ class AccountContractController extends Controller
                 $account =  AccountEmployee::where('user_id', '=', $request->user_id)->first();
                 if ($account) {
                     $account->update([
-                        'employee_id' => $employee_id
+                        'employee_id' => $employee_id,
+                        'status' => 'Probationary'
                     ]);
 
                     $ja = JobApplication::where([
