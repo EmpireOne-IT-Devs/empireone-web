@@ -81,9 +81,9 @@ class JobApplicationController extends Controller
 
 
             if ($user->wasRecentlyCreated) {
-                Mail::to($user->email)->send(
-                    new SendEmailAccountCreation($user, url('/auth/login'))
-                );
+                // Mail::to($user->email)->send(
+                //     new SendEmailAccountCreation($user, url('/auth/login'))
+                // );
             }
 
             if (!empty($emailData['attachments'])) {

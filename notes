@@ -12,12 +12,17 @@ Need to remove when reset
 - job_applications
 - job_requisition
 - job_requisition_logs
+- job_applicant_schedules
 
 Need to Delete 
 -government_i_d_s
 -e_signatures
 -account_contracts
 -employees
+-agent_accounts
+-job_batches
+-personal_infos
+-working_experiences
 
 
 1342 - gio
