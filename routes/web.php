@@ -167,8 +167,13 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('pooling', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/pooling/page');
             });
-            Route::get('regularization', function () {
-                return Inertia::render('accounts/_administrator/employee_relation/regularization/page');
+            Route::prefix('regularization')->group(function () {
+                Route::get('', function () {
+                    return Inertia::render('accounts/_administrator/employee_relation/regularization/page');
+                });
+                Route::get('/{id}', function () {
+                    return Inertia::render('accounts/_administrator/employee_relation/regularization/id/page');
+                });
             });
             Route::get('disciplinary_records', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/disciplinary_records/page');

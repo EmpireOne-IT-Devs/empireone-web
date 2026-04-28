@@ -33,10 +33,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('locations')
                 ->nullOnDelete();
-            $table->foreignId('account_contract_id')
-                ->nullable()
-                ->constrained('account_contracts')
-                ->nullOnDelete();
+            $table->enum('is_has_contract', [
+                'True',
+                'False',
+            ])->nullable();
             $table->string('work_type')->default('Full Time');
             $table->string('eogs_email')->nullable();
             $table->string('employee_id')->nullable();
@@ -56,7 +56,7 @@ return new class extends Migration
                 'Resigned',
                 'Terminated',
                 'Trainee Fallout',
-            ])->default('Probationary');
+            ])->nullable();
             $table->timestamps();
         });
     }

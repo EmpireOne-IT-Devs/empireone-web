@@ -67,6 +67,7 @@ class JobOfferController extends Controller
                 'site_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
                 'location_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
                 'position' => $request->job_application['job_posting']['job_requisition']['title'],
+                'started_at' => $jo->start_date
             ]);
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferAcceptedMail($jo));
             Mail::to($jo->user['email'])->send(new PreEmploymentMail($jo));

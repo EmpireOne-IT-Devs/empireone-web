@@ -37,7 +37,7 @@ export default function TableSection() {
 
     // 1. Extract IDs, Timestamps, and Signature
     const employeeData = data?.user?.account_employee;
-    const contractId = employeeData?.account_contract_id;
+    const contractId = employeeData?.is_has_contract;
     const onboardingDate = employeeData?.onboarding_agree_on;
     const signature = employeeData?.signature;
 

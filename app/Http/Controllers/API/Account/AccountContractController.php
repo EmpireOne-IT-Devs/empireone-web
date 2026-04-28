@@ -125,7 +125,6 @@ class AccountContractController extends Controller
 
         $employee = AccountEmployee::where('user_id', '=', $request->user_id)->first();
 
-        $employment = AccountContract::where('user_id', '=', $request->user_id)->first();
         if ($employee) {
             $employee->update([
                 'onboarding_agree_on' => $request->onboarding_agree_on
@@ -135,7 +134,7 @@ class AccountContractController extends Controller
             ]);
         }
 
-        if ($employee->account_contract_id && $employee->onboarding_agree_on) {
+        if ($employee->is_has_contract && $employee->onboarding_agree_on) {
             $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
                 ->pluck('employee_id')
                 ->toArray();
@@ -150,7 +149,7 @@ class AccountContractController extends Controller
             $isExist = in_array($employee->employee_id, $todayEmployeeIds);
 
             if (!$isExist || $employee->employee_id == null) {
-                $account =  AccountEmployee::where('user_id', '=', $employment->user_id)->first();
+                $account =  AccountEmployee::where('user_id', '=', $request->user_id)->first();
                 if ($account) {
                     $account->update([
                         'employee_id' => $employee_id
@@ -174,14 +173,10 @@ class AccountContractController extends Controller
     }
     public function store(Request $request)
     {
-        $employment = AccountContract::firstOrCreate(
-            ['user_id' => $request->user_id],
-            $request->all()
-        );
 
         $employee = AccountEmployee::updateOrCreate(
             ['user_id' => $request->user_id],
-            ['account_contract_id' => $employment->id]
+            ['is_has_contract' => 'True']
         );
 
         $user = User::where('id', '=', $request->user_id)->first();
@@ -191,7 +186,7 @@ class AccountContractController extends Controller
             ]);
         }
 
-        if ($employee->account_contract_id && $employee->onboarding_agree_on) {
+        if ($employee->is_has_contract && $employee->onboarding_agree_on) {
             $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
                 ->pluck('employee_id')
                 ->toArray();
@@ -206,7 +201,7 @@ class AccountContractController extends Controller
             $isExist = in_array($employee->employee_id, $todayEmployeeIds);
 
             if (!$isExist || $employee->employee_id == null) {
-                $account =  AccountEmployee::where('user_id', '=', $employment->user_id)->first();
+                $account =  AccountEmployee::where('user_id', '=', $request->user_id)->first();
                 if ($account) {
                     $account->update([
                         'employee_id' => $employee_id
@@ -227,9 +222,7 @@ class AccountContractController extends Controller
 
         // 3. Return a response
         return response()->json([
-            'message' => 'Employment record saved successfully',
-            'data' => $employment,
-            'employee' => $employee
+            'message' => 'Contract record saved successfully',
         ], 200);
     }
 

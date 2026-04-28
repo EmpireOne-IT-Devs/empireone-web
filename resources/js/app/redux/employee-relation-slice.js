@@ -6,6 +6,7 @@ export const employeeRelationSlice = createSlice({
     initialState: {
         employees: [],
         pools: [],
+        probationaries: [],
     },
     reducers: {
         setEmployees: (state, action) => {
@@ -14,8 +15,12 @@ export const employeeRelationSlice = createSlice({
         setPools: (state, action) => {
             state.pools = action.payload;
         },
+        setProbationaries: (state, action) => {
+            state.probationaries = action.payload;
+        },
     },
 });
-export const { setEmployees, setPools } = employeeRelationSlice.actions;
+export const { setEmployees, setPools, setProbationaries } =
+    employeeRelationSlice.actions;
 
 export default employeeRelationSlice.reducer;
