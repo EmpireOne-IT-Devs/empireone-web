@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import EditStatusSection from "./edit-status-section";
-import SendJobOfferSection from "../../../../applicants/_sections/send-job-offer-section";
 import Button from "@/app/_components/button";
 import AddInterviewSchedule from "./add-interview-schedule";
 import { Calendar } from "lucide-react";
 import TransferApplicant from "./transfer-applicant";
+import SendJobOfferSection from "./send-job-offer-section";
 
 export default function TableSection() {
     const [openModal, setOpenModal] = useState(false);

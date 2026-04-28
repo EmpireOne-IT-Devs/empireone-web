@@ -2,25 +2,16 @@ import Table from "@/app/_components/table";
 import { Link } from "@inertiajs/react";
 import React from "react";
 import { useSelector } from "react-redux";
+import SendJobOfferSection from "./send-job-offer-section";
 
 export default function PoolingTableSection() {
-    const { employees } = useSelector((store) => store.employee_relations);
-    console.log(
-        "employees",
-        employees?.data?.map((res) => ({
-            ...res,
-            name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
-            department: res?.department?.name,
-        })) ?? [],
-    );
+    const { pools } = useSelector((store) => store.employee_relations);
+    console.log("pools", pools?.data);
     const columns = [
-        { header: "Applicant ID", accessor: "employee_id" },
+        { header: "Applicant ID", accessor: "id" },
         { header: "Fullname", accessor: "name" },
-        { header: "Position", accessor: "position" },
-        { header: "Department", accessor: "department" },
-        { header: "Account", accessor: "account" },
         { header: "Contact", accessor: "contact" },
-        { header: "Site", accessor: "site" },
+        { header: "Location", accessor: "location" },
         { header: "Status", accessor: "status" },
         { header: "Action", accessor: "action" },
     ];
@@ -29,7 +20,7 @@ export default function PoolingTableSection() {
             <Table
                 columns={columns}
                 data={
-                    employees?.data?.map((res) => ({
+                    pools?.data?.map((res) => ({
                         ...res,
                         employee_id: (
                             <Link
@@ -40,12 +31,12 @@ export default function PoolingTableSection() {
                                 {res?.employee_id}
                             </Link>
                         ),
-                        name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
-                        department: res?.department?.name,
-                        account: res?.account?.name,
-                        contact: res?.personal_information?.contact,
-                        site: res?.site?.name,
-                        status: res?.status,
+                        name: `${res?.applicant?.personal_information?.first_name} ${res?.applicant?.personal_information?.middle_name} ${res?.applicant?.personal_information?.last_name}`,
+                        contact: res?.applicant?.personal_information?.contact,
+                        status: res?.final_status,
+                        location:
+                            res?.job_posting?.job_requisition?.location?.name,
+                        action: <SendJobOfferSection data={res} />,
                     })) ?? []
                 }
             />

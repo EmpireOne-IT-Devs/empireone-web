@@ -4,10 +4,12 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import allowances from "@/app/lib/allowance";
 import { setAlert } from "@/app/redux/app-slice";
-import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
+import {
+    get_applicants_thunk,
+    get_job_application_by_id_thunk,
+} from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
-import { AwsResAwsDatasyncDiscovery } from "@thesvg/react";
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +42,7 @@ export default function SendJobOfferSection({ data }) {
     useEffect(() => {
         setValue("job_posting_id", data?.job_posting?.id);
     }, []);
-    console.log('watchedValues',watchedValues)
+    console.log("watchedValues", watchedValues);
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
@@ -49,7 +51,7 @@ export default function SendJobOfferSection({ data }) {
                 start_date: formData.start_date,
                 job_application_id: data.id,
             });
-            await store.dispatch(get_applicants_thunk());
+            await store.dispatch(get_job_application_by_id_thunk());
             await dispatch(
                 setAlert({
                     type: "success",

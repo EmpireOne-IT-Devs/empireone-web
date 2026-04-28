@@ -14,6 +14,6 @@ class JobPosition extends Model
 
     public function job_requisition(): HasOne
     {
-        return $this->hasOne(JobRequisition::class, 'title', 'title');
+        return $this->hasOne(JobRequisition::class, 'title', 'title')->with(['job_posting']);
     }
 }

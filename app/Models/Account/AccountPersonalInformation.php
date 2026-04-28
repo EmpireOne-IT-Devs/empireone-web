@@ -26,7 +26,7 @@ class AccountPersonalInformation extends Model
         'birth_place', // required
         'nationality',
         'marital_status',
-        'contact',
+        'contact', //required
 
         // address
         'region', // required

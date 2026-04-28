@@ -39,6 +39,15 @@ class JobApplicationController extends Controller
         return base64_decode($data);
     }
 
+    public function get_applicant_pooling()
+    {
+        $applications = JobApplication::whereIn('final_status', ['Pooled', 'Sent Job Offer', 'Accepted Job Offer'])->with(['job_posting', 'applicant'])->get();
+
+        return response()->json([
+            'data' => $applications,
+            'status' => 'success',
+        ], 200);
+    }
     public function get_job_application_from_email(Request $request)
     {
         // The Google Apps Script sends an array of email objects
@@ -160,10 +169,11 @@ class JobApplicationController extends Controller
         ], 200);
     }
 
+
     public function send_job_offer(Request $request)
     {
         $request->validate([
-            'position' => 'required|string',
+            'job_posting_id' => 'required',
             'job_application_id' => 'required',
             'start_date' => 'required|string',
             'salary' => 'required|numeric',
@@ -183,9 +193,31 @@ class JobApplicationController extends Controller
                 ]);
         }
 
+
+        $ja = JobApplication::where('id', $request->job_application_id)->with(['job_posting'])->first();
+        if ($ja) {
+            if ($ja->job_posting_id != $request->job_posting_id) {
+                $ja->update([
+                    'final_status' => 'Transferred',
+                    'transferred_to' => Auth::id()
+                ]);
+                JobApplication::create([
+                    $ja,
+                    'user_id' => $ja->user_id,
+                    'job_posting_id' => $request->job_posting_id,
+                    'final_status' => 'Sent Job Offer',
+                ]);
+            } else {
+                $ja->update([
+                    'final_status' => 'Sent Job Offer',
+                    'job_posting_id' => $request->job_posting_id,
+                ]);
+            }
+        }
+        $ja->load('job_posting');
         $jo = JobOffer::create([
             'user_id' => $request->user_id,
-            'job_application_id' => $request->job_application_id,
+            'job_application_id' => $ja->id,
             'status' => 'Pending',
             'start_date' => $request->start_date,
             'salary' => $request->salary,
@@ -200,13 +232,12 @@ class JobApplicationController extends Controller
                 'allowance' => $value['allowance'],
             ]);
         }
-        JobApplication::where('id', $request->job_application_id)
-            ->update(['final_status' => 'Sent Job Offer']);
 
         Mail::to($send_to)->send(new JobOfferMail(
             array_merge($data, [
                 'job_offer_id' => $jo->id,
-                'user_role' => $jo->user->role
+                'user_role' => $jo->user->role,
+                'position' => $ja->job_posting['job_requisition']['title']
             ])
         ));
 

@@ -40,7 +40,6 @@ export default function SendJobOfferSection({ data }) {
     useEffect(() => {
         setValue("job_posting_id", data?.job_posting?.id);
     }, []);
-    console.log('watchedValues',watchedValues)
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
@@ -60,8 +59,10 @@ export default function SendJobOfferSection({ data }) {
             );
             setOpen(false);
             reset();
+            // console.log("send_job_offerzzzzzz", formData.job_posting_id);
         } catch (error) {}
     };
+
 
     return (
         <div>
@@ -123,7 +124,6 @@ export default function SendJobOfferSection({ data }) {
                                 rules={{
                                     required: "Offer Position is required",
                                 }}
-                                value={watchedValues.job_posting_id}
                                 render={({ field }) => (
                                     <Select
                                         {...field}
