@@ -96,8 +96,8 @@ export default function AddDocumentSection() {
                 onClose={() => setOpen(false)}
                 title="Add Documents"
             >
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="min-h-96 flex flex-col items-start justify-between w-full gap-5 my-5">
+                    <div className="flex flex-col gap-4 w-full px-3">
                         {/* ADD BUTTON */}
                         <div className="flex justify-end">
                             <Button
@@ -174,6 +174,7 @@ export default function AddDocumentSection() {
                                     {/* REMOVE */}
                                     <Button
                                         name="button"
+                                        disabled={index == 0}
                                         onClick={() => remove(index)}
                                         className="bg-red-500 text-white px-3"
                                     >
@@ -184,7 +185,9 @@ export default function AddDocumentSection() {
                         })}
 
                         {/* SUBMIT */}
-                        <Button
+                       
+                    </div>
+                     <Button
                             name="submit"
                             type="submit"
                             loading={isSubmitting}
@@ -192,7 +195,6 @@ export default function AddDocumentSection() {
                         >
                             SUBMIT
                         </Button>
-                    </div>
                 </form>
             </Modal>
         </>

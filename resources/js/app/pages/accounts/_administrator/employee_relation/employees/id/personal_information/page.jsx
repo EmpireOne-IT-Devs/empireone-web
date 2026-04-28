@@ -336,7 +336,7 @@ const Page = () => {
                     >
                         <div className="flex justify-center p-2">
                             <QRCodeSVG
-                                className="w-full max-w-[300px]"
+                                className="h-52"
                                 value={user?.account_employee?.employee_id}
                                 size={400}
                                 bgColor={"#ffffff"}
@@ -351,10 +351,11 @@ const Page = () => {
                         icon={<PenLine size={15} />}
                         theme={CARD_THEMES.orange}
                     >
-                        <div className="flex justify-center bg-white border border-orange-100 rounded-xl p-4">
+                        <div className="flex justify-center bg-white border border-orange-100 rounded-xl">
                             <img
+                            
                                 src={user?.account_employee?.signature}
-                                className="max-h-30 object-contain"
+                                className="w-full object-contain h-52"
                                 alt="Signature"
                             />
                         </div>
@@ -369,7 +370,7 @@ const Page = () => {
 
 const Card = ({ title, icon, theme = CARD_THEMES.blue, children }) => (
     <div
-        className={`rounded-2xl border shadow-sm overflow-hidden ${theme.border} bg-white`}
+        className={`rounded-2xl border shadow-sm overflow-hidden ${theme.border} bg-white min-h-52`}
     >
         {/* Colored Card Header */}
         <div

@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     // Role constants
     public const ROLE_ADMIN = 1;

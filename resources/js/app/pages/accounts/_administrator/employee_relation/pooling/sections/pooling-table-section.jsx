@@ -36,7 +36,9 @@ export default function PoolingTableSection() {
                         status: res?.final_status,
                         location:
                             res?.job_posting?.job_requisition?.location?.name,
-                        action: <SendJobOfferSection data={res} />,
+                        action: res?.final_status == "Pooled" && (
+                            <SendJobOfferSection data={res} />
+                        ),
                     })) ?? []
                 }
             />
