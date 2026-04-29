@@ -4,6 +4,7 @@ namespace App\Models\Account;
 
 use App\Models\Account;
 use App\Models\Department;
+use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -55,6 +56,6 @@ class AccountEmployee extends Model
     }
     public function site(): HasOne
     {
-        return $this->hasOne(Account::class, 'id', 'site_id');
+        return $this->hasOne(Site::class, 'id', 'site_id')->with(['location']);
     }
 }

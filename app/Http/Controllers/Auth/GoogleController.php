@@ -76,14 +76,18 @@ class GoogleController extends Controller
                     if ($location) {
                         $site = Site::where('location_id', $location->id)->first();
 
+                        $dateHired = \Carbon\Carbon::parse($value->datehired);
+                        $isRegular = $dateHired->diffInMonths(now()) >= 6;
+
                         AccountEmployee::create([
-                            'user_id' => $user->id,
-                            'employee_id',$value->employee_id,
-                            'eogs_email' => $value->email,
-                            'site_id' => $site ? $site->id : null,
+                            'user_id'     => $user->id,
+                            'employee_id' => $value->employee_id, 
+                            'eogs_email'  => $value->email,
+                            'site_id'     => $site ? $site->id : null,
                             'location_id' => $location->id,
-                            'started_at' => $value->datehired,
-                            'position' => $value->position,
+                            'started_at'  => $value->datehired,
+                            'position'    => $value->position,
+                            'status'      => $isRegular ? 'Regular' : 'Probationary'
                         ]);
                     }
 
@@ -100,11 +104,11 @@ class GoogleController extends Controller
                     ]);
 
                     $inserted_emails[] = $value->email;
-                } 
-            }else {
-                    // Collect the emails that were already in the DB
-                    $existing_emails[] = $value->firstname;
                 }
+            } else {
+                // Collect the emails that were already in the DB
+                $existing_emails[] = $value->firstname;
+            }
         }
 
         return response()->json([

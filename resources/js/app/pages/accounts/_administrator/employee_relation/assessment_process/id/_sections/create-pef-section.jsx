@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -18,7 +19,7 @@ const CreatePEFSection = () => {
             supervisor_name: "",
             user_id: "",
             supervisor_id: "",
-            date_of_assessment: "",
+            date_of_assessment: moment().format("YYYY-MM-DD"),
             objectives: [
                 { title: "", action_items: "", outcomes: "", mgr_rating: "" },
             ],
@@ -44,7 +45,7 @@ const CreatePEFSection = () => {
     // Watch form values for real-time calculations
     const watchedObjectives = watch("objectives");
     const watchedPerformance = watch("performance");
-    
+
     useEffect(() => {
         setValue(
             "employee_name",
@@ -181,6 +182,7 @@ const CreatePEFSection = () => {
                         <span className="text-red-500 ml-1">*</span>
                     </div>
                     <input
+                        disabled
                         {...register("employee_name", { required: true })}
                         className={`${inputStyles} ${getErrorStyle(errors.employee_name)} bg-white m-[1px] w-[calc(100%-2px)]`}
                         placeholder="John Doe"
@@ -191,6 +193,7 @@ const CreatePEFSection = () => {
                         <span className="text-red-500 ml-1">*</span>
                     </div>
                     <input
+                        disabled
                         {...register("supervisor_name", { required: true })}
                         className={`${inputStyles} ${getErrorStyle(errors.supervisor_name)} bg-white m-[1px] w-[calc(100%-2px)]`}
                         placeholder="Jane Smith"
@@ -201,6 +204,7 @@ const CreatePEFSection = () => {
                         <span className="text-red-500 ml-1">*</span>
                     </div>
                     <input
+                        disabled
                         type="date"
                         {...register("date_of_assessment", {
                             required: true,

@@ -13,10 +13,22 @@ class SitesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $sites = ['Site 1', 'Site 2', 'Site 3'];
+
+        $sites = [
+            ['location_id' => 1, 'name' => 'Site 1', 'address' => 'Pantalan'],
+            ['location_id' => 1, 'name' => 'Site 2', 'address' => 'Dunganon'],
+            ['location_id' => 1, 'name' => 'Site 3', 'address' => 'Center Mall'],
+            ['location_id' => 2, 'name' => 'Site 1', 'address' => 'Gen. Luna St.'],
+            ['location_id' => 3, 'name' => 'Site 1', 'address' => 'Cebu City.'],
+        ];
 
         foreach ($sites as $site) {
-            Site::create(['name' => $site]);
+            Site::create([
+                'location_id' => $site['location_id'],
+                'name'        => $site['name'],
+                'address'     => $site['address'],
+                'status'      => null, // Matches your screenshot
+            ]);
         }
     }
 }

@@ -2,7 +2,10 @@ import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import { setAlert } from "@/app/redux/app-slice";
-import { get_leader_thunk } from "@/app/redux/employee-relation-thunk";
+import {
+    get_leader_by_id_thunk,
+    get_leader_thunk,
+} from "@/app/redux/employee-relation-thunk";
 import { add_subordinates_service } from "@/app/services/er-leaders-service";
 import store from "@/app/store/store";
 import React, { useState, useEffect } from "react";
@@ -63,7 +66,9 @@ export default function AddMemberSection() {
             };
 
             await add_subordinates_service(payload);
-            await store.dispatch(get_leader_thunk());
+            await store.dispatch(
+                get_leader_by_id_thunk(window.location.pathname.split("/")[5]),
+            );
 
             await dispatch(
                 setAlert({

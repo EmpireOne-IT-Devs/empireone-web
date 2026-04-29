@@ -33,15 +33,17 @@ class ERSubordinateController extends Controller
         $request->validate([
             'er_leader_id' => 'required|integer',
             'subordinates' => 'required|array',
-            'subordinates.*' => 'required|integer' 
+            'subordinates.*' => 'required|integer'
         ]);
         $leaderId = $request->er_leader_id;
         $subordinates = $request->subordinates;
         foreach ($subordinates as $subordinateId) {
-            ERSubordinate::firstOrCreate([
-                'er_leader_id' => $leaderId,
-                'subordinate_id' => $subordinateId
-            ]);
+            if ($subordinateId) {
+                ERSubordinate::firstOrCreate([
+                    'er_leader_id' => $leaderId,
+                    'subordinate_id' => $subordinateId
+                ]);
+            }
         }
         return response()->json([
             'status' => 'success',
