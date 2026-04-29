@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountEmployee;
+use App\Models\Account\AccountPersonalInformation;
+use App\Models\Location;
+use App\Models\Site;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +18,104 @@ use Illuminate\Support\Facades\Hash;
 
 class GoogleController extends Controller
 {
+
+    public function get_employee()
+    {
+        $filename = public_path("csv/active_employees.csv");
+        $employees = [];
+
+        if (!file_exists($filename)) {
+            return response()->json(['error' => 'File not found'], 404);
+        }
+
+        if (($handle = fopen($filename, "r")) !== FALSE) {
+            $raw_headers = fgetcsv($handle, 0, ",");
+
+            $clean_headers = array_map(function ($header, $index) {
+                $header = mb_convert_encoding(trim($header), 'UTF-8', 'ISO-8859-1');
+                if ($index === 0) {
+                    $header = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $header);
+                }
+                return strtolower(str_replace(' ', '_', $header));
+            }, $raw_headers, array_keys($raw_headers));
+
+            $header_count = count($clean_headers);
+
+            while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+                if (count($data) === $header_count) {
+                    $utf8_data = array_map(function ($value) {
+                        return mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
+                    }, $data);
+
+                    $row = array_combine($clean_headers, $utf8_data);
+                    $employees[] = (object) $row; // Saving as OBJECT
+                }
+            }
+            fclose($handle);
+        }
+
+        // Initialize an array to track emails that were skipped
+        $existing_emails = [];
+        $inserted_emails = [];
+
+        foreach ($employees as $value) {
+            if (!empty($value->email)) {
+                $has_user = User::where('email', $value->email)->first();
+
+                if (!$has_user) {
+                    // INSERTION LOGIC
+                    $user = User::create([
+                        'name' => $value->firstname . " " . $value->lastname,
+                        'email' => $value->email,
+                        'password' => bcrypt('Business12'),
+                        'role' => 2,
+                    ]);
+
+                    $location = Location::where('name', $value->site)->first();
+
+                    if ($location) {
+                        $site = Site::where('location_id', $location->id)->first();
+
+                        AccountEmployee::create([
+                            'user_id' => $user->id,
+                            'employee_id',$value->employee_id,
+                            'eogs_email' => $value->email,
+                            'site_id' => $site ? $site->id : null,
+                            'location_id' => $location->id,
+                            'started_at' => $value->datehired,
+                            'position' => $value->position,
+                        ]);
+                    }
+
+                    AccountPersonalInformation::create([
+                        'user_id' => $user->id,
+                        'first_name' => $value->firstname,
+                        'last_name' => $value->lastname,
+                        'date_of_birth' => $value->birthdate,
+                        'contact' => $value->mobileno,
+                        'philhealth' => $value->philhealth,
+                        'sss' => $value->sss,
+                        'pagibig' => $value->pagibig,
+                        'tin' => $value->tin,
+                    ]);
+
+                    $inserted_emails[] = $value->email;
+                } 
+            }else {
+                    // Collect the emails that were already in the DB
+                    $existing_emails[] = $value->firstname;
+                }
+        }
+
+        return response()->json([
+            'message' => 'Processing complete',
+            'total' => count($employees),
+            'new_inserts_count' => count($inserted_emails),
+            'already_existed_count' => count($inserted_emails),
+            'skipped_emails_count' => count($existing_emails),
+            'skipped_emails' => $existing_emails,
+        ]);
+    }
 
     public function route_page($role)
     {

@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import Layout from "../../../layout";
-import EmployeeRelationLayout from "../layout";
+import Layout from "../../../../layout";
+import EmployeeRelationLayout from "../../layout";
 import store from "@/app/store/store";
 import { get_probationary_thunk } from "@/app/redux/employee-relation-thunk";
 import TableSection from "./_sections/table-section";
+import AssessmentProcessLayout from "../layout";
 
 export default function page() {
     useEffect(() => {
@@ -12,9 +13,9 @@ export default function page() {
     return (
         <Layout>
             <EmployeeRelationLayout>
-                <div className="mt-10">
-                    <TableSection />
-                </div>
+                    <AssessmentProcessLayout>
+                        <TableSection />
+                    </AssessmentProcessLayout>
             </EmployeeRelationLayout>
         </Layout>
     );

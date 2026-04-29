@@ -7,6 +7,8 @@ use App\Http\Controllers\API\Account\AccountEmployeeController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
+use App\Http\Controllers\API\ER\ERLeaderController;
+use App\Http\Controllers\API\ER\ERSubordinateController;
 use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
 use App\Http\Controllers\API\Jobs\JobOfferController;
@@ -39,7 +41,7 @@ Route::post('auth/job_seeker_verify_otp', [EmailOtpController::class, 'job_seeke
 Route::post('auth/forgot_password_send_otp', [EmailOtpController::class, 'forgot_password_send_otp']);
 Route::post('auth/forgot_password_verify_otp', [EmailOtpController::class, 'forgot_password_verify_otp']);
 Route::post('auth/change_password', [EmailOtpController::class, 'change_password']);
-
+Route::get('get_employee', [GoogleController::class, 'get_employee']);
 
 
 
@@ -98,8 +100,6 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('contract', AccountContractController::class);
         Route::post('agree_onboarding',  [AccountContractController::class, 'agree_onboarding']);
         Route::post('edit_information',  [AccountContractController::class, 'edit_information']);
-
-
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);
@@ -108,6 +108,11 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_documents_by_user',  [AccountDocumentController::class, 'get_documents_by_user']);
         Route::post('send_documents',  [AccountDocumentController::class, 'send_documents']);
         Route::get('get_201_files_by_user/{user_id}',  [AccountDocumentController::class, 'get_201_files_by_user']);
+    });
+
+    Route::prefix('er')->group(function () {
+        Route::resource('leaders', ERLeaderController::class);
+        Route::resource('subordinates', ERSubordinateController::class);
     });
 });
 

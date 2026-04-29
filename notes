@@ -16,14 +16,10 @@ Need to remove when reset
 - account_employees
 - account_documents
 -account_contracts
-
-
 1342 - gio
 3-chingay
 
 - update the address all employees
-
-
 Employee Section: 
 - Department
 - Position
@@ -31,53 +27,204 @@ Employee Section:
 - Employee ID 
 
 
+Automatic notify PEF 3months & 5th months
+
+er_leader
+-user_id
+
+er_subordinate 
+-er_leader_id
+-subordinate_id
+
+er_performance_evaluation_form
+-user_id
+-supervisor_id
+-has_supervisor_signature
+-date_of_assessment
+-remarks
+-section1_average
+-section2_average
+-total_average
+-recommendation
+
+er_performance_evaluation_section1
+-er_performance_evaluation_form_id
+-objective
+-action
+-outcome
+-rating
+
+er_performance_evaluation_section2
+-er_performance_evaluation_form_id
+-requirments
+-description 
+-rating 
 
 
-Account Access
-- user_id
-- order
-- type (job_requisition_approval)
-
-remove access account
-
-create job requisition
-- Site 1 add subname - (pantalan dunganon)
-- priority type (low medium high) only
-- remove from and to from the salary
-- sub interviewer add optional
-- remove interview date. and change time availability
-- interview schedule change to interviewer details.
-- interviewer 1, availability (monday to sunday) day and time
-- interviewer 2, availability (monday to sunday) day and time
-- remove justification,positon requirments and responsibility
-- add position erf clasification dropdown.
-- add sourcing method 
-- add job discription
-- add job requirments
-- 1row (position title,department)
-- 2row (employment type,number of position priority )
-- 3row (position type,sourcing method)
-- send first= supervisor, final=gio last: pinaka last = ms chingay
-- automatic create job posting after ms chingay approval.
 
 
-Create New Job Posting
--remove Target Audience
--remove application deadline
--remove year of experience
--remove bachelors degree
-
--Add my request ERF
-
-active job posting add recruiter. here https://empireone-bpo.com/accounts/administrator/talent_acquisition/active_posting
 
 
-JOB POSTING Landing Page
-- Basic Personal Information only
-- 
-
-Applicant Portal
 
 
-Admin Portal
-- Accepted Job offer > Schedule for Orientation > Send Documents
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+  "message": "Processing complete",
+  "total": 631,
+  "new_inserts_count": 0,
+  "already_existed_count": 0,
+  "skipped_emails_count": 114,
+  "skipped_emails": [
+    "Emmanuel",
+    "Zain Schine",
+    "JOANE",
+    "Justin",
+    "Darwin",
+    "Karla Mae",
+    "Mark Anthony",
+    "Charlene",
+    "Abegail Ann",
+    "Daisy",
+    "Adrian Christian",
+    "Rechelle",
+    "Katrina",
+    "Jhyle",
+    "Mylen",
+    "Johnrey",
+    "Jaime",
+    "Josh",
+    "Jeramae",
+    "Christ Vein",
+    "Julius",
+    "Rucel Jane",
+    "Dennis",
+    "Shajanie Ann",
+    "NiÃ±a Jane",
+    "Maria Lynde",
+    "MICHELLE",
+    "Jancel Marie",
+    "Lemuel",
+    "Jonnavelle Fatima",
+    "Jiah Mae",
+    "Manley",
+    "Hyacinth",
+    "Ricky",
+    "Leo, Jr.",
+    "Nestle",
+    "Clarice Kate",
+    "Lee Daniel",
+    "Simon Anselle",
+    "Lanmark",
+    "Paul",
+    "Nina Jane",
+    "Louie",
+    "Clea Kaye",
+    "Mary Jocellie",
+    "Ma. Kim",
+    "Charle",
+    "Almera",
+    "Jhuniel",
+    "Irene",
+    "Jainah James",
+    "Shayna Evanleigh",
+    "Michael Jerome",
+    "Genevieve",
+    "Larisha Anne",
+    "Jaynel",
+    "Krizza Joy",
+    "Dylan",
+    "Althea Marie",
+    "Jennielyn",
+    "Jhonreb",
+    "Snickers Jay",
+    "Steve",
+    "Roanne Sitti Jehani",
+    "Tracy Giveryl",
+    "Kristian",
+    "Ray Vee",
+    "Esther",
+    "Rafael",
+    "Cherilyn",
+    "Alan",
+    "Xandra Mae",
+    "Christian Faith",
+    "Syrille",
+    "Grezel Rose",
+    "Ethel",
+    "Jessa Mae",
+    "Alyssa Venice",
+    "Richlie Kaye",
+    "Juverlyn",
+    "John Philip",
+    "Danrhyn",
+    "Geof",
+    "Jhuana",
+    "Renie",
+    "Ralph Lindsey",
+    "Jamaica",
+    "Rendel Mark",
+    "Daisy",
+    "Richelle Mae",
+    "Mar Bhea",
+    "Christi Ann",
+    "NiÃ±a Elsa",
+    "Romel Brian",
+    "Vianca Marie",
+    "Carine",
+    "Shyrine",
+    "Jazheel",
+    "Nichole",
+    "Stephen",
+    "Rogelio",
+    "DEXLIN",
+    "Mary Jane",
+    "Aschell",
+    "Jona Mae",
+    "Ronel Rico",
+    "Zax",
+    "Maria Luz",
+    "John Mark",
+    "Alvin",
+    "Jerry Jr.",
+    "Fretzie",
+    "Anthony Levon",
+    "Jade"
+  ]
+}

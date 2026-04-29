@@ -167,12 +167,38 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::get('pooling', function () {
                 return Inertia::render('accounts/_administrator/employee_relation/pooling/page');
             });
-            Route::prefix('regularization')->group(function () {
+            Route::prefix('leads')->group(function () {
                 Route::get('', function () {
-                    return Inertia::render('accounts/_administrator/employee_relation/regularization/page');
+                    return Inertia::render('accounts/_administrator/employee_relation/leads/page');
                 });
                 Route::get('/{id}', function () {
-                    return Inertia::render('accounts/_administrator/employee_relation/regularization/id/page');
+                    return Inertia::render('accounts/_administrator/employee_relation/leads/id/page');
+                });
+            });
+            Route::prefix('assessment_process')->group(function () {
+                Route::prefix('regularization')->group(function () {
+                    Route::get('', function () {
+                        return Inertia::render('accounts/_administrator/employee_relation/assessment_process/regularization/page');
+                    });
+                    Route::get('/{id}', function () {
+                        return Inertia::render('accounts/_administrator/employee_relation/assessment_process/id/page');
+                    });
+                });
+                Route::prefix('extended_regularization')->group(function () {
+                    Route::get('', function () {
+                        return Inertia::render('accounts/_administrator/employee_relation/assessment_process/extended_regularization/page');
+                    });
+                    Route::get('/{id}', function () {
+                        return Inertia::render('accounts/_administrator/employee_relation/assessment_process/id/page');
+                    });
+                });
+                Route::prefix('none_regularization')->group(function () {
+                    Route::get('', function () {
+                        return Inertia::render('accounts/_administrator/employee_relation/assessment_process/none_regularization/page');
+                    });
+                    Route::get('/{id}', function () {
+                        return Inertia::render('accounts/_administrator/employee_relation/assessment_process/id/page');
+                    });
                 });
             });
             Route::get('disciplinary_records', function () {

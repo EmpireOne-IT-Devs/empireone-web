@@ -10,6 +10,8 @@ use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
+use App\Models\ER\ERLeader;
+use App\Models\ER\ERSubordinate;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -63,6 +65,10 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+     public function subordinate(): HasOne
+    {
+        return $this->hasOne(ERSubordinate::class, 'subordinate_id', 'id')->with(['leader']);
+    }
     public function department()
     {
         return $this->belongsTo(Department::class);

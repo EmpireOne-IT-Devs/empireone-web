@@ -44,11 +44,11 @@ export default function TableSection() {
                                 <button
                                     onClick={() =>
                                         router.visit(
-                                            `/accounts/${role}/employee_relation/regularization/${res.id}`,
+                                            `/accounts/${role}/employee_relation/assessment_process/regularization/${res.id}`,
                                         )
                                     }
                                 >
-                                    View ECF
+                                    View PEF
                                 </button>
                             </div>
                         ),
