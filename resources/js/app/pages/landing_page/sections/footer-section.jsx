@@ -20,7 +20,8 @@ export default function FooterSection() {
     const quickLinks = [
         { name: "Home", href: "#home" },
         { name: "About Us", href: "#about-us" },
-        { name: "Services", href: "#services" },
+         { name: "Testimonial", href: "#testimonial" },
+        { name: "Careers", href: "#careers" },
         { name: "Contact", href: "#contact" },
     ];
 
@@ -104,8 +105,53 @@ export default function FooterSection() {
     ];
 
     return (
-        <footer className="bg-white px-5 pb-8 pt-16 text-black sm:px-6">
+        <footer
+            className="relative overflow-hidden px-5 pb-8 pt-16 sm:px-6"
+            style={{ background: "#050816", colorScheme: "dark" }}
+        >
             <div className="mx-auto max-w-7xl">
+                {/* Ambient light orbs */}
+                <div
+                    className="pointer-events-none absolute inset-0"
+                    aria-hidden="true"
+                >
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "-20%",
+                            left: "-10%",
+                            width: "52%",
+                            height: "62%",
+                            background:
+                                "radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 65%)",
+                            filter: "blur(60px)",
+                        }}
+                    />
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "5%",
+                            right: "-8%",
+                            width: "42%",
+                            height: "52%",
+                            background:
+                                "radial-gradient(circle, rgba(249,115,22,0.2) 0%, transparent 65%)",
+                            filter: "blur(55px)",
+                        }}
+                    />
+                    <div
+                        style={{
+                            position: "absolute",
+                            bottom: "0%",
+                            left: "28%",
+                            width: "52%",
+                            height: "48%",
+                            background:
+                                "radial-gradient(circle, rgba(59,130,246,0.22) 0%, transparent 65%)",
+                            filter: "blur(55px)",
+                        }}
+                    />
+                </div>
                 {/* TOP GRID */}
                 <motion.div
                     initial="hidden"
@@ -113,7 +159,7 @@ export default function FooterSection() {
                     viewport={{ once: false, amount: 0.2 }}
                     variants={fadeUp}
                     custom={0.06}
-                    className="mb-14 grid grid-cols-1 gap-10 md:grid-cols-2 xl:grid-cols-4"
+                    className="relative z-10 mb-14 grid grid-cols-1 gap-10 md:grid-cols-2 xl:grid-cols-4"
                 >
                     {/* BRAND */}
                     <div className="md:col-span-1">
@@ -126,10 +172,13 @@ export default function FooterSection() {
                             />
                         </div>
 
-                        <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                            Empowering businesses with innovative IT solutions,
-                            robust cybersecurity, and scalable cloud
-                            infrastructure for the digital age.
+                        <p
+                            className="text-sm leading-relaxed mb-6"
+                            style={{ color: "rgba(255,255,255,0.5)" }}
+                        >
+                            Delivering outstanding customer support, efficient
+                            outsourcing solutions, and meaningful client
+                            connections that drive business growth.
                         </p>
 
                         {/* Social Icons */}
@@ -139,7 +188,27 @@ export default function FooterSection() {
                                     key={s.name}
                                     href={s.href}
                                     aria-label={s.name}
-                                    className="w-9 h-9 rounded-full  border border-blue-700 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-500 hover:bg-orange-500/10 transition-all duration-200"
+                                    className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200"
+                                    style={{
+                                        border: "1px solid rgba(124,58,237,0.5)",
+                                        color: "rgba(168,85,247,0.7)",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color =
+                                            "rgb(251,146,60)";
+                                        e.currentTarget.style.borderColor =
+                                            "rgba(249,115,22,0.7)";
+                                        e.currentTarget.style.background =
+                                            "rgba(249,115,22,0.08)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color =
+                                            "rgba(168,85,247,0.7)";
+                                        e.currentTarget.style.borderColor =
+                                            "rgba(124,58,237,0.5)";
+                                        e.currentTarget.style.background =
+                                            "transparent";
+                                    }}
                                 >
                                     {s.icon}
                                 </a>
@@ -149,7 +218,16 @@ export default function FooterSection() {
 
                     {/* QUICK LINKS */}
                     <div>
-                        <h4 className="text-gray-800 font-semibold text-base mb-2">
+                        <h4
+                            className="font-semibold text-base mb-5"
+                            style={{
+                                background:
+                                    "linear-gradient(90deg, #c084fc, #60a5fa)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                                backgroundClip: "text",
+                            }}
+                        >
                             Quick Links
                         </h4>
                         <ul className="space-y-3">
@@ -158,10 +236,27 @@ export default function FooterSection() {
                                     key={link.name}
                                     className="flex items-center gap-2"
                                 >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                                    <span
+                                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                        style={{
+                                            background:
+                                                "linear-gradient(135deg, #a78bfa, #60a5fa)",
+                                        }}
+                                    />
                                     <a
                                         href={link.href}
-                                        className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
+                                        className="text-sm transition-colors"
+                                        style={{
+                                            color: "rgba(255,255,255,0.52)",
+                                        }}
+                                        onMouseEnter={(e) =>
+                                            (e.currentTarget.style.color =
+                                                "rgb(251,146,60)")
+                                        }
+                                        onMouseLeave={(e) =>
+                                            (e.currentTarget.style.color =
+                                                "rgba(255,255,255,0.52)")
+                                        }
                                     >
                                         {link.name}
                                     </a>
@@ -172,7 +267,16 @@ export default function FooterSection() {
 
                     {/* OUR SERVICES */}
                     <div>
-                        <h4 className="mb-5 text-base font-semibold text-gray-800">
+                        <h4
+                            className="mb-5 text-base font-semibold"
+                            style={{
+                                background:
+                                    "linear-gradient(90deg, #60a5fa, #fb923c)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                                backgroundClip: "text",
+                            }}
+                        >
                             Our Services
                         </h4>
                         <ul className="space-y-3">
@@ -181,10 +285,27 @@ export default function FooterSection() {
                                     key={s.name}
                                     className="flex items-center gap-2"
                                 >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                                    <span
+                                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                        style={{
+                                            background:
+                                                "linear-gradient(135deg, #60a5fa, #fb923c)",
+                                        }}
+                                    />
                                     <a
                                         href={s.href}
-                                        className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
+                                        className="text-sm transition-colors"
+                                        style={{
+                                            color: "rgba(255,255,255,0.52)",
+                                        }}
+                                        onMouseEnter={(e) =>
+                                            (e.currentTarget.style.color =
+                                                "rgb(251,146,60)")
+                                        }
+                                        onMouseLeave={(e) =>
+                                            (e.currentTarget.style.color =
+                                                "rgba(255,255,255,0.52)")
+                                        }
                                     >
                                         {s.name}
                                     </a>
@@ -195,10 +316,22 @@ export default function FooterSection() {
 
                     {/* NEWSLETTER */}
                     <div>
-                        <h4 className="mb-3 text-base font-semibold text-gray-800">
+                        <h4
+                            className="mb-3 text-base font-semibold"
+                            style={{
+                                background:
+                                    "linear-gradient(90deg, #a78bfa, #f97316)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                                backgroundClip: "text",
+                            }}
+                        >
                             Newsletter
                         </h4>
-                        <p className="text-sm text-slate-600 leading-relaxed mb-5">
+                        <p
+                            className="text-sm leading-relaxed mb-5"
+                            style={{ color: "rgba(255,255,255,0.5)" }}
+                        >
                             Subscribe to our newsletter to get the latest
                             updates and news.
                         </p>
@@ -206,11 +339,26 @@ export default function FooterSection() {
                             <input
                                 type="email"
                                 placeholder="Email Address"
-                                className="w-full px-4 py-3 rounded-lg border border-slate-700 text-slate-900 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                className="w-full px-4 py-3 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                style={{
+                                    background: "rgba(255,255,255,0.05)",
+                                    border: "1px solid rgba(124,58,237,0.4)",
+                                }}
                             />
                             <button
                                 type="button"
-                                className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-sm transition-all duration-200"
+                                className="w-full flex items-center justify-center gap-2 py-3 text-white font-semibold rounded-lg text-sm transition-all duration-200"
+                                style={{
+                                    background:
+                                        "linear-gradient(90deg, #7c3aed, #2563eb, #ea580c)",
+                                    boxShadow: "0 0 22px rgba(124,58,237,0.4)",
+                                }}
+                                onMouseEnter={(e) =>
+                                    (e.currentTarget.style.opacity = "0.85")
+                                }
+                                onMouseLeave={(e) =>
+                                    (e.currentTarget.style.opacity = "1")
+                                }
                             >
                                 Subscribe Now
                                 <ArrowRightIcon className="h-4 w-4" />
@@ -220,7 +368,14 @@ export default function FooterSection() {
                 </motion.div>
 
                 {/* DIVIDER */}
-                <div className="border-t border-slate-700/60" />
+                <div
+                    className="relative z-10"
+                    style={{
+                        height: "1px",
+                        background:
+                            "linear-gradient(90deg, transparent, rgba(124,58,237,0.7), rgba(59,130,246,0.6), rgba(249,115,22,0.5), transparent)",
+                    }}
+                />
 
                 {/* BOTTOM */}
                 <motion.div
@@ -229,21 +384,42 @@ export default function FooterSection() {
                     viewport={{ once: false, amount: 0.8 }}
                     variants={fadeUp}
                     custom={0.12}
-                    className="flex flex-col items-start justify-between gap-3 pt-6 sm:flex-row sm:items-center"
+                    className="relative z-10 flex flex-col items-start justify-between gap-3 pt-6 sm:flex-row sm:items-center"
                 >
-                    <p className="text-xs text-slate-500">
+                    <p
+                        className="text-xs"
+                        style={{ color: "rgba(255,255,255,0.32)" }}
+                    >
                         © {year} EmpireOne. All rights reserved.
                     </p>
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 sm:gap-6">
+                    <div className="flex flex-wrap items-center gap-4 text-xs sm:gap-6">
                         <a
                             href="/privacy-policy"
-                            className="hover:text-blue-600 transition-colors"
+                            className="transition-colors"
+                            style={{ color: "rgba(255,255,255,0.32)" }}
+                            onMouseEnter={(e) =>
+                                (e.currentTarget.style.color =
+                                    "rgb(251,146,60)")
+                            }
+                            onMouseLeave={(e) =>
+                                (e.currentTarget.style.color =
+                                    "rgba(255,255,255,0.32)")
+                            }
                         >
                             Privacy Policy
                         </a>
                         <a
                             href="/terms"
-                            className="hover:text-blue-600 transition-colors"
+                            className="transition-colors"
+                            style={{ color: "rgba(255,255,255,0.32)" }}
+                            onMouseEnter={(e) =>
+                                (e.currentTarget.style.color =
+                                    "rgb(251,146,60)")
+                            }
+                            onMouseLeave={(e) =>
+                                (e.currentTarget.style.color =
+                                    "rgba(255,255,255,0.32)")
+                            }
                         >
                             Terms of Service
                         </a>

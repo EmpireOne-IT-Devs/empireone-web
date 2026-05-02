@@ -369,10 +369,14 @@ export default function CareerSection() {
                                     src="/images/mm.png"
                                     alt="Career"
                                     className="relative z-[1] drop-shadow-2xl"
+                                    draggable="false"
+                                    onDragStart={(e) => e.preventDefault()}
                                     style={{
                                         height: 260,
                                         objectFit: "cover",
                                         objectPosition: "top",
+                                        userSelect: "none",
+                                        WebkitUserDrag: "none",
                                     }}
                                 />
                             </div>

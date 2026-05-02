@@ -175,6 +175,9 @@ export default function HeroSection() {
                         src="/images/mmm.png"
                         className="max-w-[480px] sm:max-w-[700px] md:max-w-[960px] lg:max-w-none lg:w-[130%] object-contain w-full"
                         alt=""
+                        draggable="false"
+                        onDragStart={(e) => e.preventDefault()}
+                        style={{ userSelect: "none", WebkitUserDrag: "none" }}
                     />
 
                     {/* ===================== FLOATING CARD 1 ===================== */}
