@@ -52,7 +52,7 @@ export default function TableSection() {
                                 ||
                                 <a
                                     target="_blank"
-                                    href={`/accounts/${role}/employee_relation/${res?.employee?.account_employee?.user_id}/personal_information`}
+                                    href={`/accounts/${role}/my_team/${res?.employee?.account_employee?.user_id}/personal_information`}
                                 >
                                     View Information
                                 </a>
