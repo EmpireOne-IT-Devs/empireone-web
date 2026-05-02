@@ -509,6 +509,19 @@ const CreatePEFSection = () => {
                             Recommendation{" "}
                             <span className="text-red-500">*</span>
                         </p>
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <input
+                                type="radio"
+                                value="Mid-Probationary"
+                                {...register("recommendation", {
+                                    required: true,
+                                })}
+                                className="w-4 h-4 accent-blue-600 cursor-pointer"
+                            />
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                                Mid-Probationary
+                            </span>
+                        </label>
 
                         <label className="flex items-center gap-3 cursor-pointer group">
                             <input

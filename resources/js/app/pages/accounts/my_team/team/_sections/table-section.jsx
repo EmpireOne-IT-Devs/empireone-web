@@ -42,21 +42,27 @@ export default function TableSection() {
                         status:
                             res?.employee?.account_employee?.status ?? "N/A",
                         action: (
-                            <>
-                                <a
-                                    target="_blank"
-                                    href={`/accounts/${role}/performance_evaluation/${res?.employee?.account_employee?.user_id}`}
-                                >
-                                    create_performance
-                                </a>
-                                ||
+                            <div className="flex gap-3">
+                                {res?.employee?.account_employee?.status ==
+                                    "Probationary" && (
+                                    <>
+                                        <a
+                                            target="_blank"
+                                            href={`/accounts/${role}/performance_evaluation/${res?.employee?.account_employee?.user_id}`}
+                                        >
+                                            Evaluate Performance
+                                        </a>
+                                        |
+                                    </>
+                                )}
+
                                 <a
                                     target="_blank"
                                     href={`/accounts/${role}/my_team/${res?.employee?.account_employee?.user_id}/personal_information`}
                                 >
                                     View Information
                                 </a>
-                            </>
+                            </div>
                         ),
                     })) ?? []
                 }

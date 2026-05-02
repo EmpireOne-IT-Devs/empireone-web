@@ -13,9 +13,13 @@ class ERPerformanceEvaluationFormController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $evaluations = ERPerformanceEvaluationForm::where('recommendation', $request->status)->with(['supervisor'])->get();
+        return response()->json([
+            'data' => $evaluations,
+            'status'  => 'success',
+        ], 200);
     }
 
 

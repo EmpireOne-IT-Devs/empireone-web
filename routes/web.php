@@ -155,7 +155,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             });
 
             Route::prefix('assessment_process')->group(function () {
-                $assessmentTypes = ['regularization', 'extended_regularization', 'none_regularization'];
+                $assessmentTypes = ['mid_regularization', 'regularization', 'extended_regularization', 'none_regularization'];
                 foreach ($assessmentTypes as $type) {
                     Route::prefix($type)->group(function () use ($type) {
                         Route::inertia('', "accounts/_administrator/employee_relation/assessment_process/{$type}/page");
