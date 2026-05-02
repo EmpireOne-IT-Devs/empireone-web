@@ -1,0 +1,1 @@
+import{e}from"./app-DJZSFR5c.js";async function t(a){return await e.post("/api/er/performance_evaluation",a)}async function n(a){return(await e.get(`/api/er/performance_evaluation/${a}`)).data}export{t as c,n as g};

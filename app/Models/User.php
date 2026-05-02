@@ -11,6 +11,7 @@ use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
 use App\Models\ER\ERLeader;
+use App\Models\ER\ERPerformanceEvaluationForm;
 use App\Models\ER\ERSubordinate;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
@@ -65,9 +66,17 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-     public function subordinate(): HasOne
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(ERPerformanceEvaluationForm::class, 'user_id', 'id')->with(['section1s', 'section2s', 'supervisor']);
+    }
+    public function subordinate(): HasOne
     {
         return $this->hasOne(ERSubordinate::class, 'subordinate_id', 'id')->with(['leader']);
+    }
+    public function leader(): HasOne
+    {
+        return $this->hasOne(ERLeader::class, 'user_id', 'id')->with(['subordinates']);
     }
     public function department()
     {
@@ -79,7 +88,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function account_employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id', 'id')->with(['account','site','department']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'id')->with(['account', 'site', 'department']);
     }
     public function documents(): HasMany
     {

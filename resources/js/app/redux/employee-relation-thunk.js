@@ -1,6 +1,7 @@
 import { get_applicant_pooling_service } from "../services/applicants-service";
 import { get_employees_service, get_probationary_service } from "../services/employee-relation-service";
 import { get_leader_by_id_service, get_leader_service } from "../services/er-leaders-service";
+import { get_performance_evaluation_by_id_service } from "../services/performance-evaluation-service";
 import { employeeRelationSlice } from "./employee-relation-slice";
 
 export function get_employees_thunk() {
@@ -40,3 +41,16 @@ export function get_leader_by_id_thunk(id) {
         dispatch(employeeRelationSlice.actions.setLeader(result.data));
     };
 }
+export function get_performance_evaluation_by_id_thunk(id) {
+    return async function (dispatch, getState) {
+        const result = await get_performance_evaluation_by_id_service(id);
+        dispatch(employeeRelationSlice.actions.setEvaluation(result.data));
+    };
+}
+
+// export function get_performance_evaluation_by_user_id_thunk(id) {
+//     return async function (dispatch, getState) {
+//         const result = await get_performance_evaluation_by_user_id_service(id);
+//         dispatch(employeeRelationSlice.actions.setEvaluations(result.data));
+//     };
+// }

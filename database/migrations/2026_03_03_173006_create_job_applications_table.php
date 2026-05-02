@@ -27,6 +27,7 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->string('referral_id')->nullable();
             $table->string('threadId')->nullable();
+            $table->string('source')->nullable();
             $table->enum('screening_status', [
                 'New',
                 'Conducted',

@@ -17,6 +17,11 @@ export default function TabsSection() {
             path: `/accounts/administrator/employee_relation/${user_id}/201_files`,
             active: path === "201_files",
         },
+         {
+            label: "Evaluations",
+            path: `/accounts/administrator/employee_relation/${user_id}/evaluations`,
+            active: path === "evaluations",
+        },
         {
             label: "Disciplinary Records",
             path: `/accounts/administrator/employee_relation/${user_id}/disciplinary_records`,

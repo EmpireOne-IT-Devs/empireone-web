@@ -1,4 +1,4 @@
-php artisan make:model Jobs/JobsApplication -mcr
+php artisan make:model ER/JobsApplication -mcr
 
 - add emergency contract
 - add parents name.
@@ -35,6 +35,8 @@ er_leader
 er_subordinate 
 -er_leader_id
 -subordinate_id
+
+
 
 er_performance_evaluation_form
 -user_id

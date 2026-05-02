@@ -28,7 +28,6 @@ class AppController extends Controller
             'date_of_birth',
             'year_graduated',
             'contact',
-            'birth_place',
             'region',
             'province',
             'city',
@@ -57,7 +56,7 @@ class AppController extends Controller
         $position = JobPosition::with(['job_requisition'])->get();
         $sites = Site::get();
         $accounts = Account::get();
-        $user = Auth::user()->load(['account_employee', 'is_passed', 'personal_information', 'documents', 'working_experience', 'skills']);
+        $user = Auth::user()->load(['account_employee', 'is_passed', 'personal_information', 'documents', 'working_experience', 'skills', 'leader']);
 
         $total_job_opening = JobPosting::whereIn('target_audience', ['Internal', 'Both'])->count();
         $total_application_submitted = JobApplication::where('user_id', $user->id)->count();
