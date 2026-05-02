@@ -1,4 +1,3 @@
-import { CheckCircle } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
@@ -129,14 +128,10 @@ export default function AboutSection() {
                 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600;700&display=swap');
 
                 :root {
-                    --ink:    #0b0b10;
-                    --paper:  #f5f0e8;
-                    --cream:  #ede7d9;
-                    --gold:   #c9a84c;
-                    --gold2:  #e8c97a;
-                    --lilac:  #8b7bb5;
-                    --mist:   rgba(255,255,255,0.06);
-                    --rule:   rgba(255,255,255,0.1);
+                    --ink:   #0b0b10;
+                    --gold:  #c9a84c;
+                    --gold2: #e8c97a;
+                    --lilac: #8b7bb5;
                 }
 
                 .about-root {
@@ -146,13 +141,9 @@ export default function AboutSection() {
                     font-family: 'Outfit', sans-serif;
                 }
 
-                /* ── video bg ── */
-                .about-video-wrap {
-                    position: absolute; inset: 0; z-index: 0;
-                }
-                .about-video-wrap video {
-                    width: 100%; height: 100%; object-fit: cover;
-                }
+                /* video bg */
+                .about-video-wrap { position: absolute; inset: 0; z-index: 0; }
+                .about-video-wrap video { width: 100%; height: 100%; object-fit: cover; }
                 .about-video-wrap::after {
                     content: '';
                     position: absolute; inset: 0;
@@ -161,7 +152,7 @@ export default function AboutSection() {
                         linear-gradient(100deg, rgba(11,11,16,0.9) 0%, transparent 60%);
                 }
 
-                /* noise grain */
+                /* grain */
                 .about-grain {
                     position: absolute; inset: 0; z-index: 1; pointer-events: none;
                     opacity: 0.035;
@@ -169,42 +160,34 @@ export default function AboutSection() {
                     background-size: 200px 200px;
                 }
 
-                /* ── layout ── */
+                /* layout */
                 .about-inner {
                     position: relative; z-index: 2;
-                    max-width: 1360px;
-                    margin: 0 auto;
+                    max-width: 1360px; margin: 0 auto;
                     padding: 100px 48px 80px;
                     display: grid;
                     grid-template-columns: 1fr 1fr;
                     gap: 0 72px;
                     align-items: start;
                 }
-                @media (max-width: 900px) {
-                    .about-inner { grid-template-columns: 1fr; gap: 56px; padding: 72px 24px 60px; }
-                }
 
-                /* ── eyebrow ── */
+                /* eyebrow */
                 .eyebrow {
                     display: inline-flex; align-items: center; gap: 10px;
                     font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
-                    text-transform: uppercase;
-                    color: var(--gold);
-                    margin-bottom: 22px;
+                    text-transform: uppercase; color: var(--gold); margin-bottom: 22px;
                 }
                 .eyebrow-line {
                     display: block; width: 32px; height: 1px;
                     background: linear-gradient(90deg, var(--gold), transparent);
                 }
 
-                /* ── headline ── */
+                /* headline */
                 .about-h2 {
                     font-family: 'Cormorant Garamond', serif;
-                    font-size: clamp(42px, 5vw, 72px);
-                    font-weight: 700;
-                    line-height: 1.03;
-                    color: #fff;
-                    margin: 0 0 6px;
+                    font-size: clamp(38px, 5vw, 72px);
+                    font-weight: 700; line-height: 1.03;
+                    color: #fff; margin: 0 0 6px;
                 }
                 .about-h2 em {
                     font-style: italic;
@@ -216,19 +199,15 @@ export default function AboutSection() {
 
                 .about-sub {
                     font-size: 15px; font-weight: 300; line-height: 1.75;
-                    color: rgba(255,255,255,0.52);
-                    max-width: 440px;
-                    margin-bottom: 40px;
+                    color: rgba(255,255,255,0.52); max-width: 440px; margin-bottom: 40px;
                 }
 
-                /* ── pillars ── */
+                /* pillars */
                 .pillars { display: flex; flex-direction: column; gap: 2px; margin-bottom: 44px; }
                 .pillar-card {
                     display: flex; align-items: flex-start; gap: 20px;
-                    padding: 20px 22px;
-                    border-radius: 14px;
-                    border: 1px solid transparent;
-                    cursor: default;
+                    padding: 18px 20px; border-radius: 14px;
+                    border: 1px solid transparent; cursor: default;
                     transition: background 0.25s, border-color 0.25s, transform 0.25s;
                 }
                 .pillar-card:hover {
@@ -238,215 +217,186 @@ export default function AboutSection() {
                 }
                 .pillar-num {
                     font-family: 'Cormorant Garamond', serif;
-                    font-size: 11px; font-weight: 600;
-                    letter-spacing: 0.15em;
-                    color: var(--gold);
-                    margin-top: 3px;
-                    flex-shrink: 0;
-                    min-width: 26px;
+                    font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+                    color: var(--gold); margin-top: 3px; flex-shrink: 0; min-width: 26px;
                 }
-                .pillar-body { flex: 1; }
+                .pillar-body { flex: 1; min-width: 0; }
                 .pillar-title {
-                    display: block;
-                    font-size: 14px; font-weight: 600;
-                    color: rgba(255,255,255,0.9);
-                    margin-bottom: 4px;
-                    letter-spacing: 0.01em;
+                    display: block; font-size: 14px; font-weight: 600;
+                    color: rgba(255,255,255,0.9); margin-bottom: 4px; letter-spacing: 0.01em;
                 }
                 .pillar-text {
                     font-size: 13px; font-weight: 300;
-                    color: rgba(255,255,255,0.42);
-                    line-height: 1.65;
-                    margin: 0;
+                    color: rgba(255,255,255,0.42); line-height: 1.65; margin: 0;
                 }
                 .pillar-arrow {
                     font-size: 16px; color: rgba(255,255,255,0.12);
-                    margin-top: 2px;
+                    margin-top: 2px; flex-shrink: 0;
                     transition: color 0.2s, transform 0.2s;
-                    flex-shrink: 0;
                 }
-                .pillar-card:hover .pillar-arrow {
-                    color: var(--gold); transform: translateX(4px);
-                }
+                .pillar-card:hover .pillar-arrow { color: var(--gold); transform: translateX(4px); }
 
-                /* ── CTA buttons ── */
+                /* CTA */
                 .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
                 .btn-primary {
                     padding: 13px 30px;
                     background: linear-gradient(135deg, var(--gold) 0%, #a8722a 100%);
                     border: none; border-radius: 10px;
-                    font-family: 'Outfit', sans-serif;
-                    font-size: 13px; font-weight: 600;
-                    color: #1a1000;
-                    cursor: pointer;
-                    letter-spacing: 0.03em;
+                    font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600;
+                    color: #1a1000; cursor: pointer; letter-spacing: 0.03em;
                     transition: transform 0.2s, box-shadow 0.2s;
                     box-shadow: 0 8px 28px rgba(201,168,76,0.28);
                 }
                 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(201,168,76,0.38); }
                 .btn-ghost {
-                    padding: 13px 30px;
-                    background: transparent;
-                    border: 1px solid rgba(255,255,255,0.18);
-                    border-radius: 10px;
-                    font-family: 'Outfit', sans-serif;
-                    font-size: 13px; font-weight: 500;
-                    color: rgba(255,255,255,0.7);
-                    cursor: pointer;
+                    padding: 13px 30px; background: transparent;
+                    border: 1px solid rgba(255,255,255,0.18); border-radius: 10px;
+                    font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
+                    color: rgba(255,255,255,0.7); cursor: pointer; text-decoration: none;
+                    display: inline-flex; align-items: center;
                     transition: border-color 0.2s, color 0.2s, transform 0.2s;
                 }
                 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
 
-                /* ── right col ── */
-                .right-col {
-                    display: flex; flex-direction: column; gap: 28px;
-                }
+                /* right col */
+                .right-col { display: flex; flex-direction: column; gap: 28px; }
 
                 /* image frame */
-                .img-frame-outer {
-                    position: relative;
-                }
+                .img-frame-outer { position: relative; }
                 .img-frame {
-                    position: relative;
-                    border-radius: 20px;
-                    overflow: hidden;
+                    position: relative; border-radius: 20px; overflow: hidden;
                     aspect-ratio: 4/3;
                     border: 1px solid rgba(255,255,255,0.08);
-                    box-shadow:
-                        0 40px 80px rgba(0,0,0,0.55),
-                        inset 0 0 0 1px rgba(255,255,255,0.04);
+                    box-shadow: 0 40px 80px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.04);
                 }
-                .img-frame img {
-                    width: 100%; height: 100%;
-                    object-fit: cover; object-position: center;
-                    display: block;
-                }
+                .img-frame img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
                 .img-frame::after {
-                    content: '';
-                    position: absolute; inset: 0;
+                    content: ''; position: absolute; inset: 0;
                     background: linear-gradient(to top, rgba(11,11,16,0.6) 0%, transparent 55%);
-                    border-radius: inherit;
-                    pointer-events: none;
+                    border-radius: inherit; pointer-events: none;
                 }
-
-                /* decorative corner rule */
                 .img-corner {
-                    position: absolute;
-                    width: 52px; height: 52px;
-                    border-color: var(--gold);
-                    border-style: solid;
-                    border-width: 0;
-                    opacity: 0.6;
+                    position: absolute; width: 52px; height: 52px;
+                    border-color: var(--gold); border-style: solid; border-width: 0; opacity: 0.6;
                 }
                 .img-corner.tl { top: -10px; left: -10px; border-top-width: 1px; border-left-width: 1px; border-top-left-radius: 6px; }
                 .img-corner.br { bottom: -10px; right: -10px; border-bottom-width: 1px; border-right-width: 1px; border-bottom-right-radius: 6px; }
 
                 /* badge */
                 .img-badge {
-                    position: absolute;
-                    bottom: 20px; left: 20px; z-index: 3;
-                    background: rgba(11,11,16,0.82);
-                    backdrop-filter: blur(18px);
-                    border: 1px solid rgba(201,168,76,0.25);
-                    border-radius: 14px;
-                    padding: 14px 18px;
-                    display: flex; align-items: center; gap: 12px;
+                    position: absolute; bottom: 16px; left: 16px; z-index: 3;
+                    background: rgba(11,11,16,0.82); backdrop-filter: blur(18px);
+                    border: 1px solid rgba(201,168,76,0.25); border-radius: 14px;
+                    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
                     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+                    max-width: calc(100% - 32px);
                 }
                 .badge-dot {
-                    width: 8px; height: 8px; border-radius: 50%;
-                    background: #4ade80;
-                    flex-shrink: 0;
-                    box-shadow: 0 0 10px #4ade80;
+                    width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
+                    flex-shrink: 0; box-shadow: 0 0 10px #4ade80;
                     animation: pulse-green 2.2s ease-out infinite;
                 }
                 @keyframes pulse-green {
                     0%,100% { box-shadow: 0 0 6px #4ade80; }
                     50% { box-shadow: 0 0 14px #4ade80, 0 0 24px rgba(74,222,128,0.3); }
                 }
-                .badge-text-top {
-                    font-size: 11px; font-weight: 300;
-                    color: rgba(255,255,255,0.45);
-                    margin-bottom: 1px;
-                }
-                .badge-text-bot {
-                    font-size: 14px; font-weight: 600;
-                    color: #fff;
-                    font-family: 'Outfit', sans-serif;
-                }
+                .badge-text-top { font-size: 11px; font-weight: 300; color: rgba(255,255,255,0.45); margin-bottom: 1px; }
+                .badge-text-bot { font-size: 14px; font-weight: 600; color: #fff; font-family: 'Outfit', sans-serif; }
 
-                /* ── divider ── */
+                /* divider */
                 .gold-rule {
                     width: 100%; height: 1px;
                     background: linear-gradient(90deg, transparent, rgba(201,168,76,0.35), transparent);
                 }
 
-                /* ── stats grid ── */
+                /* stats grid */
                 .stats-grid {
-                    display: grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    gap: 1px;
-                    background: rgba(255,255,255,0.07);
-                    border-radius: 18px;
-                    overflow: hidden;
+                    display: grid; grid-template-columns: repeat(2, 1fr);
+                    gap: 1px; background: rgba(255,255,255,0.07);
+                    border-radius: 18px; overflow: hidden;
                     border: 1px solid rgba(255,255,255,0.07);
                 }
                 .stat-chip {
                     display: flex; flex-direction: column; align-items: flex-start;
-                    gap: 4px;
-                    padding: 26px 24px 22px;
+                    gap: 4px; padding: 22px 20px 18px;
                     background: rgba(11,11,16,0.85);
-                    transition: background 0.25s;
-                    cursor: default;
+                    transition: background 0.25s; cursor: default;
                 }
-                .stat-chip:hover {
-                    background: rgba(201,168,76,0.06);
-                }
-                .stat-icon {
-                    font-size: 12px; color: var(--gold); margin-bottom: 6px;
-                    letter-spacing: 0;
-                }
+                .stat-chip:hover { background: rgba(201,168,76,0.06); }
+                .stat-icon { font-size: 12px; color: var(--gold); margin-bottom: 6px; }
                 .stat-val {
                     font-family: 'Cormorant Garamond', serif;
-                    font-size: clamp(30px, 3.5vw, 42px);
-                    font-weight: 700;
-                    color: #fff;
-                    line-height: 1;
-                    letter-spacing: -0.02em;
+                    font-size: clamp(26px, 3.5vw, 42px);
+                    font-weight: 700; color: #fff; line-height: 1; letter-spacing: -0.02em;
                 }
                 .stat-label {
-                    font-size: 10px; font-weight: 500;
-                    letter-spacing: 0.14em;
-                    text-transform: uppercase;
-                    color: rgba(255,255,255,0.38);
-                    margin-top: 2px;
+                    font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+                    text-transform: uppercase; color: rgba(255,255,255,0.38); margin-top: 2px;
                 }
 
-                /* ── bottom strip ── */
+                /* bottom strip */
                 .about-strip {
                     position: relative; z-index: 2;
                     border-top: 1px solid rgba(255,255,255,0.06);
-                    padding: 28px 48px;
-                    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+                    padding: 24px 48px;
+                    display: flex; align-items: center; justify-content: space-between;
+                    flex-wrap: wrap; gap: 16px;
                     max-width: 1360px; margin: 0 auto;
                 }
                 .strip-text {
                     font-size: 12px; font-weight: 400;
-                    color: rgba(255,255,255,0.28);
-                    letter-spacing: 0.06em;
+                    color: rgba(255,255,255,0.28); letter-spacing: 0.06em;
                 }
                 .strip-badges { display: flex; gap: 10px; flex-wrap: wrap; }
                 .strip-badge {
-                    padding: 6px 14px;
-                    border: 1px solid rgba(255,255,255,0.1);
-                    border-radius: 999px;
-                    font-size: 11px; font-weight: 500;
-                    color: rgba(255,255,255,0.38);
-                    letter-spacing: 0.06em;
-                    transition: border-color 0.2s, color 0.2s;
-                    cursor: default;
+                    padding: 6px 14px; border: 1px solid rgba(255,255,255,0.1);
+                    border-radius: 999px; font-size: 11px; font-weight: 500;
+                    color: rgba(255,255,255,0.38); letter-spacing: 0.06em;
+                    transition: border-color 0.2s, color 0.2s; cursor: default;
+                    display: flex; align-items: center; gap: 6px;
                 }
                 .strip-badge:hover { border-color: var(--gold); color: var(--gold); }
+
+                /* ── RESPONSIVE ─────────────────────────────────── */
+                @media (max-width: 1024px) {
+                    .about-inner { gap: 0 48px; padding: 80px 32px 60px; }
+                }
+
+                @media (max-width: 768px) {
+                    .about-inner {
+                        grid-template-columns: 1fr;
+                        gap: 48px;
+                        padding: 72px 20px 52px;
+                    }
+                    .about-h2 { font-size: clamp(32px, 9vw, 56px); }
+                    .about-sub { font-size: 14px; max-width: 100%; margin-bottom: 28px; }
+                    .pillars { margin-bottom: 32px; }
+                    .pillar-card { padding: 14px 16px; gap: 14px; }
+                    .cta-row { flex-direction: column; }
+                    .btn-primary, .btn-ghost { width: 100%; text-align: center; justify-content: center; padding: 14px 24px; }
+                    .right-col { gap: 20px; }
+                    .stat-chip { padding: 18px 16px 14px; }
+                    .about-strip {
+                        flex-direction: column; align-items: flex-start;
+                        padding: 20px 20px; gap: 14px;
+                    }
+                    .strip-badges { gap: 8px; }
+                    .strip-badge { font-size: 10px; padding: 5px 10px; }
+                    .strip-badge img { height: 40px !important; }
+                }
+
+                @media (max-width: 480px) {
+                    .about-inner { padding: 64px 16px 44px; gap: 36px; }
+                    .eyebrow { font-size: 9px; }
+                    .about-h2 { font-size: clamp(28px, 10vw, 44px); }
+                    .img-badge { padding: 10px 12px; gap: 8px; }
+                    .badge-text-bot { font-size: 12px; }
+                    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+                    .stat-chip { padding: 14px 12px 12px; }
+                    .stat-val { font-size: clamp(22px, 6vw, 32px); }
+                    .stat-label { font-size: 9px; }
+                    .strip-badge img { height: 30px !important; }
+                }
             `}</style>
 
             {/* ── Video background ───────────────────────────────── */}
@@ -468,8 +418,6 @@ export default function AboutSection() {
                     >
                         <span className="eyebrow-line" />
                         About EmpireOne BPO Solutions Inc.
-
-                        
                     </motion.div>
 
                     <motion.h2
@@ -620,7 +568,7 @@ export default function AboutSection() {
                 </div>
             </div>
             <motion.div
-                className="about-strip "
+                className="about-strip"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, amount: 0.5 }}
@@ -650,14 +598,11 @@ export default function AboutSection() {
                             img: "/images/BBB-Logo.png",
                         },
                     ].map((b) => (
-                        <span
-                            key={b.label}
-                            className="strip-badge flex items-center gap-2"
-                        >
+                        <span key={b.label} className="strip-badge">
                             <img
                                 src={b.img}
                                 alt={b.label}
-                                style={{ height: 60, width: "auto" }}
+                                style={{ height: 50, width: "auto" }}
                             />
                             <span>{b.label}</span>
                         </span>

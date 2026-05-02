@@ -1,40 +1,31 @@
 import Card from "@/app/_components/card";
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { router } from "@inertiajs/react";
+import store from "@/app/store/store";
+import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
+import { setJobPostingId } from "@/app/redux/app-slice";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 /* =========================
-   DATA
+   HELPERS
 ========================= */
-const jobListings = {
-    "Customer Experience & Operations": {
-        subtitle:
-            "Deliver exceptional support and streamline our global operations.",
-        jobs: [
-            {
-                title: "Senior Customer Success Manager (Bilingual)",
-                tags: ["Remote", "Full-time"],
-            },
-            {
-                title: "Technical Support Specialist (L2)",
-                tags: ["Remote", "Full-time", "24/7 Shift"],
-            },
-            { title: "Operations Team Lead", tags: ["Hybrid", "Full-time"] },
-            { title: "QA Specialist Manager", tags: ["Remote", "Full-time"] },
-            {
-                title: "Product Support Specialist (L3)",
-                tags: ["Remote", "Full-time", "24/7 Shift"],
-            },
-            { title: "Account Lead", tags: ["Hybrid", "Full-time"] },
-        ],
-    },
-};
+function buildTags(posting) {
+    const tags = [];
+    const location = posting.job_requisition?.location?.name;
+    const employment = posting.job_requisition?.employment_type;
+    if (location) tags.push(location);
+    if (employment) tags.push(employment);
+    return tags;
+}
 
-const featuredJobs = [
-    { title: "Senior Customer Success Manager", tags: ["Remote", "Full-time"] },
-    { title: "Senior UX Designer", tags: ["Hybrid - San Carlos", "Full-time"] },
-    { title: "IT Staff (Tier 2)", tags: ["Full-time", "On-Site"] },
-    { title: "Operations Team Lead", tags: ["Hybrid", "Full-time"] },
-    { title: "QA Specialist Manager", tags: ["Full-time", "On-Site"] },
-];
+function groupByDepartment(postings) {
+    return postings.reduce((acc, posting) => {
+        const dept = posting.job_requisition?.department?.name ?? "General";
+        if (!acc[dept]) acc[dept] = [];
+        acc[dept].push(posting);
+        return acc;
+    }, {});
+}
 
 /* =========================
    ICON
@@ -64,60 +55,170 @@ const getTagStyle = (tag) =>
 /* =========================
    COMPONENTS
 ========================= */
-function JobCard({ title, tags }) {
+function SkeletonCard() {
+    return (
+        <div className="animate-pulse rounded-2xl border border-purple-800/30 bg-[rgba(20,8,40,0.6)] p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-10">
+            <div className="flex flex-col gap-2 flex-1">
+                <div className="h-4 bg-purple-900/50 rounded w-3/4" />
+                <div className="flex gap-2">
+                    <div className="h-5 w-16 bg-blue-900/40 rounded-full" />
+                    <div className="h-5 w-20 bg-blue-900/40 rounded-full" />
+                </div>
+            </div>
+            <div className="h-8 w-24 bg-purple-900/40 rounded-xl self-start sm:self-auto" />
+        </div>
+    );
+}
+
+function JobCard({ id, title, tags, onApply, posting }) {
+    const [expanded, setExpanded] = useState(false);
+    const req = posting?.job_requisition;
+
     return (
         <Card
             outlined
-            padding="p-6"
-            className="!flex-row items-center justify-between gap-10 !rounded-2xl !border-l-[3px] !border-l-orange-400 !border-purple-800/30 !bg-[rgba(20,8,40,0.6)] !text-white hover:!bg-purple-900/20 hover:!border-purple-500/50 transition-all duration-200"
+            padding="p-5 sm:p-6"
+            className="!flex-col !rounded-2xl !border-l-[3px] !border-l-orange-400 !border-purple-800/30 !bg-[rgba(20,8,40,0.6)] !text-white hover:!border-purple-500/50 transition-all duration-200"
         >
-            {/* LEFT CONTENT */}
-            <div className="flex flex-col gap-3">
-                <p className="text-base font-semibold text-purple-100 leading-snug">
-                    {title}
-                </p>
+            {/* TOP ROW */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-10">
+                {/* LEFT CONTENT */}
+                <div className="flex flex-col gap-3 min-w-0">
+                    <p className="text-base font-bold text-purple-100 leading-snug uppercase tracking-wide">
+                        {title}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {tags.map((tag) => (
+                            <span
+                                key={tag}
+                                className="text-xs rounded-full px-3 py-1"
+                                style={getTagStyle(tag)}
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
 
-                <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className="text-xs rounded-full px-3 py-1"
-                            style={
-                                tag === "24/7 Shift"
-                                    ? {
-                                          color: "rgba(251,146,60,0.9)",
-                                          background: "rgba(251,146,60,0.1)",
-                                          border: "1px solid rgba(251,146,60,0.3)",
-                                      }
-                                    : {
-                                          color: "rgba(147,197,253,0.85)",
-                                          background: "rgba(59,130,246,0.1)",
-                                          border: "1px solid rgba(59,130,246,0.3)",
-                                      }
-                            }
-                        >
-                            {tag}
+                {/* BUTTONS */}
+                <div className="flex flex-col gap-2 w-full max-w-[150px] flex-shrink-0">
+                    {/* APPLY BUTTON */}
+                    <button
+                        onClick={() => onApply(id)}
+                        className="w-full h-10 flex items-center justify-center text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200 hover:scale-105"
+                        style={{
+                            color: "#c084fc",
+                            background: "rgba(168,85,247,0.12)",
+                            border: "1px solid rgba(168,85,247,0.3)",
+                        }}
+                    >
+                        Apply Now →
+                    </button>
+
+                    {/* VIEW BUTTON */}
+                    <button
+                        onClick={() => setExpanded((p) => !p)}
+                        className="w-full h-10 flex items-center justify-center gap-2 text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200"
+                        style={{
+                            color: expanded
+                                ? "#fb923c"
+                                : "rgba(200,180,255,0.6)",
+                            background: expanded
+                                ? "rgba(251,146,60,0.1)"
+                                : "rgba(255,255,255,0.05)",
+                            border: expanded
+                                ? "1px solid rgba(251,146,60,0.3)"
+                                : "1px solid rgba(255,255,255,0.1)",
+                        }}
+                    >
+                        <span>
+                            {expanded ? "Hide Details" : "View Details"}
                         </span>
-                    ))}
+
+                        <ChevronDown
+                            size={16}
+                            className={`transition-transform duration-300 ${
+                                expanded ? "rotate-180" : "rotate-0"
+                            }`}
+                        />
+                    </button>
                 </div>
             </div>
 
-            {/* RIGHT BUTTON */}
-            <button
-                className="flex-shrink-0 text-sm font-bold rounded-xl px-4 py-2 whitespace-nowrap hover:scale-105 transition-transform"
-                style={{
-                    color: "#c084fc",
-                    background: "rgba(168,85,247,0.12)",
-                    border: "1px solid rgba(168,85,247,0.3)",
-                }}
+            {/* EXPANDABLE DETAILS */}
+            <div
+                className="overflow-hidden transition-all duration-500 ease-in-out"
+                style={{ maxHeight: expanded ? "1000px" : "0px" }}
             >
-                Apply Now →
-            </button>
+                <div
+                    className="flex flex-col gap-4 mt-5 pt-5"
+                    style={{ borderTop: "1px solid rgba(168,85,247,0.15)" }}
+                >
+                    {req?.qualifications && (
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-2">
+                                Job Qualifications
+                            </p>
+                            <div
+                                className="text-sm leading-relaxed prose-sm"
+                                style={{ color: "rgba(200,180,255,0.7)" }}
+                                dangerouslySetInnerHTML={{
+                                    __html: req.qualifications,
+                                }}
+                            />
+                        </div>
+                    )}
+                    {req?.responsibilities && (
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-2">
+                                Job Responsibilities
+                            </p>
+                            <div
+                                className="text-sm leading-relaxed"
+                                style={{ color: "rgba(200,180,255,0.7)" }}
+                                dangerouslySetInnerHTML={{
+                                    __html: req.responsibilities,
+                                }}
+                            />
+                        </div>
+                    )}
+                    {req?.justification_for_position && (
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-widest text-orange-400 mb-2">
+                                Justification for Position
+                            </p>
+                            <div
+                                className="text-sm leading-relaxed"
+                                style={{ color: "rgba(200,180,255,0.7)" }}
+                                dangerouslySetInnerHTML={{
+                                    __html: req.justification_for_position,
+                                }}
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
         </Card>
     );
 }
 
 export default function CareerSection() {
+    const { job_postings, loading } = useSelector(
+        (state) => state.job_postings,
+    );
+
+    useEffect(() => {
+        store.dispatch(get_job_posting_thunk());
+    }, []);
+
+    const handleApply = (id) => {
+        store.dispatch(setJobPostingId(id));
+        router.visit("/talent/application");
+    };
+
+    const grouped = groupByDepartment(job_postings ?? []);
+    const featuredJobs = (job_postings ?? []).slice(0, 5);
+
     return (
         <section
             id="careers"
@@ -139,11 +240,11 @@ export default function CareerSection() {
                 }}
             />
 
-            <div className="relative z-10 max-w-[1300px] mx-auto px-6 py-16 lg:py-24 w-full flex flex-col gap-10">
+            <div className="relative z-10 max-w-[1300px] mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 w-full flex flex-col gap-8 sm:gap-10">
                 {/* HEADER */}
                 <div className="flex flex-col gap-3">
                     <div
-                        className="inline-flex items-center gap-2 self-start rounded-full px-4 py-1.5"
+                        className="inline-flex items-center gap-2 self-start rounded-full px-3 sm:px-4 py-1.5"
                         style={{
                             background: "rgba(168,85,247,0.12)",
                             border: "1px solid rgba(168,85,247,0.3)",
@@ -162,7 +263,7 @@ export default function CareerSection() {
                     </div>
 
                     <h2
-                        className="text-4xl sm:text-5xl font-extrabold"
+                        className="text-3xl sm:text-4xl lg:text-5xl font-extrabold"
                         style={{
                             background:
                                 "linear-gradient(90deg,#c084fc 0%,#93c5fd 55%,#fb923c 100%)",
@@ -184,118 +285,154 @@ export default function CareerSection() {
 
                 {/* GRID */}
                 <div
-                    className="grid"
+                    className="flex flex-col lg:grid lg:gap-16 xl:gap-20"
                     style={{
-                        gridTemplateColumns: "1fr 400px",
-                        gap: 80,
+                        gridTemplateColumns: "1fr 380px",
                         alignItems: "start",
                     }}
                 >
-                    {/* LEFT */}
-                    <div className="flex flex-col gap-10">
-                        {Object.entries(jobListings).map(
-                            ([category, { subtitle, jobs }]) => (
-                                <div
-                                    key={category}
-                                    className="flex flex-col gap-1"
-                                >
-                                    <p className="text-xs font-bold tracking-widest uppercase mb-1 text-orange-400">
-                                        {category}
-                                    </p>
-
-                                    <div
-                                        className="inline-flex self-start rounded-full px-4 py-1 mb-4 text-xs text-purple-300"
-                                        style={{
-                                            background: "rgba(168,85,247,0.1)",
-                                            border: "1px solid rgba(168,85,247,0.25)",
-                                        }}
-                                    >
-                                        {subtitle}
-                                    </div>
-
-                                    <div className="flex flex-col gap-6">
-                                        {jobs.map((job) => (
-                                            <JobCard key={job.title} {...job} />
-                                        ))}
-                                    </div>
-                                </div>
-                            ),
-                        )}
-                    </div>
-
-                    {/* RIGHT */}
-                    <div
-                        className="sticky top-6 flex flex-col"
-                        style={{ alignSelf: "start" }}
-                    >
-                        <div className="relative flex justify-center items-end h-[260px] mb-[-16px]">
+                    {/* LEFT — job listings grouped by department */}
+                    <div className="flex flex-col gap-8 sm:gap-10">
+                        {loading ? (
+                            <div className="flex flex-col gap-6">
+                                {[...Array(3)].map((_, i) => (
+                                    <SkeletonCard key={i} />
+                                ))}
+                            </div>
+                        ) : Object.keys(grouped).length === 0 ? (
                             <div
-                                className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full"
-                                style={{
-                                    width: 190,
-                                    height: 190,
-                                    background:
-                                        "linear-gradient(135deg,#7c3aed,#a855f7)",
-                                    boxShadow: "0 0 40px rgba(168,85,247,0.4)",
-                                }}
-                            />
-
-                            <img
-                                src="/images/mm.png"
-                                alt="Career"
-                                className="relative z-20"
-                                style={{
-                                    height: 255,
-                                    objectFit: "cover",
-                                    objectPosition: "top",
-                                }}
-                            />
-                        </div>
-
-                        {/* FEATURED */}
-                        <Card
-                            outlined
-                            padding="p-5"
-                            className="!rounded-2xl !border-purple-700/30 !bg-[rgba(20,8,40,0.75)] !text-white gap-6 backdrop-blur-md"
-                        >
-                            <h3 className="text-sm font-bold text-purple-300 mb-2">
-                                Featured Opportunities
-                            </h3>
-
-                            {featuredJobs.map((job, i) => (
-                                <div
-                                    key={job.title}
-                                    className="flex items-start gap-3 pb-3"
-                                    style={{
-                                        borderBottom:
-                                            i < featuredJobs.length - 1
-                                                ? "1px solid rgba(168,85,247,0.12)"
-                                                : "none",
-                                    }}
+                                className="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-purple-800/20"
+                                style={{ background: "rgba(20,8,40,0.4)" }}
+                            >
+                                <p className="text-purple-300 font-semibold text-lg mb-1">
+                                    No open positions right now
+                                </p>
+                                <p
+                                    className="text-sm"
+                                    style={{ color: "rgba(200,180,255,0.4)" }}
                                 >
-                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-600 to-indigo-600">
-                                        {briefcaseIcon}
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs font-semibold text-purple-100 mb-1">
-                                            {job.title}
+                                    Check back soon — we're always growing!
+                                </p>
+                            </div>
+                        ) : (
+                            Object.entries(grouped).map(
+                                ([department, postings]) => (
+                                    <div
+                                        key={department}
+                                        className="flex flex-col gap-1"
+                                    >
+                                        <p className="text-xs font-bold tracking-widest uppercase mb-1 text-orange-400">
+                                            {department}
                                         </p>
-
-                                        <div className="flex flex-wrap gap-1">
-                                            {job.tags.map((tag) => (
-                                                <span
-                                                    key={tag}
-                                                    className="text-xs rounded-full px-2 py-0.5 text-purple-300 bg-purple-500/10 border border-purple-500/20"
-                                                >
-                                                    {tag}
-                                                </span>
+                                        <div className="flex flex-col gap-6">
+                                            {postings.map((posting) => (
+                                                <JobCard
+                                                    key={posting.id}
+                                                    id={posting.id}
+                                                    title={
+                                                        posting.job_requisition
+                                                            ?.title
+                                                    }
+                                                    tags={buildTags(posting)}
+                                                    onApply={handleApply}
+                                                    posting={posting}
+                                                />
                                             ))}
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </Card>
+                                ),
+                            )
+                        )}
+                    </div>
+
+                    {/* RIGHT — sticky sidebar */}
+                    <div
+                        className="hidden lg:flex lg:sticky lg:top-6 flex-col"
+                        style={{ alignSelf: "start" }}
+                    >
+                        {/* Wrapper: image behind, card in front */}
+                        <div className="relative">
+                            {/* Image + orb — z-0, behind card */}
+                            <div className="relative flex justify-center items-end h-[280px]">
+                                <div
+                                    className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full z-0"
+                                    style={{
+                                        width: 180,
+                                        height: 180,
+                                        background:
+                                            "linear-gradient(135deg,#7c3aed,#a855f7)",
+                                        boxShadow:
+                                            "0 0 50px rgba(168,85,247,0.5)",
+                                    }}
+                                />
+                                <img
+                                    src="/images/mm.png"
+                                    alt="Career"
+                                    className="relative z-[1] drop-shadow-2xl"
+                                    style={{
+                                        height: 260,
+                                        objectFit: "cover",
+                                        objectPosition: "top",
+                                    }}
+                                />
+                            </div>
+
+                            {/* Card — z-10, pulled up over image with negative margin */}
+                            <Card
+                                outlined
+                                padding="p-5"
+                                className="relative z-10 -mt-16 !rounded-2xl !border-purple-700/30 !bg-[rgba(20,8,40,0.90)] !text-white backdrop-blur-md flex flex-col gap-0"
+                            >
+                                <h3 className="text-sm font-bold text-purple-300 mb-3">
+                                    Featured Opportunities
+                                </h3>
+
+                                {featuredJobs.length === 0 ? (
+                                    <p
+                                        className="text-xs"
+                                        style={{
+                                            color: "rgba(200,180,255,0.4)",
+                                        }}
+                                    >
+                                        New openings coming soon — stay tuned!
+                                    </p>
+                                ) : (
+                                    featuredJobs.map((job, i) => (
+                                        <div
+                                            key={job.id}
+                                            className="flex items-start gap-3 py-3"
+                                            style={{
+                                                borderBottom:
+                                                    i < featuredJobs.length - 1
+                                                        ? "1px solid rgba(168,85,247,0.12)"
+                                                        : "none",
+                                            }}
+                                        >
+                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-600 to-indigo-600">
+                                                {briefcaseIcon}
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-semibold text-purple-100 mb-1">
+                                                    {job.job_requisition?.title}
+                                                </p>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {buildTags(job).map(
+                                                        (tag) => (
+                                                            <span
+                                                                key={tag}
+                                                                className="text-xs rounded-full px-2 py-0.5 text-purple-300 bg-purple-500/10 border border-purple-500/20"
+                                                            >
+                                                                {tag}
+                                                            </span>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </Card>
+                        </div>
                     </div>
                 </div>
             </div>

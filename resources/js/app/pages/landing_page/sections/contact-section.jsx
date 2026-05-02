@@ -143,14 +143,15 @@ const INFO_ITEMS = [
     {
         icon: <IconPin />,
         label: "Our Locations",
+        color: "from-purple-500 to-indigo-600",
         content: (
             <div className="space-y-3 mt-1">
                 {CONTACT_DATA.addresses.map((loc, i) => (
                     <div key={i}>
-                        <p className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-0.5">
+                        <p className="text-xs font-bold text-purple-400 uppercase tracking-wide mb-0.5">
                             {loc.name}
                         </p>
-                        <p className="text-sm text-slate-500 leading-relaxed">
+                        <p className="text-sm text-white/50 leading-relaxed">
                             {loc.address}
                         </p>
                     </div>
@@ -161,10 +162,11 @@ const INFO_ITEMS = [
     {
         icon: <IconPhone />,
         label: "Phone Number",
+        color: "from-orange-500 to-pink-500",
         content: (
             <a
                 href={`tel:${CONTACT_DATA.phone}`}
-                className="text-sm text-slate-500 hover:text-blue-600 transition-colors"
+                className="text-sm text-white/50 hover:text-orange-400 transition-colors"
             >
                 {CONTACT_DATA.phone}
             </a>
@@ -173,13 +175,14 @@ const INFO_ITEMS = [
     {
         icon: <IconMail />,
         label: "Email Address",
+        color: "from-sky-500 to-blue-600",
         content: (
             <div className="space-y-0.5">
                 {CONTACT_DATA.emails.map((email, i) => (
                     <a
                         key={i}
                         href={`mailto:${email}`}
-                        className="block text-sm text-slate-500 hover:text-blue-600 transition-colors"
+                        className="block text-sm text-white/50 hover:text-sky-400 transition-colors break-all"
                     >
                         {email}
                     </a>
@@ -190,8 +193,9 @@ const INFO_ITEMS = [
     {
         icon: <IconClock />,
         label: "Office Hours",
+        color: "from-emerald-500 to-teal-600",
         content: CONTACT_DATA.officeHours.map((h, i) => (
-            <p key={i} className="text-sm text-slate-500">
+            <p key={i} className="text-sm text-white/50">
                 {h}
             </p>
         )),
@@ -202,20 +206,20 @@ const INFO_ITEMS = [
 function Field({ label, required, error, children }) {
     return (
         <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                {label} {required && <span className="text-red-400">*</span>}
+            <label className="block text-sm font-semibold text-white/70 mb-1.5">
+                {label} {required && <span className="text-orange-400">*</span>}
             </label>
             {children}
-            {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+            {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
         </div>
     );
 }
 
 const inputCls = (err) =>
-    `w-full px-4 py-3 rounded-xl border bg-slate-50 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:bg-white transition-all duration-200 ${
+    `w-full px-4 py-3 rounded-xl border bg-white/5 text-white placeholder-white/25 text-sm focus:outline-none focus:ring-2 focus:bg-white/8 transition-all duration-200 ${
         err
-            ? "border-red-300 focus:ring-red-300"
-            : "border-slate-200 focus:ring-blue-300 focus:border-blue-300"
+            ? "border-red-500/50 focus:ring-red-500/30"
+            : "border-white/10 focus:ring-purple-500/40 focus:border-purple-500/50"
     }`;
 
 // ── Main Component ──────────────────────────────────────────
@@ -253,7 +257,6 @@ export default function ContactSection() {
             return;
         }
         setStatus("submitting");
-        // TODO: wire up real submission
         setTimeout(() => {
             setStatus("success");
             setForm({ name: "", email: "", subject: "", message: "" });
@@ -265,128 +268,123 @@ export default function ContactSection() {
         <section
             id="contact"
             aria-labelledby="contact-heading"
-            className="relative min-h-screen overflow-hidden py-20 md:py-32"
+            className="relative overflow-hidden py-20 md:py-32 bg-[#0a0a14] text-white"
         >
-            {/* Background */}
-            <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                style={{
-                    backgroundImage:
-                        "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-                }}
-            />
-            <div
-                className="absolute inset-0"
-                style={{
-                    background:
-                        "linear-gradient(135deg, rgba(239,246,255,0.97) 0%, rgba(219,234,254,0.93) 30%, rgba(191,219,254,0.90) 40%)",
-                }}
-            />
+            {/* Background glows */}
+            <div className="absolute w-[600px] h-[600px] bg-purple-600/20 blur-3xl rounded-full -top-40 -left-32 pointer-events-none" />
+            <div className="absolute w-[500px] h-[500px] bg-orange-500/15 blur-3xl rounded-full top-20 -right-24 pointer-events-none" />
+            <div className="absolute w-[400px] h-[400px] bg-sky-500/10 blur-3xl rounded-full bottom-10 left-1/3 pointer-events-none" />
 
-            <div className="relative max-w-7xl mx-auto px-6 md:px-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+                {/* Section heading */}
+                <Reveal delay={0}>
+                    <div className="text-center mb-12 sm:mb-16">
+                        <div
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-4"
+                            style={{
+                                background: "rgba(168,85,247,0.12)",
+                                border: "1px solid rgba(168,85,247,0.3)",
+                                color: "#c084fc",
+                            }}
+                        >
+                            <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_#a855f7]" />
+                            Get In Touch
+                        </div>
+                        <h2
+                            id="contact-heading"
+                            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight"
+                        >
+                            <span className="bg-gradient-to-r from-purple-400 to-orange-400 text-transparent bg-clip-text">
+                                Contact Us
+                            </span>
+                        </h2>
+                        <p className="text-white/50 mt-3 text-sm sm:text-base max-w-md mx-auto">
+                            Fill out the form and our team will respond within
+                            24 hours.
+                        </p>
+                    </div>
+                </Reveal>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
                     {/* ── LEFT: Form ── */}
-                    <Reveal delay={50}>
-                        <div className="bg-white rounded-2xl border border-slate-200/80 p-8 md:p-10 shadow-sm shadow-slate-100">
-                            <Reveal delay={100}>
-                                <h2
-                                    id="contact-heading"
-                                    className="text-3xl font-black text-slate-900 mb-1.5 tracking-tight"
-                                >
-                                    Get In Touch
-                                </h2>
-                                <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-                                    Fill out the form and our team will respond
-                                    within 24 hours.
-                                </p>
-                            </Reveal>
-
+                    <Reveal delay={80}>
+                        <div className="bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 p-6 sm:p-8 shadow-2xl">
                             <form
                                 onSubmit={handleSubmit}
                                 noValidate
-                                className="space-y-5"
+                                className="space-y-5 p-7"
                             >
                                 {/* Name + Email */}
-                                <Reveal delay={150}>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <Field
-                                            label="Your Name"
-                                            required
-                                            error={errors.name}
-                                        >
-                                            <input
-                                                id="name"
-                                                name="name"
-                                                type="text"
-                                                value={form.name}
-                                                onChange={handleChange}
-                                                placeholder="Juan dela Cruz"
-                                                className={inputCls(
-                                                    errors.name,
-                                                )}
-                                            />
-                                        </Field>
-                                        <Field
-                                            label="Email Address"
-                                            required
-                                            error={errors.email}
-                                        >
-                                            <input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                value={form.email}
-                                                onChange={handleChange}
-                                                placeholder="juan@example.com"
-                                                className={inputCls(
-                                                    errors.email,
-                                                )}
-                                            />
-                                        </Field>
-                                    </div>
-                                </Reveal>
-
-                                {/* Subject */}
-                                <Reveal delay={200}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <Field
-                                        label="Subject"
+                                        label="Your Name"
                                         required
-                                        error={errors.subject}
+                                        error={errors.name}
                                     >
                                         <input
-                                            id="subject"
-                                            name="subject"
+                                            id="name"
+                                            name="name"
                                             type="text"
-                                            value={form.subject}
+                                            value={form.name}
                                             onChange={handleChange}
-                                            placeholder="How can we help you?"
-                                            className={inputCls(errors.subject)}
+                                            placeholder="Juan dela Cruz"
+                                            className={inputCls(errors.name)}
                                         />
                                     </Field>
-                                </Reveal>
+                                    <Field
+                                        label="Email Address"
+                                        required
+                                        error={errors.email}
+                                    >
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={form.email}
+                                            onChange={handleChange}
+                                            placeholder="juan@example.com"
+                                            className={inputCls(errors.email)}
+                                        />
+                                    </Field>
+                                </div>
+
+                                {/* Subject */}
+                                <Field
+                                    label="Subject"
+                                    required
+                                    error={errors.subject}
+                                >
+                                    <input
+                                        id="subject"
+                                        name="subject"
+                                        type="text"
+                                        value={form.subject}
+                                        onChange={handleChange}
+                                        placeholder="How can we help you?"
+                                        className={inputCls(errors.subject)}
+                                    />
+                                </Field>
 
                                 {/* Message */}
-                                <Reveal delay={250}>
-                                    <Field
-                                        label="Message"
-                                        required
-                                        error={errors.message}
-                                    >
-                                        <textarea
-                                            id="message"
-                                            name="message"
-                                            rows={5}
-                                            value={form.message}
-                                            onChange={handleChange}
-                                            placeholder="Write your message here..."
-                                            className={`${inputCls(errors.message)} resize-none`}
-                                        />
-                                    </Field>
-                                </Reveal>
+                                <Field
+                                    label="Message"
+                                    required
+                                    error={errors.message}
+                                >
+                                    <textarea
+                                        id="message"
+                                        name="message"
+                                        rows={5}
+                                        value={form.message}
+                                        onChange={handleChange}
+                                        placeholder="Write your message here..."
+                                        className={`${inputCls(errors.message)} resize-none`}
+                                    />
+                                </Field>
 
                                 {/* Success banner */}
                                 {status === "success" && (
-                                    <div className="flex items-center gap-2.5 bg-green-50 border border-green-200 text-green-700 text-sm font-medium px-4 py-3 rounded-xl">
+                                    <div className="flex items-center gap-2.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium px-4 py-3 rounded-xl">
                                         <svg
                                             width="16"
                                             height="16"
@@ -406,77 +404,58 @@ export default function ContactSection() {
                                 )}
 
                                 {/* Submit */}
-                                <Reveal delay={300}>
-                                    <button
-                                        type="submit"
-                                        disabled={status === "submitting"}
-                                        className="w-full flex items-center justify-center gap-2.5 py-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25 text-sm tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
-                                    >
-                                        {status === "submitting" ? (
-                                            <>
-                                                <svg
-                                                    className="animate-spin"
-                                                    width="16"
-                                                    height="16"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2.5"
-                                                >
-                                                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                                                </svg>
-                                                Sending…
-                                            </>
-                                        ) : (
-                                            <>
-                                                <IconSend /> Send Message
-                                            </>
-                                        )}
-                                    </button>
-                                </Reveal>
+                                <button
+                                    type="submit"
+                                    disabled={status === "submitting"}
+                                    className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 active:scale-[0.99] text-white font-bold rounded-xl transition-all duration-200 shadow-lg shadow-purple-500/20 text-sm tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    {status === "submitting" ? (
+                                        <>
+                                            <svg
+                                                className="animate-spin"
+                                                width="16"
+                                                height="16"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2.5"
+                                            >
+                                                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                            </svg>
+                                            Sending…
+                                        </>
+                                    ) : (
+                                        <>
+                                            <IconSend /> Send Message
+                                        </>
+                                    )}
+                                </button>
                             </form>
                         </div>
                     </Reveal>
 
                     {/* ── RIGHT: Info ── */}
-                    <Reveal delay={120} from="right">
-                        <div className="space-y-2">
-                            {/* Badge */}
-                            <div
-                                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold tracking-widest uppercase mb-4"
-                                style={{
-                                    background: "rgba(59,130,246,0.08)",
-                                    border: "1px solid rgba(59,130,246,0.2)",
-                                    color: "#3b82f6",
-                                }}
-                            >
-                                <span className="w-2 h-2 rounded-full bg-blue-500 inline-block animate-pulse" />
-                                Contact Information
-                            </div>
-
-                            {/* Info cards */}
-                            <div className="space-y-3">
-                                {INFO_ITEMS.map(
-                                    ({ icon, label, content }, i) => (
-                                        <Reveal
-                                            key={label}
-                                            delay={160 + i * 70}
-                                        >
-                                            <div className="flex items-start gap-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200">
-                                                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-500 flex-shrink-0 mt-0.5">
-                                                    {icon}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-bold text-slate-900 text-sm mb-1">
-                                                        {label}
-                                                    </p>
-                                                    {content}
-                                                </div>
+                    <Reveal delay={140} from="right">
+                        <div className="flex flex-col gap-3">
+                            {INFO_ITEMS.map(
+                                ({ icon, label, color, content }, i) => (
+                                    <Reveal key={label} delay={160 + i * 60}>
+                                        <div className="flex items-start gap-4 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 p-4 sm:p-5 hover:border-white/20 hover:bg-white/5 transition-all duration-200">
+                                            <div
+                                                className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-white flex-shrink-0 mt-0.5 shadow-lg`}
+                                            >
+                                                {icon}
                                             </div>
-                                        </Reveal>
-                                    ),
-                                )}
-                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-bold text-white/90 text-sm mb-1">
+                                                    {label}
+                                                </p>
+                                                {content}
+                                            </div>
+                                        </div>
+                                    </Reveal>
+                                ),
+                            )}
                         </div>
                     </Reveal>
                 </div>
