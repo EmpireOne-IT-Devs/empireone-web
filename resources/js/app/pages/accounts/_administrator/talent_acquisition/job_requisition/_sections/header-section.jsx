@@ -1,5 +1,4 @@
 import React from "react";
-import SettingsSection from "./settings-section";
 
 export default function HeaderSection() {
     return (
@@ -9,7 +8,6 @@ export default function HeaderSection() {
                 <div className="text-gray-600">Manage all job requisitions</div>
             </div>
             <div>
-              <SettingsSection />
             </div>
         </div>
     );
