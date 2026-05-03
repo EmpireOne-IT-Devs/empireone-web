@@ -8,6 +8,7 @@ use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
 use App\Http\Controllers\API\ER\ERLeaderController;
+use App\Http\Controllers\API\ER\ERPerformanceEvaluationFormController;
 use App\Http\Controllers\API\ER\ERSubordinateController;
 use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
@@ -113,6 +114,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::prefix('er')->group(function () {
         Route::resource('leaders', ERLeaderController::class);
         Route::resource('subordinates', ERSubordinateController::class);
+        Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
+        Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
 });
 

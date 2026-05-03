@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/layout-B_HgYElx.js
+import{r as n,j as t}from"./app-BiFVZ66E.js";import{T as o}from"./tabs-WK-U3BfW.js";function p({children:e}){const[i,c]=n.useState(0),a=window.location.pathname.split("/")[4],s=[{label:"View",path:"/accounts/administrator/activities",active:a===void 0},{label:"Manage Content",path:"/accounts/administrator/activities/manage_content/news",active:a==="manage_content"}];return t.jsxs("div",{children:[t.jsx(o,{tabs:s,activeIndex:i}),t.jsx("div",{className:"p-3",children:e})]})}export{p as default};
+========
+import{r as n,j as t}from"./app-CHIV4VgW.js";import{T as o}from"./tabs-B0MFzwfy.js";function p({children:e}){const[i,c]=n.useState(0),a=window.location.pathname.split("/")[4],s=[{label:"View",path:"/accounts/administrator/activities",active:a===void 0},{label:"Manage Content",path:"/accounts/administrator/activities/manage_content/news",active:a==="manage_content"}];return t.jsxs("div",{children:[t.jsx(o,{tabs:s,activeIndex:i}),t.jsx("div",{className:"p-3",children:e})]})}export{p as default};
+>>>>>>>> ea78a1b1ee9cd0d662af90a6de113e90d84056c3:public/build/assets/layout-zQhKS9m1.js

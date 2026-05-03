@@ -33,11 +33,13 @@ function classNames(...classes) {
 }
 
 export default function SidebarSection() {
-    const { desktopCollapsed, sidebarOpen } = useSelector((store) => store.app);
+    const { desktopCollapsed, sidebarOpen, data } = useSelector(
+        (store) => store.app,
+    );
     const dispatch = useDispatch();
     const path = window.location.pathname.split("/")[3];
     const account_role = window.location.pathname.split("/")[2];
-
+    console.log("datadata", data?.user?.leader != null);
     // 1. We split the main navigation items and include labels...
     const mainNavigation = [
         { is_label: true, name: "Main Menu" },
@@ -83,6 +85,18 @@ export default function SidebarSection() {
             current: path == "messages",
             is_incoming: true,
         },
+        ...(data?.user?.leader != null
+            ? [
+                  { is_label: true, name: "Leader Hub" },
+                  {
+                      name: "My Team",
+                      href: `/accounts/${account_role}/my_team`,
+                      icon: FcConferenceCall,
+                      current: path === "my_team",
+                      is_incoming: false,
+                  },
+              ]
+            : []),
         ...(account_role == "administrator"
             ? [
                   { is_label: true, name: "Administration" },
@@ -153,6 +167,7 @@ export default function SidebarSection() {
                   },
               ]
             : []),
+
         ...(account_role == "employee"
             ? [
                   { is_label: true, name: "Employee Hub" },

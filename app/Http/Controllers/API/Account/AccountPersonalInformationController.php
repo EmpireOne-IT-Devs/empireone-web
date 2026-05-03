@@ -69,7 +69,7 @@ class AccountPersonalInformationController extends Controller
     public function get_user_by_id($id)
     {
 
-        $users = User::where('id', $id)->with(['subordinate', 'department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee', 'is_passed', 'salary', 'account_contract'])->first();
+        $users = User::where('id', $id)->with(['evaluations', 'subordinate', 'department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee', 'is_passed', 'salary', 'account_contract'])->first();
         return response()->json([
             'data' => $users,
             'status'  => 'success',
@@ -87,7 +87,6 @@ class AccountPersonalInformationController extends Controller
             'date_of_birth',
             'year_graduated',
             'contact',
-            'birth_place',
             'region',
             'province',
             'city',
