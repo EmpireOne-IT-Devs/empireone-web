@@ -42,7 +42,6 @@ Route::post('auth/job_seeker_verify_otp', [EmailOtpController::class, 'job_seeke
 Route::post('auth/forgot_password_send_otp', [EmailOtpController::class, 'forgot_password_send_otp']);
 Route::post('auth/forgot_password_verify_otp', [EmailOtpController::class, 'forgot_password_verify_otp']);
 Route::post('auth/change_password', [EmailOtpController::class, 'change_password']);
-Route::get('get_employee', [GoogleController::class, 'get_employee']);
 
 
 
@@ -57,6 +56,9 @@ Route::post('job/get_job_application_from_email',  [JobApplicationController::cl
 Route::get('job/postings',  [JobPostingController::class, 'index']);
 Route::resource('job/job_interviewer_schedules', JobInterviewerScheduleController::class);
 Route::get('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
+
+Route::get('get_employee', [GoogleController::class, 'get_employee']); // do not remove this
+Route::get('employee_assessment_notifications', [AppController::class, 'employee_assessment_notifications']); // do not remove this
 
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
