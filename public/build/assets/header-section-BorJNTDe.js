@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/header-section-BVv0nuyt.js
-import{j as e}from"./app-BiFVZ66E.js";function n(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Employee Relations 👥"}),e.jsx("div",{className:"text-gray-600",children:"Manage employee concerns, communication, and workplace engagement"})]})}export{n as default};
-========
-import{j as e}from"./app-CHIV4VgW.js";function n(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Employee Relations 👥"}),e.jsx("div",{className:"text-gray-600",children:"Manage employee concerns, communication, and workplace engagement"})]})}export{n as default};
->>>>>>>> ea78a1b1ee9cd0d662af90a6de113e90d84056c3:public/build/assets/header-section-BorJNTDe.js

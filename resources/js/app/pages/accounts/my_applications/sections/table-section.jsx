@@ -6,7 +6,6 @@ import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import { Calendar } from "lucide-react";
-import SelectInterviewSection from "./select-interview-schedule-section";
 
 export default function TableSection() {
     const { applications } = useSelector((store) => store.applicants);
@@ -108,17 +107,6 @@ export default function TableSection() {
         final_status: getStatusBadge(res.final_status),
         action: (
             <div className="flex items-center gap-2">
-                {res?.screening_status?.toLowerCase() === "screened passed" && (
-                    <Button
-                        className="text-md"
-                        variant="success"
-                        outlined
-                        onClick={() => setOpenModal(true)}
-                    >
-                        Select Interview
-                    </Button>
-                )}
-
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),
@@ -128,11 +116,6 @@ export default function TableSection() {
             <div>
                 <Table columns={columns} data={tableData} />
             </div>
-
-            <SelectInterviewSection
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-            />
         </div>
     );
 }
