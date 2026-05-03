@@ -54,7 +54,7 @@ export default function CreateJobRequisition() {
             qualifications: "",
             responsibilities: "",
             approver1_id: "",
-            approver2_id: 1342,
+            approver2_id: 517,
             approver3_id: 3,
         },
     });
@@ -850,7 +850,6 @@ export default function CreateJobRequisition() {
                                                 value: res.id,
                                             })) || []
                                         }
-                                        disabled
                                         value={watchedValues.approver2_id}
                                         error={errors.approver2_id?.message}
                                         onChange={(val) =>
@@ -860,7 +859,6 @@ export default function CreateJobRequisition() {
                                     <Select
                                         label="Approver 3 "
                                         required
-                                        disabled
                                         name="approver3_id"
                                         options={
                                             users?.users?.map((res) => ({

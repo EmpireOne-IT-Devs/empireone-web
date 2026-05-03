@@ -22,7 +22,7 @@ export default function TabsSection() {
         },
         {
             label: "Assessment Process",
-            path: "/accounts/administrator/employee_relation/assessment_process/regularization",
+            path: "/accounts/administrator/employee_relation/assessment_process/mid_regularization?status=Mid-Probationary",
             active: currentPath === "assessment_process",
         },
         {
