@@ -7,7 +7,6 @@ export default function HeaderSection() {
     const user_role = window.location.pathname.split("/")[2];
     const percent = data?.profile_percent ? Number(data.profile_percent) : 0;
 
-    // Check if profile is 100% complete
     const isComplete = percent === 100;
 
     const radius = 40;
@@ -74,7 +73,6 @@ export default function HeaderSection() {
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70px] h-[70px] rounded-full object-cover border-2 border-blue-800"
                     />
 
-                    {/* Dynamic Percentage Badge */}
                     <span
                         className={`absolute -bottom-1 left-1/2 -translate-x-1/2 text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors duration-500
                         ${isComplete ? "bg-green-500 text-white" : "bg-yellow-400 text-blue-900"}`}
@@ -86,3 +84,4 @@ export default function HeaderSection() {
         </div>
     );
 }
+    
