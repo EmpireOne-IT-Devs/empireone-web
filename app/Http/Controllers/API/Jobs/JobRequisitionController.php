@@ -41,7 +41,7 @@ class JobRequisitionController extends Controller
                 if ($account && $account->eogs_email) {
                     $account->notify(new JobRequisitionNotification($jobRequisition));
                 }
-            } else if ($position == 'Director Approved') {
+            } else if ($position == 'Recruitment Manager') {
                 $account = AccountEmployee::where('user_id', $jobRequisition->approver3_id)->first();
                 if ($account && $account->eogs_email) {
                     $account->notify(new JobRequisitionNotification($jobRequisition));
