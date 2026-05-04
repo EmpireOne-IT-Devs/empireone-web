@@ -147,7 +147,9 @@ const OfferLetterPDF = (data) => (
                 </Text>
             </View>
 
-            <Text style={styles.paragraph}>Dear Mr. Bautista,</Text>
+            <Text style={styles.paragraph}>
+                Dear Mr/Mrs. {data?.applicant_name},
+            </Text>
 
             <Text style={styles.paragraph}>
                 We are pleased to make you an offer of employment with us and
@@ -500,7 +502,7 @@ const OfferLetterPDF = (data) => (
 );
 
 // Example wrapper for preViewing
-const AgentOfferLetterPreview = ({ name, type }) => {
+const AgentOfferLetterPreview = ({ name, type,applicant_signature }) => {
     const { job_offer } = useSelector((store) => store.applicants);
     const { document } = useSelector((store) => store.app);
     const dispatch = useDispatch();
@@ -525,7 +527,7 @@ const AgentOfferLetterPreview = ({ name, type }) => {
             `${job_offer?.user?.personal_information?.first_name || ""} ${job_offer?.user?.personal_information?.last_name || ""}`.trim(),
         applicant_address:
             `${job_offer?.user?.personal_information?.street || ""} ${job_offer?.user?.personal_information?.city || ""} ${job_offer?.user?.personal_information?.province || ""} ${job_offer?.user?.personal_information?.zip_code || ""}`.trim(),
-        applicant_signature: job_offer?.employee?.signature || "",
+        applicant_signature: applicant_signature,
         place_of_posting: `${job_offer?.job_application?.job_posting?.job_requisition?.location?.name} City`,
         annual_fixed_pay: peso_format(`${Number(job_offer?.salary) * 12}`),
         total_compensation: peso_format(

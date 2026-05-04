@@ -27,7 +27,7 @@ export default function Page() {
     // const hasOffer = job_offer?.documents?.some((res) =>
     //     validOffers.includes(res.name),
     // );
-    console.log("job_offer", user?.account_employee?.signature);
+    // console.log("job_offer", user?.account_employee?.signature);
 
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
@@ -43,18 +43,27 @@ export default function Page() {
                         <ManagerOfferLetterPreview
                             name="Managerial Offer"
                             type="offer"
+                            applicant_signature={
+                                user?.account_employee?.signature
+                            }
                         />
                     )}
                     {job_offer?.role == "Agent" && (
                         <AgentOfferLetterPreview
                             name="Agent Offer"
                             type="offer"
+                            applicant_signature={
+                                user?.account_employee?.signature
+                            }
                         />
                     )}
                     {job_offer?.role == "Support" && (
                         <SupportOfferLetterPreview
                             name="Support Offer"
                             type="offer"
+                            applicant_signature={
+                                user?.account_employee?.signature
+                            }
                         />
                     )}
                     {job_offer?.status == "Pending" && (
