@@ -1,1 +1,0 @@
-import{e as a}from"./app-CE86ux3q.js";async function s(i){return await a.post("/api/job/requisitions",i)}async function t(i){return await a.post("/api/job/approve_job_requisition",i)}async function e(i){return await a.post("/api/job/account_access",i)}async function n(){return(await a.get(`/api/job/requisitions${window.location.search}`)).data}export{t as a,e as b,s as c,n as g};
