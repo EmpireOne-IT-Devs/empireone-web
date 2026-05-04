@@ -15,7 +15,7 @@ export default function HeaderSection() {
     const [copied, setCopied] = useState(false);
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
-
+    const role = window.location.pathname.split("/")[2];
     const profileCompletion = data?.profile_percent
         ? Number(data.profile_percent)
         : 0;
@@ -157,7 +157,7 @@ export default function HeaderSection() {
                             {copied ? "Copied!" : "Copy Link"}
                         </button>
                         <a
-                            href="/accounts/my_profile/signature"
+                            href={`/accounts/${role}/my_profile/signature`}
                             target="_blank"
                             rel="noreferrer"
                             className="w-full sm:w-auto px-4 py-2 flex gap-2 border border-purple-500 bg-purple-600 rounded-md items-center justify-center text-white text-sm font-medium transition-colors hover:bg-purple-700"
@@ -166,7 +166,7 @@ export default function HeaderSection() {
                             E-Signature
                         </a>
                     </div>
-                </div>                                                                                                                                                                                                                              
+                </div>
 
                 {profileCompletion < 100 && (
                     <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 transition-all">

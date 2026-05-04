@@ -4,7 +4,7 @@ import { Link } from "@inertiajs/react";
 
 export default function VerifySection() {
     const [isVisible, setIsVisible] = useState(true);
-
+    const role = window.location.pathname.split('/')[2]
     if (!isVisible) return null;
 
     return (
@@ -37,10 +37,10 @@ export default function VerifySection() {
                         <div className="flex gap-3 mt-4">
                             <a
                                 target="_blank"
-                                href={"/accounts/my_profile/signature"}
+                                href={`/accounts/${role}/my_profile/signature`}
                                 className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm"
                             >
-                                Verify Now
+                                ADD SIGNATURE
                             </a>
                         </div>
                     </div>

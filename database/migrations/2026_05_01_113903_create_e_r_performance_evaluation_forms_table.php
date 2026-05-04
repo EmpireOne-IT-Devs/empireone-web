@@ -22,12 +22,18 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
             $table->boolean('has_supervisor_signature')->default(false);
-            $table->date('date_of_assessment');
+            $table->date('date_of_assessment')->nullable();
             $table->text('remarks')->nullable();
             $table->decimal('section1_average', 5, 2)->nullable();
             $table->decimal('section2_average', 5, 2)->nullable();
             $table->decimal('total_average', 5, 2)->nullable();
             $table->text('recommendation')->nullable();
+            $table->string('evaluation_period')->nullable();
+            $table->enum('status', [
+                'Pending',
+                'Passed',
+                'Failed',
+            ])->default('Pending');
             $table->timestamps();
         });
     }

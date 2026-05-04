@@ -27,10 +27,11 @@ export default function Page() {
     // const hasOffer = job_offer?.documents?.some((res) =>
     //     validOffers.includes(res.name),
     // );
-    console.log("job_offer", job_offer.status);
+    console.log("job_offer", user?.account_employee?.signature);
 
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
+            return <VerifySection />;
         } else if (user?.account_employee?.signature === null) {
             return (
                 user?.account_employee?.signature === null && <VerifySection />

@@ -22,6 +22,8 @@ class ERPerformanceEvaluationForm extends Model
         'section2_average',
         'total_average',
         'recommendation',
+        'evaluation_period',
+        'status'
     ];
 
     protected $casts = [

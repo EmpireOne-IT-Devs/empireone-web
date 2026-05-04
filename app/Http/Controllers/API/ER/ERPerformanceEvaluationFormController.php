@@ -37,7 +37,12 @@ class ERPerformanceEvaluationFormController extends Controller
     public function store(Request $request)
     {
         try {
-            // 1. UPDATE OR CREATE the main evaluation form
+            $totalAverage = $request->calculated_scores['total_average'] ?? null;
+
+            $status = null;
+            if ($totalAverage !== null) {
+                $status = $totalAverage >= 3 ? 'Passed' : 'Failed';
+            }
             $evaluation = ERPerformanceEvaluationForm::updateOrCreate(
                 ['id' => $request->evaluation_id],
                 [
@@ -48,8 +53,9 @@ class ERPerformanceEvaluationFormController extends Controller
                     'remarks' => $request->remarks,
                     'section1_average' => $request->calculated_scores['section_1'] ?? null,
                     'section2_average' => $request->calculated_scores['section_2'] ?? null,
-                    'total_average' => $request->calculated_scores['total_average'] ?? null,
+                    'total_average' => $totalAverage,
                     'recommendation' => $request->recommendation,
+                    'status' => $status,
                 ]
             );
 

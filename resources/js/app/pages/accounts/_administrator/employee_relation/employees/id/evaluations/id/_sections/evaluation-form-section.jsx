@@ -11,7 +11,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
 // ADDED: isEdit prop (defaults to true for editing)
-const EvaluationFormSection = ({ isEdit = true }) => {
+const EvaluationFormSection = ({ isEdit = false }) => {
     const { evaluation } = useSelector((store) => store.employee_relations);
     const dispatch = useDispatch();
 
@@ -560,7 +560,22 @@ const EvaluationFormSection = ({ isEdit = true }) => {
                             Recommendation{" "}
                             <span className="text-red-500">*</span>
                         </p>
-
+                        <label
+                            className={`flex items-center gap-3 group ${!isEdit && "opacity-70 cursor-not-allowed"}`}
+                        >
+                            <input
+                                disabled={!isEdit}
+                                type="radio"
+                                value="Mid-Probationary"
+                                {...register("recommendation", {
+                                    required: true,
+                                })}
+                                className="w-4 h-4 accent-blue-600 cursor-pointer"
+                            />
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                                Mid-Probationary
+                            </span>
+                        </label>
                         <label
                             className={`flex items-center gap-3 group ${!isEdit && "opacity-70 cursor-not-allowed"}`}
                         >

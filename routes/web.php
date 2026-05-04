@@ -102,6 +102,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
         Route::prefix('my_team')->group(function () use ($employeeDetailsRoutes) {
             Route::inertia('', 'accounts/my_team/dashboard/page');
             Route::inertia('/team', 'accounts/my_team/team/page');
+            Route::inertia('/assessment_process', 'accounts/my_team/assessment_process/page');
             Route::prefix('{id}')->group($employeeDetailsRoutes); // Applied Reusable Group
 
             // Route::inertia('/regularization', 'accounts/my_team/regularization/page');

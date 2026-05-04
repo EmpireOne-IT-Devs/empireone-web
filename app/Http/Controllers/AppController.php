@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Account\AccountEmployee;
 use App\Models\Department;
+use App\Models\ER\ERPerformanceEvaluationForm;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosition;
@@ -44,6 +45,18 @@ class AppController extends Controller
 
             return $employee;
         });
+
+        foreach ($employees as $key => $value) {
+            ERPerformanceEvaluationForm::updateOrCreate(
+                [
+                    'user_id' => $value['user_id'],
+                    'evaluation_period' => $value['evaluation_period'],
+                    // 'supervisor_id'=>""
+                ],
+                []
+            );
+        }
+
 
         return response()->json([
             'users'  => $employees,

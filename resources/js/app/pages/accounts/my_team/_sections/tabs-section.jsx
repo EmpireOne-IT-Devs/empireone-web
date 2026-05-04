@@ -16,11 +16,11 @@ export default function TabsSection() {
             path: "/accounts/administrator/my_team/team",
             active: currentPath === "team",
         },
-        // {
-        //     label: "Regularization",
-        //     path: "/accounts/administrator/my_team/regularization",
-        //     active: currentPath === "regularization",
-        // },
+        {
+            label: "Assessment Process",
+            path: "/accounts/administrator/my_team/assessment_process",
+            active: currentPath === "assessment_process",
+        },
         // {
         //     label: "Extended Regularization",
         //     path: "/accounts/administrator/my_team/extended_regularization",
