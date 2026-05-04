@@ -9,6 +9,7 @@ import AddInterviewSchedule from "./add-interview-schedule";
 import { Calendar } from "lucide-react";
 import TransferApplicant from "./transfer-applicant";
 import SendJobOfferSection from "./send-job-offer-section";
+import ResendJobOfferSection from "./resend-job-offer-section";
 
 export default function TableSection() {
     const [openModal, setOpenModal] = useState(false);
@@ -87,6 +88,11 @@ export default function TableSection() {
             <div className="flex gap-3">
                 {res.final_status == "Passed" && (
                     <SendJobOfferSection data={res} />
+                )}
+                {res.final_status === "Declined Job Offer" && (
+                    <>
+                        <ResendJobOfferSection data={res} />
+                    </>
                 )}
                 <Button
                     className="text-xs px-3 py-1"
