@@ -29,7 +29,7 @@ export default function TableSection() {
                             //     target="_blnak"
                             //     className="underline text-blue-500 hover:text-blue-600"
                             //     disabled
-                            //     href={`/accounts/administrator/employee_relation/leads/${res.id}`}
+                            //     href={`/accounts/administrator/human_resources/leads/${res.id}`}
                             // >
                             //     {res?.employee?.account_employee?.employee_id}
                             // </Link>

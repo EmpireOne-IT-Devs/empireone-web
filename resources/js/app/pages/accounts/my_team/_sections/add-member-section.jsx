@@ -13,7 +13,7 @@ export default function AddMemberSection() {
     const dispatch = useDispatch();
     const { users } = useSelector((state) => state.job_requisitions);
     const { data } = useSelector((store) => store.app);
-    const { leader } = useSelector((store) => store.employee_relations);
+    const { leader } = useSelector((store) => store.human_resourcess);
     const er_leader_id = data?.user?.leader?.id;
     const [open, setOpen] = useState(false);
 

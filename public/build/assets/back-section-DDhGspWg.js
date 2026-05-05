@@ -1,4 +1,4 @@
-import{j as e,c as o}from"./app-CCsSpNN6.js";function t(){const n=()=>{o.visit("/accounts/administrator/employee_relation/leads")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
+import{j as e,c as o}from"./app-CCsSpNN6.js";function t(){const n=()=>{o.visit("/accounts/administrator/human_resources/leads")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
           group flex items-center gap-2 px-4 py-2 
           text-[15px] font-semibold text-blue-600 
           bg-transparent border  rounded-lg 

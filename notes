@@ -3,6 +3,13 @@ php artisan make:model ER/JobsApplication -mcr
 - add emergency contract
 - add parents name.
 
+
+
+account employee add
+- position_level
+- basic_pay
+- allowances
+
 Application: [Job Title] - [First Name] [Last Name]
 
 2026-04-30

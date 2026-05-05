@@ -83,15 +83,15 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
     }
 
     // --- Reusable Route Groups ---
-    // Extracting duplicate routes for employee details used in 'my_team' and 'employee_relation'
+    // Extracting duplicate routes for employee details used in 'my_team' and 'human_resources'
     $employeeDetailsRoutes = function () {
-        Route::inertia('personal_information', 'accounts/_administrator/employee_relation/employees/id/personal_information/page');
-        Route::inertia('evaluations', 'accounts/_administrator/employee_relation/employees/id/evaluations/page');
-        Route::inertia('evaluations/{evaluation_id}', 'accounts/_administrator/employee_relation/employees/id/evaluations/id/page');
-        Route::inertia('201_files', 'accounts/_administrator/employee_relation/employees/id/201_files/page');
-        Route::inertia('employee_details', 'accounts/_administrator/employee_relation/employees/id/employee_details/page');
-        Route::inertia('contract', 'accounts/_administrator/employee_relation/employees/id/contract/page');
-        Route::inertia('onboarding', 'accounts/_administrator/employee_relation/employees/id/onboarding/page');
+        Route::inertia('personal_information', 'accounts/_administrator/human_resources/employees/id/personal_information/page');
+        Route::inertia('evaluations', 'accounts/_administrator/human_resources/employees/id/evaluations/page');
+        Route::inertia('evaluations/{evaluation_id}', 'accounts/_administrator/human_resources/employees/id/evaluations/id/page');
+        Route::inertia('201_files', 'accounts/_administrator/human_resources/employees/id/201_files/page');
+        Route::inertia('employee_details', 'accounts/_administrator/human_resources/employees/id/employee_details/page');
+        Route::inertia('contract', 'accounts/_administrator/human_resources/employees/id/contract/page');
+        Route::inertia('onboarding', 'accounts/_administrator/human_resources/employees/id/onboarding/page');
     };
 
     // 3. ADMINISTRATOR Specific Routes
@@ -103,6 +103,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::inertia('', 'accounts/my_team/dashboard/page');
             Route::inertia('/team', 'accounts/my_team/team/page');
             Route::inertia('/assessment_process', 'accounts/my_team/assessment_process/page');
+            Route::inertia('/employee_status_changes', 'accounts/my_team/employee_status_changes/page');
             Route::prefix('{id}')->group($employeeDetailsRoutes); // Applied Reusable Group
 
             // Route::inertia('/regularization', 'accounts/my_team/regularization/page');
@@ -144,25 +145,31 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::inertia('/job_posting/{id}/job_offers', 'accounts/_administrator/talent_acquisition/job_posting/id/job_offers/page');
         });
 
-        Route::prefix('employee_relation')->group(function () use ($employeeDetailsRoutes) {
-            Route::inertia('employees', 'accounts/_administrator/employee_relation/employees/page');
-            Route::inertia('pooling', 'accounts/_administrator/employee_relation/pooling/page');
-            Route::inertia('disciplinary_records', 'accounts/_administrator/employee_relation/disciplinary_records/page');
-            Route::inertia('separation', 'accounts/_administrator/employee_relation/separation/page');
+        Route::prefix('human_resources')->group(function () use ($employeeDetailsRoutes) {
+            Route::inertia('employees', 'accounts/_administrator/human_resources/employees/page');
+            Route::inertia('pooling', 'accounts/_administrator/human_resources/pooling/page');
+            Route::inertia('disciplinary_records', 'accounts/_administrator/human_resources/disciplinary_records/page');
+            Route::inertia('separation', 'accounts/_administrator/human_resources/separation/page');
 
             Route::prefix('leads')->group(function () {
-                Route::inertia('', 'accounts/_administrator/employee_relation/leads/page');
-                Route::inertia('/{id}', 'accounts/_administrator/employee_relation/leads/id/page');
+                Route::inertia('', 'accounts/_administrator/human_resources/leads/page');
+                Route::inertia('/{id}', 'accounts/_administrator/human_resources/leads/id/page');
             });
+            Route::prefix('employee_movements')->group(function () {
+                // Route::prefix('assessment_process')->group(function () {
+                //     $assessmentTypes = ['mid_regularization', 'regularization', 'extended_regularization', 'none_regularization'];
+                //     foreach ($assessmentTypes as $type) {
+                //         Route::prefix($type)->group(function () use ($type) {
+                //             Route::inertia('', "accounts/_administrator/human_resources/employee_movements/assessment_process/{$type}/page");
+                //             Route::inertia('/{id}', 'accounts/_administrator/human_resources/employee_movements/assessment_process/id/page');
+                //         });
+                //     }
+                // });
 
-            Route::prefix('assessment_process')->group(function () {
-                $assessmentTypes = ['mid_regularization', 'regularization', 'extended_regularization', 'none_regularization'];
-                foreach ($assessmentTypes as $type) {
-                    Route::prefix($type)->group(function () use ($type) {
-                        Route::inertia('', "accounts/_administrator/employee_relation/assessment_process/{$type}/page");
-                        Route::inertia('/{id}', 'accounts/_administrator/employee_relation/assessment_process/id/page');
-                    });
-                }
+                Route::inertia('/assessment_process', "accounts/_administrator/human_resources/employee_movements/assessment_process/page");
+                Route::inertia('/employee_status_changes', "accounts/_administrator/human_resources/employee_movements/employee_status_changes/page");
+                // Route::inertia('/position_and_title', "accounts/_administrator/human_resources/employee_movements/position_and_title/page");
+                // Route::inertia('/tiering', "accounts/_administrator/human_resources/employee_movements/tiering/page");
             });
 
             Route::prefix('{id}')->group($employeeDetailsRoutes); // Applied Reusable Group
@@ -186,8 +193,8 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
 
     // 5. GLOBAL "Accounts" level routes
     Route::prefix('my_documents/{id}')->group(function () {
-        Route::inertia('/contract', 'accounts/_administrator/employee_relation/employees/id/contract/page');
-        Route::inertia('/onboarding', 'accounts/_administrator/employee_relation/employees/id/onboarding/page');
+        Route::inertia('/contract', 'accounts/_administrator/human_resources/employees/id/contract/page');
+        Route::inertia('/onboarding', 'accounts/_administrator/human_resources/employees/id/onboarding/page');
     });
 });
 

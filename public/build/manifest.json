@@ -688,73 +688,73 @@
       "resources/js/app/pages/accounts/_administrator/e_store/layout.jsx",
       "resources/js/app/pages/accounts/_administrator/e_store/redemption_history/page.jsx",
       "resources/js/app/pages/accounts/_administrator/e_store/rewards_item/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/search-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/extended_regularization/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/id/_sections/create-pef-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/id/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/mid_regularization/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/none_regularization/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/employee-change-form-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/disciplinary_records/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/pagination-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/search-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/add-document-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/input-file.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/re-upload-document-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/stats-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/tabs-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/verify-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/agree-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/employment-contract-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/id/_sections/evaluation-form-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/id/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/attendance-policy-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/job-description-form-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/onboarding-checklist-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/stepper-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/training-agreement-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/personal_information/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/create-lead-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/add-member-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/back-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/page.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/pagination-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/pooling-table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/search-pooling-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/send-job-offer-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/separation/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/search-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/extended_regularization/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/id/_sections/create-pef-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/id/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/mid_regularization/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/none_regularization/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/employee-change-form-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/disciplinary_records/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/pagination-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/search-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/add-document-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/input-file.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/re-upload-document-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/stats-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/verify-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/agree-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/employment-contract-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/id/_sections/evaluation-form-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/id/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/attendance-policy-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/job-description-form-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/onboarding-checklist-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/stepper-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/training-agreement-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/personal_information/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/create-lead-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/add-member-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/back-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/page.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/pagination-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/pooling-table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/search-pooling-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/send-job-offer-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/separation/page.jsx",
       "resources/js/app/pages/accounts/_administrator/finance/dashboard/page.jsx",
       "resources/js/app/pages/accounts/_administrator/finance/expenses/page.jsx",
       "resources/js/app/pages/accounts/_administrator/finance/layout.jsx",
@@ -1312,38 +1312,38 @@
       "_tabs-CzkPpuMv.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx": {
     "file": "assets/header-section-D4Nn94w2.js",
     "name": "header-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx": {
     "file": "assets/tabs-section-BjwYGL49.js",
     "name": "tabs-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_tabs-CzkPpuMv.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/search-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/search-section.jsx": {
     "file": "assets/search-section-YVQ7i5zh.js",
     "name": "search-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/search-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/search-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/table-section.jsx": {
     "file": "assets/table-section-Dl0zihwz.js",
     "name": "table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1352,26 +1352,26 @@
       "_moment-BMQglvow.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx": {
     "file": "assets/tabs-section-BK65A-Rf.js",
     "name": "tabs-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/extended_regularization/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/extended_regularization/page.jsx": {
     "file": "assets/page-BdZEcFUa.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/extended_regularization/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/extended_regularization/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/table-section.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -1385,10 +1385,10 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
       "_applicants-service-NrBNKubk.js",
       "_er-leaders-service-2wdB6W7o.js",
@@ -1398,10 +1398,10 @@
       "_moment-BMQglvow.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/id/_sections/create-pef-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/id/_sections/create-pef-section.jsx": {
     "file": "assets/create-pef-section-6yFBZMZH.js",
     "name": "create-pef-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/id/_sections/create-pef-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/id/_sections/create-pef-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1409,15 +1409,15 @@
       "_index.esm-y7JlnH8N.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/id/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/id/page.jsx": {
     "file": "assets/page-Bp3KOvgv.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/id/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/id/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/id/_sections/create-pef-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/id/_sections/create-pef-section.jsx",
       "_app-thunk-C-bm5WNX.js",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
@@ -1435,31 +1435,31 @@
       "_user-service-BuHuLxb-.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/layout.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/layout.jsx": {
     "file": "assets/layout-BEGjvblN.js",
     "name": "layout",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/layout.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/layout.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
       "_applicants-service-NrBNKubk.js",
       "_er-leaders-service-2wdB6W7o.js",
       "_performance-evaluation-service-CAmzoeb5.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/mid_regularization/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/mid_regularization/page.jsx": {
     "file": "assets/page-BuCHkoz3.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/mid_regularization/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/mid_regularization/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/table-section.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -1473,10 +1473,10 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
       "_applicants-service-NrBNKubk.js",
       "_er-leaders-service-2wdB6W7o.js",
@@ -1486,17 +1486,17 @@
       "_moment-BMQglvow.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/none_regularization/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/none_regularization/page.jsx": {
     "file": "assets/page-Byx-5yc5.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/none_regularization/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/none_regularization/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/table-section.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -1510,10 +1510,10 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
       "_applicants-service-NrBNKubk.js",
       "_er-leaders-service-2wdB6W7o.js",
@@ -1523,10 +1523,10 @@
       "_moment-BMQglvow.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/employee-change-form-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/employee-change-form-section.jsx": {
     "file": "assets/employee-change-form-section-DLaZw5Kr.js",
     "name": "employee-change-form-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/employee-change-form-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/employee-change-form-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1538,17 +1538,17 @@
       "_iconBase-BxwuRZk-.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/table-section.jsx": {
     "file": "assets/table-section-jiyDfRNT.js",
     "name": "table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_index-BNlzU0iR.js",
       "_table-C5vkl013.js",
       "_moment-BMQglvow.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/employee-change-form-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/employee-change-form-section.jsx",
       "_button-CsoQkssM.js",
       "_modal-BONMpjKM.js",
       "_index-DWKdiuX8.js",
@@ -1556,17 +1556,17 @@
       "_index.esm-y7JlnH8N.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/page.jsx": {
     "file": "assets/page-9DdcWUxx.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/layout.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -1580,32 +1580,32 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
       "_index-BNlzU0iR.js",
       "_table-C5vkl013.js",
       "_moment-BMQglvow.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/regularization/_sections/employee-change-form-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/regularization/_sections/employee-change-form-section.jsx",
       "_button-CsoQkssM.js",
       "_modal-BONMpjKM.js",
       "_index.esm-y7JlnH8N.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/assessment_process/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/assessment_process/_sections/tabs-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
       "_applicants-service-NrBNKubk.js",
       "_er-leaders-service-2wdB6W7o.js",
       "_performance-evaluation-service-CAmzoeb5.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/disciplinary_records/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/disciplinary_records/page.jsx": {
     "file": "assets/page-C0kWesk0.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/disciplinary_records/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/disciplinary_records/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -1619,45 +1619,45 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/pagination-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/pagination-section.jsx": {
     "file": "assets/pagination-section-BiIXPaWX.js",
     "name": "pagination-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/pagination-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/pagination-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_pagination-B5sXoiB_.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/search-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/search-section.jsx": {
     "file": "assets/search-section-Cxc38CRT.js",
     "name": "search-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/search-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/search-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_input-JnEnp1sg.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/table-section.jsx": {
     "file": "assets/table-section-C_5jFwjd.js",
     "name": "table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_table-C5vkl013.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/add-document-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/add-document-section.jsx": {
     "file": "assets/add-document-section-DNyLtkBH.js",
     "name": "add-document-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/add-document-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/add-document-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1678,14 +1678,14 @@
       "_createLucideIcon-B5PuXwkH.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/header-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/header-section.jsx": {
     "file": "assets/header-section-CUmHsk1K.js",
     "name": "header-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/header-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/header-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/add-document-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/add-document-section.jsx",
       "_index.esm-y7JlnH8N.js",
       "_button-CsoQkssM.js",
       "_index-BNlzU0iR.js",
@@ -1703,19 +1703,19 @@
       "_trash-2-Fa4Ls4_N.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/input-file.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/input-file.jsx": {
     "file": "assets/input-file-CSEiTLCP.js",
     "name": "input-file",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/input-file.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/input-file.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/re-upload-document-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/re-upload-document-section.jsx": {
     "file": "assets/re-upload-document-section-CSmmnk9_.js",
     "name": "re-upload-document-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/re-upload-document-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/re-upload-document-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1736,26 +1736,26 @@
       "_createLucideIcon-B5PuXwkH.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/stats-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/stats-section.jsx": {
     "file": "assets/stats-section-CNimsLOi.js",
     "name": "stats-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/stats-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/stats-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/table-section.jsx": {
     "file": "assets/table-section-9CedOItk.js",
     "name": "table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_badge-Boi4v9gO.js",
       "_table-C5vkl013.js",
       "_moment-BMQglvow.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/re-upload-document-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/re-upload-document-section.jsx",
       "_index.esm-y7JlnH8N.js",
       "_button-CsoQkssM.js",
       "_index-BNlzU0iR.js",
@@ -1773,18 +1773,18 @@
       "_createLucideIcon-B5PuXwkH.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/page.jsx": {
     "file": "assets/page-CdJrsq2d.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/stats-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/stats-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/layout.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -1801,7 +1801,7 @@
       "_badge-Boi4v9gO.js",
       "_table-C5vkl013.js",
       "_moment-BMQglvow.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/re-upload-document-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/re-upload-document-section.jsx",
       "_index.esm-y7JlnH8N.js",
       "_button-CsoQkssM.js",
       "_index-BNlzU0iR.js",
@@ -1815,36 +1815,36 @@
       "_job-offer-service-DXoshDRJ.js",
       "_cloud-upload-enp1unLS.js",
       "_createLucideIcon-B5PuXwkH.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/201_files/_sections/add-document-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/201_files/_sections/add-document-section.jsx",
       "_trash-2-Fa4Ls4_N.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/tabs-section.jsx",
       "_tabs-CzkPpuMv.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/header-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/header-section.jsx": {
     "file": "assets/header-section-BLuD9dwy.js",
     "name": "header-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/header-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/header-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/tabs-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/tabs-section.jsx": {
     "file": "assets/tabs-section-deYtBA4q.js",
     "name": "tabs-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/tabs-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/tabs-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_tabs-CzkPpuMv.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/verify-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/verify-section.jsx": {
     "file": "assets/verify-section-DP2udHro.js",
     "name": "verify-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/verify-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/verify-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1852,10 +1852,10 @@
       "_createLucideIcon-B5PuXwkH.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/agree-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/agree-section.jsx": {
     "file": "assets/agree-section-BsHpoR10.js",
     "name": "agree-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/agree-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/agree-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1867,10 +1867,10 @@
       "_user-service-BuHuLxb-.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/employment-contract-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/employment-contract-section.jsx": {
     "file": "assets/employment-contract-section-B5QoYVKM.js",
     "name": "employment-contract-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/employment-contract-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/employment-contract-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1879,18 +1879,18 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/page.jsx": {
     "file": "assets/page-C_k5EyFE.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/employment-contract-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/employment-contract-section.jsx",
       "_app-thunk-C-bm5WNX.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/verify-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/verify-section.jsx",
       "_index-BNlzU0iR.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/contract/_sections/agree-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/contract/_sections/agree-section.jsx",
       "_moment-BMQglvow.js",
       "_react-pdf.browser-D7QpBhzS.js",
       "_index-C0crQJ5U.js",
@@ -1901,10 +1901,10 @@
       "_account-contract-service-CDA7962Z.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/_sections/table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/_sections/table-section.jsx": {
     "file": "assets/table-section-BJTY7qWo.js",
     "name": "table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/_sections/table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/_sections/table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1913,10 +1913,10 @@
       "_moment-BMQglvow.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/id/_sections/evaluation-form-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/id/_sections/evaluation-form-section.jsx": {
     "file": "assets/evaluation-form-section-B8Rg9xKE.js",
     "name": "evaluation-form-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/id/_sections/evaluation-form-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/id/_sections/evaluation-form-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -1929,14 +1929,14 @@
       "_user-service-BuHuLxb-.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/id/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/id/page.jsx": {
     "file": "assets/page-BWjOctQY.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/id/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/id/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/id/_sections/evaluation-form-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/id/_sections/evaluation-form-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
       "_button-CsoQkssM.js",
       "_index-BNlzU0iR.js",
@@ -1949,16 +1949,16 @@
       "_er-leaders-service-2wdB6W7o.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/page.jsx": {
     "file": "assets/page-DucZ3YDO.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/evaluations/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/evaluations/_sections/table-section.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -1972,32 +1972,32 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
       "_index-BNlzU0iR.js",
       "_table-C5vkl013.js",
       "_moment-BMQglvow.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/layout.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/layout.jsx": {
     "file": "assets/layout-C7zJ6IAE.js",
     "name": "layout",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/layout.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/layout.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/tabs-section.jsx",
       "_app-thunk-C-bm5WNX.js",
       "_tabs-CzkPpuMv.js",
       "_user-service-BuHuLxb-.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx": {
     "file": "assets/acknowledgment-of-code-of-conduct-and-discipline-section-CLDXgTBS.js",
     "name": "acknowledgment-of-code-of-conduct-and-discipline-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2006,10 +2006,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/attendance-policy-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/attendance-policy-section.jsx": {
     "file": "assets/attendance-policy-section-CN0bQKEG.js",
     "name": "attendance-policy-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/attendance-policy-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/attendance-policy-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2018,10 +2018,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx": {
     "file": "assets/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section-DbxU6eHY.js",
     "name": "certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2030,10 +2030,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx": {
     "file": "assets/code-of-conduct-and-discipline-section-DXQijhvt.js",
     "name": "code-of-conduct-and-discipline-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2042,10 +2042,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx": {
     "file": "assets/confidentiality-and-non-competition-agreement-section-CIAAONfs.js",
     "name": "confidentiality-and-non-competition-agreement-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2054,10 +2054,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx": {
     "file": "assets/house-rules-and-regulations-general-rules-section-CFGY-hGm.js",
     "name": "house-rules-and-regulations-general-rules-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2066,10 +2066,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/job-description-form-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/job-description-form-section.jsx": {
     "file": "assets/job-description-form-section-D1ktkz36.js",
     "name": "job-description-form-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/job-description-form-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/job-description-form-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2078,10 +2078,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx": {
     "file": "assets/locker-policy-and-agreement-section-GQ_kEp7y.js",
     "name": "locker-policy-and-agreement-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2090,10 +2090,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx": {
     "file": "assets/mobile-phone-and-dress-code-policy-section-z5S7XmGX.js",
     "name": "mobile-phone-and-dress-code-policy-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2102,10 +2102,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/onboarding-checklist-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/onboarding-checklist-section.jsx": {
     "file": "assets/onboarding-checklist-section-BWYhRfKf.js",
     "name": "onboarding-checklist-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/onboarding-checklist-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/onboarding-checklist-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2114,10 +2114,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx": {
     "file": "assets/pre-employment-check-list-section-RWFDcbKf.js",
     "name": "pre-employment-check-list-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2126,10 +2126,10 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/stepper-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/stepper-section.jsx": {
     "file": "assets/stepper-section-B_58DVVf.js",
     "name": "stepper-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/stepper-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/stepper-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2141,10 +2141,10 @@
       "_index-BNlzU0iR.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/training-agreement-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/training-agreement-section.jsx": {
     "file": "assets/training-agreement-section-u9t3Hwq8.js",
     "name": "training-agreement-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/training-agreement-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/training-agreement-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2153,27 +2153,27 @@
       "_index-C0crQJ5U.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/page.jsx": {
     "file": "assets/page-CXJCjSP_.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/stepper-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/attendance-policy-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/job-description-form-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/onboarding/_sections/onboarding-checklist-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/pre-employment-check-list-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/stepper-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/confidentiality-and-non-competition-agreement-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/attendance-policy-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/certification-of-use-and-service-of-electronic-data-and-electronic-data-signature-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/code-of-conduct-and-discipline-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/acknowledgment-of-code-of-conduct-and-discipline-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/house-rules-and-regulations-general-rules-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/mobile-phone-and-dress-code-policy-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/job-description-form-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/locker-policy-and-agreement-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/onboarding/_sections/onboarding-checklist-section.jsx",
       "_app-thunk-C-bm5WNX.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/verify-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/verify-section.jsx",
       "_react-pdf.browser-D7QpBhzS.js",
       "_index-C0crQJ5U.js",
       "_pdf-loader-CO1zFhgy.js",
@@ -2187,14 +2187,14 @@
       "_bell-BiseAKge.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/personal_information/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/personal_information/page.jsx": {
     "file": "assets/page-D2Rqryn5.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/personal_information/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/personal_information/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/layout.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
       "_moment-BMQglvow.js",
       "_user-BboJwfvI.js",
@@ -2205,8 +2205,8 @@
       "_createLucideIcon-B5PuXwkH.js",
       "_briefcase-CErpXzJh.js",
       "_shield-BUMTVvIx.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/id/_sections/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/id/_sections/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
       "_app-thunk-C-bm5WNX.js",
       "_user-service-BuHuLxb-.js",
@@ -2223,19 +2223,19 @@
       "_dialog-nx-t5O2M.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/employees/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/employees/page.jsx": {
     "file": "assets/page-NQF5HH0O.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/employees/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/employees/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/table-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/search-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/employees/_sections/pagination-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/search-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/employees/_sections/pagination-section.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -2253,29 +2253,29 @@
       "_applicants-service-NrBNKubk.js",
       "_er-leaders-service-2wdB6W7o.js",
       "_performance-evaluation-service-CAmzoeb5.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
       "_input-JnEnp1sg.js",
       "_pagination-B5sXoiB_.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx": {
     "file": "assets/layout-DOVE3Y2M.js",
     "name": "layout",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/create-lead-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/create-lead-section.jsx": {
     "file": "assets/create-lead-section-BQxr0qWv.js",
     "name": "create-lead-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/create-lead-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/create-lead-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2292,20 +2292,20 @@
       "_performance-evaluation-service-CAmzoeb5.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/table-section.jsx": {
     "file": "assets/table-section-DHDvBgXg.js",
     "name": "table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_table-C5vkl013.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/add-member-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/add-member-section.jsx": {
     "file": "assets/add-member-section-B9uOnGq-.js",
     "name": "add-member-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/add-member-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/add-member-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2322,47 +2322,47 @@
       "_performance-evaluation-service-CAmzoeb5.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/back-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/back-section.jsx": {
     "file": "assets/back-section-DDhGspWg.js",
     "name": "back-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/back-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/back-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/header-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/header-section.jsx": {
     "file": "assets/header-section-DieEUln9.js",
     "name": "header-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/header-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/header-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/table-section.jsx": {
     "file": "assets/table-section-D-DvZ_-x.js",
     "name": "table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_table-C5vkl013.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/page.jsx": {
     "file": "assets/page-H3QHdURW.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/back-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/id/_sections/add-member-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/back-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/id/_sections/add-member-section.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -2387,17 +2387,17 @@
       "_index.esm-y7JlnH8N.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/leads/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/leads/page.jsx": {
     "file": "assets/page-CtIydY4r.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/leads/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/leads/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/leads/_sections/create-lead-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/leads/_sections/create-lead-section.jsx",
       "_job-requisition-thunk-JPq4Gzya.js",
       "_employee-relation-thunk-Bud_nmC8.js",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
@@ -2413,8 +2413,8 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
       "_table-C5vkl013.js",
       "_button-CsoQkssM.js",
@@ -2427,17 +2427,17 @@
       "_performance-evaluation-service-CAmzoeb5.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/pooling/page.jsx": {
     "file": "assets/page-jWafSk8c.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/pooling/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/pooling-table-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/search-pooling-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/pooling-table-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/search-pooling-section.jsx",
       "_employee-relation-thunk-Bud_nmC8.js",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
@@ -2452,11 +2452,11 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js",
       "_table-C5vkl013.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/send-job-offer-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/send-job-offer-section.jsx",
       "_button-CsoQkssM.js",
       "_index-BNlzU0iR.js",
       "_input-JnEnp1sg.js",
@@ -2471,25 +2471,25 @@
       "_performance-evaluation-service-CAmzoeb5.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/pagination-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/pagination-section.jsx": {
     "file": "assets/pagination-section-CWeWuIBG.js",
     "name": "pagination-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/pagination-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/pagination-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_pagination-B5sXoiB_.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/pooling-table-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/pooling-table-section.jsx": {
     "file": "assets/pooling-table-section-DK7MhSd7.js",
     "name": "pooling-table-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/pooling-table-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/pooling-table-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_table-C5vkl013.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/send-job-offer-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/send-job-offer-section.jsx",
       "_button-CsoQkssM.js",
       "_index-BNlzU0iR.js",
       "_input-JnEnp1sg.js",
@@ -2504,20 +2504,20 @@
       "_index.esm-y7JlnH8N.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/search-pooling-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/search-pooling-section.jsx": {
     "file": "assets/search-pooling-section-F_pr8vh_.js",
     "name": "search-pooling-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/search-pooling-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/search-pooling-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "_input-JnEnp1sg.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/send-job-offer-section.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/send-job-offer-section.jsx": {
     "file": "assets/send-job-offer-section-BFGL_fwY.js",
     "name": "send-job-offer-section",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/pooling/sections/send-job-offer-section.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/pooling/sections/send-job-offer-section.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
@@ -2535,15 +2535,15 @@
       "_job-application-service-CFPNLmrD.js"
     ]
   },
-  "resources/js/app/pages/accounts/_administrator/employee_relation/separation/page.jsx": {
+  "resources/js/app/pages/accounts/_administrator/human_resources/separation/page.jsx": {
     "file": "assets/page-BuLIk0IJ.js",
     "name": "page",
-    "src": "resources/js/app/pages/accounts/_administrator/employee_relation/separation/page.jsx",
+    "src": "resources/js/app/pages/accounts/_administrator/human_resources/separation/page.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.jsx",
       "resources/js/app/pages/accounts/layout.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/layout.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/layout.jsx",
       "resources/js/app/pages/accounts/__sections/topbar-section.jsx",
       "_Bars3Icon-DwzFT7WE.js",
       "_MagnifyingGlassIcon-YEF5nsv2.js",
@@ -2557,8 +2557,8 @@
       "_index-DWKdiuX8.js",
       "_index-BgHwFtDp.js",
       "_dialog-nx-t5O2M.js",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/header-section.jsx",
-      "resources/js/app/pages/accounts/_administrator/employee_relation/_section/tabs-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/header-section.jsx",
+      "resources/js/app/pages/accounts/_administrator/human_resources/_section/tabs-section.jsx",
       "_tabs-CzkPpuMv.js"
     ]
   },

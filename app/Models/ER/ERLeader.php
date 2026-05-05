@@ -16,7 +16,7 @@ class ERLeader extends Model
 
     public function subordinates(): HasMany
     {
-        return $this->hasMany(ERSubordinate::class, 'er_leader_id', 'id')->with(['employee']);
+        return $this->hasMany(ERSubordinate::class, 'er_leader_id', 'id')->with(['employee','leader']);
     }
      public function user(): HasOne
     {

@@ -116,10 +116,10 @@ export default function SidebarSection() {
                   },
 
                   {
-                      name: "Employee Relation",
-                      href: `/accounts/${account_role}/employee_relation/employees`,
+                      name: "Human Resources",
+                      href: `/accounts/${account_role}/human_resources/employees`,
                       icon: FcPodiumWithAudience,
-                      current: path == "employee_relation",
+                      current: path == "human_resources",
                       is_incoming: false,
                   },
                   {

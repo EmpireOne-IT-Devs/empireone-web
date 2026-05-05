@@ -15,7 +15,7 @@ class ERPerformanceEvaluationFormController extends Controller
      */
     public function index(Request $request)
     {
-        $evaluations = ERPerformanceEvaluationForm::where('recommendation', $request->status)->with(['supervisor'])->get();
+        $evaluations = ERPerformanceEvaluationForm::where('recommendation', $request->status)->with(['supervisor','user','employee'])->get();
         return response()->json([
             'data' => $evaluations,
             'status'  => 'success',
