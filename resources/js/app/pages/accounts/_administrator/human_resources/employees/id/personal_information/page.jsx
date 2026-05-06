@@ -79,6 +79,7 @@ const Page = () => {
                                                 user?.personal_information
                                                     ?.middle_name
                                             }
+                                            
                                         </span>
                                         <span>
                                             {
@@ -87,8 +88,14 @@ const Page = () => {
                                             }
                                         </span>
                                     </h4>
-                                    <p className="text-xs font-semibold text-gray-200 tracking-widest uppercase mb-16 ml-0.5">
-                                        {user?.account_employee?.employee_id}
+                                    <p className="text-xs  text-white tracking-widest uppercase mb-16 ml-0.5">
+                                        EOID:{" "}
+                                        <span className="font-bold text-white underline">
+                                            {
+                                                user?.account_employee
+                                                    ?.employee_id
+                                            }
+                                        </span>
                                     </p>
                                 </div>
                             </div>
@@ -245,7 +252,7 @@ const Page = () => {
                         icon={<User size={15} />}
                         theme={CARD_THEMES.purple}
                     >
-                        <div className="space-y-3">
+                        <div className="space-y-4 overflow-y-auto max-h-52">
                             {user?.skills?.map((res, index) => (
                                 <div key={index}>
                                     <div className="flex justify-between items-center mb-1">
@@ -276,7 +283,7 @@ const Page = () => {
                         icon={<Briefcase size={15} />}
                         theme={CARD_THEMES.blue}
                     >
-                        <div className="space-y-4">
+                        <div className="space-y-4 overflow-y-auto max-h-52">
                             {user?.working_experience?.map((res, index) => (
                                 <TimelineItem
                                     key={index}
@@ -353,7 +360,6 @@ const Page = () => {
                     >
                         <div className="flex justify-center bg-white border border-orange-100 rounded-xl">
                             <img
-                            
                                 src={user?.account_employee?.signature}
                                 className="w-full object-contain h-52"
                                 alt="Signature"

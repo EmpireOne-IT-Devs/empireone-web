@@ -6,58 +6,44 @@ const jobCards = [
     {
         role: "UI/UX Designer",
         company: "TechCorp",
-        pay: "₱45,000/mo",
         type: "Remote",
         color: "#7c3aed",
     },
     {
         role: "Customer Support",
         company: "HelperHub",
-        pay: "₱12,000/mo",
         type: "Full-time",
         color: "#0ea5e9",
     },
     {
         role: "Data Analyst",
         company: "InsightCo",
-        pay: "₱38,000/mo",
         type: "Contract",
         color: "#10b981",
     },
     {
         role: "Sales Rep",
         company: "GrowthLabs",
-        pay: "₱30,000/mo",
         type: "Remote",
         color: "#f97316",
     },
     {
         role: "Virtual Assistant",
         company: "AssistPro",
-        pay: "₱25,000/mo",
         type: "Part-time",
         color: "#ec4899",
     },
     {
         role: "TA Staff",
         company: "MediaX",
-        pay: "₱28,000/mo",
         type: "Freelance",
         color: "#f59e0b",
     },
     {
         role: "Account Manager",
         company: "SalesForce",
-        pay: "₱42,000/mo",
         type: "Remote",
         color: "#6366f1",
-    },
-    {
-        role: "IT Support",
-        company: "TechSolve",
-        pay: "₱35,000/mo",
-        type: "Full-time",
-        color: "#14b8a6",
     },
 ];
 export default function HeroSection() {
@@ -103,20 +89,67 @@ export default function HeroSection() {
         }
 
         .float { animation: float 4s ease-in-out infinite; }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(32px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(48px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-48px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scalePop {
+          0%   { opacity: 0; transform: scale(0.85); }
+          70%  { transform: scale(1.04); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes orbPulse {
+          0%,100% { opacity: 0.6; transform: scale(1); }
+          50%     { opacity: 1;   transform: scale(1.08); }
+        }
+
+        .anim-fade-up   { animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+        .anim-fade-in   { animation: fadeIn 0.8s ease both; }
+        .anim-slide-right { animation: slideInRight 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+        .anim-slide-left  { animation: slideInLeft 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+        .anim-scale-pop { animation: scalePop 0.7s cubic-bezier(0.22,1,0.36,1) both; }
+        .anim-orb       { animation: orbPulse 6s ease-in-out infinite; }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
+        .delay-800 { animation-delay: 0.8s; }
       `}</style>
 
             {/* ---------------- BACKGROUND ---------------- */}
             <div className="absolute inset-0 bg-[#0a0a14]" />
-            <div className="absolute w-[700px] h-[700px] bg-purple-600/30 blur-3xl rounded-full -top-40 -left-32" />
-            <div className="absolute w-[600px] h-[600px] bg-orange-500/20 blur-3xl rounded-full top-20 -right-24" />
-            <div className="absolute w-[400px] h-[400px] bg-sky-500/20 blur-3xl rounded-full bottom-10 left-1/3" />
+            <div className="absolute w-[700px] h-[700px] bg-purple-600/30 blur-3xl rounded-full -top-40 -left-32 anim-orb" />
+            <div className="absolute w-[600px] h-[600px] bg-orange-500/20 blur-3xl rounded-full top-20 -right-24 anim-orb delay-300" />
+            <div className="absolute w-[400px] h-[400px] bg-sky-500/20 blur-3xl rounded-full bottom-10 left-1/3 anim-orb delay-600" />
 
             {/* ---------------- HERO ---------------- */}
             <div className="relative z-10 sm:flex-1 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-20 flex flex-col lg:flex-row items-center gap-6 lg:gap-10 pt-20 sm:pt-24 lg:pt-10 pb-8 sm:pb-0">
                 {/* LEFT */}
                 <div className="w-full lg:w-[55%] font-dm space-y-4 sm:space-y-5 lg:space-y-6 mt-0 sm:mt-4 lg:mt-14 text-center lg:text-left">
                     {/* BADGES */}
-                    <div className="flex gap-2 sm:gap-3 flex-wrap justify-center lg:justify-start">
+                    <div className="flex gap-2 sm:gap-3 flex-wrap justify-center lg:justify-start anim-fade-up">
                         <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-400 text-[10px] sm:text-xs font-semibold">
                             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-ping" />
                             {activeJobs.toLocaleString()} Employees
@@ -128,7 +161,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* TITLE */}
-                    <h1 className="font-syne text-[clamp(32px,8vw,88px)] sm:text-[clamp(40px,7vw,88px)] lg:text-[clamp(48px,6vw,88px)] leading-[1.1] sm:leading-[1.05] lg:leading-[1.02]">
+                    <h1 className="font-syne text-[clamp(32px,8vw,88px)] anim-fade-up delay-200 sm:text-[clamp(40px,7vw,88px)] lg:text-[clamp(48px,6vw,88px)] leading-[1.1] sm:leading-[1.05] lg:leading-[1.02]">
                         Your Next <br />
                         <span className="bg-gradient-to-r from-purple-400 to-orange-400 text-transparent bg-clip-text">
                             Dream Career
@@ -136,14 +169,14 @@ export default function HeroSection() {
                         <br /> Starts Here.
                     </h1>
 
-                    <p className="text-white/60 max-w-md mx-auto lg:mx-0 text-base sm:text-lg px-4 sm:px-0">
+                    <p className="text-white/60 max-w-md mx-auto lg:mx-0 text-base sm:text-lg px-4 sm:px-0 anim-fade-up delay-300">
                         Join the leading BPO platform of independent
                         professionals. Get hired faster, work smarter, earn
                         more.
                     </p>
 
                     {/* SEARCH */}
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-white/10 border border-white/10 rounded-xl p-3 sm:px-4 sm:py-3 max-w-md mx-auto lg:mx-0 gap-3 sm:gap-0">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-white/10 anim-fade-up delay-400 border border-white/10 rounded-xl p-3 sm:px-4 sm:py-3 max-w-md mx-auto lg:mx-0 gap-3 sm:gap-0">
                         <input
                             placeholder='Try "Virtual Assistant"...'
                             className="bg-transparent outline-none flex-1 text-sm text-white/80 placeholder:text-white/30 min-w-0"
@@ -154,7 +187,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* CTA */}
-                    <div className="flex flex-wrap gap-2 px-4 sm:px-0 max-w-md mx-auto lg:mx-0">
+                    <div className="flex flex-wrap gap-2 px-4 sm:px-0 max-w-md mx-auto lg:mx-0 anim-fade-up delay-500">
                         <Button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/20 text-xs font-medium whitespace-nowrap">
                             Mobile App <Android className="w-3.5 h-3.5" />
                         </Button>
@@ -169,7 +202,7 @@ export default function HeroSection() {
 
                 {/* RIGHT */}
                 {/* RIGHT SIDE */}
-                <div className="hidden sm:flex w-full lg:w-[45%] relative items-end justify-center z-10 lg:self-end">
+                <div className="hidden sm:flex w-full lg:w-[45%] relative items-end justify-center z-10 lg:self-end anim-slide-right delay-300">
                     {/* IMAGE */}
                     <img
                         src="/images/mmm.png"
@@ -181,7 +214,7 @@ export default function HeroSection() {
                     />
 
                     {/* ===================== FLOATING CARD 1 ===================== */}
-                    <div className="hidden sm:block absolute top-[8%] right-[-2%] lg:right-[-2%] md:right-[2%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[180px] sm:max-w-none">
+                    <div className="hidden sm:block absolute top-[8%] right-[-2%] lg:right-[-2%] md:right-[2%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[180px] sm:max-w-none animate-bounce">
                         <div className="flex items-center gap-2 sm:gap-3">
                             <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
                                 <svg
@@ -209,8 +242,8 @@ export default function HeroSection() {
                     </div>
 
                     {/* ===================== FLOATING CARD 2 ===================== */}
-                    <div className="hidden md:block absolute top-[2%] left-[-2%] lg:left-[-8%] md:left-[-4%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[180px] sm:max-w-none">
-                        <div className="flex items-center gap-2 sm:gap-3">
+                    <div className=" hidden md:block absolute top-[2%] left-[-2%] lg:left-[-8%] md:left-[-4%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[180px] sm:max-w-none animate-bounce">
+                        <div className="flex items-center gap-2 sm:gap-3 ">
                             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0">
                                 <svg
                                     width="14"
@@ -237,7 +270,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* ===================== FLOATING CARD 3 ===================== */}
-                    <div className="hidden sm:block absolute bottom-[2%] right-[-22%] lg:right-[-22%] md:right-[-10%] sm:right-[-15%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[160px] sm:max-w-none">
+                    <div className="hidden sm:block absolute bottom-[2%] right-[-22%] lg:right-[-22%] md:right-[-10%] sm:right-[-15%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[160px] sm:max-w-none animate-bounce">
                         <p className="text-[10px] sm:text-xs text-white/40 mb-2">
                             Recent applicants
                         </p>
@@ -262,11 +295,9 @@ export default function HeroSection() {
                     </div>
                 </div>
             </div>
-
-            {/* ---------------- CAROUSEL ---------------- */}
-            <div className="relative z-20 py-3 sm:py-4 border-y border-white/10">
+            <div className="relative z-20 py-3 sm:py-4 border-y border-white/10 anim-fade-in delay-700">
                 {/* ROW 1 */}
-                <div className="overflow-hidden mb-1.5 sm:mb-2">
+                <div className="overflow-hidden mb-1.5 sm:mb-2">    
                     <div className="flex w-max ticker-left gap-2 sm:gap-3 lg:gap-4">
                         {[...jobCards, ...jobCards].map((job, i) => (
                             <div
@@ -277,20 +308,11 @@ export default function HeroSection() {
                                     className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded flex-shrink-0"
                                     style={{ background: job.color }}
                                 />
-                                <span className="text-xs sm:text-sm font-semibold text-white/85">
+                                <span className="text-xs sm:text-sm font-semibold text-white/85">   
                                     {job.role}
                                 </span>
                                 <span className="text-[10px] sm:text-xs text-white/40 hidden sm:inline">
                                     {job.company}
-                                </span>
-                                <span
-                                    className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded"
-                                    style={{
-                                        color: job.color,
-                                        background: `${job.color}22`,
-                                    }}
-                                >
-                                    {job.pay}
                                 </span>
                                 <span className="text-[10px] sm:text-[11px] text-white/40 bg-white/5 px-1.5 sm:px-2 py-0.5 rounded hidden md:inline">
                                     {job.type}
@@ -322,14 +344,8 @@ export default function HeroSection() {
                                 <span className="text-[10px] sm:text-xs text-white/40 hidden sm:inline">
                                     {job.company}
                                 </span>
-                                <span
-                                    className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded"
-                                    style={{
-                                        color: job.color,
-                                        background: `${job.color}22`,
-                                    }}
-                                >
-                                    {job.pay}
+                                <span className="text-[10px] sm:text-[11px] text-white/40 bg-white/5 px-1.5 sm:px-2 py-0.5 rounded hidden md:inline">
+                                    {job.type}
                                 </span>
                             </div>
                         ))}

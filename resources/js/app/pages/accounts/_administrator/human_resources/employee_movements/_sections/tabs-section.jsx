@@ -17,7 +17,7 @@ export default function TabsSection() {
         },
     ];
     return (
-        <div className="border-2 rounded-lg border-blue-600 py-1 max-w-lg flex items-center justify-center">
+        <div className="border-2 rounded-lg py-1 max-w-lg flex items-center justify-center">
             <Tabs tabs={tabs} activeIndex={activeTab} />
         </div>
     );
