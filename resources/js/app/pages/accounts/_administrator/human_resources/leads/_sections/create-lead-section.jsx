@@ -5,6 +5,7 @@ import { setAlert } from "@/app/redux/app-slice";
 import { get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 import { add_leader_service } from "@/app/services/er-leaders-service";
 import store from "@/app/store/store";
+import { ClipboardCheckIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
@@ -79,7 +80,21 @@ export default function CreateLeadSection() {
                 isOpen={open}
                 onClose={handleClose}
                 width="max-w-xl h-96"
-                title="Add Leader"
+                title={
+                    <div className="flex items-center gap-3 p-2">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <ClipboardCheckIcon />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                Employee Relations
+                            </p>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                Add Team Leader
+                            </h2>
+                        </div>
+                    </div>
+                }
             >
                 {/* Wrapped the content in a form tag to enable validation and submission */}
                 <form
