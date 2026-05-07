@@ -4,7 +4,7 @@ namespace App\Models\ER;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ERPerformanceEvaluationSection1 extends Model
 {
@@ -25,8 +25,8 @@ class ERPerformanceEvaluationSection1 extends Model
     /**
      * Get the evaluation form that owns this section entry.
      */
-    public function form(): BelongsTo
+    public function form(): HasOne
     {
-        return $this->belongsTo(ErPerformanceEvaluationForm::class, 'e_r_performance_evaluation_form_id');
+        return $this->hasOne(ErPerformanceEvaluationForm::class,'id', 'e_r_performance_evaluation_form_id');
     }
 }

@@ -11,9 +11,9 @@ export default function MyTeamLayout({ children }) {
                     <div className="flex-1">
                         <HeaderSection />
                     </div>
-                    <div>
+                    {/* <div>
                         <AddMemberSection />
-                    </div>
+                    </div> */}
                 </div>
                 <TabsSection />
                 {children}
