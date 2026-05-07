@@ -44,9 +44,9 @@ class ERPerformanceEvaluationForm extends Model
         return $this->belongsTo(User::class, 'user_id')->with(['personal_information']);
     }
 
-      public function employee(): HasOne
+    public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id','user_id')->with(['department','account']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['department', 'account']);
     }
 
     /**
@@ -54,7 +54,7 @@ class ERPerformanceEvaluationForm extends Model
      */
     public function supervisor(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'supervisor_id')->with(['personal_information','account_employee']);
+        return $this->belongsTo(User::class, 'supervisor_id')->with(['personal_information', 'account_employee']);
     }
 
     /**
@@ -62,7 +62,7 @@ class ERPerformanceEvaluationForm extends Model
      */
     public function section1s(): HasMany
     {
-        return $this->hasMany(ERPerformanceEvaluationSection1::class, 'e_r_performance_evaluation_form_id');
+        return $this->hasMany(ERPerformanceEvaluationSection1::class, 'e_r_performance_evaluation_form_id', 'id');
     }
 
     /**
@@ -70,6 +70,6 @@ class ERPerformanceEvaluationForm extends Model
      */
     public function section2s(): HasMany
     {
-        return $this->hasMany(ErPerformanceEvaluationSection2::class, 'e_r_performance_evaluation_form_id');
+        return $this->hasMany(ErPerformanceEvaluationSection2::class, 'e_r_performance_evaluation_form_id', 'id');
     }
 }
