@@ -26,7 +26,7 @@ class ERSubordinate extends Model
     {
         return $this->hasOne(ERPerformanceEvaluationForm::class, 'user_id', 'subordinate_id')->where('evaluation_period', '3 Months');
     }
-    public function has4_months_evaluation(): HasOne
+    public function has5_months_evaluation(): HasOne
     {
         return $this->hasOne(ERPerformanceEvaluationForm::class, 'user_id', 'subordinate_id')->where('evaluation_period', '5 Months');
     }
