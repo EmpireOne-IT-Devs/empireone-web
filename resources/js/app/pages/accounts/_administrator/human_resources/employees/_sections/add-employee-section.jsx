@@ -10,6 +10,7 @@ import { Clickup } from '@thesvg/react'
 import store from '@/app/store/store'
 import { get_employees_thunk } from '@/app/redux/employee-relation-thunk'
 import { setAlert } from '@/app/redux/app-slice'
+import { add_employee_service } from '@/app/services/account-service'
 
 export default function AddEmployeeSection() {
     const { data } = useSelector((store) => store.app);

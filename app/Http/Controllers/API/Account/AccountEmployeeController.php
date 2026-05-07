@@ -8,6 +8,7 @@ use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AccountEmployeeController extends Controller
@@ -18,11 +19,13 @@ class AccountEmployeeController extends Controller
     public function add_employee(Request $request)
     {
         // 1. Create or Update the base User
+        $authUser = Auth::user();
         $user = User::updateOrCreate(
             ['email' => $request->eogs_email],
             [
                 'name' => $request->first_name . ' ' . $request->last_name,
                 'password' => Hash::make('Business12'),
+                'role' => '2',
             ]
         );
         AccountEmployee::updateOrCreate(
@@ -35,6 +38,7 @@ class AccountEmployeeController extends Controller
                 'status'        => $request->status,
                 'started_at'    => $request->started_at,
                 'work_type'     => $request->work_type,
+                'location_id'   => $authUser->account_employee?->location_id
             ]
         );
 

@@ -93,7 +93,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::prefix('accounts')->group(function () {
         Route::resource('employees',  AccountEmployeeController::class);
         Route::get('get_all_employees',  [AccountEmployeeController::class, 'get_all_employees']);
-        Route::get('add_employee',  [AccountEmployeeController::class, 'add_employee']);
+        Route::post('add_employee',  [AccountEmployeeController::class, 'add_employee']);
         Route::get('get_regular',  [AccountEmployeeController::class, 'get_regular']);
         Route::get('user',  [AccountPersonalInformationController::class, 'accounts_user']);
         Route::post('personal_information',  [AccountPersonalInformationController::class, 'accounts_personal_information']);
