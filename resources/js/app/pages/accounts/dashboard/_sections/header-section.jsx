@@ -17,8 +17,10 @@ export default function HeaderSection() {
         <div className="relative flex items-center justify-between my-3 bg-blue-700 rounded-2xl px-8 py-6 overflow-hidden">
             {/* Left Content */}
             <div className="flex flex-col gap-2 z-10">
-                <h1 className="text-2xl md:text-3xl font-black text-white">
-                    Welcome Back! {data?.user?.name}!
+                <h1 className="text-2xl md:text-3xl font-semi text-white">
+                    Welcome Back,
+                    <span className="font-bold "> {data?.user?.name}</span>
+                    
                 </h1>
                 <p className="text-blue-200 text-sm">
                     Here's what's happening in your workspace today

@@ -77,7 +77,7 @@ export default function AddInterviewerSection() {
 
     return (
         <>
-            <Button onClick={() => setOpen(true)}>Add Interviewer</Button>
+            <Button outlined onClick={() => setOpen(true)} className="text-xs">Add Interviewer</Button>
 
             <Modal
                 isOpen={open}
