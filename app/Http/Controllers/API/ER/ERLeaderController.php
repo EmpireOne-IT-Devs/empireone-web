@@ -28,9 +28,13 @@ class ERLeaderController extends Controller
     public function store(Request $request)
     {
 
-        ERLeader::create([
-            'user_id' => $request->user_id
-        ]);
+        ERLeader::updateOrCreate(
+            // 1. Search criteria: Look for an existing record with this user_id
+            ['user_id' => $request->user_id],
+
+            // 2. Values to update: Leave empty because there are no other fields to update
+            []
+        );
         return response()->json([
             'status' => 'success',
         ], 200);

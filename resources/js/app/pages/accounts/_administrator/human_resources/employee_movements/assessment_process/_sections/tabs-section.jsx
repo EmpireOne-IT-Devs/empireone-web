@@ -2,28 +2,25 @@ import { Link } from "@inertiajs/react";
 import React from "react";
 
 export default function TabsSection() {
-    const currentParams = new URLSearchParams(window.location.search);
-    const currentPath = currentParams.get("status");
+    // const currentParams = new URLSearchParams(window.location.search);
+    // const currentPath = currentParams.get("status");
+    const currentPath =window.location.pathname.split('/')[6]??'regular'
     const tabs = [
-        {
-            label: "Mid Regularization",
-            path: "/accounts/administrator/human_resources/employee_movements/assessment_process?status=Mid-Probationary",
-            active: currentPath === "Mid-Probationary",
-        },
         {
             label: "Regularization",
             path: "/accounts/administrator/human_resources/employee_movements/assessment_process?status=Regular",
-            active: currentPath === "Regular",
+            active: currentPath === "regular",
+        },
+
+        {
+            label: "Promotions",
+            path: "/accounts/administrator/human_resources/employee_movements/assessment_process/promotions",
+            active: currentPath === "promotions",
         },
         {
-            label: "Extended Regularization",
-            path: "/accounts/administrator/human_resources/employee_movements/assessment_process?status=Extended Probationary",
-            active: currentPath === "Extended Probationary",
-        },
-        {
-            label: "None Regularization",
-            path: "/accounts/administrator/human_resources/employee_movements/assessment_process?status=End of Contract",
-            active: currentPath === "End of Contract",
+            label: "Transfers",
+            path: "/accounts/administrator/human_resources/employee_movements/assessment_process/transfers",
+            active: currentPath === "transfers",
         },
     ];
 
@@ -38,10 +35,9 @@ export default function TabsSection() {
                             href={tab.path}
                             className={`
                                 relative flex-1 px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 ease-out outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 text-center whitespace-nowrap block
-                                ${
-                                    tab.active
-                                        ? "bg-white text-blue-700 shadow-sm border border-gray-200/50 scale-100"
-                                        : "text-gray-800 hover:text-gray-800 hover:bg-gray-200/50 scale-95 hover:scale-100"
+                                ${tab.active
+                                    ? "bg-white text-blue-700 shadow-sm border border-gray-200/50 scale-100"
+                                    : "text-gray-800 hover:text-gray-800 hover:bg-gray-200/50 scale-95 hover:scale-100"
                                 }
                             `}
                             aria-current={tab.active ? "page" : undefined}

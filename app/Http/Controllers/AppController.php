@@ -51,7 +51,6 @@ class AppController extends Controller
                 [
                     'user_id' => $value['user_id'],
                     'evaluation_period' => $value['evaluation_period'],
-                    // 'supervisor_id'=>""
                 ],
                 []
             );

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
+use App\Models\ER\ERSubordinate;
 use App\Models\Location;
 use App\Models\Site;
 use Laravel\Socialite\Facades\Socialite;
@@ -19,6 +20,40 @@ use Illuminate\Support\Facades\Hash;
 class GoogleController extends Controller
 {
 
+    public function merge_data()
+    {
+        $agents = [
+            25020301,
+            25020305,
+            25011507,
+            25011508,
+            25031002,
+            25011501,
+            25020310,
+            25020303,
+            24072221,
+        ];
+        foreach ($agents as $key => $value) {
+            $employee = AccountEmployee::where('employee_id', $value)->first();
+            if ($employee) {
+                // ERSubordinate::where([
+                //     ['er_leader_id', '=', 13],
+                //     ['subordinate_id', '=', $employee->user_id]
+                // ])->delete();
+                // ERSubordinate::updateOrCreate(
+                //     [
+                //         'er_leader_id' => 20,
+                //         'subordinate_id' => $employee->user_id
+                //     ],
+                //     []
+                // );
+                // $employee->update([
+                //     'department_id' => 4,
+                //     'account_id' => '9'
+                // ]);
+            }
+        }
+    }
     public function get_employee()
     {
         $filename = public_path("csv/employee_data.xlsx - employee_data.csv");

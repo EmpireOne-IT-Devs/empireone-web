@@ -15,6 +15,8 @@ export default function TableSection() {
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
         { header: "Employment Status", accessor: "status" },
+        { header: "Hired Date", accessor: "started_at" },
+        { header: "Evaluation Period", accessor: "evaluation_period" },
         { header: "Action", accessor: "action" },
     ];
     return (
@@ -39,12 +41,17 @@ export default function TableSection() {
                         position: `${res?.employee?.account_employee?.position} `,
                         department:
                             res?.employee?.account_employee?.department?.name,
+                        started_at:
+                            res?.employee?.account_employee?.started_at,
                         status:
                             res?.employee?.account_employee?.status ?? "N/A",
+                        evaluation_period: res?.has3_months_evaluation?.evaluation_period,
                         action: (
                             <div className="flex gap-3">
-                                {res?.employee?.account_employee?.status ==
-                                    "Probationary" && (
+                                {/* {
+                                    res?.has3_months_evaluation?.user_id
+                                } */}
+                                {res?.has3_months_evaluation && (
                                     <>
                                         <a
                                             target="_blank"

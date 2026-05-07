@@ -59,6 +59,7 @@ Route::resource('job/job_interviewer_schedules', JobInterviewerScheduleControlle
 Route::get('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
 
 Route::get('get_employee', [GoogleController::class, 'get_employee']); // do not remove this
+Route::get('merge_data', [GoogleController::class, 'merge_data']); // do not remove this
 Route::get('employee_assessment_notifications', [AppController::class, 'employee_assessment_notifications']); // do not remove this
 
 
