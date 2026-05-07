@@ -2,6 +2,7 @@
 
 namespace App\Models\ER;
 
+use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -16,10 +17,14 @@ class ERLeader extends Model
 
     public function subordinates(): HasMany
     {
-        return $this->hasMany(ERSubordinate::class, 'er_leader_id', 'id')->with(['employee','leader']);
+        return $this->hasMany(ERSubordinate::class, 'er_leader_id', 'id')->with(['employee', 'leader']);
     }
-     public function user(): HasOne
+    public function user(): HasOne
     {
-        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information','account_employee']);
+        return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information', 'account_employee']);
+    }
+    public function employee(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id');
     }
 }

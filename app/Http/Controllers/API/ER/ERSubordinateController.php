@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API\ER;
 
 use App\Models\ER\ERSubordinate;
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountEmployee;
+use App\Models\ER\ERLeader;
 use Illuminate\Http\Request;
 
 class ERSubordinateController extends Controller
@@ -36,12 +38,17 @@ class ERSubordinateController extends Controller
             'subordinates.*' => 'required|integer'
         ]);
         $leaderId = $request->er_leader_id;
+        $leader = ERLeader::where('id', $leaderId)->with(['employee'])->first();
         $subordinates = $request->subordinates;
         foreach ($subordinates as $subordinateId) {
             if ($subordinateId) {
                 ERSubordinate::firstOrCreate([
                     'er_leader_id' => $leaderId,
                     'subordinate_id' => $subordinateId
+                ]);
+                AccountEmployee::where('user_id', $subordinateId)->update([
+                    'account_id' => $leader['employee']['account_id'] ?? null,
+                    'department_id' => $leader['employee']['department_id'] ?? null,
                 ]);
             }
         }
