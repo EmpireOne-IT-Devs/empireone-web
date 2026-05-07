@@ -70,6 +70,6 @@ class ERPerformanceEvaluationForm extends Model
      */
     public function section2s(): HasMany
     {
-        return $this->hasMany(ErPerformanceEvaluationSection2::class, 'e_r_performance_evaluation_form_id', 'id');
+        return $this->hasMany(ERPerformanceEvaluationSection2::class, 'e_r_performance_evaluation_form_id', 'id');
     }
 }
