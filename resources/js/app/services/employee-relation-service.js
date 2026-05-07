@@ -12,3 +12,8 @@ export async function get_employees_service(data) {
 export async function get_probationary_service() {
     return (await axios.get(`/api/accounts/get_probationary`)).data;
 }
+
+export async function get_regular_service() {
+    return (await axios.get(`/api/accounts/get_regular`)).data;
+}
+

@@ -18,7 +18,7 @@ const store = configureStore({
         sites: siteSlice,
         job_requisitions: jobRequisitionSlice,
         applicants: applicantSlice,
-        human_resourcess: employeeRelationSlice,
+        human_resources: employeeRelationSlice,
         talent_acquisitions: talentAcquisitionSlice,
     },
 });

@@ -7,10 +7,13 @@ export const employeeRelationSlice = createSlice({
         employees: [],
         pools: [],
         probationaries: [],
-        leaders:[],
-        leader:{},
-        evaluations:[],
-        evaluation:{},
+        leaders: [],
+        leader: {},
+        evaluations: [],
+        evaluation: {},
+        regulars: [],
+        ecfs: [],
+        ecf: [],
     },
     reducers: {
         setEmployees: (state, action) => {
@@ -31,12 +34,31 @@ export const employeeRelationSlice = createSlice({
         setEvaluations: (state, action) => {
             state.evaluations = action.payload;
         },
-         setEvaluation: (state, action) => {
+        setEvaluation: (state, action) => {
             state.evaluation = action.payload;
+        },
+        setRegulars: (state, action) => {
+            state.regulars = action.payload;
+        },
+        setECFs: (state, action) => {
+            state.ecfs = action.payload;
+        },
+         setECF: (state, action) => {
+            state.ecf = action.payload;
         },
     },
 });
-export const { setEmployees, setPools, setProbationaries,setLeaders,setLeader,setEvaluations,setEvaluation } =
-    employeeRelationSlice.actions;
+export const {
+    setEmployees,
+    setPools,
+    setProbationaries,
+    setLeaders,
+    setLeader,
+    setEvaluations,
+    setEvaluation,
+    setRegulars,
+    setECFs,
+    setECF,
+} = employeeRelationSlice.actions;
 
 export default employeeRelationSlice.reducer;

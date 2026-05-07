@@ -6,9 +6,14 @@ import Radio from "@/app/_components/radio";
 import Select from "@/app/_components/select";
 import TextArea from "@/app/_components/textarea";
 import { peso_format } from "@/app/lib/peso-format";
+import { setAlert } from "@/app/redux/app-slice";
+import { get_employee_change_form_thunk } from "@/app/redux/employee-relation-thunk";
+import { create_employee_change_form_service } from "@/app/services/employee-change-form-service";
+import store from "@/app/store/store";
+import moment from "moment";
 import React, { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const defaultFormValues = {
     user_id: null,
@@ -23,7 +28,6 @@ const defaultFormValues = {
     reporting_to: null,
     reason_for_change: null,
     effective_date: null,
-    change_type: null,
     info_position_level_from: null,
     info_position_level_to: null,
     info_department_from: null,
@@ -40,9 +44,8 @@ const defaultFormValues = {
     info_basic_pay_to: null,
     info_allowances_from: null,
     info_allowances_to: null,
-    ack_name: null,
+    prepaired_by_id: 'Anthony Aragon',
     ack_date: null,
-    // Toggles for inline editing
     is_edit_status: false,
     is_edit_reporting_to: false,
     is_edit_basic_pay: false,
@@ -50,16 +53,19 @@ const defaultFormValues = {
 };
 
 const EmployeeChangeFormSection = () => {
+    const params = new URLSearchParams(window.location.search);
+    const user_id = params.get("user_id");
     const { data } = useSelector((store) => store.app);
+    const { regulars } = useSelector((store) => store.human_resources);
     const [open, setOpen] = useState(false);
-
+    const dispatch = useDispatch()
     const {
         register,
         handleSubmit,
         reset,
         watch,
         setValue,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: defaultFormValues,
     });
@@ -68,47 +74,49 @@ const EmployeeChangeFormSection = () => {
 
     // Optimize derivations using useMemo
     const selected_employee = useMemo(() => {
-        return data?.user?.leader?.subordinates?.find(
-            (res) => res.subordinate_id == watchedValues.user_id,
-        );
-    }, [data?.user?.leader?.subordinates, watchedValues.user_id]);
+        return regulars?.find((res) => res.user_id == watchedValues.user_id);
+    }, [regulars.length, watchedValues.user_id]);
 
-    const selected_ecf = useMemo(() => {
-        return data?.user?.account_employee?.account?.ecfs?.find(
-            (res) => res.id == watchedValues.ecf_id,
-        );
-    }, [data?.user?.account_employee?.account?.ecfs, watchedValues.ecf_id]);
+    const selected_ecf = selected_employee?.account?.ecfs.find(res => res.id == watchedValues.ecf_id)
 
-    // Batch setValues loop to keep code clean
+    useEffect(() => {
+        setValue("user_id", user_id);
+    }, []);
+    useEffect(() => {
+        if (user_id && selected_employee) {
+            setOpen(true);
+        }
+    }, [user_id, selected_employee?.id]);
+
     useEffect(() => {
         if (selected_employee) {
-            const empData = selected_employee?.employee?.account_employee;
-            const leaderData =
-                selected_employee?.leader?.user?.personal_information;
+            const leaderData = selected_employee?.leader?.personal_information;
             const reportingName =
                 `${leaderData?.first_name || ""} ${leaderData?.last_name || ""}`.trim();
 
             const fieldUpdates = {
-                employee_id: empData?.employee_id,
-                hire_date: empData?.started_at,
-                position_level: empData?.position_level ?? "N/A",
-                info_position_level_from: empData?.position_level ?? "N/A",
-                info_position_level_to: empData?.position_level ?? "N/A",
-                info_department_from: empData?.department?.name,
-                info_department_id_to: empData?.department?.id,
-                info_account_from: empData?.account?.name,
-                info_account_id_to: empData?.account?.id,
-                info_status_from: empData?.status,
-                info_status_to: empData?.status,
-                info_position_from: empData?.position,
-                info_position_to: empData?.position,
+                employee_id: selected_employee?.employee_id,
+                hire_date: selected_employee?.started_at,
+                position_level: selected_employee?.position_level ?? "N/A",
+                info_position_level_from:
+                    selected_employee?.position_level ?? "N/A",
+                info_position_level_to:
+                    selected_employee?.position_level ?? "N/A",
+                info_department_from: selected_employee?.department?.name,
+                info_department_id_to: selected_employee?.department?.id,
+                info_account_from: selected_employee?.account?.name,
+                info_account_id_to: selected_employee?.account?.id,
+                info_status_from: selected_employee?.status,
+                info_status_to: selected_employee?.status,
+                info_position_from: selected_employee?.position,
+                info_position_to: selected_employee?.position,
                 info_reporting_from: reportingName,
                 info_reporting_to: reportingName,
-                info_basic_pay_from: empData?.basic_pay,
-                info_allowances_from: empData?.allowance,
-                position: empData?.position,
-                department: empData?.department?.name,
-                account: empData?.account?.name,
+                info_basic_pay_from: selected_employee?.basic_pay,
+                info_allowances_from: selected_employee?.allowance,
+                position: selected_employee?.position,
+                department: selected_employee?.department?.name,
+                account: selected_employee?.account?.name,
                 reporting_to: reportingName,
             };
 
@@ -118,9 +126,24 @@ const EmployeeChangeFormSection = () => {
         }
     }, [selected_employee, setValue]);
 
-    const onSubmit = (form_data) => {
+    const onSubmit = async (form_data) => {
         console.log("Form Submitted:", form_data);
-        // setOpen(false);
+        try {
+            await create_employee_change_form_service(form_data)
+            await store.dispatch(get_employee_change_form_thunk())
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Change Form Created Successfully!",
+                    message:
+                        "The change Form has been created and is ready for review.",
+                    open: true,
+                }),
+            );
+            setOpen(false);
+        } catch (error) {
+
+        }
     };
 
     return (
@@ -174,15 +197,11 @@ const EmployeeChangeFormSection = () => {
                                         <Select
                                             label="Employee"
                                             name="user_id"
-                                            options={data?.user?.leader?.subordinates?.map(
-                                                (res) => ({
-                                                    ...res,
-                                                    label: `${res.employee.personal_information.first_name} ${res.employee.personal_information.last_name}`,
-                                                    value: res.employee
-                                                        .personal_information
-                                                        .user_id,
-                                                }),
-                                            )}
+                                            options={regulars?.map((res) => ({
+                                                ...res,
+                                                label: `${res.personal_information.first_name} ${res.personal_information.last_name}`,
+                                                value: `${res?.personal_information.user_id}`,
+                                            }))}
                                             value={watchedValues.user_id}
                                             onChange={(val) =>
                                                 setValue("user_id", val, {
@@ -204,6 +223,7 @@ const EmployeeChangeFormSection = () => {
                                             {...register("employee_id", {
                                                 required: true,
                                             })}
+                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.employee_id}
                                         />
@@ -217,6 +237,7 @@ const EmployeeChangeFormSection = () => {
                                             {...register("hire_date", {
                                                 required: true,
                                             })}
+                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.hire_date}
                                         />
@@ -232,6 +253,7 @@ const EmployeeChangeFormSection = () => {
                                             {...register("position_level", {
                                                 required: true,
                                             })}
+                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.position_level}
                                         />
@@ -245,6 +267,7 @@ const EmployeeChangeFormSection = () => {
                                             {...register("position", {
                                                 required: true,
                                             })}
+                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.position}
                                         />
@@ -260,6 +283,7 @@ const EmployeeChangeFormSection = () => {
                                             {...register("department", {
                                                 required: true,
                                             })}
+                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.department}
                                         />
@@ -273,6 +297,7 @@ const EmployeeChangeFormSection = () => {
                                             {...register("account", {
                                                 required: true,
                                             })}
+                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.account}
                                         />
@@ -288,6 +313,7 @@ const EmployeeChangeFormSection = () => {
                                             {...register("reporting_to", {
                                                 required: true,
                                             })}
+                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.reporting_to}
                                         />
@@ -296,10 +322,7 @@ const EmployeeChangeFormSection = () => {
                                         Employment Status:
                                     </td>
                                     <td className="border border-black p-1 px-2 text-center">
-                                        {
-                                            selected_employee?.employee
-                                                ?.account_employee?.status
-                                        }
+                                        {selected_employee?.status}
                                     </td>
                                 </tr>
                             </tbody>
@@ -332,8 +355,7 @@ const EmployeeChangeFormSection = () => {
                             />
                         </div>
                         <div className="flex gap-3 items-start justify-center w-full">
-                            {data?.user?.account_employee?.status ==
-                                "Probationar" && (
+                            {selected_employee?.status == "Probationary" && (
                                 <Checkbox
                                     label="Regular"
                                     {...register("regular")}
@@ -382,13 +404,12 @@ const EmployeeChangeFormSection = () => {
                                 }
                             />
                         </div>
-
                         {watchedValues.tiering && (
                             <Select
                                 label="Tiers"
                                 name="ecf_id"
                                 className="w-full"
-                                options={data?.user?.account_employee?.account?.ecfs?.map(
+                                options={selected_employee?.account?.ecfs?.map(
                                     (res) => ({
                                         ...res,
                                         label: res.original,
@@ -843,7 +864,7 @@ const EmployeeChangeFormSection = () => {
                             <p className="font-bold mb-8">
                                 Prepared & Approved by:
                             </p>
-                            <p className="font-bold">Anthony Aragon</p>
+                            <p className="font-bold">{watchedValues.prepaired_by_id}</p>
                             <p className="italic">HR Director</p>
                         </div>
 
@@ -852,16 +873,17 @@ const EmployeeChangeFormSection = () => {
                                 Acknowledgment and Confirmation:
                             </p>
                             <div className="border-t border-black w-64 mb-1"></div>
-                            <div className="border border-black w-64 font-bold p-1 uppercase">
+                            {/* <div className="border border-black w-64 font-bold p-1 uppercase">
                                 <Input
                                     type="text"
-                                    {...register("ack_name", {
+                                    {...register("prepaired_by_id", {
                                         required: true,
                                     })}
                                     className="bg-transparent w-full outline-none uppercase font-bold text-black"
-                                    error={errors.ack_name && "Required"}
+                                    error={errors.prepaired_by_id && "Required"}
                                 />
-                            </div>
+                                
+                            </div> */}
                         </div>
 
                         <div className="flex justify-between items-end mb-12">
@@ -869,15 +891,16 @@ const EmployeeChangeFormSection = () => {
                                 <span className="font-bold mr-2 mb-1">
                                     Date:
                                 </span>
-                                <div className="border-b border-black w-48">
-                                    <Input
+                                <div className="border-b text-center border-black w-48">
+                                    {/* <Input
                                         type="date"
                                         {...register("ack_date", {
                                             required: true,
                                         })}
                                         className="bg-transparent w-full outline-none text-black pb-1"
                                         error={errors.ack_date && "Required"}
-                                    />
+                                    /> */}
+                                    {moment().format("LL")}
                                 </div>
                             </div>
                             <div className="text-[10px] text-gray-700">
@@ -913,7 +936,9 @@ const EmployeeChangeFormSection = () => {
                         >
                             Reset
                         </Button>
-                        <Button type="submit">Submit Change Form</Button>
+                        <Button
+                            loading={isSubmitting}
+                            type="submit">Submit Change Form</Button>
                     </div>
                 </form>
             </Modal>

@@ -30,8 +30,9 @@ return new class extends Migration
             $table->text('recommendation')->nullable();
             $table->string('evaluation_period')->nullable();
             $table->enum('status', [
-                'Pending',
                 'Passed',
+                'Sent ECF',
+                'Accepted ECF',
                 'Failed',
             ])->default('Pending');
             $table->timestamps();

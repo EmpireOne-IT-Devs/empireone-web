@@ -4,7 +4,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 export default function TableSection() {
-    const { leader } = useSelector((store) => store.human_resourcess);
+    const { leader } = useSelector((store) => store.human_resources);
     console.log("leaderadada", leader?.data?.subordinates);
 
     const columns = [

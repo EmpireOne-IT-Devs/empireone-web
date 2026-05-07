@@ -17,6 +17,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+            $table->foreignId('leader_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->foreignId('department_id')
                 ->nullable()
                 ->constrained('departments')
@@ -45,6 +49,15 @@ return new class extends Migration
             $table->longText('signature')->nullable();
             $table->string('onboarding_agree_on')->nullable();
             $table->string('started_at')->nullable();
+            $table->enum('position_level', [
+                'Rank and File',
+                'Supervisor',
+                'Manager',
+                'Executive',
+            ])->nullable();
+            $table->string('basic_pay')->nullable();
+            $table->string('allowance')->nullable();
+
             $table->enum('status', [
                 'Probationary',
                 'Regular',

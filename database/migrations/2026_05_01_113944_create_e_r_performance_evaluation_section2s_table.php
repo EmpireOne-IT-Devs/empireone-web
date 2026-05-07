@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('e_r_performance_evaluation_section2s', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('e_r_performance_evaluation_form_id')->nullable();
-
-            // 2. Assign the foreign key with a short custom name
             $table->foreign('e_r_performance_evaluation_form_id', 'fk_sec1_form_id')
                 ->references('id')
                 ->on('e_r_performance_evaluation_forms')

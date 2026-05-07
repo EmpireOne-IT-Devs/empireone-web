@@ -18,6 +18,7 @@ class DepartmentsTableSeeder extends Seeder
             'Finance Department',
             'Operation Department',
             'Compliance Department',
+            'Admin Department',
         ];
 
         foreach ($departments as $dept) {

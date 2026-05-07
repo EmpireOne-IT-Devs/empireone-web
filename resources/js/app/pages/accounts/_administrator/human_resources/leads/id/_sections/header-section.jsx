@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 export default function HeaderSection() {
-    const { leader } = useSelector((store) => store.human_resourcess);
+    const { leader } = useSelector((store) => store.human_resources);
     return (
         <div className="flex flex-col gap-2 my-3">
             <div className="text-2xl font-black">

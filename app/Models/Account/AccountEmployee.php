@@ -17,6 +17,7 @@ class AccountEmployee extends Model
     protected $fillable = [
         'user_id',
         'department_id',
+        'leader_id',
         'site_id',
         'location_id',
         'account_id',
@@ -29,7 +30,10 @@ class AccountEmployee extends Model
         'signature',
         'onboarding_agree_on',
         'status',
-        'started_at'
+        'started_at',
+        'position_level',
+        'basic_pay',
+        'allowance',
     ];
 
 
@@ -42,6 +46,10 @@ class AccountEmployee extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function leader()
+    {
+        return $this->hasOne(User::class, 'id', 'leader_id')->with(['personal_information']);
+    }
     public function personal_information(): HasOne
     {
         return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id');
@@ -52,7 +60,7 @@ class AccountEmployee extends Model
     }
     public function account(): HasOne
     {
-        return $this->hasOne(Account::class, 'id', 'account_id');
+        return $this->hasOne(Account::class, 'id', 'account_id')->with(['ecfs']);
     }
     public function site(): HasOne
     {

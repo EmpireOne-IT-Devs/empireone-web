@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import SendJobOfferSection from "./send-job-offer-section";
 
 export default function PoolingTableSection() {
-    const { pools } = useSelector((store) => store.human_resourcess);
+    const { pools } = useSelector((store) => store.human_resources);
     console.log("pools", pools?.data);
     const columns = [
         { header: "Applicant ID", accessor: "id" },

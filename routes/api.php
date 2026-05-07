@@ -7,6 +7,7 @@ use App\Http\Controllers\API\Account\AccountEmployeeController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
 use App\Http\Controllers\API\Account\AccountSkillsController;
 use App\Http\Controllers\API\Account\AccountWorkingExperienceController;
+use App\Http\Controllers\API\ER\EREmployeeChangeFormController;
 use App\Http\Controllers\API\ER\ERLeaderController;
 use App\Http\Controllers\API\ER\ERPerformanceEvaluationFormController;
 use App\Http\Controllers\API\ER\ERSubordinateController;
@@ -91,7 +92,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('accounts')->group(function () {
         Route::resource('employees',  AccountEmployeeController::class);
-        Route::get('get_probationary',  [AccountEmployeeController::class, 'get_probationary']);
+        Route::get('get_all_employees',  [AccountEmployeeController::class, 'get_all_employees']);
+        Route::get('get_regular',  [AccountEmployeeController::class, 'get_regular']);
         Route::get('user',  [AccountPersonalInformationController::class, 'accounts_user']);
         Route::post('personal_information',  [AccountPersonalInformationController::class, 'accounts_personal_information']);
         Route::post('address_information',  [AccountPersonalInformationController::class, 'accounts_address_information']);
@@ -117,6 +119,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('leaders', ERLeaderController::class);
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
+        Route::resource('employee_change_form', EREmployeeChangeFormController::class);
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
 });

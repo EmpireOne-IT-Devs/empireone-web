@@ -16,7 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 export default function AddMemberSection() {
     const dispatch = useDispatch();
     const { users } = useSelector((state) => state.job_requisitions);
-    const { leader } = useSelector((store) => store.human_resourcess);
+    const { leader } = useSelector((store) => store.human_resources);
     const er_leader_id = window.location.pathname.split("/")[5];
     const [open, setOpen] = useState(false);
 

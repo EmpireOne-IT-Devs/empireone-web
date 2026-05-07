@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // ADDED: isEdit prop (defaults to true for editing)
 const EvaluationFormSection = ({ isEdit = false }) => {
-    const { evaluation } = useSelector((store) => store.human_resourcess);
+    const { evaluation } = useSelector((store) => store.human_resources);
     const dispatch = useDispatch();
 
     const {

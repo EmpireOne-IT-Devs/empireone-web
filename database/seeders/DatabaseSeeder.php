@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             LocationsTableSeeder::class,
             SitesTableSeeder::class,
             UsersTableSeeder::class,
+            EcfTierSeeder::class,
             // JobPositionSeeder::class,
             // JobRequisitionSeeder::class,
             // JobPostingSeeder::class,

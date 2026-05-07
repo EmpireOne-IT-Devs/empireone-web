@@ -12,6 +12,15 @@ class AccountEmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function get_regular()
+    {
+        $employees = AccountEmployee::whereIn('status', ['Regular', 'Probationary'])->with(['leader', 'user', 'personal_information', 'department', 'account', 'site', 'account'])->get();
+        return response()->json([
+            'status' => 'success',
+            'data'   => $employees,
+        ], 200);
+    }
     public function get_probationary()
     {
         $employees = AccountEmployee::where('status', 'Probationary')->with(['user', 'personal_information', 'department', 'account', 'site'])->get();

@@ -1,4 +1,4 @@
-php artisan make:model ER/JobsApplication -mcr
+php artisan make:model ER/EmployeeChangeForm -mcr
 
 - add emergency contract
 - add parents name.
@@ -9,6 +9,8 @@ account employee add
 - position_level
 - basic_pay
 - allowances
+
+
 
 Application: [Job Title] - [First Name] [Last Name]
 

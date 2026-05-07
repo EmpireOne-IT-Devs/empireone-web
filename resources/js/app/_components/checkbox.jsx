@@ -32,7 +32,7 @@ export default function Checkbox({
             {/* Label */}
             <label
                 htmlFor={name}
-                className="text-gray-700 text-sm select-none peer-disabled:text-gray-400"
+                className="text-gray-700 ml-2 text-sm select-none peer-disabled:text-gray-400"
             >
                 {label}
             </label>
