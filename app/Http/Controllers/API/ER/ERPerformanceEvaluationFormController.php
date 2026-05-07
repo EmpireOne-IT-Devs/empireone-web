@@ -129,7 +129,9 @@ class ERPerformanceEvaluationFormController extends Controller
      */
     public function show($id)
     {
-        $evaluation = ERPerformanceEvaluationForm::where('id', $id)->with(['user', 'supervisor', 'section1s', 'section2s'])->first();
+        // $evaluation = ERPerformanceEvaluationForm::where('id', $id)->with(['user', 'supervisor', 'section1s', 'section2s'])->first();
+        
+        $evaluation = ERPerformanceEvaluationForm::where('id', $id)->with(['user', 'supervisor'])->first();
         return response()->json([
             'data' => $evaluation,
             'status'  => 'success',
