@@ -19,8 +19,7 @@ export default function HeaderSection() {
             <div className="flex flex-col gap-2 z-10">
                 <h1 className="text-2xl md:text-3xl font-semi text-white">
                     Welcome Back,
-                    <span className="font-bold "> {data?.user?.name}</span>
-                    
+                    <span className="font-bold "> {data?.user?.name}!</span>
                 </h1>
                 <p className="text-blue-200 text-sm">
                     Here's what's happening in your workspace today
@@ -86,4 +85,3 @@ export default function HeaderSection() {
         </div>
     );
 }
-    

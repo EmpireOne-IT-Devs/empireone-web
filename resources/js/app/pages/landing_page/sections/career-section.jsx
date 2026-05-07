@@ -18,6 +18,29 @@ function buildTags(posting) {
     return tags;
 }
 
+/* Parse the upper bound of a salary_range string like "₱20,000 - ₱50,000" */
+function parseSalaryUpperBound(salaryRange) {
+    if (!salaryRange) return 0;
+    const parts = salaryRange.split("-");
+    const upper = parts[parts.length - 1].replace(/[^\d]/g, "");
+    return parseInt(upper, 10) || 0;
+}
+
+/* One highest-salary job per department */
+function topJobPerDepartment(postings) {
+    const map = {};
+    postings.forEach((posting) => {
+        const dept = posting.job_requisition?.department?.name ?? "General";
+        const salary = parseSalaryUpperBound(
+            posting.job_requisition?.salary_range,
+        );
+        if (!map[dept] || salary > map[dept].salary) {
+            map[dept] = { posting, salary };
+        }
+    });
+    return Object.values(map).map((v) => v.posting);
+}
+
 function groupByDepartment(postings) {
     return postings.reduce((acc, posting) => {
         const dept = posting.job_requisition?.department?.name ?? "General";
@@ -81,7 +104,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
             className="!flex-col !rounded-2xl !border-l-[3px] !border-l-orange-400 !border-purple-800/30 !bg-[rgba(20,8,40,0.6)] !text-white hover:!border-purple-500/50 transition-all duration-200"
         >
             {/* TOP ROW */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-10">
+            <div className="flex flex-row items-start justify-between gap-4">
                 {/* LEFT CONTENT */}
                 <div className="flex flex-col gap-3 min-w-0">
                     <p className="text-base font-bold text-purple-100 leading-snug uppercase tracking-wide">
@@ -101,24 +124,24 @@ function JobCard({ id, title, tags, onApply, posting }) {
                 </div>
 
                 {/* BUTTONS */}
-                <div className="flex flex-col gap-2 w-full max-w-[150px] flex-shrink-0">
+                <div className="flex flex-col gap-2 flex-shrink-0">
                     {/* APPLY BUTTON */}
                     <button
                         onClick={() => onApply(id)}
-                        className="w-full h-10 flex items-center justify-center text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200 hover:scale-105"
+                        className="w-auto h-10 flex items-center justify-center text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200 hover:scale-105"
                         style={{
                             color: "#c084fc",
                             background: "rgba(168,85,247,0.12)",
                             border: "1px solid rgba(168,85,247,0.3)",
                         }}
                     >
-                        Apply Now →
+                        Apply Now
                     </button>
 
                     {/* VIEW BUTTON */}
                     <button
                         onClick={() => setExpanded((p) => !p)}
-                        className="w-full h-10 flex items-center justify-center gap-2 text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200"
+                        className="w-24 h-10 flex items-center justify-center  text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200"
                         style={{
                             color: expanded
                                 ? "#fb923c"
@@ -135,12 +158,12 @@ function JobCard({ id, title, tags, onApply, posting }) {
                             {expanded ? "Hide Details" : "View Details"}
                         </span>
 
-                        <ChevronDown
-                            size={16}
-                            className={`transition-transform duration-300 ${
+                        {/* <ChevronDown
+                            size={14}
+                            className={`transition-transform duration-300 ml-1 ${
                                 expanded ? "rotate-180" : "rotate-0"
                             }`}
-                        />
+                        /> */}
                     </button>
                 </div>
             </div>
@@ -216,8 +239,8 @@ export default function CareerSection() {
         router.visit("/talent/application");
     };
 
-    const grouped = groupByDepartment(job_postings ?? []);
-    const featuredJobs = (job_postings ?? []).slice(0, 5);
+    const grouped = groupByDepartment((job_postings ?? []).slice(0, 5));
+    const featuredJobs = topJobPerDepartment(job_postings ?? []);
 
     return (
         <section
@@ -292,7 +315,7 @@ export default function CareerSection() {
                     }}
                 >
                     {/* LEFT — job listings grouped by department */}
-                    <div className="flex flex-col gap-8 sm:gap-10">
+                    <div className="flex flex-col gap-8 sm:gap-6">
                         {loading ? (
                             <div className="flex flex-col gap-6">
                                 {[...Array(3)].map((_, i) => (
@@ -315,33 +338,56 @@ export default function CareerSection() {
                                 </p>
                             </div>
                         ) : (
-                            Object.entries(grouped).map(
-                                ([department, postings]) => (
-                                    <div
-                                        key={department}
-                                        className="flex flex-col gap-1"
-                                    >
-                                        <p className="text-xs font-bold tracking-widest uppercase mb-1 text-orange-400">
-                                            {department}
-                                        </p>
-                                        <div className="flex flex-col gap-6">
-                                            {postings.map((posting) => (
-                                                <JobCard
-                                                    key={posting.id}
-                                                    id={posting.id}
-                                                    title={
-                                                        posting.job_requisition
-                                                            ?.title
-                                                    }
-                                                    tags={buildTags(posting)}
-                                                    onApply={handleApply}
-                                                    posting={posting}
-                                                />
-                                            ))}
+                            <>
+                                {Object.entries(grouped).map(
+                                    ([department, postings]) => (
+                                        <div
+                                            key={department}
+                                            className="flex flex-col gap-1"
+                                        >
+                                            <p className="text-xs font-bold tracking-widest uppercase mb-1 text-orange-400">
+                                                {department}
+                                            </p>
+                                            <div className="flex flex-col gap-6">
+                                                {postings.map((posting) => (
+                                                    <JobCard
+                                                        key={posting.id}
+                                                        id={posting.id}
+                                                        title={
+                                                            posting
+                                                                .job_requisition
+                                                                ?.title
+                                                        }
+                                                        tags={buildTags(
+                                                            posting,
+                                                        )}
+                                                        onApply={handleApply}
+                                                        posting={posting}
+                                                    />
+                                                ))}
+                                            </div>
                                         </div>
+                                    ),
+                                )}
+                                {(job_postings ?? []).length > 5 && (
+                                    <div className="flex justify-center mt-2">
+                                        <button
+                                            onClick={() =>
+                                                router.visit(
+                                                    "/talent/application",
+                                                )
+                                            }
+                                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105"
+                                        >
+                                            See More Openings
+                                            <ChevronDown
+                                                size={15}
+                                                className="-rotate-90"
+                                            />
+                                        </button>
                                     </div>
-                                ),
-                            )
+                                )}
+                            </>
                         )}
                     </div>
 
@@ -419,6 +465,15 @@ export default function CareerSection() {
                                                 <p className="text-xs font-semibold text-purple-100 mb-1">
                                                     {job.job_requisition?.title}
                                                 </p>
+                                                {job.job_requisition
+                                                    ?.salary_range && (
+                                                    <p className="text-xs font-bold text-orange-400 mb-1">
+                                                        {
+                                                            job.job_requisition
+                                                                .salary_range
+                                                        }
+                                                    </p>
+                                                )}
                                                 <div className="flex flex-wrap gap-1">
                                                     {buildTags(job).map(
                                                         (tag) => (
