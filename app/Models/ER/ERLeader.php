@@ -3,7 +3,6 @@
 namespace App\Models\ER;
 
 use App\Models\Account\AccountEmployee;
-use App\Models\Account\AccountPersonalInformation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

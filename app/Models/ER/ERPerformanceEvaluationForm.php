@@ -60,16 +60,16 @@ class ERPerformanceEvaluationForm extends Model
     /**
      * Get the Section 1 entries for this form.
      */
-    // public function section1s(): HasMany
-    // {
-    //     return $this->hasMany(ERPerformanceEvaluationSection1::class, 'e_r_performance_evaluation_form_id', 'id');
-    // }
+    public function section1s(): HasMany
+    {
+        return $this->hasMany(ERPerformanceEvaluationSection1::class, 'e_r_performance_evaluation_form_id', 'id');
+    }
 
-    // /**
-    //  * Get the Section 2 entries for this form.
-    //  */
-    // public function section2s(): HasMany
-    // {
-    //     return $this->hasMany(ErPerformanceEvaluationSection2::class, 'e_r_performance_evaluation_form_id', 'id');
-    // }
+    /**
+     * Get the Section 2 entries for this form.
+     */
+    public function section2s(): HasMany
+    {
+        return $this->hasMany(ErPerformanceEvaluationSection2::class, 'e_r_performance_evaluation_form_id', 'id');
+    }
 }
