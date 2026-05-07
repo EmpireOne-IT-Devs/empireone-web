@@ -21,7 +21,7 @@ class GoogleController extends Controller
 
     public function get_employee()
     {
-        $filename = public_path("csv/active_employees.csv");
+        $filename = public_path("csv/employee_data.xlsx - employee_data.csv");
         $employees = [];
 
         if (!file_exists($filename)) {
@@ -81,7 +81,7 @@ class GoogleController extends Controller
 
                         AccountEmployee::create([
                             'user_id'     => $user->id,
-                            'employee_id' => $value->employee_id, 
+                            'employee_id' => $value->employee_id,
                             'eogs_email'  => $value->email,
                             'site_id'     => $site ? $site->id : null,
                             'location_id' => $location->id,
@@ -106,17 +106,19 @@ class GoogleController extends Controller
                     $inserted_emails[] = $value->email;
                 }
             } else {
-                // Collect the emails that were already in the DB
-                $existing_emails[] = $value->firstname;
+                if ($value->site == "San Carlos") {
+                    $existing_emails[] = $value;
+                }
             }
         }
 
         return response()->json([
             'message' => 'Processing complete',
-            'total' => count($employees),
-            'new_inserts_count' => count($inserted_emails),
-            'already_existed_count' => count($inserted_emails),
-            'skipped_emails_count' => count($existing_emails),
+            // 'total' => count($employees),
+            // 'employees'=>$employees,
+            // 'new_inserts_count' => count($inserted_emails),
+            // 'already_existed_count' => count($inserted_emails),
+            // 'skipped_emails_count' => count($existing_emails),
             'skipped_emails' => $existing_emails,
         ]);
     }

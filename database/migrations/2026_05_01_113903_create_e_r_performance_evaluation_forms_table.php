@@ -34,7 +34,7 @@ return new class extends Migration
                 'Sent ECF',
                 'Accepted ECF',
                 'Failed',
-            ])->default('Pending');
+            ])->nullable();
             $table->timestamps();
         });
     }
