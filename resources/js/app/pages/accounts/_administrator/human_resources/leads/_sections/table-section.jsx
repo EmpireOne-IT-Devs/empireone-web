@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 export default function TableSection() {
     const { leaders } = useSelector((store) => store.human_resources);
-   
+
 
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
@@ -13,7 +13,7 @@ export default function TableSection() {
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
         { header: "Account", accessor: "account" },
-        { header: "Member handled", accessor: "member_handled" },
+        { header: "Member handled", accessor: "subordinates_count" },
         { header: "Action", accessor: "action" },
     ];
     return (
@@ -39,7 +39,7 @@ export default function TableSection() {
                             res?.user?.account_employee?.department?.name,
                         account:
                             res?.user?.account_employee?.account?.name ?? "N/A",
-                        accomember_handledunt: 0,
+                        subordinates_count: res?.subordinates_count,
                         action: "button",
                     })) ?? []
                 }

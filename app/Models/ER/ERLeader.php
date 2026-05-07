@@ -27,4 +27,8 @@ class ERLeader extends Model
     {
         return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id');
     }
+    public function member_handled(): int
+    {
+        return $this->hasMany(ERSubordinate::class, 'er_leader_id', 'id')->count();
+    }
 }

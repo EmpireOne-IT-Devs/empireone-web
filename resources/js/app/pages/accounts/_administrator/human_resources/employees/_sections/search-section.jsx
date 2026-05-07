@@ -39,7 +39,7 @@ export default function SearchSection({ onSearch }) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="bg-white shadow p-4 rounded-xl flex items-end gap-4 my-3 mt-8"
+            className="bg-white shadow p-4 rounded-xl flex items-end gap-4 my-3 "
         >
             <div className="flex-1">
                 <Input
