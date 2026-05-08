@@ -19,20 +19,17 @@ use Illuminate\Support\Facades\Hash;
 
 class GoogleController extends Controller
 {
-
+    public function get_all_email()
+    {
+        return response()->json(
+            User::whereHas('account_employee', function ($query) {
+                $query->where('location_id', 1);
+            })->pluck('email')
+        );
+    }
     public function merge_data()
     {
-        $agents = [
-            25020301,
-            25020305,
-            25011507,
-            25011508,
-            25031002,
-            25011501,
-            25020310,
-            25020303,
-            24072221,
-        ];
+        $agents = [];
         foreach ($agents as $key => $value) {
             $employee = AccountEmployee::where('employee_id', $value)->first();
             if ($employee) {

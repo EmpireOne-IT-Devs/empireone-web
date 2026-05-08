@@ -91,9 +91,10 @@ const SignaturePad = () => {
                     title: "Signature save successfully!",
                 }),
             );
+            window.history.back()
             setLoading(false);
             console.log("Signature Value:", signatureData);
-        } catch (error) {}
+        } catch (error) { }
     };
 
     return (
@@ -117,11 +118,10 @@ const SignaturePad = () => {
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className={`flex items-center gap-2 px-8 py-2 text-sm font-bold text-white rounded-full shadow-lg transition-all active:scale-95 ${
-                            loading
-                                ? "bg-slate-400"
-                                : "bg-slate-900 hover:bg-black shadow-slate-200"
-                        }`}
+                        className={`flex items-center gap-2 px-8 py-2 text-sm font-bold text-white rounded-full shadow-lg transition-all active:scale-95 ${loading
+                            ? "bg-slate-400"
+                            : "bg-slate-900 hover:bg-black shadow-slate-200"
+                            }`}
                     >
                         {loading ? (
                             "Submitting..."
