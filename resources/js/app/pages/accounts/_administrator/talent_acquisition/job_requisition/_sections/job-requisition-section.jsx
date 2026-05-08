@@ -253,8 +253,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                 onClose={() => setOpen(false)}
             >
                 {/* Responsive split: stack on small screens, row on large screens */}
-                <div className="flex flex-col lg:flex-row overflow-auto max-h-[75vh] no-scrollbar">
-                    <div className="flex-1 p-4 sm:p-6 space-y-6">
+                <div className="flex flex-col lg:flex-row max-h-[75vh] overflow-hidden">
+                    <div className="flex-1 p-4 sm:p-6 space-y-6 overflow-y-auto no-scrollbar">
                         <div className="space-y-4">
                             <div className="flex flex-wrap items-center gap-3">
                                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -476,7 +476,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                     </div>
 
                     {/* Logs Section: 100% width on mobile, 1/3 width on desktop */}
-                    <div className="w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l bg-gray-50/50 p-4 sm:p-6 shrink-0">
+                    <div className="w-full lg:w-1/3 border-t lg:border-t-0 lg:border-l bg-gray-50/50 p-4 sm:p-6 shrink-0 overflow-y-auto no-scrollbar">
                         <h3 className="font-semibold text-lg mb-4">
                             Activity Logs
                         </h3>

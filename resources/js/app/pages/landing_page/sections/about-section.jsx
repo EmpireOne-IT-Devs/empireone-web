@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 /* ─── Count-up hook ─────────────────────────────────────── */
@@ -29,6 +29,45 @@ const stats = [
     { value: "250+", label: "Skilled Experts", icon: "◆" },
     { value: "10+", label: "Finished Projects", icon: "◉" },
     { value: "1000+", label: "Media Posts", icon: "◇" },
+];
+
+const badgeDetails = [
+    {
+        label: "ISO Certified",
+        img: "/images/ISO-Logo.png",
+        title: "ISO 27001:2022",
+        desc: "The ISO 27001:2022 badge is an internationally recognized certification that confirms our organization operates a world-class Information Security Management System (ISMS). This standard proves that we don't just use security tools—we have a comprehensive, board-led culture of risk management.",
+    },
+    {
+        label: "GDPR Compliant",
+        img: "/images/GDPR-Logo.png",
+        title: "GDPR",
+        desc: "The GDPR badge signifies our adherence to the most stringent data protection framework in the world. Beyond mere security, GDPR compliance demonstrates our commitment to Data Privacy as a Human Right, ensuring that every individual's personal information is handled with transparency, purpose, and absolute care.",
+    },
+    {
+        label: "SOC 2 Type II",
+        img: "/images/SOC2-Logo.png",
+        title: "SOC2 TYPE2",
+        desc: "The SOC 2 Type 2 badge is the gold standard for service organizations, representing a rigorous, independent audit of our internal controls. Unlike a \"snapshot\" audit, the Type 2 certification proves that our security protocols have been followed consistently and effectively over an extended period.",
+    },
+    {
+        label: "HIPAA Ready",
+        img: "/images/HIPAA-Logo.png",
+        title: "HIPAA",
+        desc: "As a HIPAA-compliant organization, we adhere to the highest federal standards for the protection of Protected Health Information (PHI). This certification signifies that we have implemented rigorous safeguards to ensure the confidentiality, integrity, and availability of sensitive healthcare data.",
+    },
+    {
+        label: "PCI DSS Certified",
+        img: "/images/PCI-Logo.png",
+        title: "PCI DSS",
+        desc: "The PCI DSS badge signifies that our organization meets the rigorous security standards established by the world's leading financial institutions. This compliance ensures that every credit card transaction and financial record processed through our systems is handled with maximum security to prevent fraud and data theft.",
+    },
+    {
+        label: "BBB Accredited",
+        img: "/images/BBB-Logo.png",
+        title: "BBB ACCREDITED BUSINESSES",
+        desc: "The BBB Accredited Business seal is more than a rating; it is a public declaration of our commitment to ethical business practices. Accreditation signifies that we have been independently vetted and have pledged to uphold the BBB Standards for Trust—a comprehensive set of best practices for how businesses should treat their clients and the public.",
+    },
 ];
 
 const pillars = [
@@ -109,6 +148,35 @@ function PillarCard({ num, title, body, index }) {
             </div>
             <div className="pillar-arrow">→</div>
         </motion.div>
+    );
+}
+
+/* ─── Badge item with tooltip ───────────────────────────── */
+function BadgeItem({ label, img, title, desc }) {
+    const [hovered, setHovered] = useState(false);
+    return (
+        <span
+            className="strip-badge"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
+            <img src={img} alt={label} style={{ height: 50, width: "auto" }} />
+            <span>{label}</span>
+            <AnimatePresence>
+                {hovered && (
+                    <motion.div
+                        className="badge-tooltip"
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        transition={{ duration: 0.18, ease: "easeOut" }}
+                    >
+                        <div className="badge-tooltip-title">{title}</div>
+                        <p className="badge-tooltip-desc">{desc}</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </span>
     );
 }
 
@@ -354,8 +422,45 @@ export default function AboutSection() {
                     color: rgba(255,255,255,0.38); letter-spacing: 0.06em;
                     transition: border-color 0.2s, color 0.2s; cursor: default;
                     display: flex; align-items: center; gap: 6px;
+                    position: relative;
                 }
                 .strip-badge:hover { border-color: var(--gold); color: var(--gold); }
+
+                /* badge tooltip */
+                .badge-tooltip {
+                    position: absolute;
+                    bottom: calc(100% + 14px);
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 270px;
+                    background: rgba(11,11,16,0.97);
+                    backdrop-filter: blur(24px);
+                    -webkit-backdrop-filter: blur(24px);
+                    border: 1px solid rgba(201,168,76,0.35);
+                    border-radius: 14px;
+                    padding: 16px 18px;
+                    pointer-events: none;
+                    z-index: 200;
+                    box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,76,0.08) inset;
+                }
+
+                .badge-tooltip-title {
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: 0.16em;
+                    color: var(--gold);
+                    text-transform: uppercase;
+                    margin-bottom: 8px;
+                    font-family: 'Outfit', sans-serif;
+                }
+                .badge-tooltip-desc {
+                    font-size: 12px;
+                    font-weight: 300;
+                    color: rgba(255,255,255,0.62);
+                    line-height: 1.65;
+                    margin: 0;
+                    font-family: 'Outfit', sans-serif;
+                }
 
                 /* ── RESPONSIVE ─────────────────────────────────── */
                 @media (max-width: 1024px) {
@@ -578,34 +683,8 @@ export default function AboutSection() {
                     EmpireOne BPO · Trusted Worldwide
                 </span>
                 <div className="strip-badges">
-                    {[
-                        { label: "ISO Certified", img: "/images/ISO-Logo.png" },
-                        {
-                            label: "GDPR Compliant",
-                            img: "/images/GDPR-Logo.png",
-                        },
-                        {
-                            label: "SOC 2 Type II",
-                            img: "/images/SOC2-Logo.png",
-                        },
-                        { label: "HIPAA Ready", img: "/images/HIPAA-Logo.png" },
-                        {
-                            label: "PCI DSS Certified",
-                            img: "/images/PCI-Logo.png",
-                        },
-                        {
-                            label: "BBB Accredited",
-                            img: "/images/BBB-Logo.png",
-                        },
-                    ].map((b) => (
-                        <span key={b.label} className="strip-badge">
-                            <img
-                                src={b.img}
-                                alt={b.label}
-                                style={{ height: 50, width: "auto" }}
-                            />
-                            <span>{b.label}</span>
-                        </span>
+                    {badgeDetails.map((b) => (
+                        <BadgeItem key={b.label} {...b} />
                     ))}
                 </div>
             </motion.div>

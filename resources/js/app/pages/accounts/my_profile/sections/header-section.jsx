@@ -129,15 +129,23 @@ export default function HeaderSection() {
 
                         {/* Applicant Info */}
                         <div className="mt-2 text-center md:text-left">
-                            <p className="text-base font-bold text-gray-900">
-                                {data?.user?.name || "Loading..."}
-                            </p>
+                            <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                                <p className="text-base font-bold text-gray-900">
+                                    {data?.user?.name || "Loading..."}
+                                </p>
+                                {data?.user?.account_employee?.position && (
+                                    <span className="text-xs font-medium text-white bg-purple-500 px-2 py-0.5 rounded-full">
+                                        {data.user.account_employee.position}
+                                    </span>
+                                )}
+                            </div>
                             {data?.user?.account_employee?.employee_id && (
                                 <p className="text-sm font-semibold text-gray-600">
                                     ID:{" "}
                                     {data?.user?.account_employee?.employee_id}
                                 </p>
                             )}
+
                             <div className="flex items-center justify-center md:justify-start gap-1 mt-0.5 text-gray-500 text-xs">
                                 <Mail className="w-3.5 h-3.5 text-gray-400" />
                                 <span className="truncate max-w-[200px] md:max-w-none">

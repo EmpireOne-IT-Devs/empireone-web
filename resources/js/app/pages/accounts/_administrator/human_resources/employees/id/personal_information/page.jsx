@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Mail,
     Phone,
@@ -17,7 +17,6 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import { QRCodeSVG } from "qrcode.react";
 
-// ─── Color Themes per Card (Purple · Blue · Orange only) ─────────────────────
 const CARD_THEMES = {
     purple: {
         bg: "bg-purple-50",
@@ -48,9 +47,236 @@ const CARD_THEMES = {
     },
 };
 
+// ─── Dummy org data (shown when no real relations exist) ─────────────────────
+const DUMMY_ORG = {
+    manager: {
+        id: null,
+        name: "Apple Loraine Mag-Usara",
+        position: "Operations Manager",
+        account_employee: { position: "Operations Manager" },
+        personal_information: {
+            first_name: "Apple",
+            middle_name: "Loraine",
+            last_name: "Mag-Usara",
+        },
+    },
+    directReports: [
+        {
+            id: null,
+            name: "Juan Dela Cruz",
+            account_employee: { position: "Senior Agent" },
+            personal_information: {
+                first_name: "Juan",
+                middle_name: null,
+                last_name: "Dela Cruz",
+            },
+        },
+        {
+            id: null,
+            name: "Maria Santos",
+            account_employee: { position: "Team Lead" },
+            personal_information: {
+                first_name: "Maria",
+                middle_name: null,
+                last_name: "Santos",
+            },
+        },
+        {
+            id: null,
+            name: "Rodel Bautista",
+            account_employee: { position: "Quality Analyst" },
+            personal_information: {
+                first_name: "Rodel",
+                middle_name: null,
+                last_name: "Bautista",
+            },
+        },
+    ],
+};
+
+function OrgChartPopup({ user, onMouseEnter, onMouseLeave }) {
+    const rawManager = user?.subordinate?.leader?.user;
+    const rawReports = user?.leader?.subordinates ?? [];
+    const isDummy = !rawManager && rawReports.length === 0;
+
+    const manager = isDummy ? DUMMY_ORG.manager : rawManager;
+    const directReports = isDummy
+        ? DUMMY_ORG.directReports
+        : rawReports.map((s) => s.employee).filter(Boolean);
+    const basePath = `/accounts/_administrator/human_resources/employees`;
+
+    const fullName = (u) => {
+        if (!u) return "N/A";
+        const pi = u.personal_information;
+        return (
+            [pi?.first_name, pi?.middle_name, pi?.last_name]
+                .filter(Boolean)
+                .join(" ") ||
+            u.name ||
+            "N/A"
+        );
+    };
+
+    return (
+        <div
+            className="absolute left-full top-0 ml-2 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-2xl p-4 text-left max-h-96 overflow-y-auto"
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+        >
+            <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    Organization Chart
+                </p>
+                {isDummy && (
+                    <span className="text-[9px] bg-yellow-100 text-yellow-600 font-semibold px-1.5 py-0.5 rounded-full">
+                        Preview
+                    </span>
+                )}
+            </div>
+
+            {/* Reports To */}
+            {manager && (
+                <div className="mb-2">
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">
+                        Reports To
+                    </p>
+                    {isDummy || !manager.id ? (
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
+                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <span className="text-blue-600 text-xs font-bold">
+                                    {fullName(manager).charAt(0)}
+                                </span>
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-gray-800 leading-tight">
+                                    {fullName(manager)}
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                    {manager.account_employee?.position}
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <a
+                            href={`${basePath}/${manager.id}/personal_information`}
+                            className="flex items-center gap-2 p-2 rounded-lg hover:bg-blue-50 transition-colors group"
+                        >
+                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <span className="text-blue-600 text-xs font-bold">
+                                    {fullName(manager).charAt(0)}
+                                </span>
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 leading-tight">
+                                    {fullName(manager)}
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                    {manager.account_employee?.position}
+                                </p>
+                            </div>
+                        </a>
+                    )}
+                    <div className="w-px h-3 bg-gray-200 mx-6" />
+                </div>
+            )}
+
+            {/* Current */}
+            <div className="mb-2">
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">
+                    Current
+                </p>
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-purple-50 border border-purple-100">
+                    <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-purple-600 text-xs font-bold">
+                            {(
+                                user?.personal_information?.first_name ||
+                                user?.name ||
+                                "?"
+                            ).charAt(0)}
+                        </span>
+                    </div>
+                    <div>
+                        <p className="text-sm font-semibold text-gray-800 leading-tight">
+                            {fullName(user)}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                            {user?.account_employee?.position || "Employee"}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Direct Reports */}
+            {directReports.length > 0 && (
+                <div>
+                    <div className="w-px h-3 bg-gray-200 mx-6" />
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">
+                        Direct Reports ({directReports.length})
+                    </p>
+                    <div className="space-y-1 max-h-44 overflow-y-auto pr-1">
+                        {directReports.map((emp, i) =>
+                            isDummy || !emp?.id ? (
+                                <div
+                                    key={i}
+                                    className="flex items-center gap-2 p-2 rounded-lg bg-gray-50"
+                                >
+                                    <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-green-600 text-xs font-bold">
+                                            {fullName(emp).charAt(0)}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-semibold text-gray-800 leading-tight">
+                                            {fullName(emp)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            {emp?.account_employee?.position}
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <a
+                                    key={emp.id}
+                                    href={`${basePath}/${emp.id}/personal_information`}
+                                    className="flex items-center gap-2 p-2 rounded-lg hover:bg-green-50 transition-colors group"
+                                >
+                                    <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-green-600 text-xs font-bold">
+                                            {fullName(emp).charAt(0)}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-semibold text-gray-800 group-hover:text-green-600 leading-tight">
+                                            {fullName(emp)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            {emp?.account_employee?.position}
+                                        </p>
+                                    </div>
+                                </a>
+                            ),
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 const Page = () => {
     const { user } = useSelector((store) => store.app);
+    const [showOrgChart, setShowOrgChart] = useState(false);
+    const hideTimer = useRef(null);
     console.log("User Data:", user);
+
+    const handleMouseEnter = () => {
+        clearTimeout(hideTimer.current);
+        setShowOrgChart(true);
+    };
+
+    const handleMouseLeave = () => {
+        hideTimer.current = setTimeout(() => setShowOrgChart(false), 120);
+    };
 
     return (
         <Layout>
@@ -61,34 +287,58 @@ const Page = () => {
 
                         <div className="px-6 pb-6">
                             <div className="flex items-end gap-4 -mt-12 mb-4 ml-1.5">
-                                <img
-                                    src="/images/empireone.png.png"
-                                    className="w-28 h-28 rounded-2xl bg-white border-4 border-white shadow-md object-cover flex-shrink-0"
-                                    alt="Profile"
-                                />
-                                <div className="pb-1">
-                                    <h4 className="text-xl font-bold text-white flex gap-1 flex-wrap leading-tight mb-1">
-                                        <span>
-                                            {
-                                                user?.personal_information
-                                                    ?.first_name
-                                            }
+                                <div
+                                    className="relative flex-shrink-0 mb-1.5 group"
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                >
+                                    <img
+                                        src="/images/empireone.png.png"
+                                        className="w-28 h-28 rounded-2xl bg-white border-4 border-white shadow-md object-cover cursor-pointer"
+                                        alt="Profile"
+                                    />
+                                    <div className="absolute inset-0 rounded-xl bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-2 pointer-events-none">
+                                        <span className="text-white text-[9px] font-semibold bg-black/50 px-2 py-0.5 rounded-full">
+                                            Organization Chart
                                         </span>
-                                        <span>
-                                            {
-                                                user?.personal_information
-                                                    ?.middle_name
-                                            }
-                                            
-                                        </span>
-                                        <span>
-                                            {
-                                                user?.personal_information
-                                                    ?.last_name
-                                            }
-                                        </span>
-                                    </h4>
-                                    <p className="text-xs  text-white tracking-widest uppercase mb-16 ml-0.5">
+                                    </div>
+                                    {showOrgChart && (
+                                        <OrgChartPopup
+                                            user={user}
+                                            onMouseEnter={handleMouseEnter}
+                                            onMouseLeave={handleMouseLeave}
+                                        />
+                                    )}
+                                </div>
+                                <div className="pb-1 mb-16">
+                                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                                        <h4 className="text-xl font-bold text-white flex gap-1 flex-wrap leading-tight">
+                                            <span>
+                                                {
+                                                    user?.personal_information
+                                                        ?.first_name
+                                                }
+                                            </span>
+                                            <span>
+                                                {
+                                                    user?.personal_information
+                                                        ?.middle_name
+                                                }
+                                            </span>
+                                            <span>
+                                                {
+                                                    user?.personal_information
+                                                        ?.last_name
+                                                }
+                                            </span>
+                                        </h4>
+                                        {user?.account_employee?.position && (
+                                            <span className="text-xs font-medium text-white bg-purple-600 px-2 py-0.5 rounded-full">
+                                                {user.account_employee.position}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="text-xs text-white tracking-widest uppercase ml-0.5 mb-1.5">
                                         EOID:{" "}
                                         <span className="font-bold text-white underline">
                                             {
