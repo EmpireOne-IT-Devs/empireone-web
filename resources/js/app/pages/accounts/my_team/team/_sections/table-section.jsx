@@ -49,7 +49,7 @@ export default function TableSection() {
                                 target="_blank"
                                 rel="noopener noreferrer" // Security best practice when using target="_blank"
                                 className="underline text-blue-500 hover:text-blue-600"
-                                href={`/accounts/administrator/human_resources/review/evaluations/${res?.has3_months_evaluation?.id}`}
+                                href={`/accounts/${role}/human_resources/review/evaluations/${res?.has3_months_evaluation?.id}`}
                             >
                                 {res?.has3_months_evaluation?.evaluation_period}
                             </a>
@@ -65,7 +65,7 @@ export default function TableSection() {
                                 target="_blank"
                                 rel="noopener noreferrer" // Security best practice when using target="_blank"
                                 className="underline text-blue-500 hover:text-blue-600"
-                                href={`/accounts/administrator/human_resources/review/evaluations/${res?.has5_months_evaluation?.id}`}
+                                href={`/accounts/${role}/human_resources/review/evaluations/${res?.has5_months_evaluation?.id}`}
                             >
                                 {res?.has5_months_evaluation?.evaluation_period}
                             </a>

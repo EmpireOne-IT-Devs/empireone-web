@@ -1,1 +1,0 @@
-import{e}from"./app-ZnhkGZq1.js";async function n(a){return await e.post("/api/accounts/save_signature",a)}async function t(a){return await e.post("/api/accounts/send_documents",a)}async function i(a){return await e.post("/api/accounts/edit_information",a)}async function o(a){return await e.post("/api/accounts/add_employee",a)}export{o as a,n as b,i as e,t as s};
