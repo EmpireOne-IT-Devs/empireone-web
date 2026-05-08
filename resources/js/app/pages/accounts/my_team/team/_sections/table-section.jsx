@@ -16,7 +16,8 @@ export default function TableSection() {
         { header: "Department", accessor: "department" },
         { header: "Employment Status", accessor: "status" },
         { header: "Hired Date", accessor: "started_at" },
-        { header: "Evaluation Period", accessor: "evaluation_period" },
+        { header: "3rd Month Evaluation", accessor: "evaluation_period3" },
+        { header: "5th Month Evaluation", accessor: "evaluation_period5" },
         { header: "Action", accessor: "action" },
     ];
     return (
@@ -27,14 +28,6 @@ export default function TableSection() {
                     data?.user?.leader?.subordinates?.map((res) => ({
                         ...res,
                         employee_id: (
-                            // <Link
-                            //     target="_blnak"
-                            //     className="underline text-blue-500 hover:text-blue-600"
-                            //     disabled
-                            //     href={`/accounts/administrator/human_resources/leads/${res.id}`}
-                            // >
-                            //     {res?.employee?.account_employee?.employee_id}
-                            // </Link>
                             <> {res?.employee?.account_employee?.employee_id}</>
                         ),
                         name: `${res?.employee?.personal_information?.first_name} ${res?.employee?.personal_information?.middle_name} ${res?.employee?.personal_information?.last_name}`,
@@ -45,17 +38,48 @@ export default function TableSection() {
                             res?.employee?.account_employee?.started_at,
                         status:
                             res?.employee?.account_employee?.status ?? "N/A",
-                        evaluation_period: res?.has3_months_evaluation?.evaluation_period,
+                        evaluation_period3: res?.has3_months_evaluation?.status == null ? (
+                            // Render plain text if status is null
+                            <span className="text-gray-500">
+                                {res?.has3_months_evaluation?.evaluation_period || "No Evaluation"}
+                            </span>
+                        ) : (
+                            // Render the active link if status exists
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer" // Security best practice when using target="_blank"
+                                className="underline text-blue-500 hover:text-blue-600"
+                                href={`/accounts/${role}/human_resources/review/evaluations/${res?.has3_months_evaluation?.id}`}
+                            >
+                                {res?.has3_months_evaluation?.evaluation_period}
+                            </a>
+                        ),
+                        evaluation_period5: res?.has5_months_evaluation?.status == null ? (
+                            // Render plain text if status is null
+                            <span className="text-gray-500">
+                                {res?.has5_months_evaluation?.evaluation_period || "No Evaluation"}
+                            </span>
+                        ) : (
+                            // Render the active link if status exists
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer" // Security best practice when using target="_blank"
+                                className="underline text-blue-500 hover:text-blue-600"
+                                href={`/accounts/${role}/human_resources/review/evaluations/${res?.has5_months_evaluation?.id}`}
+                            >
+                                {res?.has5_months_evaluation?.evaluation_period}
+                            </a>
+                        ),
                         action: (
                             <div className="flex gap-3">
                                 {/* {
                                     res?.has3_months_evaluation?.user_id
                                 } */}
-                                {res?.has3_months_evaluation && (
+                                {res?.has3_months_evaluation?.status === null && (
                                     <>
                                         <a
                                             target="_blank"
-                                            href={`/accounts/${role}/performance_evaluation/${res?.employee?.account_employee?.user_id}`}
+                                            href={`/accounts/${role}/performance_evaluation/${res?.employee?.account_employee?.user_id}?evaluation_period=${res?.has3_months_evaluation?.evaluation_period}`}
                                         >
                                             Evaluate Performance
                                         </a>

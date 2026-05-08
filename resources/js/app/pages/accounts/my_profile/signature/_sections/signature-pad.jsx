@@ -5,6 +5,9 @@ import { FaRegSave } from "react-icons/fa";
 import { save_signature_service } from "@/app/services/account-service";
 import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
+import store from "@/app/store/store";
+import { get_app_data_thunk } from "@/app/redux/app-thunk";
+import { router } from "@inertiajs/react";
 
 const SignaturePad = () => {
     const sigCanvas = useRef({});
@@ -85,15 +88,20 @@ const SignaturePad = () => {
             await save_signature_service({
                 signature: signatureData,
             });
+            await store.dispatch(get_app_data_thunk());
             await dispatch(
                 setAlert({
                     type: "success",
                     title: "Signature save successfully!",
+                    message:
+                        "The documents has been created and is ready for review.",
+                    open: true,
                 }),
             );
+            router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_profile?tab=personal`);
             setLoading(false);
             console.log("Signature Value:", signatureData);
-        } catch (error) {}
+        } catch (error) { }
     };
 
     return (
@@ -117,11 +125,10 @@ const SignaturePad = () => {
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className={`flex items-center gap-2 px-8 py-2 text-sm font-bold text-white rounded-full shadow-lg transition-all active:scale-95 ${
-                            loading
-                                ? "bg-slate-400"
-                                : "bg-slate-900 hover:bg-black shadow-slate-200"
-                        }`}
+                        className={`flex items-center gap-2 px-8 py-2 text-sm font-bold text-white rounded-full shadow-lg transition-all active:scale-95 ${loading
+                            ? "bg-slate-400"
+                            : "bg-slate-900 hover:bg-black shadow-slate-200"
+                            }`}
                     >
                         {loading ? (
                             "Submitting..."

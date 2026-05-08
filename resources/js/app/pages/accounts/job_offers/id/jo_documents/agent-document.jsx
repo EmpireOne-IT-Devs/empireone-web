@@ -502,7 +502,7 @@ const OfferLetterPDF = (data) => (
 );
 
 // Example wrapper for preViewing
-const AgentOfferLetterPreview = ({ name, type,applicant_signature }) => {
+const AgentOfferLetterPreview = ({ name, type, applicant_signature }) => {
     const { job_offer } = useSelector((store) => store.applicants);
     const { document } = useSelector((store) => store.app);
     const dispatch = useDispatch();

@@ -97,7 +97,7 @@ export default function Alert({
     }, [open]);
 
     /* --------------------------------------------
-     * Auto-dismiss progress bar
+     * Auto-dismiss progress bar calculation
      * ------------------------------------------ */
     useEffect(() => {
         if (!show || !showProgress || safeType === "none") return;
@@ -106,18 +106,20 @@ export default function Alert({
         const decrement = 100 / (duration / intervalTime);
 
         const interval = setInterval(() => {
-            setProgress((prev) => {
-                if (prev <= 0) {
-                    clearInterval(interval);
-                    handleClose();
-                    return 0;
-                }
-                return Math.max(prev - decrement, 0);
-            });
+            setProgress((prev) => Math.max(prev - decrement, 0));
         }, intervalTime);
 
         return () => clearInterval(interval);
-    }, [show, duration, showProgress, handleClose, safeType]);
+    }, [show, duration, showProgress, safeType]);
+
+    /* --------------------------------------------
+     * Watcher to close when progress hits 0
+     * ------------------------------------------ */
+    useEffect(() => {
+        if (progress <= 0 && show) {
+            handleClose();
+        }
+    }, [progress, show, handleClose]);
 
     /* --------------------------------------------
      * Shake on open
