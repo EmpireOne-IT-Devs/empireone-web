@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 export default function ResendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
-    const { data: datas } = useSelector((store) => store.app);
+    const { job_postings } = useSelector((store) => store.job_postings);
     const {
         register,
         handleSubmit,
@@ -63,7 +63,7 @@ export default function ResendJobOfferSection({ data }) {
             );
             setOpen(false);
             reset();
-        } catch (error) {}
+        } catch (error) { }
     };
 
     return (
@@ -120,29 +120,18 @@ export default function ResendJobOfferSection({ data }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-y-5 gap-5 mt-6">
-                            <Controller
-                                name="job_posting_id"
-                                control={control}
-                                rules={{
-                                    required: "Offer Position is required",
-                                }}
+                            <Select
+                                label="Select Existing Position"
+                                options={
+                                    job_postings?.map((res) => ({
+                                        label: res?.job_requisition?.title,
+                                        value: res?.id,
+                                    })) || []
+                                }
                                 value={watchedValues.job_posting_id}
-                                render={({ field }) => (
-                                    <Select
-                                        {...field}
-                                        label="Select Existing Position"
-                                        options={
-                                            datas?.position?.map((res) => ({
-                                                label: res.title,
-                                                value: res?.job_requisition
-                                                    ?.job_posting?.id,
-                                            })) || []
-                                        }
-                                        error={errors.job_posting_id?.message}
-                                    />
-                                )}
+                                error={errors.job_posting_id?.message}
+                                onChange={(e) => setValue('job_posting_id', e)}
                             />
-
                             <Select
                                 label="Role"
                                 name="role"
@@ -254,7 +243,7 @@ export default function ResendJobOfferSection({ data }) {
                                             type="button"
                                             variant="danger"
                                             onClick={() => remove(index)}
-                                            // disabled={fields.length === 1}
+                                        // disabled={fields.length === 1}
                                         >
                                             ✕
                                         </Button>
