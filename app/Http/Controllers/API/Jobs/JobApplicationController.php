@@ -193,7 +193,6 @@ class JobApplicationController extends Controller
                 ]);
         }
 
-
         $ja = JobApplication::where('id', $request->job_application_id)->with(['job_posting'])->first();
         if ($ja) {
             if ($ja->job_posting_id != $request->job_posting_id) {
@@ -201,29 +200,38 @@ class JobApplicationController extends Controller
                     'final_status' => 'Transferred',
                     'transferred_to' => Auth::id()
                 ]);
-                JobApplication::create([
+                $nja =  JobApplication::create([
                     $ja,
                     'user_id' => $ja->user_id,
                     'job_posting_id' => $request->job_posting_id,
                     'final_status' => 'Sent Job Offer',
                 ]);
+                $jo = JobOffer::create([
+                    'user_id' => $request->user_id,
+                    'job_application_id' => $nja->id,
+                    'status' => 'Pending',
+                    'start_date' => $request->start_date,
+                    'salary' => $request->salary,
+                    'role' => $request->role,
+                ]);
+                $jo->load('user');
             } else {
                 $ja->update([
                     'final_status' => 'Sent Job Offer',
                     'job_posting_id' => $request->job_posting_id,
                 ]);
+                $jo = JobOffer::create([
+                    'user_id' => $request->user_id,
+                    'job_application_id' => $ja->id,
+                    'status' => 'Pending',
+                    'start_date' => $request->start_date,
+                    'salary' => $request->salary,
+                    'role' => $request->role,
+                ]);
             }
         }
         $ja->load('job_posting');
-        $jo = JobOffer::create([
-            'user_id' => $request->user_id,
-            'job_application_id' => $ja->id,
-            'status' => 'Pending',
-            'start_date' => $request->start_date,
-            'salary' => $request->salary,
-            'role' => $request->role,
-        ]);
-        $jo->load('user');
+
         foreach ($request->allowances as $key => $value) {
             AccountEmployeeAllowance::create([
                 'user_id' => $request->user_id,

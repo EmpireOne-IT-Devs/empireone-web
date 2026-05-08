@@ -10,6 +10,7 @@ export default function TableSection() {
         { header: "Applicant Name", accessor: "name" },
         { header: "Email", accessor: "email" },
         { header: "Role", accessor: "role" },
+        { header: "Position", accessor: "position" },
         { header: "Status", accessor: "status" },
         { header: "Action", accessor: "action" },
     ];
@@ -39,6 +40,7 @@ export default function TableSection() {
                         name: res.user.name,
                         email: res.user.email,
                         role: res.role,
+                        position:res?.job_application?.job_posting?.job_requisition?.title,
                         status: (
                             <Badge
                                 label={res.status}
