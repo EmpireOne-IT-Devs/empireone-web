@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import store from "@/app/store/store";
 import { get_app_data_thunk } from "@/app/redux/app-thunk";
+import { router } from "@inertiajs/react";
 
 const SignaturePad = () => {
     const sigCanvas = useRef({});
@@ -94,7 +95,7 @@ const SignaturePad = () => {
                     title: "Signature save successfully!",
                 }),
             );
-            window.history.back()
+            router.back();
             setLoading(false);
             console.log("Signature Value:", signatureData);
         } catch (error) { }
