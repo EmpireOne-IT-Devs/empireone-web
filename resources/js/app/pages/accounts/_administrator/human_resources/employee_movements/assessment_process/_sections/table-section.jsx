@@ -18,6 +18,7 @@ export default function TableSection() {
         { header: "Average 2", accessor: "section2_average" },
         { header: "Total", accessor: "total_average" },
         { header: "Status", accessor: "status" },
+        { header: "Evaluation Period", accessor: "evaluation_period" },
         { header: "Action", accessor: "action" },
     ];
     console.log("evaluations", evaluations);
@@ -36,6 +37,7 @@ export default function TableSection() {
                     section2_average: res.section2_average,
                     total_average: res.total_average,
                     status: res.status,
+                    evaluation_period: res.evaluation_period,
                     action: (
                         <div className="flex gap-3">
                             {
@@ -52,7 +54,7 @@ export default function TableSection() {
 
                             <a
                                 target="_blank"
-                                href={`/accounts/${role}/human_resources/235/evaluations/${res.id}`}
+                                href={`/accounts/${role}/human_resources/review/evaluations/${res.id}`}
                             >
                                 SHOW RESULT
                             </a>

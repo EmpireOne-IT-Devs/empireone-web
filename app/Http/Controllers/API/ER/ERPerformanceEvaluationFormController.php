@@ -15,11 +15,8 @@ class ERPerformanceEvaluationFormController extends Controller
      */
     public function index(Request $request)
     {
-        $evaluations = ERPerformanceEvaluationForm::where('recommendation', $request->status)->with(['supervisor', 'user', 'employee'])->get();
-        return response()->json([
-            'data' => $evaluations,
-            'status'  => 'success',
-        ], 200);
+        $evaluations = ERPerformanceEvaluationForm::whereIn('recommendation', ['Mid-Probationary', 'Regular', 'Probationary', 'Extended Probationary', 'End of Contract'])->with(['supervisor', 'user', 'employee'])->paginate();
+        return response()->json($evaluations, 200);
     }
 
 
@@ -44,9 +41,11 @@ class ERPerformanceEvaluationFormController extends Controller
                 $status = $totalAverage >= 3 ? 'Passed' : 'Failed';
             }
             $evaluation = ERPerformanceEvaluationForm::updateOrCreate(
-                ['id' => $request->evaluation_id],
                 [
-                    'user_id' => $request->user_id,
+                    'status' => $status,
+                    'user_id' => $request->user_id
+                ],
+                [
                     'supervisor_id' => $request->supervisor_id,
                     'has_supervisor_signature' => true,
                     'date_of_assessment' => $request->date_of_assessment,
@@ -55,7 +54,6 @@ class ERPerformanceEvaluationFormController extends Controller
                     'section2_average' => $request->calculated_scores['section_2'] ?? null,
                     'total_average' => $totalAverage,
                     'recommendation' => $request->recommendation,
-                    'status' => $status,
                 ]
             );
 

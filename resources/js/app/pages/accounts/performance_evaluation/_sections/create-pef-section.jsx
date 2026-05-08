@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 const CreatePEFSection = () => {
     const { user } = useSelector((store) => store.app);
     const dispatch = useDispatch();
+    const params = new URLSearchParams(window.location.search);
+    const evaluation_period = params.get("evaluation_period");
 
     const {
         register,
@@ -127,9 +129,9 @@ const CreatePEFSection = () => {
     const totalScore =
         section1Score > 0 && section2Score > 0
             ? (
-                  (parseFloat(section1Score) + parseFloat(section2Score)) /
-                  2
-              ).toFixed(2)
+                (parseFloat(section1Score) + parseFloat(section2Score)) /
+                2
+            ).toFixed(2)
             : 0;
 
     const getScoreColor = (score) => {
@@ -168,7 +170,7 @@ const CreatePEFSection = () => {
             router.visit(
                 `/accounts/${window.location.pathname.split("/")[2]}/my_team/team`,
             );
-        } catch (error) {}
+        } catch (error) { }
     };
 
     // --- REUSABLE COMPONENTS ---
@@ -502,82 +504,85 @@ const CreatePEFSection = () => {
 
                 {/* Signatures & Recommendations */}
                 <div className="mt-12 grid grid-cols-2 gap-12 px-6">
-                    <div
-                        className={`flex flex-col gap-3 p-4 rounded-md transition-colors ${errors.recommendation ? "bg-red-50 ring-1 ring-red-300" : ""}`}
-                    >
-                        <p className="text-sm font-bold uppercase text-gray-800  ">
-                            Recommendation{" "}
-                            <span className="text-red-500">*</span>
-                        </p>
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                                type="radio"
-                                value="Mid-Probationary"
-                                {...register("recommendation", {
-                                    required: true,
-                                })}
-                                className="w-4 h-4 accent-blue-600 cursor-pointer"
-                            />
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                Mid-Probationary
-                            </span>
-                        </label>
+                    {
+                        evaluation_period !== "3 Months" && <div
+                            className={`flex flex-col gap-3 p-4 rounded-md transition-colors ${errors.recommendation ? "bg-red-50 ring-1 ring-red-300" : ""}`}
+                        >
+                            <p className="text-sm font-bold uppercase text-gray-800  ">
+                                Recommendation{" "}
+                                <span className="text-red-500">*</span>
+                            </p>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input
+                                    type="radio"
+                                    value="Mid-Probationary"
+                                    {...register("recommendation", {
+                                        required: true,
+                                    })}
+                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
+                                />
+                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                                    Mid-Probationary
+                                </span>
+                            </label>
 
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                                type="radio"
-                                value="Regular"
-                                {...register("recommendation", {
-                                    required: true,
-                                })}
-                                className="w-4 h-4 accent-blue-600 cursor-pointer"
-                            />
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                Regular
-                            </span>
-                        </label>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input
+                                    type="radio"
+                                    value="Regular"
+                                    {...register("recommendation", {
+                                        required: true,
+                                    })}
+                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
+                                />
+                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                                    Regular
+                                </span>
+                            </label>
 
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                                type="radio"
-                                value="Extended Probationary"
-                                {...register("recommendation", {
-                                    required: true,
-                                })}
-                                className="w-4 h-4 accent-blue-600 cursor-pointer"
-                            />
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                Extended Probationary
-                            </span>
-                        </label>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input
+                                    type="radio"
+                                    value="Extended Probationary"
+                                    {...register("recommendation", {
+                                        required: true,
+                                    })}
+                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
+                                />
+                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                                    Extended Probationary
+                                </span>
+                            </label>
 
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                            <input
-                                type="radio"
-                                value="End of Contract"
-                                {...register("recommendation", {
-                                    required: true,
-                                })}
-                                className="w-4 h-4 accent-blue-600 cursor-pointer"
-                            />
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                End of Contract
-                            </span>
-                        </label>
-                    </div>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input
+                                    type="radio"
+                                    value="End of Contract"
+                                    {...register("recommendation", {
+                                        required: true,
+                                    })}
+                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
+                                />
+                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+                                    End of Contract
+                                </span>
+                            </label>
+                        </div>
+                    }
+
                     <div className="flex flex-col items-center justify-end h-full w-full max-w-sm mx-auto">
                         <div className="relative flex flex-col items-center justify-end w-full">
                             {user?.subordinate?.leader?.user?.account_employee
                                 ?.signature && (
-                                <img
-                                    src={
-                                        user?.subordinate?.leader?.user
-                                            ?.account_employee?.signature
-                                    }
-                                    alt="Supervisor Signature"
-                                    className="h-96 object-contain absolute -bottom-[160px] pointer-events-none mix-blend-multiply"
-                                />
-                            )}
+                                    <img
+                                        src={
+                                            user?.subordinate?.leader?.user
+                                                ?.account_employee?.signature
+                                        }
+                                        alt="Supervisor Signature"
+                                        className="h-96 object-contain absolute -bottom-[160px] pointer-events-none mix-blend-multiply"
+                                    />
+                                )}
                             <span className="font-bold text-gray-900 text-lg mb-1 relative z-10">
                                 {watch("supervisor_name")}
                             </span>

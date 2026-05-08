@@ -142,14 +142,14 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
                                 {job_requisition.type ===
                                     "Existing Position" && (
-                                    <Badge
-                                        outlined
-                                        showDot={false}
-                                        className="rounded-md px-3 py-1 text-xs font-medium"
-                                        variant="purple"
-                                        label="📋 Existing"
-                                    />
-                                )}
+                                        <Badge
+                                            outlined
+                                            showDot={false}
+                                            className="rounded-md px-3 py-1 text-xs font-medium"
+                                            variant="purple"
+                                            label="📋 Existing"
+                                        />
+                                    )}
                             </div>
                         </div>
 
@@ -277,10 +277,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
                             <div className="flex flex-wrap gap-2 border-t pt-4">
                                 <span
-                                    className={`px-3 py-1 rounded text-sm font-medium ${
-                                        statusColors[job_requisition.status] ||
+                                    className={`px-3 py-1 rounded text-sm font-medium ${statusColors[job_requisition.status] ||
                                         "bg-yellow-100 text-yellow-800"
-                                    }`}
+                                        }`}
                                 >
                                     {job_requisition.status || "Pending"}
                                 </span>
@@ -355,8 +354,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     <div className="font-semibold text-gray-900">
                                         {job_requisition?.created_at
                                             ? moment(
-                                                  job_requisition.created_at,
-                                              ).format("LL")
+                                                job_requisition.created_at,
+                                            ).format("LL")
                                             : "N/A"}
                                     </div>
                                 </div>
@@ -367,8 +366,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                     <div className="font-semibold text-gray-900">
                                         {job_requisition?.target_start_date
                                             ? moment(
-                                                  job_requisition.target_start_date,
-                                              ).format("LL")
+                                                job_requisition.target_start_date,
+                                            ).format("LL")
                                             : "N/A"}
                                     </div>
                                 </div>
@@ -411,8 +410,8 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         <p className="font-semibold text-gray-900">
                                             {job_requisition?.interview_date
                                                 ? moment(
-                                                      job_requisition.interview_date,
-                                                  ).format("LL")
+                                                    job_requisition.interview_date,
+                                                ).format("LL")
                                                 : "N/A"}
                                         </p>
                                     </div>
@@ -493,22 +492,22 @@ export default function JobRequisitionBodySection({ job_requisition }) {
 
                 {/* Footer Action Buttons: Stack on mobile, row on tablet/desktop */}
                 <div className="flex flex-col sm:flex-row w-full items-center justify-between border-t gap-3 p-4 bg-white sticky bottom-0">
-                    {job_requisition.status == "Pending" &&
-                        job_requisition.approver1_id == data?.user?.id && (
+                    {(job_requisition.status == "Pending" &&
+                        job_requisition.approver1_id == data?.user?.id) && (
                             <ApproveJobRequisitionSection
                                 data={job_requisition}
                             />
                         )}
 
-                    {job_requisition.status == "In Progress" &&
-                        job_requisition.approver2_id == data?.user?.id && (
+                    {(job_requisition.status == "In Progress" &&
+                        job_requisition.approver2_id == data?.user?.id) && (
                             <ApproveJobRequisitionSection
                                 data={job_requisition}
                             />
                         )}
 
-                    {job_requisition.status == "Director Approved" &&
-                        job_requisition.approver2_id == data?.user?.id && (
+                    {(job_requisition.status == "Director Approved" &&
+                        job_requisition.approver3_id == data?.user?.id) && (
                             <ApproveJobRequisitionSection
                                 data={job_requisition}
                             />
