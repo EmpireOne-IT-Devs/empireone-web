@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import { Bell } from "lucide-react";
 import React from "react";
 
@@ -28,12 +29,12 @@ export default function NoSignatureNotification() {
 
                 {/* Button */}
                 <div className="mt-8">
-                    <a
+                    <Link
                         href={`/accounts/${role}/my_profile/signature`}
                         className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-lg"
                     >
                         ADD SIGNATURE
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

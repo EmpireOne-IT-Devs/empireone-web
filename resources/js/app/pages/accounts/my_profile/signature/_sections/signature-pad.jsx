@@ -93,9 +93,12 @@ const SignaturePad = () => {
                 setAlert({
                     type: "success",
                     title: "Signature save successfully!",
+                    message:
+                        "The documents has been created and is ready for review.",
+                    open: true,
                 }),
             );
-            router.back();
+            router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_profile?tab=personal`);
             setLoading(false);
             console.log("Signature Value:", signatureData);
         } catch (error) { }
