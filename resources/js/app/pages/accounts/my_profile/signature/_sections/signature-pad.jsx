@@ -5,6 +5,8 @@ import { FaRegSave } from "react-icons/fa";
 import { save_signature_service } from "@/app/services/account-service";
 import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
+import store from "@/app/store/store";
+import { get_app_data_thunk } from "@/app/redux/app-thunk";
 
 const SignaturePad = () => {
     const sigCanvas = useRef({});
@@ -85,6 +87,7 @@ const SignaturePad = () => {
             await save_signature_service({
                 signature: signatureData,
             });
+            await store.dispatch(get_app_data_thunk());
             await dispatch(
                 setAlert({
                     type: "success",
