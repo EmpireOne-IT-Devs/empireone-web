@@ -55,15 +55,14 @@ export default function TableSection() {
                     ),
                     action: (
                         <div className="flex gap-3">
-                            {res.status === "Declined Job Offer" && (
+                            {res.job_application.final_status !== 'Transferred' && res.status === "Declined Job Offer" && (
                                 <>
                                     <ResendJobOfferSection data={res} />
                                 </>
                             )}
-
                             {res.status == "Accepted Job Offer" &&
                                 res?.job_application?.final_status ==
-                                    "Accepted Job Offer" && (
+                                "Accepted Job Offer" && (
                                     <>
                                         <SendDocumentsSection data={res} />
                                     </>

@@ -41,6 +41,7 @@ export default function ResendJobOfferSection({ data }) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: "allowances",
+        job_posting_id: null
     });
     useEffect(() => {
         if (job_order_id == data.id) {
@@ -54,6 +55,7 @@ export default function ResendJobOfferSection({ data }) {
             "position",
             data.job_application.job_posting.job_requisition.title,
         );
+        setValue("job_posting_id", data?.job_application?.job_posting?.id);
     }, []);
     const onSubmit = async (formData) => {
         try {
@@ -76,7 +78,7 @@ export default function ResendJobOfferSection({ data }) {
             );
             setOpen(false);
             reset();
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const getBadgeVariant = (status) => {
@@ -171,6 +173,7 @@ export default function ResendJobOfferSection({ data }) {
                                         value: res.title,
                                     })) || []
                                 }
+                                disabled
                                 value={watchedValues.position}
                                 error={errors.position}
                                 required
@@ -277,7 +280,7 @@ export default function ResendJobOfferSection({ data }) {
                                             type="button"
                                             variant="danger"
                                             onClick={() => remove(index)}
-                                            // disabled={fields.length === 1}
+                                        // disabled={fields.length === 1}
                                         >
                                             ✕
                                         </Button>

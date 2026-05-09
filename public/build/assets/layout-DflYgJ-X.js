@@ -1,0 +1,1 @@
+import{j as t}from"./app-BtM4a8-c.js";import o from"./tabs-section-BjGYYiaE.js";import"./tabs-C8nsIY0q.js";function a({children:e}){return t.jsxs(t.Fragment,{children:[t.jsx(o,{}),t.jsx("div",{className:"py-3",children:e})]})}export{a as default};

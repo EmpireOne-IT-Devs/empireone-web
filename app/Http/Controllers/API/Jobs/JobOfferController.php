@@ -9,6 +9,7 @@ use App\Mail\PreEmploymentMail;
 use App\Models\Account\AccountEmployee;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
+use App\Models\Jobs\JobPosting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -112,12 +113,18 @@ class JobOfferController extends Controller
         // Paginate results
         $jobOffers = $query->paginate(10)->appends($request->all());
 
-        return response()->json([
-            'data' => $jobOffers,
-            'status' => 'success',
-        ], 200);
+        return response()->json($jobOffers, 200);
     }
+    public function get_job_offers_by_job_posting($id)
+    {
+        $jobPostings = JobOffer::with(['job_application','user'])
+            ->whereHas('job_application', function ($query) use ($id) {
+                $query->where('job_posting_id', $id);
+            })
+            ->paginate(10);
 
+        return response()->json($jobPostings, 200);
+    }
     /**
      * Display the specified resource.
      */

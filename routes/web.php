@@ -139,10 +139,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::inertia('/applicants', 'accounts/_administrator/talent_acquisition/applicants/page');
             Route::inertia('/interviews', 'accounts/_administrator/talent_acquisition/interviews/page');
             Route::inertia('/qr_code', 'accounts/_administrator/talent_acquisition/qr_code/page');
-
-            // Dynamic Routes Refactored to Route::inertia
-            Route::inertia('/job_posting/{id}/applicants', 'accounts/_administrator/talent_acquisition/job_posting/id/applicants/page');
-            Route::inertia('/job_posting/{id}/job_offers', 'accounts/_administrator/talent_acquisition/job_posting/id/job_offers/page');
+            Route::inertia('/job_posting/{id}/applicants', 'accounts/_administrator/talent_acquisition/job_posting/id/page');
         });
 
         Route::prefix('human_resources')->group(function () use ($employeeDetailsRoutes) {
@@ -197,7 +194,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
     Route::prefix('my_documents/{id}')->group(function () {
         Route::inertia('/contract', 'accounts/_administrator/human_resources/employees/id/contract/page');
         Route::inertia('/onboarding', 'accounts/_administrator/human_resources/employees/id/onboarding/page');
-        Route::inertia('/employee_change_form', 'accounts/my_documents/employee_change_form/page');
+        // Route::inertia('/employee_change_form', 'accounts/my_documents/employee_change_form/page');
     });
 });
 

@@ -8,7 +8,12 @@ export async function get_job_postings_service() {
 }
 
 export async function get_job_offers_service() {
-    return (await axios.get(`/api/job/offers${window.location.search}`)).data;
+    return (await axios.get(`/api/job/offers${window.location.search}`));
+}
+
+
+export async function get_job_offers_by_job_posting_service(id) {
+    return (await axios.get(`/api/job/get_job_offers_by_job_posting/${id}`)).data;
 }
 
 export async function delete_job_postings_service(id) {

@@ -124,18 +124,20 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(JobApplication::class, 'user_id', 'id')
             ->where(function ($query) {
                 $query->where([
-                    ['final_status', 'Passed'],
+                    ['final_status', 'Accepted Job Offer'],
                     ['interview_status', 'Passed'],
                     ['screening_status', 'Screened Passed'],
-                ])->orWhere([
-                    ['final_status', 'Passed'],
-                    ['interview_status', 'Passed'],
-                    ['screening_status', 'Accepted Job Offer'],
-                ])->orWhere([
-                    ['final_status', 'Passed'],
-                    ['interview_status', 'Passed'],
-                    ['screening_status', 'Hired'],
                 ]);
+                // ->orWhere([
+                //     ['final_status', 'Passed'],
+                //     ['interview_status', 'Passed'],
+                //     ['screening_status', 'Accepted Job Offer'],
+                // ]);
+                // ->orWhere([
+                //     ['final_status', 'Passed'],
+                //     ['interview_status', 'Passed'],
+                //     ['screening_status', 'Hired'],
+                // ]);
             })
             ->with(['job_posting']);
     }

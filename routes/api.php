@@ -76,6 +76,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
+        Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
+        
         Route::resource('job_applicant_schedules', JobApplicantScheduleController::class);
         Route::resource('account_access', AccountAccessController::class);
         Route::get('get_job_offer_by_user',  [JobOfferController::class, 'get_job_offer_by_user']);
