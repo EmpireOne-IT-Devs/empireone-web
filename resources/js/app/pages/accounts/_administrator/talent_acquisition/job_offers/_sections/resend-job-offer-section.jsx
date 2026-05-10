@@ -1,4 +1,3 @@
-import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
@@ -7,17 +6,18 @@ import allowances from "@/app/lib/allowance";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     get_applicants_thunk,
-    get_job_offers_thunk,
+    get_job_application_by_id_thunk,
 } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 export default function ResendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
-    const params = new URLSearchParams(window.location.search);
     const dispatch = useDispatch();
+    const { job_postings } = useSelector((store) => store.job_postings);
     const { data: datas } = useSelector((store) => store.app);
     const {
         register,
@@ -29,45 +29,39 @@ export default function ResendJobOfferSection({ data }) {
         formState: { errors, isSubmitting }, // Destructured isSubmitting
     } = useForm({
         defaultValues: {
-            position: "", // Default to current title
+            job_posting_id: "",
             salary: "",
             role: "",
+            start_date: "",
+            allowances: []
         },
     });
-
-    const job_order_id = params.get("job_order_id");
-    console.log("datadata", data);
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: "allowances",
-        job_posting_id: null
     });
-    useEffect(() => {
-        if (job_order_id == data.id) {
-            setOpen(true);
-        }
-    }, []);
 
     const watchedValues = watch();
     useEffect(() => {
-        setValue(
-            "position",
-            data.job_application.job_posting.job_requisition.title,
-        );
         setValue("job_posting_id", data?.job_application?.job_posting?.id);
+        setValue("role", data?.role);
+        setValue("salary", data?.salary);
+        setValue("start_date", moment(data?.start_date).format('YYYY-MM-DD'));
+        setValue("allowances", data?.allowances);
+
     }, []);
+    console.log("watchedValues", data);
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
                 ...data,
                 ...formData,
+                start_date: moment(formData.start_date).format('LL'),
+                job_application_id: data.id,
                 status: "Re-Offered",
-                applicant: {
-                    ...data.user,
-                },
             });
-            await store.dispatch(get_job_offers_thunk(window.location.search));
+            await store.dispatch(get_applicants_thunk());
             await dispatch(
                 setAlert({
                     type: "success",
@@ -81,30 +75,17 @@ export default function ResendJobOfferSection({ data }) {
         } catch (error) { }
     };
 
-    const getBadgeVariant = (status) => {
-        switch (status) {
-            case "Pending":
-                return "warning"; // yellow
-            case "Accepted":
-                return "success"; // green
-            case "Re-Offered":
-                return "secondary"; // blue/orange
-            case "Declined":
-                return "danger"; // red
-            default:
-                return "primary"; // default blue
-        }
-    };
-
     return (
         <div>
-            <Button onClick={() => setOpen(true)}>RESEND JOB OFFER</Button>
+            <Button className="h-full text-sm" onClick={() => setOpen(true)}>
+                RESEND&nbsp;JOB&nbsp;OFFER
+            </Button>
 
             <Modal
                 width="max-w-3xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="Send Job Offer"
+                title="Resend Job Offer"
             >
                 {/* Wrap content in a form tag to utilize handleSubmit */}
                 <form
@@ -112,80 +93,53 @@ export default function ResendJobOfferSection({ data }) {
                     className="bg-gray-50 p-6 rounded-xl space-y-6 text-sm text-gray-700 border border-gray-100"
                 >
                     <div>
-                        <div className="flex items-center justify-between">
-                            <p className="font-bold text-blue-600 uppercase text-xl tracking-wider mb-2">
-                                Position Details
-                            </p>
-                            <Badge
-                                variant={getBadgeVariant(data.status)}
-                                label={data.status}
-                            />
-                        </div>
-                        {data?.declined_reason && (
-                            <div className="flex flex-col my-5">
-                                <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
-                                    Reason To Declined
-                                </p>
-                                <p className="text-red-500 text-md">
-                                    {data?.declined_reason}
-                                </p>
-                            </div>
-                        )}
-
+                        <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
+                            Position Details
+                        </p>
                         <div className="grid grid-cols-2 gap-y-1">
                             <p>
                                 <strong>Full Name:</strong>{" "}
-                                {data?.user?.personal_information?.first_name}{" "}
-                                {data?.user?.personal_information?.last_name}
+                                {
+                                    data?.user?.personal_information
+                                        ?.first_name
+                                }{" "}
+                                {
+                                    data?.user?.personal_information
+                                        ?.last_name
+                                }
                             </p>
                             <p>
                                 <strong>Department:</strong>{" "}
                                 {
-                                    data.job_application.job_posting
-                                        .job_requisition.department.name
+                                    data?.job_application?.job_posting?.job_requisition
+                                        .department.name
                                 }
                             </p>
                             <p>
                                 <strong>Location:</strong>{" "}
                                 {
-                                    data.job_application.job_posting
-                                        .job_requisition.location.name
+                                    data?.job_application?.job_posting?.job_requisition.location
+                                        .name
                                 }
                             </p>
                             <p>
                                 <strong>Current Title:</strong>{" "}
-                                {
-                                    data.job_application.job_posting
-                                        .job_requisition.title
-                                }
+                                {data?.job_application?.job_posting?.job_requisition?.title}
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-y-1 gap-5 mt-6">
+                        <div className="grid grid-cols-2 gap-y-5 gap-5 mt-6">
                             <Select
-                                label="Offer Position"
-                                {...register("position", {
-                                    required: "Required",
-                                })}
+                                label="Select Existing Position"
                                 options={
                                     datas?.position?.map((res) => ({
-                                        label: res.title,
-                                        value: res.title,
+                                        label: res?.job_requisition?.title,
+                                        value: res?.id,
                                     })) || []
                                 }
-                                disabled
-                                value={watchedValues.position}
-                                error={errors.position}
-                                required
-                            />
-                            <Input
-                                label="Monthly Salary"
-                                type="number"
-                                {...register("salary", {
-                                    required: true,
-                                })}
-                                error={errors.salary}
-                                placeholder="e.g. 50000"
+                                value={watchedValues.job_posting_id}
+                                error={errors.job_posting_id?.message}
+                                onChange={(e) => setValue('job_posting_id', e)}
                             />
 
                             <Select
@@ -201,6 +155,25 @@ export default function ResendJobOfferSection({ data }) {
                                 ]}
                                 error={errors.role}
                                 value={watchedValues.role}
+                            />
+                            <Input
+                                label="Monthly Salary"
+                                type="number"
+                                {...register("salary", {
+                                    required: true,
+                                })}
+                                error={errors.salary}
+                                placeholder="e.g. 50000"
+                            />
+                            <Input
+                                label="Start Date"
+                                type="date"
+                                {...register("start_date", {
+                                    required: true,
+                                })}
+                                min={new Date().toISOString().split("T")[0]}
+                                error={errors.start_date}
+                                placeholder="e.g. March *"
                             />
                         </div>
                     </div>
@@ -290,6 +263,7 @@ export default function ResendJobOfferSection({ data }) {
                         </div>
                     </div>
 
+                    {/* Interactive Loading Button */}
                     <Button
                         type="submit"
                         className="w-full flex justify-center items-center"

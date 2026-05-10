@@ -99,6 +99,7 @@ export default function ApplicantTableSection() {
                         <ResendJobOfferSection data={res} />
                     </>
                 )}
+                
                 {res?.final_status ==
                     "Accepted Job Offer" && (
                         <>

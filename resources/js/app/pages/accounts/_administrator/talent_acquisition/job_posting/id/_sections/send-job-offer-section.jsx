@@ -10,6 +10,7 @@ import {
 } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,7 +50,7 @@ export default function SendJobOfferSection({ data }) {
             await send_job_offer_service({
                 ...data,
                 ...formData,
-                start_date: formData.start_date,
+                start_date: moment(formData.start_date).format('LL'),
                 job_application_id: data.id,
             });
             await store.dispatch(get_job_application_by_id_thunk());

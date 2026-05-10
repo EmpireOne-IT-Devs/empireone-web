@@ -483,7 +483,7 @@ class JobApplicationController extends Controller
 
     public function applicants()
     {
-        $applications = JobApplication::with(['job_posting', 'applicant'])->paginate();
+        $applications = JobApplication::with(['job_posting', 'applicant','job_offer'])->paginate();
         return response()->json([
             'data' => $applications,
             'status' => 'success',
@@ -522,7 +522,7 @@ class JobApplicationController extends Controller
     {
 
         // 1. Fetch all applications for this specific job once
-        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant'])->get();
+        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant','job_offer'])->get();
         $job_posting = JobPosting::where('id', $id)->with(['job_requisition', 'job_application'])->first();
         return response()->json([
             'job_applications' => $applications,

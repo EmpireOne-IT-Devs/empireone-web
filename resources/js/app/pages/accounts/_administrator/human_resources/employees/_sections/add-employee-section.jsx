@@ -11,6 +11,7 @@ import store from '@/app/store/store'
 import { get_employees_thunk } from '@/app/redux/employee-relation-thunk'
 import { setAlert } from '@/app/redux/app-slice'
 import { add_employee_service } from '@/app/services/account-service'
+import moment from 'moment'
 
 export default function AddEmployeeSection() {
     const { data } = useSelector((store) => store.app);
@@ -44,7 +45,10 @@ export default function AddEmployeeSection() {
     const onSubmit = async (formData) => {
         console.log("Form Data Submitted:", formData);
         try {
-            await add_employee_service(formData)
+            await add_employee_service({
+                ...formData,
+                started_at: moment(formData.started_at).format('LL')
+            })
             await store.dispatch(get_employees_thunk());
             await dispatch(
                 setAlert({
@@ -142,19 +146,7 @@ export default function AddEmployeeSection() {
                     </div>
 
                     <div className='flex flex-col gap-4 md:flex-row'>
-                        <div className="w-full md:flex-1">
-                            <Select
-                                label="Account"
-                                name="account_id"
-                                value={form.account_id}
-                                options={data?.accounts?.map((res) => ({
-                                    ...res,
-                                    label: res.name,
-                                    value: res.id,
-                                }))}
-                                onChange={(val) => setValue("account_id", val)}
-                            />
-                        </div>
+
 
                         <div className="w-full md:flex-1">
                             <Select
@@ -169,6 +161,21 @@ export default function AddEmployeeSection() {
                                 onChange={(val) => setValue("department_id", val)}
                             />
                         </div>
+                        {form.department_id == 4 && <div className="w-full md:flex-1">
+                            <Select
+                                label="Account"
+                                name="account_id"
+                                value={form.account_id}
+                                options={data?.accounts?.map((res) => ({
+                                    ...res,
+                                    label: res.name,
+                                    value: res.id,
+                                }))}
+                                onChange={(val) => setValue("account_id", val)}
+                            />
+                        </div>}
+
+
                     </div>
 
                     <div className='flex flex-col gap-4 md:flex-row'>

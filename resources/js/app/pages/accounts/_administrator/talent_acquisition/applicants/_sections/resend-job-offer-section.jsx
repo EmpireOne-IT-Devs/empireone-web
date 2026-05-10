@@ -10,6 +10,7 @@ import {
 } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,14 +43,19 @@ export default function ResendJobOfferSection({ data }) {
     const watchedValues = watch();
     useEffect(() => {
         setValue("job_posting_id", data?.job_posting?.id);
+        setValue("role", data?.job_offer?.role);
+        setValue("salary", data?.job_offer?.salary);
+        setValue("start_date", moment(data?.job_offer?.start_date).format('YYYY-MM-DD'));
+        setValue("allowances", data?.job_offer?.allowances);
     }, []);
-    console.log("watchedValues", watchedValues);
+
+    console.log("zzzzzzzzzzzzz", data);
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
                 ...data,
                 ...formData,
-                start_date: formData.start_date,
+                start_date: moment(formData.start_date).format('LL'),
                 job_application_id: data.id,
                 status: "Re-Offered",
             });

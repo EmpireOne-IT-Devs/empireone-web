@@ -58,12 +58,12 @@ class AccountDocumentController extends Controller
 
     public function send_documents(Request $request)
     {
-        $employee = AccountEmployee::where('user_id', $request->user_id)->first();
-        if ($employee) {
-            $employee->update([
-                'started_at' => $request->startDate
-            ]);
-        }
+        // $employee = AccountEmployee::where('user_id', $request->user_id)->first();
+        // if ($employee) {
+        //     $employee->update([
+        //         'started_at' => $request->startDate
+        //     ]);
+        // }
         Mail::to($request->user['email'])->send(new OnboardingDocumentsMail($request->all()));
         Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
         // started_at
