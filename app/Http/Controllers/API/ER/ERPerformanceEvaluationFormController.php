@@ -42,8 +42,8 @@ class ERPerformanceEvaluationFormController extends Controller
             }
             $evaluation = ERPerformanceEvaluationForm::updateOrCreate(
                 [
-                    'status' => $status,
-                    'user_id' => $request->user_id
+                    'user_id' => $request->user_id,
+                    'evaluation_period' => $request->evaluation_period,
                 ],
                 [
                     'supervisor_id' => $request->supervisor_id,
@@ -54,6 +54,7 @@ class ERPerformanceEvaluationFormController extends Controller
                     'section2_average' => $request->calculated_scores['section_2'] ?? null,
                     'total_average' => $totalAverage,
                     'recommendation' => $request->recommendation,
+                    'status' => $status,
                 ]
             );
 

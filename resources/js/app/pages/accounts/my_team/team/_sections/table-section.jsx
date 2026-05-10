@@ -38,12 +38,7 @@ export default function TableSection() {
                             res?.employee?.account_employee?.started_at,
                         status:
                             res?.employee?.account_employee?.status ?? "N/A",
-                        evaluation_period3: res?.has3_months_evaluation?.status == null ? (
-                            // Render plain text if status is null
-                            <span className="text-gray-500">
-                                {res?.has3_months_evaluation?.evaluation_period || "No Evaluation"}
-                            </span>
-                        ) : (
+                        evaluation_period3: (res?.has3_months_evaluation?.status == 'Passed' || res?.has3_months_evaluation?.status == 'Failed') ? (
                             // Render the active link if status exists
                             <a
                                 target="_blank"
@@ -53,13 +48,15 @@ export default function TableSection() {
                             >
                                 {res?.has3_months_evaluation?.evaluation_period}
                             </a>
-                        ),
-                        evaluation_period5: res?.has5_months_evaluation?.status == null ? (
+                        ) : (
                             // Render plain text if status is null
                             <span className="text-gray-500">
-                                {res?.has5_months_evaluation?.evaluation_period || "No Evaluation"}
+                                {res?.has3_months_evaluation?.evaluation_period || "No Evaluation"}
                             </span>
-                        ) : (
+
+                        ),
+                        evaluation_period5: (res?.has5_months_evaluation?.status == 'Passed' || res?.has5_months_evaluation?.status == 'Failed') ? (
+
                             // Render the active link if status exists
                             <a
                                 target="_blank"
@@ -69,23 +66,43 @@ export default function TableSection() {
                             >
                                 {res?.has5_months_evaluation?.evaluation_period}
                             </a>
+                        ) : (
+                            // Render plain text if status is null
+                            <span className="text-gray-500">
+                                {res?.has5_months_evaluation?.evaluation_period || "No Evaluation"}
+                            </span>
+
                         ),
                         action: (
                             <div className="flex gap-3">
                                 {/* {
                                     res?.has3_months_evaluation?.user_id
                                 } */}
-                                {res?.has3_months_evaluation?.status === null && (
+                                {(res?.has3_months_evaluation?.evaluation_period == "3 Months" && res?.has3_months_evaluation?.status === null) && (
                                     <>
                                         <a
                                             target="_blank"
                                             href={`/accounts/${role}/performance_evaluation/${res?.employee?.account_employee?.user_id}?evaluation_period=${res?.has3_months_evaluation?.evaluation_period}`}
                                         >
-                                            Evaluate Performance
+                                            Create {`${res?.has3_months_evaluation?.evaluation_period}`} Evaluate Performance
                                         </a>
                                         |
                                     </>
                                 )}
+
+
+                                {(res?.has5_months_evaluation?.evaluation_period == "5 Months" && res?.has5_months_evaluation?.status === null) && (
+                                    <>
+                                        <a
+                                            target="_blank"
+                                            href={`/accounts/${role}/performance_evaluation/${res?.employee?.account_employee?.user_id}?evaluation_period=${res?.has5_months_evaluation?.evaluation_period}`}
+                                        >
+                                            Create {`${res?.has5_months_evaluation?.evaluation_period}`} Evaluate Performance
+                                        </a>
+                                        |
+                                    </>
+                                )}
+
 
                                 <a
                                     target="_blank"

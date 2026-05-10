@@ -1,6 +1,6 @@
 import Button from "@/app/_components/button";
 import { setAlert } from "@/app/redux/app-slice";
-import { get_user_by_id_thunk } from "@/app/redux/app-thunk";
+import { get_app_data_thunk, get_user_by_id_thunk } from "@/app/redux/app-thunk";
 import { create_performance_evaluation_service } from "@/app/services/performance-evaluation-service";
 import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
@@ -145,6 +145,7 @@ const CreatePEFSection = () => {
     const onSubmit = async (data) => {
         const finalPayload = {
             ...data,
+            evaluation_period:evaluation_period,
             calculated_scores: {
                 section_1: section1Score,
                 section_2: section2Score,
@@ -154,9 +155,7 @@ const CreatePEFSection = () => {
         console.log("Submitting Form Data:", finalPayload);
         try {
             await create_performance_evaluation_service(finalPayload);
-            await store.dispatch(
-                get_user_by_id_thunk(window.location.pathname.split("/")[4]),
-            );
+            await store.dispatch(get_app_data_thunk());
             dispatch(
                 setAlert({
                     type: "success",
@@ -505,27 +504,13 @@ const CreatePEFSection = () => {
                 {/* Signatures & Recommendations */}
                 <div className="mt-12 grid grid-cols-2 gap-12 px-6">
                     {
-                        evaluation_period !== "3 Months" && <div
+                        evaluation_period != "3 Months" && <div
                             className={`flex flex-col gap-3 p-4 rounded-md transition-colors ${errors.recommendation ? "bg-red-50 ring-1 ring-red-300" : ""}`}
                         >
                             <p className="text-sm font-bold uppercase text-gray-800  ">
                                 Recommendation{" "}
                                 <span className="text-red-500">*</span>
                             </p>
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                    type="radio"
-                                    value="Mid-Probationary"
-                                    {...register("recommendation", {
-                                        required: true,
-                                    })}
-                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
-                                />
-                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                    Mid-Probationary
-                                </span>
-                            </label>
-
                             <label className="flex items-center gap-3 cursor-pointer group">
                                 <input
                                     type="radio"

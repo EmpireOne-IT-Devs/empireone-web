@@ -570,6 +570,6 @@ export default function ResultFormSection() {
         totalScore: totalScore,
         signature: evaluation?.supervisor?.account_employee?.signature,
     };
-
+console.log('evaluation',evaluation)
     return <PDFLoader pdf={<EvaluationDocument data={pdfPayload} />} width="w-full" />;
 }
