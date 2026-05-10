@@ -14,6 +14,8 @@ import Table from "@/app/_components/table";
 import EditStatusSection from "./edit-status-section";
 import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import SendJobOfferSection from "./send-job-offer-section";
+import ResendJobOfferSection from "./resend-job-offer-section";
+import SendDocumentsSection from "./send-documents-section";
 
 export default function ApplicantTableSection() {
     const { applicants, search_applicant_status } = useSelector(
@@ -76,7 +78,7 @@ export default function ApplicantTableSection() {
     const tableData = filteredApplications?.map((res) => ({
         name: res?.applicant?.name,
         position: res?.job_posting?.job_requisition?.title,
-        recruiter:  res?.job_posting?.job_requisition?.recruiter?.name,
+        recruiter: res?.job_posting?.job_requisition?.recruiter?.name,
         applied_at: moment(res.created_at).format("LLL"),
         screening_status: (
             <EditStatusSection data={res} table_status="screening_status" />
@@ -89,9 +91,20 @@ export default function ApplicantTableSection() {
         ),
         action: (
             <div className="flex gap-3">
-                {res.final_status == "Passed" && (
+                {(res.final_status == "Passed" || res.final_status == "Pooled") && (
                     <SendJobOfferSection data={res} />
                 )}
+                {res.final_status === "Declined Job Offer" && (
+                    <>
+                        <ResendJobOfferSection data={res} />
+                    </>
+                )}
+                {res?.final_status ==
+                    "Accepted Job Offer" && (
+                        <>
+                            <SendDocumentsSection data={res} />
+                        </>
+                    )}
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),

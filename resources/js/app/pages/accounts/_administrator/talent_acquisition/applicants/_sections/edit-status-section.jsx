@@ -1,8 +1,5 @@
 import { setAlert } from "@/app/redux/app-slice";
-import {
-    get_applicants_thunk,
-    get_job_application_by_id_thunk,
-} from "@/app/redux/job-posting-thunk";
+import { get_job_application_by_id_thunk } from "@/app/redux/job-posting-thunk";
 import { update_job_application_status_service } from "@/app/services/job-application-service";
 import store from "@/app/store/store";
 import React, { useEffect, useState } from "react";
@@ -47,7 +44,6 @@ export default function EditStatusSection({ data, table_status }) {
         "Rejected",
         "No Show",
     ];
-
     const getStatusVariant = (status) => {
         switch (status) {
             case "New":
@@ -89,7 +85,7 @@ export default function EditStatusSection({ data, table_status }) {
                 [table_status]: e,
             });
 
-            await store.dispatch(get_applicants_thunk());
+            await store.dispatch(get_job_application_by_id_thunk());
 
             setLoading(false);
             setIsEditing(false);
@@ -106,7 +102,7 @@ export default function EditStatusSection({ data, table_status }) {
             setLoading(false);
         }
     }
-
+    const isTransferred = data.final_status === "Transferred";
     return (
         <div className="min-h-[50px] flex items-center">
             {isEditing ? (
@@ -149,7 +145,11 @@ export default function EditStatusSection({ data, table_status }) {
                 </div>
             ) : (
                 <div
-                    onDoubleClick={() => setIsEditing(true)}
+                    onDoubleClick={() => {
+                        if (!isTransferred) {
+                            setIsEditing(true);
+                        }
+                    }}
                     className="cursor-pointer"
                     title="Double click to edit"
                 >
