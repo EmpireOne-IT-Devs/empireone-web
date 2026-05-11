@@ -20,7 +20,7 @@ function classNames(...classes) {
 export default function TopbarSection() {
     const { data } = useSelector((store) => store.app);
     const dispatch = useDispatch();
-    console.log("user", data);
+    const user_role = window.location.pathname.split("/")[2];
     return (
         <>
             <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm ">
@@ -56,8 +56,11 @@ export default function TopbarSection() {
                         <Menu as="iv" className="relative">
                             <Menu.Button className="flex items-center">
                                 <img
-                                    className="w-8 h-8 rounded-full"
-                                    src="/images/empireone.png.png"
+                                    className="w-8 h-8 rounded-full object-cover"
+                                    src={
+                                        data?.user?.avatar ||
+                                        "/images/empireone.png"
+                                    }
                                     alt=""
                                 />
                                 <span className="ml-2 hidden lg:block text-sm font-semibold text-gray-900 ">
@@ -77,23 +80,19 @@ export default function TopbarSection() {
                             >
                                 <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ">
                                     <Menu.Item>
-                                        <a
-                                            as="button"
-                                            className={
-                                                "block px-3 py-1 text-sm text-gray-900  hover:bg-gray-100"
-                                            }
+                                        <Link
+                                            href={`/accounts/${user_role}/my_profile`}
+                                            className="block px-3 py-1 text-sm text-gray-900 hover:text-blue-700"
                                         >
                                             Profile
-                                        </a>
+                                        </Link>
                                     </Menu.Item>
                                     <Menu.Item>
                                         <Link
                                             method="post"
                                             href={route("logout")}
                                             as="button"
-                                            className={
-                                                "block px-3 py-1 text-sm text-gray-900  hover:bg-gray-100"
-                                            }
+                                            className="block px-3 py-1 text-sm text-gray-900 hover:text-blue-700"
                                         >
                                             Sign Out
                                         </Link>

@@ -9,7 +9,7 @@ export default function HeaderSection() {
 
     const isComplete = percent === 100;
 
-    const radius = 40;
+    const radius = 52;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference * (1 - percent / 100);
 
@@ -36,15 +36,15 @@ export default function HeaderSection() {
             <div className="hidden sm:flex items-center justify-center z-10">
                 <div className="relative">
                     <svg
-                        width="90"
-                        height="90"
-                        viewBox="0 0 90 90"
+                        width="120"
+                        height="120"
+                        viewBox="0 0 120 120"
                         className="rotate-[-90deg]"
                     >
                         {/* Background Circle */}
                         <circle
-                            cx="45"
-                            cy="45"
+                            cx="60"
+                            cy="60"
                             r={radius}
                             fill="none"
                             stroke="#1e3a8a"
@@ -52,11 +52,11 @@ export default function HeaderSection() {
                         />
                         {/* Dynamic Progress Circle */}
                         <circle
-                            cx="45"
-                            cy="45"
+                            cx="60"
+                            cy="60"
                             r={radius}
                             fill="none"
-                            stroke={isComplete ? "#22c55e" : "#facc15"} // Green if 100%, Yellow otherwise
+                            stroke={isComplete ? "#22c55e" : "#facc15"}
                             strokeWidth="4"
                             strokeDasharray={circumference}
                             strokeDashoffset={strokeDashoffset}
@@ -66,12 +66,9 @@ export default function HeaderSection() {
                     </svg>
 
                     <img
-                        src={
-                            data?.user?.profile_picture ||
-                            "/images/empireone.png"
-                        }
+                        src={data?.user?.avatar || "/images/empireone.png"}
                         alt="Profile"
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70px] h-[70px] rounded-full object-cover border-2 border-blue-800"
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92px] h-[92px] rounded-full object-cover border-2 border-blue-800"
                     />
 
                     <span

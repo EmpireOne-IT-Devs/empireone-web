@@ -104,11 +104,15 @@ class AppController extends Controller
         $accounts = Account::get();
         $user = Auth::user()->load(['account_employee', 'is_passed', 'personal_information', 'documents', 'working_experience', 'skills', 'leader']);
 
+        $profilePic = $user->personal_information?->profile_picture;
+        $userArray = $user->toArray();
+        $userArray['profile_picture'] = $profilePic ? asset('storage/' . $profilePic) : null;
+
         $total_job_opening = JobPosting::whereIn('target_audience', ['Internal', 'Both'])->count();
         $total_application_submitted = JobApplication::where('user_id', $user->id)->count();
         $total_job_offer = JobOffer::where('user_id', $user->id)->count();
         return response()->json([
-            'user' => $user,
+            'user' => $userArray,
             'profile_percent' => $percent, // Renamed slightly for clarity
             'departments' => $departments,
             'locations' => $locations,

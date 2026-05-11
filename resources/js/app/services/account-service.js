@@ -1,5 +1,11 @@
 import axios from "axios";
 
+export async function upload_avatar_service(file) {
+    const formData = new FormData();
+    formData.append("avatar", file);
+    return await axios.post(`/api/accounts/upload_avatar`, formData);
+}
+
 export async function save_signature_service(data) {
     return await axios.post(`/api/accounts/save_signature`, data);
 }
@@ -8,12 +14,9 @@ export async function send_documents_service(data) {
     return await axios.post(`/api/accounts/send_documents`, data);
 }
 
-
 export async function edit_information_service(data) {
     return await axios.post(`/api/accounts/edit_information`, data);
 }
-
-
 
 export async function add_employee_service(data) {
     return await axios.post(`/api/accounts/add_employee`, data);

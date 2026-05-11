@@ -1,20 +1,12 @@
 import Button from "@/app/_components/button";
-import {
-    AlertCircle,
-    Mail,
-    User,
-    Camera,
-    PencilLine,
-    Link as LinkIcon,
-} from "lucide-react";
-import React, { useRef, useState } from "react";
+import { AlertCircle, Mail, PencilLine, Link as LinkIcon } from "lucide-react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import UploadProfileSection from "./upload-profile-section";
 
 export default function HeaderSection() {
     const { data } = useSelector((store) => store.app);
     const [copied, setCopied] = useState(false);
-    const fileInputRef = useRef(null);
-    const [uploading, setUploading] = useState(false);
     const role = window.location.pathname.split("/")[2];
     const profileCompletion = data?.profile_percent
         ? Number(data.profile_percent)
@@ -29,33 +21,6 @@ export default function HeaderSection() {
         });
     };
 
-    const handleAvatarClick = () => {
-        if (!uploading && fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
-
-    const uploadProfilePicture = async (file) => {
-        setUploading(true);
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1200));
-            console.log("Uploaded file:", file);
-        } catch (err) {
-            console.error("Upload failed", err);
-        } finally {
-            setUploading(false);
-        }
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            uploadProfilePicture(file);
-        }
-        // Reset so the same file can be re-selected
-        e.target.value = "";
-    };
-
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden mx-auto w-full">
             {/* Banner */}
@@ -64,68 +29,8 @@ export default function HeaderSection() {
             <div className="px-4 md:px-6 pb-5">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-end">
                     <div className="flex flex-col items-center md:items-start">
-                        {/* Avatar — file input moved OUTSIDE the clickable div */}
-                        <input
-                            type="file"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            className="hidden"
-                            disabled={uploading}
-                        />
-
-                        <div
-                            className="w-[90px] h-[90px] rounded-full bg-gray-200 border-4 border-white flex items-center justify-center -mt-11 relative z-10 overflow-hidden group cursor-pointer shadow-sm"
-                            onClick={handleAvatarClick}
-                            title="Change profile picture"
-                        >
-                            {/* Avatar image or fallback */}
-                            {data?.user?.profile_picture ? (
-                                <img
-                                    src={data.user.profile_picture}
-                                    alt="Profile"
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <User className="w-10 h-10 text-gray-400" />
-                            )}
-
-                            {/* Hover overlay — pointer-events enabled now */}
-                            {!uploading && (
-                                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20">
-                                    <Camera className="w-5 h-5 text-white mb-1" />
-                                    <span className="text-[10px] text-white font-semibold text-center leading-tight px-1">
-                                        Update photo
-                                    </span>
-                                </div>
-                            )}
-
-                            {/* Loading spinner overlay */}
-                            {uploading && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-30">
-                                    <svg
-                                        className="animate-spin h-6 w-6 text-white"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <circle
-                                            className="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            strokeWidth="4"
-                                        />
-                                        <path
-                                            className="opacity-75"
-                                            fill="currentColor"
-                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                                        />
-                                    </svg>
-                                </div>
-                            )}
-                        </div>
+                        {/* Avatar upload */}
+                        <UploadProfileSection />
 
                         {/* Applicant Info */}
                         <div className="mt-2 text-center md:text-left">

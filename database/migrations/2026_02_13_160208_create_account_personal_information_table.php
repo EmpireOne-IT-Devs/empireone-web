@@ -18,6 +18,8 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
             // personal information
+            
+            $table->string('profile_picture')->nullable();
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
             $table->string('last_name')->nullable();

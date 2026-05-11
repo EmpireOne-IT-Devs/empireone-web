@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AccountPersonalInformationController extends Controller
 {
@@ -115,6 +116,23 @@ class AccountPersonalInformationController extends Controller
             'data'    => array_merge($auth->toArray(), [
                 'percent' => $percent
             ])
+        ], 200);
+    }
+
+    public function upload_avatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+          if ($request->avatar) {
+              $path = $request->file("avatar")->store('unified/account/avatar', 's3');
+                $url  = Storage::disk('s3')->url($path);
+             User::where('id', Auth::id())->update([
+                'avatar' => $url,
+            ]);
+          }
+        return response()->json([
+            'status'          => 'success',
         ], 200);
     }
 

@@ -17,6 +17,7 @@ class AccountPersonalInformation extends Model
         'user_id',
         'app_id',
         // personal information
+        'profile_picture',
         'first_name', // required
         'middle_name', // required
         'last_name', // required
