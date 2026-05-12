@@ -147,6 +147,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::inertia('/applicants', 'accounts/_administrator/talent_acquisition/applicants/page');
             Route::inertia('/interviews', 'accounts/_administrator/talent_acquisition/interviews/page');
             Route::inertia('/qr_code', 'accounts/_administrator/talent_acquisition/qr_code/page');
+            Route::inertia('/ai_interviews', 'accounts/_administrator/talent_acquisition/ai_interviews/page');
             Route::inertia('/job_posting/{id}/applicants', 'accounts/_administrator/talent_acquisition/job_posting/id/page');
         });
 

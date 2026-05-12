@@ -351,6 +351,7 @@ class JobApplicationController extends Controller
             ]);
 
             $ji = JobInterview::create([
+                'user_id'        => $user->id,
                 'job_title' => $request->position,
                 'questions_limit' => 5,
                 'current_step' => 0,

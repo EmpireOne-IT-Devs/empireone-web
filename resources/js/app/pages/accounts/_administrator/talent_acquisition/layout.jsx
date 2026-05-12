@@ -35,6 +35,11 @@ export default function JobPostingLayout({ children }) {
             path: "/accounts/administrator/talent_acquisition/applicants",
             active: path === "applicants",
         },
+           {
+            label: "AI Interviews",
+            path: "/accounts/administrator/talent_acquisition/ai_interviews",
+            active: path === "ai_interviews",
+        },
         {
             label: "Calendar",
             path: "/accounts/administrator/talent_acquisition/calendar",

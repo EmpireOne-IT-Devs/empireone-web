@@ -85,6 +85,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('top_performing_jobs', [JobPostingController::class, 'top_performing_jobs']);
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
+        Route::resource('job_interview', InterviewController::class);
         Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
 
         Route::resource('job_applicant_schedules', JobApplicantScheduleController::class);

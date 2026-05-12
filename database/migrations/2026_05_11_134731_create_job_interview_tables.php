@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('job_interviews', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->string('job_title');
             $table->integer('questions_limit')->default(5);
             $table->integer('current_step')->default(0);

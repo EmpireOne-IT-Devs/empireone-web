@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Storage;
 
 class InterviewController extends Controller
 {
+    public function index()
+    {
+        $data = JobInterview::with(['applicant', 'answers'])->paginate();
+        return response()->json($data);
+    }
     public function get_job_interview_by_id($id)
     {
         $data = JobInterview::where('id', $id)->first();
