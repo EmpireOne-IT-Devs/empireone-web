@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import Button from "@/app/_components/button";
@@ -9,8 +9,12 @@ import store from "@/app/store/store";
 import { create_job_interviewer_schedule_service } from "@/app/services/job-interviewer-schedule-service";
 import { get_job_interviewer_schedule_thunk } from "@/app/redux/app-thunk";
 
-export default function AddInterviewerSection() {
+export default function AddInterviewerSection({ autoOpen = false } = {}) {
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (autoOpen) setOpen(true);
+    }, [autoOpen]);
 
     const { users } = useSelector((state) => state.job_requisitions);
     const { interviewers } = useSelector((store) => store.app);

@@ -4,14 +4,144 @@ namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
 
+use App\Models\Jobs\JobApplicantSchedule;
+use App\Models\Jobs\JobApplication;
+use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
 use App\Models\Jobs\JobRequisition;
+use App\Models\Jobs\JobRequisitionLog;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JobPostingController extends Controller
 {
 
+    public function dashboard_stats()
+    {
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $startOfMonth = Carbon::now()->startOfMonth();
+
+        $activePostings = JobPosting::where('status', 'Active')->count();
+        $newPostingsThisWeek = JobPosting::where('status', 'Active')
+            ->where('created_at', '>=', $startOfWeek)->count();
+
+        $totalApplicants = JobApplication::count();
+        $newApplicantsThisWeek = JobApplication::where('created_at', '>=', $startOfWeek)->count();
+
+        $interviewsScheduled = JobApplicantSchedule::count();
+        $interviewsThisWeek = JobApplicantSchedule::where('created_at', '>=', $startOfWeek)->count();
+
+        $positionsFilled = JobOffer::where('status', 'Accepted Job Offer')->count();
+        $positionsFilledThisMonth = JobOffer::where('status', 'Accepted Job Offer')
+            ->where('updated_at', '>=', $startOfMonth)->count();
+
+        return response()->json([
+            'active_postings' => $activePostings,
+            'new_postings_this_week' => $newPostingsThisWeek,
+            'total_applicants' => $totalApplicants,
+            'new_applicants_this_week' => $newApplicantsThisWeek,
+            'interviews_scheduled' => $interviewsScheduled,
+            'interviews_this_week' => $interviewsThisWeek,
+            'positions_filled' => $positionsFilled,
+            'positions_filled_this_month' => $positionsFilledThisMonth,
+        ]);
+    }
+
+    public function recent_activity()
+    {
+        $activities = collect();
+
+        // New applications
+        JobApplication::with(['applicant', 'job_posting.job_requisition'])
+            ->latest()->limit(10)->get()
+            ->each(function ($item) use (&$activities) {
+                $title = $item->job_posting?->job_requisition?->title ?? 'a position';
+                $activities->push([
+                    'type'       => 'application',
+                    'variant'    => 'primary',
+                    'label'      => "New application for {$title}",
+                    'user'       => $item->applicant?->name ?? 'Unknown',
+                    'created_at' => $item->created_at,
+                ]);
+            });
+
+        // Interviews scheduled
+        JobApplicantSchedule::with(['application.applicant', 'application.job_posting.job_requisition'])
+            ->latest()->limit(10)->get()
+            ->each(function ($item) use (&$activities) {
+                $title = $item->application?->job_posting?->job_requisition?->title ?? 'a position';
+                $activities->push([
+                    'type'       => 'schedule',
+                    'variant'    => 'primary',
+                    'label'      => "Interview scheduled for {$title}",
+                    'user'       => $item->application?->applicant?->name ?? 'Unknown',
+                    'created_at' => $item->created_at,
+                ]);
+            });
+
+        // New job postings
+        JobPosting::with(['job_requisition', 'applicant'])
+            ->latest()->limit(10)->get()
+            ->each(function ($item) use (&$activities) {
+                $title = $item->job_requisition?->title ?? 'a position';
+                $activities->push([
+                    'type'       => 'posting',
+                    'variant'    => 'success',
+                    'label'      => "New job posting created: {$title}",
+                    'user'       => $item->applicant?->name ?? 'System',
+                    'created_at' => $item->created_at,
+                ]);
+            });
+
+        // Requisition logs
+        JobRequisitionLog::with(['user'])
+            ->latest()->limit(10)->get()
+            ->each(function ($item) use (&$activities) {
+                $activities->push([
+                    'type'       => 'log',
+                    'variant'    => 'warning',
+                    'label'      => $item->notes ?? 'Requisition updated',
+                    'user'       => $item->user?->name ?? 'Unknown',
+                    'created_at' => $item->created_at,
+                ]);
+            });
+
+        $result = $activities
+            ->sortByDesc('created_at')
+            ->take(15)
+            ->values()
+            ->map(function ($item) {
+                return array_merge($item, [
+                    'time' => Carbon::parse($item['created_at'])->diffForHumans(),
+                ]);
+            });
+
+        return response()->json($result);
+    }
+
+    public function top_performing_jobs()
+    {
+        $postings = JobPosting::withCount('applications')
+            ->with(['job_requisition'])
+            ->orderByDesc('applications_count')
+            ->limit(10)
+            ->get()
+            ->map(function ($posting) {
+                $applicationIds = $posting->applications()->pluck('id');
+                $interviewCount = JobApplicantSchedule::whereIn('application_id', $applicationIds)->count();
+
+                return [
+                    'title'      => $posting->job_requisition?->title ?? 'Untitled',
+                    'applicants' => $posting->applications_count,
+                    'interviews' => $interviewCount,
+                    'status'     => $posting->status,
+                    'variant'    => $posting->status === 'Active' ? 'success' : 'secondary',
+                ];
+            });
+
+        return response()->json($postings);
+    }
 
     public function index()
     {

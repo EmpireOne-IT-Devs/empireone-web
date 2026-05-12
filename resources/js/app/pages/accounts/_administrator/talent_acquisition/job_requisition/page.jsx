@@ -7,8 +7,13 @@ import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import { useEffect } from "react";
 import store from "@/app/store/store";
 import JobPostingLayout from "../layout";
+import CreateJobRequisition from "./_sections/create-requisition-section";
+import { usePage } from "@inertiajs/react";
 
 export default function Page() {
+    const { url } = usePage();
+    const autoOpen = new URLSearchParams(url.split("?")[1]).get("create") === "1";
+
     useEffect(() => {
         store.dispatch(get_job_requisitions_thunk());
     }, []);
@@ -20,6 +25,7 @@ export default function Page() {
                     <CardSection />
                     <SearchSection />
                     <JobRequisitionCardSection />
+                    <CreateJobRequisition autoOpen={autoOpen} hideButton />
                 </div>
             </JobPostingLayout>
         </Layout>

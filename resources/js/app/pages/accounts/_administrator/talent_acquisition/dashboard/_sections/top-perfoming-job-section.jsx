@@ -1,74 +1,77 @@
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import { CalendarIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { LuUsers } from "react-icons/lu";
+import { get_ta_top_performing_jobs_service } from "@/app/services/job-posting-service";
+import { FiBriefcase } from "react-icons/fi";
 
 export default function TopPerformingJobSection() {
-    const jobs = [
-        {
-            title: "Marketing Specialist",
-            applicants: 67,
-            interviews: 12,
-            status: "Active",
-            variant: "success",
-        },
-        {
-            title: "Accountant",
-            applicants: 52,
-            interviews: 8,
-            status: "Closed",
-            variant: "secondary",
-        },
-        {
-            title: "Senior Software Engineer",
-            applicants: 45,
-            interviews: 6,
-            status: "Active",
-            variant: "success",
-        },
-        {
-            title: "HR Manager",
-            applicants: 28,
-            interviews: 4,
-            status: "Active",
-            variant: "success",
-        },
-    ];
+    const [jobs, setJobs] = useState([]);
+
+    useEffect(() => {
+        get_ta_top_performing_jobs_service()
+            .then(setJobs)
+            .catch(console.error);
+    }, []);
+
+    const maxApplicants = jobs[0]?.applicants ?? 1;
 
     return (
-        <Card>
-            <div className="pb-2 mb-3 flex items-center justify-between">
+        <Card className="flex-1 flex flex-col gap-3 p-6">
+            <div className="pb-3 mb-1 flex items-center justify-between border-b border-gray-100">
                 <div className="text-xl font-bold">Top Performing Jobs</div>
-                <div className="text-blue-600 font-bold">View All</div>
+                <span className="text-xs text-gray-400 font-medium">By applicants</span>
             </div>
 
-            {jobs.map((job, index) => (
-                <div key={index} className="py-2">
-                    <div className="bg-gray-50 p-2 rounded-md">
-                        <div className="font-medium mb-2">{job.title}</div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-gray-300 mt-2">
-                                <div className="flex items-center gap-1 text-gray-500">
-                                    <LuUsers className="w-4 h-5 text-gray-500" />
-                                    <span>{job.applicants} applicants</span>
+            <div className="overflow-y-auto max-h-72 pr-1">
+                {jobs.length === 0 && (
+                    <div className="text-sm text-gray-400 text-center py-10">No data available.</div>
+                )}
+
+                <div className="flex flex-col gap-3">
+                    {jobs.map((job, index) => {
+                        const barWidth = Math.round((job.applicants / maxApplicants) * 100);
+                        return (
+                            <div key={index} className="flex flex-col gap-1.5 p-3 rounded-xl border border-gray-100 hover:border-blue-100 hover:bg-blue-50/40 transition-colors">
+                                <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
+                                            <FiBriefcase className="w-3.5 h-3.5 text-blue-600" />
+                                        </div>
+                                        <span className="font-semibold text-sm text-gray-900 truncate">{job.title}</span>
+                                    </div>
+                                    <Badge
+                                        className="rounded-md flex-shrink-0"
+                                        label={job.status}
+                                        variant={job.variant}
+                                        showDot={false}
+                                    />
                                 </div>
-                                <div className="flex items-center gap-1 text-gray-500">
-                                    <CalendarIcon className="w-4     h-5" />
-                                    <span>{job.interviews} interviews</span>
+
+                                {/* Progress bar */}
+                                <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                                        style={{ width: `${barWidth}%` }}
+                                    />
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-1 text-gray-500">
+                                        <LuUsers className="w-3.5 h-3.5" />
+                                        <span className="text-xs">{job.applicants} applicants</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-gray-500">
+                                        <CalendarIcon className="w-3.5 h-3.5" />
+                                        <span className="text-xs">{job.interviews} interviews</span>
+                                    </div>
                                 </div>
                             </div>
-
-                            <Badge
-                                className="rounded-md "
-                                label={job.status}
-                                variant={job.variant}
-                                showDot={false}
-                            />
-                        </div>
-                    </div>
+                        );
+                    })}
                 </div>
-            ))}
+            </div>
         </Card>
     );
 }

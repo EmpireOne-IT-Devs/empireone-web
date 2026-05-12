@@ -74,6 +74,9 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('approve_job_requisition',  [JobRequisitionController::class, 'approve_job_requisition']);
         Route::resource('requisition_logs', JobRequisitionLogController::class);
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
+        Route::get('dashboard_stats', [JobPostingController::class, 'dashboard_stats']);
+        Route::get('recent_activity', [JobPostingController::class, 'recent_activity']);
+        Route::get('top_performing_jobs', [JobPostingController::class, 'top_performing_jobs']);
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
         Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
