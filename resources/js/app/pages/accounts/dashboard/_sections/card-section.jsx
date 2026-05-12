@@ -64,7 +64,7 @@ export default function CardSection() {
                         <Mail size={28} />
                     </div>
                     <div className="text-3xl font-bold text-red-600">0</div>
-                </div>
+                </div>  
                 <div className="mt-4 text-sm font-medium text-gray-500">
                     Unread Messages
                     <span className="text-[10px] text-gray-400 block xl:inline ml-0 xl:ml-1">
