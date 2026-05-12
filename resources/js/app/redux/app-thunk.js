@@ -1,4 +1,4 @@
-import { get_app_data_service } from "../services/app-service";
+import { get_app_data_service, get_job_interview_by_id_service } from "../services/app-service";
 import {
     get_job_interviewer_schedule_by_interviewer_id_service,
     get_job_interviewer_schedule_service,
@@ -10,6 +10,15 @@ export function get_app_data_thunk(product_id) {
     return async function (dispatch, getState) {
         const result = await get_app_data_service();
         dispatch(appSlice.actions.setData(result.data));
+    };
+}
+
+
+
+export function get_job_interview_by_id_thunk(id) {
+    return async function (dispatch, getState) {
+        const result = await get_job_interview_by_id_service(id);
+        dispatch(appSlice.actions.setJobInterviewId(result.data));
     };
 }
 

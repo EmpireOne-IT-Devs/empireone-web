@@ -25,6 +25,7 @@ use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,11 @@ Route::get('merge_data', [GoogleController::class, 'merge_data']); // do not rem
 Route::get('employee_assessment_notifications', [AppController::class, 'employee_assessment_notifications']); // do not remove this
 Route::get('get_all_email', [GoogleController::class, 'get_all_email']); // do not remove this
 
+
+Route::post('/interviews/start', [InterviewController::class, 'start']);
+Route::post('/interviews/{id}/submitAnswer', [InterviewController::class, 'submitAnswer']);
+Route::get('/get_job_interview_by_id/{id}', [InterviewController::class, 'get_job_interview_by_id']);
+
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
@@ -80,7 +86,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
         Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
-        
+
         Route::resource('job_applicant_schedules', JobApplicantScheduleController::class);
         Route::resource('account_access', AccountAccessController::class);
         Route::get('get_job_offer_by_user',  [JobOfferController::class, 'get_job_offer_by_user']);

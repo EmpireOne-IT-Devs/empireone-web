@@ -139,9 +139,9 @@ class JobRequisitionController extends Controller
             ['title' => $request->title],
             ['department_id' => $request->department_id]
         );
-        // if ($account && $account->eogs_email) {
-        //     $account->notify(new JobRequisitionNotification($jobRequisition));
-        // }
+        if ($account && $account->eogs_email) {
+            $account->notify(new JobRequisitionNotification($jobRequisition));
+        }
 
         return response()->json([
             'status' => 'success',

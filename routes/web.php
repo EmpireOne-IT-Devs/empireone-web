@@ -41,6 +41,14 @@ Route::get('/talent/application', function () {
     return Inertia::render('talent/page');
 })->name('talent');
 
+Route::get('/talent/application', function () {
+    return Inertia::render('talent/page');
+})->name('talent');
+
+Route::get('/talent/{job_interview_id}/ai_interview', function () {
+    return Inertia::render('ai_interview/page');
+})->name('ai_interview');
+
 Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');

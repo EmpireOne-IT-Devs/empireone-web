@@ -12,6 +12,7 @@ use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
+use App\Models\JobInterview;
 use App\Models\Jobs\JobApplicantSchedule;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobInterviewerSchedule;
@@ -349,12 +350,20 @@ class JobApplicationController extends Controller
                 'status'       => 'Scheduled' // Change status since it is officially booked
             ]);
 
+            $ji = JobInterview::create([
+                'job_title' => $request->position,
+                'questions_limit' => 5,
+                'current_step' => 0,
+            ]);
+
             Mail::to($user->email)->send(
                 new SendEmailAccountCreation($user, url('/auth/login'), [
                     ...$googleEvent,
+                    // FIXED: Changed to double quotes and wrapped the variable in curly braces
+                    'job_interview_id'  => url("/talent/{$ji->id}/ai_interview"),
                     'start_time'        => $googleStartTime,
                     'end_time'          => $googleEndTime,
-                    'meet_link' => $googleEvent['meet_link']
+                    'meet_link'         => $googleEvent['meet_link']
                 ])
             );
         }
@@ -483,7 +492,7 @@ class JobApplicationController extends Controller
 
     public function applicants()
     {
-        $applications = JobApplication::with(['job_posting', 'applicant','job_offer'])->paginate();
+        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer'])->paginate();
         return response()->json([
             'data' => $applications,
             'status' => 'success',
@@ -522,7 +531,7 @@ class JobApplicationController extends Controller
     {
 
         // 1. Fetch all applications for this specific job once
-        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant','job_offer'])->get();
+        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant', 'job_offer'])->get();
         $job_posting = JobPosting::where('id', $id)->with(['job_requisition', 'job_application'])->first();
         return response()->json([
             'job_applications' => $applications,

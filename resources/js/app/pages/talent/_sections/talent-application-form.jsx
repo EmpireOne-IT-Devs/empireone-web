@@ -93,7 +93,7 @@ const TalentApplicationForm = () => {
             dispatch(setJobPostingId(watchedValues.job_posting_id));
         }
     }, [watchedValues.job_posting_id]);
-    
+
     useEffect(() => {
         const timeout = setTimeout(async () => {
             localStorage.setItem("talent_data", JSON.stringify(watchedValues));
@@ -149,6 +149,7 @@ const TalentApplicationForm = () => {
             ...data,
             referral_id: referral_id,
             source: source,
+            position: position,
             interviewer_id: interviewer.interviewer_id,
         };
         try {
