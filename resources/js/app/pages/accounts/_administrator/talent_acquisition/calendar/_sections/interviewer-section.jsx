@@ -4,7 +4,7 @@ import AddInterviewerSection from "./add-interviewer-section";
 // Import your actual actions here:
 // import { addInterviewer, removeInterviewer } from "../../_redux/app-slice";
 
-export default function InterviewerSection() {
+export default function InterviewerSection({ autoOpen = false }) {
     const { interviewers } = useSelector((store) => store.app);
  
     // Helper to format days (e.g., 1 to 5 becomes Mon-Fri)
@@ -29,7 +29,7 @@ export default function InterviewerSection() {
             </div>
 
             <div className="flex w-full items-end justify-end">
-                <AddInterviewerSection />
+                <AddInterviewerSection autoOpen={autoOpen} />
             </div>
             <div className="flex flex-col gap-3">
                 {interviewers?.length === 0 ? (

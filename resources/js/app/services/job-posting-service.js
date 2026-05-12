@@ -7,6 +7,18 @@ export async function get_job_postings_service() {
     return await axios.get("/api/job/postings");
 }
 
+export async function get_ta_dashboard_stats_service() {
+    return (await axios.get("/api/job/dashboard_stats")).data;
+}
+
+export async function get_ta_recent_activity_service() {
+    return (await axios.get("/api/job/recent_activity")).data;
+}
+
+export async function get_ta_top_performing_jobs_service() {
+    return (await axios.get("/api/job/top_performing_jobs")).data;
+}
+
 export async function get_job_offers_service() {
     return (await axios.get(`/api/job/offers${window.location.search}`));
 }

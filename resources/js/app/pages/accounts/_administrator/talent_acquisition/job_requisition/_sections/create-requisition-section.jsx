@@ -14,8 +14,12 @@ import Radio from "@/app/_components/radio";
 import { peso_format } from "@/app/lib/peso-format";
 import { BriefcaseIcon } from "lucide-react";
 
-export default function CreateJobRequisition() {
+export default function CreateJobRequisition({ autoOpen = false, hideButton = false }) {
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (autoOpen) setOpen(true);
+    }, [autoOpen]);
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
     const { users } = useSelector((state) => state.job_requisitions);
@@ -217,12 +221,12 @@ export default function CreateJobRequisition() {
     ];
     return (
         <div>
-            <Button type="button" onClick={() => setOpen(true)}>
+            {!hideButton && <Button type="button" onClick={() => setOpen(true)}>
                 <div className="flex items-center gap-2">
                     <PlusCircleIcon className="w-5 h-5" />
                     New Job Requisition
                 </div>
-            </Button>
+            </Button>}
 
             <Modal
                 width="max-w-4xl"

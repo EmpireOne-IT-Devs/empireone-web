@@ -1,11 +1,19 @@
 import Card from "@/app/_components/card";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TbChartBar, TbClock, TbClock24, TbListDetails } from "react-icons/tb";
 import { FiBriefcase } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { get_ta_dashboard_stats_service } from "@/app/services/job-posting-service";
+
 export default function CardSection() {
+    const [stats, setStats] = useState(null);
+
+    useEffect(() => {
+        get_ta_dashboard_stats_service().then(setStats).catch(console.error);
+    }, []);
+
     return (
         <div className="flex flex-col md:flex-row gap-3 w-full">
             <Card className="w-full md:w-1/4 flex-col gap-3">
@@ -16,9 +24,9 @@ export default function CardSection() {
                     <FaArrowTrendUp className="text-green-600 text-lg" />
                 </div>
                 <div className="flex-col flex items-start justify-between">
-                    <div>3</div>
+                    <div>{stats?.active_postings ?? "—"}</div>
                     <div className="text-gray-600">Active Postings</div>
-                    <div className="text-green-500 mt-2">+ 2 this week</div>
+                    <div className="text-green-500 mt-2">+ {stats?.new_postings_this_week ?? "—"} this week</div>
                 </div>
             </Card>
             <Card className="w-full md:w-1/4 flex-col gap-3">
@@ -29,9 +37,9 @@ export default function CardSection() {
                     <FaArrowTrendUp className="text-green-600 text-lg" />
                 </div>
                 <div className="flex-col flex items-start justify-between">
-                    <div>192</div>
+                    <div>{stats?.total_applicants ?? "—"}</div>
                     <div className="text-gray-600">Total Applicants</div>
-                    <div className="text-green-500 mt-2">+ 18% this week</div>
+                    <div className="text-green-500 mt-2">+ {stats?.new_applicants_this_week ?? "—"} this week</div>
                 </div>
             </Card>
             <Card className="w-full md:w-1/4 flex-col gap-3">
@@ -42,9 +50,9 @@ export default function CardSection() {
                     <FaArrowTrendUp className="text-green-600 text-lg" />
                 </div>
                 <div className="flex-col flex items-start justify-between">
-                    <div>24</div>
+                    <div>{stats?.interviews_scheduled ?? "—"}</div>
                     <div className="text-gray-600">Interviews Scheduled</div>
-                    <div className="text-green-500 mt-2">8 this week</div>
+                    <div className="text-green-500 mt-2">{stats?.interviews_this_week ?? "—"} this week</div>
                 </div>
             </Card>
             <Card className="w-full md:w-1/4 flex-col gap-3">
@@ -55,9 +63,9 @@ export default function CardSection() {
                     <FaArrowTrendUp className="text-green-600 text-lg" />
                 </div>
                 <div className="flex-col flex items-start justify-between ">
-                    <div>1</div>
+                    <div>{stats?.positions_filled ?? "—"}</div>
                     <div className="text-gray-600">Positions Filled</div>
-                    <div className="text-green-500 mt-2">3 this months</div>
+                    <div className="text-green-500 mt-2">{stats?.positions_filled_this_month ?? "—"} this month</div>
                 </div>
             </Card>
         </div>
