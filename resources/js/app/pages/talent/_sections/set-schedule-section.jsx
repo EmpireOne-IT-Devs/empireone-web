@@ -10,7 +10,7 @@ export default function SetScheduleSection({
     watchedValues,
 }) {
     const { interviewer } = useSelector((store) => store.app);
-    console.log("interviewer", interviewer.upcoming_schedules);
+    console.log("interviewer", interviewer?.upcoming_schedules);
 
     // ---------------------------------------------------------
     // Initialize State with Default Values
@@ -101,10 +101,10 @@ export default function SetScheduleSection({
             return `${formattedH.toString().padStart(2, "0")}:${formattedM} ${ampm}`;
         };
 
-        const startMin = parseTime(interviewer.start_time);
-        const endMin = parseTime(interviewer.end_time);
-        const breakStartMin = parseTime(interviewer.break_time_start);
-        const breakEndMin = parseTime(interviewer.break_time_end);
+        const startMin = parseTime(interviewer?.start_time);
+        const endMin = parseTime(interviewer?.end_time);
+        const breakStartMin = parseTime(interviewer?.break_time_start);
+        const breakEndMin = parseTime(interviewer?.break_time_end);
 
         // Get the formatted date string for matching with the schedule
         const formattedSelectedDate = selectedDate
@@ -112,7 +112,7 @@ export default function SetScheduleSection({
             : null;
 
         // Find booked slots for the selected date
-        const bookedStartMinutes = (interviewer.upcoming_schedules || [])
+        const bookedStartMinutes = (interviewer?.upcoming_schedules || [])
             .filter(
                 (schedule) => schedule.scheduled_date === formattedSelectedDate,
             )
