@@ -188,8 +188,16 @@ const TalentApplicationForm = () => {
     };
 
     return (
-        <div className="min-h-screen bg-blue-50 flex items-start justify-center md:p-6 font-sans    ">
-            <div className="max-w-4xl w-full min-h-screen bg-white md:rounded-xl shadow-lg transition-all duration-500 p-4 lg:p-8">
+        <div
+            className="min-h-screen flex items-start justify-center md:p-6 font-sans"
+            style={{
+                backgroundImage: "url('/images/empireone-background.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundAttachment: "fixed",
+            }}
+        >
+            <div className="max-w-4xl w-full min-h-screen bg-white/95 backdrop-blur-xl border border-white/20 md:rounded-xl shadow-2xl transition-all duration-500 p-4 lg:p-8">
                 {/* Progress Bar */}
                 <div className="px-3 py-3 lg:px-8">
                     <div>

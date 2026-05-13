@@ -175,7 +175,11 @@ function JobCard({ id, title, tags, onApply, posting }) {
             >
                 <div
                     className="flex flex-col gap-4 mt-5 pt-5"
-                    style={{ borderTop: "1px solid rgba(168,85,247,0.15)" }}
+                    style={{
+                        borderTop: "1px solid rgba(168,85,247,0.15)",
+                        maxHeight: expanded ? "400px" : "0px",
+                        overflowY: expanded ? "auto" : "hidden",
+                    }}
                 >
                     {req?.qualifications && (
                         <div>
