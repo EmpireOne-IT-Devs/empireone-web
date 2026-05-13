@@ -9,6 +9,7 @@ import store from "@/app/store/store";
 import JobPostingLayout from "../layout";
 import CreateJobRequisition from "./_sections/create-requisition-section";
 import { usePage } from "@inertiajs/react";
+import { get_job_interviewer_schedule_thunk } from "@/app/redux/app-thunk";
 
 export default function Page() {
     const { url } = usePage();
@@ -16,6 +17,7 @@ export default function Page() {
 
     useEffect(() => {
         store.dispatch(get_job_requisitions_thunk());
+        store.dispatch(get_job_interviewer_schedule_thunk());
     }, []);
     return (
         <Layout>

@@ -361,7 +361,7 @@ class JobApplicationController extends Controller
                 new SendEmailAccountCreation($user, url('/auth/login'), [
                     ...$googleEvent,
                     // FIXED: Changed to double quotes and wrapped the variable in curly braces
-                    'job_interview_id'  => url("/talent/{$ji->id}/ai_interview"),
+                    'job_interview_id'  => url("/accounts/talent/{$ji->id}/ai_interview"),
                     'start_time'        => $googleStartTime,
                     'end_time'          => $googleEndTime,
                     'meet_link'         => $googleEvent['meet_link']

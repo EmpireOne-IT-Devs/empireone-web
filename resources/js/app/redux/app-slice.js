@@ -23,14 +23,14 @@ export const appSlice = createSlice({
         interviewers: [],
         interviewer: {},
         interviewer_id: {},
-        job_interview_id: {},
+        job_interview: {},
     },
     reducers: {
         setUser: (state, action) => {
             state.user = action.payload;
         },
-        setJobInterviewId: (state, action) => {
-            state.job_interview_id = action.payload;
+        setJobInterview: (state, action) => {
+            state.job_interview = action.payload;
         },
         setSidebarOpen: (state) => {
             state.sidebarOpen = !state.sidebarOpen;
@@ -76,7 +76,7 @@ export const {
     setInterviewers,
     setInterviewer,
     setInterviewerId,
-    setJobInterviewId,
+    setJobInterview,
 } = appSlice.actions;
 
 export default appSlice.reducer;

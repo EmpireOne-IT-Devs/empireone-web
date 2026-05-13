@@ -20,6 +20,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     useEffect(() => {
         if (autoOpen) setOpen(true);
     }, [autoOpen]);
+    
     const dispatch = useDispatch();
     const { data } = useSelector((store) => store.app);
     const { users } = useSelector((state) => state.job_requisitions);

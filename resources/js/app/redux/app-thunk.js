@@ -18,7 +18,7 @@ export function get_app_data_thunk(product_id) {
 export function get_job_interview_by_id_thunk(id) {
     return async function (dispatch, getState) {
         const result = await get_job_interview_by_id_service(id);
-        dispatch(appSlice.actions.setJobInterviewId(result.data));
+        dispatch(appSlice.actions.setJobInterview(result.data));
     };
 }
 
