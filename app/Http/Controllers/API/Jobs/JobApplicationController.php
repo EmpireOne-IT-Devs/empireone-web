@@ -3,19 +3,15 @@
 namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
-use App\Mail\DocumentFileInstructions;
 use App\Mail\JobOfferMail;
 use App\Mail\SendEmailAccountCreation;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\Account\AccountPersonalInformation;
-use App\Models\Account\AccountSkills;
-use App\Models\Account\AccountWorkingExperience;
-use App\Models\JobInterview;
+use App\Models\Jobs\JobAIInterview;
 use App\Models\Jobs\JobApplicantSchedule;
 use App\Models\Jobs\JobApplication;
-use App\Models\Jobs\JobInterviewerSchedule;
 use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
 use App\Models\Jobs\JobRequisition;
@@ -350,7 +346,7 @@ class JobApplicationController extends Controller
                 'status'       => 'Scheduled' // Change status since it is officially booked
             ]);
 
-            $ji = JobInterview::create([
+            $ji = JobAIInterview::create([
                 'user_id'        => $user->id,
                 'job_title' => $request->position,
                 'questions_limit' => 5,
@@ -361,7 +357,7 @@ class JobApplicationController extends Controller
                 new SendEmailAccountCreation($user, url('/auth/login'), [
                     ...$googleEvent,
                     // FIXED: Changed to double quotes and wrapped the variable in curly braces
-                    'job_interview_id'  => url("/talent/{$ji->id}/ai_interview"),
+                    'job_interview_id'  => url("/accounts/talent/{$ji->id}/ai_interview"),
                     'start_time'        => $googleStartTime,
                     'end_time'          => $googleEndTime,
                     'meet_link'         => $googleEvent['meet_link']

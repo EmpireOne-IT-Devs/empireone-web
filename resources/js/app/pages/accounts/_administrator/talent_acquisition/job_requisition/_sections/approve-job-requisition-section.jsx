@@ -12,6 +12,7 @@ export default function ApproveJobRequisitionSection({ data }) {
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const [recruiter, setRecruiter] = useState(null);
+    const { interviewers } = useSelector((store) => store.app);
     const { users } = useSelector((state) => state.job_requisitions);
 
     console.log("data recruiter", recruiter);
@@ -48,15 +49,15 @@ export default function ApproveJobRequisitionSection({ data }) {
         }
     }
 
-    const allOptions =
-        users?.users?.map((res) => ({
-            ...res,
-            label: res.name,
-            value: res.id,
-        })) || [];
+    const allOptions = interviewers?.map((res) => ({
+        ...res,
+        label: res?.interviewer?.name,
+        value: res?.interviewer_id,
+    })) || [];
 
     return (
         <div className="flex gap-3 flex-col w-full">
+
             {data.status == "Director Approved" && (
                 <>
                     <Select
@@ -70,6 +71,7 @@ export default function ApproveJobRequisitionSection({ data }) {
                     />
                 </>
             )}
+
             <Button
                 variant="primary"
                 loading={loading}

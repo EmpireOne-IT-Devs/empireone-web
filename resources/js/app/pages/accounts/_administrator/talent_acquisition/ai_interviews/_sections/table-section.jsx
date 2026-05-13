@@ -45,7 +45,7 @@ export default function TableSection() {
                             res?.answers?.map((res, i) => {
                                 return <a
                                     target="_blank"
-                                    href={res.answer_audio_url}
+                                    href={res.answer_video_url}
                                 >Answer{i + 1}</a>
                             })
                         }

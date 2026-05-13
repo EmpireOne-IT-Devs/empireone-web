@@ -11,6 +11,7 @@ use App\Http\Controllers\API\ER\EREmployeeChangeFormController;
 use App\Http\Controllers\API\ER\ERLeaderController;
 use App\Http\Controllers\API\ER\ERPerformanceEvaluationFormController;
 use App\Http\Controllers\API\ER\ERSubordinateController;
+use App\Http\Controllers\API\Jobs\JobAIInterviewController;
 use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
 use App\Http\Controllers\API\Jobs\JobOfferController;
@@ -25,7 +26,6 @@ use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -65,15 +65,16 @@ Route::get('employee_assessment_notifications', [AppController::class, 'employee
 Route::get('get_all_email', [GoogleController::class, 'get_all_email']); // do not remove this
 
 
-Route::post('/interviews/start', [InterviewController::class, 'start']);
-Route::post('/interviews/{id}/submitAnswer', [InterviewController::class, 'submitAnswer']);
-Route::get('/get_job_interview_by_id/{id}', [InterviewController::class, 'get_job_interview_by_id']);
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);
     Route::resource('accounts_information', AccountPersonalInformationController::class);
+
+    Route::post('/interviews/start', [JobAIInterviewController::class, 'start']);
+    Route::post('/interviews/{id}/submitAnswer', [JobAIInterviewController::class, 'submitAnswer']);
+    Route::get('/get_job_interview_by_id/{id}', [JobAIInterviewController::class, 'get_job_interview_by_id']);
 
     Route::prefix('job')->group(function () {
         Route::resource('requisitions', JobRequisitionController::class);
@@ -85,7 +86,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('top_performing_jobs', [JobPostingController::class, 'top_performing_jobs']);
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
-        Route::resource('job_interview', InterviewController::class);
+        Route::resource('job_interview', JobAIInterviewController::class);
         Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
 
         Route::resource('job_applicant_schedules', JobApplicantScheduleController::class);
