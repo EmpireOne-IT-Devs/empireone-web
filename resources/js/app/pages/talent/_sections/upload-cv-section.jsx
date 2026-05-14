@@ -14,23 +14,31 @@ export default function UploadCvSection({
     return (
         <div className="space-y-4 animate-in fade-in duration-300 my-3">
             <div className="flex flex-col">
-                <label className="font-bold text-gray-700 mb-2">
+                <label
+                    className="font-bold mb-2 text-xs uppercase tracking-widest"
+                    style={{ color: "#7e22ce" }}
+                >
                     Upload Your CV
                 </label>
 
                 <div className="relative group">
                     <label
                         htmlFor="cv-upload"
-                        className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl cursor-pointer transition-all
-                            ${errors.cv ? "border-red-400 bg-red-50" : ""}
-                            ${fileName || watchedValues.file ? "border-green-400 bg-green-50" : "border-gray-300 bg-gray-50 hover:bg-blue-50 hover:border-blue-400"}
-                        `}
+                        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200"
+                        style={
+                            errors.cv
+                                ? { borderColor: "rgba(248,113,113,0.5)", background: "rgba(248,113,113,0.05)" }
+                                : fileName || watchedValues.file
+                                ? { borderColor: "rgba(52,211,153,0.45)", background: "rgba(52,211,153,0.05)" }
+                                : { borderColor: "rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.05)" }
+                        }
                     >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             {/* Icon */}
                             {fileName || watchedValues.file ? (
                                 <svg
-                                    className="w-10 h-10 mb-3 text-green-500"
+                                    className="w-10 h-10 mb-3"
+                                    style={{ color: "#34d399" }}
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -44,7 +52,8 @@ export default function UploadCvSection({
                                 </svg>
                             ) : (
                                 <svg
-                                    className="w-10 h-10 mb-3 text-gray-400 group-hover:text-blue-500"
+                                    className="w-10 h-10 mb-3 transition-colors"
+                                    style={{ color: "rgba(168,85,247,0.6)" }}
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -58,7 +67,7 @@ export default function UploadCvSection({
                                 </svg>
                             )}
 
-                            <p className="mb-2 text-sm text-gray-700">
+                            <p className="mb-2 text-sm" style={{ color: "#4b5563" }}>
                                 <span className="font-semibold">
                                     {fileName || watchedValues.file
                                         ? "File selected!"
@@ -67,13 +76,13 @@ export default function UploadCvSection({
                                 {!fileName && "or drag and drop"}
                             </p>
 
-                            <p className="text-xs text-gray-500 truncate max-w-xs">
-                                {"PDF, DOC, or DOCX (MAX. 50MB)"}
+                            <p className="text-xs truncate max-w-xs" style={{ color: "#9ca3af" }}>
+                                PDF, DOC, or DOCX (MAX. 50MB)
                             </p>
 
                             {/* Note for restored files */}
                             {fileName && (
-                                <p className="text-[10px] text-gray-400 mt-1">
+                                <p className="text-[10px] mt-1" style={{ color: "#9ca3af" }}>
                                     (Please re-upload before submitting)
                                 </p>
                             )}
@@ -92,30 +101,38 @@ export default function UploadCvSection({
                 </div>
 
                 {errors.cv && (
-                    <p className="text-red-500 text-xs mt-2 font-medium flex items-center">
+                    <p className="text-xs mt-2 font-medium flex items-center" style={{ color: "rgba(248,113,113,0.9)" }}>
                         <span className="mr-1">⚠️</span> CV is required!
                     </p>
                 )}
             </div>
 
             <div className="flex gap-4 pt-2">
-                <Button
-                    outlined
-                    variant="secondary"
+                <button
                     type="button"
                     onClick={prevStep}
-                    className="w-1/2 "
+                    className="w-1/2 h-11 rounded-xl text-sm font-semibold transition-all duration-200"
+                    style={{
+                        color: "#9333ea",
+                        background: "rgba(168,85,247,0.06)",
+                        border: "1px solid rgba(168,85,247,0.2)",
+                    }}
                 >
                     Back
-                </Button>
-                <Button
-                    outlined
+                </button>
+                <button
                     type="button"
                     onClick={nextStep}
-                    className="w-1/2 "
+                    className="w-1/2 h-11 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
+                    style={{
+                        color: "#fff",
+                        background: "linear-gradient(135deg,#a855f7,#3b82f6)",
+                        border: "1px solid rgba(168,85,247,0.4)",
+                        boxShadow: "0 4px 15px rgba(168,85,247,0.25)",
+                    }}
                 >
                     Continue to set interview
-                </Button>
+                </button>
             </div>
         </div>
     );
