@@ -75,7 +75,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                             }`}
                         >
                             {/* Card Top Bar */}
-                            <div className="h-1 w-full bg-gradient-to-r from-blue-500 to-indigo-500" />
+                            <div className="h-1 w-full bg-gradient-to-r from-purple-500 to-orange-500" />
 
                             <div className="p-5 sm:p-6">
                                 {/* Header Row */}

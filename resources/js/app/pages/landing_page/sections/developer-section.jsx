@@ -99,6 +99,7 @@ function useGlobalStyles() {
       }
       .ds-card-flip:hover .ds-card-flip-inner {
         transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
       }
       .ds-gradient-text {
         background: linear-gradient(90deg, #c084fc 0%, #60a5fa 50%, #fb923c 100%);
@@ -159,16 +160,23 @@ function TeamCard({ member, index }) {
                     className="ds-card-flip-inner relative w-full h-full"
                     style={{
                         transformStyle: "preserve-3d",
+                        WebkitTransformStyle: "preserve-3d",
                         transition:
                             "transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1)",
+                        WebkitTransition:
+                            "-webkit-transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1)",
+                        willChange: "transform",
                     }}
                 >
                     <div
-                        className="absolute inset-0 rounded-[20px] overflow-hidden flex flex-col justify-end"
+                        className="absolute inset-0 rounded-[20px] flex flex-col justify-end"
                         style={{
                             backfaceVisibility: "hidden",
                             WebkitBackfaceVisibility: "hidden",
+                            transform: "rotateY(0deg)",
+                            WebkitTransform: "rotateY(0deg)",
                             pointerEvents: "none",
+                            overflow: "hidden",
                             boxShadow:
                                 "0 8px 40px rgba(5,8,22,0.65), 0 0 0 1px rgba(124,58,237,0.25)",
                         }}
@@ -178,7 +186,7 @@ function TeamCard({ member, index }) {
                                 src={member.img}
                                 alt={member.name}
                                 onError={() => setImgError(true)}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                className="absolute inset-0 w-full h-full object-cover rounded-[20px]"
                             />
                         ) : (
                             <div
@@ -229,6 +237,7 @@ function TeamCard({ member, index }) {
                             backfaceVisibility: "hidden",
                             WebkitBackfaceVisibility: "hidden",
                             transform: "rotateY(180deg)",
+                            WebkitTransform: "rotateY(180deg)",
                             background:
                                 "linear-gradient(145deg, #07041a 0%, #0b0620 50%, #050d1e 100%)",
                             boxShadow:

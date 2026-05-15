@@ -187,6 +187,8 @@ const TalentApplicationForm = () => {
         }
     };
 
+    const stepLabels = ["Position", "Details", "Schedule", "Review"];
+
     return (
         <div
             className="min-h-screen flex items-start justify-center md:p-6 font-sans"
@@ -197,51 +199,159 @@ const TalentApplicationForm = () => {
                 backgroundAttachment: "fixed",
             }}
         >
-            <div className="max-w-4xl w-full min-h-screen bg-white/95 backdrop-blur-xl border border-white/20 md:rounded-xl shadow-2xl transition-all duration-500 p-4 lg:p-8">
-                {/* Progress Bar */}
-                <div className="px-3 py-3 lg:px-8">
-                    <div>
-                        <button
-                            type="button"
-                            onClick={() => router.visit("/")}
-                            className="mb-4 text-gray-400 hover:text-gray-900 text-sm transition-colors duration-200"
+            {/* Dark overlay with ambient gradients */}
+            <div
+                className="fixed inset-0 pointer-events-none"
+                style={{
+                    background: `
+                        linear-gradient(135deg, rgba(13,5,32,0.55) 0%, rgba(19,8,48,0.50) 50%, rgba(10,15,31,0.55) 100%),
+                        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(168,85,247,0.12) 0%, transparent 70%),
+                        radial-gradient(ellipse 40% 50% at 90% 20%, rgba(59,130,246,0.09) 0%, transparent 70%),
+                        radial-gradient(ellipse 30% 35% at 60% 90%, rgba(251,146,60,0.08) 0%, transparent 70%)
+                    `,
+                }}
+            />
+
+            <div
+                className="relative z-10 max-w-4xl w-full min-h-screen md:min-h-0 md:rounded-2xl shadow-2xl transition-all duration-500"
+                style={{
+                    background: "rgba(255,255,255,0.92)",
+                    border: "1px solid rgba(168,85,247,0.2)",
+                    backdropFilter: "blur(20px)",
+                    boxShadow: "0 0 40px rgba(168,85,247,0.12), 0 25px 60px rgba(0,0,0,0.3)",
+                }}
+            >
+                {/* Header */}
+                <div className="px-5 pt-6 pb-5 lg:px-10 border-b" style={{ borderColor: "rgba(168,85,247,0.15)" }}>
+                    {/* Back button */}
+                    <button
+                        type="button"
+                        onClick={() => router.visit("/")}
+                        className="mb-5 flex items-center gap-1.5 text-xs font-semibold transition-colors duration-200"
+                        style={{ color: "#9333ea" }}
+                        onMouseEnter={e => e.currentTarget.style.color = "#6b21a8"}
+                        onMouseLeave={e => e.currentTarget.style.color = "#9333ea"}
+                    >
+                        ← Back to homepage
+                    </button>
+
+                    {/* Step dots + label */}
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            {stepLabels.map((label, i) => {
+                                const idx = i; // step 0 = Position, 1 = Details, etc.
+                                const isActive = step === idx;
+                                const isDone = step > idx;
+                                return (
+                                    <div key={label} className="flex items-center gap-1.5">
+                                        <div
+                                            className="flex items-center justify-center rounded-full text-xs font-bold transition-all duration-300"
+                                            style={{
+                                                width: 26,
+                                                height: 26,
+                                                background: isDone
+                                                    ? "linear-gradient(135deg,#a855f7,#fb923c)"
+                                                    : isActive
+                                                    ? "rgba(168,85,247,0.15)"
+                                                    : "rgba(168,85,247,0.07)",
+                                                border: isActive
+                                                    ? "1.5px solid rgba(168,85,247,0.8)"
+                                                    : isDone
+                                                    ? "1.5px solid transparent"
+                                                    : "1.5px solid rgba(168,85,247,0.25)",
+                                                color: isDone ? "#fff" : isActive ? "#9333ea" : "rgba(120,90,160,0.6)",
+                                            }}
+                                        >
+                                            {isDone ? "✓" : idx + 1}
+                                        </div>
+                                        <span
+                                            className="text-xs font-semibold hidden sm:block"
+                                            style={{
+                                                color: isActive ? "#9333ea" : isDone ? "rgba(234,88,12,0.9)" : "rgba(120,90,160,0.45)",
+                                            }}
+                                        >
+                                            {label}
+                                        </span>
+                                        {i < stepLabels.length - 1 && (
+                                            <div
+                                                className="w-6 h-px mx-1 hidden sm:block"
+                                                style={{
+                                                    background: step > idx
+                                                        ? "linear-gradient(90deg,#a855f7,#fb923c)"
+                                                        : "rgba(168,85,247,0.15)",
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <span
+                            className="text-xs font-bold tabular-nums"
+                            style={{
+                                background: "linear-gradient(90deg,#c084fc,#fb923c)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                            }}
                         >
-                            ← Back to homepage
-                        </button>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                        <span className="text-xs font-bold text-blue-600 uppercase">
-                            Job Posting - Step {step} of 3
-                        </span>
-                        <span className="text-xs font-bold text-blue-600">
                             {Math.round((step / 3) * 100)}%
                         </span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2">
+
+                    {/* Progress bar */}
+                    <div
+                        className="w-full rounded-full h-1.5"
+                        style={{ background: "rgba(168,85,247,0.1)" }}
+                    >
                         <div
-                            className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
-                            style={{ width: `${(step / 3) * 100}%` }}
+                            className="h-1.5 rounded-full transition-all duration-500 ease-out"
+                            style={{
+                                width: `${(step / 3) * 100}%`,
+                                background: "linear-gradient(90deg,#a855f7 0%,#3b82f6 50%,#fb923c 100%)",
+                                boxShadow: "0 0 10px rgba(168,85,247,0.5)",
+                            }}
                         />
                     </div>
                 </div>
 
-                <form className="p-2 lg:px-8" onSubmit={handleSubmit(onSubmit)}>
+                <form className="p-5 lg:px-10 lg:py-8" onSubmit={handleSubmit(onSubmit)}>
                     {step === 0 && <JobPostingSection setStep={setStep} />}
+
                     {step !== 0 && (
-                        <div className="flex items-center gap-3 pb-4 mb-6 border-b border-gray-200">
-                            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                                <BriefcaseIcon className="w-5 h-5 text-blue-600" />
+                        <div
+                            className="flex items-center gap-3 pb-5 mb-6 rounded-xl px-4 py-3"
+                            style={{
+                                background: "rgba(168,85,247,0.08)",
+                                border: "1px solid rgba(168,85,247,0.2)",
+                            }}
+                        >
+                            <div
+                                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                                style={{
+                                    background: "linear-gradient(135deg,rgba(168,85,247,0.3),rgba(59,130,246,0.2))",
+                                    border: "1px solid rgba(168,85,247,0.3)",
+                                }}
+                            >
+                                <BriefcaseIcon className="w-5 h-5" style={{ color: "#c084fc" }} />
                             </div>
                             <div className="leading-tight">
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#9333ea" }}>
                                     Applying for
                                 </p>
-                                <p className="text-xl font-semibold text-blue-500">
+                                <p
+                                    className="text-lg font-bold uppercase tracking-wide"
+                                    style={{
+                                        background: "linear-gradient(90deg,#c084fc 0%,#93c5fd 55%,#fb923c 100%)",
+                                        WebkitBackgroundClip: "text",
+                                        WebkitTextFillColor: "transparent",
+                                    }}
+                                >
                                     {position}
                                 </p>
                             </div>
                         </div>
                     )}
+
                     {step === 1 && (
                         <>
                             <PersonalInformationSection

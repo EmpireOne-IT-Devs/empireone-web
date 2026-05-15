@@ -10,7 +10,14 @@ export default function PersonalInformationSection({
 }) {
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800  pb-2">
+            <h2
+                className="text-2xl font-bold pb-2"
+                style={{
+                    background: "linear-gradient(90deg,#c084fc,#93c5fd)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                }}
+            >
                 Personal Details
             </h2>
 
