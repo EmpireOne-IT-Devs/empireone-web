@@ -35,18 +35,23 @@ return new class extends Migration
             $table->string('info_account_from')->nullable();
             $table->string('info_status_from')->nullable();
             $table->string('info_position_from')->nullable();
-            $table->string('info_reporting_from')->nullable();
             $table->decimal('info_basic_pay_from', 12, 2)->nullable();
+            $table->decimal('info_basic_pay_to', 12, 2)->nullable();
             $table->decimal('info_allowances_from', 12, 2)->nullable();
+            $table->decimal('info_allowances_to', 12, 2)->nullable();
 
             // "To" Information
             $table->string('info_position_level_to')->default('N/A');
             $table->unsignedBigInteger('info_department_id_to')->nullable();
             $table->unsignedBigInteger('info_department_id_from')->nullable();
             $table->unsignedBigInteger('info_account_id_to')->nullable();
+            $table->unsignedBigInteger('info_account_id_from')->nullable();
+            $table->unsignedBigInteger('info_reporting_id_from')->nullable();
+            $table->unsignedBigInteger('info_reporting_id_to')->nullable();
             $table->string('info_status_to')->nullable();
             $table->string('info_position_to')->nullable();
             $table->string('info_reporting_to')->nullable();
+            $table->string('info_reporting_from')->nullable();
 
             // checkbox
 

@@ -60,7 +60,7 @@ const EmployeeChangeFormSection = () => {
     const params = new URLSearchParams(window.location.search);
     const user_id = params.get("user_id");
     const { data } = useSelector((store) => store.app);
-    const { employees } = useSelector((store) => store.human_resources);
+    const { employees, leaders } = useSelector((store) => store.human_resources);
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch()
     const {
@@ -83,7 +83,7 @@ const EmployeeChangeFormSection = () => {
     console.log('selected_employee', selected_employee?.reporting_to?.leader?.user?.personal_information?.first_name)
     const selected_ecf = selected_employee?.account?.ecfs?.find(res => res.id == watchedValues.ecf_id)
 
-
+    console.log('leaders', leaders?.data)
     useEffect(() => {
         setValue("user_id", user_id);
     }, []);
@@ -98,7 +98,7 @@ const EmployeeChangeFormSection = () => {
             const leaderData = selected_employee?.reporting_to?.leader?.user?.personal_information;
             const reportingName =
                 `${leaderData?.first_name || ""} ${leaderData?.last_name || ""}`.trim();
-
+            console.log('leaderData', leaderData)
             const fieldUpdates = {
                 employee_id: selected_employee?.employee_id,
                 hire_date: selected_employee?.started_at,
@@ -112,14 +112,19 @@ const EmployeeChangeFormSection = () => {
                 info_department_id_to: selected_employee?.department?.id,
                 info_account_from: selected_employee?.account?.name,
                 info_account_id_to: selected_employee?.account?.id,
+                info_account_id_from: selected_employee?.account?.id,
                 info_status_from: selected_employee?.status,
                 info_status_to: selected_employee?.status,
                 info_position_from: selected_employee?.position,
                 info_position_to: selected_employee?.position,
                 info_reporting_from: reportingName,
                 info_reporting_to: reportingName,
+                info_reporting_id_to: leaderData?.user_id,
+                info_reporting_id_from: leaderData?.user_id,
                 info_basic_pay_from: selected_employee?.basic_pay,
+                info_basic_pay_to: selected_employee?.basic_pay,
                 info_allowances_from: selected_employee?.allowance,
+                info_allowances_to: selected_employee?.allowance,
                 position: selected_employee?.position,
                 department: selected_employee?.department?.name,
                 account: selected_employee?.account?.name,
@@ -722,26 +727,49 @@ const EmployeeChangeFormSection = () => {
                                         Reporting To:
                                     </td>
                                     <td className="border border-black p-1">
-                                        <Input
-                                            type="text"
-                                            {...register(
-                                                "info_reporting_from",
-                                                { required: true },
-                                            )}
+                                        <Select
+                                            name="info_reporting_id_from"
+                                            className="w-full text-center"
                                             disabled
-                                            className="bg-transparent w-full outline-none text-center text-black"
+                                            options={leaders?.data?.map((res) => ({
+                                                label: res.user.name,
+                                                value: res.user_id,
+                                            }))}
+                                            value={
+                                                watchedValues.info_reporting_id_from
+                                            }
+                                            onChange={(val) =>
+                                                setValue(
+                                                    "info_reporting_id_from",
+                                                    val,
+                                                )
+                                            }
+                                            error={
+                                                errors.info_reporting_id_from
+                                            }
                                         />
                                     </td>
                                     <td className="border border-black p-1">
                                         {watchedValues.is_edit_reporting_to ? (
-                                            <Input
-                                                type="text"
-                                                {...register(
-                                                    "info_reporting_to",
-                                                    { required: true },
-                                                )}
-                                                className="bg-transparent w-full outline-none text-center text-black"
-                                                error={errors.info_reporting_to}
+                                            <Select
+                                                name="info_reporting_id_to"
+                                                className="w-full"
+                                                options={leaders?.data?.map((res) => ({
+                                                    label: res.user.name,
+                                                    value: res.user_id,
+                                                }))}
+                                                value={
+                                                    watchedValues.info_reporting_id_to
+                                                }
+                                                onChange={(val) =>
+                                                    setValue(
+                                                        "info_reporting_id_to",
+                                                        val,
+                                                    )
+                                                }
+                                                error={
+                                                    errors.info_reporting_id_to
+                                                }
                                             />
                                         ) : (
                                             "No Change"

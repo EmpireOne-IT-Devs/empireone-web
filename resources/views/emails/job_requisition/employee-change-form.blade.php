@@ -91,8 +91,7 @@
                 <p style="margin-top: 20px;">You can access the full details and the employee's submission via the link below:</p>
 
                 <div class="button-container">
-                    <a href="{{ $url }}"
-                        class="btn-primary">Review Submission</a>
+                    <a href="{{ $url }}" class="btn-primary">Review Submission</a>
                 </div>
             </div>
         </div>

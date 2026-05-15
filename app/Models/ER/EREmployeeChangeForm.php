@@ -13,14 +13,17 @@ class EREmployeeChangeForm extends Model
 {
     protected $fillable = [
         'employee_id',
+        'prepaired_by_id',
         'hire_date',
         'effective_date',
         'position_level',
         'position',
         'department',
         'account',
-        'prepaired_by_id',
         'reporting_to',
+        'reason_for_change',
+
+        // "From" Information
         'info_position_level_from',
         'info_department_from',
         'info_account_from',
@@ -29,25 +32,34 @@ class EREmployeeChangeForm extends Model
         'info_reporting_from',
         'info_basic_pay_from',
         'info_allowances_from',
+
+        // "To" Information
         'info_position_level_to',
         'info_department_id_to',
         'info_department_id_from',
         'info_account_id_to',
+        'info_account_id_from',
+        'info_reporting_id_to',
+        'info_reporting_id_from',
         'info_status_to',
         'info_position_to',
         'info_reporting_to',
-        'status',
+        'info_basic_pay_to',
+        'info_allowances_to',
+
+        // Checkboxes
         'regular',
         'account_transfer',
         'department_transfer',
         'position_and_title',
         'tiering',
-        'reason_for_change'
+
+        'status',
     ];
 
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information','user']);
+        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information', 'user']);
     }
     public function account_to(): HasOne
     {
@@ -62,9 +74,8 @@ class EREmployeeChangeForm extends Model
     {
         return $this->hasOne(AccountEmployee::class, 'user_id', 'prepaired_by_id')->with(['personal_information']);
     }
-       public function tiering(): HasOne
+    public function tiering(): HasOne
     {
         return $this->hasOne(EcfTier::class, 'id', 'tiering');
     }
-    
 }
