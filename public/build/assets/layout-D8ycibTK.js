@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-D8ycibTK.js
-import{r as n,j as t}from"./app-Dkh-cg7x.js";import{T as o}from"./tabs-c_ekES5j.js";function p({children:e}){const[i,c]=n.useState(0),a=window.location.pathname.split("/")[4],s=[{label:"View",path:"/accounts/administrator/activities",active:a===void 0},{label:"Manage Content",path:"/accounts/administrator/activities/manage_content/news",active:a==="manage_content"}];return t.jsxs("div",{children:[t.jsx(o,{tabs:s,activeIndex:i}),t.jsx("div",{className:"p-3",children:e})]})}export{p as default};
-========
-import{r as n,j as t}from"./app-DjYmpiqR.js";import{T as o}from"./tabs-Citg6MT5.js";function p({children:e}){const[i,c]=n.useState(0),a=window.location.pathname.split("/")[4],s=[{label:"View",path:"/accounts/administrator/activities",active:a===void 0},{label:"Manage Content",path:"/accounts/administrator/activities/manage_content/news",active:a==="manage_content"}];return t.jsxs("div",{children:[t.jsx(o,{tabs:s,activeIndex:i}),t.jsx("div",{className:"p-3",children:e})]})}export{p as default};
->>>>>>>> 0644bd035c967f8210f589c34f8fc352ef0ae8d1:public/build/assets/layout-C3sT48O6.js

@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/job-requisition-service-Dt_a3ehB.js
-import{e as i}from"./app-Dkh-cg7x.js";async function o(a){return await i.post("/api/job/requisitions",a)}async function t(a){return await i.post("/api/job/approve_job_requisition",a)}async function n(){return(await i.get(`/api/job/job_interview${window.location.search}`)).data}async function r(){return(await i.get(`/api/job/requisitions${window.location.search}`)).data}export{t as a,n as b,o as c,r as g};
-========
-import{e as i}from"./app-DjYmpiqR.js";async function o(a){return await i.post("/api/job/requisitions",a)}async function t(a){return await i.post("/api/job/approve_job_requisition",a)}async function n(){return(await i.get(`/api/job/job_interview${window.location.search}`)).data}async function r(){return(await i.get(`/api/job/requisitions${window.location.search}`)).data}export{t as a,n as b,o as c,r as g};
->>>>>>>> 0644bd035c967f8210f589c34f8fc352ef0ae8d1:public/build/assets/job-requisition-service-DpA4egEc.js

@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-Bv5Tgk-V.js
-import{j as e}from"./app-Dkh-cg7x.js";import r from"./header-section-DYqYgzxh.js";import"./index-dxgKGxE1.js";import"./select-B4LhRJ4J.js";import t from"./tabs-section-vxPFaT73.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
-========
-import{j as e}from"./app-DjYmpiqR.js";import r from"./header-section-dtMtK92t.js";import"./index-DjGiOr7b.js";import"./select-DNqXmv7W.js";import t from"./tabs-section-GXZy9RqO.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
->>>>>>>> 0644bd035c967f8210f589c34f8fc352ef0ae8d1:public/build/assets/layout-C6m8aa5L.js
