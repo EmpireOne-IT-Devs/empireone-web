@@ -13,7 +13,7 @@ class JobAIInterviewController extends Controller
 {
     public function index()
     {
-        $data = JobAIInterview::with(['applicant', 'answers'])->paginate();
+        $data = JobAIInterview::where('status', 'completed')->with(['applicant', 'answers'])->paginate();
         return response()->json($data);
     }
     public function get_job_interview_by_id($id)

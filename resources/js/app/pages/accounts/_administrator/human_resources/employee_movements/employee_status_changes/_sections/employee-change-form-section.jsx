@@ -32,19 +32,23 @@ const defaultFormValues = {
     info_position_level_to: null,
     info_department_from: null,
     info_department_id_to: null,
+    info_department_id_from: null,
     info_account_from: null,
     info_account_id_to: null,
+    info_account_id_from: null, //
     info_status_from: null,
     info_status_to: null,
     info_position_from: null,
     info_position_to: null,
     info_reporting_from: null,
     info_reporting_to: null,
+    info_reporting_id_from: null, // 
+    info_reporting_id_to: null, //
     info_basic_pay_from: null,
     info_basic_pay_to: null,
     info_allowances_from: null,
     info_allowances_to: null,
-    prepaired_by_id: 'Anthony Aragon',
+    prepaired_by_id: 50,
     ack_date: null,
     is_edit_status: false,
     is_edit_reporting_to: false,
@@ -56,7 +60,7 @@ const EmployeeChangeFormSection = () => {
     const params = new URLSearchParams(window.location.search);
     const user_id = params.get("user_id");
     const { data } = useSelector((store) => store.app);
-    const { regulars } = useSelector((store) => store.human_resources);
+    const { employees } = useSelector((store) => store.human_resources);
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch()
     const {
@@ -71,13 +75,14 @@ const EmployeeChangeFormSection = () => {
     });
 
     const watchedValues = watch();
-
     // Optimize derivations using useMemo
     const selected_employee = useMemo(() => {
-        return regulars?.find((res) => res.user_id == watchedValues.user_id);
-    }, [regulars.length, watchedValues.user_id]);
+        return employees?.find((res) => res.user_id == watchedValues.user_id);
+    }, [employees?.length, watchedValues.user_id]);
 
-    const selected_ecf = selected_employee?.account?.ecfs.find(res => res.id == watchedValues.ecf_id)
+    console.log('selected_employee', selected_employee?.reporting_to?.leader?.user?.personal_information?.first_name)
+    const selected_ecf = selected_employee?.account?.ecfs?.find(res => res.id == watchedValues.ecf_id)
+
 
     useEffect(() => {
         setValue("user_id", user_id);
@@ -90,7 +95,7 @@ const EmployeeChangeFormSection = () => {
 
     useEffect(() => {
         if (selected_employee) {
-            const leaderData = selected_employee?.leader?.personal_information;
+            const leaderData = selected_employee?.reporting_to?.leader?.user?.personal_information;
             const reportingName =
                 `${leaderData?.first_name || ""} ${leaderData?.last_name || ""}`.trim();
 
@@ -103,6 +108,7 @@ const EmployeeChangeFormSection = () => {
                 info_position_level_to:
                     selected_employee?.position_level ?? "N/A",
                 info_department_from: selected_employee?.department?.name,
+                info_department_id_from: selected_employee?.department?.id,
                 info_department_id_to: selected_employee?.department?.id,
                 info_account_from: selected_employee?.account?.name,
                 info_account_id_to: selected_employee?.account?.id,
@@ -197,7 +203,7 @@ const EmployeeChangeFormSection = () => {
                                         <Select
                                             label="Employee"
                                             name="user_id"
-                                            options={regulars?.map((res) => ({
+                                            options={employees?.map((res) => ({
                                                 ...res,
                                                 label: `${res.personal_information.first_name} ${res.personal_information.last_name}`,
                                                 value: `${res?.personal_information.user_id}`,
@@ -767,7 +773,7 @@ const EmployeeChangeFormSection = () => {
                                             type="number"
                                             {...register(
                                                 "info_basic_pay_from",
-                                                { required: true },
+                                                { required: false },
                                             )}
                                             disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
@@ -814,7 +820,7 @@ const EmployeeChangeFormSection = () => {
                                             type="number"
                                             {...register(
                                                 "info_allowances_from",
-                                                { required: true },
+                                                { required: false },
                                             )}
                                             disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
@@ -864,7 +870,10 @@ const EmployeeChangeFormSection = () => {
                             <p className="font-bold mb-8">
                                 Prepared & Approved by:
                             </p>
-                            <p className="font-bold">{watchedValues.prepaired_by_id}</p>
+                            <p className="font-bold">
+                                {/* {watchedValues.prepaired_by_id} */}
+                                Anthony Aragon
+                            </p>
                             <p className="italic">HR Director</p>
                         </div>
 

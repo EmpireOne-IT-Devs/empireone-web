@@ -42,6 +42,7 @@ return new class extends Migration
             // "To" Information
             $table->string('info_position_level_to')->default('N/A');
             $table->unsignedBigInteger('info_department_id_to')->nullable();
+            $table->unsignedBigInteger('info_department_id_from')->nullable();
             $table->unsignedBigInteger('info_account_id_to')->nullable();
             $table->string('info_status_to')->nullable();
             $table->string('info_position_to')->nullable();

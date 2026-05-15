@@ -31,6 +31,7 @@ class EREmployeeChangeForm extends Model
         'info_allowances_from',
         'info_position_level_to',
         'info_department_id_to',
+        'info_department_id_from',
         'info_account_id_to',
         'info_status_to',
         'info_position_to',
@@ -46,7 +47,7 @@ class EREmployeeChangeForm extends Model
 
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information']);
+        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information','user']);
     }
     public function account_to(): HasOne
     {

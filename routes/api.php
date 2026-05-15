@@ -54,6 +54,7 @@ Route::middleware('web')->group(function () {
 });
 
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
+Route::get('job/employee_applicants',  [JobApplicationController::class, 'employee_applicants']);
 Route::post('job/get_job_application_from_email',  [JobApplicationController::class, 'get_job_application_from_email']);
 Route::get('job/postings',  [JobPostingController::class, 'index']);
 Route::resource('job/job_interviewer_schedules', JobInterviewerScheduleController::class);
@@ -136,6 +137,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);
+        Route::post('accept_employee_change_form',  [EREmployeeChangeFormController::class, 'accept_employee_change_form']);
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
 });

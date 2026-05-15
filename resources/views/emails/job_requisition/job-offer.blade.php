@@ -89,7 +89,6 @@
                     <a href="{{ config('app.url') }}/accounts/{{ $user['user_role'] == 1 ? 'administrator' : ($user['user_role'] == 2 ? 'employee' : 'applicant') }}/job_offers/{{$user['job_offer_id']}}"
                         class="btn-primary" style="color: white !important;">View & Sign Offer</a>
                 </div>
-
             </div>
         </div>
         <div class="footer">

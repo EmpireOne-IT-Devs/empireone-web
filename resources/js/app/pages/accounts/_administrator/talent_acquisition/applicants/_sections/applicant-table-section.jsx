@@ -16,6 +16,8 @@ import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import SendJobOfferSection from "./send-job-offer-section";
 import ResendJobOfferSection from "./resend-job-offer-section";
 import SendDocumentsSection from "./send-documents-section";
+import { FcApproval } from "react-icons/fc";
+import Button from "@/app/_components/button";
 
 export default function ApplicantTableSection() {
     const { applicants, search_applicant_status } = useSelector(
@@ -75,8 +77,15 @@ export default function ApplicantTableSection() {
         return screeningMatch && interviewMatch && finalMatch;
     });
 
+    console.log('filteredApplications', filteredApplications)
+
     const tableData = filteredApplications?.map((res) => ({
-        name: res?.applicant?.name,
+        name: <div className="flex gap-1">
+            {
+                res?.applicant?.account_employee?.employee_id && <FcApproval className="text-xl" />
+            }
+            {res?.applicant?.name}
+        </div>,
         position: res?.job_posting?.job_requisition?.title,
         recruiter: res?.job_posting?.job_requisition?.recruiter?.name,
         applied_at: moment(res.created_at).format("LLL"),
@@ -91,7 +100,7 @@ export default function ApplicantTableSection() {
         ),
         action: (
             <div className="flex gap-3">
-                {(res.final_status == "Passed" || res.final_status == "Pooled") && (
+                {(res?.user.role == '3' && (res.final_status == "Passed" || res.final_status == "Pooled")) && (
                     <SendJobOfferSection data={res} />
                 )}
                 {res.final_status === "Declined Job Offer" && (
@@ -99,7 +108,7 @@ export default function ApplicantTableSection() {
                         <ResendJobOfferSection data={res} />
                     </>
                 )}
-                
+
                 {res?.final_status ==
                     "Accepted Job Offer" && (
                         <>

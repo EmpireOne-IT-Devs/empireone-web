@@ -4,24 +4,23 @@ import React from "react";
 export default function TabsSection() {
     // const currentParams = new URLSearchParams(window.location.search);
     // const currentPath = currentParams.get("status");
-    const currentPath =window.location.pathname.split('/')[6]??'regular'
+    const currentPath = window.location.pathname.split('/')[6] ?? 'regular'
     const tabs = [
         {
             label: "Regularization",
             path: "/accounts/administrator/human_resources/employee_movements/assessment_process?status=Regular",
             active: currentPath === "regular",
         },
-
         {
-            label: "Promotions",
+            label: "Promotions & Transfer",
             path: "/accounts/administrator/human_resources/employee_movements/assessment_process/promotions",
             active: currentPath === "promotions",
         },
-        {
-            label: "Transfers",
-            path: "/accounts/administrator/human_resources/employee_movements/assessment_process/transfers",
-            active: currentPath === "transfers",
-        },
+        // {
+        //     label: "Transfers",
+        //     path: "/accounts/administrator/human_resources/employee_movements/assessment_process/transfers",
+        //     active: currentPath === "transfers",
+        // },
     ];
 
     return (

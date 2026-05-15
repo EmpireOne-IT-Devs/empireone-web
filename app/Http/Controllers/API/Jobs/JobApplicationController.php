@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
 class JobApplicationController extends Controller
 {
 
+
     function base64ToFile($base64String)
     {
         // Split "data:mime/type;base64,XXXXX"
@@ -34,6 +35,23 @@ class JobApplicationController extends Controller
 
         // Decode Base64
         return base64_decode($data);
+    }
+    public function employee_applicants()
+    {
+        $applications = JobApplication::where([
+            ['interview_status', '=', 'Passed'],
+            ['final_status', '=', 'Passed']
+        ])
+            ->with(['job_posting', 'applicant', 'user'])
+            ->whereHas('user', function ($query) {
+                $query->whereIn('role', [1, 2]);
+            })
+            ->get();
+
+        return response()->json([
+            'data' => $applications,
+            'status' => 'success',
+        ], 200);
     }
 
     public function get_applicant_pooling()
@@ -489,7 +507,7 @@ class JobApplicationController extends Controller
 
     public function applicants()
     {
-        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer'])->paginate();
+        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer','user'])->paginate();
         return response()->json([
             'data' => $applications,
             'status' => 'success',

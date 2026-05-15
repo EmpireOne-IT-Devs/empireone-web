@@ -15,7 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 export default function SendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
-    const { data: datas } = useSelector((store) => store.app);
+    const { job_postings } = useSelector((store) => store.job_postings);
+    console.log('job_postings', job_postings)
     const {
         register,
         handleSubmit,
@@ -41,7 +42,7 @@ export default function SendJobOfferSection({ data }) {
     useEffect(() => {
         setValue("job_posting_id", data?.job_posting?.id);
     }, []);
-    console.log('watchedValues', watchedValues)
+    console.log('watchedValueszzzz', data?.job_posting?.id)
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
@@ -130,10 +131,9 @@ export default function SendJobOfferSection({ data }) {
                                         {...field}
                                         label="Select Existing Position"
                                         options={
-                                            datas?.position?.map((res) => ({
-                                                label: res.title,
-                                                value: res?.job_requisition
-                                                    ?.job_posting?.id,
+                                            job_postings?.map((res) => ({
+                                                label: `${res?.job_requisition?.title}`,
+                                                value: res?.id,
                                             })) || []
                                         }
                                         error={errors.job_posting_id?.message}

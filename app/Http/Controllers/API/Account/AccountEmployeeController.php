@@ -83,7 +83,7 @@ class AccountEmployeeController extends Controller
         // 1. Capture the search term
         $search = $request->input('search');
 
-        $employees = AccountEmployee::with(['user', 'personal_information', 'department', 'account', 'site'])
+        $employees = AccountEmployee::with(['user', 'personal_information', 'department', 'account', 'site', 'reporting_to'])
             ->whereNotNull('employee_id')
             // 2. Filter by Role (as you had before)
             ->whereHas('user', function ($query) {
@@ -104,9 +104,7 @@ class AccountEmployeeController extends Controller
                 });
             })
             ->orderBy('id', 'desc')
-            ->paginate(15)
-            // 4. Append search query to pagination links
-            ->withQueryString();
+            ->get();
 
         return response()->json([
             'status' => 'success',

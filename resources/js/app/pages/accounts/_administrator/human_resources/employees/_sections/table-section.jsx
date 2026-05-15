@@ -5,14 +5,7 @@ import { useSelector } from "react-redux";
 
 export default function TableSection() {
     const { employees } = useSelector((store) => store.human_resources);
-    console.log(
-        "employees",
-        employees?.data?.map((res) => ({
-            ...res,
-            name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
-            department: res?.department?.name,
-        })) ?? [],
-    );
+   
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
         { header: "Fullname", accessor: "name" },
@@ -29,7 +22,7 @@ export default function TableSection() {
             <Table
                 columns={columns}
                 data={
-                    employees?.data?.map((res) => ({
+                    employees?.map((res) => ({
                         ...res,
                         employee_id: (
                             <Link

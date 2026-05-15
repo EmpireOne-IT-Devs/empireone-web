@@ -203,7 +203,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
     Route::prefix('my_documents/{id}')->group(function () {
         Route::inertia('/contract', 'accounts/_administrator/human_resources/employees/id/contract/page');
         Route::inertia('/onboarding', 'accounts/_administrator/human_resources/employees/id/onboarding/page');
-        // Route::inertia('/employee_change_form', 'accounts/my_documents/employee_change_form/page');
+        Route::inertia('/employee_change_form', 'accounts/my_documents/employee_change_form/page');
     });
 });
 

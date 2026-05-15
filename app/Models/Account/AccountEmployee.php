@@ -4,6 +4,7 @@ namespace App\Models\Account;
 
 use App\Models\Account;
 use App\Models\Department;
+use App\Models\ER\ERSubordinate;
 use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +50,10 @@ class AccountEmployee extends Model
     public function leader()
     {
         return $this->hasOne(User::class, 'id', 'leader_id')->with(['personal_information']);
+    }
+    public function reporting_to()
+    {
+        return $this->hasOne(ERSubordinate::class, 'subordinate_id', 'user_id')->with(['leader']);
     }
     public function personal_information(): HasOne
     {

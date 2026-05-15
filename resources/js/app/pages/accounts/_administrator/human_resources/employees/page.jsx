@@ -26,7 +26,7 @@ export default function Page() {
                 <div className="flex flex-col gap-3">
                     {/* <PaginationSection /> */}
                     <TableSection />
-                    <PaginationSection />
+                    {/* <PaginationSection /> */}
                 </div>
             </EmployeeRelationLayout>
         </Layout>

@@ -18,7 +18,6 @@ export default function ResendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const { job_postings } = useSelector((store) => store.job_postings);
-    const { data: datas } = useSelector((store) => store.app);
     const {
         register,
         handleSubmit,
@@ -130,8 +129,8 @@ export default function ResendJobOfferSection({ data }) {
                             <Select
                                 label="Select Existing Position"
                                 options={
-                                    datas?.position?.map((res) => ({
-                                        label: res?.job_requisition?.title,
+                                    job_postings?.map((res) => ({
+                                        label: `${res?.job_requisition?.title}`,
                                         value: res?.id,
                                     })) || []
                                 }

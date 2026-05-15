@@ -1,0 +1,1 @@
+import{j as t}from"./app-Dkh-cg7x.js";import o from"./tabs-section-5nQsSgFO.js";import"./tabs-c_ekES5j.js";function a({children:e}){return t.jsxs(t.Fragment,{children:[t.jsx(o,{}),t.jsx("div",{className:"py-3",children:e})]})}export{a as default};

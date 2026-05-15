@@ -41,4 +41,8 @@ class JobApplication extends Model
     {
         return $this->hasOne(JobOffer::class, 'user_id', 'user_id')->with(['allowances']);
     }
+     public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }

@@ -461,6 +461,7 @@ const EmployeeChangeFormDocument = ({ data }) => {
 const EmployeeChangeFormSection = () => {
 
     const { ecf } = useSelector((store) => store.human_resources);
+   
     return (
         <PDFLoader pdf={<EmployeeChangeFormDocument data={{
             ...ecf,

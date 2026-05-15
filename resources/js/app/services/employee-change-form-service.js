@@ -12,3 +12,7 @@ export async function get_employee_change_form_service() {
 export async function get_employee_change_form_by_id_service(id) {
     return (await axios.get(`/api/er/employee_change_form/${id}`)).data;
 }
+
+export async function accept_employee_change_form_service(data) {
+    return await axios.post("/api/er/accept_employee_change_form",data);
+}
