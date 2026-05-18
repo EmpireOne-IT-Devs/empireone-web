@@ -75,7 +75,7 @@ export default function SkillsSection({
             </div>
 
             {/* Cards */}
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2.5 overflow-auto max-h-[400px] pr-1">
                 {skillFields.map((field, index) => {
                     const skillName = watch(`skills.${index}.skill`);
                     const pct = watch(`skills.${index}.percentage`) || 0;

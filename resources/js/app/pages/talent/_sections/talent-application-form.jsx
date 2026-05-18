@@ -199,7 +199,6 @@ const TalentApplicationForm = () => {
                 backgroundAttachment: "fixed",
             }}
         >
-            {/* Dark overlay with ambient gradients */}
             <div
                 className="fixed inset-0 pointer-events-none"
                 style={{

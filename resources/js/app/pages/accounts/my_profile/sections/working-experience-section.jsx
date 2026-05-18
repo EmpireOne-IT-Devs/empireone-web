@@ -67,7 +67,7 @@ export default function WorkingExperienceSection({
             </div>
 
             {/* Cards list */}
-            <div className="space-y-3">
+            <div className="space-y-3 overflow-auto max-h-[400px] pr-1">
                 {experienceFields.map((field, index) => {
                     const exp = watchedValues?.experiences?.[index];
                     const isExpanded = expandedIndex === index;

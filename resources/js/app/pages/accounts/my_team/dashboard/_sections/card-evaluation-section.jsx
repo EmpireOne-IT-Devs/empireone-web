@@ -21,7 +21,7 @@ export default function CardEvaluationSection() {
     const eval5Pending = 2;
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col ">
             <SectionLabel title="3rd Month Evaluation" />
             <div className="flex gap-3 w-full flex-wrap">
                 <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">

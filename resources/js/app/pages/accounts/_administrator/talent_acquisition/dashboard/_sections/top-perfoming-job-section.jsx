@@ -37,7 +37,7 @@ export default function TopPerformingJobSection() {
                                 <div className="flex items-center justify-between gap-2">
                                     <div className="flex items-center gap-2 min-w-0">
                                         <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                            <FiBriefcase className="w-3.5 h-3.5 text-blue-600" />
+                                            <FiBriefcase className="w-3.5 h-3.5 text-blue-600" />   
                                         </div>
                                         <span className="font-semibold text-sm text-gray-900 truncate">{job.title}</span>
                                     </div>

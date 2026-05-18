@@ -84,7 +84,7 @@ export default function PendingEvaluationSection() {
                             >
                                 {item.period}
                             </span>
-                         
+                                
                         </div>
                     </div>
                 ))}
