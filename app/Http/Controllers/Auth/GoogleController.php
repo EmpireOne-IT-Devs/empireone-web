@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
+use App\Models\ER\ERLeader;
 use App\Models\ER\ERSubordinate;
 use App\Models\Location;
 use App\Models\Site;
@@ -27,6 +28,19 @@ class GoogleController extends Controller
             })->pluck('email')
         );
     }
+
+    // public function assigned_leads()
+    // {
+    //     $subordinates = ERSubordinate::get();
+    //     foreach ($subordinates as $key => $value) {
+    //         $employee =  AccountEmployee::where('user_id', $value['subordinate_id'])->first();
+    //         if ($employee) {
+    //             $employee->update([
+    //                 'leader_id' => $value['er_leader_id']
+    //             ]);
+    //         }
+    //     }
+    // }
     public function merge_data()
     {
         $agents = [];

@@ -1,1 +1,0 @@
-import{e as a}from"./app-CJFQxq5o.js";async function s(e){return await a.post("/api/er/leaders",e)}async function t(e){return await a.get("/api/er/leaders",e)}async function i(e){return await a.get(`/api/er/leaders/${e}`)}async function n(e){return await a.post("/api/er/subordinates",e)}export{s as a,n as b,i as c,t as g};

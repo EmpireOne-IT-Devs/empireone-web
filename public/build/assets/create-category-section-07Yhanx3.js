@@ -1,0 +1,1 @@
+import{j as r}from"./app-DlOVISgE.js";import{B as t}from"./button-DDF4q-JP.js";import"./index-Q8pxbkWb.js";function a(){return r.jsx("div",{children:r.jsx(t,{variant:"primary",children:"Add Category"})})}export{a as default};

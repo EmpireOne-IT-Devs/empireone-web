@@ -64,7 +64,7 @@ Route::get('get_employee', [GoogleController::class, 'get_employee']); // do not
 Route::get('merge_data', [GoogleController::class, 'merge_data']); // do not remove this
 Route::get('employee_assessment_notifications', [AppController::class, 'employee_assessment_notifications']); // do not remove this
 Route::get('get_all_email', [GoogleController::class, 'get_all_email']); // do not remove this
-
+// Route::get('assigned_leads', [GoogleController::class, 'assigned_leads']); // do not remove this
 
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {

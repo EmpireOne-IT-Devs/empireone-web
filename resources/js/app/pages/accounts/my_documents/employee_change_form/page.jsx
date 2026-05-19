@@ -15,7 +15,7 @@ export default function Page() {
         <div>
             <EmployeeChangeFormSection />
             {
-                ecf.status == 'Pending' && <AcceptChangeForm />
+                ecf?.status == 'Pending' && <AcceptChangeForm />
             }
         </div>
     )
