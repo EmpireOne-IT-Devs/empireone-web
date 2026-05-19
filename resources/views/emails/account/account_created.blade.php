@@ -133,13 +133,13 @@
                     @else
                     <a href="{{ $meetingLink }}" class="button">Join Meet Link</a>
                     @endif
-                    <div>
+                    <!-- <div>
                         Or
                     </div>
                     {{-- FIXED: Added missing quote and helper check --}}
                     <a href="{{ $schedule['job_interview_id'] ?? '#' }}" class="button">
                         Join AI Interview
-                    </a>
+                    </a> -->
 
                     <a href="{{ $url }}" class="button button-secondary">
                         Get Started →

@@ -24,7 +24,7 @@ class GoogleCalendarService
 
     public function createInterviewEvent($interviewDetails)
     {
-        $staticMeetLink = 'https://meet.google.com/kwi-mrdx-fqa';
+        $staticMeetLink = 'https://meet.google.com/ibi-cdps-fxp';
 
         $event = new Event([
             'summary'     => $interviewDetails['title'],
