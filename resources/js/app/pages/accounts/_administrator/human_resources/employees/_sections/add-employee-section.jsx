@@ -5,7 +5,7 @@ import Select from '@/app/_components/select'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { Hash, Building2, Briefcase, Mail, Clock } from 'lucide-react'
+import { Hash, Building2, Briefcase, Mail, Clock, BriefcaseIcon, UserPlus } from 'lucide-react'
 import { Clickup } from '@thesvg/react'
 import store from '@/app/store/store'
 import { get_employees_thunk } from '@/app/redux/employee-relation-thunk'
@@ -66,7 +66,7 @@ export default function AddEmployeeSection() {
 
     return (
         <div className='flex items-center justify-center h-full'>
-            <Button
+            <Button 
                 className='py-5'
                 onClick={() => setOpen(true)}
             >
@@ -77,7 +77,21 @@ export default function AddEmployeeSection() {
                 width="max-w-3xl"
                 isOpen={open}
                 onClose={() => setOpen(false)}
-                title="ADD EMPLOYEE"
+                title={
+                                   <div className="flex items-center gap-3">
+                                       <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                                           <UserPlus />
+                                       </div>
+                                       <div>
+                                           <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                               Human Resources
+                                           </p>
+                                           <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                              Add Employee
+                                           </h2>
+                                       </div>
+                                   </div>
+                               }
             >
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 px-3 mt-4 min-h-96">
 

@@ -13,12 +13,14 @@ import { get_job_interviewer_schedule_thunk } from "@/app/redux/app-thunk";
 
 export default function Page() {
     const { url } = usePage();
-    const autoOpen = new URLSearchParams(url.split("?")[1]).get("create") === "1";
+    const autoOpen =
+        new URLSearchParams(url.split("?")[1]).get("create") === "1";
 
     useEffect(() => {
         store.dispatch(get_job_requisitions_thunk());
         store.dispatch(get_job_interviewer_schedule_thunk());
-    }, []);
+    }, [url]);
+
     return (
         <Layout>
             <JobPostingLayout>

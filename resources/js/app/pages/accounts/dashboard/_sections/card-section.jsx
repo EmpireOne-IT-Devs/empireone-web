@@ -11,7 +11,6 @@ export default function CardSection() {
            'grid' is much more reliable for enforcing specific column counts.
         */
         <div className="flex gap-3 w-full flex-wrap ">
-            
             {/* Total Job Openings */}
             <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
                 <div className="flex items-start justify-between">
@@ -27,7 +26,6 @@ export default function CardSection() {
                 </div>
             </Card>
 
-            {/* Applications Submitted */}
             <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
                 <div className="flex items-start justify-between">
                     <div className="p-3 bg-green-50 rounded-lg text-green-600">
@@ -41,8 +39,6 @@ export default function CardSection() {
                     Applications Submitted
                 </div>
             </Card>
-
-            {/* Job Offers Received */}
             <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
                 <div className="flex items-start justify-between">
                     <div className="p-3 bg-orange-50 rounded-lg text-orange-500">
@@ -64,7 +60,7 @@ export default function CardSection() {
                         <Mail size={28} />
                     </div>
                     <div className="text-3xl font-bold text-red-600">0</div>
-                </div>  
+                </div>
                 <div className="mt-4 text-sm font-medium text-gray-500">
                     Unread Messages
                     <span className="text-[10px] text-gray-400 block xl:inline ml-0 xl:ml-1">

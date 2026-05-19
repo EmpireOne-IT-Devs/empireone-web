@@ -20,7 +20,6 @@ class JobPostingController extends Controller
     public function dashboard_stats()
     {
         $startOfWeek = Carbon::now()->startOfWeek();
-        $startOfMonth = Carbon::now()->startOfMonth();
 
         $activePostings = JobPosting::where('status', 'Active')->count();
         $newPostingsThisWeek = JobPosting::where('status', 'Active')
@@ -32,9 +31,8 @@ class JobPostingController extends Controller
         $interviewsScheduled = JobApplicantSchedule::count();
         $interviewsThisWeek = JobApplicantSchedule::where('created_at', '>=', $startOfWeek)->count();
 
-        $positionsFilled = JobOffer::where('status', 'Accepted Job Offer')->count();
-        $positionsFilledThisMonth = JobOffer::where('status', 'Accepted Job Offer')
-            ->where('updated_at', '>=', $startOfMonth)->count();
+        $totalRequisitions = JobRequisition::count();
+        $newRequisitionsThisWeek = JobRequisition::where('created_at', '>=', $startOfWeek)->count();
 
         return response()->json([
             'active_postings' => $activePostings,
@@ -43,8 +41,8 @@ class JobPostingController extends Controller
             'new_applicants_this_week' => $newApplicantsThisWeek,
             'interviews_scheduled' => $interviewsScheduled,
             'interviews_this_week' => $interviewsThisWeek,
-            'positions_filled' => $positionsFilled,
-            'positions_filled_this_month' => $positionsFilledThisMonth,
+            'total_requisitions' => $totalRequisitions,
+            'new_requisitions_this_week' => $newRequisitionsThisWeek,
         ]);
     }
 

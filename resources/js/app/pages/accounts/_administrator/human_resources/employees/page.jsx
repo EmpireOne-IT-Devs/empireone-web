@@ -16,17 +16,17 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 <div className="flex w-full gap-3 mt-8">
-                    <div className="flex-none">
-                        <AddEmployeeSection />
-                    </div>
                     <div className="flex-1">
                         <SearchSection />
+                    </div>
+                    <div className="flex-none">
+                        <AddEmployeeSection />
                     </div>
                 </div>
                 <div className="flex flex-col gap-3">
                     {/* <PaginationSection /> */}
                     <TableSection />
-                    {/* <PaginationSection /> */}
+                    <PaginationSection />
                 </div>
             </EmployeeRelationLayout>
         </Layout>

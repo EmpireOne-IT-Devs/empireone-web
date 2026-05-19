@@ -85,11 +85,12 @@ class JobRequisitionController extends Controller
     public function index(Request $request)
     {
         $search = $request->query('search');
+        $status = $request->query('status');
 
         $stats = [
             'total'       => JobRequisition::count(),
             'pending'     => JobRequisition::where('status', 'Pending')->count(),
-            'approved'    => JobRequisition::where('status', 'Approved')->count(),
+            'approved'    => JobRequisition::where('status', 'Final Approved')->count(),
             'in_progress' => JobRequisition::where('status', 'In Progress')->count(),
             'declined'    => JobRequisition::where('status', 'Declined')->count(),
         ];
@@ -108,6 +109,10 @@ class JobRequisitionController extends Controller
                 $q->orWhereHas('location', function ($userQuery) use ($search) {
                     $userQuery->where('name', 'LIKE', "%{$search}%");
                 });
+            })
+            ->when($status, function ($q) use ($status) {
+                // Filter by status if provided
+                $q->where('status', $status);
             })
             ->orderBy('id', 'desc')
             ->get();

@@ -6,6 +6,7 @@ import { LuUsers } from "react-icons/lu";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { get_ta_dashboard_stats_service } from "@/app/services/job-posting-service";
+import { router } from "@inertiajs/react";
 
 export default function CardSection() {
     const [stats, setStats] = useState(null);
@@ -16,7 +17,10 @@ export default function CardSection() {
 
     return (
         <div className="flex flex-col md:flex-row gap-3 w-full">
-            <Card className="w-full md:w-1/4 flex-col gap-3">
+            <Card 
+                onClick={() => router.visit('/accounts/administrator/talent_acquisition/job_posting')}
+                className="w-full md:w-1/4 flex-col gap-3 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105"
+            >
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-blue-600 p-3 rounded-xl w-16">
                         <FiBriefcase className="inline-block mr-2 text-4xl text-white" />
@@ -29,7 +33,10 @@ export default function CardSection() {
                     <div className="text-green-500 mt-2">+ {stats?.new_postings_this_week ?? "—"} this week</div>
                 </div>
             </Card>
-            <Card className="w-full md:w-1/4 flex-col gap-3">
+            <Card 
+                onClick={() => router.visit('/accounts/administrator/talent_acquisition/applicants')}
+                className="w-full md:w-1/4 flex-col gap-3 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105"
+            >
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-green-600 p-3 rounded-xl w-16">
                         <LuUsers className="inline-block mr-2 text-4xl text-white" />
@@ -42,7 +49,10 @@ export default function CardSection() {
                     <div className="text-green-500 mt-2">+ {stats?.new_applicants_this_week ?? "—"} this week</div>
                 </div>
             </Card>
-            <Card className="w-full md:w-1/4 flex-col gap-3">
+            <Card 
+                onClick={() => router.visit('/accounts/administrator/talent_acquisition/calendar')}
+                className="w-full md:w-1/4 flex-col gap-3 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105"
+            >
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-purple-700 p-3 rounded-xl w-16">
                         <CalendarIcon className="inline-block mr-2 text-4xl text-white" />
@@ -55,7 +65,10 @@ export default function CardSection() {
                     <div className="text-green-500 mt-2">{stats?.interviews_this_week ?? "—"} this week</div>
                 </div>
             </Card>
-            <Card className="w-full md:w-1/4 flex-col gap-3">
+            <Card 
+                onClick={() => router.visit('/accounts/administrator/talent_acquisition/job_requisition')}
+                className="w-full md:w-1/4 flex-col gap-3 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105"
+            >
                 <div className="flex-row flex items-start justify-between">
                     <div className="bg-orange-600 p-3 rounded-xl w-16">
                         <CheckCircleIcon className="inline-block mr-2 text-4xl text-white" />
@@ -63,9 +76,9 @@ export default function CardSection() {
                     <FaArrowTrendUp className="text-green-600 text-lg" />
                 </div>
                 <div className="flex-col flex items-start justify-between ">
-                    <div>{stats?.positions_filled ?? "—"}</div>
-                    <div className="text-gray-600">Positions Filled</div>
-                    <div className="text-green-500 mt-2">{stats?.positions_filled_this_month ?? "—"} this month</div>
+                    <div>{stats?.total_requisitions ?? "—"}</div>
+                    <div className="text-gray-600">Total Requisitions</div>
+                    <div className="text-green-500 mt-2">+ {stats?.new_requisitions_this_week ?? "—"} this week</div>
                 </div>
             </Card>
         </div>
