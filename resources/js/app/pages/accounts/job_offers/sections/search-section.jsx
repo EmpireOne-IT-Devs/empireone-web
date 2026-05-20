@@ -7,7 +7,7 @@ export default function SearchSection() {
     return (
         <div className="bg-white shadow-md rounded-md p-5 border-2  flex gap-2 my-3">
             <div className="flex-1">
-                <Input label="Search job postings..." name="search" />
+                <Input label="Search job offers..." name="search" />
             </div>
             <div>
                 <Select

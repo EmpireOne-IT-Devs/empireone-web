@@ -4,6 +4,7 @@ import TableSection from "./sections/table-section";
 import Layout from "./../layout";
 import store from "@/app/store/store";
 import { get_job_offer_by_user_thunk } from "@/app/redux/applicant-thunk";
+import SearchSection from "./sections/search-section";
 
 export default function Page() {
     useEffect(() => {
@@ -14,6 +15,7 @@ export default function Page() {
         <Layout>
             <div className="flex gap-3 flex-col">
                 <HeaderSection />
+                <SearchSection />
                 <TableSection />
             </div>
         </Layout>

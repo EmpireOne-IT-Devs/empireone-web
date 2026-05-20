@@ -1,5 +1,4 @@
-import { time } from "framer-motion";
-import { useState } from "react";
+import Table from "@/app/_components/table";
 
 export default function TicketTableSection() {
     const data = [
@@ -115,130 +114,30 @@ export default function TicketTableSection() {
         },
     ];
 
-    // Status map
-    const statusMap = {
-        pending: {
-            label: "Pending",
-            className: "bg-orange-100 text-orange-700",
-        },
-        in_progress: {
-            label: "In Progress",
-            className: "bg-blue-100 text-blue-700",
-        },
-        closed: { label: "Closed", className: "bg-green-100 text-green-700" },
-    };
-
-    // Priority map
-    const priorityMap = {
-        high: { label: "High", className: "bg-red-100 text-red-700" },
-        medium: { label: "Medium", className: "bg-yellow-100 text-yellow-700" },
-        low: { label: "Low", className: "bg-green-100 text-green-700" },
-    };
-
-    const getStatusBadge = (status) => {
-        const key = status.toLowerCase().replace(" ", "_");
-        return (
-            statusMap[key] || {
-                label: status,
-                className: "bg-gray-100 text-gray-700",
-            }
-        );
-    };
-
-    const getPriorityBadge = (priority) => {
-        const key = priority.toLowerCase();
-        return (
-            priorityMap[key] || {
-                label: priority,
-                className: "bg-gray-100 text-gray-700",
-            }
-        );
-    };
+    const columns = [
+        { header: "Ticket No.", accessor: "ticket_id" },
+        { header: "Requestor", accessor: "requestor" },
+        { header: "Category", accessor: "category" },
+        { header: "Location", accessor: "location" },
+        { header: "Assigned To", accessor: "assigned_to" },
+        { header: "Priority", accessor: "priority" },
+        { header: "Status", accessor: "status" },
+        { header: "Date Created", accessor: "date_created" },
+    ];
 
     return (
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-full">
-            <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead>
-                        <tr className="border-b border-gray-200">
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Ticket No.
-                            </th>
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Requestor
-                            </th>
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Category
-                            </th>
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Location
-                            </th>
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Assigned To
-                            </th>
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Priority
-                            </th>
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Status
-                            </th>
-                            <th className="text-left py-4 px-4 text-md font-bold text-gray-700">
-                                Date Created
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {data.map((ticket) => {
-                            const statusBadge = getStatusBadge(ticket.status);
-                            const priorityBadge = getPriorityBadge(
-                                ticket.priority,
-                            );
-
-                            return (
-                                <tr
-                                    key={ticket.ticket_id}
-                                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                                >
-                                    <td className="py-4 px-4 text-sm font-medium underline text-blue-700 cursor-pointer">
-                                        {ticket.ticket_id}
-                                    </td>
-                                    <td className="py-4 px-4 text-sm text-gray-700">
-                                        {ticket.requestor}
-                                    </td>
-                                    <td className="py-4 px-4 text-sm text-gray-700">
-                                        {ticket.category}
-                                    </td>
-                                    <td className="py-4 px-4 text-sm text-gray-700">
-                                        {ticket.location}
-                                    </td>
-                                    <td className="py-4 px-4 text-sm text-gray-700">
-                                        {ticket.assigned_to}
-                                    </td>
-                                    <td className="py-4 px-4">
-                                        <span
-                                            className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-bold ${priorityBadge.className}`}
-                                        >
-                                            {priorityBadge.label}
-                                        </span>
-                                    </td>
-                                    <td className="py-4 px-4">
-                                        <span
-                                            className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-bold ${statusBadge.className}`}
-                                        >
-                                            {statusBadge.label}
-                                        </span>
-                                    </td>
-                                    <td className="py-4 px-4 text-sm text-gray-700">
-                                        {ticket.date_created}{" "}
-                                        {ticket.time_created}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+        <div>
+            <Table
+                columns={columns}
+                data={data?.map((ticket) => ({
+                    ...ticket,
+                    ticket_id: (
+                        <span className="text-blue-700 underline cursor-pointer font-medium">
+                            {ticket.ticket_id}
+                        </span>
+                    ),
+                }))}
+            />
         </div>
     );
 }

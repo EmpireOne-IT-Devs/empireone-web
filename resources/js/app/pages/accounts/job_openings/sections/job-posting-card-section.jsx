@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
 import { TbMapPin, TbTag, TbUser, TbUsers } from "react-icons/tb";
@@ -11,6 +11,34 @@ export default function JobPostingCardSection() {
         (state) => state.job_postings,
     );
     console.log("job_postings", job_postings);
+
+    // Get filter parameters from URL
+    const params = new URLSearchParams(window.location.search);
+    const searchTerm = params.get("search") || "";
+    const statusFilter = params.get("status") || "all";
+
+    // Filter job postings based on search term and status
+    const filteredJobPostings = useMemo(() => {
+        if (!job_postings) return [];
+
+        return job_postings.filter((job) => {
+            // Filter by status
+            const statusMatch =
+                statusFilter === "all" ||
+                job.status?.toLowerCase() === statusFilter.toLowerCase();
+
+            // Filter by search term
+            const searchLower = searchTerm.toLowerCase();
+            const searchMatch =
+                !searchTerm ||
+                job?.job_requisition?.title?.toLowerCase().includes(searchLower) ||
+                job?.job_requisition?.department?.name?.toLowerCase().includes(searchLower) ||
+                job?.job_requisition?.location?.name?.toLowerCase().includes(searchLower) ||
+                job?.job_requisition?.employment_type?.toLowerCase().includes(searchLower);
+
+            return statusMatch && searchMatch;
+        });
+    }, [job_postings, searchTerm, statusFilter]);
 
     if (loading) {
         return (
@@ -28,10 +56,20 @@ export default function JobPostingCardSection() {
         );
     }
 
+    if (filteredJobPostings.length === 0) {
+        return (
+            <div className="flex justify-center items-center py-12">
+                <div className="text-gray-500">
+                    No job postings match your search criteria
+                </div>
+            </div>
+        );
+    }
+
     return (
         <>
             <div className="flex flex-col gap-3">
-                {job_postings.map((job) => (
+                {filteredJobPostings.map((job) => (
                     <Card className="border rounded-xl p-6">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">

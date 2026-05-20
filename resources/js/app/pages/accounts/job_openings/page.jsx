@@ -7,11 +7,10 @@ import store from "@/app/store/store";
 import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 
 export default function Page() {
-    
-
     useEffect(() => {
-            store.dispatch(get_job_posting_thunk())
+        store.dispatch(get_job_posting_thunk());
     }, []);
+
     return (
         <Layout>
             <HeaderSection />

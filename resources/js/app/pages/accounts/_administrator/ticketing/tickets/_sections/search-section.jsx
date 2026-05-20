@@ -1,7 +1,7 @@
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import React from "react";
-import { TbCategory, TbFilter, TbMapPin, TbSearch } from "react-icons/tb";
+import {TbSearch } from "react-icons/tb";
 
 export default function SearchSection() {
     return (
@@ -15,7 +15,6 @@ export default function SearchSection() {
             </div>
             <div  className="flex-1">
                 <Select
-                    iconLeft={<TbFilter className="text-xl" />}
                     label="All Status"
                     options={[
                         { value: "all", label: "All Tickets" },
@@ -26,7 +25,6 @@ export default function SearchSection() {
             </div>
             <div  className="flex-1">
                 <Select
-                    iconLeft={<TbCategory className="text-xl" />}
                     label="Priorities"
                     options={[
                         { value: "all", label: "All Priorities" },
@@ -39,7 +37,6 @@ export default function SearchSection() {
             </div>
             <div  className="flex-1">
                 <Select
-                    iconLeft={<TbMapPin className="text-xl" />}
                     label="Location"
                     options={[
                         { value: "Site 1", label: "Site 1" },

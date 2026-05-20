@@ -22,7 +22,7 @@ export default function SearchSection() {
                         { value: "pending", label: "Pending Tickets" },
                     ]}
                 />
-            </div>``
+            </div>
             <div>
                 <Select
                     label="Priorities"

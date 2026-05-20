@@ -2,96 +2,88 @@ import Card from "@/app/_components/card";
 import React from "react";
 
 export default function IssuesByCategorySection() {
+    const categories = [
+        {
+            name: "Network",
+            count: 379,
+            percentage: 32,
+            color: "bg-blue-600",
+            progressColor: "bg-blue-600",
+        },
+        {
+            name: "Account Access",
+            count: 298,
+            percentage: 25,
+            color: "bg-purple-600",
+            progressColor: "bg-purple-600",
+        },
+        {
+            name: "Software",
+            count: 215,
+            percentage: 18,
+            color: "bg-green-600",
+            progressColor: "bg-green-600",
+        },
+        {
+            name: "Email",
+            count: 187,
+            percentage: 16,
+            color: "bg-orange-600",
+            progressColor: "bg-orange-600",
+        },
+        {
+            name: "Hardware",
+            count: 108,
+            percentage: 9,
+            color: "bg-red-600",
+            progressColor: "bg-red-600",
+        },
+    ];
+
     return (
         <Card>
-            <div className=" border-b-2 pb-2 mb-3 flex items-center justify-between">
-                <div className="text-xl font-bold ">Issues by Category</div>
-                <div>Last 30 Days</div>
-            </div>
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div className="flex gap-2 items-center justify-center">
-                        <div className="w-3 bg-blue-600 rounded-full h-3"></div>
-                        <div>Network</div>
-                    </div>
-                    <div className="flex gap-3">
-                        <div className="font-black">379</div>(70%)
-                    </div>
+            <div className="border-b-2 border-gray-200 pb-3 mb-1 flex items-center justify-between">
+                <div className="text-xl font-bold text-gray-800">
+                    Issues by Category
                 </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
-                    <div
-                        className="bg-brand h-2 rounded-full bg-blue-800"
-                        style={{ width: "70%" }}
-                    ></div>
+                <div className="text-sm text-gray-500 font-medium">
+                    Last 30 Days
                 </div>
             </div>
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div className="flex gap-2 items-center justify-center">
-                        <div className="w-3 bg-purple-600 rounded-full h-3"></div>
-                        <div>Account Access</div>
-                    </div>
-                    <div className="flex gap-3">
-                        <div className="font-black">379</div>(40%)
-                    </div>
-                </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
+
+            <div className="flex flex-col gap-3">
+                {categories.map((category, index) => (
                     <div
-                        className="bg-brand h-2 rounded-full bg-purple-800"
-                        style={{ width: "40%" }}
-                    ></div>
-                </div>
-            </div>
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div className="flex gap-2 items-center justify-center">
-                        <div className="w-3 bg-green-600 rounded-full h-3"></div>
-                        <div>Software</div>
+                        key={index}
+                        className="py-2 px-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                    >
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex gap-2 items-center">
+                                <div
+                                    className={`w-3 h-3 ${category.color} rounded-full shadow-sm`}
+                                ></div>
+                                <div className="font-semibold text-gray-800">
+                                    {category.name}
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-lg text-gray-900">
+                                    {category.count}
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                    ({category.percentage}%)
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                            <div
+                                className={`${category.progressColor} h-2.5 rounded-full transition-all duration-500 ease-out shadow-sm`}
+                                style={{ width: `${category.percentage}%` }}
+                            ></div>
+                        </div>
                     </div>
-                    <div className="flex gap-3">
-                        <div className="font-black">379</div>(20%)
-                    </div>
-                </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
-                    <div
-                        className="bg-brand h-2 rounded-full bg-green-800"
-                        style={{ width: "20%" }}
-                    ></div>
-                </div>
-            </div>
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div className="flex gap-2 items-center justify-center">
-                        <div className="w-3 bg-orange-600 rounded-full h-3"></div>
-                        <div>Email</div>
-                    </div>
-                    <div className="flex gap-3">
-                        <div className="font-black">379</div>(90%)
-                    </div>
-                </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
-                    <div
-                        className="bg-brand h-2 rounded-full bg-orange-800"
-                        style={{ width: "90%" }}
-                    ></div>
-                </div>
-            </div>
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div className="flex gap-2 items-center justify-center">
-                        <div className="w-3 bg-red-600 rounded-full h-3"></div>
-                        <div>Hardware</div>
-                    </div>
-                    <div className="flex gap-3">
-                        <div className="font-black">379</div>(20%)
-                    </div>
-                </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
-                    <div
-                        className="bg-brand h-2 rounded-full bg-red-800"
-                        style={{ width: "20%" }}
-                    ></div>
-                </div>
+                ))}
             </div>
         </Card>
     );

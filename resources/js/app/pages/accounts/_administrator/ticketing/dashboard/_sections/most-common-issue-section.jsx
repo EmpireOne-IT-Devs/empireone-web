@@ -3,70 +3,85 @@ import Card from "@/app/_components/card";
 import React from "react";
 
 export default function MostCommonIssueSection() {
+    const issues = [
+        {
+            title: "Password Reset Request",
+            count: 342,
+            percentage: 28,
+            category: "Account Access",
+            avgResolution: "15 min",
+            progress: 70,
+            progressColor: "bg-blue-600",
+        },
+        {
+            title: "Software Installation",
+            count: 256,
+            percentage: 21,
+            category: "IT Support",
+            avgResolution: "45 min",
+            progress: 40,
+            progressColor: "bg-purple-600",
+        },
+        {
+            title: "Hardware Issues",
+            count: 198,
+            percentage: 16,
+            category: "Technical",
+            avgResolution: "2 hours",
+            progress: 80,
+            progressColor: "bg-green-600",
+        },
+    ];
+
     return (
         <Card className="flex-1 flex flex-col gap-3">
-            <div className=" border-b-2 pb-2 mb-3 flex items-center justify-between">
-                <div className="text-xl font-bold ">Most Common Issues</div>
-                <div>Last 30 Days</div>
-            </div>
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div>Password Reset Request</div>
-                    <div className="flex gap-3">
-                        <div className="font-black">342</div>(28%)
-                    </div>
+            <div className="border-b-2 border-gray-200 pb-3 mb-1 flex items-center justify-between">
+                <div className="text-xl font-bold text-gray-800">
+                    Most Common Issues
                 </div>
-                <div className="flex gap-1 p-1">
-                    <Badge variant="secondary">Account Access</Badge>
-                    <div className="text-md">Avg Resolution: 15 min</div>
-                </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
-                    <div
-                        className="bg-brand h-2 rounded-full bg-blue-800"
-                        style={{ width: "70%" }}
-                    ></div>
+                <div className="text-sm text-gray-500 font-medium">
+                    Last 30 Days
                 </div>
             </div>
 
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div>Password Reset Request</div>
-                    <div className="flex gap-3">
-                        <div className="font-black">342</div>(28%)
-                    </div>
-                </div>
-                <div className="flex gap-1 p-1">
-                    <Badge  variant="secondary">
-                        Account Access
-                    </Badge>
-                    <div className="text-md">Avg Resolution: 15 min</div>
-                </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
+            <div className="flex flex-col gap-4">
+                {issues.map((issue, index) => (
                     <div
-                        className="bg-brand h-2 rounded-full bg-blue-800"
-                        style={{ width: "40%" }}
-                    ></div>
-                </div>
-            </div>
-            <div className="py-2">
-                <div className="flex items-center justify-between ">
-                    <div>Password Reset Request</div>
-                    <div className="flex gap-3">
-                        <div className="font-black">342</div>(28%)
+                        key={index}
+                        className="py-3 px-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                    >
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="font-semibold text-gray-800">
+                                {issue.title}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-lg text-gray-900">
+                                    {issue.count}
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                    ({issue.percentage}%)
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="secondary">{issue.category}</Badge>
+                            <span className="text-sm text-gray-600">
+                                Avg Resolution:{" "}
+                                <span className="font-semibold">
+                                    {issue.avgResolution}
+                                </span>
+                            </span>
+                        </div>
+
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                            <div
+                                className={`${issue.progressColor} h-2.5 rounded-full transition-all duration-500 ease-out shadow-sm`}
+                                style={{ width: `${issue.progress}%` }}
+                            ></div>
+                        </div>
                     </div>
-                </div>
-                <div className="flex gap-1 p-1">
-                    <Badge  variant="primary">
-                        Account Access
-                    </Badge>
-                    <div className="text-md">Avg Resolution: 15 min</div>
-                </div>
-                <div className="w-full bg-gray-400  rounded-full h-2">
-                    <div
-                        className="bg-brand h-2 rounded-full bg-blue-800"
-                        style={{ width: "80%" }}
-                    ></div>
-                </div>
+                ))}
             </div>
         </Card>
     );
