@@ -78,11 +78,11 @@ export default function JobPostingCardSection() {
                                         <TbUser />{" "}
                                         {job?.job_requisition?.employment_type}
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         {job?.job_requisition?.salary_range
                                             ? `${job?.job_requisition?.salary_range}`
                                             : "Salary not specified"}
-                                    </div>
+                                    </div> */}
                                     <div className="flex items-center gap-2 text-gray-600 font-medium">
                                         <TbUsers />
                                         {job?.applications?.length ?? 0}{" "}

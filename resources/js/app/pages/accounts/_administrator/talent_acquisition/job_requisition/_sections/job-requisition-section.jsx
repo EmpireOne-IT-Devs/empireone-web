@@ -202,10 +202,10 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    {/* <div className="flex items-center gap-2 shrink-0">
                         <TbCurrencyDollar className="text-gray-600 w-4 h-4" />
                         <span>{job_requisition.salary_range}</span>
-                    </div>
+                    </div> */}
                 </div>
 
                 <hr className="border-gray-200 w-full" />

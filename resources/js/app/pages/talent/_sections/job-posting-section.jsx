@@ -90,9 +90,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                         .employment_type
                                                 }
                                             </span>
-                                            <span className="text-xs text-gray-400 font-medium">
-                                                #{res.id}
-                                            </span>
+                                           
                                         </div>
 
                                         <h1 className="text-xl sm:text-2xl font-extrabold text-gray-800 leading-tight">
@@ -107,18 +105,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                         .name
                                                 }
                                             </span>
-                                            {res.job_requisition
-                                                .salary_range && (
-                                                <span className="flex items-center gap-1.5">
-                                                    <DollarSign className="w-3.5 h-3.5 text-green-400" />
-                                                    <span className="font-semibold text-green-600">
-                                                        {
-                                                            res.job_requisition
-                                                                .salary_range
-                                                        }
-                                                    </span>
-                                                </span>
-                                            )}
+                                           
                                             {res.job_requisition.created_at && (
                                                 <span className="flex items-center gap-1.5">
                                                     <Clock className="w-3.5 h-3.5 text-gray-400" />

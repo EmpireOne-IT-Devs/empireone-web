@@ -469,15 +469,6 @@ export default function CareerSection() {
                                                 <p className="text-xs font-semibold text-purple-100 mb-1">
                                                     {job.job_requisition?.title}
                                                 </p>
-                                                {job.job_requisition
-                                                    ?.salary_range && (
-                                                    <p className="text-xs font-bold text-orange-400 mb-1">
-                                                        {
-                                                            job.job_requisition
-                                                                .salary_range
-                                                        }
-                                                    </p>
-                                                )}
                                                 <div className="flex flex-wrap gap-1">
                                                     {buildTags(job).map(
                                                         (tag) => (
