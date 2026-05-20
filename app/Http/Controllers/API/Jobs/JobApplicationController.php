@@ -286,7 +286,7 @@ class JobApplicationController extends Controller
     }
 
 
-    public function apply_job_application(Request $request, GoogleCalendarService $calendarService)
+    public function apply_job_application(Request $request)
     {
         // 1. Create or Find User
         $user = User::firstOrCreate(
