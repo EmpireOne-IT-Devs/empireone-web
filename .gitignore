@@ -24,3 +24,4 @@ Homestead.yaml
 Thumbs.db
 storage/app/google-credentials.json
 storage/app/google-credentials2.json
+appscript_code

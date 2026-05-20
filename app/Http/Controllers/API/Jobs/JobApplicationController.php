@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use GuzzleHttp\Client;
 
 class JobApplicationController extends Controller
 {
@@ -270,6 +271,20 @@ class JobApplicationController extends Controller
     }
 
 
+    public function send_interview_schedule($data)
+    {
+        $scriptUrl = env('SEND_INTERVIEW_SCHEDULE');
+        $client = new Client();
+        $response = $client->post($scriptUrl, [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
+            'form_params' => $data
+        ]);
+        $body = $response->getBody()->getContents();
+        return $body;
+    }
+
 
     public function apply_job_application(Request $request, GoogleCalendarService $calendarService)
     {
@@ -335,74 +350,85 @@ class JobApplicationController extends Controller
         $googleStartTime = Carbon::parse($request->scheduled_date . ' ' . $request->start_time, 'Asia/Manila')->toIso8601String();
         $googleEndTime   = Carbon::parse($request->scheduled_date . ' ' . $request->end_time, 'Asia/Manila')->toIso8601String();
         // 5. Save Schedule to Database
-        $schedule = JobApplicantSchedule::create([
-            'application_id' => $application->id,
-            'interviewer_id' => $request->interviewer_id,
-            'scheduled_date' => $request->scheduled_date,
-            'start_time'     => $formattedStartTime,
-            'end_time'       => $formattedEndTime,
-            'status'         => 'Pending',
-        ]);
+        $schedule = JobApplicantSchedule::updateOrCreate(
+            // 1. Search criteria: find the existing schedule for this specific application
+            [
+                'application_id' => $application->id,
+            ],
+            // 2. Values to update or create
+            [
+                'interviewer_id' => $request->interviewer_id,
+                'scheduled_date' => $request->scheduled_date,
+                'start_time'     => $formattedStartTime,
+                'end_time'       => $formattedEndTime,
+                'status'         => 'Pending', // Resets to 'Pending' if the schedule is updated
+            ]
+        );
 
         // 6. Generate Google Meet Link
         // Fetch the interviewer to get their email address
         $interviewer = User::find($request->interviewer_id);
 
         if ($interviewer) {
-            $googleEvent = $calendarService->createInterviewEvent([
-                'title'             => 'Interview: ' . $user->name,
-                'description'       => 'Schedule for Initial Interview.',
-                'start_time'        => $googleStartTime,
-                'end_time'          => $googleEndTime,
-                'applicant_email'   => $user->email,
-                'interviewer_email' => $interviewer->email,
+
+            // $ji = JobAIInterview::create([
+            //     'user_id'        => $user->id,
+            //     'job_title' => $request->position,
+            //     'questions_limit' => 5,
+            //     'current_step' => 0,
+            // ]);
+
+            $result =  $this->send_interview_schedule([
+                // 'job_interview_id' => url("/accounts/talent/{$ji->id}/ai_interview"),
+                'applicant_email' => $user->email,
+                'applicant_name'  => $user->name, // Pass the real name so Apps Script doesn't have to guess
+                'start_time'      => $googleStartTime, // Must be a valid date string (e.g., '2026-05-22T10:40:00')
+                'end_time'        => $googleEndTime,
+                'job_title'       => $request->position,
             ]);
 
-            // Update the schedule with the generated Meet link
+            $googleData = json_decode($result, true);
+            $meetLink = $googleData['eventId']['meetLink'];
+            // $eventId = $googleData['eventId']['eventId'];
             $schedule->update([
-                'meeting_link' => $googleEvent['meet_link'],
+                'meeting_link' => $meetLink,
                 'status'       => 'Scheduled' // Change status since it is officially booked
             ]);
 
-            $ji = JobAIInterview::create([
-                'user_id'        => $user->id,
-                'job_title' => $request->position,
-                'questions_limit' => 5,
-                'current_step' => 0,
-            ]);
+            // Mail::to($user->email)->send(
+            //     new SendEmailAccountCreation($user, url('/auth/login'), [
+            //         ...$googleEvent,
+            //         // FIXED: Changed to double quotes and wrapped the variable in curly braces
+            //         'job_interview_id'  => url("/accounts/talent/{$ji->id}/ai_interview"),
+            //         'start_time'        => $googleStartTime,
+            //         'end_time'          => $googleEndTime,
+            //         'meet_link'         => $googleEvent['meet_link']
+            //     ])
+            // );
 
-            Mail::to($user->email)->send(
-                new SendEmailAccountCreation($user, url('/auth/login'), [
-                    ...$googleEvent,
-                    // FIXED: Changed to double quotes and wrapped the variable in curly braces
-                    'job_interview_id'  => url("/accounts/talent/{$ji->id}/ai_interview"),
-                    'start_time'        => $googleStartTime,
-                    'end_time'          => $googleEndTime,
-                    'meet_link'         => $googleEvent['meet_link']
-                ])
-            );
+            // 7. Handle Resume Upload
+            if ($request->file) {
+                $fileContent = $this->base64ToFile($request->file);
+                $fileName = 'resume_' . time();
+                $path = "unified/account/resume";
+                Storage::disk('s3')->put($path, $fileContent);
+                $url = Storage::disk('s3')->url($path);
+
+                AccountDocument::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'type'    => 'Resume',
+                    ],
+                    [
+                        'name'   => $fileName,
+                        'url'    => $url,
+                        'status' => 'Approved',
+                    ]
+                );
+            }
         }
 
-        // 7. Handle Resume Upload
-        if ($request->file) {
-            $fileContent = $this->base64ToFile($request->file);
-            $fileName = 'resume_' . time();
-            $path = "unified/account/resume";
-            Storage::disk('s3')->put($path, $fileContent);
-            $url = Storage::disk('s3')->url($path);
 
-            AccountDocument::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'type'    => 'Resume',
-                ],
-                [
-                    'name'   => $fileName,
-                    'url'    => $url,
-                    'status' => 'Approved',
-                ]
-            );
-        }
 
         // 8. Send Email & Return Response
 
@@ -507,7 +533,7 @@ class JobApplicationController extends Controller
 
     public function applicants()
     {
-        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer','user'])->paginate();
+        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer', 'user'])->paginate();
         return response()->json([
             'data' => $applications,
             'status' => 'success',
