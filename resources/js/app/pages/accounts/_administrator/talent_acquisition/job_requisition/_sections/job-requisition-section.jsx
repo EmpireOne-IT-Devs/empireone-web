@@ -386,7 +386,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                             Final Interviewer
                                         </p>
                                         <p className="font-semibold text-gray-900">
-                                            {job_requisition.interviewer ||
+                                            {job_requisition.interviewer1 ||
                                                 "Not Assigned"}
                                         </p>
                                     </div>
@@ -396,7 +396,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                             Sub-Interviewer
                                         </p>
                                         <p className="font-semibold text-gray-900">
-                                            {job_requisition.sub_interviewer ||
+                                            {job_requisition.interviewer2 ||
                                                 "Not Assigned"}
                                         </p>
                                     </div>
@@ -405,14 +405,10 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                                     <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                                         <p className="text-sm text-gray-600 mb-1">
-                                            Interview Date
+                                            Interview Availability
                                         </p>
                                         <p className="font-semibold text-gray-900">
-                                            {job_requisition?.interview_date
-                                                ? moment(
-                                                    job_requisition.interview_date,
-                                                ).format("LL")
-                                                : "N/A"}
+                                            {job_requisition?.availability1 || "N/A"}
                                         </p>
                                     </div>
 
@@ -422,7 +418,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         </p>
                                         <p className="font-semibold text-gray-900">
                                             {formatTime(
-                                                job_requisition.interview_time,
+                                                job_requisition.interview_time1,
                                             )}
                                         </p>
                                     </div>
