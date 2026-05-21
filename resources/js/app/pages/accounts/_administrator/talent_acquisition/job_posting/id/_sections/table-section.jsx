@@ -87,7 +87,8 @@ export default function TableSection() {
         ),
         action: (
             <div className="flex gap-3">
-                {(res.final_status == "Passed" || res.final_status == "Pooled") && (
+                {(res.final_status == "Passed" ||
+                    res.final_status == "Pooled") && (
                     <SendJobOfferSection data={res} />
                 )}
                 {res.final_status === "Declined Job Offer" && (
@@ -95,22 +96,12 @@ export default function TableSection() {
                         <ResendJobOfferSection data={res} />
                     </>
                 )}
-                {res?.final_status ==
-                    "Accepted Job Offer" && (
-                        <>
-                            <SendDocumentsSection data={res} />
-                        </>
-                    )}
+                {res?.final_status == "Accepted Job Offer" && (
+                    <>
+                        <SendDocumentsSection data={res} />
+                    </>
+                )}
 
-                <Button
-                    className="text-xs px-3 py-1"
-                    variant="success"
-                    outlined
-                    onClick={() => setOpenModal(true)}
-                >
-                    Schedule Interview
-                </Button>
-                <TransferApplicant data={res} />
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),
