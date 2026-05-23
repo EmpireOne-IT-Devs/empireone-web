@@ -34,26 +34,22 @@ export default function JobPostingLayout({ children }) {
             path: "/accounts/administrator/talent_acquisition/applicants",
             active: path === "applicants",
         },
-           {
-            label: "AI Interviews",
-            path: "/accounts/administrator/talent_acquisition/ai_interviews",
-            active: path === "ai_interviews",
-        },
         {
             label: "Calendar",
             path: "/accounts/administrator/talent_acquisition/calendar",
             active: path === "calendar",
         },
-        // {
-        //     label: "Interviews",
-        //     path: "/accounts/administrator/talent_acquisition/interviews",
-        //     active: path === "interviews",
+        //    {
+        //     label: "AI Interviews",
+        //     path: "/accounts/administrator/talent_acquisition/ai_interviews",
+        //     active: path === "ai_interviews",
         // },
-        {
-            label: "QR Codes",
-            path: "/accounts/administrator/talent_acquisition/qr_code",
-            active: path === "qr_code",
-        },
+        
+        // {
+        //     label: "QR Codes",
+        //     path: "/accounts/administrator/talent_acquisition/qr_code",
+        //     active: path === "qr_code",
+        // },
     ];
     return (
         <div>

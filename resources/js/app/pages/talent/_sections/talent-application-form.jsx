@@ -142,7 +142,9 @@ const TalentApplicationForm = () => {
         if (isValid) setStep((curr) => curr + 1);
     };
 
-    const prevStep = () => setStep((curr) => curr - 1);
+    const prevStep = () => {
+        setStep((curr) => curr - 1)
+    };
 
     const onSubmit = async (data) => {
         const finalData = {
@@ -187,7 +189,7 @@ const TalentApplicationForm = () => {
         }
     };
 
-    const stepLabels = ["Position", "Details", "Schedule", "Review"];
+    const stepLabels = ["Position", "Schedule", "Review"];
 
     return (
         <div
@@ -235,29 +237,27 @@ const TalentApplicationForm = () => {
                     </button>
 
                     {/* Step dots + label */}
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
+                    <div className="flex items-center mb-4">
+                        <div className="flex items-center gap-2  justify-between w-full">
                             {stepLabels.map((label, i) => {
                                 const idx = i; // step 0 = Position, 1 = Details, etc.
                                 const isActive = step === idx;
                                 const isDone = step > idx;
                                 return (
-                                    <div key={label} className="flex items-center gap-1.5">
+                                    <div key={label} className="flex items-center gap-3 h-10 w-full">
                                         <div
-                                            className="flex items-center justify-center rounded-full text-xs font-bold transition-all duration-300"
+                                            className="flex w-10 h-7 items-center justify-center rounded-full text-xs font-bold transition-all duration-300"
                                             style={{
-                                                width: 26,
-                                                height: 26,
                                                 background: isDone
                                                     ? "linear-gradient(135deg,#a855f7,#fb923c)"
                                                     : isActive
-                                                    ? "rgba(168,85,247,0.15)"
-                                                    : "rgba(168,85,247,0.07)",
+                                                        ? "rgba(168,85,247,0.15)"
+                                                        : "rgba(168,85,247,0.07)",
                                                 border: isActive
                                                     ? "1.5px solid rgba(168,85,247,0.8)"
                                                     : isDone
-                                                    ? "1.5px solid transparent"
-                                                    : "1.5px solid rgba(168,85,247,0.25)",
+                                                        ? "1.5px solid transparent"
+                                                        : "1.5px solid rgba(168,85,247,0.25)",
                                                 color: isDone ? "#fff" : isActive ? "#9333ea" : "rgba(120,90,160,0.6)",
                                             }}
                                         >
@@ -271,16 +271,14 @@ const TalentApplicationForm = () => {
                                         >
                                             {label}
                                         </span>
-                                        {i < stepLabels.length - 1 && (
-                                            <div
-                                                className="w-6 h-px mx-1 hidden sm:block"
-                                                style={{
-                                                    background: step > idx
-                                                        ? "linear-gradient(90deg,#a855f7,#fb923c)"
-                                                        : "rgba(168,85,247,0.15)",
-                                                }}
-                                            />
-                                        )}
+                                        <div
+                                            className="w-[80%] h-px mx-1 hidden sm:block"
+                                            style={{
+                                                background: step > idx
+                                                    ? "linear-gradient(90deg,#a855f7,#fb923c)"
+                                                    : "rgba(168,85,247,0.15)",
+                                            }}
+                                        />
                                     </div>
                                 );
                             })}

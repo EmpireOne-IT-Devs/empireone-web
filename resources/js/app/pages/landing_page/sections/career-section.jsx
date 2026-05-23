@@ -1,6 +1,6 @@
 import Card from "@/app/_components/card";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { router } from "@inertiajs/react";
 import store from "@/app/store/store";
 import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
@@ -65,15 +65,15 @@ const briefcaseIcon = (
 const getTagStyle = (tag) =>
     tag === "24/7 Shift"
         ? {
-              color: "rgba(251,146,60,0.9)",
-              background: "rgba(251,146,60,0.1)",
-              border: "1px solid rgba(251,146,60,0.3)",
-          }
+            color: "rgba(251,146,60,0.9)",
+            background: "rgba(251,146,60,0.1)",
+            border: "1px solid rgba(251,146,60,0.3)",
+        }
         : {
-              color: "rgba(147,197,253,0.85)",
-              background: "rgba(59,130,246,0.1)",
-              border: "1px solid rgba(59,130,246,0.3)",
-          };
+            color: "rgba(147,197,253,0.85)",
+            background: "rgba(59,130,246,0.1)",
+            border: "1px solid rgba(59,130,246,0.3)",
+        };
 
 /* =========================
    COMPONENTS
@@ -95,6 +95,7 @@ function SkeletonCard() {
 
 function JobCard({ id, title, tags, onApply, posting }) {
     const [expanded, setExpanded] = useState(false);
+    const dispatch = useDispatch()
     const req = posting?.job_requisition;
 
     return (
@@ -126,7 +127,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
                 {/* BUTTONS */}
                 <div className="flex flex-col gap-2 flex-shrink-0">
                     {/* APPLY BUTTON */}
-                    <button
+                    <a
                         onClick={() => onApply(id)}
                         className="w-auto h-10 flex items-center justify-center text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200 hover:scale-105"
                         style={{
@@ -136,7 +137,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
                         }}
                     >
                         Apply Now
-                    </button>
+                    </a>
 
                     {/* VIEW BUTTON */}
                     <button
@@ -239,8 +240,7 @@ export default function CareerSection() {
     }, []);
 
     const handleApply = (id) => {
-        store.dispatch(setJobPostingId(id));
-        router.visit("/talent/application");
+        router.visit(`/talent/application?job_posting_id=${id}`);
     };
 
     const grouped = groupByDepartment((job_postings ?? []).slice(0, 5));

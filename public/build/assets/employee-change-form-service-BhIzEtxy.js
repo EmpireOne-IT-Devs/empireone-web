@@ -1,1 +1,0 @@
-import{e as a}from"./app-DqAb4Ohw.js";async function _(e){return await a.post("/api/er/employee_change_form",e)}async function c(){return await a.get("/api/er/employee_change_form")}async function o(e){return(await a.get(`/api/er/employee_change_form/${e}`)).data}async function n(e){return await a.post("/api/er/accept_employee_change_form",e)}export{n as a,c as b,_ as c,o as g};
