@@ -56,11 +56,11 @@ return new class extends Migration
             // checkbox
 
             $table->boolean('regular')->nullable();
-            $table->boolean('account_transfer')->nullable();
-            $table->boolean('department_transfer')->nullable();
-            $table->boolean('position_and_title')->nullable();
-            $table->boolean('tiering')->nullable();
-
+            $table->boolean('is_account_transfer')->nullable();
+            $table->boolean('is_department_transfer')->nullable();
+            $table->boolean('is_position_and_title')->nullable();
+            $table->boolean('is_tiering')->nullable();
+        
             $table->enum('status', [
                 'Pending',
                 'Accepted',

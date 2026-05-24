@@ -317,10 +317,10 @@ const EmployeeChangeFormDocument = ({ data }) => {
                         {safeData.status === "Probationary" && (
                             <FormCheckbox label="Regular" checked={safeData.regular} />
                         )}
-                        <FormCheckbox label="Account Transfer" checked={safeData.account_transfer} />
-                        <FormCheckbox label="Department Transfer" checked={safeData.department_transfer} />
-                        <FormCheckbox label="Position & Title" checked={safeData.position_and_title} />
-                        <FormCheckbox label="Tiering" checked={safeData.tiering} />
+                        <FormCheckbox label="Account Transfer" checked={safeData.is_account_transfer} />
+                        <FormCheckbox label="Department Transfer" checked={safeData.is_department_transfer} />
+                        <FormCheckbox label="Position & Title" checked={safeData.is_position_and_title} />
+                        <FormCheckbox label="Tiering" checked={safeData.is_tiering} />
                     </View>
                 </View>
                 <View>
@@ -426,13 +426,7 @@ const EmployeeChangeFormDocument = ({ data }) => {
                 <View style={styles.signatureArea}>
 
 
-                    <View style={styles.signatureBlock}>
-                        {/* {safeData?.prepaired_by_signature && (
-                            <Image
-                                style={styles.signature}
-                                src={data?.prepaired_by_signature}
-                            />
-                        )} */}
+                    <View style={[styles.signatureBlock, { flexDirection: 'row', justifyContent: 'space-between' }]}>
                         <View style={styles.signature_over_printed_name_line}>
                             {safeData?.prepaired_by_signature && (
                                 <Image
@@ -444,6 +438,19 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                 HR Director:{safeData.prepaired_by_id}
                             </Text>
                             <Text style={[styles.bold, { marginTop: 8 }]}>Prepared & Approved by:</Text>
+                            {/* <Text>Signature over Printed Name / Date</Text> */}
+                        </View>
+                        <View style={styles.signature_over_printed_name_line}>
+                            {safeData?.employee_signature && (
+                                <Image
+                                    style={styles.signature_over_printed_name}
+                                    src={safeData?.employee_signature}
+                                />
+                            )}
+                            <Text style={{ marginTop: -20 }}>
+                               {safeData.name}
+                            </Text>
+                            <Text style={[styles.bold, { marginTop: 8 }]}>Employee:</Text>
                             {/* <Text>Signature over Printed Name / Date</Text> */}
                         </View>
                         {/* <Text style={[styles.bold]}>Date: {moment().format("LL")}</Text> */}
@@ -461,7 +468,7 @@ const EmployeeChangeFormDocument = ({ data }) => {
 const EmployeeChangeFormSection = () => {
 
     const { ecf } = useSelector((store) => store.human_resources);
-   
+    console.log('ecfecfss', ecf)
     return (
         <PDFLoader pdf={<EmployeeChangeFormDocument data={{
             ...ecf,
@@ -469,7 +476,8 @@ const EmployeeChangeFormSection = () => {
             info_account_id_to: `${ecf?.account_to?.name}`,
             info_department_id_to: `${ecf?.department_to?.name}`,
             prepaired_by_id: `${ecf?.prepaired_by?.personal_information?.first_name} ${ecf?.prepaired_by?.personal_information?.last_name}`,
-            prepaired_by_signature: ecf?.prepaired_by?.signature
+            prepaired_by_signature: ecf?.prepaired_by?.signature,
+            employee_signature: ecf.employee?.signature
         }} />} width="w-full" />
     );
 };

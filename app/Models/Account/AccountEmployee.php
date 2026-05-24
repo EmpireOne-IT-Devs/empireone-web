@@ -4,6 +4,7 @@ namespace App\Models\Account;
 
 use App\Models\Account;
 use App\Models\Department;
+use App\Models\ER\ERLeader;
 use App\Models\ER\ERSubordinate;
 use App\Models\Site;
 use App\Models\User;
@@ -18,6 +19,7 @@ class AccountEmployee extends Model
     protected $fillable = [
         'user_id',
         'department_id',
+        'e_r_leader_id',
         'leader_id',
         'site_id',
         'location_id',
@@ -47,9 +49,9 @@ class AccountEmployee extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function leader()
+    public function er_leader()
     {
-        return $this->hasOne(User::class, 'id', 'leader_id')->with(['personal_information']);
+        return $this->hasOne(ERLeader::class, 'id', 'e_r_leader_id')->with(['employee']);
     }
     public function reporting_to()
     {

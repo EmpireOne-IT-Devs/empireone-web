@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Mail\ChangeFormEmail;
 use App\Models\Account\AccountEmployee;
 use App\Models\ER\EREmployeeChangeForm;
+use App\Models\ER\ERLeader;
+use App\Models\Jobs\JobPosting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -15,10 +17,14 @@ class EREmployeeChangeFormController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $ecfs = EREmployeeChangeForm::with(['employee'])->paginate();
-        return response()->json($ecfs);
+        // $job_posting = JobPosting::where('id', $request->job_posting_id)->with(['job_requisition'])->first();
+        return response()->json([
+            ...$ecfs,
+            // 'job_posting' => $job_posting
+        ]);
     }
 
     public function accept_employee_change_form(Request $request)
@@ -52,7 +58,10 @@ class EREmployeeChangeFormController extends Controller
         }
 
         if ($request->info_reporting_id_to != $ecf->info_reporting_id_from) {
-            $updateData['leader_id'] = $request->info_reporting_id_to;
+            $leader = ERLeader::where('user_id', $request->info_reporting_id_to)->first();
+            if ($leader) {
+                $updateData['e_r_leader_id'] = $leader->id;
+            }
         }
 
         if ($request->info_basic_pay_to != $ecf->info_basic_pay_from) {
@@ -62,6 +71,7 @@ class EREmployeeChangeFormController extends Controller
         if ($request->info_allowances_to != $ecf->info_allowances_from) {
             $updateData['allowance'] = $request->info_allowances_to;
         }
+
 
         // 4. If there are changes, execute ONE single update query
         if (!empty($updateData)) {
@@ -95,7 +105,7 @@ class EREmployeeChangeFormController extends Controller
      */
     public function show($id)
     {
-        $ecf = EREmployeeChangeForm::where('id', $id)->with(['employee', 'account_to', 'department_to', 'prepaired_by', 'tiering'])->first();
+        $ecf = EREmployeeChangeForm::where('id', $id)->with(['employee', 'account_to', 'department_to', 'prepaired_by'])->first();
         return response()->json([
             'data' => $ecf,
             'status' => 'success',

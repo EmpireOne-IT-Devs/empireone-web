@@ -49,11 +49,11 @@ class EREmployeeChangeForm extends Model
 
         // Checkboxes
         'regular',
-        'account_transfer',
-        'department_transfer',
-        'position_and_title',
-        'tiering',
-
+        'is_account_transfer',
+        'is_department_transfer',
+        'is_position_and_title',
+        'is_tiering',
+        
         'status',
     ];
 
@@ -74,8 +74,8 @@ class EREmployeeChangeForm extends Model
     {
         return $this->hasOne(AccountEmployee::class, 'user_id', 'prepaired_by_id')->with(['personal_information']);
     }
-    public function tiering(): HasOne
-    {
-        return $this->hasOne(EcfTier::class, 'id', 'tiering');
-    }
+    // public function tiering(): HasOne
+    // {
+    //     return $this->hasOne(EcfTier::class, 'id', 'tiering');
+    // }
 }

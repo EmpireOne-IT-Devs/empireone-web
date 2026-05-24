@@ -4,12 +4,11 @@ import EmployeeRelationLayout from "../../layout";
 import EmployeeMovementsLayout from "../layout";
 import EmployeeChangeFormSection from "./_sections/employee-change-form-section";
 import store from "@/app/store/store";
-import { get_employee_change_form_thunk, get_employees_thunk, get_leader_thunk } from "@/app/redux/employee-relation-thunk";
+import { get_employee_change_form_thunk, get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 import TableSection from "./_sections/table-section";
 
 export default function Page() {
     useEffect(() => {
-        store.dispatch(get_employees_thunk());
         store.dispatch(get_leader_thunk())
         store.dispatch(get_employee_change_form_thunk())
     }, []);

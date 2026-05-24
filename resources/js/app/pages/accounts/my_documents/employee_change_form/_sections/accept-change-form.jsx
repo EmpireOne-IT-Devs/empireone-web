@@ -33,11 +33,11 @@ export default function AcceptChangeForm() {
                 "documents[0][file]",
                 fileBlob
             );
-            await add_documents_service(formData);
             await accept_employee_change_form_service({
                 ...ecf,
                 employee_change_form_id: window.location.pathname.split('/')[3]
             })
+            await add_documents_service(formData);
             router.visit(`/accounts/${ecf?.employee?.user?.role == 1 ? "administrator" : "employee"}/my_documents`)
             dispatch(
                 setAlert({
