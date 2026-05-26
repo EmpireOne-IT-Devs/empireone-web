@@ -55,7 +55,7 @@ export default function Pagination({ data }) {
                         href={`?page=${
                             currentPage - 1
                         }&search=${search}&status=${status}`}
-                        className="inline-flex items-center  border-transparent bg-blue-500 p-2 text-white rounded-md text-sm font-medium"
+                        className="inline-flex items-center  border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
                     >
                         <ArrowLongLeftIcon
                             aria-hidden="true"
@@ -76,8 +76,8 @@ export default function Pagination({ data }) {
                         }
                         className={`inline-flex items-center  rounded-md text-center px-4 p-2 text-sm font-medium ${
                             currentPage === page
-                                ? "text-blue-600 border-blue-600 border-2 text-blue"
-                                : "bg-blue-500  hover:bg-blue-500  text-white "
+                                ? "text-purple-600 border-purple-600 border-2 text-purple"
+                                : "bg-purple-500  hover:bg-purple-500  text-white "
                         }`}
                     >
                         {page}
@@ -90,7 +90,7 @@ export default function Pagination({ data }) {
                         href={`?page=${
                             currentPage + 1
                         }&search=${search}&status=${status}`}
-                        className="inline-flex items-center  border-transparent bg-blue-500 p-2 text-white rounded-md text-sm font-medium  "
+                        className="inline-flex items-center  border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium  "
                     >
                         Next
                         <ArrowLongRightIcon

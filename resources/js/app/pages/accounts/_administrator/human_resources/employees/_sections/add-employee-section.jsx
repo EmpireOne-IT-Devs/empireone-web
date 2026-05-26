@@ -68,6 +68,8 @@ export default function AddEmployeeSection() {
         <div className='flex items-center justify-center h-full'>
             <Button 
                 className='py-5'
+                outlined
+                variant='secondary'
                 onClick={() => setOpen(true)}
             >
                 ADD EMPLOYEE

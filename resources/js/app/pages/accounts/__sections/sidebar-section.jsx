@@ -202,7 +202,7 @@ export default function SidebarSection() {
                   {
                       name: "Loan",
                       href: `/accounts/${account_role}/loan`,
-                      icon: () => <FaMoneyBillWave className="text-blue-600" />,
+                      icon: () => <FaMoneyBillWave className="text-purple-600" />,
                       current: path == "loan",
                       is_incoming: true,
                   },
@@ -323,8 +323,8 @@ export default function SidebarSection() {
                                                             }}
                                                             className={classNames(
                                                                 item.current
-                                                                    ? "bg-blue-700 text-white "
-                                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
+                                                                    ? "bg-purple-700 text-white "
+                                                                    : "text-gray-700 hover:text-puple-600 hover:bg-purple-200 ",
                                                                 "flex items-center gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                                             )}
                                                         >
@@ -332,8 +332,8 @@ export default function SidebarSection() {
                                                                 aria-hidden="true"
                                                                 className={classNames(
                                                                     item.current
-                                                                        ? "text-indigo-600 "
-                                                                        : "text-gray-400 group-hover:text-indigo-600 ",
+                                                                        ? "text-purple-600 "
+                                                                        : "text-gray-400 group-hover:text-purple-600 ",
                                                                     "w-6 h-6 shrink-0",
                                                                 )}
                                                             />
@@ -370,8 +370,8 @@ export default function SidebarSection() {
                                                         }}
                                                         className={classNames(
                                                             item.current
-                                                                ? "bg-blue-700 text-white "
-                                                                : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
+                                                                ? "bg-purple-700 text-white "
+                                                                : "text-gray-700 hover:text-purple-600 hover:bg-purple-200 ",
                                                             "flex items-center gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                                         )}
                                                     >
@@ -379,8 +379,8 @@ export default function SidebarSection() {
                                                             aria-hidden="true"
                                                             className={classNames(
                                                                 item.current
-                                                                    ? "text-indigo-600 "
-                                                                    : "text-gray-400 group-hover:text-indigo-600 ",
+                                                                    ? "text-purple-600 "
+                                                                    : "text-gray-400 group-hover:text-purple-600 ",
                                                                 "w-6 h-6 shrink-0",
                                                             )}
                                                         />
@@ -453,8 +453,8 @@ export default function SidebarSection() {
                                                 }}
                                                 className={classNames(
                                                     item.current
-                                                        ? "bg-blue-700 text-white "
-                                                        : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
+                                                        ? "bg-purple-700 text-white "
+                                                        : "text-gray-700 hover:text-purple-600 hover:bg-purple-200 ",
                                                     "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                                 )}
                                             >
@@ -498,8 +498,8 @@ export default function SidebarSection() {
                                             href={item.href}
                                             className={classNames(
                                                 item.current
-                                                    ? "bg-blue-700 text-white "
-                                                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-200 ",
+                                                    ? "bg-purple-700 text-white "
+                                                    : "text-gray-700 hover:text-purple-600 hover:bg-purple-200 ",
                                                 "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
                                             )}
                                         >

@@ -14,7 +14,7 @@ export default function HeaderSection() {
     const strokeDashoffset = circumference * (1 - percent / 100);
 
     return (
-        <div className="relative flex items-center justify-between my-3 bg-blue-700 rounded-2xl px-8 py-6 overflow-hidden">
+        <div className="relative flex items-center justify-between my-3 bg-gradient-to-r from-purple-700 to-purple-800  rounded-2xl px-8 py-6 overflow-hidden">
             {/* Left Content */}
             <div className="flex flex-col gap-2 z-10">
                 <h1 className="text-2xl md:text-3xl font-semi text-white">

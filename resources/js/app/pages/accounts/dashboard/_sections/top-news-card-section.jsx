@@ -128,7 +128,7 @@ export default function TopNewsCardSection() {
             </div>
 
             {/* Footer */}
-            <div className="mx-3 mb-3 py-2.5 rounded-xl bg-gradient-to-r from-gray-700 to-gray-900 text-center cursor-pointer hover:opacity-90 transition-opacity shadow-sm shadow-gray-300">
+            <div className="mx-3 mb-3 py-2.5 rounded-xl bg-gradient-to-r from-purple-700 to-orange-900 text-center cursor-pointer hover:opacity-90 transition-opacity shadow-sm shadow-gray-300">
                 <button className="text-xs font-bold text-white tracking-wide">
                     Read More News →
                 </button>

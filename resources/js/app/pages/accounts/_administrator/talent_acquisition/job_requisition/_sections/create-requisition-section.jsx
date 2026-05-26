@@ -221,7 +221,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     ];
     return (
         <div>
-            {!hideButton && <Button type="button" onClick={() => setOpen(true)}>
+            {!hideButton && <Button type="button" variant="secondary" onClick={() => setOpen(true)}>
                 <div className="flex items-center gap-2">
                     <PlusCircleIcon className="w-5 h-5" />
                     New Job Requisition
@@ -252,7 +252,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                     onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col max-h-[75vh]"
                 >
-                    <div className="flex-1 h-[400px] overflow-y-auto space-y-6 pr-2">
+                    <div className="flex-1 h-[400px] overflow-y-auto space-y-6 pr-2 mb-2">
                         <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-300">
                             <label className="text-sm font-medium text-gray-700">
                                 <span className="text-black">

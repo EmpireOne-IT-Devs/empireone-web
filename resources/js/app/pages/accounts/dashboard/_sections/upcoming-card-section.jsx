@@ -102,7 +102,7 @@ export default function UpcomingCardSection() {
             </div>
 
             {/* Footer */}
-            <div className="mx-3 mb-3 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-center cursor-pointer hover:opacity-90 transition-opacity shadow-sm shadow-blue-200">
+            <div className="mx-3 mb-3 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-orange-600 text-center cursor-pointer hover:opacity-90 transition-opacity shadow-sm shadow-blue-200">
                 <button className="text-xs font-bold text-white tracking-wide">
                     View Full Calendar →
                 </button>

@@ -109,7 +109,6 @@ export default function TableSection() {
     return (
         <div>
             <Table columns={columns} data={tableData} />
-
             <AddInterviewSchedule
                 open={openModal}
                 onClose={() => setOpenModal(false)}
