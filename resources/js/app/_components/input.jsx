@@ -42,7 +42,7 @@ const Input = forwardRef(
                         {...props}
                         className={`
               peer w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black transition-colors
-              focus:outline-none focus:ring-2 focus:ring-blue-500 
+              focus:outline-none focus:ring-2 focus:ring-purple-500 
              
               ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : ""}
               ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
@@ -54,13 +54,13 @@ const Input = forwardRef(
                     <label
                         htmlFor={name}
                         className={`
-              absolute left-3 top-2.5 bg-white px-1 text-blue-500 text-sm
+              absolute left-3 top-2.5 bg-white px-1 text-purple-500 text-sm
               transition-all duration-200 ease-out pointer-events-none
               peer-placeholder-shown:top-2.5
               peer-placeholder-shown:text-sm
-              peer-placeholder-shown:text-blue-500
-              peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-600
-              peer-valid:-top-2 peer-valid:text-xs peer-valid:text-blue-700
+              peer-placeholder-shown:text-purple-500
+              peer-focus:-top-2 peer-focus:text-xs peer-focus:text-purple-600
+              peer-valid:-top-2 peer-valid:text-xs peer-valid:text-purple-700
               peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs
             `}
                     >

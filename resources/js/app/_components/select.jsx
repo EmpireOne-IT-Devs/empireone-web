@@ -87,7 +87,7 @@ const Select = forwardRef(
                         onClick={handleInputClick}
                         placeholder=""
                         className={`w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black
-              focus:outline-none focus:ring-2 focus:ring-blue-500
+              focus:outline-none focus:ring-2 focus:ring-purple-500
               ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : "pr-8"}
               ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
               ${className}`}
@@ -97,7 +97,7 @@ const Select = forwardRef(
                     <label
                         htmlFor={name}
                         className={`absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out
-              ${search || isOpen ? "-top-2 text-xs text-blue-600" : "top-2.5 text-gray-500"}`}
+              ${search || isOpen ? "-top-2 text-xs text-purple-600" : "top-2.5 text-gray-500"}`}
                     >
                         {label}
                     </label>
@@ -135,9 +135,9 @@ const Select = forwardRef(
                                 filteredOptions.map((option, idx) => (
                                     <li
                                         key={idx}
-                                        className={`cursor-pointer px-4 py-2 hover:bg-blue-100 text-black text-sm ${
+                                        className={`cursor-pointer px-4 py-2 hover:bg-purple-100 text-black text-sm ${
                                             value === option.value
-                                                ? "bg-blue-50 text-blue-600"
+                                                ? "bg-purple-50 text-purple-600"
                                                 : ""
                                         }`}
                                         onMouseDown={(e) => {
