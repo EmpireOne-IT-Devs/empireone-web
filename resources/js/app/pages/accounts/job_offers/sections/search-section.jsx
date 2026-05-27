@@ -5,11 +5,11 @@ import { TbSearch } from "react-icons/tb";
 
 export default function SearchSection() {
     return (
-        <div className="bg-white shadow-md rounded-md p-5 border-2  flex gap-2 my-3">
-            <div className="flex-1">
+        <div className="bg-white shadow-md rounded-md p-4 sm:p-5 border-2 flex flex-col sm:flex-row gap-2 my-3">
+            <div className="w-full sm:flex-1">
                 <Input label="Search job offers..." name="search" />
             </div>
-            <div>
+            <div className="w-full sm:w-auto">
                 <Select
                     label="All Status"
                     options={[
