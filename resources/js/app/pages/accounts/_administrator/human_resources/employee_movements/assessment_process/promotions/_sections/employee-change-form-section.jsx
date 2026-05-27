@@ -7,7 +7,7 @@ import Select from "@/app/_components/select";
 import TextArea from "@/app/_components/textarea";
 import { peso_format } from "@/app/lib/peso-format";
 import { setAlert } from "@/app/redux/app-slice";
-import { get_employee_change_form_thunk } from "@/app/redux/employee-relation-thunk";
+import { get_employee_applicants_thunk } from "@/app/redux/employee-relation-thunk";
 import { create_employee_change_form_service } from "@/app/services/employee-change-form-service";
 import store from "@/app/store/store";
 import moment from "moment";
@@ -108,12 +108,12 @@ const EmployeeChangeFormSection = ({ props_data }) => {
     }, [employees?.length, watchedValues.user_id]);
 
 
-    const selected_ecf = agent_account.ecfs?.find(res => res.id == watchedValues.ecf_id)
+    const selected_ecf = agent_account?.ecfs?.find(res => res.id == watchedValues.ecf_id)
 
-    console.log('leaders', new_position_information?.user?.personal_information?.first_name)
     useEffect(() => {
         setValue("user_id", user_id);
     }, []);
+
 
     useEffect(() => {
         if (employee_information) {
@@ -161,8 +161,12 @@ const EmployeeChangeFormSection = ({ props_data }) => {
     const onSubmit = async (form_data) => {
         console.log("Form Submitted:", form_data);
         try {
-            await create_employee_change_form_service(form_data)
-            await store.dispatch(get_employee_change_form_thunk())
+
+            await create_employee_change_form_service({
+                ...form_data,
+                job_application_id: props_data.id
+            })
+            await store.dispatch(get_employee_applicants_thunk())
             dispatch(
                 setAlert({
                     type: "success",

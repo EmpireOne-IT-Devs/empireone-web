@@ -65,12 +65,11 @@ export default function ApplicantTableSection() {
         final_status: res.final_status,
 
         action: (
-            // <Link
-            //     href={`/accounts/administrator/human_resources/employee_movements/employee_status_changes?user_id=${res?.user_id}&job_posting_id=${res.job_posting_id}`}
-            // >
-            //     CREATE ECF
-            // </Link>
-            <EmployeeChangeFormSection props_data={res}/>
+            <>
+                {!res.change_form && <EmployeeChangeFormSection props_data={res} />}
+                {res.change_form && <>Change Form {res.change_form.status}</>}
+            </>
+
         ),
     }));
     return (

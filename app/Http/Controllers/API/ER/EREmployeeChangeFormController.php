@@ -31,7 +31,6 @@ class EREmployeeChangeFormController extends Controller
     {
         // 1. Use findOrFail so the code automatically stops and returns a 404 if the form doesn't exist.
         $ecf = EREmployeeChangeForm::findOrFail($request->employee_change_form_id);
-
         // 2. Prepare an empty array to collect all the changes
         $updateData = [];
 

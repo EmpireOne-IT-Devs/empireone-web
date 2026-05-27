@@ -13,6 +13,7 @@ class EREmployeeChangeForm extends Model
 {
     protected $fillable = [
         'employee_id',
+        'job_application_id',
         'prepaired_by_id',
         'hire_date',
         'effective_date',

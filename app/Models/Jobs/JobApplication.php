@@ -2,6 +2,7 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\ER\EREmployeeChangeForm;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,6 +30,10 @@ class JobApplication extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information', 'cover_letter', 'resume', 'account_employee', 'working_experience', 'skills']);
     }
+    public function change_form(): HasOne
+    {
+        return $this->hasOne(EREmployeeChangeForm::class, 'job_application_id', 'id');
+    }
     public function job_posting(): HasOne
     {
         return $this->hasOne(JobPosting::class, 'id', 'job_posting_id')->with(['job_requisition']);
@@ -41,7 +46,7 @@ class JobApplication extends Model
     {
         return $this->hasOne(JobOffer::class, 'user_id', 'user_id')->with(['allowances']);
     }
-     public function user(): HasOne
+    public function user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }

@@ -18,6 +18,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+            $table->foreignId('job_application_id')
+                ->nullable()
+                ->constrained('job_applications')
+                ->nullOnDelete();
             $table->string('hire_date')->nullable();
             $table->string('effective_date')->nullable();
             $table->string('position_level')->default('N/A');
@@ -60,7 +64,7 @@ return new class extends Migration
             $table->boolean('is_department_transfer')->nullable();
             $table->boolean('is_position_and_title')->nullable();
             $table->boolean('is_tiering')->nullable();
-        
+
             $table->enum('status', [
                 'Pending',
                 'Accepted',

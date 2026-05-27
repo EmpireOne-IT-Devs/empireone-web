@@ -15,7 +15,7 @@ class ERPerformanceEvaluationFormController extends Controller
      */
     public function index(Request $request)
     {
-        $evaluations = ERPerformanceEvaluationForm::whereIn('recommendation', ['Mid-Probationary', 'Regular', 'Probationary', 'Extended Probationary', 'End of Contract'])->with(['supervisor', 'user', 'employee'])->paginate();
+        $evaluations = ERPerformanceEvaluationForm::whereIn('recommendation', ['Mid-Probationary', 'Regular', 'Probationary', 'Extended Probationary', 'End of Contract'])->with(['supervisor', 'user', 'employee','applicant'])->paginate();
         return response()->json($evaluations, 200);
     }
 

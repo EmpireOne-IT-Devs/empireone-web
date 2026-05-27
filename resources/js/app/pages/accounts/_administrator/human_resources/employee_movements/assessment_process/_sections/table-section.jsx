@@ -4,6 +4,7 @@ import { Link } from "@inertiajs/react";
 import moment from "moment";
 import React from "react";
 import { useSelector } from "react-redux";
+import EmployeeChangeFormSection from "./employee-change-form-section";
 
 export default function TableSection() {
     const { evaluations } = useSelector((store) => store.human_resources);
@@ -40,18 +41,7 @@ export default function TableSection() {
                     evaluation_period: res.evaluation_period,
                     action: (
                         <div className="flex gap-3">
-                            {
-                                res.status == 'Passed' && <>
-                                    <a
-                                        target="_blank"
-                                        href={`/accounts/administrator/human_resources/employee_movements/employee_status_changes?user_id=${res?.user?.id}`}
-                                    >
-                                        CREATE ECF
-                                    </a>
-                                    |
-                                </>
-                            }
-
+                            <EmployeeChangeFormSection props_data={res} />
                             <a
                                 target="_blank"
                                 href={`/accounts/${role}/human_resources/review/evaluations/${res.id}`}

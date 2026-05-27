@@ -9,7 +9,7 @@ import TableSection from "./_sections/table-section";
 
 export default function Page() {
     useEffect(() => {
-        store.dispatch(get_leader_thunk())
+        // store.dispatch(get_leader_thunk())
         store.dispatch(get_employee_change_form_thunk())
     }, []);
     return (
@@ -18,9 +18,6 @@ export default function Page() {
                 <div className="py-3">
                     <EmployeeMovementsLayout>
                         <div className="flex flex-col gap-3">
-                            <div className="flex items-center justify-end">
-                                <EmployeeChangeFormSection />
-                            </div>
                             <TableSection />
                         </div>
                     </EmployeeMovementsLayout>

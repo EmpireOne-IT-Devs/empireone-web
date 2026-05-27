@@ -21,7 +21,7 @@ export default function TableSection() {
         <>
             <Table
                 columns={columns}
-                data={ecfs?.data?.map((res) => ({
+                data={ecfs?.map((res) => ({
                     supervisor: `${res?.reporting_to}`,
                     date_of_assessment: moment(res.date_of_assessment).format(
                         "LL",
