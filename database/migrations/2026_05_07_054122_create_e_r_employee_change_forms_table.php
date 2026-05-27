@@ -22,6 +22,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('job_applications')
                 ->nullOnDelete();
+            $table->foreignId('er_perfomance_evaluation_id')
+                ->nullable()
+                ->constrained('e_r_performance_evaluation_forms')
+                ->nullOnDelete();
             $table->string('hire_date')->nullable();
             $table->string('effective_date')->nullable();
             $table->string('position_level')->default('N/A');

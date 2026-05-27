@@ -41,7 +41,7 @@ export default function TableSection() {
                     evaluation_period: res.evaluation_period,
                     action: (
                         <div className="flex gap-3">
-                            <EmployeeChangeFormSection props_data={res} />
+                            {!res.evaluation_form && <EmployeeChangeFormSection props_data={res} />}
                             <a
                                 target="_blank"
                                 href={`/accounts/${role}/human_resources/review/evaluations/${res.id}`}

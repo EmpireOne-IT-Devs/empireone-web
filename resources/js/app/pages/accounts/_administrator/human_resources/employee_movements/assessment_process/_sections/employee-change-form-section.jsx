@@ -152,7 +152,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
 
             await create_employee_change_form_service({
                 ...form_data,
-                job_application_id: props_data.id
+                er_perfomance_evaluation_id: props_data.id
             })
             await store.dispatch(get_employee_applicants_thunk())
             dispatch(

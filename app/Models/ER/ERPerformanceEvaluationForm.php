@@ -48,12 +48,16 @@ class ERPerformanceEvaluationForm extends Model
     {
         return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['department', 'account']);
     }
-      public function applicant(): HasOne
+    public function applicant(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id')->with(['account_employee']);
     }
 
-    
+    public function evaluation_form(): HasOne
+    {
+        return $this->hasOne(EREmployeeChangeForm::class, 'er_perfomance_evaluation_id', 'id');
+    }
+
     /**
      * Get the supervisor who is conducting the evaluation.
      */
