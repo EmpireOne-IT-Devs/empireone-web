@@ -26,33 +26,55 @@ class JobRequisitionController extends Controller
 
     public function get_job_requisitions_by_user(Request $request)
     {
-
         $search = $request->query('search');
         $status = $request->query('status');
+        $userId = Auth::id();
+
+        // 1. Create a reusable closure to group the user access logic safely.
+        // This generates: WHERE (user_id = ? OR recruiter = ? OR ...)
+        $userAccessScope = function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhere('recruiter', $userId)
+                ->orWhere('approver1_id', $userId)
+                ->orWhere('approver2_id', $userId)
+                ->orWhere('approver3_id', $userId);
+        };
+
+        // 2. Get total count using the scope
+        $totalRequisitions = JobRequisition::where($userAccessScope)->count();
+
+        // 3. Get status counts using the scope
+        $statusCounts = JobRequisition::where($userAccessScope)
+            ->whereIn('status', ['Pending', 'Final Approved', 'In Progress', 'Declined'])
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
 
         $stats = [
-            'total'       => JobRequisition::where('user_id', Auth::id())->count(),
-            'pending'     => JobRequisition::where('user_id', Auth::id())->where('status', 'Pending')->count(),
-            'approved'    => JobRequisition::where('user_id', Auth::id())->where('status', 'Final Approved')->count(),
-            'in_progress' => JobRequisition::where('user_id', Auth::id())->where('status', 'In Progress')->count(),
-            'declined'    => JobRequisition::where('user_id', Auth::id())->where('status', 'Declined')->count(),
+            'total'       => $totalRequisitions,
+            'pending'     => $statusCounts->get('Pending', 0),
+            'approved'    => $statusCounts->get('Final Approved', 0),
+            'in_progress' => $statusCounts->get('In Progress', 0),
+            'declined'    => $statusCounts->get('Declined', 0),
         ];
-        $jobRequisitions = JobRequisition::where('user_id', Auth::id())->with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter', 'user'])
+
+        // 4. Fetch Requisitions using the scope and search filters
+        $jobRequisitions = JobRequisition::where($userAccessScope)
+            ->with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter'])
             ->when($search, function ($q) use ($search) {
-                // Use a nested where to group the 'OR' logic
-                $q->where(function ($subQuery) use ($search) {
-                    $subQuery->where('title', 'LIKE', "%{$search}%")
-                        ->orWhere('status', 'LIKE', "%{$search}%");
-                });
-                $q->orWhereHas('department', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'LIKE', "%{$search}%");
-                });
-                $q->orWhereHas('location', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'LIKE', "%{$search}%");
+                // Keep this search block grouped so it uses 'AND (search conditions)'
+                $q->where(function ($query) use ($search) {
+                    $query->where('title', 'LIKE', "%{$search}%")
+                        ->orWhere('status', 'LIKE', "%{$search}%")
+                        ->orWhereHas('department', function ($depQuery) use ($search) {
+                            $depQuery->where('name', 'LIKE', "%{$search}%");
+                        })
+                        ->orWhereHas('location', function ($locQuery) use ($search) {
+                            $locQuery->where('name', 'LIKE', "%{$search}%");
+                        });
                 });
             })
             ->when($status, function ($q) use ($status) {
-                // Filter by status if provided
                 $q->where('status', $status);
             })
             ->orderBy('id', 'desc')
@@ -64,7 +86,7 @@ class JobRequisitionController extends Controller
             'status' => 'success',
             'stats'  => $stats,
             'data'   => $jobRequisitions,
-            'users' => [
+            'users'  => [
                 'users' => $users,
             ]
         ]);
