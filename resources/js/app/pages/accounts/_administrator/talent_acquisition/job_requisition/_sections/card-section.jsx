@@ -10,16 +10,6 @@ import { router } from "@inertiajs/react";
 export default function CardSection() {
     const { stats } = useSelector((state) => state.job_requisitions);
 
-    useEffect(() => {
-        store.dispatch(get_job_requisitions_thunk());
-
-        const interval = setInterval(() => {
-            store.dispatch(get_job_requisitions_thunk());
-        }, 30000); // 30 seconds
-
-        return () => clearInterval(interval);
-    }, []);
-
     const handleCardClick = (statusFilter) => {
         const params = new URLSearchParams(window.location.search);
         const queryParams = {};

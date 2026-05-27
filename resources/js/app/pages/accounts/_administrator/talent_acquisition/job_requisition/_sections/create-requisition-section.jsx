@@ -13,6 +13,8 @@ import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import Radio from "@/app/_components/radio";
 import { peso_format } from "@/app/lib/peso-format";
 import { BriefcaseIcon } from "lucide-react";
+import store from "@/app/store/store";
+import { router } from "@inertiajs/react";
 
 export default function CreateJobRequisition({ autoOpen = false, hideButton = false }) {
     const [open, setOpen] = useState(false);
@@ -70,9 +72,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     const existingPositionId = watch("existing_position_id");
 
     const selectedPosition = data?.position?.find(
-        (res) => String(res.title) === String(existingPositionId),
+        (res) => String(res.id) === String(existingPositionId),
     );
-
     useEffect(() => {
         if (String(watchedValues.department_id) !== "4") {
             setValue("account_id", "");
@@ -110,7 +111,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             setValue("number_of_positions", req?.number_of_positions || "");
             setValue("salary_range_from", salaryFrom.replace("₱", "").trim());
             setValue("salary_range_to", salaryTo.replace("₱", "").trim());
-            setValue("existing_position_id", req?.title || "");
+            setValue("existing_position_id", req?.id || "");
 
             setValue("qualifications", req?.qualifications || "");
             setValue("responsibilities", req?.responsibilities || "");
@@ -152,13 +153,11 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                 ...form_data,
                 availability1: `${form_data.week_from1}-${form_data.week_to1} `,
                 availability2: `${form_data.week_from2}-${form_data.week_to2} `,
-                salary_range: `₱${peso_format(form_data.salary_range_from)} ${
-                    form_data.salary_range_to
-                        ? ` - ₱${peso_format(form_data.salary_range_to)}`
-                        : ""
-                }`,
+                salary_range: `₱${peso_format(form_data.salary_range_from)} ${form_data.salary_range_to
+                    ? ` - ₱${peso_format(form_data.salary_range_to)}`
+                    : ""
+                    }`,
             });
-            await dispatch(get_job_requisitions_thunk());
             dispatch(
                 setAlert({
                     type: "success",
@@ -168,6 +167,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                     open: true,
                 }),
             );
+            router.visit(window.location.pathname)
             reset();
             setOpen(false);
         } catch (error) {
@@ -334,7 +334,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                         data?.position?.map(
                                                             (res) => ({
                                                                 label: res.title,
-                                                                value: res.title,
+                                                                value: res.id,
                                                             }),
                                                         ) || []
                                                     }
@@ -397,34 +397,34 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                     </div>
                                     {String(watchedValues.department_id) ===
                                         "4" && (
-                                        <div className="flex-1 w-full">
-                                            <Controller
-                                                name="account_id"
-                                                control={control}
-                                                rules={{
-                                                    required:
-                                                        "Account is required",
-                                                }}
-                                                render={({ field }) => (
-                                                    <Select
-                                                        {...field}
-                                                        label="Select Account"
-                                                        options={data?.accounts?.map(
-                                                            (res) => ({
-                                                                ...res,
-                                                                label: res.name,
-                                                                value: res.id,
-                                                            }),
-                                                        )}
-                                                        error={
-                                                            errors.account_id
-                                                                ?.message
-                                                        }
-                                                    />
-                                                )}
-                                            />
-                                        </div>
-                                    )}
+                                            <div className="flex-1 w-full">
+                                                <Controller
+                                                    name="account_id"
+                                                    control={control}
+                                                    rules={{
+                                                        required:
+                                                            "Account is required",
+                                                    }}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            {...field}
+                                                            label="Select Account"
+                                                            options={data?.accounts?.map(
+                                                                (res) => ({
+                                                                    ...res,
+                                                                    label: res.name,
+                                                                    value: res.id,
+                                                                }),
+                                                            )}
+                                                            error={
+                                                                errors.account_id
+                                                                    ?.message
+                                                            }
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+                                        )}
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
