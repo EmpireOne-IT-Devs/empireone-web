@@ -70,7 +70,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::inertia('/my_applications', 'accounts/my_applications/page');
             Route::inertia('/job_offers', 'accounts/job_offers/page');
             Route::inertia('/my_documents', 'accounts/my_documents/page');
-            if ($role != 'applicant') {
+            if ($role == 'administrator') {
                 Route::inertia('/my_requisition', 'accounts/my_requisition/page');
             }
             Route::inertia('/settings', 'accounts/settings/page');
