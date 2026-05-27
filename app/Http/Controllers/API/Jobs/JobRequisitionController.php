@@ -24,6 +24,52 @@ class JobRequisitionController extends Controller
     // In Progress send to Recruitment Staff 
     // The Staff will Create Job Posting
 
+    public function get_job_requisitions_by_user(Request $request)
+    {
+
+        $search = $request->query('search');
+        $status = $request->query('status');
+
+        $stats = [
+            'total'       => JobRequisition::where('user_id', Auth::id())->count(),
+            'pending'     => JobRequisition::where('user_id', Auth::id())->where('status', 'Pending')->count(),
+            'approved'    => JobRequisition::where('user_id', Auth::id())->where('status', 'Final Approved')->count(),
+            'in_progress' => JobRequisition::where('user_id', Auth::id())->where('status', 'In Progress')->count(),
+            'declined'    => JobRequisition::where('user_id', Auth::id())->where('status', 'Declined')->count(),
+        ];
+        $jobRequisitions = JobRequisition::where('user_id', Auth::id())->with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter', 'user'])
+            ->when($search, function ($q) use ($search) {
+                // Use a nested where to group the 'OR' logic
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('title', 'LIKE', "%{$search}%")
+                        ->orWhere('status', 'LIKE', "%{$search}%");
+                });
+                $q->orWhereHas('department', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'LIKE', "%{$search}%");
+                });
+                $q->orWhereHas('location', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'LIKE', "%{$search}%");
+                });
+            })
+            ->when($status, function ($q) use ($status) {
+                // Filter by status if provided
+                $q->where('status', $status);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $users = User::where('role', 1)->get();
+
+        return response()->json([
+            'status' => 'success',
+            'stats'  => $stats,
+            'data'   => $jobRequisitions,
+            'users' => [
+                'users' => $users,
+            ]
+        ]);
+    }
+
     public function approve_job_requisition(Request $request)
     {
 
@@ -96,7 +142,7 @@ class JobRequisitionController extends Controller
         ];
 
         // 2. Build the query for the table (Filtered Data)
-        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting', 'account','recruiter', 'user'])
+        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter', 'user'])
             ->when($search, function ($q) use ($search) {
                 // Use a nested where to group the 'OR' logic
                 $q->where(function ($subQuery) use ($search) {

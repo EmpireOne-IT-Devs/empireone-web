@@ -3,12 +3,12 @@ php artisan make:model ER/EmployeeChangeForm -mcr
 - add emergency contract
 - add parents name.
 
-
-
-account employee add
-- position_level
-- basic_pay
-- allowances
+Talent Aquisition Table need to clear
+-job_applications
+-job_a_i_interviews
+-job_a_i_interview_qnas
+-job_interviewer_schedules
+-job_postings
 
 
 

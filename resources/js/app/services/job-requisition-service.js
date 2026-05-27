@@ -22,6 +22,13 @@ export async function get_job_requisitions_service() {
         .data;
 }
 
+export async function get_job_requisitions_by_user_service() {
+    return (await axios.get(`/api/job/get_job_requisitions_by_user${window.location.search}`))
+        .data;
+}
+
+
+
 export async function get_job_requisitions_by_id_service() {
     return (
         await axios.get(

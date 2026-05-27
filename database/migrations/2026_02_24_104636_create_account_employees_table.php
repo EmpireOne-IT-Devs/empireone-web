@@ -61,7 +61,6 @@ return new class extends Migration
             ])->nullable();
             $table->string('basic_pay')->nullable();
             $table->string('allowance')->nullable();
-
             $table->enum('status', [
                 'Probationary',
                 'Regular',
