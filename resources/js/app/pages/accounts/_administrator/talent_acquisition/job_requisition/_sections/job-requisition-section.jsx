@@ -25,7 +25,6 @@ export default function JobRequisitionBodySection({ job_requisition }) {
     const { data } = useSelector((store) => store.app);
     console.log("data", data?.user?.id);
     const id = queryParams.get("id");
-    const my_requisition = window.location.pathname.split('/')['3']
 
     useEffect(() => {
         if (id == job_requisition.id) {
@@ -479,42 +478,37 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         <JobRequisitionLogsSection
                             job_requisition={job_requisition}
                         />
-                        {
-                            my_requisition != 'my_requisition' && <div className="mt-16 pb-16">
-                                <DeclinedJobRequisitionSection
-                                    data={job_requisition}
-                                />
-                            </div>
-                        }
+                        <div className="mt-16 pb-16">
+                            <DeclinedJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {
-                    my_requisition != 'my_requisition' && <div className="flex flex-col sm:flex-row w-full items-center justify-between border-t gap-3 p-4 bg-white sticky bottom-0">
-                        {(job_requisition.status == "Pending" &&
-                            job_requisition.approver1_id == data?.user?.id) && (
-                                <ApproveJobRequisitionSection
-                                    data={job_requisition}
-                                />
-                            )}
+                {/* Footer Action Buttons: Stack on mobile, row on tablet/desktop */}
+                <div className="flex flex-col sm:flex-row w-full items-center justify-between border-t gap-3 p-4 bg-white sticky bottom-0">
+                    {(job_requisition.status == "Pending" &&
+                        job_requisition.approver1_id == data?.user?.id) && (
+                            <ApproveJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        )}
 
-                        {(job_requisition.status == "In Progress" &&
-                            job_requisition.approver2_id == data?.user?.id) && (
-                                <ApproveJobRequisitionSection
-                                    data={job_requisition}
-                                />
-                            )}
+                    {(job_requisition.status == "In Progress" &&
+                        job_requisition.approver2_id == data?.user?.id) && (
+                            <ApproveJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        )}
 
-                        {(job_requisition.status == "Director Approved" &&
-                            job_requisition.approver3_id == data?.user?.id) && (
-                                <ApproveJobRequisitionSection
-                                    data={job_requisition}
-                                />
-                            )}
-                    </div>
-                }
-
-
+                    {(job_requisition.status == "Director Approved" &&
+                        job_requisition.approver3_id == data?.user?.id) && (
+                            <ApproveJobRequisitionSection
+                                data={job_requisition}
+                            />
+                        )}
+                </div>
             </Modal>
         </>
     );
