@@ -47,6 +47,7 @@ class ERSubordinateController extends Controller
                     'subordinate_id' => $subordinateId
                 ]);
                 AccountEmployee::where('user_id', $subordinateId)->update([
+                    'e_r_leader_id' => $leader->id,
                     'account_id' => $leader['employee']['account_id'] ?? null,
                     'department_id' => $leader['employee']['department_id'] ?? null,
                 ]);

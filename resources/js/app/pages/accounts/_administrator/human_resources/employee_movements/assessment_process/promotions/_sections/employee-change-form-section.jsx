@@ -158,6 +158,8 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         }
     }, [employee_information, setValue]);
 
+    console.log('new_position_information',props_data?.applicant?.account_employee)
+
     const onSubmit = async (form_data) => {
         console.log("Form Submitted:", form_data);
         try {
