@@ -34,7 +34,7 @@ class JobRequisitionController extends Controller
         // This generates: WHERE (user_id = ? OR recruiter = ? OR ...)
         $userAccessScope = function ($query) use ($userId) {
             $query->where('user_id', $userId)
-                ->orWhere('recruiter', $userId)
+                ->orWhere('recruiter_id', $userId)
                 ->orWhere('approver1_id', $userId)
                 ->orWhere('approver2_id', $userId)
                 ->orWhere('approver3_id', $userId);
