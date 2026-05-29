@@ -18,6 +18,10 @@ export default function TableSection() {
             accessor: "name",
         },
         {
+            header: "Position Applied",
+            accessor: "position",
+        },
+        {
             header: "Email",
             accessor: "email",
         },
@@ -98,6 +102,7 @@ export default function TableSection() {
 
     const tableData = applications?.map((res) => ({
         name: res?.applicant?.name,
+        position: res?.job_posting?.job_requisition?.title,
         email: res?.applicant?.email,
         contact: res?.applicant?.personal_information?.contact,
         applied_at: moment(res.created_at).format("LLL"),

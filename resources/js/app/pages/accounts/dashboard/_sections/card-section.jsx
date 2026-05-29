@@ -39,7 +39,7 @@ export default function CardSection() {
                 <div className="mt-4 text-sm font-medium text-gray-500">
                     Applications Submitted
                 </div>
-            </Card> 
+            </Card>
             <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
                 <div className="flex items-start justify-between">
                     <div className="p-3 bg-orange-50 rounded-lg text-orange-500">
