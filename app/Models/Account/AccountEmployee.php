@@ -18,24 +18,24 @@ class AccountEmployee extends Model
     use  Notifiable;
     protected $fillable = [
         'user_id',
-        'department_id',
+        'department_id', //
         'e_r_leader_id',
-        'site_id',
-        'location_id',
-        'account_id',
+        'site_id', //
+        'location_id', //
+        'account_id', //
         'employee_id',
         'is_has_contract',
-        'work_type',
+        'work_type', //
         'eogs_email',
         'with_bpo',
-        'position',
+        'position', //
         'signature',
         'onboarding_agree_on',
-        'status',
-        'started_at',
-        'position_level',
-        'basic_pay',
-        'allowance',
+        'status', //status
+        'started_at', //
+        'position_level', //
+        'basic_pay', //
+        'allowance', //
     ];
 
 

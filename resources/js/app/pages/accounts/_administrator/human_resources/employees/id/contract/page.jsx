@@ -71,7 +71,7 @@ export default function Page() {
             return (
                 <>
                     <EmploymentContractSection data={data} />
-                    {!user?.account_contract && <AgreeSection data={data} />}
+                    {!user?.account_employee?.is_has_contract && <AgreeSection data={data} />}
                 </>
             );
         }

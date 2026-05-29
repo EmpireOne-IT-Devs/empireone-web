@@ -36,7 +36,7 @@ const StepperSection = ({ steps }) => {
             setComplete(true);
         }
     };
-    console.log("useruser", user);
+    console.log("useruser", user?.account_employee?.onboarding_agree_on);
 
     const prevStep = (value) => {
         if (value > 1) {
@@ -92,13 +92,12 @@ const StepperSection = ({ steps }) => {
                         {/* Step Circle */}
                         <div
                             className={`relative  flex items-center justify-center w-10 h-10 rounded-full border-2 shrink-0 transition-all duration-500
-                            ${
-                                currentStep > step.id || complete
+                            ${currentStep > step.id || complete
                                     ? "bg-blue-600 border-blue-600"
                                     : currentStep === step.id
-                                      ? "border-blue-600 bg-white text-blue-600"
-                                      : "bg-white border-gray-200 text-gray-400"
-                            }`}
+                                        ? "border-blue-600 bg-white text-blue-600"
+                                        : "bg-white border-gray-200 text-gray-400"
+                                }`}
                         >
                             {currentStep > step.id || complete ? (
                                 <Check className="w-6 h-6 text-white" />
@@ -141,7 +140,7 @@ const StepperSection = ({ steps }) => {
                 </div>
 
                 {/* Controls - Fixed to the bottom of the content area */}
-                {!complete && (
+                {!user?.account_employee?.onboarding_agree_on && (
                     <div className="fixed bottom-0 left-0 flex p-10 justify-between w-full pt-10">
                         <Button
                             variant="outlined"

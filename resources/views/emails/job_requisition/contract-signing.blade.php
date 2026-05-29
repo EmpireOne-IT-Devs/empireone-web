@@ -66,7 +66,7 @@
                     This is an automated notification to inform you that
                     <strong>{{ $user['user']['name'] }}</strong> has a contract ready to be signed
                     for the position of
-                    <strong>{{ $user['job_application']['job_posting']['job_requisition']['title'] }}</strong>.
+                    <strong>{{ $user['job_posting']['job_requisition']['title'] }}</strong>.
                 </p>
 
                 <p>

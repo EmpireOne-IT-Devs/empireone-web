@@ -7,6 +7,7 @@ use App\Mail\JobOfferAcceptedMail;
 use App\Mail\JobOfferDeclinedMail;
 use App\Mail\PreEmploymentMail;
 use App\Models\Account\AccountEmployee;
+use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
@@ -61,14 +62,20 @@ class JobOfferController extends Controller
 
         if ($request->status == 'Declined Job Offer') {
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferDeclinedMail($jo));
-        } else if ($request->status == 'Accepted Job Offer') {
+        } else if ($request->status == 'Accepted Job Offer') { // Replace 'amount' with the actual column name you want to sum
+            $total_allowance = AccountEmployeeAllowance::where('job_offer_id', $jo->id)->sum('allowance');
             AccountEmployee::where('user_id', $request->user_id)->update([
                 'department_id' => $request->job_application['job_posting']['job_requisition']['department_id'],
                 'account_id' => $request->job_application['job_posting']['job_requisition']['account_id'] ?? null,
                 'site_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
                 'location_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
                 'position' => $request->job_application['job_posting']['job_requisition']['title'],
-                'started_at' => $jo->start_date
+                'started_at' => $jo->start_date,
+                'position_level' => 'Rank and File',
+                'basic_pay' => $jo->salary ?? 0,
+                'allowance' => $total_allowance ?? 0,
+                'work_type' => "Full Time",
+                'status' => "Probationary"
             ]);
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferAcceptedMail($jo));
             Mail::to($jo->user['email'])->send(new PreEmploymentMail($jo));
@@ -117,7 +124,7 @@ class JobOfferController extends Controller
     }
     public function get_job_offers_by_job_posting($id)
     {
-        $jobPostings = JobOffer::with(['job_application','user'])
+        $jobPostings = JobOffer::with(['job_application', 'user'])
             ->whereHas('job_application', function ($query) use ($id) {
                 $query->where('job_posting_id', $id);
             })

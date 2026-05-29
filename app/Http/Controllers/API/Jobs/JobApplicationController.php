@@ -572,7 +572,7 @@ class JobApplicationController extends Controller
     {
 
         // 1. Fetch all applications for this specific job once
-        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant', 'job_offer'])->get();
+        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant', 'job_offer','user'])->get();
         $job_posting = JobPosting::where('id', $id)->with(['job_requisition', 'job_application'])->first();
         return response()->json([
             'job_applications' => $applications,
