@@ -29,18 +29,6 @@ class GoogleController extends Controller
         );
     }
 
-    // public function assigned_leads()
-    // {
-    //     $subordinates = ERSubordinate::get();
-    //     foreach ($subordinates as $key => $value) {
-    //         $employee =  AccountEmployee::where('user_id', $value['subordinate_id'])->first();
-    //         if ($employee) {
-    //             $employee->update([
-    //                 'leader_id' => $value['er_leader_id']
-    //             ]);
-    //         }
-    //     }
-    // }
     public function merge_data()
     {
         $agents = [];

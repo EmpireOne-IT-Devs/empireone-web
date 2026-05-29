@@ -19,11 +19,7 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->foreignId('e_r_leader_id')
                 ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
-            $table->foreignId('leader_id')
-                ->nullable()
-                ->constrained('users')
+                ->constrained('e_r_leaders')
                 ->nullOnDelete();
             $table->foreignId('department_id')
                 ->nullable()

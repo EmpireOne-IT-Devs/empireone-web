@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('er_leader_id')
                 ->nullable()
-                ->constrained('users')
+                ->constrained('e_r_leaders')
                 ->nullOnDelete();
             $table->foreignId('subordinate_id')
                 ->nullable()

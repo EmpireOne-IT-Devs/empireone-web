@@ -35,7 +35,7 @@ export default function TabsSection() {
                             className={`
                                 relative flex-1 px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 ease-out outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 text-center whitespace-nowrap block
                                 ${tab.active
-                                    ? "bg-white text-blue-700 shadow-sm border border-gray-200/50 scale-100"
+                                    ? "bg-purple-500 text-white shadow-sm border border-gray-200/50 scale-100"
                                     : "text-gray-800 hover:text-gray-800 hover:bg-gray-200/50 scale-95 hover:scale-100"
                                 }
                             `}

@@ -158,7 +158,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         }
     }, [employee_information, setValue]);
 
-    console.log('new_position_information',props_data?.applicant?.account_employee)
+    console.log('new_position_information', props_data?.applicant?.account_employee)
 
     const onSubmit = async (form_data) => {
         console.log("Form Submitted:", form_data);
@@ -187,7 +187,9 @@ const EmployeeChangeFormSection = ({ props_data }) => {
     return (
         <>
             <div className="w-full flex items-center justify-end">
-                <Button className="w-64" onClick={() => setOpen(true)}>
+                <Button className="w-64"
+                    variant="secondary"
+                    onClick={() => setOpen(true)}>
                     CREATE CHANGE FORM
                 </Button>
             </div>

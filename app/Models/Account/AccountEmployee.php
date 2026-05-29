@@ -20,7 +20,6 @@ class AccountEmployee extends Model
         'user_id',
         'department_id',
         'e_r_leader_id',
-        'leader_id',
         'site_id',
         'location_id',
         'account_id',
