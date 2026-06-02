@@ -8,6 +8,7 @@ use App\Mail\JobOfferDeclinedMail;
 use App\Mail\PreEmploymentMail;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountEmployeeAllowance;
+use App\Models\ER\ERLeader;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
@@ -64,7 +65,11 @@ class JobOfferController extends Controller
             Mail::to('hiring@empireonegroup.com')->send(new JobOfferDeclinedMail($jo));
         } else if ($request->status == 'Accepted Job Offer') { // Replace 'amount' with the actual column name you want to sum
             $total_allowance = AccountEmployeeAllowance::where('job_offer_id', $jo->id)->sum('allowance');
+            $requestor_id = $request->job_application['job_posting']['job_requisition']['user_id'];
+            $er_leader = ERLeader::where('user_id', $requestor_id)->first();
+
             AccountEmployee::where('user_id', $request->user_id)->update([
+                'e_r_leader_id' => $er_leader->id ?? 0,
                 'department_id' => $request->job_application['job_posting']['job_requisition']['department_id'],
                 'account_id' => $request->job_application['job_posting']['job_requisition']['account_id'] ?? null,
                 'site_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
