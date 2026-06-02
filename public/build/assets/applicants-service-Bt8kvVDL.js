@@ -1,1 +1,0 @@
-import{f as a}from"./app-baH1jF8y.js";async function e(){return await a.get("/api/job/applicants")}async function i(){return await a.get("/api/job/employee_applicants")}async function p(){return await a.get("/api/job/get_applicant_pooling")}export{p as a,i as b,e as g};
