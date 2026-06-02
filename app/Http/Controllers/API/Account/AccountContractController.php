@@ -153,7 +153,8 @@ class AccountContractController extends Controller
                 if ($account) {
                     $account->update([
                         'employee_id' => $employee_id,
-                        'status' => 'Probationary'
+                        'status' => 'Probationary',
+                        'position_level' => 'Rank and File'
                     ]);
 
                     $ja = JobApplication::where([
@@ -206,7 +207,10 @@ class AccountContractController extends Controller
                 if ($account) {
                     $account->update([
                         'employee_id' => $employee_id,
-                        'status' => 'Probationary'
+                        'status' => 'Probationary',
+                        'position_level' => 'Rank and File',
+                        'basic_pay' => '',
+                        'allowance' => ''
                     ]);
 
                     $ja = JobApplication::where([

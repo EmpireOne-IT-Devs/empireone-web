@@ -93,7 +93,7 @@ class EREmployeeChangeFormController extends Controller
         $ecf = EREmployeeChangeForm::create($request->all());
         $user = User::where('id', $request->user_id)->with(['account_employee'])->first();
         $url = url("/accounts/my_documents/" . $ecf->id . "/employee_change_form");
-        Mail::to($user->account_employee['eogs_email'])->send(new ChangeFormEmail($user, $url));
+        Mail::to($user->account_employee['eogs_email'] ?? $user->email)->send(new ChangeFormEmail($user, $url));
         return response()->json([
             'status' => 'success',
         ], 200);

@@ -63,7 +63,7 @@
             </div>
             <div class="content">
                 <p>Hi <strong>{{ $user['applicant']['name'] }}</strong>,</p>
-                <p>We were incredibly impressed with your interview performance. We are thrilled to officially offer you the position of <strong>{{ $user['position'] }}</strong> at our team!</p>
+                <p>We were incredibly impressed with your interview performance. We are thrilled to officially offer you the position of <strong>{{ $user['position'] }}</strong> on our team!</p>
 
                 <p><strong>Package Details:</strong></p>
                 <ul style="padding-left: 20px; margin: 0;">

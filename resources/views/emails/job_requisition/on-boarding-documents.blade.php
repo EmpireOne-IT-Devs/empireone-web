@@ -64,7 +64,7 @@
             <div class="content">
                 <p>
                     This is an automated notification to inform you that
-                    <strong>{{ $user['user']['name'] }}</strong> has a onboarding documents ready to be signed
+                    <strong>{{ $user['user']['name'] }}</strong> has onboarding documents ready to be signed
                     for the position of
                     <strong>{{ $user['job_posting']['job_requisition']['title'] }}</strong>.
                 </p>

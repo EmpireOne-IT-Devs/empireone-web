@@ -39,7 +39,7 @@ export default function AgreeSection({ data }) {
                     onClick={submit_contract_agreement}
                     disabled={loading}
                 >
-                    I Agree The Contract
+                    I Agree
                 </Button>
             </div>
         </>
