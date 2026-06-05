@@ -1,6 +1,7 @@
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
+import Dropdown from "@/Components/Dropdown";
 import React from "react";
 
 export default function PersonalInformationSection({
@@ -60,8 +61,7 @@ export default function PersonalInformationSection({
                     {...register("birth_place", {
                         required: true,
                     })}
-                    error={errors.birth_place}
-                    placeholder="San Carlos City, Philippines"
+                    error={errors.birth_place}  
                 />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -232,13 +232,20 @@ export default function PersonalInformationSection({
                     </div>
 
                     <div className="flex flex-col w-full md:flex-1">
-                        <Input
+                        <Select
                             label="Source"
                             name="source"
                             value={watchedValues.source}
                             {...register("source")}
-                            placeholder="e.g. LinkedIn, Facebook, Referral"
-                            disabled
+                            options={[
+                                { value: "Facebook", label: "Facebook" },
+                                { value: "LinkedIn", label: "LinkedIn" },
+                                { value: "Online Application", label: "Online Application" },
+                                { value: "Referral", label: "Referral" },
+                                { value: "Job Fair", label: "Job Fair" },
+                                { value: "Walk-in", label: "Walk-in" },
+                                { value: "Other", label: "Other" },
+                            ]}
                         />
                     </div>
                 </div>

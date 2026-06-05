@@ -59,6 +59,7 @@ const TalentApplicationForm = () => {
             marital_status: "",
             cv: [],
             file: null,
+            source: source,
             job_posting_id: job_posting_id ?? savedData.job_posting_id,
             ...savedData, // ✅ restore saved values
         },
@@ -81,9 +82,6 @@ const TalentApplicationForm = () => {
                     "job_posting_id",
                     job_posting_id ?? savedData.job_posting_id,
                 );
-            }
-            if (source) {
-                setValue("source", source);
             }
         }
         load_data();
@@ -150,7 +148,7 @@ const TalentApplicationForm = () => {
         const finalData = {
             ...data,
             referral_id: referral_id,
-            source: source,
+            source: data.source || source,
             position: position,
             interviewer_id: interviewer.interviewer_id,
         };

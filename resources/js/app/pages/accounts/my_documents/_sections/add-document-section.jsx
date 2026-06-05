@@ -230,7 +230,7 @@ export default function AddDocumentSection() {
                         {/* SUBMIT */}
                         <div className=" overflow-hidden">
                             <Button
-                                outlined
+                                
                                 name="submit"
                                 type="submit"
                                 loading={isSubmitting}

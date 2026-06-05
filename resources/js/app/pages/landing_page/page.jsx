@@ -22,7 +22,7 @@ export default function Page() {
                 </div>
 
                 <CareerSection />
-                <DeveloperSection />
+                {/* <DeveloperSection /> */}
                 {/* <ServicesSection /> */}
                 <AboutSection />
                 <TestimonialSection />

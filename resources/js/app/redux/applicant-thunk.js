@@ -9,9 +9,9 @@ import {
 } from "../services/job-offer-service";
 import { applicantSlice } from "./applicant-slice";
 
-export function get_job_offer_by_user_thunk() {
+export function get_job_offer_by_user_thunk(params = {}) {
     return async function (dispatch, getState) {
-        const result = await get_job_offer_by_user_service();
+        const result = await get_job_offer_by_user_service(params);
         dispatch(applicantSlice.actions.setJobOffers(result.data));
     };
 }

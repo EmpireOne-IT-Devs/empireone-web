@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export async function get_job_offer_by_user_service() {
-    return await axios.get("/api/job/get_job_offer_by_user");
+export async function get_job_offer_by_user_service(params = {}) {
+    return await axios.get("/api/job/get_job_offer_by_user", { params });
 }
 
 export async function submit_job_offer_service(data) {

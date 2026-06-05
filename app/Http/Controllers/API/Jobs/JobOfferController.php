@@ -89,9 +89,37 @@ class JobOfferController extends Controller
             'status' => 'success',
         ], 200);
     }
-    public function get_job_offer_by_user()
+    public function get_job_offer_by_user(Request $request)
     {
-        $jo = JobOffer::where('user_id', Auth::id())->with(['job_application', 'user', 'allowances'])->orderBy('id', 'desc')->get();
+        $search = $request->input('search');
+        $status = $request->input('status');
+        
+        $query = JobOffer::where('user_id', Auth::id())->with(['job_application', 'user', 'allowances']);
+
+        // Apply search filter (searching in role and position/title)
+        if ($request->filled('search') && $search) {
+            $query->where(function ($q) use ($search) {
+                // Search in role field
+                $q->where('role', 'like', "%{$search}%")
+                    // Search in user name and email
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                    // Search in job requisition title (position)
+                    ->orWhereHas('job_application.job_posting.job_requisition', function ($requisitionQuery) use ($search) {
+                        $requisitionQuery->where('title', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status') && $status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $jo = $query->orderBy('id', 'desc')->get();
+        
         return response()->json([
             'data' => $jo,
             'status' => 'success',
