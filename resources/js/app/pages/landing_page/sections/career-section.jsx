@@ -65,19 +65,16 @@ const briefcaseIcon = (
 const getTagStyle = (tag) =>
     tag === "24/7 Shift"
         ? {
-            color: "rgba(251,146,60,0.9)",
-            background: "rgba(251,146,60,0.1)",
-            border: "1px solid rgba(251,146,60,0.3)",
-        }
+              color: "rgba(251,146,60,0.9)",
+              background: "rgba(251,146,60,0.1)",
+              border: "1px solid rgba(251,146,60,0.3)",
+          }
         : {
-            color: "rgba(147,197,253,0.85)",
-            background: "rgba(59,130,246,0.1)",
-            border: "1px solid rgba(59,130,246,0.3)",
-        };
+              color: "rgba(147,197,253,0.85)",
+              background: "rgba(59,130,246,0.1)",
+              border: "1px solid rgba(59,130,246,0.3)",
+          };
 
-/* =========================
-   COMPONENTS
-========================= */
 function SkeletonCard() {
     return (
         <div className="animate-pulse rounded-2xl border border-purple-800/30 bg-[rgba(20,8,40,0.6)] p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-10">
@@ -95,7 +92,7 @@ function SkeletonCard() {
 
 function JobCard({ id, title, tags, onApply, posting }) {
     const [expanded, setExpanded] = useState(false);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const req = posting?.job_requisition;
 
     return (
@@ -108,7 +105,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
             <div className="flex flex-row items-start justify-between gap-4">
                 {/* LEFT CONTENT */}
                 <div className="flex flex-col gap-3 min-w-0">
-                    <p className="text-base font-bold text-purple-100 leading-snug uppercase tracking-wide">
+                    <p className="text-2xl font-bold text-purple-100 leading-snug uppercase tracking-wide">
                         {title}
                     </p>
                     <div className="flex flex-wrap gap-2">

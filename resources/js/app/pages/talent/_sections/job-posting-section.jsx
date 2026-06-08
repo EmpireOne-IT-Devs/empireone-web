@@ -82,30 +82,27 @@ export default function JobPostingSection({ onApply, setStep }) {
                                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                                     {/* Left */}
                                     <div className="flex flex-col gap-2 min-w-0">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                        <h1 className="text-xl font-bold text-gray-800  uppercase">
+                                            {res.job_requisition.title}
+                                        </h1>
+                            
+                                        <div className="flex flex-wrap gap-3 text-md text-gray-500 mt-1">
+                                            <span className="flex items-center gap-1.5">
                                                 <Briefcase className="w-3 h-3" />
                                                 {
                                                     res.job_requisition
                                                         .employment_type
                                                 }
                                             </span>
-                                           
-                                        </div>
-
-                                        <h1 className="text-xl sm:text-2xl font-extrabold text-gray-800 leading-tight">
-                                            {res.job_requisition.title}
-                                        </h1>
-
-                                        <div className="flex flex-wrap gap-3 text-sm text-gray-500">
                                             <span className="flex items-center gap-1.5">
-                                                <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                                                <MapPin className="w-3.5 h-3.5" />
                                                 {
                                                     res.job_requisition.location
                                                         .name
                                                 }
                                             </span>
-                                           
+                                            
+
                                             {res.job_requisition.created_at && (
                                                 <span className="flex items-center gap-1.5">
                                                     <Clock className="w-3.5 h-3.5 text-gray-400" />
