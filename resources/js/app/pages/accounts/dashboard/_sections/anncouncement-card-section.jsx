@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Megaphone, Heart, AlertTriangle, ChevronRight, Sparkles } from "lucide-react";
+import {
+    Megaphone,
+    Heart,
+    AlertTriangle,
+    ChevronRight,
+    Sparkles,
+} from "lucide-react";
 
 const announcements = [
     {
@@ -40,25 +46,20 @@ export default function AnnouncementCardSection() {
     return (
         <div className="rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden">
             {/* Header */}
-            <div className="relative px-5 pt-5 pb-4 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-400 border-b border-gray-100" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
-                <div className="relative flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                            <Sparkles size={15} className="text-white" />
-                        </div>
-                        <div>
-                            <p className="text-white font-bold text-sm tracking-wide">Announcements</p>
-                            <p className="text-white/70 text-xs">{announcements.length} active alerts</p>
-                        </div>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center">
+                        <Sparkles size={15} className="text-purple-600" />
                     </div>
-                    <span className="text-xs font-bold bg-white/90 backdrop-blur-sm text-orange-400 px-3 py-1 rounded-full border border-white/90">
-                        New
+                    <span className="text-sm font-bold text-gray-800">
+                        Announcements
                     </span>
                 </div>
-            </div>
 
+                <span className="text-xs font-semibold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
+                    {announcements.length} alerts
+                </span>
+            </div>  
             {/* Items */}
             <div className="flex flex-col gap-2 p-3">
                 {announcements.map((item, index) => (
@@ -67,11 +68,15 @@ export default function AnnouncementCardSection() {
                         onMouseEnter={() => setHovered(index)}
                         onMouseLeave={() => setHovered(null)}
                         className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-                            hovered === index ? "bg-gray-50 scale-[1.01]" : "bg-white"
+                            hovered === index
+                                ? "bg-gray-50 scale-[1.01]"
+                                : "bg-white"
                         }`}
                     >
                         <div className="flex items-center gap-3">
-                            <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md ${item.glow} flex-shrink-0`}>
+                            <div
+                                className={`w-9 h-9 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md ${item.glow} flex-shrink-0`}
+                            >
                                 {item.icon}
                             </div>
                             <div>
@@ -79,15 +84,23 @@ export default function AnnouncementCardSection() {
                                     {item.title}
                                 </p>
                                 <div className="flex items-center gap-1.5 mt-1">
-                                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.tagColor}`}>
+                                    <span
+                                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.tagColor}`}
+                                    >
                                         {item.tag}
                                     </span>
-                                    <div className={`w-1 h-1 rounded-full ${item.dot}`} />
-                                    <span className="text-xs text-gray-400">{item.time}</span>
+                                    <div
+                                        className={`w-1 h-1 rounded-full ${item.dot}`}
+                                    />
+                                    <span className="text-xs text-gray-400">
+                                        {item.time}
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${hovered === index ? "bg-gray-200" : "bg-gray-100"}`}>
+                        <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${hovered === index ? "bg-gray-200" : "bg-gray-100"}`}
+                        >
                             <ChevronRight size={13} className="text-gray-500" />
                         </div>
                     </div>

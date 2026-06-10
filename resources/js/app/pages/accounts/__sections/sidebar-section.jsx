@@ -253,7 +253,6 @@ export default function SidebarSection() {
 
     return (
         <>
-            {/* Mobile sidebar */}
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
                     as="div"
