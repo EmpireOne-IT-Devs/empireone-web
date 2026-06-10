@@ -56,6 +56,7 @@ const TalentApplicationForm = () => {
             city: "",
             barangay: "",
             zip_code: "",
+            previous_employee_status: "",
             marital_status: "",
             cv: [],
             file: null,
@@ -124,6 +125,7 @@ const TalentApplicationForm = () => {
             "nationality",
             "birth_place",
             "course",
+            "previous_employee_status",
             "marital_status",
             "year_graduated",
             "degree",
@@ -141,7 +143,7 @@ const TalentApplicationForm = () => {
     };
 
     const prevStep = () => {
-        setStep((curr) => curr - 1)
+        setStep((curr) => curr - 1);
     };
 
     const onSubmit = async (data) => {
@@ -217,19 +219,27 @@ const TalentApplicationForm = () => {
                     background: "rgba(255,255,255,0.92)",
                     border: "1px solid rgba(168,85,247,0.2)",
                     backdropFilter: "blur(20px)",
-                    boxShadow: "0 0 40px rgba(168,85,247,0.12), 0 25px 60px rgba(0,0,0,0.3)",
+                    boxShadow:
+                        "0 0 40px rgba(168,85,247,0.12), 0 25px 60px rgba(0,0,0,0.3)",
                 }}
             >
                 {/* Header */}
-                <div className="px-5 pt-6 pb-5 lg:px-10 border-b" style={{ borderColor: "rgba(168,85,247,0.15)" }}>
+                <div
+                    className="px-5 pt-6 pb-5 lg:px-10 border-b"
+                    style={{ borderColor: "rgba(168,85,247,0.15)" }}
+                >
                     {/* Back button */}
                     <button
                         type="button"
                         onClick={() => router.visit("/")}
                         className="mb-5 flex items-center gap-1.5 text-xs font-semibold transition-colors duration-200"
                         style={{ color: "#9333ea" }}
-                        onMouseEnter={e => e.currentTarget.style.color = "#6b21a8"}
-                        onMouseLeave={e => e.currentTarget.style.color = "#9333ea"}
+                        onMouseEnter={(e) =>
+                            (e.currentTarget.style.color = "#6b21a8")
+                        }
+                        onMouseLeave={(e) =>
+                            (e.currentTarget.style.color = "#9333ea")
+                        }
                     >
                         ← Back to homepage
                     </button>
@@ -242,21 +252,28 @@ const TalentApplicationForm = () => {
                                 const isActive = step === idx;
                                 const isDone = step > idx;
                                 return (
-                                    <div key={label} className="flex items-center gap-3 h-10 w-full">
+                                    <div
+                                        key={label}
+                                        className="flex items-center gap-3 h-10 w-full"
+                                    >
                                         <div
                                             className="flex w-10 h-7 items-center justify-center rounded-full text-xs font-bold transition-all duration-300"
                                             style={{
                                                 background: isDone
                                                     ? "linear-gradient(135deg,#a855f7,#fb923c)"
                                                     : isActive
-                                                        ? "rgba(168,85,247,0.15)"
-                                                        : "rgba(168,85,247,0.07)",
+                                                      ? "rgba(168,85,247,0.15)"
+                                                      : "rgba(168,85,247,0.07)",
                                                 border: isActive
                                                     ? "1.5px solid rgba(168,85,247,0.8)"
                                                     : isDone
-                                                        ? "1.5px solid transparent"
-                                                        : "1.5px solid rgba(168,85,247,0.25)",
-                                                color: isDone ? "#fff" : isActive ? "#9333ea" : "rgba(120,90,160,0.6)",
+                                                      ? "1.5px solid transparent"
+                                                      : "1.5px solid rgba(168,85,247,0.25)",
+                                                color: isDone
+                                                    ? "#fff"
+                                                    : isActive
+                                                      ? "#9333ea"
+                                                      : "rgba(120,90,160,0.6)",
                                             }}
                                         >
                                             {isDone ? "✓" : idx + 1}
@@ -264,7 +281,11 @@ const TalentApplicationForm = () => {
                                         <span
                                             className="text-xs font-semibold hidden sm:block"
                                             style={{
-                                                color: isActive ? "#9333ea" : isDone ? "rgba(234,88,12,0.9)" : "rgba(120,90,160,0.45)",
+                                                color: isActive
+                                                    ? "#9333ea"
+                                                    : isDone
+                                                      ? "rgba(234,88,12,0.9)"
+                                                      : "rgba(120,90,160,0.45)",
                                             }}
                                         >
                                             {label}
@@ -272,9 +293,10 @@ const TalentApplicationForm = () => {
                                         <div
                                             className="w-[80%] h-px mx-1 hidden sm:block"
                                             style={{
-                                                background: step > idx
-                                                    ? "linear-gradient(90deg,#a855f7,#fb923c)"
-                                                    : "rgba(168,85,247,0.15)",
+                                                background:
+                                                    step > idx
+                                                        ? "linear-gradient(90deg,#a855f7,#fb923c)"
+                                                        : "rgba(168,85,247,0.15)",
                                             }}
                                         />
                                     </div>
@@ -284,7 +306,8 @@ const TalentApplicationForm = () => {
                         <span
                             className="text-xs font-bold tabular-nums"
                             style={{
-                                background: "linear-gradient(90deg,#c084fc,#fb923c)",
+                                background:
+                                    "linear-gradient(90deg,#c084fc,#fb923c)",
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent",
                             }}
@@ -302,14 +325,18 @@ const TalentApplicationForm = () => {
                             className="h-1.5 rounded-full transition-all duration-500 ease-out"
                             style={{
                                 width: `${(step / 3) * 100}%`,
-                                background: "linear-gradient(90deg,#a855f7 0%,#3b82f6 50%,#fb923c 100%)",
+                                background:
+                                    "linear-gradient(90deg,#a855f7 0%,#3b82f6 50%,#fb923c 100%)",
                                 boxShadow: "0 0 10px rgba(168,85,247,0.5)",
                             }}
                         />
                     </div>
                 </div>
 
-                <form className="p-5 lg:px-10 lg:py-8" onSubmit={handleSubmit(onSubmit)}>
+                <form
+                    className="p-5 lg:px-10 lg:py-8"
+                    onSubmit={handleSubmit(onSubmit)}
+                >
                     {step === 0 && <JobPostingSection setStep={setStep} />}
 
                     {step !== 0 && (
@@ -323,20 +350,28 @@ const TalentApplicationForm = () => {
                             <div
                                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                                 style={{
-                                    background: "linear-gradient(135deg,rgba(168,85,247,0.3),rgba(59,130,246,0.2))",
+                                    background:
+                                        "linear-gradient(135deg,rgba(168,85,247,0.3),rgba(59,130,246,0.2))",
                                     border: "1px solid rgba(168,85,247,0.3)",
                                 }}
                             >
-                                <BriefcaseIcon className="w-5 h-5" style={{ color: "#c084fc" }} />
+                                <BriefcaseIcon
+                                    className="w-5 h-5"
+                                    style={{ color: "#c084fc" }}
+                                />
                             </div>
                             <div className="leading-tight">
-                                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#9333ea" }}>
+                                <p
+                                    className="text-xs font-semibold uppercase tracking-widest"
+                                    style={{ color: "#9333ea" }}
+                                >
                                     Applying for
                                 </p>
                                 <p
                                     className="text-lg font-bold uppercase tracking-wide"
                                     style={{
-                                        background: "linear-gradient(90deg,#c084fc 0%,#93c5fd 55%,#fb923c 100%)",
+                                        background:
+                                            "linear-gradient(90deg,#c084fc 0%,#93c5fd 55%,#fb923c 100%)",
                                         WebkitBackgroundClip: "text",
                                         WebkitTextFillColor: "transparent",
                                     }}

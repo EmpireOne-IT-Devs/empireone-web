@@ -30,6 +30,7 @@ class AccountContractController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'birth_place' => $request->birth_place,
             'nationality' => $request->nationality,
+            'previous_employee_status' => $request->previous_employee_status,
             'marital_status' => $request->marital_status,
             'region' => $request->region,
             'province' => $request->province,

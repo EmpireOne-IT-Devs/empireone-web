@@ -61,29 +61,23 @@ export default function PersonalInformationSection({
                     {...register("birth_place", {
                         required: true,
                     })}
-                    error={errors.birth_place}  
+                    error={errors.birth_place}
                 />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col flex-1 w-full">
                     <Select
-                        label="Marital Status"
-                        name="marital_status"
-                        {...register("marital_status", {
+                        label="Have you previously worked for EmpireOne?"
+                        name="previous_employee_status"
+                        {...register("previous_employee_status", {
                             required: true,
                         })}
                         options={[
-                            { value: "Single", label: "Single" },
-                            { value: "Married", label: "Married" },
-                            { value: "Widowed", label: "Widowed" },
-                            { value: "Separated", label: "Separated" },
-                            { value: "Divorced", label: "Divorced" },
-                            { value: "Annulled", label: "Annulled" },
-                            { value: "Other", label: "Other" },
+                            { value: "No", label: "No" },
+                            { value: "Yes", label: "Yes" },
                         ]}
-                        error={errors.marital_status}
-                        value={watchedValues.marital_status}
-                        required
+                        error={errors.previous_employee_status}
+                        value={watchedValues.previous_employee_status}
                     />
                 </div>
                 <div className="flex flex-col flex-1 w-full">
@@ -240,7 +234,10 @@ export default function PersonalInformationSection({
                             options={[
                                 { value: "Facebook", label: "Facebook" },
                                 { value: "LinkedIn", label: "LinkedIn" },
-                                { value: "Online Application", label: "Online Application" },
+                                {
+                                    value: "Online Application",
+                                    label: "Online Application",
+                                },
                                 { value: "Referral", label: "Referral" },
                                 { value: "Job Fair", label: "Job Fair" },
                                 { value: "Walk-in", label: "Walk-in" },

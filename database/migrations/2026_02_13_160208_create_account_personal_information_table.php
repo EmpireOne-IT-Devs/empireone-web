@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('date_of_birth')->nullable();
             $table->string('birth_place')->nullable();
             $table->string('nationality')->nullable();
+            $table->string('previous_employee_status')->nullable();
             $table->string('marital_status')->nullable();
             $table->string('contact')->nullable();
             // address

@@ -317,6 +317,7 @@ class JobApplicationController extends Controller
                 'date_of_birth' => $request->date_of_birth ?? null,
                 'birth_place' => $request->birth_place ?? null,
                 'nationality' => $request->nationality ?? null,
+                'previous_employee_status' => $request->previous_employee_status ?? null,
                 'marital_status' => $request->marital_status ?? null,
                 'contact' => $request->contact ?? null,
                 'school_name' => $request->school_name ?? null,
