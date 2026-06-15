@@ -1,14 +1,18 @@
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
+import Radio from "@/app/_components/radio";
 import Select from "@/app/_components/select";
 import Dropdown from "@/Components/Dropdown";
 import React from "react";
+import { useSelector } from "react-redux";
 
 export default function PersonalInformationSection({
     register,
     errors,
     watchedValues,
 }) {
+    const { departments } = useSelector((store) => store.departments);
+    console.log("departments", departments);
     return (
         <div className="space-y-6">
             <h2
@@ -66,19 +70,51 @@ export default function PersonalInformationSection({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col flex-1 w-full">
-                    <Select
-                        label="Have you previously worked for EmpireOne?"
-                        name="previous_employee_status"
-                        {...register("previous_employee_status", {
-                            required: true,
-                        })}
-                        options={[
-                            { value: "No", label: "No" },
-                            { value: "Yes", label: "Yes" },
-                        ]}
-                        error={errors.previous_employee_status}
-                        value={watchedValues.previous_employee_status}
-                    />
+                    <div className="flex flex-col flex-1 w-full">
+                        <label className="text-sm font-medium mb-2">
+                            Have you previously worked for EmpireOne?
+                        </label>
+                        <div className="flex gap-4">
+                            <Radio
+                                label="Yes"
+                                value="Yes"
+                                {...register("previous_employee_status", {
+                                    required: true,
+                                })}
+                            />
+                            <Radio
+                                label="No"
+                                value="No"
+                                {...register("previous_employee_status", {
+                                    required: true,
+                                })}
+                            />
+                        </div>
+                        {errors.previous_employee_status && (
+                            <span className="text-red-500 text-sm">
+                                This field is required.
+                            </span>
+                        )}
+
+                        {watchedValues.previous_employee_status === "Yes" && (
+                            <div className="mt-4">
+                                <Select
+                                    label="What department did you work for?"
+                                    {...register("department", {
+                                        required:
+                                            "Please specify the department.",
+                                    })}
+                                    options={departments.map((res) => ({
+                                        ...res,
+                                        label: res.name,
+                                        value: res.id,
+                                    }))}
+                                    error={errors.department}
+                                    value={watchedValues.department}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className="flex flex-col flex-1 w-full">
                     <Input

@@ -38,10 +38,7 @@ export default function ApplicantTableSection() {
             header: "Recruiter",
             accessor: "recruiter",
         },
-        // {
-        //     header: "Applied At",
-        //     accessor: "applied_at",
-        // },
+
         {
             header: "Screening Status",
             accessor: "screening_status",
@@ -77,15 +74,18 @@ export default function ApplicantTableSection() {
         return screeningMatch && interviewMatch && finalMatch;
     });
 
-    console.log('filteredApplications', filteredApplications)
+    console.log("filteredApplications", filteredApplications);
 
     const tableData = filteredApplications?.map((res) => ({
-        name: <div className="flex gap-1">
-            {
-                res?.applicant?.account_employee?.employee_id && <FcApproval className="text-xl" />
-            }
-            {res?.applicant?.name}
-        </div>,
+        name: (
+            <div className="flex items-center gap-2">
+                <span>{res?.applicant?.name}</span>
+
+                {res?.previous_employee_status === "Yes" && (
+                    <Badge>Former Employee</Badge>
+                )}
+            </div>
+        ),
         position: res?.job_posting?.job_requisition?.title,
         recruiter: res?.job_posting?.job_requisition?.recruiter?.name,
         applied_at: moment(res.created_at).format("LLL"),
@@ -100,21 +100,22 @@ export default function ApplicantTableSection() {
         ),
         action: (
             <div className="flex gap-3">
-                {(res?.user.role == '3' && (res.final_status == "Passed" || res.final_status == "Pooled")) && (
-                    <SendJobOfferSection data={res} />
-                )}
+                {res?.user?.role == "3" &&
+                    (res.final_status == "Passed" ||
+                        res.final_status == "Pooled") && (
+                        <SendJobOfferSection data={res} />
+                    )}
                 {res.final_status === "Declined Job Offer" && (
                     <>
                         <ResendJobOfferSection data={res} />
                     </>
                 )}
 
-                {res?.final_status ==
-                    "Accepted Job Offer" && (
-                        <>
-                            <SendDocumentsSection data={res} />
-                        </>
-                    )}
+                {res?.final_status == "Accepted Job Offer" && (
+                    <>
+                        <SendDocumentsSection data={res} />
+                    </>
+                )}
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),

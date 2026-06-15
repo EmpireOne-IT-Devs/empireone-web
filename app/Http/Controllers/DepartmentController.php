@@ -13,18 +13,10 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::withCount('users')->get();
+        $departments = Department::get();
 
-        // Transform the data to match the frontend structure
-        $departmentsData = $departments->map(function ($department) {
-            return [
-                'id' => $department->id,
-                'name' => $department->name,
-                'userCount' => $department->users_count,
-            ];
-        });
 
-        return response()->json($departmentsData);
+        return response()->json($departments);
     }
 
     /**

@@ -125,6 +125,7 @@ const TalentApplicationForm = () => {
             "nationality",
             "birth_place",
             "course",
+            "department_id",
             "previous_employee_status",
             "marital_status",
             "year_graduated",

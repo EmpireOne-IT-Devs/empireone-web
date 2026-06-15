@@ -52,8 +52,8 @@ export default function FinalReviewSection({
                             {moment(watchedValues.date_of_birth).format("LL")}
                         </p>
                         <p>
-                            <strong style={{ color: "#6b7280" }}>Marital Status: </strong>
-                            {watchedValues.marital_status}
+                            <strong style={{ color: "#6b7280" }}>Previous designation: </strong>
+                            {watchedValues.department_id === "other" ? watchedValues.other_department : watchedValues.department}
                         </p>
                            <p>
                             <strong style={{ color: "#6b7280" }}>Previously of EmpireOne: </strong>
