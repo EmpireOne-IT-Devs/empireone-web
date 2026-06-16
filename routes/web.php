@@ -122,17 +122,13 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             // Route::inertia('/none_regularization', 'accounts/my_team/none_regularization/page');
         });
 
-        Route::prefix('activities')->group(function () {
-            Route::inertia('/', 'accounts/_administrator/activities/view/page');
-            Route::prefix('manage_content')->group(function () {
-                Route::inertia('/', 'accounts/_administrator/activities/manage_content/page');
-                Route::inertia('/announcement', 'accounts/_administrator/activities/manage_content/announcement/page');
-                Route::inertia('/activities', 'accounts/_administrator/activities/manage_content/activities/page');
-                Route::inertia('/news', 'accounts/_administrator/activities/manage_content/news/page');
-                Route::inertia('/events', 'accounts/_administrator/activities/manage_content/events/page');
-            });
-        });
-
+      Route::prefix('activities')->group(function () {
+    Route::inertia('/home', 'accounts/_administrator/activities/home/page');
+    Route::inertia('/company_newsfeed', 'accounts/_administrator/activities/company_newsfeed/page');
+    Route::inertia('/events_calendar', 'accounts/_administrator/activities/events_calendar/page');
+    Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
+  
+});
         Route::prefix('ticketing')->group(function () {
             Route::inertia('/', 'accounts/_administrator/ticketing/dashboard/page');
             Route::inertia('/my_tickets', 'accounts/_administrator/ticketing/my_tickets/page');
