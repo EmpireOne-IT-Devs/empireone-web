@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Image, Video, BarChart3, User, Send } from "lucide-react";
-import Card from "@/app/_components/card";
 
 export default function CreatePostCardSection() {
     const [text, setText] = useState("");
@@ -15,11 +14,7 @@ export default function CreatePostCardSection() {
     };
 
     return (
-        <div className="w-full">
-            <Card 
-                padding="p-4" 
-                className="w-full font-sans flex flex-col gap-3 cursor-default"
-            >
+        <div className="w-full font-sans flex flex-col gap-3">
                 <form onSubmit={handleSubmit}>
                     {/* Top Row: Avatar and Input */}
                     <div className="flex items-center gap-3">
@@ -79,7 +74,6 @@ export default function CreatePostCardSection() {
                         )}
                     </div>
                 </form>
-            </Card>
         </div>
     );
 }

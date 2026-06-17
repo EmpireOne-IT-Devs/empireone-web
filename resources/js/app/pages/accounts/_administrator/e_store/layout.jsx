@@ -1,6 +1,8 @@
 import Tabs from "@/app/_components/tabs";
 import { router } from "@inertiajs/react";
 import React, { useState } from "react";
+import HeaderSection from "./_sections/header-section";
+import StatisticCardSection from "./_sections/statistic-card-section";
 
 export default function StoreAdminLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
@@ -8,24 +10,26 @@ export default function StoreAdminLayout({ children }) {
 
     const tabs = [
         {
-            label: "Analytics",
-            path: "/accounts/administrator/e_store/analytics",
-            active: path == "analytics",
+            label: "Rewards Items",
+            path: "/accounts/administrator/e_store/rewards_items",
+            active: path == "rewards_items",
         },
+
         {
             label: "Redemption History",
             path: "/accounts/administrator/e_store/redemption_history",
             active: path == "redemption_history",
         },
         {
-            label: "Rewards Items",
-            path: "/accounts/administrator/e_store/rewards_items",
-            active: path == "rewards_items",
+            label: "Analytics",
+            path: "/accounts/administrator/e_store/analytics",
+            active: path == "analytics",
         },
-     
     ];
     return (
         <div>
+            <HeaderSection />
+            <StatisticCardSection />
             <Tabs tabs={tabs} activeIndex={activeTab} />
             <div className="p-3">{children}</div>
         </div>

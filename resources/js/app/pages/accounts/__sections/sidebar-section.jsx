@@ -156,7 +156,7 @@ export default function SidebarSection() {
                       href: `/accounts/${account_role}/e_store/rewards_items`,
                       icon: FcShop,
                       current: path == "e_store",
-                      is_incoming: true,
+                      is_incoming: false,
                   },
                   {
                       name: "Time Keeping",
