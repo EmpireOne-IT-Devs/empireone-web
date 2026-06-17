@@ -9,10 +9,14 @@ export default function ActivitiesLayout({ children }) {
 
     
     return (
-        <div>
-            <HeaderSection />
-            <TabsSection />
-            <div className="p-3">{children}</div>
+        <div className="flex flex-col h-screen">
+            <div className="sticky top-0 z-50">
+                <HeaderSection />
+                <TabsSection />
+            </div>
+            <div className="flex-1 min-h-0 p-3">
+                {children}
+            </div>
         </div>
     );
 }

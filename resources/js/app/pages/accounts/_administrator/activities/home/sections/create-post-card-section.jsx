@@ -15,10 +15,10 @@ export default function CreatePostCardSection() {
     };
 
     return (
-        <div className="flex justify-center items-center bg-gray-100 p-6">
+        <div className="w-full">
             <Card 
                 padding="p-4" 
-                className="w-full max-w-2xl font-sans flex flex-col gap-3 cursor-default"
+                className="w-full font-sans flex flex-col gap-3 cursor-default"
             >
                 <form onSubmit={handleSubmit}>
                     {/* Top Row: Avatar and Input */}
