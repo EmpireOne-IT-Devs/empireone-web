@@ -59,6 +59,12 @@ return new class extends Migration
             // Job Details
             $table->string('type')->nullable();
             $table->string('title')->nullable();
+            $table->enum('position_level', [
+                'Rank and File',
+                'Supervisor',
+                'Manager',
+                'Executive',
+            ])->default('Rank and File');
             $table->enum('employment_type', [
                 'Full-time',
                 'Part-time',

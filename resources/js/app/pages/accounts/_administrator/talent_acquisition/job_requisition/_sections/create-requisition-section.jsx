@@ -60,6 +60,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             qualifications: "",
             responsibilities: "",
             approver1_id: "",
+            position_level: 'Rank and File',
             approver2_id: 517,
             approver3_id: 3,
         },
@@ -508,7 +509,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <Controller
                                         name="erf_classification"
                                         control={control}
@@ -578,7 +579,44 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             />
                                         )}
                                     />
+                                    <Controller
+                                        name="position_level"
+                                        control={control}
+                                        rules={{
+                                            required:
+                                                "Position Level is required",
+                                        }}
+                                        render={({ field }) => (
+                                            <Select
+                                                {...field}
+                                                label="Position Level"
+                                                options={[
+                                                    {
+                                                        value: "Rank and File",
+                                                        label: "Rank and File",
+                                                    },
+                                                    {
+                                                        value: "Supervisor",
+                                                        label: "Supervisor",
+                                                    },
+                                                    {
+                                                        value: "Manager",
+                                                        label: "Manager",
+                                                    },
+                                                    {
+                                                        value: "Executive",
+                                                        label: "Executive",
+                                                    },
+                                                ]}
+                                                error={
+                                                    errors.position_level
+                                                        ?.message
+                                                }
+                                            />
+                                        )}
+                                    />
                                 </div>
+
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <Controller

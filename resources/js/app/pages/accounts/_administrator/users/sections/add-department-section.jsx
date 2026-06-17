@@ -2,7 +2,7 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import { setAlert } from "@/app/redux/app-slice";
-import { create_department_service_thunk } from "@/app/redux/department-slice";
+// import { create_department_service_thunk } from "@/app/redux/department-slice";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -24,7 +24,7 @@ export default function AddDepartmentSection() {
     async function onSubmit(data) {
         try {
             console.log("Form data:", data);
-            await dispatch(create_department_service_thunk(data)).unwrap();
+            // await dispatch(create_department_service_thunk(data)).unwrap();
             dispatch(
                 setAlert({
                     type: "success",

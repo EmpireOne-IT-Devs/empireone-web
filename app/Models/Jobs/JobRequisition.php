@@ -56,6 +56,7 @@ class JobRequisition extends Model
         'justification_for_position',
         'qualifications',
         'responsibilities',
+        'position_level',
 
         // Status
         'status'

@@ -54,7 +54,7 @@ return new class extends Migration
                 'Supervisor',
                 'Manager',
                 'Executive',
-            ])->nullable();
+            ])->default('Rank and File');
             $table->string('basic_pay')->nullable();
             $table->string('allowance')->nullable();
             $table->enum('status', [

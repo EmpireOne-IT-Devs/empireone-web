@@ -82,7 +82,6 @@ class AccountPersonalInformationController extends Controller
         $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee'])->first();
         $requiredFields = collect([
             'first_name',
-            'middle_name',
             'last_name',
             'gender',
             'date_of_birth',
