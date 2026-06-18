@@ -1,0 +1,1 @@
+import{j as e}from"./app-DMQ1k6B6.js";function t(){return e.jsxs("div",{className:"bg-gray-100 px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"The Engagement Floor"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Create and manage company news, events calendar, and department showcases"})]})}export{t as default};

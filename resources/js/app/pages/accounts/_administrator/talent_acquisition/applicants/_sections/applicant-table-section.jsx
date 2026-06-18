@@ -97,7 +97,8 @@ export default function ApplicantTableSection() {
         ),
         action: (
             <div className="flex gap-3">
-                {res?.user?.role == "3" &&
+                {
+                    // res?.user?.role == "3" &&
                     (res.final_status == "Passed" ||
                         res.final_status == "Pooled") && (
                         <SendJobOfferSection data={res} />
