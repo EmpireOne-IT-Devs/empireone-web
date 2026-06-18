@@ -60,7 +60,7 @@ export const update_activity_post_thunk = createAsyncThunk(
     "activities/updateActivityPost",
     async ({ id, data }, { rejectWithValue }) => {
         try {
-            const response = await update_activity_post_service(id, data);
+            await update_activity_post_service(id, data);
             return { id, data };
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
