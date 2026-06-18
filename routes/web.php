@@ -51,7 +51,7 @@ Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->group(function () {
     Route::get('/talent/{job_interview_id}/ai_interview', function () {
         return Inertia::render('accounts/ai_interview/page');
     });
@@ -81,7 +81,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::inertia('/job_offers/{id}', 'accounts/job_offers/id/page');
 
             // My Profile Sub-group
-            Route::prefix('my_profile')->group(function () {
+            Route::prefix('my_profile')->withoutMiddleware(['info.complete'])->group(function () {
                 Route::inertia('/', 'accounts/my_profile/page');
                 Route::inertia('/signature', 'accounts/my_profile/signature/page');
             });
@@ -122,20 +122,20 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             // Route::inertia('/none_regularization', 'accounts/my_team/none_regularization/page');
         });
 
-      Route::prefix('activities')->group(function () {
-        Route::redirect('/', '/accounts/administrator/activities/home');
-        Route::inertia('/home', 'accounts/_administrator/activities/home/page');
-        Route::inertia('/company_newsfeed', 'accounts/_administrator/activities/company_newsfeed/page');
-        Route::inertia('/events_calendar', 'accounts/_administrator/activities/events_calendar/page');
-        Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
-      });
+        Route::prefix('activities')->group(function () {
+            Route::redirect('/', '/accounts/administrator/activities/home');
+            Route::inertia('/home', 'accounts/_administrator/activities/home/page');
+            Route::inertia('/company_newsfeed', 'accounts/_administrator/activities/company_newsfeed/page');
+            Route::inertia('/events_calendar', 'accounts/_administrator/activities/events_calendar/page');
+            Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
+        });
 
         Route::prefix('e_store')->group(function () {
             Route::redirect('/', '/accounts/administrator/e_store/rewards_items');
             Route::inertia('/rewards_items', 'accounts/_administrator/e_store/rewards_item/page');
             Route::inertia('/redemption_history', 'accounts/_administrator/e_store/redemption_history/page');
             Route::inertia('/analytics', 'accounts/_administrator/e_store/analytics/page');
-        }); 
+        });
         Route::prefix('ticketing')->group(function () {
             Route::inertia('/', 'accounts/_administrator/ticketing/dashboard/page');
             Route::inertia('/my_tickets', 'accounts/_administrator/ticketing/my_tickets/page');

@@ -103,6 +103,11 @@ class AccountContractController extends Controller
                 'position' => $request->position ?? null,
                 'eogs_email' => $request->eogs_email ?? null,
                 'status' => $request->status ?? null,
+                'e_r_leader_id' => $request->e_r_leader_id ?? null,
+                'started_at' => $request->started_at ?? null,
+                'position_level' => $request->position_level ?? null,
+                'basic_pay' => $request->basic_pay ?? null,
+                'allowance' => $request->allowance ?? null,
             ]
         );
         // 🔥 Delete experiences not in request

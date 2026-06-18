@@ -12,6 +12,26 @@ Talent Aquisition Table need to clear
 
 
 
+
+
+need to complete to create ERF
+
+employee_id
+started_at 
+position_level
+e_r_leader_id
+account_id
+position
+eogs email
+basic_pay
+allowance
+status
+
+
+
+
+
+
 Application: [Job Title] - [First Name] [Last Name]
 
 2026-04-30

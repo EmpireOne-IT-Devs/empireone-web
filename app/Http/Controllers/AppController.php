@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Account\AccountEmployee;
 use App\Models\Department;
+use App\Models\ER\ERLeader;
 use App\Models\ER\ERPerformanceEvaluationForm;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
@@ -110,12 +111,24 @@ class AppController extends Controller
         $total_job_opening = JobPosting::whereIn('target_audience', ['Internal', 'Both'])->count();
         $total_application_submitted = JobApplication::where('user_id', $user->id)->count();
         $total_job_offer = JobOffer::where('user_id', $user->id)->count();
+
+        // 1. Extract the ID first to avoid calling Auth deeply inside closures
+        $location_id = Auth::user()->account_employee->location_id;
+
+        // 2. Build and execute the query using dot notation
+        $leaders = ERLeader::with('user')
+            ->whereHas('user.account_employee', function ($query) use ($location_id) {
+                $query->where('location_id', $location_id);
+            })
+            ->get();
+
         return response()->json([
             'user' => $userArray,
             'profile_percent' => $percent, // Renamed slightly for clarity
             'departments' => $departments,
             'locations' => $locations,
             'sites' => $sites,
+            'leaders' => $leaders,
             'position' => $position,
             'accounts' => $accounts,
             'dashboard' => [

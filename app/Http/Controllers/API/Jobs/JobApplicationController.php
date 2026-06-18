@@ -37,18 +37,27 @@ class JobApplicationController extends Controller
         // Decode Base64
         return base64_decode($data);
     }
-    public function employee_applicants()
+    public function employee_applicants(Request $request)
     {
         $applications = JobApplication::where([
             ['interview_status', '=', 'Passed'],
             ['final_status', '=', 'Passed']
         ])
             ->with(['job_posting', 'applicant', 'user', 'change_form'])
-            ->whereHas('user', function ($query) {
+            ->whereHas('user', function ($query) use ($request) {
                 $query->whereIn('role', [1, 2]);
+
+                // Check if employee_id is present in the request
+                if ($request->filled('employee_id')) {
+                    // Since account_employee is likely a relationship on the User model,
+                    // you need a nested whereHas to query its columns.
+                    $query->whereHas('account_employee', function ($subQuery) use ($request) {
+                        $subQuery->where('employee_id', $request->employee_id);
+                    });
+                }
             })
             ->get();
-
+            
         return response()->json([
             'data' => $applications,
             'status' => 'success',
@@ -535,7 +544,12 @@ class JobApplicationController extends Controller
 
     public function applicants()
     {
-        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer', 'user'])->paginate();
+        $locationId = Auth::user()->account_employee->location_id;
+        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer', 'user'])
+            ->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+                $query->where('location_id', $locationId);
+            })
+            ->paginate();
         return response()->json([
             'data' => $applications,
             'status' => 'success',

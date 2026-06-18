@@ -5,7 +5,7 @@ export async function get_applicants_service() {
 }
 
 export async function get_employee_applicants_service() {
-    return await axios.get("/api/job/employee_applicants");
+    return await axios.get(`/api/job/employee_applicants${window.location.search}`);
 }
 
 
