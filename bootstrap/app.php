@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
         $middleware->alias([
+            'info.complete' => \App\Http\Middleware\EnsureAccountEmployeeComplete::class,
             'role.redirect' => \App\Http\Middleware\RedirectByRole::class,
         ]);
         //

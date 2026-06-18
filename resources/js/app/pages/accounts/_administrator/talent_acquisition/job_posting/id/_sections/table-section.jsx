@@ -5,12 +5,12 @@ import { useSelector } from "react-redux";
 import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import EditStatusSection from "./edit-status-section";
 import Button from "@/app/_components/button";
-import AddInterviewSchedule from "./add-interview-schedule";
-import { Calendar } from "lucide-react";
-import TransferApplicant from "./transfer-applicant";
 import SendJobOfferSection from "./send-job-offer-section";
 import ResendJobOfferSection from "./resend-job-offer-section";
 import SendDocumentsSection from "./send-documents-section";
+import { FcApproval, FcButtingIn } from "react-icons/fc";
+import Tooltip from "@/app/_components/tooltip";
+import { router } from "@inertiajs/react";
 
 export default function TableSection() {
     const [openModal, setOpenModal] = useState(false);
@@ -72,7 +72,24 @@ export default function TableSection() {
     );
 
     const tableData = filteredApplications?.map((res) => ({
-        name: res?.applicant?.name,
+        // name: res?.applicant?.name,
+        name: (
+            <div className="flex items-center gap-2">
+                <Tooltip
+                    title="Current Employee"
+                >
+                    {
+                        res?.applicant?.account_employee?.employee_id && <FcApproval className="text-2xl" />
+                    }
+                </Tooltip>
+                <Tooltip
+                    title={`Former employee in the ${res?.applicant?.personal_information?.previous_employee_status}`}
+                >
+                    {res?.applicant?.personal_information?.previous_employee_status && <FcButtingIn className="text-2xl" />}
+                </Tooltip>
+                <span>{res?.applicant?.name}</span>
+            </div>
+        ),
         email: res?.applicant?.email,
         contact: res?.applicant?.personal_information?.contact,
         applied_at: moment(res.created_at).format("LLL"),
@@ -87,10 +104,10 @@ export default function TableSection() {
         ),
         action: (
             <div className="flex gap-3">
-                {(res.final_status == "Passed" ||
+                {res?.user?.role == "3" && (res.final_status == "Passed" ||
                     res.final_status == "Pooled") && (
-                    <SendJobOfferSection data={res} />
-                )}
+                        <SendJobOfferSection data={res} />
+                    )}
                 {res.final_status === "Declined Job Offer" && (
                     <>
                         <ResendJobOfferSection data={res} />
@@ -101,18 +118,24 @@ export default function TableSection() {
                         <SendDocumentsSection data={res} />
                     </>
                 )}
-
+                {
+                    (res.final_status == "Passed" && res?.applicant?.account_employee?.employee_id) && <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => router.visit(`/accounts/administrator/human_resources/employee_movements/assessment_process/promotions?employee_id=${res?.applicant?.account_employee?.employee_id}`)}
+                    >
+                        CREATE&nbsp;ERF
+                    </Button>
+                }
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),
     }));
     return (
-        <div>
-            <Table columns={columns} data={tableData} />
-            <AddInterviewSchedule
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-            />
-        </div>
+        <>
+            <div className="flex flex-col gap-3">
+                <Table columns={columns} data={tableData} />
+            </div>
+        </>
     );
 }

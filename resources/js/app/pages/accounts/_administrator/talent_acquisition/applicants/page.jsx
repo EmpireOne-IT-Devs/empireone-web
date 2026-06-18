@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import Layout from "../../../layout";
 import JobPostingLayout from "../layout";
-import HeaderSection from "./_sections/header-section";
+// import HeaderSection from "./_sections/header-section";
 import CardSection from "./_sections/card-section";
-import SearchSection from "./_sections/search-section";
+// import SearchSection from "./_sections/search-section";
 import store from "../../../../../store/store";
 import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import ApplicantTableSection from "./_sections/applicant-table-section";
@@ -20,7 +20,7 @@ export default function Page() {
         <Layout>
             <JobPostingLayout>
                 <div className="flex flex-col gap-3">
-                    <HeaderSection />
+                    {/* <HeaderSection /> */}
                     <CardSection />
 
                     <SearchStatusSection />

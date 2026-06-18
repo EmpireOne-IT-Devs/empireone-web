@@ -14,6 +14,7 @@ import EmergencyContactSection from "./emergency-contact-section";
 import EmployeeInformationSection from "./employee-information-section";
 import store from "@/app/store/store";
 import { get_app_data_thunk } from "@/app/redux/app-thunk";
+import moment from "moment";
 
 const TAB_IDS = [
     "personal",
@@ -83,6 +84,13 @@ export default function InfoTabsSection() {
         if (data?.user?.personal_information) {
             reset({
                 ...data?.user?.personal_information,
+                e_r_leader_id: data?.user?.account_employee?.e_r_leader_id,
+                started_at: data?.user?.account_employee?.started_at
+                    ? moment(data.user.account_employee.started_at).format('YYYY-MM-DD')
+                    : '',
+                position_level: data?.user?.account_employee?.position_level,
+                basic_pay: data?.user?.account_employee?.basic_pay,
+                allowance: data?.user?.account_employee?.allowance,
                 employee_id: data?.user?.account_employee?.employee_id,
                 department_id: data?.user?.account_employee?.department_id,
                 account_id: data?.user?.account_employee?.account_id,
@@ -104,6 +112,7 @@ export default function InfoTabsSection() {
     const onSubmit = async (data) => {
         const finalData = {
             ...data,
+            started_at: moment(data.started_at).format('LL'),
             region: getName(regions, data.region),
             province: getName(provinces, data.province),
             city: getName(cities, data.city),
@@ -135,7 +144,7 @@ export default function InfoTabsSection() {
                         <Tabs
                             tabs={tabs}
                             activeIndex={activeIndex}
-                            onTabClick={() => {}}
+                            onTabClick={() => { }}
                         />
                     </div>
 
@@ -163,6 +172,7 @@ export default function InfoTabsSection() {
                             <EmployeeInformationSection
                                 form={formValues}
                                 register={register}
+                                errors={errors}
                                 setValue={setValue}
                             />
                         )}

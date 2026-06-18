@@ -8,6 +8,7 @@ export default function EmployeeInformationSection({
     register,
     form,
     setValue,
+    errors
 }) {
     const { data } = useSelector((store) => store.app);
     return (
@@ -22,8 +23,57 @@ export default function EmployeeInformationSection({
                         label="Employee ID"
                         name="employee_id"
                         disabled={data?.user?.account_employee?.employee_id}
-                        {...register("employee_id")}
+                        {...register("employee_id", { required: true })}
+                        error={errors.employee_id}
                         iconLeft={<Hash size={14} />}
+                    />
+
+                    <Input
+                        label="Started At"
+                        name="started_at"
+                        type="date"
+                        disabled={data?.user?.account_employee?.started_at}
+                        {...register("started_at", { required: true })}
+                        error={errors.started_at}
+                    />
+                    <Select
+                        disabled={data?.user?.account_employee?.position_level}
+                        label="Level of Position"
+                        name="position_level"
+                        value={form.position_level}
+                        options={[
+                            {
+                                label: 'Rank and File (Agent,Support Etc.)',
+                                value: 'Rank and File'
+                            }, {
+                                label: 'Supervisor',
+                                value: 'Supervisor'
+                            }, {
+                                label: 'Manager',
+                                value: 'Manager'
+                            }, {
+                                label: 'Executive',
+                                value: 'Executive'
+                            }
+                        ]?.map((res) => ({
+                            ...res,
+                            label: res.label,
+                            value: res.value,
+                        }))}
+                        onChange={(val) => setValue("position_level", val)}
+                    />
+                    <Select
+                        disabled={data?.user?.account_employee?.e_r_leader_id}
+                        label="Leader"
+                        name="e_r_leader_id"
+                        value={form.e_r_leader_id}
+                        options={data?.leaders?.map((res) => ({
+                            ...res,
+                            label: res?.user?.name,
+                            value: res.id,
+                        }))}
+                        error={errors.e_r_leader_id}
+                        onChange={(val) => setValue("e_r_leader_id", val)}
                     />
 
                     <Select
@@ -38,8 +88,10 @@ export default function EmployeeInformationSection({
                         }))}
                         onChange={(val) => setValue("account_id", val)}
                     />
+
+
                     <Select
-                        label="Select Department"
+                        label="Department"
                         name="department_id"
                         disabled={data?.user?.account_employee?.department_id}
                         value={form.department_id}
@@ -51,12 +103,14 @@ export default function EmployeeInformationSection({
                         onChange={(val) => setValue("department_id", val)}
                         iconLeft={<Building2 size={14} />}
                     />
+
                     <Input
                         label="Position"
                         name="position"
                         disabled={data?.user?.account_employee?.position}
-                        {...register("position")}
+                        {...register("position", { required: true })}
                         iconLeft={<Briefcase size={14} />}
+                        error={errors.position}
                     />
                     <Input
                         label="EOGS Email"
@@ -64,15 +118,16 @@ export default function EmployeeInformationSection({
                         disabled={data?.user?.account_employee?.eogs_email}
                         placeholder="eogs.yourname@gmail.com"
                         type="email"
-                        {...register("eogs_email")}
+                        {...register("eogs_email", { required: true })}
                         iconLeft={<Mail size={14} />}
+                        error={errors.eogs_email}
                     />
 
                     <Select
                         disabled={data?.user?.account_employee?.status}
                         label="Employment Status"
                         name="status"
-                        {...register("status")}
+                        {...register("status", { required: true })}
                         value={form.status}
                         options={[
                             { label: "Probationary", value: "Probationary" },
@@ -95,6 +150,23 @@ export default function EmployeeInformationSection({
                                 value: "Trainee Fallout",
                             },
                         ]}
+                    />
+                    <Input
+                        label="Basic Pay"
+                        name="basic_pay"
+                        type="number"
+                        disabled={data?.user?.account_employee?.basic_pay}
+                        {...register("basic_pay", { required: true })}
+                        error={errors.basic_pay}
+                    />
+
+                    <Input
+                        label="Allowance"
+                        name="allowance"
+                        disabled={data?.user?.account_employee?.allowance}
+                        type="number"
+                        {...register("allowance", { required: true })}
+                        error={errors.allowance}
                     />
                 </div>
             </div>

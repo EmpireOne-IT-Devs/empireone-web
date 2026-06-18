@@ -17,7 +17,9 @@ import SendJobOfferSection from "./send-job-offer-section";
 import ResendJobOfferSection from "./resend-job-offer-section";
 import SendDocumentsSection from "./send-documents-section";
 import { FcApproval, FcButtingIn } from "react-icons/fc";
+import Tooltip from "@/app/_components/tooltip";
 import Button from "@/app/_components/button";
+import { router } from "@inertiajs/react";
 
 export default function ApplicantTableSection() {
     const { applicants, search_applicant_status } = useSelector(
@@ -79,7 +81,18 @@ export default function ApplicantTableSection() {
     const tableData = filteredApplications?.map((res) => ({
         name: (
             <div className="flex items-center gap-2">
-                {res?.applicant?.personal_information?.previous_employee_status && <FcButtingIn className="text-2xl" />}
+                <Tooltip
+                    title="Current Employee"
+                >
+                    {
+                        res?.applicant?.account_employee?.employee_id && <FcApproval className="text-2xl" />
+                    }
+                </Tooltip>
+                <Tooltip
+                    title={`Former employee in the ${res?.applicant?.personal_information?.previous_employee_status}`}
+                >
+                    {res?.applicant?.personal_information?.previous_employee_status && <FcButtingIn className="text-2xl" />}
+                </Tooltip>
                 <span>{res?.applicant?.name}</span>
             </div>
         ),
@@ -98,7 +111,7 @@ export default function ApplicantTableSection() {
         action: (
             <div className="flex gap-3">
                 {
-                    // res?.user?.role == "3" &&
+                    res?.user?.role == "3" &&
                     (res.final_status == "Passed" ||
                         res.final_status == "Pooled") && (
                         <SendJobOfferSection data={res} />
@@ -114,6 +127,16 @@ export default function ApplicantTableSection() {
                         <SendDocumentsSection data={res} />
                     </>
                 )}
+
+                {
+                    (res.final_status == "Passed" && res?.applicant?.account_employee?.employee_id) && <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => router.visit(`/accounts/administrator/human_resources/employee_movements/assessment_process/promotions?employee_id=${res?.applicant?.account_employee?.employee_id}`)}
+                    >
+                        CREATE ERF
+                    </Button>
+                }
                 <ShowApplicantDetailsSection data={res} />
             </div>
         ),

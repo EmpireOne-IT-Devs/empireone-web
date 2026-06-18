@@ -2,7 +2,7 @@ import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import React, { useState } from "react";
 import { TbSearch } from "react-icons/tb";
-import CreateJobRequisition from "./create-requisition-section";
+// import CreateJobRequisition from "./create-requisition-section";
 import { router } from "@inertiajs/react";
 
 export default function SearchSection() {
@@ -73,9 +73,9 @@ export default function SearchSection() {
                 />
             </div>
 
-            <div className="w-full md:w-auto shrink-0">
+            {/* <div className="w-full md:w-auto shrink-0">
                 <CreateJobRequisition />
-            </div>
+            </div> */}
         </div>
     );
 }

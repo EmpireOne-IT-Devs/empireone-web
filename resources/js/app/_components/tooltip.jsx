@@ -38,7 +38,7 @@ export default function Tooltip({
                     {position == "left" && <FcRight className="text-4xl" />}
                     {position == "bottom" && <FcUp className="text-4xl" />}
                     <div className="bg-gray-800 text-white px-2 py-1 flex items-center justify-center rounded w-full">
-                        {title.replace(/ /g, "\u00A0")}
+                        {title?.replace(/ /g, "\u00A0")}
                     </div>
                 </div>
             )}
