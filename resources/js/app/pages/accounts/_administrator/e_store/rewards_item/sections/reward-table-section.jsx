@@ -44,11 +44,11 @@ const columns = [
 ];
 
 const data = [
-    { item: <ItemCell title="Golden Crown" sub="Avatar Decoration" typeKey="crown" />, type: 'Decoration', points: 500, stock: '∞', redemptions: 45, status: <Badge label="Active" variant="success" showDot />, actions: <Actions /> },
-    { item: <ItemCell title="Lunch Voucher - $10" sub="Meal Voucher" typeKey="meal" />, type: 'Meal', points: 180, stock: 40, redemptions: 128, status: <Badge label="Active" variant="success" showDot />, actions: <Actions /> },
-    { item: <ItemCell title="Amazon Gift Card - $25" sub="Gift Card" typeKey="card" />, type: 'Gift Card', points: 500, stock: 100, redemptions: 67, status: <Badge label="Active" variant="success" showDot />, actions: <Actions /> },
-    { item: <ItemCell title="Company Hoodie" sub="Merchandise" typeKey="shirt" />, type: 'Merchandise', points: 400, stock: 80, redemptions: 34, status: <Badge label="Active" variant="success" showDot />, actions: <Actions /> },
-    { item: <ItemCell title="Extra WFH Day" sub="Workplace Perk" typeKey="perk" />, type: 'Perk', points: 150, stock: 100, redemptions: 203, status: <Badge label="Active" variant="success" showDot />, actions: <Actions /> },
+    { item: <ItemCell title="Golden Crown" sub="Avatar Decoration" typeKey="crown" />, type: 'Decoration', points: 500, stock: '∞', redemptions: 45, status: <Badge outlined label="Active" variant="success" showDot />, actions: <Actions /> },
+    { item: <ItemCell title="Lunch Voucher - $10" sub="Meal Voucher" typeKey="meal" />, type: 'Meal', points: 180, stock: 40, redemptions: 128, status: <Badge outlined label="Active" variant="success" showDot />, actions: <Actions /> },
+    { item: <ItemCell title="Amazon Gift Card - $25" sub="Gift Card" typeKey="card" />, type: 'Gift Card', points: 500, stock: 100, redemptions: 67, status: <Badge outlined label="Active" variant="success" showDot />, actions: <Actions /> },
+    { item: <ItemCell title="Company Hoodie" sub="Merchandise" typeKey="shirt" />, type: 'Merchandise', points: 400, stock: 80, redemptions: 34, status: <Badge outlined label="Active" variant="success" showDot />, actions: <Actions /> },
+    { item: <ItemCell title="Extra WFH Day" sub="Workplace Perk" typeKey="perk" />, type: 'Perk', points: 150, stock: 100, redemptions: 203, status: <Badge outlined label="Active" variant="success" showDot />, actions: <Actions /> },
 ];
 
 export default function RewardTableSection() {

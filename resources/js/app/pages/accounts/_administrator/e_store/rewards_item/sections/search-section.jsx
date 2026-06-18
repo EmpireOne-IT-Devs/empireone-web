@@ -1,6 +1,7 @@
 import { TbSearch } from "react-icons/tb";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
+import AddRewardSection from "./add-reward-section";
 
 export default function SearchSection() {
     return (
@@ -44,6 +45,7 @@ export default function SearchSection() {
                     ]}
                 />
             </div>
+             <AddRewardSection />
         </div>
     );
 }

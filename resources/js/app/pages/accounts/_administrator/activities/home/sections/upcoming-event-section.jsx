@@ -1,87 +1,75 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Card from "@/app/_components/card";
+import { useDispatch, useSelector } from "react-redux";
+import { get_upcoming_birthdays_thunk, get_upcoming_events_thunk } from "@/app/redux/activities-slice";
+
+const TYPE_STYLE = {
+  birthday: {
+    textColor: "text-pink-500",
+    pillBg:    "bg-pink-50 text-pink-500 hover:bg-pink-100",
+    status:    "BIRTHDAY 🎂",
+  },
+  general: {
+    textColor: "text-indigo-600",
+    pillBg:    "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
+    status:    "SCHEDULED",
+  },
+};
 
 export default function UpcomingEventSection() {
+  const dispatch = useDispatch();
+  const { birthdayMonth, birthdayCount, birthdays, upcomingEvents } = useSelector((state) => state.activities);
+
+  useEffect(() => {
+    dispatch(get_upcoming_birthdays_thunk());
+    dispatch(get_upcoming_events_thunk());
+  }, [dispatch]);
+
+  const today = new Date().getDate();
+  // Nearest birthday on or after today; fall back to first if all are past
+  const nextBirthday = birthdays.find((b) => b.birthday_day >= today) ?? birthdays[0];
+  const isToday = nextBirthday?.is_today ?? false;
+
+  const birthdayEvents = birthdayCount > 0 && nextBirthday ? [{
+    id:        "birthdays-month",
+    month:     birthdayMonth?.substring(0, 3).toUpperCase() ?? "",
+    day:       String(nextBirthday.birthday_day),
+    title:     `${birthdayMonth} Birthday Celebrants`,
+    time:      isToday ? "Today 🎉" : nextBirthday.birthday_label,
+    location:  `${birthdayCount} celebrant${birthdayCount !== 1 ? "s" : ""}`,
+    iconType:  "location",
+    status:    isToday ? "TODAY 🎉" : "UPCOMING",
+    accentBg:  "bg-pink-500",
+    textColor: "text-pink-500",
+    pillBg:    isToday
+      ? "bg-pink-100 text-pink-600 hover:bg-pink-200"
+      : "bg-pink-50 text-pink-500 hover:bg-pink-100",
+  }] : [];
+
+  // ── Scheduled posts from DB ───────────────────────────────────────────────
+  const dbEvents = upcomingEvents.map((e) => {
+    const style = TYPE_STYLE[e.type] ?? TYPE_STYLE.general;
+    return {
+      id:        `db-${e.id}`,
+      month:     e.month.toUpperCase(),
+      day:       String(e.day),
+      title:     e.headline,
+      time:      e.time,
+      location:  e.publish_to,
+      iconType:  "location",
+      status:    style.status,
+      accentBg:  e.type === "birthday" ? "bg-pink-500" : "bg-indigo-600",
+      textColor: style.textColor,
+      pillBg:    style.pillBg,
+    };
+  });
+
   const events = [
-    {
-      id: 1,
-      month: "OCT",
-      day: "12",
-      title: "HR Training: Modern Leadership",
-      time: "10:00 AM",
-      location: "Room 4B",
-      iconType: "location",
-      status: "RSVP NOW",
-      accentBg: "bg-blue-600",
-      textColor: "text-blue-600",
-      pillBg: "bg-blue-50 text-blue-600 hover:bg-blue-100",
-    },
-    {
-      id: 2,
-      month: "OCT",
-      day: "15",
-      title: "Team Lunch & Learn",
-      time: "12:30 PM",
-      location: "Roof Garden",
-      iconType: "food",
-      status: "ATTENDING",
-      accentBg: "bg-purple-600",
-      textColor: "text-purple-600",
-      pillBg: "bg-purple-50 text-purple-600 hover:bg-purple-100",
-    },
-    {
-      id: 3,
-      month: "OCT",
-      day: "18",
-      title: "Design Sync & Review",
-      time: "02:00 PM",
-      location: "Zoom",
-      iconType: "location",
-      status: "ATTENDING",
-      accentBg: "bg-purple-600",
-      textColor: "text-purple-600",
-      pillBg: "bg-purple-50 text-purple-600 hover:bg-purple-100",
-    },
-    {
-      id: 4,
-      month: "OCT",
-      day: "22",
-      title: "All-Hands Quarterly",
-      time: "09:00 AM",
-      location: "Main Hall",
-      iconType: "location",
-      status: "RSVP NOW",
-      accentBg: "bg-blue-600",
-      textColor: "text-blue-600",
-      pillBg: "bg-blue-50 text-blue-600 hover:bg-blue-100",
-    },  
-    {
-      id: 4,
-      month: "OCT",
-      day: "22",
-      title: "All-Hands Quarterly",
-      time: "09:00 AM",
-      location: "Main Hall",
-      iconType: "location",
-      status: "RSVP NOW",
-      accentBg: "bg-blue-600",
-      textColor: "text-blue-600",
-      pillBg: "bg-blue-50 text-blue-600 hover:bg-blue-100",
-    },
-    {
-      id: 4,
-      month: "OCT",
-      day: "22",
-      title: "All-Hands Quarterly",
-      time: "09:00 AM",
-      location: "Main Hall",
-      iconType: "location",
-      status: "RSVP NOW",
-      accentBg: "bg-blue-600",
-      textColor: "text-blue-600",
-      pillBg: "bg-blue-50 text-blue-600 hover:bg-blue-100",
-    }
+    
+    
   ];
+
+  const allEvents = [...birthdayEvents, ...dbEvents, ...events];
 
   return (
     <Card variant="default" padding="p-5" className="max-w-md bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -98,7 +86,7 @@ export default function UpcomingEventSection() {
 
       {/* Event Cards List */}
       <div className="flex flex-col gap-3 max-h-[380px] overflow-y-auto pr-1 ">
-        {events.map((event) => (
+        {allEvents.map((event) => (
           <div
             key={event.id}
             className="group flex items-center justify-between bg-gray-50/60 hover:bg-gray-50 p-3 rounded-xl transition-all duration-200 border border-transparent hover:border-gray-100"
@@ -132,7 +120,7 @@ export default function UpcomingEventSection() {
                     <span>{event.time}</span>
                   </div>
 
-                  {/* Location / Food Icon */}
+                  
                   <div className="flex items-center gap-1">
                     {event.iconType === "location" ? (
                       <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">

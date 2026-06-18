@@ -1,152 +1,297 @@
-import React from "react";
-import { Heart, MessageSquare, Share2, MoreHorizontal } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Heart, MessageSquare, Share2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
+import {
+    get_activity_posts_thunk,
+    delete_activity_post_thunk,
+} from "@/app/redux/activities-slice";
+import PostActionMenu from "./post-action-menu";
+import EditPostModal from "./edit-post-modal";
 
-const postsData = [
-    {
-        id: 1,
-        author: "Sarah Jenkins",
-        department: "Engineering Excellence",
-        timeAgo: "2h ago",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
-        content: "Thrilled to announce that our team just deployed the new AI-driven resource allocator. Huge shoutout to everyone involved in the sprint! 🚀",
-        hashtags: "#Engineering #Innovation",
-        image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800",
-        likes: 24,
-        comments: 8,
-    },
-    {
-        id: 2,
-        author: "Michael Chen",
-        department: "Product Management",
-        timeAgo: "4h ago",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-        content: "Excited to share that we've reached a new milestone! Our Q2 product roadmap is now live. Check it out and share your feedback! 📈",
-        hashtags: "#ProductLaunch #Milestone",
-        image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800",
-        likes: 42,
-        comments: 15,
-    },
-    {
-        id: 3,
-        author: "Emily Rodriguez",
-        department: "Human Resources",
-        timeAgo: "6h ago",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
-        content: "We're proud to announce our new diversity and inclusion initiatives for the upcoming quarter. Everyone's voice matters! 🌟",
-        hashtags: "#DEI #Culture",
-        image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800",
-        likes: 56,
-        comments: 22,
-    },
-    {
-        id: 4,
-        author: "David Park",
-        department: "Sales Team",
-        timeAgo: "1d ago",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
-        content: "Just closed the biggest deal of the year! Couldn't have done it without the amazing support from our cross-functional teams. Thank you all! 🎉",
-        hashtags: "#Sales #Teamwork",
-        image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800",
-        likes: 78,
-        comments: 31,
-    },
-    {
-        id: 5,
-        author: "Jessica Martinez",
-        department: "Customer Success",
-        timeAgo: "1d ago",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
-        content: "Our customer satisfaction score hit an all-time high this month! A huge thank you to the entire team for your dedication and hard work! 💪",
-        hashtags: "#CustomerSuccess #Excellence",
-        image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800",
-        likes: 91,
-        comments: 28,
-    },
-];
-
-function PostCard({ post }) {
+// ── Birthday post card ──────────────────────────────────────────────────────
+function BirthdayPostCard({ post, celebrants = [], menuOpen, onMenuToggle, onEdit, onDelete, deleting }) {
     return (
-        <div className="w-full">
-            <Card
-                variant="default"
-                padding="p-3"
-                className="w-full font-sans flex flex-col gap-2 cursor-default"
-            >
-                {/* Header Section */}
-                <div className="flex justify-between items-start w-full">
+        <Card
+            variant="default"
+            padding="p-0"
+            className="w-full overflow-hidden font-sans"
+        >
+            {/* Gradient banner */}
+            <div className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-5 py-4 flex items-center gap-3">
+                <span className="text-2xl">🎂</span>
+                <div>
+                    <p className="text-white font-bold text-sm leading-tight">
+                        {post.headline}
+                    </p>
+                    <p className="text-white/70 text-[11px] font-mono tracking-widest mt-0.5">
+                        {post.month} {post.year}
+                    </p>
+                </div>
+            </div>
+
+            {/* Body */}
+            <div className="px-5 py-4 flex flex-col gap-3">
+                {/* Author row */}
+                <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                        {/* Profile Avatar */}
-                        <img
-                            src={post.avatar}
-                            alt={post.author}
-                            className="w-9 h-9 rounded-full object-cover"
-                        />
-                        {/* User Info */}
+                        {post.author.avatar ? (
+                            <img
+                                src={post.author.avatar}
+                                alt={post.author.name}
+                                className="w-8 h-8 rounded-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                                {post.author.initials}
+                            </div>
+                        )}
                         <div>
-                            <h3 className="font-semibold text-gray-900 text-sm leading-tight">
-                                {post.author}
-                            </h3>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                                {post.department} <span className="mx-1 text-gray-400">•</span> {post.timeAgo}
+                            <p className="text-sm font-semibold text-gray-900 leading-tight">
+                                {post.author.name}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                                Activities • {post.time_ago}
                             </p>
                         </div>
                     </div>
-
-                    {/* Options Button */}
-                    <button className="text-gray-400 hover:text-gray-600 transition p-1">
-                        <MoreHorizontal size={16} />
-                    </button>
-                </div>
-
-                {/* Post Text Content */}
-                <div className="text-gray-800 text-sm leading-relaxed">
-                    <p>{post.content}</p>
-                    <p className="mt-0.5 text-blue-600 text-xs font-medium hover:underline cursor-pointer">
-                        {post.hashtags}
-                    </p>
-                </div>
-
-                {/* Post Image Banner */}
-                <div className="overflow-hidden rounded-lg border border-gray-100">
-                    <img
-                        src={post.image}
-                        alt="Post image"
-                        className="w-full h-auto max-h-[200px] object-cover"
+                    <PostActionMenu
+                        open={menuOpen}
+                        onToggle={onMenuToggle}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                        deleting={deleting}
                     />
                 </div>
 
-                {/* Footer Engagement Section */}
-                <div className="flex justify-between items-center pt-2 text-gray-500 text-xs border-t border-gray-100">
-                    {/* Left Side: Likes and Comments */}
+                {/* Message */}
+                <div
+                    className="text-sm text-gray-700 leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: post.message }}
+                />
+
+                {celebrants.length > 0 && (
+                    <div className="border border-pink-100 bg-pink-50/50 rounded-xl p-3.5 flex flex-col gap-2">
+                        <p className="text-xs font-bold text-pink-500 uppercase tracking-wider">
+                            🎂 Birthday Celebrant
+                            {celebrants.length !== 1 ? "s" : ""} of the Month
+                        </p>
+                        <ul className="flex flex-col gap-1">
+                            {celebrants.map((c) => (
+                                <li
+                                    key={c.user_id}
+                                    className="flex items-center justify-between"
+                                >
+                                    <span className="text-sm text-gray-800 font-medium">
+                                        {c.name}
+                                    </span>
+                                    {c.is_today && (
+                                        <span className="text-[10px] font-bold bg-pink-200 text-pink-700 px-2 py-0.5 rounded-full">
+                                            Today 🎂
+                                        </span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {/* Footer */}
+                <div className="flex justify-between items-center pt-2 border-t border-gray-100 text-gray-500 text-xs">
                     <div className="flex items-center gap-4">
                         <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
-                            <Heart size={14} className="group-hover:scale-110 transition" />
-                            <span className="font-medium text-gray-600">{post.likes}</span>
+                            <Heart
+                                size={14}
+                                className="group-hover:scale-110 transition"
+                            />
+                            <span className="font-medium text-gray-600">0</span>
                         </button>
                         <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
-                            <MessageSquare size={14} className="group-hover:scale-110 transition" />
-                            <span className="font-medium text-gray-600">{post.comments}</span>
+                            <MessageSquare
+                                size={14}
+                                className="group-hover:scale-110 transition"
+                            />
+                            <span className="font-medium text-gray-600">0</span>
                         </button>
                     </div>
-
-                    {/* Right Side: Share */}
                     <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
-                        <Share2 size={14} className="group-hover:scale-110 transition" />
+                        <Share2
+                            size={14}
+                            className="group-hover:scale-110 transition"
+                        />
                         <span className="font-medium text-gray-600">Share</span>
                     </button>
                 </div>
-            </Card>
-        </div>
+            </div>
+        </Card>
+    );
+}
+
+// ── Generic post card (for future general posts) ────────────────────────────
+function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, deleting }) {
+    return (
+        <Card
+            variant="default"
+            padding="p-3"
+            className="w-full font-sans flex flex-col gap-2"
+        >
+            <div className="flex justify-between items-start w-full">
+                <div className="flex items-center gap-2.5">
+                    {post.author.avatar ? (
+                        <img
+                            src={post.author.avatar}
+                            alt={post.author.name}
+                            className="w-9 h-9 rounded-full object-cover"
+                        />
+                    ) : (
+                        <div className="w-9 h-9 rounded-full bg-violet-500 flex items-center justify-center text-white font-bold text-xs">
+                            {post.author.initials}
+                        </div>
+                    )}
+                    <div>
+                        <h3 className="font-semibold text-gray-900 text-sm leading-tight">
+                            {post.author.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                            Activities • {post.time_ago}
+                        </p>
+                    </div>
+                </div>
+                <PostActionMenu
+                    open={menuOpen}
+                    onToggle={onMenuToggle}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    deleting={deleting}
+                />
+            </div>
+            <div className="text-gray-800 text-sm leading-relaxed">
+                <p className="font-semibold">{post.headline}</p>
+                <div
+                    className="mt-1 text-gray-600 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: post.message }}
+                />
+            </div>
+            <div className="flex justify-between items-center pt-2 text-gray-500 text-xs border-t border-gray-100">
+                <div className="flex items-center gap-4">
+                    <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
+                        <Heart
+                            size={14}
+                            className="group-hover:scale-110 transition"
+                        />
+                        <span className="font-medium text-gray-600">0</span>
+                    </button>
+                    <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
+                        <MessageSquare
+                            size={14}
+                            className="group-hover:scale-110 transition"
+                        />
+                        <span className="font-medium text-gray-600">0</span>
+                    </button>
+                </div>
+                <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
+                    <Share2
+                        size={14}
+                        className="group-hover:scale-110 transition"
+                    />
+                    <span className="font-medium text-gray-600">Share</span>
+                </button>
+            </div>
+        </Card>
     );
 }
 
 export default function PostCardSection() {
+    const dispatch = useDispatch();
+    const { posts, postsLoading, postsError, birthdays, birthdayMonth, postDeleting } =
+        useSelector((state) => state.activities);
+
+    // openMenuId: which post's menu is open (null = none)
+    const [openMenuId, setOpenMenuId] = useState(null);
+    // editingPost: the post object currently being edited (null = modal closed)
+    const [editingPost, setEditingPost] = useState(null);
+
+    useEffect(() => {
+        dispatch(get_activity_posts_thunk());
+    }, [dispatch]);
+
+    function handleMenuToggle(id) {
+        setOpenMenuId((prev) => (prev === id ? null : id));
+    }
+
+    function handleEdit(post) {
+        setEditingPost(post);
+    }
+
+    function handleDelete(id) {
+        dispatch(delete_activity_post_thunk(id));
+    }
+
+    if (postsLoading) {
+        return (
+            <div className="flex flex-col gap-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                        key={i}
+                        className="w-full h-40 bg-gray-100 rounded-2xl animate-pulse"
+                    />
+                ))}
+            </div>
+        );
+    }
+
+    if (postsError) {
+        return (
+            <div className="flex items-center justify-center py-16 text-sm text-red-400">
+                Failed to load posts. Please refresh and try again.
+            </div>
+        );
+    }
+
+    if (posts.length === 0) {
+        return (
+            <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+                No posts yet. Publish a birthday post to get started!
+            </div>
+        );
+    }
+
     return (
-        <div className="w-full flex flex-col gap-4">
-            {postsData.map((post) => (
-                <PostCard key={post.id} post={post} />
-            ))}
-        </div>
+        <>
+            <div className="w-full flex flex-col gap-4">
+                {posts.map((post) =>
+                    post.type === "birthday" ? (
+                        <BirthdayPostCard
+                            key={post.id}
+                            post={post}
+                            celebrants={
+                                post.month === birthdayMonth ? birthdays : []
+                            }
+                            menuOpen={openMenuId === post.id}
+                            onMenuToggle={() => handleMenuToggle(post.id)}
+                            onEdit={() => handleEdit(post)}
+                            onDelete={() => handleDelete(post.id)}
+                            deleting={postDeleting}
+                        />
+                    ) : (
+                        <GeneralPostCard
+                            key={post.id}
+                            post={post}
+                            menuOpen={openMenuId === post.id}
+                            onMenuToggle={() => handleMenuToggle(post.id)}
+                            onEdit={() => handleEdit(post)}
+                            onDelete={() => handleDelete(post.id)}
+                            deleting={postDeleting}
+                        />
+                    ),
+                )}
+            </div>
+
+            <EditPostModal
+                post={editingPost}
+                onClose={() => setEditingPost(null)}
+            />
+        </>
     );
 }
+

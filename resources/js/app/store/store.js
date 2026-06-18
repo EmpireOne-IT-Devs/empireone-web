@@ -8,6 +8,7 @@ import jobRequisitionSlice from "../redux/job-requisition-slice";
 import applicantSlice from "../redux/applicant-slice";
 import employeeRelationSlice from "../redux/employee-relation-slice";
 import talentAcquisitionSlice from "../redux/talent-acquisition-slice";
+import activitiesSlice from "../redux/activities-slice";
 
 const store = configureStore({
     reducer: {
@@ -20,6 +21,7 @@ const store = configureStore({
         applicants: applicantSlice,
         human_resources: employeeRelationSlice,
         talent_acquisitions: talentAcquisitionSlice,
+        activities: activitiesSlice,
     },
 });
 

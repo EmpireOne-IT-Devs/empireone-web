@@ -67,8 +67,10 @@ export default function AddRewardSection() {
 
     return (
         <>
-            <div className="flex justify-end mb-4">
-                <Button onClick={() => setIsOpen(true)}>
+            <div className="flex justify-end ">
+                <Button
+                outlined
+                onClick={() => setIsOpen(true)}>
                     <PlusCircle size={16} />
                     <div className="ml-2">Add New Reward Item</div>
                 </Button>
@@ -94,12 +96,11 @@ export default function AddRewardSection() {
                 }
                 width="max-w-2xl"
             >
-                <div className="flex flex-col gap-4 overflow-y-auto max-h-[60vh] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent ">
+                <div className="flex flex-col gap-4 overflow-y-auto max-h-[60vh] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent p-3 ">
                     <Input
                         label="Name"
                         name="name"
                         placeholder="Enter reward name"
-                        className="placeholder-transparent focus:placeholder-gray-400"
                         value={form.name}
                         onChange={set("name")}
                     />
@@ -141,8 +142,8 @@ export default function AddRewardSection() {
                             />
                         </div>
                         <div>
-                            <label className={labelClass}>Color</label>
-                            <input
+                            <Input
+                                label="Color"
                                 type="color"
                                 className="w-full h-[38px] border border-gray-300 rounded-md cursor-pointer px-1"
                                 value={form.color}

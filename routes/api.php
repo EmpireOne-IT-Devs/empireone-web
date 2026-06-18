@@ -22,6 +22,8 @@ use App\Http\Controllers\API\Jobs\JobInterviewerScheduleController;
 use App\Http\Controllers\Auth\AuthorizationController;
 use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\API\Activities\ActivityBirthdayController;
+use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -140,6 +142,15 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);
         Route::post('accept_employee_change_form',  [EREmployeeChangeFormController::class, 'accept_employee_change_form']);
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
+    });
+
+    Route::prefix('activities')->group(function () {
+        Route::get('upcoming_birthdays', [ActivityBirthdayController::class, 'upcoming_birthdays']);
+        Route::get('posts',              [ActivityPostController::class,    'index']);
+        Route::post('posts',             [ActivityPostController::class,    'store']);
+        Route::put('posts/{activityPost}',    [ActivityPostController::class, 'update']);
+        Route::delete('posts/{activityPost}', [ActivityPostController::class, 'destroy']);
+        Route::get('upcoming_events',    [ActivityPostController::class,    'upcoming_events']);
     });
 });
 

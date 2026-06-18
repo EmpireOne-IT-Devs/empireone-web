@@ -29,8 +29,14 @@ export default function StoreAdminLayout({ children }) {
     return (
         <div>
             <HeaderSection />
-            <StatisticCardSection />
-            <Tabs tabs={tabs} activeIndex={activeTab} />
+            <StatisticCardSection/>
+           
+            <div className="mt-6 bg-white shadow-sm rounded-2xl border-2 w-4/12">
+                <Tabs
+                
+                tabs={tabs} activeIndex={activeTab} />
+            </div>
+            
             <div className="p-3">{children}</div>
         </div>
     );
