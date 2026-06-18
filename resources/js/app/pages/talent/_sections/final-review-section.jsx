@@ -7,6 +7,8 @@ export default function FinalReviewSection({
     watchedValues,
     loading,
 }) {
+
+    console.log('watchedValues', watchedValues.file_name)
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <h2
@@ -29,7 +31,7 @@ export default function FinalReviewSection({
             >
                 {/* Personal & Contact Info */}
                 <div>
-                    <p className="font-bold uppercase text-xs tracking-wider mb-2" style={{ color: "#fb923c" }}>
+                    <p className="font-bold uppercase text-xs tracking-wider" style={{ color: "#fb923c" }}>
                         Personal & Contact Details
                     </p>
                     <div className="grid grid-cols-2 gap-y-1">
@@ -51,18 +53,15 @@ export default function FinalReviewSection({
                             <strong style={{ color: "#6b7280" }}>DOB: </strong>
                             {moment(watchedValues.date_of_birth).format("LL")}
                         </p>
+                        
                         <p>
-                            <strong style={{ color: "#6b7280" }}>Previous designation: </strong>
-                            {watchedValues.department_id === "other" ? watchedValues.other_department : watchedValues.department}
-                        </p>
-                           <p>
                             <strong style={{ color: "#6b7280" }}>Previously of EmpireOne: </strong>
                             {watchedValues.previous_employee_status}
                         </p>
                     </div>
                 </div>
                 <div>
-                    <p className="font-bold uppercase text-xs tracking-wider mb-2" style={{ color: "#fb923c" }}>
+                    <p className="font-bold uppercase text-xs tracking-wider" style={{ color: "#fb923c" }}>
                         Interview Details
                     </p>
                     <p>
@@ -73,13 +72,23 @@ export default function FinalReviewSection({
                 </div>
                 {/* Address Information */}
                 <div>
-                    <p className="font-bold uppercase text-xs tracking-wider mb-2" style={{ color: "#fb923c" }}>
+                    <p className="font-bold uppercase text-xs tracking-wider" style={{ color: "#fb923c" }}>
                         Birth Place
                     </p>
                     <p className="capitalize">{watchedValues.birth_place}</p>
                 </div>
+                {
+                    watchedValues.is_previous_employee == 'Yes' && <div>
+                        <p className="font-bold uppercase text-xs tracking-wider" style={{ color: "#fb923c" }}>
+                            Previous Employee Status
+                        </p>
+                        <p className="capitalize">{watchedValues.previous_employee_status}</p>
+                    </div>
+                }
+
+
                 <div>
-                    <p className="font-bold uppercase text-xs tracking-wider mb-2" style={{ color: "#fb923c" }}>
+                    <p className="font-bold uppercase text-xs tracking-wider" style={{ color: "#fb923c" }}>
                         Current Address
                     </p>
                     <p className="capitalize">
@@ -98,11 +107,11 @@ export default function FinalReviewSection({
                     }}
                 >
                     <div>
-                    <p className="text-[10px] font-bold uppercase" style={{ color: "#3b82f6" }}>
+                        <p className="text-[10px] font-bold uppercase" style={{ color: "#3b82f6" }}>
                             Attached CV
                         </p>
-                    <p className="text-xs font-medium truncate max-w-[200px]" style={{ color: "#1e3a8a" }}>
-                            {watchedValues.cv?.[0]?.name || "No file uploaded"}
+                        <p className="text-xs font-medium truncate max-w-[200px]" style={{ color: "#1e3a8a" }}>
+                            {watchedValues.file_name || "No file uploaded"}
                         </p>
                     </div>
                     <svg className="w-5 h-5" style={{ color: "#93c5fd" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">

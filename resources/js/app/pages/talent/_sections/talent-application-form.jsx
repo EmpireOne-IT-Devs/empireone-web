@@ -48,6 +48,9 @@ const TalentApplicationForm = () => {
     } = useForm({
         defaultValues: {
             position: "",
+            file_name: "",
+            interview_type: "",
+            is_previous_employee: false,
             gender: "",
             experiences: [],
             skills: [{ name: "", percentage: 0 }],
@@ -76,6 +79,7 @@ const TalentApplicationForm = () => {
     useEffect(() => {
         async function load_data() {
             if (cvFile?.name) {
+                setValue('file_name', cvFile?.name)
                 setValue("file", await base64File);
             }
             if (job_posting_id || savedData.job_posting_id) {
@@ -87,6 +91,7 @@ const TalentApplicationForm = () => {
         }
         load_data();
     }, [cvFile?.name, job_posting_id]);
+
     useEffect(() => {
         if (watchedValues.job_posting_id) {
             dispatch(setJobPostingId(watchedValues.job_posting_id));
@@ -154,6 +159,7 @@ const TalentApplicationForm = () => {
             source: data.source || source,
             position: position,
             interviewer_id: interviewer.interviewer_id,
+            previous_employee_status: data.is_previous_employee == 'Yes' ? data.previous_employee_status : null
         };
         try {
             setLoading(true);
@@ -263,18 +269,18 @@ const TalentApplicationForm = () => {
                                                 background: isDone
                                                     ? "linear-gradient(135deg,#a855f7,#fb923c)"
                                                     : isActive
-                                                      ? "rgba(168,85,247,0.15)"
-                                                      : "rgba(168,85,247,0.07)",
+                                                        ? "rgba(168,85,247,0.15)"
+                                                        : "rgba(168,85,247,0.07)",
                                                 border: isActive
                                                     ? "1.5px solid rgba(168,85,247,0.8)"
                                                     : isDone
-                                                      ? "1.5px solid transparent"
-                                                      : "1.5px solid rgba(168,85,247,0.25)",
+                                                        ? "1.5px solid transparent"
+                                                        : "1.5px solid rgba(168,85,247,0.25)",
                                                 color: isDone
                                                     ? "#fff"
                                                     : isActive
-                                                      ? "#9333ea"
-                                                      : "rgba(120,90,160,0.6)",
+                                                        ? "#9333ea"
+                                                        : "rgba(120,90,160,0.6)",
                                             }}
                                         >
                                             {isDone ? "✓" : idx + 1}
@@ -285,8 +291,8 @@ const TalentApplicationForm = () => {
                                                 color: isActive
                                                     ? "#9333ea"
                                                     : isDone
-                                                      ? "rgba(234,88,12,0.9)"
-                                                      : "rgba(120,90,160,0.45)",
+                                                        ? "rgba(234,88,12,0.9)"
+                                                        : "rgba(120,90,160,0.45)",
                                             }}
                                         >
                                             {label}
@@ -410,8 +416,10 @@ const TalentApplicationForm = () => {
                     {step === 2 && (
                         <SetScheduleSection
                             prevStep={prevStep}
+                            register={register}
                             nextStep={nextStep}
                             setValue={setValue}
+                            errors={errors}
                             watchedValues={watchedValues}
                         />
                     )}

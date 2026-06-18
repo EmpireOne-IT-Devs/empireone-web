@@ -122,11 +122,11 @@ export default function ShowApplicantDetailsSection({ data }) {
                                     {data?.applicant?.personal_information
                                         ?.date_of_birth
                                         ? moment().diff(
-                                              data.applicant
-                                                  .personal_information
-                                                  .date_of_birth,
-                                              "years",
-                                          )
+                                            data.applicant
+                                                .personal_information
+                                                .date_of_birth,
+                                            "years",
+                                        )
                                         : "N/A"}
                                 </p>
                                 <p>
@@ -138,8 +138,18 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 </p>
                             </div>
                         </div>
-
-                        {/* Address Information */}
+                        {
+                            data?.applicant?.personal_information?.previous_employee_status && <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
+                                <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
+                                    Previous Employee Department
+                                </p>
+                                <p className="capitalize">
+                                    {
+                                        data?.applicant?.personal_information?.previous_employee_status
+                                    }
+                                </p>
+                            </div>
+                        }
                         <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Birth Place
@@ -152,6 +162,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 }
                             </p>
                         </div>
+
                         <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Current Address
@@ -176,12 +187,12 @@ export default function ShowApplicantDetailsSection({ data }) {
                         </div>
 
                         {/* Working Experiences */}
-                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
+                        {/* <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Working Experience
                             </p>
                             {data?.applicant?.working_experience &&
-                            data?.applicant?.working_experience.length > 0 ? (
+                                data?.applicant?.working_experience.length > 0 ? (
                                 data?.applicant?.working_experience.map(
                                     (exp, i) => (
                                         <div
@@ -206,10 +217,10 @@ export default function ShowApplicantDetailsSection({ data }) {
                                     No experience listed
                                 </p>
                             )}
-                        </div>
+                        </div> */}
 
                         {/* Skills & Proficiency */}
-                        <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
+                        {/* <div className="bg-gray-100 border border-gray-50 rounded-xl p-4 ">
                             <p className="font-bold text-blue-600 uppercase text-xs tracking-wider mb-2">
                                 Skills & Proficiency
                             </p>
@@ -228,39 +239,42 @@ export default function ShowApplicantDetailsSection({ data }) {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Document Review */}
 
-                        <a
-                            target="_blank"
-                            href={data?.applicant?.resume?.url}
-                            className="bg-blue-50 p-3 rounded-lg flex items-center justify-between"
-                        >
-                            <div>
-                                <p className="text-[10px] font-bold text-blue-700 uppercase">
-                                    Attached CV
-                                </p>
-                                <p className="text-xs font-medium text-blue-900 truncate max-w-[200px]">
-                                    {data?.applicant?.resume?.name ||
-                                        "No file uploaded"}
-                                </p>
-                            </div>
-                            <svg
-                                className="w-5 h-5 text-blue-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                        {
+                            data?.applicant?.resume?.url && <a
+                                target="_blank"
+                                href={data?.applicant?.resume?.url}
+                                className="bg-blue-50 p-3 rounded-lg flex items-center justify-between"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                ></path>
-                            </svg>
-                        </a>
-                        <a
+                                <div>
+                                    <p className="text-[10px] font-bold text-blue-700 uppercase">
+                                        Attached CV
+                                    </p>
+                                    <p className="text-xs font-medium text-blue-900 truncate max-w-[200px]">
+                                        {data?.applicant?.resume?.name ||
+                                            "No file uploaded"}
+                                    </p>
+                                </div>
+                                <svg
+                                    className="w-5 h-5 text-blue-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    ></path>
+                                </svg>
+                            </a>
+                        }
+
+                        {/* <a
                             target="_blank"
                             href={data?.applicant?.cover_letter?.url}
                             className="bg-blue-50 p-3 rounded-lg flex items-center justify-between"
@@ -287,7 +301,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                 ></path>
                             </svg>
-                        </a>
+                        </a> */}
                     </div>
                 </div>
             </Modal>

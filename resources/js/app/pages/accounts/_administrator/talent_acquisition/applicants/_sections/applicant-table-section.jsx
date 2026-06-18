@@ -16,7 +16,7 @@ import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import SendJobOfferSection from "./send-job-offer-section";
 import ResendJobOfferSection from "./resend-job-offer-section";
 import SendDocumentsSection from "./send-documents-section";
-import { FcApproval } from "react-icons/fc";
+import { FcApproval, FcButtingIn } from "react-icons/fc";
 import Button from "@/app/_components/button";
 
 export default function ApplicantTableSection() {
@@ -79,11 +79,8 @@ export default function ApplicantTableSection() {
     const tableData = filteredApplications?.map((res) => ({
         name: (
             <div className="flex items-center gap-2">
+                {res?.applicant?.personal_information?.previous_employee_status && <FcButtingIn className="text-2xl" />}
                 <span>{res?.applicant?.name}</span>
-
-                {res?.previous_employee_status === "Yes" && (
-                    <Badge>Former Employee</Badge>
-                )}
             </div>
         ),
         position: res?.job_posting?.job_requisition?.title,

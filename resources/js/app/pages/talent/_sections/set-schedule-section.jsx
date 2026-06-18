@@ -1,4 +1,5 @@
 import Button from "@/app/_components/button";
+import Radio from "@/app/_components/radio";
 import { Clock } from "lucide-react";
 import React, { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -8,6 +9,8 @@ export default function SetScheduleSection({
     nextStep,
     setValue,
     watchedValues,
+    register,
+    errors
 }) {
     const { interviewer } = useSelector((store) => store.app);
     console.log("interviewer", interviewer?.upcoming_schedules);
@@ -221,12 +224,11 @@ export default function SetScheduleSection({
                 onClick={() => handleDateClick(day)}
                 disabled={isPast}
                 className={`p-2 w-10 h-10 mx-auto rounded-full flex items-center justify-center transition-all duration-200
-                    ${
-                        isPast
-                            ? "text-gray-300 cursor-not-allowed"
-                            : isSelected
-                              ? "bg-blue-600 text-white shadow-md"
-                              : "hover:bg-blue-100 text-gray-700"
+                    ${isPast
+                        ? "text-gray-300 cursor-not-allowed"
+                        : isSelected
+                            ? "bg-blue-600 text-white shadow-md"
+                            : "hover:bg-blue-100 text-gray-700"
                     }
                     ${isToday && !isSelected && !isPast ? "border-2 border-blue-600 font-bold" : ""}
                 `}
@@ -238,9 +240,32 @@ export default function SetScheduleSection({
 
     return (
         <>
-            <div className="text-xl font-semibold text-gray-800 mb-4 md:mb-0 ">
-                Please select your preferred date and time for the initial
-                interview.
+            <div className="flex flex-col gap-4">
+                <div className="text-xl font-semibold text-gray-800 mb-4 md:mb-0 ">
+                    Please select your preferred date and time for the initial
+                    interview.
+                </div>
+
+                <div className="flex gap-5">
+                    <Radio
+                        label="Face to Face"
+                        name="interview_type"
+                        value={"Face to Face"}
+                        {...register("interview_type", {
+                            required:
+                                "Interview type is required.",
+                        })}
+                    />
+                    <Radio
+                        label="Virtual"
+                        name="interview_type"
+                        value={'Virtual'}
+                        {...register("interview_type", {
+                            required:
+                                "Interview type is required.",
+                        })}
+                    />
+                </div>
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 mt-12">
@@ -274,11 +299,10 @@ export default function SetScheduleSection({
                             onClick={handlePrevMonth}
                             disabled={isPrevMonthDisabled}
                             className={`p-2 rounded-lg transition-colors
-                            ${
-                                isPrevMonthDisabled
+                            ${isPrevMonthDisabled
                                     ? "text-gray-300 cursor-not-allowed"
                                     : "hover:bg-gray-100 text-gray-600"
-                            }
+                                }
                         `}
                         >
                             <svg
@@ -376,14 +400,13 @@ export default function SetScheduleSection({
                                             }
                                             disabled={slot.isDisabled}
                                             className={`py-3 px-4 rounded-xl font-medium text-sm border transition-all duration-200 
-                                            ${
-                                                slot.isDisabled
+                                            ${slot.isDisabled
                                                     ? "bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
                                                     : selectedTime ===
                                                         slot.start
-                                                      ? "bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]"
-                                                      : "border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600"
-                                            }
+                                                        ? "bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]"
+                                                        : "border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600"
+                                                }
                                         `}
                                         >
                                             {slot.display}

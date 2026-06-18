@@ -43,7 +43,7 @@ class JobApplicationController extends Controller
             ['interview_status', '=', 'Passed'],
             ['final_status', '=', 'Passed']
         ])
-            ->with(['job_posting', 'applicant', 'user','change_form'])
+            ->with(['job_posting', 'applicant', 'user', 'change_form'])
             ->whereHas('user', function ($query) {
                 $query->whereIn('role', [1, 2]);
             })
@@ -339,6 +339,7 @@ class JobApplicationController extends Controller
             [
                 'referral_id'    => $referral_id,
                 'source'         => $request->source ?? null,
+                'interview_type' => $request->interview_type
             ]
         );
 
@@ -573,7 +574,7 @@ class JobApplicationController extends Controller
     {
 
         // 1. Fetch all applications for this specific job once
-        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant', 'job_offer','user'])->get();
+        $applications = JobApplication::where('job_posting_id', $id)->with(['job_posting', 'applicant', 'job_offer', 'user'])->get();
         $job_posting = JobPosting::where('id', $id)->with(['job_requisition', 'job_application'])->first();
         return response()->json([
             'job_applications' => $applications,
