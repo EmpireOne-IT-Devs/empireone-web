@@ -70,80 +70,69 @@ function PostCard({ post }) {
         <div className="w-full">
             <Card
                 variant="default"
-                padding="p-5"
-                className="w-full font-sans flex flex-col gap-4 cursor-default"
+                padding="p-3"
+                className="w-full font-sans flex flex-col gap-2 cursor-default"
             >
                 {/* Header Section */}
                 <div className="flex justify-between items-start w-full">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5">
                         {/* Profile Avatar */}
                         <img
                             src={post.avatar}
                             alt={post.author}
-                            className="w-11 h-11 rounded-full object-cover"
+                            className="w-9 h-9 rounded-full object-cover"
                         />
                         {/* User Info */}
                         <div>
-                            <h3 className="font-semibold text-gray-900 text-[15px] leading-tight">
+                            <h3 className="font-semibold text-gray-900 text-sm leading-tight">
                                 {post.author}
                             </h3>
-                            <p className="text-xs md:text-sm text-gray-500 mt-0.5">
+                            <p className="text-xs text-gray-500 mt-0.5">
                                 {post.department} <span className="mx-1 text-gray-400">•</span> {post.timeAgo}
                             </p>
                         </div>
                     </div>
-                    
+
                     {/* Options Button */}
                     <button className="text-gray-400 hover:text-gray-600 transition p-1">
-                        <MoreHorizontal size={20} />
+                        <MoreHorizontal size={16} />
                     </button>
                 </div>
 
                 {/* Post Text Content */}
-                <div className="text-gray-800 text[15px] leading-relaxed">
-                    <p>
-                        {post.content}
-                    </p>
-                    <p className="mt-1 text-blue-600 font-medium hover:underline cursor-pointer">
+                <div className="text-gray-800 text-sm leading-relaxed">
+                    <p>{post.content}</p>
+                    <p className="mt-0.5 text-blue-600 text-xs font-medium hover:underline cursor-pointer">
                         {post.hashtags}
                     </p>
                 </div>
 
                 {/* Post Image Banner */}
-                <div className="overflow-hidden rounded-xl border border-gray-100">
+                <div className="overflow-hidden rounded-lg border border-gray-100">
                     <img
                         src={post.image}
                         alt="Post image"
-                        className="w-full h-auto max-h-[380px] object-cover"
+                        className="w-full h-auto max-h-[200px] object-cover"
                     />
                 </div>
 
                 {/* Footer Engagement Section */}
-                <div className="flex justify-between items-center pt-3 text-gray-500 text-sm border-t border-gray-100 mt-1">
+                <div className="flex justify-between items-center pt-2 text-gray-500 text-xs border-t border-gray-100">
                     {/* Left Side: Likes and Comments */}
-                    <div className="flex items-center gap-6">
-                        <button className="flex items-center gap-2 hover:text-red-500 transition group">
-                            <Heart
-                                size={18}
-                                className="group-hover:scale-110 transition"
-                            />
+                    <div className="flex items-center gap-4">
+                        <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
+                            <Heart size={14} className="group-hover:scale-110 transition" />
                             <span className="font-medium text-gray-600">{post.likes}</span>
                         </button>
-                        <button className="flex items-center gap-2 hover:text-blue-500 transition group">
-                            <MessageSquare
-                                size={18}
-                                className="group-hover:scale-110 transition"
-                            />
+                        <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
+                            <MessageSquare size={14} className="group-hover:scale-110 transition" />
                             <span className="font-medium text-gray-600">{post.comments}</span>
                         </button>
                     </div>
 
                     {/* Right Side: Share */}
-                    <button className="flex items-center gap-2 hover:text-green-600 transition group">
-                        <Share2
-                            size={18}
-                            className="group-hover:scale-110 transition"
-                        />
+                    <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
+                        <Share2 size={14} className="group-hover:scale-110 transition" />
                         <span className="font-medium text-gray-600">Share</span>
                     </button>
                 </div>

@@ -13,10 +13,10 @@ export default function Page() {
                     {/* Left Column - Posts */}
                     <div className="col-span-2 h-full min-h-0">
                         <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-3xl bg-white shadow-sm">
-                            <div className="sticky top-0 z-20 bg-white px-4 pt-4">
+                            <div className="shrink-0 bg-white px-4 pt-4 pb-3 border-b border-gray-100">
                                 <CreatePostCardSection />
                             </div>
-                            <div className="overflow-y-auto flex-1 min-h-0 px-4 pt-4 pb-4">
+                            <div className="overflow-y-auto flex-1 min-h-0 px-4 pt-4 pb-4 no-scrollbar">
                                 <PostCardSection />
                             </div>
                         </div>
