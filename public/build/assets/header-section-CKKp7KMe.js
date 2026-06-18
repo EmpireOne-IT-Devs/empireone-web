@@ -1,1 +1,0 @@
-import{j as e}from"./app-DQTZMWB6.js";function n(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"The Engagement Floor"}),e.jsx("div",{className:"text-gray-600",children:"Create and manage company news, events calendar, and department showcases"})]})}export{n as default};
