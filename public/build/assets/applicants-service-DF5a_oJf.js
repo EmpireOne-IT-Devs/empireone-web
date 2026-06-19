@@ -1,0 +1,1 @@
+import{l as a}from"./app-DWebJ3WW.js";async function e(){return await a.get("/api/job/applicants")}async function i(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function n(){return await a.get("/api/job/get_applicant_pooling")}export{n as a,i as b,e as g};

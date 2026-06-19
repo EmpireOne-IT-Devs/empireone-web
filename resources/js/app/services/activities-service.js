@@ -9,7 +9,37 @@ export async function get_activity_posts_service() {
 }
 
 export async function publish_activity_post_service(data) {
-    return await axios.post("/api/activities/posts", data);
+    // If a media file is attached, send as multipart/form-data.
+    // Do NOT manually set Content-Type — axios sets it automatically with the
+    // correct boundary when FormData is the request body.
+    if (data.media instanceof File) {
+        const form = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            if (value === null || value === undefined) return;
+            // Send arrays (e.g. poll options) as repeated indexed fields.
+            if (Array.isArray(value)) {
+                value.forEach((item) => form.append(`${key}[]`, item));
+            } else {
+                form.append(key, value);
+            }
+        });
+        return await axios.post("/api/activities/posts", form);
+    }
+
+    // For non-file posts, rename array keys to the bracket notation expected
+    // by Laravel's array validation (options → options[]).
+    const payload = { ...data };
+    if (Array.isArray(payload.options)) {
+        // Laravel's JSON body decoder accepts plain arrays under the same key.
+        // No transformation needed — keep as-is.
+    }
+    return await axios.post("/api/activities/posts", payload);
+}
+
+export async function cast_poll_vote_service(postId, optionId) {
+    return await axios.post(`/api/activities/polls/${postId}/vote`, {
+        option_id: optionId,
+    });
 }
 
 export async function get_upcoming_events_service() {

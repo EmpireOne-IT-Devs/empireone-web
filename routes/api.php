@@ -23,6 +23,7 @@ use App\Http\Controllers\Auth\AuthorizationController;
 use App\Http\Controllers\Auth\EmailOtpController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\API\Activities\ActivityBirthdayController;
+use App\Http\Controllers\API\Activities\ActivityPollController;
 use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
@@ -151,6 +152,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::put('posts/{activityPost}',    [ActivityPostController::class, 'update']);
         Route::delete('posts/{activityPost}', [ActivityPostController::class, 'destroy']);
         Route::get('upcoming_events',    [ActivityPostController::class,    'upcoming_events']);
+        Route::post('polls/{activityPost}/vote', [ActivityPollController::class, 'vote']);
     });
 });
 

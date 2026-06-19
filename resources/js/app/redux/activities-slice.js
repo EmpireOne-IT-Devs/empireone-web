@@ -6,6 +6,7 @@ import {
     get_upcoming_events_service,
     update_activity_post_service,
     delete_activity_post_service,
+    cast_poll_vote_service,
 } from "../services/activities-service";
 
 export const get_upcoming_birthdays_thunk = createAsyncThunk(
@@ -80,6 +81,18 @@ export const delete_activity_post_thunk = createAsyncThunk(
     }
 );
 
+export const cast_poll_vote_thunk = createAsyncThunk(
+    "activities/castPollVote",
+    async ({ postId, optionId }, { rejectWithValue }) => {
+        try {
+            const response = await cast_poll_vote_service(postId, optionId);
+            return { postId, data: response.data.data };
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
 const activitiesSlice = createSlice({
     name: "activities",
     initialState: {
@@ -103,6 +116,9 @@ const activitiesSlice = createSlice({
         postUpdateError: null,
         postDeleting: false,
         postDeleteError: null,
+        // poll voting
+        pollVoting: false,
+        pollVoteError: null,
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -180,6 +196,29 @@ const activitiesSlice = createSlice({
             .addCase(delete_activity_post_thunk.rejected, (state, action) => {
                 state.postDeleting = false;
                 state.postDeleteError = action.payload;
+            })
+            // ── cast poll vote ──────────────────────────────────────────
+            .addCase(cast_poll_vote_thunk.pending, (state) => {
+                state.pollVoting = true;
+                state.pollVoteError = null;
+            })
+            .addCase(cast_poll_vote_thunk.fulfilled, (state, action) => {
+                state.pollVoting = false;
+                const { postId, data } = action.payload;
+                const idx = state.posts.findIndex((p) => p.id === postId);
+                if (idx !== -1) {
+                    state.posts[idx] = {
+                        ...state.posts[idx],
+                        options: data.options,
+                        total_votes: data.total_votes,
+                        user_has_voted: data.user_has_voted,
+                        user_voted_option: data.user_voted_option,
+                    };
+                }
+            })
+            .addCase(cast_poll_vote_thunk.rejected, (state, action) => {
+                state.pollVoting = false;
+                state.pollVoteError = action.payload;
             });
     },
 });

@@ -25,7 +25,6 @@ export default function UpcomingBirthdaySection() {
         dispatch(get_upcoming_birthdays_thunk());
     }, [dispatch]);
 
-    // Continuous marquee animation — restarts whenever scrollingItems change
     useEffect(() => {
         const carousel = carouselRef.current;
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Heart, MessageSquare, Share2 } from "lucide-react";
+import { Heart, MessageSquare, Share2, Megaphone, CalendarDays, Newspaper, Send, Tag } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
+import Badge from "@/app/_components/badge";
 import {
     get_activity_posts_thunk,
     delete_activity_post_thunk,
@@ -9,7 +10,15 @@ import {
 import PostActionMenu from "./post-action-menu";
 import EditPostModal from "./edit-post-modal";
 
-// ── Birthday post card ──────────────────────────────────────────────────────
+// ── Category config ──────────────────────────────────────────────────────────
+const CATEGORY_CONFIG = {
+    "Pinned Announcement": { icon: Megaphone, variant: "danger" },
+    "Events":              { icon: CalendarDays, variant: "primary" },
+    "News":                { icon: Newspaper, variant: "info" },
+    "Milestone":           { icon: Send, variant: "success" },
+    "General":             { icon: Tag, variant: "secondary" },
+};
+
 function BirthdayPostCard({ post, celebrants = [], menuOpen, onMenuToggle, onEdit, onDelete, deleting }) {
     return (
         <Card
@@ -127,15 +136,18 @@ function BirthdayPostCard({ post, celebrants = [], menuOpen, onMenuToggle, onEdi
     );
 }
 
-// ── Generic post card (for future general posts) ────────────────────────────
 function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, deleting }) {
+    const categoryKey = post.category ?? "General";
+    const catConfig = CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
+
     return (
         <Card
             variant="default"
-            padding="p-3"
-            className="w-full font-sans flex flex-col gap-2"
+            padding="p-0"
+            className="w-full overflow-hidden font-sans"
         >
-            <div className="flex justify-between items-start w-full">
+            {/* Header */}
+            <div className="px-4 pt-4 pb-3 flex justify-between items-start w-full">
                 <div className="flex items-center gap-2.5">
                     {post.author.avatar ? (
                         <img
@@ -152,9 +164,18 @@ function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, delet
                         <h3 className="font-semibold text-gray-900 text-sm leading-tight">
                             {post.author.name}
                         </h3>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                            Activities • {post.time_ago}
-                        </p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                            <p className="text-xs text-gray-400">
+                                Activities • {post.time_ago}
+                            </p>
+                            <span className="text-gray-300">·</span>
+                            <Badge
+                                label={categoryKey}
+                                variant={catConfig.variant}
+                                outlined
+                                className="text-[10px] py-0"
+                            />
+                        </div>
                     </div>
                 </div>
                 <PostActionMenu
@@ -165,35 +186,47 @@ function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, delet
                     deleting={deleting}
                 />
             </div>
-            <div className="text-gray-800 text-sm leading-relaxed">
-                <p className="font-semibold">{post.headline}</p>
+
+            {/* Text content */}
+            <div className="px-4 pb-3 flex flex-col gap-1">
+                <p className="font-semibold text-gray-900 text-sm">{post.headline}</p>
                 <div
-                    className="mt-1 text-gray-600 prose prose-sm max-w-none"
+                    className="text-gray-600 text-sm leading-relaxed prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ __html: post.message }}
                 />
             </div>
-            <div className="flex justify-between items-center pt-2 text-gray-500 text-xs border-t border-gray-100">
+
+            {/* Media */}
+            {post.media_url && (
+                post.media_type === "video" ? (
+                    <video
+                        src={post.media_url}
+                        controls
+                        className="w-full max-h-[480px] object-contain bg-black"
+                    />
+                ) : (
+                    <img
+                        src={post.media_url}
+                        alt={post.headline}
+                        className="w-full max-h-[480px] object-cover"
+                    />
+                )
+            )}
+
+            {/* Footer */}
+            <div className="px-4 py-3 flex justify-between items-center text-gray-500 text-xs border-t border-gray-100">
                 <div className="flex items-center gap-4">
                     <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
-                        <Heart
-                            size={14}
-                            className="group-hover:scale-110 transition"
-                        />
+                        <Heart size={14} className="group-hover:scale-110 transition" />
                         <span className="font-medium text-gray-600">0</span>
                     </button>
                     <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
-                        <MessageSquare
-                            size={14}
-                            className="group-hover:scale-110 transition"
-                        />
+                        <MessageSquare size={14} className="group-hover:scale-110 transition" />
                         <span className="font-medium text-gray-600">0</span>
                     </button>
                 </div>
                 <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
-                    <Share2
-                        size={14}
-                        className="group-hover:scale-110 transition"
-                    />
+                    <Share2 size={14} className="group-hover:scale-110 transition" />
                     <span className="font-medium text-gray-600">Share</span>
                 </button>
             </div>
