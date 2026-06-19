@@ -16,7 +16,7 @@ export default function EmployeeInformationSection({
     return (
         <div className="flex flex-col gap-6 w-full">
             {
-                error_message && <div className="text-red-500 px-3 text-sm">
+                error_message && <div className="text-red-500 px-3 text-sm border border-red-500 p-3 rounded-md bg-red-50 shadow-sm">
                     {error_message}
                 </div>
             }
