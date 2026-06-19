@@ -10,12 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ActivityPostController extends Controller
 {
-    /**
-     * GET /api/activities/posts
-     *
-     * Returns all published posts, newest first.
-     * Scheduled posts (published_at = null) are excluded until their time arrives.
-     */
+   
     public function index(): JsonResponse
     {
         $posts = ActivityPost::with('user:id,name,avatar')
@@ -57,12 +52,7 @@ class ActivityPostController extends Controller
         ], 200);
     }
 
-    /**
-     * GET /api/activities/upcoming_events
-     *
-     * Returns scheduled (not yet published) activity posts ordered by scheduled_at.
-     * These appear in the Upcoming Events sidebar.
-     */
+   
     public function upcoming_events(): JsonResponse
     {
         $events = ActivityPost::whereNull('published_at')
@@ -92,13 +82,7 @@ class ActivityPostController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/activities/posts
-     *
-     * Publish a birthday (or general) activity post.
-     * If scheduled_at is provided, published_at is kept null until that time.
-     * If no schedule, published_at = now() so it appears in the feed immediately.
-     */
+   
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -123,9 +107,6 @@ class ActivityPostController extends Controller
         ], 201);
     }
 
-    /**
-     * PUT /api/activities/posts/{activityPost}
-     */
     public function update(Request $request, ActivityPost $activityPost): JsonResponse
     {
         $validated = $request->validate([
@@ -143,9 +124,7 @@ class ActivityPostController extends Controller
         ], 200);
     }
 
-    /**
-     * DELETE /api/activities/posts/{activityPost}
-     */
+   
     public function destroy(ActivityPost $activityPost): JsonResponse
     {
         $activityPost->delete();

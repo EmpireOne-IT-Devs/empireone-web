@@ -9,35 +9,20 @@ use Illuminate\Support\Carbon;
 
 class ActivityBirthdayController extends Controller
 {
-    /**
-     * GET /api/activities/upcoming_birthdays
-     *
-     * Returns ALL admin and employee users whose birthday falls in the current
-     * calendar month, sorted ascending by birthday day.
-     *
-     * Intentionally queries from User (not AccountEmployee) so that every person
-     * whose date_of_birth is recorded appears — regardless of whether their
-     * employee record is fully set up (no employee_id requirement, no status gate).
-     *
-     * Applicants (role 3) are excluded — they are not staff.
-     */
+  
     public function upcoming_birthdays(): JsonResponse
     {
         $currentMonth = now()->month;
 
         $users = User::query()
-            // Only staff roles — exclude applicants (role 3)
             ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_EMPLOYEE])
             ->whereHas('personal_information', function ($query) use ($currentMonth) {
-                // date_of_birth stored as YYYY-MM-DD from HTML date inputs.
-                // MySQL MONTH() casts that string correctly without STR_TO_DATE.
                 $query->whereNotNull('date_of_birth')
                       ->whereRaw('MONTH(date_of_birth) = ?', [$currentMonth]);
             })
             ->with([
-                // personal_information: only the fields needed for the response
-                'personal_information:id,user_id,first_name,middle_name,last_name,suffix,profile_picture,date_of_birth',
-                // account_employee already eager-loads department via its model definition
+                
+                'personal_information:id,user_id,first_name,middle_name,last_name,suffix,date_of_birth',
                 'account_employee',
             ])
             ->get()
@@ -76,7 +61,7 @@ class ActivityBirthdayController extends Controller
                     'department'      => $employee?->department?->name,
                     'position'        => $employee?->position,
                     'avatar'          => $user->avatar,
-                    'profile_picture' => $info->profile_picture,
+                    'profile_picture' => $user->avatar,
                     'date_of_birth'   => $info->date_of_birth,
                     'birthday_label'  => $date->format('M d'),
                     'birthday_month'  => $date->month,
