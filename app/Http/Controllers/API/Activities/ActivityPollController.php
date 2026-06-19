@@ -34,17 +34,10 @@ class ActivityPollController extends Controller
             ->where('activity_post_id', $activityPost->id)
             ->firstOrFail();
 
-        // Prevent duplicate votes.
-        $alreadyVoted = ActivityPollVote::where('activity_post_id', $activityPost->id)
+        // If user already voted, replace their existing vote.
+        ActivityPollVote::where('activity_post_id', $activityPost->id)
             ->where('user_id', Auth::id())
-            ->exists();
-
-        if ($alreadyVoted) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'You have already voted on this poll.',
-            ], 422);
-        }
+            ->delete();
 
         ActivityPollVote::create([
             'activity_post_id'        => $activityPost->id,

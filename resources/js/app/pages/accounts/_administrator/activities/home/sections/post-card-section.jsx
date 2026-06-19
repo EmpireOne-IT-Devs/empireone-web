@@ -3,9 +3,11 @@ import { Heart, MessageSquare, Share2, Megaphone, CalendarDays, Newspaper, Send,
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
+import ActivityPollCard from "../../_components/activity-poll-card";
 import {
     get_activity_posts_thunk,
     delete_activity_post_thunk,
+    cast_poll_vote_thunk,
 } from "@/app/redux/activities-slice";
 import PostActionMenu from "./post-action-menu";
 import EditPostModal from "./edit-post-modal";
@@ -236,7 +238,7 @@ function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, delet
 
 export default function PostCardSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading, postsError, birthdays, birthdayMonth, postDeleting } =
+    const { posts, postsLoading, postsError, birthdays, birthdayMonth, postDeleting, pollVoting } =
         useSelector((state) => state.activities);
 
     // openMenuId: which post's menu is open (null = none)
@@ -258,6 +260,10 @@ export default function PostCardSection() {
 
     function handleDelete(id) {
         dispatch(delete_activity_post_thunk(id));
+    }
+
+    function handleVote(postId, optionId) {
+        dispatch(cast_poll_vote_thunk({ postId, optionId }));
     }
 
     if (postsLoading) {
@@ -292,8 +298,9 @@ export default function PostCardSection() {
     return (
         <>
             <div className="w-full flex flex-col gap-4">
-                {posts.map((post) =>
-                    post.type === "birthday" ? (
+                {posts.map((post) => {
+                    if (post.type === "birthday") {
+                        return (
                         <BirthdayPostCard
                             key={post.id}
                             post={post}
@@ -306,7 +313,39 @@ export default function PostCardSection() {
                             onDelete={() => handleDelete(post.id)}
                             deleting={postDeleting}
                         />
-                    ) : (
+                        );
+                    }
+
+                    if (post.type === "poll") {
+                        return (
+                            <div
+                                key={post.id}
+                                className="w-full bg-[#f4f6f9] p-6 rounded-2xl font-sans antialiased"
+                            >
+                                <ActivityPollCard
+                                    post={post}
+                                    pollVoting={pollVoting}
+                                    onVote={(optionId) => handleVote(post.id, optionId)}
+                                    headerActions={
+                                        <PostActionMenu
+                                            open={openMenuId === post.id}
+                                            onToggle={() => handleMenuToggle(post.id)}
+                                            onEdit={() => handleEdit(post)}
+                                            onDelete={() => handleDelete(post.id)}
+                                            deleting={postDeleting}
+                                        />
+                                    }
+                                    footerMeta={
+                                        <span className="text-gray-400 font-medium">
+                                            Activities • {post.time_ago}
+                                        </span>
+                                    }
+                                />
+                            </div>
+                        );
+                    }
+
+                    return (
                         <GeneralPostCard
                             key={post.id}
                             post={post}
@@ -316,8 +355,8 @@ export default function PostCardSection() {
                             onDelete={() => handleDelete(post.id)}
                             deleting={postDeleting}
                         />
-                    ),
-                )}
+                    );
+                })}
             </div>
 
             <EditPostModal
