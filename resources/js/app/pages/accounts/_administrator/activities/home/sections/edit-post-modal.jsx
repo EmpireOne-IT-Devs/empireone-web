@@ -8,7 +8,7 @@ import { update_activity_post_thunk } from "@/app/redux/activities-slice";
 export default function EditPostModal({ post, onClose }) {
     const dispatch = useDispatch();
     const { postUpdating, postUpdateError } = useSelector(
-        (state) => state.activities
+        (state) => state.activities,
     );
 
     const [headline, setHeadline] = useState("");
@@ -33,7 +33,7 @@ export default function EditPostModal({ post, onClose }) {
             update_activity_post_thunk({
                 id: post.id,
                 data: { headline, message, publish_to: publishTo },
-            })
+            }),
         );
         if (result.meta.requestStatus === "fulfilled") {
             onClose();
@@ -66,7 +66,9 @@ export default function EditPostModal({ post, onClose }) {
                             message={message}
                             onMessageChange={setMessage}
                             onGoPublish={handleSave}
-                            submitLabel={postUpdating ? "Saving…" : "Save Changes"}
+                            submitLabel={
+                                postUpdating ? "Saving…" : "Save Changes"
+                            }
                         />
                     ) : (
                         /* ── General post: simple form ─────────────────────── */
@@ -78,7 +80,9 @@ export default function EditPostModal({ post, onClose }) {
                                 <input
                                     type="text"
                                     value={headline}
-                                    onChange={(e) => setHeadline(e.target.value)}
+                                    onChange={(e) =>
+                                        setHeadline(e.target.value)
+                                    }
                                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                                 />
                             </div>
@@ -91,21 +95,6 @@ export default function EditPostModal({ post, onClose }) {
                                     value={message}
                                     onChange={(html) => setMessage(html)}
                                 />
-                            </div>
-
-                            <div className="flex flex-col gap-1">
-                                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                                    Publish To
-                                </label>
-                                <select
-                                    value={publishTo}
-                                    onChange={(e) => setPublishTo(e.target.value)}
-                                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                >
-                                    <option>All Employees</option>
-                                    <option>Department Only</option>
-                                    <option>Management</option>
-                                </select>
                             </div>
 
                             {postUpdateError && (

@@ -30,6 +30,7 @@ export default function NewsSection() {
             date: formatDate(p.published_at),
             title: p.headline,
             description: stripHtml(p.message),
+            contentHtml: p.message,
             likes: 0,
             comments: 0,
         }));
@@ -85,9 +86,10 @@ export default function NewsSection() {
                                     <h3 className="text-sm font-bold text-gray-900 leading-snug tracking-tight mb-1.5 hover:text-blue-600 cursor-pointer transition-colors">
                                         {item.title}
                                     </h3>
-                                    <p className="text-xs text-gray-500 font-medium leading-relaxed mb-4 line-clamp-2">
-                                        {item.description}
-                                    </p>
+                                    <div
+                                        className="text-xs text-gray-500 font-medium leading-relaxed mb-4 line-clamp-2 [&_strong]:font-bold [&_b]:font-bold [&_em]:italic [&_i]:italic"
+                                        dangerouslySetInnerHTML={{ __html: item.contentHtml }}
+                                    />
                                 </div>
                                 <div className="flex items-center justify-between border-t border-gray-100 pt-3 mt-auto text-xs font-semibold text-gray-400">
                                     <div className="flex items-center gap-4">

@@ -4,6 +4,7 @@ import ActivitiesLayout from "../layout";
 import CreatePostCardSection from "./sections/create-post-card-section";
 import PostCardSection from "./sections/post-card-section";
 import UpcomingEventSection from "./sections/upcoming-event-section";
+import AnnouncementsSection from "../company_newsfeed/sections/announcements-section";
 
 export default function Page() {
     return (
@@ -23,8 +24,9 @@ export default function Page() {
                     </div>
                     
                     {/* Right Column - Upcoming Events */}
-                    <div className="h-full min-h-0">
+                    <div className="h-full min-h-0 overflow-auto">
                         <UpcomingEventSection />
+                        <AnnouncementsSection />
                     </div>
                 </div>
             </ActivitiesLayout>
