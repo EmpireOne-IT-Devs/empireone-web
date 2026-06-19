@@ -8,7 +8,7 @@ export default function EmployeeInformationSection({
     register,
     form,
     setValue,
-    errors
+    errors,
 }) {
     const { data } = useSelector((store) => store.app);
     const params = new URLSearchParams(window.location.search);

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import PersonalInfoSection from "./personal-info-section";
 import ProfessionalSection from "./professional-section";
 import DocumentsSection from "./document-section";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import Button from "@/app/_components/button";
 import { useDispatch, useSelector } from "react-redux";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -35,9 +35,7 @@ const TAB_LABELS = {
 };
 
 export default function InfoTabsSection() {
-    const { url } = usePage();
     const { data } = useSelector((store) => store.app);
-
     const activeIndex = window.location.pathname.split('/')[4];
     const account_role = window.location.pathname.split("/")[2];
 
@@ -127,6 +125,7 @@ export default function InfoTabsSection() {
                     open: true,
                 }),
             );
+            router.visit(window.location.pathname)
         } catch (error) {
             console.error(error);
         }
@@ -165,7 +164,6 @@ export default function InfoTabsSection() {
                                 watchedValues={formValues}
                             />
                         )}
-
                         {activeIndex === "employee" && (
                             <EmployeeInformationSection
                                 form={formValues}
