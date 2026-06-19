@@ -38,9 +38,8 @@ export default function InfoTabsSection() {
     const { url } = usePage();
     const { data } = useSelector((store) => store.app);
 
-    const urlTab = new URLSearchParams(url.split("?")[1]).get("tab");
-    const activeTabId = TAB_IDS.includes(urlTab) ? urlTab : "personal";
-    const activeIndex = TAB_IDS.indexOf(activeTabId);
+    const activeIndex = window.location.pathname.split('/')[4];
+    const account_role = window.location.pathname.split("/")[2];
 
     const {
         register,
@@ -74,12 +73,11 @@ export default function InfoTabsSection() {
         remove: removeSkill,
     } = useFieldArray({ control, name: "skills" });
 
-    const tabs = TAB_IDS.map((id, idx) => ({
+    const tabs = TAB_IDS.map((id) => ({
         label: TAB_LABELS[id],
-        active: idx === activeIndex,
-        path: `?tab=${id}`,
+        active: id === activeIndex,
+        path: `/accounts/${account_role}/my_profile/${id}`,
     }));
-
     useEffect(() => {
         if (data?.user?.personal_information) {
             reset({
@@ -149,7 +147,7 @@ export default function InfoTabsSection() {
                     </div>
 
                     <div className="p-4 md:p-6 space-y-4">
-                        {activeTabId === "personal" && (
+                        {activeIndex === "personal" && (
                             <PersonalInfoSection
                                 form={formValues}
                                 register={register}
@@ -168,7 +166,7 @@ export default function InfoTabsSection() {
                             />
                         )}
 
-                        {activeTabId === "employee" && (
+                        {activeIndex === "employee" && (
                             <EmployeeInformationSection
                                 form={formValues}
                                 register={register}
@@ -177,7 +175,7 @@ export default function InfoTabsSection() {
                             />
                         )}
 
-                        {activeTabId === "professional" && (
+                        {activeIndex === "professional" && (
                             <ProfessionalSection
                                 watchedValues={formValues}
                                 experienceFields={experienceFields}
@@ -193,7 +191,7 @@ export default function InfoTabsSection() {
                             />
                         )}
 
-                        {activeTabId === "documents" && (
+                        {activeIndex === "documents" && (
                             <DocumentsSection
                                 form={formValues}
                                 register={register}
@@ -201,11 +199,11 @@ export default function InfoTabsSection() {
                             />
                         )}
 
-                        {activeTabId === "emergency" && (
+                        {activeIndex === "emergency" && (
                             <EmergencyContactSection register={register} />
                         )}
 
-                        {activeTabId === "customization" && (
+                        {activeIndex === "customization" && (
                             <div className="flex flex-col items-center justify-center py-10 md:py-20">
                                 <Sparkles size={22} className="text-purple-500" />
                                 <p className="text-sm mt-2 text-slate-500 font-medium">

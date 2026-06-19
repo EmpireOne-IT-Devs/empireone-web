@@ -81,8 +81,13 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
             Route::inertia('/job_offers/{id}', 'accounts/job_offers/id/page');
 
             // My Profile Sub-group
-            Route::prefix('my_profile')->withoutMiddleware(['info.complete'])->group(function () {
-                Route::inertia('/', 'accounts/my_profile/page');
+            Route::prefix('my_profile')->group(function () {
+                Route::inertia('/employee', 'accounts/my_profile/page')->withoutMiddleware(['info.complete']);
+                Route::inertia('/personal', 'accounts/my_profile/page');
+                Route::inertia('/professional', 'accounts/my_profile/page');
+                Route::inertia('/documents', 'accounts/my_profile/page');
+                Route::inertia('/emergency', 'accounts/my_profile/page');
+                Route::inertia('/customization', 'accounts/my_profile/page');
                 Route::inertia('/signature', 'accounts/my_profile/signature/page');
             });
 

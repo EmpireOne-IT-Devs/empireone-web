@@ -34,7 +34,6 @@ class EnsureAccountEmployeeComplete
             'position',
             'eogs_email',
             'basic_pay',
-            'allowance',
             'status'
         ];
 
@@ -42,7 +41,7 @@ class EnsureAccountEmployeeComplete
         foreach ($requiredFields as $field) {
             if (blank($info->{$field})) {
                 // Redirect them to the form to complete their data
-                return redirect('/accounts/administrator/my_profile?tab=employee');
+                return redirect('/accounts/administrator/my_profile/employee?error_message=Please complete your employee profile.');
             }
         }
 

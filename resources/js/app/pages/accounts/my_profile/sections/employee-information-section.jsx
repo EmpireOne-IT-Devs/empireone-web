@@ -11,8 +11,16 @@ export default function EmployeeInformationSection({
     errors
 }) {
     const { data } = useSelector((store) => store.app);
+    const params = new URLSearchParams(window.location.search);
+    const error_message = params.get("error_message") || "";
     return (
         <div className="flex flex-col gap-6 w-full">
+            {
+                error_message && <div className="text-red-500 px-3 text-sm">
+                    {error_message}
+                </div>
+            }
+
             <div className="flex flex-col gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-4 md:px-6">
                 <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <Briefcase size={15} /> Employee Information
