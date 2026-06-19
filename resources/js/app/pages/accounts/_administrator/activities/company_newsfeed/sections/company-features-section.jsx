@@ -6,6 +6,7 @@ import {
     Share2,
     ChevronLeft,
     ChevronRight,
+    X,
 } from "lucide-react";
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
@@ -32,6 +33,7 @@ export default function CompanyFeaturesSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.activities);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [previewImage, setPreviewImage] = useState(null);
 
     useEffect(() => { dispatch(get_activity_posts_thunk()); }, [dispatch]);
 
@@ -40,7 +42,7 @@ export default function CompanyFeaturesSection() {
         .map((p, i) => ({
             id: p.id,
             title: p.headline,
-            description: stripHtml(p.message).substring(0, 200),
+            description: stripHtml(p.message),
             category: p.category,
             date: formatDate(p.published_at),
             author: p.author?.name ?? "Admin",
@@ -127,14 +129,18 @@ export default function CompanyFeaturesSection() {
             <Card className="overflow-hidden rounded-2xl border">
                 <div
                     key={currentFeature.id}
-                    className="flex flex-col md:flex-row animate-in fade-in duration-500"
+                    className="flex h-[520px] flex-col animate-in fade-in duration-500 md:h-[360px] md:flex-row"
                 >
                     {/* Image */}
-                    <div className="relative md:w-1/2 h-64 md:h-auto">
+                    <button
+                        type="button"
+                        onClick={() => setPreviewImage(currentFeature)}
+                        className="relative h-64 w-full overflow-hidden text-left md:h-full md:w-1/2"
+                    >
                         <img
                             src={currentFeature.image}
                             alt={currentFeature.title}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover transition duration-300 hover:scale-[1.02]"
                         />
 
                         {currentFeature.isFeatured && (
@@ -142,11 +148,11 @@ export default function CompanyFeaturesSection() {
                                 <Badge label="Featured" variant="warning" />
                             </div>
                         )}
-                    </div>
+                    </button>
 
                     {/* Content */}
-                    <div className="md:w-1/2 p-6 flex flex-col justify-between">
-                        <div>
+                    <div className="flex min-h-0 flex-1 flex-col justify-between p-6 md:w-1/2">
+                        <div className="min-h-0">
                             <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
                                 <Badge
                                     label={currentFeature.category}
@@ -164,7 +170,7 @@ export default function CompanyFeaturesSection() {
                                 {currentFeature.title}
                             </h3>
 
-                            <p className="text-sm text-gray-600">
+                            <p className="max-h-32 overflow-y-auto overflow-x-hidden pr-2 text-sm text-gray-600 leading-relaxed break-words md:max-h-36">
                                 {currentFeature.description}
                             </p>
                         </div>
@@ -199,6 +205,34 @@ export default function CompanyFeaturesSection() {
                     </div>
                 </div>
             </Card>
+
+            {previewImage && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-8 backdrop-blur-sm">
+                    <div className="relative w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+                        <button
+                            type="button"
+                            onClick={() => setPreviewImage(null)}
+                            className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 text-gray-600 shadow-sm transition hover:bg-white hover:text-gray-900"
+                            aria-label="Close image preview"
+                        >
+                            <X size={18} />
+                        </button>
+                        <img
+                            src={previewImage.image}
+                            alt={previewImage.title}
+                            className="max-h-[82vh] w-full object-contain bg-black"
+                        />
+                        <div className="border-t border-gray-100 px-5 py-4">
+                            <p className="text-sm font-semibold text-gray-900">
+                                {previewImage.title}
+                            </p>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {previewImage.category} • {previewImage.date}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Dots */}
             {features.length > 1 && (

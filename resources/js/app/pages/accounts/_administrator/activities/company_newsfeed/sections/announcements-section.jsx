@@ -1,9 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { TbSpeakerphone } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import { get_activity_posts_thunk } from "@/app/redux/activities-slice";
+import Modal from "@/app/_components/modal";
 
-function stripHtml(html) { return html ? html.replace(/<[^>]+>/g, "").trim() : ""; }
+function stripHtml(html) {
+    if (!html) return "";
+    const text = html.replace(/<[^>]+>/g, "");
+
+    if (typeof document === "undefined") {
+        return text.replace(/&nbsp;/g, " ").trim();
+    }
+
+    const textarea = document.createElement("textarea");
+    textarea.innerHTML = text;
+    return textarea.value.replace(/\u00a0/g, " ").trim();
+}
+
 function formatDate(d) {
     if (!d) return "";
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -12,17 +25,23 @@ function formatDate(d) {
 export default function AnnouncementsSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.activities);
+    const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
     useEffect(() => { dispatch(get_activity_posts_thunk()); }, [dispatch]);
 
     const announcements = posts
         .filter((p) => p.category === "Pinned Announcement")
-        .map((p) => ({
-            id: p.id,
-            title: p.headline,
-            description: stripHtml(p.message).substring(0, 120) + (stripHtml(p.message).length > 120 ? "..." : ""),
-            date: formatDate(p.published_at),
-        }));
+        .map((p) => {
+            const fullDescription = stripHtml(p.message);
+
+            return {
+                id: p.id,
+                title: p.headline,
+                description: fullDescription.substring(0, 120) + (fullDescription.length > 120 ? "..." : ""),
+                fullDescription,
+                date: formatDate(p.published_at),
+            };
+        });
 
     return (
         <div className="w-full bg-[#f4f6f9] p-6 rounded-2xl font-sans antialiased">
@@ -46,9 +65,11 @@ export default function AnnouncementsSection() {
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
                     {announcements.map((a) => (
-                        <div
+                        <button
                             key={a.id}
-                            className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between min-h-[140px] relative overflow-hidden"
+                            type="button"
+                            onClick={() => setSelectedAnnouncement(a)}
+                            className="w-full text-left bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between min-h-[140px] relative overflow-hidden"
                         >
                             <div className="flex items-start justify-between gap-4 mb-2">
                                 <div className="flex items-center gap-2.5">
@@ -70,10 +91,50 @@ export default function AnnouncementsSection() {
                                     Announcement
                                 </span>
                             </div>
-                        </div>
+                        </button>
                     ))}
                 </div>
             )}
+
+            <Modal
+                isOpen={Boolean(selectedAnnouncement)}
+                onClose={() => setSelectedAnnouncement(null)}
+                title={
+                    <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#ff4d4f]">
+                            <TbSpeakerphone size={21} />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-400">
+                                Activities / Company NewsFeed
+                            </p>
+                            <h2 className="mt-1 text-base font-semibold text-gray-900">
+                                Announcement Details
+                            </h2>
+                        </div>
+                    </div>
+                }
+                width="max-w-2xl h-max"
+            >
+                {selectedAnnouncement && (
+                    <div className="overflow-x-hidden border-t border-gray-100 pt-5">
+                        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                            <span className="rounded-full bg-red-50 px-2.5 py-1 font-medium text-[#ff4d4f]">
+                                Pinned
+                            </span>
+                            <span>{selectedAnnouncement.date}</span>
+                        </div>
+
+                        <h3 className="mb-4 text-xl font-bold leading-snug text-gray-900 break-words">
+                            {selectedAnnouncement.title}
+                        </h3>
+
+                        <div className="max-h-[52vh] overflow-y-auto overflow-x-hidden pr-2 text-sm leading-7 text-gray-600 whitespace-pre-line break-words">
+                            {selectedAnnouncement.fullDescription}
+                        </div>
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 }
