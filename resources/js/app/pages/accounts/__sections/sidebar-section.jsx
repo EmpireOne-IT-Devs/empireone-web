@@ -232,7 +232,7 @@ export default function SidebarSection() {
     const bottomNavigation = [
         {
             name: "My Profile",
-            href: `/accounts/${account_role}/my_profile`,
+            href: `/accounts/${account_role}/my_profile/personal`,
             icon: FcBusinessman,
             current: path == "my_profile",
         },
