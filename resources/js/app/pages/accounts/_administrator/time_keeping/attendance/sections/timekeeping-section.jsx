@@ -1,0 +1,82 @@
+import React, { useEffect, useState } from "react";
+import { Clock, LogIn, LogOut } from "lucide-react";
+
+export default function TimekeepingSection() {
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+    return (
+        <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-blue-100 rounded-full">
+                    <Clock className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                    <h2 className="text-xl font-bold text-gray-800">
+                        Timekeeping Attendance
+                    </h2>
+                    {/* <p className="text-sm text-gray-500">
+                        Track employee attendance and work hours.
+                    </p> */}
+                </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <p className="text-sm text-gray-500">Current Status</p>
+                        <p className="font-semibold text-green-600">
+                            Ready to Clock In
+                        </p>
+                    </div>
+
+                    <div className="text-right">
+                        <p className="text-sm text-gray-500">Current Time</p>
+                        <p className="text-lg font-bold text-blue-600">
+                            {currentTime.toLocaleTimeString()}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            {currentTime.toLocaleDateString()}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition-all shadow-sm">
+                    <LogIn size={20} />
+                    Clock In
+                </button>
+
+                <button className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition-all shadow-sm">
+                    <LogOut size={20} />
+                    Clock Out
+                </button>
+            </div>
+
+            <div className="mt-6 border-t pt-4">
+                <h3 className="font-semibold text-gray-700 mb-3">
+                    Today's Record
+                </h3>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-green-50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-500">Clock In</p>
+                        <p className="font-bold text-green-700">--:--</p>
+                    </div>
+
+                    <div className="bg-red-50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-500">Clock Out</p>
+                        <p className="font-bold text-red-700">--:--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
