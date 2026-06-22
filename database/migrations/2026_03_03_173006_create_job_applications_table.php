@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('referral_id')->nullable();
             $table->string('threadId')->nullable();
             $table->string('source')->nullable();
-            $table->string('interview_type')->nullable();
             $table->enum('screening_status', [
                 'New',
                 'Conducted',

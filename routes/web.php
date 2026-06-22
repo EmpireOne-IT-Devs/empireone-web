@@ -88,7 +88,7 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
                 Route::inertia('/documents', 'accounts/my_profile/page');
                 Route::inertia('/emergency', 'accounts/my_profile/page');
                 Route::inertia('/customization', 'accounts/my_profile/page');
-                Route::inertia('/signature', 'accounts/my_profile/signature/page');
+                Route::inertia('/signature', 'accounts/my_profile/signature/page')->withoutMiddleware(['info.complete']);
             });
 
             // Employee and Applicant shared routes

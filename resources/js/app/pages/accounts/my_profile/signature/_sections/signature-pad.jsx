@@ -98,7 +98,7 @@ const SignaturePad = () => {
                     open: true,
                 }),
             );
-            router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_profile?tab=personal`);
+            router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_profile/personal`);
             setLoading(false);
             console.log("Signature Value:", signatureData);
         } catch (error) { }
