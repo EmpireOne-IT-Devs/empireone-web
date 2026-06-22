@@ -194,6 +194,14 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
             Route::prefix('{id}')->group($employeeDetailsRoutes); // Applied Reusable Group
         });
 
+        Route::prefix('time_keeping')->group(function () {
+            Route::redirect('/', '/accounts/administrator/time_keeping/dashboard');
+            Route::inertia('/dashboard', 'accounts/_administrator/time_keeping/dashboard/page');
+            Route::inertia('/attendance', 'accounts/_administrator/time_keeping/attendance/page');
+            Route::inertia('/time_sheets', 'accounts/_administrator/time_keeping/time_sheets/page');
+            Route::inertia('/reports', 'accounts/_administrator/time_keeping/reports/page');
+        });
+
         // Route::prefix('rnr')->group(function () { ... });
         // Route::prefix('e_store')->group(function () { ... });
         // Route::prefix('time_keeping')->group(function () { ... });

@@ -130,6 +130,13 @@ export default function SidebarSection() {
                       is_incoming: false,
                   },
                   {
+                      name: "Timekeeping",
+                      href: `/accounts/${account_role}/time_keeping/dashboard`,
+                      icon: FcOvertime,
+                      current: path == "time_keeping",
+                      is_incoming: false,
+                  },
+                  {
                       name: "Ticketing",
                       href: `/accounts/${account_role}/ticketing`,
                       icon: FcCustomerSupport,
@@ -157,13 +164,6 @@ export default function SidebarSection() {
                       icon: FcShop,
                       current: path == "e_store",
                       is_incoming: false,
-                  },
-                  {
-                      name: "Time Keeping",
-                      href: `/accounts/${account_role}/time_keeping/dashboard`,
-                      icon: FcOvertime,
-                      current: path == "time_keeping",
-                      is_incoming: true,
                   },
                   {
                       name: "Finance",
