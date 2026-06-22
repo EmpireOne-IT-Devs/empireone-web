@@ -7,6 +7,7 @@ use App\Mail\ChangeFormEmail;
 use App\Models\Account\AccountEmployee;
 use App\Models\ER\EREmployeeChangeForm;
 use App\Models\ER\ERLeader;
+use App\Models\ER\ERSubordinate;
 use App\Models\Jobs\JobPosting;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -60,6 +61,12 @@ class EREmployeeChangeFormController extends Controller
             $leader = ERLeader::where('user_id', $request->info_reporting_id_to)->first();
             if ($leader) {
                 $updateData['e_r_leader_id'] = $leader->id;
+                ERSubordinate::updateOrCreate(
+                    // 1. Search for this record
+                    ['subordinate_id' => $request->employee['user_id']],
+                    // 2. Update or insert this data
+                    ['er_leader_id' => $leader->id]
+                );
             }
         }
 

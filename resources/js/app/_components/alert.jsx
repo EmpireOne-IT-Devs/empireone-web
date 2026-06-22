@@ -157,7 +157,6 @@ export default function Alert({
                     <div
                         className={`pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg
                         bg-white shadow-lg outline outline-1 outline-black/5 transition
-                        dark:bg-gray-800 dark:outline-white/10
                         ${shake ? "animate-shake" : ""}`}
                     >
                         {/* Content */}
@@ -172,10 +171,10 @@ export default function Alert({
                                 )}
 
                                 <div className="ml-3 w-0 flex-1 pt-0.5">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                    <p className="text-sm font-medium text-gray-900">
                                         {title}
                                     </p>
-                                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    <p className="mt-1 text-sm text-gray-500">
                                         {message}
                                     </p>
                                 </div>
@@ -184,7 +183,7 @@ export default function Alert({
                                     <button
                                         type="button"
                                         onClick={handleClose}
-                                        className="inline-flex rounded-md text-gray-400 hover:text-gray-500 dark:hover:text-white"
+                                        className="inline-flex rounded-md text-gray-400 hover:text-gray-500"
                                     >
                                         <span className="sr-only">Close</span>
                                         <XMarkIcon className="size-5" />
@@ -195,7 +194,7 @@ export default function Alert({
 
                         {/* Progress Bar */}
                         {showProgress && (
-                            <div className="h-1 w-full bg-gray-200 dark:bg-gray-700">
+                            <div className="h-1 w-full bg-gray-200">
                                 <div
                                     className={`h-full transition-[width] duration-[50ms] ${config[safeType].barColor}`}
                                     style={{ width: `${progress}%` }}

@@ -67,7 +67,7 @@ export default function VerifyEmail({ status }) {
                                 variant="warning"
                                 loading={processing}
                             >
-                                Resend Verification Email
+                                Send Verification Email
                             </Button>
                         </div>
                         <Link

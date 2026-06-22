@@ -786,30 +786,27 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                         {/* leader_information */}
                                     </td>
                                     <td className="border border-black p-1">
-                                        {watchedValues.is_edit_reporting_to ? (
-                                            <Select
-                                                name="info_reporting_id_to"
-                                                className="w-full text-center"
-                                                options={leaders?.data?.map((res) => ({
-                                                    label: res.user.name,
-                                                    value: res.user_id,
-                                                }))}
-                                                value={
-                                                    watchedValues.info_reporting_id_to
-                                                }
-                                                onChange={(val) =>
-                                                    setValue(
-                                                        "info_reporting_id_to",
-                                                        val,
-                                                    )
-                                                }
-                                                error={
-                                                    errors.info_reporting_id_to
-                                                }
-                                            />
-                                        ) : (
-                                            "No Change"
-                                        )}
+                                        <Select
+                                            disabled
+                                            name="info_reporting_id_to"
+                                            className="w-full text-center"
+                                            options={leaders?.data?.map((res) => ({
+                                                label: res.user.name,
+                                                value: res.user_id,
+                                            }))}
+                                            value={
+                                                watchedValues.info_reporting_id_to
+                                            }
+                                            onChange={(val) =>
+                                                setValue(
+                                                    "info_reporting_id_to",
+                                                    val,
+                                                )
+                                            }
+                                            error={
+                                                errors.info_reporting_id_to
+                                            }
+                                        />
                                     </td>
                                     <td className="border border-black p-1">
                                         <Button

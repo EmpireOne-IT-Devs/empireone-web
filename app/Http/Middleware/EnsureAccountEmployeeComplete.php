@@ -36,15 +36,13 @@ class EnsureAccountEmployeeComplete
             'basic_pay',
             'status'
         ];
-
-        // 5. Loop through and check if any are blank
-        foreach ($requiredFields as $field) {
-            if (blank($info->{$field})) {
-                // Redirect them to the form to complete their data
-                return redirect('/accounts/administrator/my_profile/employee?error_message=Please complete your employee profile.');
+        if ($user->role == 2 || $user->role == 1) {
+            foreach ($requiredFields as $field) {
+                if (blank($info->{$field})) {
+                    return redirect('/accounts/administrator/my_profile/employee?error_message=Please complete your employee profile.');
+                }
             }
         }
-
         // If everything is filled out, let the request proceed
         return $next($request);
     }
