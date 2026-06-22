@@ -39,8 +39,6 @@ export default function WorkAnniversarySection() {
                     Work Anniversaries
                 </h2>
             </div>
-
-            {/* Anniversary Container Grid / List */}
             <div className="flex flex-col gap-3">
                 {ANNIVERSARY_DATA.map((employee) => (
                     <Card key={employee.id} className="p-5 bg-white border border-gray-100 rounded-2xl shadow-sm">

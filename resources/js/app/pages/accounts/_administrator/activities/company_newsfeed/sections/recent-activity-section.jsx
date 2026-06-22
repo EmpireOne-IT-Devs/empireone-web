@@ -64,9 +64,8 @@ export default function RecentActivitySection() {
                         {activityItem.description}
                     </p>
 
-                    {/* Metadata & Social Engagement Footer */}
                     <div className="flex items-center justify-between border-t border-gray-50 pt-4">
-                        {/* Profile Info Row */}
+                      
                         <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-full bg-blue-700 flex items-center justify-center text-white font-medium text-sm shrink-0 shadow-sm">
                                 {activityItem.author.initial}
@@ -92,7 +91,6 @@ export default function RecentActivitySection() {
                                 <span>{activityItem.engagement.likes}</span>
                             </div>
 
-                            {/* Comments Counter */}
                             <div className="flex items-center gap-1.5 text-gray-400">
                                 <MessageSquare
                                     size={14}
