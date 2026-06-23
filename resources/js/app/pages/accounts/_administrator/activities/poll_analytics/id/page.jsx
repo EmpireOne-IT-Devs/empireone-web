@@ -46,7 +46,7 @@ export default function Page() {
                 <HeaderSection />
                 <PollInfoSection pollId={id} />
 
-                <div className="mb-4 flex gap-2">
+                <div className="mb-4 flex gap-2 ">
                     <button
                         type="button"
                         onClick={() => setActiveTab("results")}

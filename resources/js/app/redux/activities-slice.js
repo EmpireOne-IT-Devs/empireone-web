@@ -195,7 +195,7 @@ const activitiesSlice = createSlice({
         postDeleting: false,
         postDeleteError: null,
         // poll voting
-        pollVoting: false,
+        pollVotingPostId: null,
         pollVoteError: null,
         // poll analytics module
         pollAnalytics: [],
@@ -289,12 +289,12 @@ const activitiesSlice = createSlice({
                 state.postDeleteError = action.payload;
             })
             // ── cast poll vote ──────────────────────────────────────────
-            .addCase(cast_poll_vote_thunk.pending, (state) => {
-                state.pollVoting = true;
+            .addCase(cast_poll_vote_thunk.pending, (state, action) => {
+                state.pollVotingPostId = action.meta.arg.postId;
                 state.pollVoteError = null;
             })
             .addCase(cast_poll_vote_thunk.fulfilled, (state, action) => {
-                state.pollVoting = false;
+                state.pollVotingPostId = null;
                 const { postId, data } = action.payload;
                 const idx = state.posts.findIndex((p) => p.id === postId);
                 if (idx !== -1) {
@@ -308,7 +308,7 @@ const activitiesSlice = createSlice({
                 }
             })
             .addCase(cast_poll_vote_thunk.rejected, (state, action) => {
-                state.pollVoting = false;
+                state.pollVotingPostId = null;
                 state.pollVoteError = action.payload;
             })
             // ── poll analytics list ─────────────────────────────────────
@@ -370,11 +370,11 @@ const activitiesSlice = createSlice({
             .addCase(close_poll_thunk.fulfilled, (state, action) => {
                 state.pollStatusUpdating = false;
                 const pollId = action.payload;
-                const poll = state.pollAnalytics.find((p) => p.poll_id === pollId);
+                const poll = state.pollAnalytics.find((p) => p.id === pollId);
                 if (poll) {
                     poll.status = "Closed";
                 }
-                if (state.selectedPoll?.poll_information?.poll_id === pollId) {
+                if (state.selectedPoll?.poll_information?.id === pollId) {
                     state.selectedPoll.poll_information.status = "Closed";
                 }
             })
@@ -389,11 +389,11 @@ const activitiesSlice = createSlice({
             .addCase(reopen_poll_thunk.fulfilled, (state, action) => {
                 state.pollStatusUpdating = false;
                 const pollId = action.payload;
-                const poll = state.pollAnalytics.find((p) => p.poll_id === pollId);
+                const poll = state.pollAnalytics.find((p) => p.id === pollId);
                 if (poll) {
                     poll.status = "Active";
                 }
-                if (state.selectedPoll?.poll_information?.poll_id === pollId) {
+                if (state.selectedPoll?.poll_information?.id === pollId) {
                     state.selectedPoll.poll_information.status = "Active";
                 }
             })

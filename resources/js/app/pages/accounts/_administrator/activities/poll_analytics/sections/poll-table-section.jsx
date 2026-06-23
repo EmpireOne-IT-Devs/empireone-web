@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     close_poll_thunk,
     get_poll_analytics_thunk,
+    get_activity_posts_thunk,
     reopen_poll_thunk,
 } from "@/app/redux/activities-slice";
 import moment from "moment";
@@ -36,9 +37,25 @@ export default function PollTableSection() {
         dispatch(get_poll_analytics_thunk());
     }, [dispatch]);
 
-    const maxVotes = Math.max(...pollAnalytics.map((p) => p.total_votes), 0);
+    const params = new URLSearchParams(window.location.search);
+    const search = params.get("search") || "";
+    const status = params.get("status") || "all";
 
-    const data = pollAnalytics.map((poll) => {
+    const filtered = pollAnalytics.filter((poll) => {
+        const matchesStatus =
+            status === "all" ||
+            poll.status.toLowerCase() === status.toLowerCase();
+        const term = search.trim().toLowerCase();
+        const matchesSearch =
+            !term ||
+            poll.poll_id.toLowerCase().includes(term) ||
+            poll.poll_title.toLowerCase().includes(term);
+        return matchesStatus && matchesSearch;
+    });
+
+    const maxVotes = Math.max(...filtered.map((p) => p.total_votes), 0);
+
+    const data = filtered.map((poll) => {
         const percent =
             maxVotes > 0 ? Math.round((poll.total_votes / maxVotes) * 100) : 0;
 
@@ -66,21 +83,24 @@ export default function PollTableSection() {
                     >
                         <Eye size={16} />
                     </Link>
-                    {/* <button
+                    <button
                         type="button"
                         disabled={pollStatusUpdating}
                         onClick={() =>
                             dispatch(
                                 poll.status === "Closed"
-                                    ? reopen_poll_thunk(poll.poll_id)
-                                    : close_poll_thunk(poll.poll_id),
-                            ).then(() => dispatch(get_poll_analytics_thunk()))
+                                    ? reopen_poll_thunk(poll.id)
+                                    : close_poll_thunk(poll.id),
+                            ).then(() => {
+                                dispatch(get_poll_analytics_thunk());
+                                dispatch(get_activity_posts_thunk());
+                            })
                         }
                         className="p-1 text-amber-600 hover:bg-amber-50 rounded disabled:opacity-50"
                         title={poll.status === "Closed" ? "Reopen Poll" : "Close Poll"}
                     >
                         <Pencil size={16} />
-                    </button> */}
+                    </button>
                 </div>
             ),
         };

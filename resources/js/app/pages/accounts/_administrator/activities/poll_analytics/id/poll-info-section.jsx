@@ -31,9 +31,9 @@ export default function PollInfoSection({ pollId }) {
     const handleToggleStatus = async () => {
         if (!info) return;
         if (info.status === "Closed") {
-            await dispatch(reopen_poll_thunk(info.poll_id));
+            await dispatch(reopen_poll_thunk(pollId));
         } else {
-            await dispatch(close_poll_thunk(info.poll_id));
+            await dispatch(close_poll_thunk(pollId));
         }
         dispatch(get_poll_details_thunk(pollId));
     };

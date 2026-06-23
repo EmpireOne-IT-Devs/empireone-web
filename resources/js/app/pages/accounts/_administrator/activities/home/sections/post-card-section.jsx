@@ -287,7 +287,7 @@ export default function PostCardSection() {
         birthdays,
         birthdayMonth,
         postDeleting,
-        pollVoting,
+        pollVotingPostId,
     } = useSelector((state) => state.activities);
 
     // openMenuId: which post's menu is open (null = none)
@@ -347,7 +347,7 @@ export default function PostCardSection() {
     return (
         <>
             <div className="w-full flex flex-col gap-4">
-                {posts.map((post) => {
+                {posts.filter((post) => !(post.type === "poll" && post.is_closed)).map((post) => {
                     if (post.type === "birthday") {
                         return (
                             <BirthdayPostCard
@@ -375,7 +375,7 @@ export default function PostCardSection() {
                             >
                                 <ActivityPollCard
                                     post={post}
-                                    pollVoting={pollVoting}
+                                    pollVoting={pollVotingPostId === post.id}
                                     onVote={(optionId) =>
                                         handleVote(post.id, optionId)
                                     }

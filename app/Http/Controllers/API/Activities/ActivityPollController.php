@@ -125,6 +125,7 @@ class ActivityPollController extends Controller
         return response()->json([
             'data' => [
                 'poll_information' => [
+                    'id'           => $poll->id,
                     'poll_id'      => 'PID-' . optional($poll->created_at)->format('Ymd') . '-' . str_pad($poll->id, 3, '0', STR_PAD_LEFT),
                     'poll_title'   => $poll->headline,
                     'created_date' => optional($poll->created_at)->toDateString(),
@@ -269,22 +270,15 @@ class ActivityPollController extends Controller
             ], 422);
         }
 
-        $already_voted = ActivityPollVote::where('activity_post_id', $poll->id)
-            ->where('user_id', Auth::id())
-            ->exists();
-
-        if ($already_voted) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'You have already voted for this poll.',
-            ], 409);
-        }
-
-        ActivityPollVote::create([
-            'activity_post_id'        => $poll->id,
-            'activity_poll_option_id' => $option->id,
-            'user_id'                 => Auth::id(),
-        ]);
+        ActivityPollVote::updateOrCreate(
+            [
+                'activity_post_id' => $poll->id,
+                'user_id'          => Auth::id(),
+            ],
+            [
+                'activity_poll_option_id' => $option->id,
+            ]
+        );
 
         $poll->load('pollOptions', 'pollVotes');
 

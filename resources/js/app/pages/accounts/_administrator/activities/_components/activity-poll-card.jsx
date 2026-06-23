@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BarChart2, CheckCircle2 } from "lucide-react";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
@@ -36,6 +36,12 @@ export default function ActivityPollCard({ post, pollVoting, onVote, headerActio
     const [selectedOption, setSelectedOption] = useState(null);
     // isChangingVote: true when the user clicks "Change vote" after already voting
     const [isChangingVote, setIsChangingVote] = useState(false);
+
+    // Reset local state whenever the displayed poll changes (e.g. carousel navigation)
+    useEffect(() => {
+        setSelectedOption(null);
+        setIsChangingVote(false);
+    }, [post.id]);
 
     const showVotingUI = !userHasVoted || isChangingVote;
 
