@@ -7,6 +7,12 @@ import {
     update_activity_post_service,
     delete_activity_post_service,
     cast_poll_vote_service,
+    get_poll_analytics_service,
+    get_poll_analytics_dashboard_service,
+    get_poll_details_service,
+    get_poll_vote_records_service,
+    close_poll_service,
+    reopen_poll_service,
 } from "../services/activities-service";
 
 export const get_upcoming_birthdays_thunk = createAsyncThunk(
@@ -93,6 +99,78 @@ export const cast_poll_vote_thunk = createAsyncThunk(
     }
 );
 
+export const get_poll_analytics_thunk = createAsyncThunk(
+    "activities/getPollAnalytics",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_poll_analytics_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const get_poll_analytics_dashboard_thunk = createAsyncThunk(
+    "activities/getPollAnalyticsDashboard",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_poll_analytics_dashboard_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const get_poll_details_thunk = createAsyncThunk(
+    "activities/getPollDetails",
+    async (postId, { rejectWithValue }) => {
+        try {
+            const response = await get_poll_details_service(postId);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const get_poll_vote_records_thunk = createAsyncThunk(
+    "activities/getPollVoteRecords",
+    async (postId, { rejectWithValue }) => {
+        try {
+            const response = await get_poll_vote_records_service(postId);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const close_poll_thunk = createAsyncThunk(
+    "activities/closePoll",
+    async (postId, { rejectWithValue }) => {
+        try {
+            await close_poll_service(postId);
+            return postId;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const reopen_poll_thunk = createAsyncThunk(
+    "activities/reopenPoll",
+    async (postId, { rejectWithValue }) => {
+        try {
+            await reopen_poll_service(postId);
+            return postId;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
 const activitiesSlice = createSlice({
     name: "activities",
     initialState: {
@@ -119,6 +197,19 @@ const activitiesSlice = createSlice({
         // poll voting
         pollVoting: false,
         pollVoteError: null,
+        // poll analytics module
+        pollAnalytics: [],
+        pollAnalyticsLoading: false,
+        pollAnalyticsError: null,
+        pollDashboard: null,
+        pollDashboardLoading: false,
+        selectedPoll: null,
+        selectedPollLoading: false,
+        selectedPollError: null,
+        pollVoteRecords: [],
+        pollVoteRecordsLoading: false,
+        pollStatusUpdating: false,
+        pollStatusUpdateError: null,
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -219,6 +310,96 @@ const activitiesSlice = createSlice({
             .addCase(cast_poll_vote_thunk.rejected, (state, action) => {
                 state.pollVoting = false;
                 state.pollVoteError = action.payload;
+            })
+            // ── poll analytics list ─────────────────────────────────────
+            .addCase(get_poll_analytics_thunk.pending, (state) => {
+                state.pollAnalyticsLoading = true;
+                state.pollAnalyticsError = null;
+            })
+            .addCase(get_poll_analytics_thunk.fulfilled, (state, action) => {
+                state.pollAnalyticsLoading = false;
+                state.pollAnalytics = action.payload.data ?? [];
+            })
+            .addCase(get_poll_analytics_thunk.rejected, (state, action) => {
+                state.pollAnalyticsLoading = false;
+                state.pollAnalyticsError = action.payload;
+            })
+            // ── poll analytics dashboard ────────────────────────────────
+            .addCase(get_poll_analytics_dashboard_thunk.pending, (state) => {
+                state.pollDashboardLoading = true;
+            })
+            .addCase(
+                get_poll_analytics_dashboard_thunk.fulfilled,
+                (state, action) => {
+                    state.pollDashboardLoading = false;
+                    state.pollDashboard = action.payload.data ?? null;
+                }
+            )
+            .addCase(get_poll_analytics_dashboard_thunk.rejected, (state) => {
+                state.pollDashboardLoading = false;
+            })
+            // ── poll details ────────────────────────────────────────────
+            .addCase(get_poll_details_thunk.pending, (state) => {
+                state.selectedPollLoading = true;
+                state.selectedPollError = null;
+            })
+            .addCase(get_poll_details_thunk.fulfilled, (state, action) => {
+                state.selectedPollLoading = false;
+                state.selectedPoll = action.payload.data ?? null;
+            })
+            .addCase(get_poll_details_thunk.rejected, (state, action) => {
+                state.selectedPollLoading = false;
+                state.selectedPollError = action.payload;
+            })
+            // ── vote records ────────────────────────────────────────────
+            .addCase(get_poll_vote_records_thunk.pending, (state) => {
+                state.pollVoteRecordsLoading = true;
+            })
+            .addCase(get_poll_vote_records_thunk.fulfilled, (state, action) => {
+                state.pollVoteRecordsLoading = false;
+                state.pollVoteRecords = action.payload.data ?? [];
+            })
+            .addCase(get_poll_vote_records_thunk.rejected, (state) => {
+                state.pollVoteRecordsLoading = false;
+            })
+            // ── close/reopen poll ───────────────────────────────────────
+            .addCase(close_poll_thunk.pending, (state) => {
+                state.pollStatusUpdating = true;
+                state.pollStatusUpdateError = null;
+            })
+            .addCase(close_poll_thunk.fulfilled, (state, action) => {
+                state.pollStatusUpdating = false;
+                const pollId = action.payload;
+                const poll = state.pollAnalytics.find((p) => p.poll_id === pollId);
+                if (poll) {
+                    poll.status = "Closed";
+                }
+                if (state.selectedPoll?.poll_information?.poll_id === pollId) {
+                    state.selectedPoll.poll_information.status = "Closed";
+                }
+            })
+            .addCase(close_poll_thunk.rejected, (state, action) => {
+                state.pollStatusUpdating = false;
+                state.pollStatusUpdateError = action.payload;
+            })
+            .addCase(reopen_poll_thunk.pending, (state) => {
+                state.pollStatusUpdating = true;
+                state.pollStatusUpdateError = null;
+            })
+            .addCase(reopen_poll_thunk.fulfilled, (state, action) => {
+                state.pollStatusUpdating = false;
+                const pollId = action.payload;
+                const poll = state.pollAnalytics.find((p) => p.poll_id === pollId);
+                if (poll) {
+                    poll.status = "Active";
+                }
+                if (state.selectedPoll?.poll_information?.poll_id === pollId) {
+                    state.selectedPoll.poll_information.status = "Active";
+                }
+            })
+            .addCase(reopen_poll_thunk.rejected, (state, action) => {
+                state.pollStatusUpdating = false;
+                state.pollStatusUpdateError = action.payload;
             });
     },
 });

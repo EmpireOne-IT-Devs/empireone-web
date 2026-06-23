@@ -152,7 +152,14 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::put('posts/{activityPost}',    [ActivityPostController::class, 'update']);
         Route::delete('posts/{activityPost}', [ActivityPostController::class, 'destroy']);
         Route::get('upcoming_events',    [ActivityPostController::class,    'upcoming_events']);
-        Route::post('polls/{activityPost}/vote', [ActivityPollController::class, 'vote']);
+        Route::get('polls/analytics/dashboard', [ActivityPollController::class, 'dashboard']);
+        Route::get('polls/analytics', [ActivityPollController::class, 'index']);
+        Route::get('polls/{id}/vote-records/export', [ActivityPollController::class, 'export_vote_records']);
+        Route::get('polls/{id}/vote-records', [ActivityPollController::class, 'vote_records']);
+        Route::get('polls/{id}', [ActivityPollController::class, 'show']);
+        Route::post('polls/{id}/close', [ActivityPollController::class, 'close_poll']);
+        Route::post('polls/{id}/reopen', [ActivityPollController::class, 'reopen_poll']);
+        Route::post('polls/{id}/vote', [ActivityPollController::class, 'vote']);
     });
 });
 
