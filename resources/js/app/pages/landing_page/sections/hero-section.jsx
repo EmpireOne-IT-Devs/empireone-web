@@ -47,7 +47,7 @@ const jobCards = [
     },
 ];
 export default function HeroSection() {
-    const [activeJobs, setActiveJobs] = useState(12483);
+    const [activeJobs, setActiveJobs] = useState(850);
 
     useEffect(() => {
         const t = setInterval(() => {
@@ -156,7 +156,7 @@ export default function HeroSection() {
                         </div>
 
                         <div className="px-2.5 sm:px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-400 text-[10px] sm:text-xs font-semibold">
-                            🔥 500+ new this week
+                            🔥 10+ new this week
                         </div>
                     </div>
 
