@@ -4,7 +4,7 @@ import { Link } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navigation = [
-    { name: "Home", id: "home" },
+    { name: "Home", id: "home", href: "https://empireonecx.com" },
     { name: "Careers", id: "careers" },
     { name: "About", id: "about-us" },
     { name: "Testimonials", id: "testimonial" },
@@ -17,7 +17,11 @@ export default function HeaderSection() {
     const [scrolled, setScrolled] = useState(false);
     const [hoveredPath, setHoveredPath] = useState(null);
 
-    const scrollTo = (id) => {
+    const scrollTo = (id, href) => {
+        if (href) {
+            window.location.href = href;
+            return;
+        }
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
         setMobileMenuOpen(false);
     };
@@ -86,7 +90,7 @@ export default function HeaderSection() {
                         {navigation.map((item) => (
                             <button
                                 key={item.name}
-                                onClick={() => scrollTo(item.id)}
+                                onClick={() => scrollTo(item.id, item.href)}
                                 onMouseEnter={() => setHoveredPath(item.id)}
                                 onMouseLeave={() => setHoveredPath(null)}
                                 className="relative px-4 py-2 text-sm font-medium transition-opacity hover:opacity-100 opacity-80"
@@ -168,7 +172,7 @@ export default function HeaderSection() {
                                     initial={{ opacity: 0, x: 24 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.07, duration: 0.3 }}
-                                    onClick={() => scrollTo(item.id)}
+                                    onClick={() => scrollTo(item.id, item.href)}
                                     className="text-left text-2xl sm:text-3xl font-bold text-white/90 hover:text-white tracking-tight py-3 px-4 rounded-xl hover:bg-white/5 transition"
                                 >
                                     {item.name}
