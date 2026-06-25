@@ -83,24 +83,7 @@ export default function PollTableSection() {
                     >
                         <Eye size={16} />
                     </Link>
-                    <button
-                        type="button"
-                        disabled={pollStatusUpdating}
-                        onClick={() =>
-                            dispatch(
-                                poll.status === "Closed"
-                                    ? reopen_poll_thunk(poll.id)
-                                    : close_poll_thunk(poll.id),
-                            ).then(() => {
-                                dispatch(get_poll_analytics_thunk());
-                                dispatch(get_activity_posts_thunk());
-                            })
-                        }
-                        className="p-1 text-amber-600 hover:bg-amber-50 rounded disabled:opacity-50"
-                        title={poll.status === "Closed" ? "Reopen Poll" : "Close Poll"}
-                    >
-                        <Pencil size={16} />
-                    </button>
+                   
                 </div>
             ),
         };

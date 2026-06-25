@@ -7,9 +7,7 @@ const columns = [
     { header: "Employee Name", accessor: "employee_name" },
     { header: "User ID", accessor: "user_id" },
     { header: "Selected Option", accessor: "selected_option" },
-    { header: "Poll ID", accessor: "poll_id" },
     { header: "Voted At", accessor: "voted_at" },
-    
 ];
 
 export default function VoteRecordsSection() {
@@ -22,7 +20,7 @@ export default function VoteRecordsSection() {
         : pollVoteRecords.map((record) => ({
               ...record,
               voted_at: record.voted_at
-                  ? moment(record.voted_at).format("LLL")
+                  ? moment(record.voted_at).format("MMMM D, YYYY")
                   : "",
           }));
 
