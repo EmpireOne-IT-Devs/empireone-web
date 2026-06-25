@@ -6,9 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 const navigation = [
     { name: "Home", id: "home", href: "https://empireonecx.com" },
     { name: "Careers", id: "careers" },
-    { name: "About", id: "about-us" },
+    { name: "About", id: "about-us", href: "https://empireonecx.com/about-us" },
     { name: "Testimonials", id: "testimonial" },
-    { name: "Contact", id: "contact" },
+    { name: "Contact", id: "contact", href: "https://empireonecx.com/contact" },
 ];
 
 export default function HeaderSection() {
