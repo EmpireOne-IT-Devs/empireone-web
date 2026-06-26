@@ -1,1 +1,0 @@
-import{j as r}from"./app-BABVBfRE.js";import{B as t}from"./button-BX2nmOBg.js";import{F as i}from"./index-Cs9I-9Cm.js";import"./index-BchKxlKA.js";import"./iconBase-DVji3bir.js";function n(){return r.jsx("div",{children:r.jsxs(t,{variant:"primary",children:[r.jsx(i,{size:18,className:"mr-2"}),"Create Floor Activity"]})})}export{n as default};
