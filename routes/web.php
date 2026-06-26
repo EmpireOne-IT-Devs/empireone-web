@@ -51,7 +51,7 @@ Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->group(function () {
     Route::get('/talent/{job_interview_id}/ai_interview', function () {
         return Inertia::render('accounts/ai_interview/page');
     });
@@ -82,13 +82,13 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
 
             // My Profile Sub-group
             Route::prefix('my_profile')->group(function () {
-                Route::inertia('/employee', 'accounts/my_profile/page');
+                Route::inertia('/employee', 'accounts/my_profile/page')->withoutMiddleware(['info.complete']);
                 Route::inertia('/personal', 'accounts/my_profile/page');
                 Route::inertia('/professional', 'accounts/my_profile/page');
                 Route::inertia('/documents', 'accounts/my_profile/page');
                 Route::inertia('/emergency', 'accounts/my_profile/page');
                 Route::inertia('/customization', 'accounts/my_profile/page');
-                Route::inertia('/signature', 'accounts/my_profile/signature/page');
+                Route::inertia('/signature', 'accounts/my_profile/signature/page')->withoutMiddleware(['info.complete']);
             });
 
             // Employee and Applicant shared routes
@@ -133,8 +133,6 @@ Route::prefix('accounts')->middleware(['auth', 'verified'])->group(function () {
             Route::inertia('/company_newsfeed', 'accounts/_administrator/activities/company_newsfeed/page');
             Route::inertia('/events_calendar', 'accounts/_administrator/activities/events_calendar/page');
             Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
-                        Route::inertia('/poll_analytics', 'accounts/_administrator/activities/poll_analytics/page');
-                        Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_analytics/id/page');
         });
 
         Route::prefix('e_store')->group(function () {

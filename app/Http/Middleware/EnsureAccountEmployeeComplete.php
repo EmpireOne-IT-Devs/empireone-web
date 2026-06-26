@@ -17,7 +17,7 @@ class EnsureAccountEmployeeComplete
             return redirect()->route('login');
         }
 
-        // Applicants (role 3) don't have an account_employee record — skip check
+        // 2. Applicants (role 3) don't have an account_employee record — skip check
         if ($user->role === 3) {
             return $next($request);
         }
@@ -41,14 +41,22 @@ class EnsureAccountEmployeeComplete
             'basic_pay',
             'status'
         ];
+
+        // 5. Check if required fields are filled for Admins (1) and Employees (2)
         if ($user->role == 2 || $user->role == 1) {
             foreach ($requiredFields as $field) {
                 if (blank($info->{$field})) {
-                    return redirect('/accounts/administrator/my_profile/employee?error_message=Please complete your employee profile.');
+                    
+                    // Determine the URL segment based on role
+                    $accountType = ($user->role == 1) ? 'administrator' : 'employee';
+                    
+                    // Redirect with the query string
+                    return redirect("/accounts/{$accountType}/my_profile/employee?error_message=Please complete your employee profile.");
                 }
             }
         }
-        // If everything is filled out, let the request proceed
+
+        // 6. If everything is filled out, let the request proceed
         return $next($request);
     }
 }
