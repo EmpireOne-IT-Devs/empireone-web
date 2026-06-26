@@ -6,6 +6,7 @@ import {
     reopen_poll_thunk,
 } from "@/app/redux/activities-slice";
 import { export_poll_vote_records_service } from "@/app/services/activities-service";
+import moment from "moment";
 
 export default function PollInfoSection({ pollId }) {
     const dispatch = useDispatch();
@@ -43,10 +44,24 @@ export default function PollInfoSection({ pollId }) {
     return (
         <div className="p-4 bg-gray-100 rounded-md mb-4 flex flex-wrap gap-6 items-center justify-between">
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-700">
-                <p>Poll ID: {info.poll_id}</p>
-                <p>Poll Title: {info.poll_title}</p>
-                <p>Created Date: {info.created_date}</p>
-                <p>Total Votes: {info.total_votes}</p>
+                <p className="text-sm text-gray-700">
+                    Poll ID: <span className="font-bold ">{info.poll_id}</span>
+                </p>
+                <p>
+                    Poll Title:{" "}
+                    <span className="font-bold">{info.poll_title}</span>
+                </p>
+                <p>
+                    Created Date:{" "}
+                    <span className="font-bold">
+                        {" "}
+                        {moment(info.created_date).format("MMMM D, YYYY")}
+                    </span>
+                </p>
+                <p>
+                    Total Votes:{" "}
+                    <span className="font-bold">{info.total_votes}</span>{" "}
+                </p>
                 <p>
                     Status:{" "}
                     <span
