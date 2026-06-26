@@ -4,7 +4,6 @@ import { Cake, Eye, Edit2, Send } from "lucide-react";
 import { useSelector } from "react-redux";
 import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
-import BirthdayPreviewTab from "./birthday-preview-tab";
 import BirthdayEditMessageTab from "./birthday-edit-message-tab";
 import BirthdayPublishTab from "./birthday-publish-tab";
 
@@ -14,7 +13,7 @@ const DEFAULT_MESSAGE =
 
 export default function CreateBirthdayPost() {
     const [isOpen, setIsOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState("preview");
+    const [activeTab, setActiveTab] = useState("edit");
     const [headline, setHeadline] = useState(DEFAULT_HEADLINE);
     const [message, setMessage] = useState(DEFAULT_MESSAGE);
 
@@ -22,11 +21,11 @@ export default function CreateBirthdayPost() {
 
     const handleClose = () => {
         setIsOpen(false);
-        setActiveTab("preview");
+        setActiveTab("edit");
     };
 
     const TABS = [
-        { key: "preview", label: "Preview", icon: <Eye size={14} /> },
+        
         { key: "edit", label: "Edit Message", icon: <Edit2 size={14} /> },
         { key: "publish", label: "Publish", icon: <Send size={14} /> },
     ];
@@ -41,7 +40,7 @@ export default function CreateBirthdayPost() {
             <Modal
                 isOpen={isOpen}
                 onClose={handleClose}
-                width="max-w-2xl"
+                width="max-w-3xl"
                 title={
                     <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50 text-pink-600 shrink-0">
@@ -80,11 +79,9 @@ export default function CreateBirthdayPost() {
                         ))}
                     </div>
 
-                    {activeTab === "preview" && (
-                        <BirthdayPreviewTab headline={headline} message={message} />
-                    )}
+                 
                     {activeTab === "edit" && (
-                        <BirthdayEditMessageTab
+                        <BirthdayEditMessageTab 
                             headline={headline}
                             onHeadlineChange={setHeadline}
                             message={message}

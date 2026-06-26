@@ -2,7 +2,6 @@ import React from "react";
 import Layout from "../../../layout";
 import ActivitiesLayout from "../layout";
 import NewsSectionCard from "./sections/news-section-card";
-import AnnouncementsSection from "./sections/announcements-section";
 import RecentActivitySection from "./sections/recent-activity-section";
 import CompanyFeaturesSection from "./sections/company-features-section";
 import PoolCardSection from "../poll_analytics/sections/pool-card-section";
@@ -22,7 +21,7 @@ export default function Page() {
                         </div>
                         {/* Announcements — 40% (2/5) */}
                         <div className="flex flex-col gap-5 pb-5 xl:col-span-2">
-                            <AnnouncementsSection />
+                        
                             <RecentActivitySection />
                             <PoolCardSection />
                         </div>
