@@ -82,13 +82,13 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
 
             // My Profile Sub-group
             Route::prefix('my_profile')->group(function () {
-                Route::inertia('/employee', 'accounts/my_profile/page')->withoutMiddleware(['info.complete']);
+                Route::inertia('/employee', 'accounts/my_profile/page');
                 Route::inertia('/personal', 'accounts/my_profile/page');
                 Route::inertia('/professional', 'accounts/my_profile/page');
                 Route::inertia('/documents', 'accounts/my_profile/page');
                 Route::inertia('/emergency', 'accounts/my_profile/page');
                 Route::inertia('/customization', 'accounts/my_profile/page');
-                Route::inertia('/signature', 'accounts/my_profile/signature/page')->withoutMiddleware(['info.complete']);
+                Route::inertia('/signature', 'accounts/my_profile/signature/page');
             });
 
             // Employee and Applicant shared routes
