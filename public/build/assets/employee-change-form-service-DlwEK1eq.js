@@ -1,5 +1,1 @@
-<<<<<<<< HEAD:public/build/assets/employee-change-form-service-x0MpSi41.js
-import{k as a}from"./app-ByRRWV1Q.js";async function r(e){return await a.post("/api/er/employee_change_form",e)}async function c(){return await a.get(`/api/er/employee_change_form${window.location.search}`)}async function _(e){return(await a.get(`/api/er/employee_change_form/${e}`)).data}async function n(e){return await a.post("/api/er/accept_employee_change_form",e)}export{n as a,c as b,r as c,_ as g};
-========
 import{l as a}from"./app-RDg_UBxH.js";async function r(e){return await a.post("/api/er/employee_change_form",e)}async function c(){return await a.get(`/api/er/employee_change_form${window.location.search}`)}async function _(e){return(await a.get(`/api/er/employee_change_form/${e}`)).data}async function n(e){return await a.post("/api/er/accept_employee_change_form",e)}export{n as a,c as b,r as c,_ as g};
->>>>>>>> 9517ab5676fd8d983f1f1b62c5118a88efd0f7a0:public/build/assets/employee-change-form-service-DlwEK1eq.js

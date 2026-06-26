@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-B9U_FRAr.js
-import{j as e}from"./app-ByRRWV1Q.js";import i from"./header-section-CcuJAnFp.js";import r from"./tabs-section-CgnsBLVa.js";import"./tabs-BSeY6EFM.js";function c({children:s}){return e.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[e.jsxs("div",{className:"shrink-0 bg-gray-100",children:[e.jsx(i,{}),e.jsx(r,{})]}),e.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:s})]})}export{c as default};
-========
-import{j as e}from"./app-RDg_UBxH.js";import i from"./header-section-BMKk2jq5.js";import r from"./tabs-section-KjVLgeZP.js";import"./tabs-DG7UpqrJ.js";function c({children:s}){return e.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[e.jsxs("div",{className:"shrink-0 bg-gray-100",children:[e.jsx(i,{}),e.jsx(r,{})]}),e.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:s})]})}export{c as default};
->>>>>>>> 9517ab5676fd8d983f1f1b62c5118a88efd0f7a0:public/build/assets/layout-C9HRMI9e.js

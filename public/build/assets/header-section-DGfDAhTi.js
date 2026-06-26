@@ -1,5 +1,1 @@
-<<<<<<<< HEAD:public/build/assets/header-section-Cgulsk6P.js
-import{j as e}from"./app-ByRRWV1Q.js";function t(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Interview Management"}),e.jsx("div",{className:"text-gray-600",children:"Schedule and manage candidate interviews"})]})}export{t as default};
-========
 import{j as e}from"./app-RDg_UBxH.js";function t(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Interview Management"}),e.jsx("div",{className:"text-gray-600",children:"Schedule and manage candidate interviews"})]})}export{t as default};
->>>>>>>> 9517ab5676fd8d983f1f1b62c5118a88efd0f7a0:public/build/assets/header-section-DGfDAhTi.js

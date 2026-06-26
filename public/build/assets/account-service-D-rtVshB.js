@@ -1,5 +1,1 @@
-<<<<<<<< HEAD:public/build/assets/account-service-BJP2FaMi.js
-import{k as t}from"./app-ByRRWV1Q.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
-========
 import{l as t}from"./app-RDg_UBxH.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
->>>>>>>> 9517ab5676fd8d983f1f1b62c5118a88efd0f7a0:public/build/assets/account-service-D-rtVshB.js
