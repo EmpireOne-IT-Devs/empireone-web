@@ -19,6 +19,7 @@ class ActivityPost extends Model
         'publish_to',
         'scheduled_at',
         'published_at',
+        'closed_at',
     ];
 
     protected function casts(): array
@@ -26,6 +27,7 @@ class ActivityPost extends Model
         return [
             'scheduled_at' => 'datetime',
             'published_at' => 'datetime',
+            'closed_at'    => 'datetime',
             'year'         => 'integer',
         ];
     }

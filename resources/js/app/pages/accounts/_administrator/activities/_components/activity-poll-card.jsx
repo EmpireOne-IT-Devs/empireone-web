@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BarChart2, CheckCircle2 } from "lucide-react";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
@@ -16,17 +16,32 @@ function stripHtml(html) {
     return html ? html.replace(/<[^>]+>/g, "").trim() : "";
 }
 
+function WysiwygContent({ html }) {
+    return (
+        <div
+            className="text-sm text-gray-500 font-normal leading-relaxed break-words overflow-x-hidden [&_*]:max-w-full [&_a]:break-all [&_a]:text-blue-600 [&_a]:underline [&_b]:font-bold [&_blockquote]:border-l-4 [&_blockquote]:border-gray-200 [&_blockquote]:pl-4 [&_blockquote]:italic [&_em]:italic [&_h1]:text-lg [&_h1]:font-bold [&_h2]:text-base [&_h2]:font-bold [&_h3]:text-sm [&_h3]:font-bold [&_i]:italic [&_img]:hidden [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-2 [&_strong]:font-bold [&_strong]:text-gray-700 [&_table]:hidden [&_ul]:list-disc [&_ul]:pl-5"
+            dangerouslySetInnerHTML={{ __html: html ?? "" }}
+        />
+    );
+}
+
 export default function ActivityPollCard({ post, pollVoting, onVote, headerActions = null, footerMeta = null }) {
     const options = post.options ?? [];
     const totalVotes = post.total_votes ?? 0;
     const userHasVoted = post.user_has_voted ?? false;
     const userVotedOption = post.user_voted_option ?? null;
-    const questionText = stripHtml(post.message);
+    const hasQuestion = Boolean(stripHtml(post.message));
 
     // selectedOption: the option the user has highlighted but not yet submitted
     const [selectedOption, setSelectedOption] = useState(null);
     // isChangingVote: true when the user clicks "Change vote" after already voting
     const [isChangingVote, setIsChangingVote] = useState(false);
+
+    // Reset local state whenever the displayed poll changes (e.g. carousel navigation)
+    useEffect(() => {
+        setSelectedOption(null);
+        setIsChangingVote(false);
+    }, [post.id]);
 
     const showVotingUI = !userHasVoted || isChangingVote;
 
@@ -86,10 +101,8 @@ export default function ActivityPollCard({ post, pollVoting, onVote, headerActio
                 <h3 className="text-base font-semibold text-gray-900 tracking-tight mb-2">
                     {post.headline}
                 </h3>
-                {questionText && (
-                    <p className="text-sm text-gray-500 font-normal leading-relaxed">
-                        {questionText}
-                    </p>
+                {hasQuestion && (
+                    <WysiwygContent html={post.message} />
                 )}
             </div>
 

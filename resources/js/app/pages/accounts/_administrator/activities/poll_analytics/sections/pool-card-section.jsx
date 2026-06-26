@@ -11,7 +11,7 @@ import {
 
 export default function PoolCardSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading, pollVoting } = useSelector(
+    const { posts, postsLoading, pollVotingPostId } = useSelector(
         (s) => s.activities,
     );
     const [pollIndex, setPollIndex] = useState(0);
@@ -20,7 +20,7 @@ export default function PoolCardSection() {
         dispatch(get_activity_posts_thunk());
     }, [dispatch]);
 
-    const polls = posts.filter((p) => p.type === "poll");
+    const polls = posts.filter((p) => p.type === "poll" && !p.is_closed);
 
     // Keep index in bounds when the poll list changes.
     useEffect(() => {
@@ -65,8 +65,9 @@ export default function PoolCardSection() {
     }
 
     const currentPoll = polls[pollIndex] ?? polls[0];
+    const isCurrentPollVoting = pollVotingPostId === currentPoll?.id;
     const handleVote = (optionId) => {
-        if (pollVoting) return;
+        if (isCurrentPollVoting) return;
         dispatch(
             cast_poll_vote_thunk({ postId: currentPoll.id, optionId }),
         );
@@ -76,7 +77,7 @@ export default function PoolCardSection() {
         <div className="w-full bg-[#f4f6f9] p-6 rounded-2xl font-sans antialiased">
             <ActivityPollCard
                 post={currentPoll}
-                pollVoting={pollVoting}
+                pollVoting={isCurrentPollVoting}
                 onVote={handleVote}
                 headerActions={
                     <>

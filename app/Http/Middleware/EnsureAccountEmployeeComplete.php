@@ -17,6 +17,11 @@ class EnsureAccountEmployeeComplete
             return redirect()->route('login');
         }
 
+        // Applicants (role 3) don't have an account_employee record — skip check
+        if ($user->role === 3) {
+            return $next($request);
+        }
+
         $info = $user->account_employee;
 
         // 3. If the record doesn't exist at all, redirect them

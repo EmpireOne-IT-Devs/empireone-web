@@ -14,6 +14,15 @@ function formatDate(d) {
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function WysiwygPreview({ html }) {
+    return (
+        <div
+            className="mb-4 line-clamp-2 overflow-hidden text-xs font-medium leading-relaxed text-gray-500 break-words [&_*]:max-w-full [&_a]:break-all [&_a]:text-blue-600 [&_a]:underline [&_b]:font-bold [&_blockquote]:hidden [&_br]:hidden [&_em]:italic [&_h1]:text-sm [&_h1]:font-bold [&_h2]:text-sm [&_h2]:font-bold [&_h3]:text-sm [&_h3]:font-bold [&_i]:italic [&_img]:hidden [&_li]:inline [&_ol]:inline [&_ol]:p-0 [&_p]:inline [&_strong]:font-bold [&_table]:hidden [&_ul]:inline [&_ul]:p-0"
+            dangerouslySetInnerHTML={{ __html: html ?? "" }}
+        />
+    );
+}
+
 export default function NewsSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.activities);
@@ -86,10 +95,7 @@ export default function NewsSection() {
                                     <h3 className="text-sm font-bold text-gray-900 leading-snug tracking-tight mb-1.5 hover:text-blue-600 cursor-pointer transition-colors">
                                         {item.title}
                                     </h3>
-                                    <div
-                                        className="text-xs text-gray-500 font-medium leading-relaxed mb-4 line-clamp-2 [&_strong]:font-bold [&_b]:font-bold [&_em]:italic [&_i]:italic"
-                                        dangerouslySetInnerHTML={{ __html: item.contentHtml }}
-                                    />
+                                    <WysiwygPreview html={item.contentHtml} />
                                 </div>
                                 <div className="flex items-center justify-between border-t border-gray-100 pt-3 mt-auto text-xs font-semibold text-gray-400">
                                     <div className="flex items-center gap-4">

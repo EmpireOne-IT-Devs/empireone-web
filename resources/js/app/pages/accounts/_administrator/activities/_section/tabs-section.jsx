@@ -25,6 +25,11 @@ export default function TabsSection() {
             path: "/accounts/administrator/activities/department_showcase",
             active: currentPath === "department_showcase",
         },
+         {
+            label: "Poll Analytics",
+            path: "/accounts/administrator/activities/poll_analytics",
+            active: currentPath === "poll_analytics",
+        },
     ];
 
     return <Tabs tabs={tabs} />;

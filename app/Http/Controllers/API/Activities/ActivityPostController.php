@@ -79,6 +79,7 @@ class ActivityPostController extends Controller
                     'total_votes'        => $totalVotes,
                     'user_has_voted'     => $userVote !== null,
                     'user_voted_option'  => $userVote?->activity_poll_option_id,
+                    'is_closed'          => $isPoll && $post->closed_at !== null,
                 ];
             });
 

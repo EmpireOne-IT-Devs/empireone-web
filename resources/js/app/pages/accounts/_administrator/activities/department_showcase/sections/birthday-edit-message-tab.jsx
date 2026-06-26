@@ -72,9 +72,9 @@ export default function BirthdayEditMessageTab({
                                     🎂 Birthday Celebrant{birthdays.length !== 1 ? "s" : ""} of the Month
                                 </p>
                                 <ul className="flex flex-col gap-1">
-                                    {birthdays.map((c) => (
+                                    {birthdays.map((c, index) => (
                                         <li key={c.user_id} className="flex items-center justify-between">
-                                            <span className="text-sm text-gray-800 font-medium">{c.name}</span>
+                                            <span className="text-xs text-red-800 font-medium">{index + 1}. {c.name}</span>
                                             {c.is_today && (
                                                 <span className="text-[10px] font-bold bg-pink-200 text-pink-700 px-2 py-0.5 rounded-full">
                                                     Today 🎂

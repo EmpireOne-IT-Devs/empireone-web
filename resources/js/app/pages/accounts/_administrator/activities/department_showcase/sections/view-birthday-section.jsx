@@ -109,8 +109,6 @@ export default function ViewBirthdaySection() {
                                             </span>
                                         </div>
                                     </div>
-
-                                    {/* Right: date pill */}
                                     <div className="shrink-0 pl-2">
                                         <span className={`inline-flex items-center gap-1 text-[10px] font-bold text-white px-3 py-1 rounded-full shadow-sm tracking-wide uppercase ${user.is_today ? "bg-gradient-to-r from-pink-500 to-rose-500" : palette.pillBg}`}>
                                             🎂 {user.birthday_label}

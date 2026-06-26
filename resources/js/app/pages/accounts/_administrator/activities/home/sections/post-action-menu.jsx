@@ -1,15 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
-/**
- * Three-dot action menu for a post card.
- * Props:
- *   open       – boolean, controlled by parent
- *   onToggle   – () => void
- *   onEdit     – () => void
- *   onDelete   – () => void
- *   deleting   – boolean (shows spinner on delete item)
- */
 export default function PostActionMenu({
     open,
     onToggle,

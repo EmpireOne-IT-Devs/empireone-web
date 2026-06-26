@@ -52,8 +52,6 @@ export default function CreatePostCardSection() {
     const [mediaFile, setMediaFile] = useState(null);
     const [mediaDragging, setMediaDragging] = useState(false);
     const fileInputRef = useRef(null);
-
-    // Memoize the preview URL and revoke it when the file changes (prevents memory leaks).
     const mediaPreviewUrl = useMemo(
         () => (mediaFile ? URL.createObjectURL(mediaFile) : null),
         [mediaFile],

@@ -25,7 +25,7 @@ export default function Page() {
                     
                     {/* Right Column - Upcoming Events */}
                     <div className="h-full min-h-0 overflow-auto">
-                        <UpcomingEventSection />
+                        {/* <UpcomingEventSection /> */}
                         <AnnouncementsSection />
                     </div>
                 </div>

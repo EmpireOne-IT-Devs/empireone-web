@@ -25,7 +25,7 @@ export default function Page() {
                 {/* <DeveloperSection /> */}
                 {/* <ServicesSection /> */}
                 <AboutSection />
-                <TestimonialSection />
+                {/* <TestimonialSection /> */}
 
                 <ContactSection />
                 <FooterSection />

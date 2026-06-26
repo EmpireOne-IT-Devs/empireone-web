@@ -4,11 +4,11 @@ import { Link } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navigation = [
-    { name: "Home", id: "home" },
+    { name: "Home", id: "home", href: "https://empireonecx.com" },
     { name: "Careers", id: "careers" },
-    { name: "About", id: "about-us" },
-    { name: "Testimonials", id: "testimonial" },
-    { name: "Contact", id: "contact" },
+    { name: "About", id: "about-us", href: "https://empireonecx.com/about-us" },
+    // { name: "Testimonials", id: "testimonial" },
+    { name: "Contact", id: "contact", href: "https://empireonecx.com/contact" },
 ];
 
 export default function HeaderSection() {
@@ -17,7 +17,11 @@ export default function HeaderSection() {
     const [scrolled, setScrolled] = useState(false);
     const [hoveredPath, setHoveredPath] = useState(null);
 
-    const scrollTo = (id) => {
+    const scrollTo = (id, href) => {
+        if (href) {
+            window.location.href = href;
+            return;
+        }
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
         setMobileMenuOpen(false);
     };
@@ -66,7 +70,7 @@ export default function HeaderSection() {
                 ${
                     isDark
                         ? "bg-black/20 border-white/10 text-white"
-                        : "bg-white/40 border-black/5 text-slate-900"
+                        : "bg-white border-black/5 text-slate-900"
                 }`}
             >
                 <div className="flex items-center justify-between">
@@ -76,7 +80,7 @@ export default function HeaderSection() {
                             <img
                                 src="/images/eologo.png"
                                 alt="Logo"
-                                className="h-7 sm:h-8 transition-transform group-hover:scale-105"
+                                className="h-7 sm:h-10 transition-transform group-hover:scale-105 ml-2"
                             />
                         </a>
                     </div>
@@ -86,10 +90,10 @@ export default function HeaderSection() {
                         {navigation.map((item) => (
                             <button
                                 key={item.name}
-                                onClick={() => scrollTo(item.id)}
+                                onClick={() => scrollTo(item.id, item.href)}
                                 onMouseEnter={() => setHoveredPath(item.id)}
                                 onMouseLeave={() => setHoveredPath(null)}
-                                className="relative px-4 py-2 text-sm font-medium transition-opacity hover:opacity-100 opacity-80"
+                                className="relative px-4 py-2 text-md font-medium transition-opacity hover:opacity-100 opacity-80"
                             >
                                 {item.name}
                                 {hoveredPath === item.id && (
@@ -117,7 +121,7 @@ export default function HeaderSection() {
                         </Link>
                         <Link
                             href="/talent/application"
-                            className="hidden xs:inline-flex lg:inline-flex bg-purple-600 hover:bg-purple-500 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+                            className="hidden xs:inline-flex lg:inline-flex bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:brightness-110 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-lg shadow-purple-500/20 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
                         >
                             Apply Now
                         </Link>
@@ -141,7 +145,11 @@ export default function HeaderSection() {
                         initial={{ opacity: 0, x: "100%" }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: "100%" }}
-                        transition={{ type: "spring", damping: 28, stiffness: 250 }}
+                        transition={{
+                            type: "spring",
+                            damping: 28,
+                            stiffness: 250,
+                        }}
                         className="fixed inset-0 z-[60] bg-[#0a0a14] flex flex-col overflow-y-auto"
                     >
                         {/* Mobile Menu Header */}
@@ -167,8 +175,11 @@ export default function HeaderSection() {
                                     key={item.name}
                                     initial={{ opacity: 0, x: 24 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.07, duration: 0.3 }}
-                                    onClick={() => scrollTo(item.id)}
+                                    transition={{
+                                        delay: i * 0.07,
+                                        duration: 0.3,
+                                    }}
+                                    onClick={() => scrollTo(item.id, item.href)}
                                     className="text-left text-2xl sm:text-3xl font-bold text-white/90 hover:text-white tracking-tight py-3 px-4 rounded-xl hover:bg-white/5 transition"
                                 >
                                     {item.name}
@@ -199,7 +210,8 @@ export default function HeaderSection() {
 
                         {/* Footer note */}
                         <p className="text-center text-white/30 text-xs mt-auto pb-8 pt-6 px-5">
-                            © {new Date().getFullYear()} EmpireOne. All rights reserved.
+                            © {new Date().getFullYear()} EmpireOne. All rights
+                            reserved.
                         </p>
                     </motion.div>
                 )}

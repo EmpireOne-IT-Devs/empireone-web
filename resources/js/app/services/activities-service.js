@@ -42,6 +42,36 @@ export async function cast_poll_vote_service(postId, optionId) {
     });
 }
 
+export async function get_poll_analytics_service() {
+    return await axios.get("/api/activities/polls/analytics");
+}
+
+export async function get_poll_analytics_dashboard_service() {
+    return await axios.get("/api/activities/polls/analytics/dashboard");
+}
+
+export async function get_poll_details_service(postId) {
+    return await axios.get(`/api/activities/polls/${postId}`);
+}
+
+export async function get_poll_vote_records_service(postId) {
+    return await axios.get(`/api/activities/polls/${postId}/vote-records`);
+}
+
+export async function export_poll_vote_records_service(postId) {
+    return await axios.get(`/api/activities/polls/${postId}/vote-records/export`, {
+        responseType: "blob",
+    });
+}
+
+export async function close_poll_service(postId) {
+    return await axios.post(`/api/activities/polls/${postId}/close`);
+}
+
+export async function reopen_poll_service(postId) {
+    return await axios.post(`/api/activities/polls/${postId}/reopen`);
+}
+
 export async function get_upcoming_events_service() {
     return await axios.get("/api/activities/upcoming_events");
 }

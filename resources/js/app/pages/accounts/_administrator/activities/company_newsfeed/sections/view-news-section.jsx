@@ -11,6 +11,17 @@ const categoryVariantMap = {
     Sales: "info",
 };
 
+function WysiwygContent({ html, collapsed }) {
+    return (
+        <div
+            className={`overflow-x-hidden text-sm leading-7 text-gray-600 break-words [&_*]:max-w-full [&_a]:break-all [&_a]:text-blue-600 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-gray-200 [&_blockquote]:pl-4 [&_blockquote]:italic [&_b]:font-bold [&_em]:italic [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-bold [&_i]:italic [&_img]:my-3 [&_img]:rounded-xl [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_strong]:font-bold [&_strong]:text-gray-800 [&_table]:my-3 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-200 [&_td]:p-2 [&_th]:border [&_th]:border-gray-200 [&_th]:bg-gray-50 [&_th]:p-2 [&_ul]:list-disc [&_ul]:pl-5 ${
+                collapsed ? "max-h-32 overflow-hidden" : ""
+            }`}
+            dangerouslySetInnerHTML={{ __html: html ?? "" }}
+        />
+    );
+}
+
 export default function ViewNewsSection({ item, isOpen, onClose }) {
     const [comment, setComment] = useState("");
     const [expanded, setExpanded] = useState(false);
@@ -51,7 +62,7 @@ export default function ViewNewsSection({ item, isOpen, onClose }) {
             width="max-w-2xl h-max"
         >
             {item && (
-                <div className="flex flex-col gap-5 overflow-x-hidden">
+                <div className="flex flex-col gap-5  max-h-[80vh] pr-1">
                     {/* Hero Image */}
                     <div className="relative h-64 w-full shrink-0 overflow-hidden rounded-2xl bg-gray-200">
                         <img
@@ -60,6 +71,7 @@ export default function ViewNewsSection({ item, isOpen, onClose }) {
                             className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
                         <div className="absolute bottom-5 left-6 right-6">
                             <div className="flex items-center gap-3 mb-2">
                                 <Badge
@@ -80,7 +92,6 @@ export default function ViewNewsSection({ item, isOpen, onClose }) {
                         </div>
                     </div>
 
-                    {/* Article Body */}
                     <div className="flex-1">
                         {/* Author Metadata */}
                         <div className="mb-5 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
@@ -100,13 +111,9 @@ export default function ViewNewsSection({ item, isOpen, onClose }) {
                         {/* Full Content with view more/less */}
                         <div className="prose prose-sm max-w-none overflow-x-hidden">
                             <div className="relative">
-                                <div
-                                    className={`overflow-x-hidden text-sm leading-7 text-gray-600 break-words [&_*]:max-w-full [&_a]:break-all [&_a]:text-blue-600 [&_a]:underline [&_b]:font-bold [&_strong]:font-bold [&_strong]:text-gray-800 [&_em]:italic [&_i]:italic [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5 ${
-                                        isLong && !expanded
-                                            ? "max-h-32 overflow-hidden"
-                                            : ""
-                                    }`}
-                                    dangerouslySetInnerHTML={{ __html: contentHtml }}
+                                <WysiwygContent
+                                    html={contentHtml}
+                                    collapsed={isLong && !expanded}
                                 />
                                 {isLong && !expanded && (
                                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-white/0" />
@@ -118,7 +125,9 @@ export default function ViewNewsSection({ item, isOpen, onClose }) {
                                     onClick={() => setExpanded((prev) => !prev)}
                                     className="mt-3 inline-flex items-center justify-center rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700 transition hover:border-blue-200 hover:bg-blue-100"
                                 >
-                                    {expanded ? "Show less" : "Read full article"}
+                                    {expanded
+                                        ? "Show less"
+                                        : "Read full article"}
                                 </button>
                             )}
                         </div>
@@ -141,7 +150,7 @@ export default function ViewNewsSection({ item, isOpen, onClose }) {
                                 disabled={!comment.trim()}
                                 className="absolute right-2 p-1.5 rounded-lg text-gray-400 hover:text-blue-600 disabled:hover:text-gray-400 disabled:opacity-40 transition-colors"
                             >
-                                <Send size={16} className="m-2"/>
+                                <Send size={16} className="m-2" />
                             </button>
                         </form>
                     </div>

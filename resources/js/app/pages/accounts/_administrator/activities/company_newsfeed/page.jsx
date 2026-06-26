@@ -4,8 +4,8 @@ import ActivitiesLayout from "../layout";
 import NewsSectionCard from "./sections/news-section-card";
 import AnnouncementsSection from "./sections/announcements-section";
 import RecentActivitySection from "./sections/recent-activity-section";
-import PoolCardSection from "./sections/pool-card-section";
 import CompanyFeaturesSection from "./sections/company-features-section";
+import PoolCardSection from "../poll_analytics/sections/pool-card-section";
 export default function Page() {
     return (
         <Layout>

@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Heart, MessageSquare, Share2, Megaphone, CalendarDays, Newspaper, Send, Tag } from "lucide-react";
+import {
+    Heart,
+    MessageSquare,
+    Share2,
+    Megaphone,
+    CalendarDays,
+    Newspaper,
+    Send,
+    Tag,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
@@ -15,13 +24,30 @@ import EditPostModal from "./edit-post-modal";
 // ── Category config ──────────────────────────────────────────────────────────
 const CATEGORY_CONFIG = {
     "Pinned Announcement": { icon: Megaphone, variant: "danger" },
-    "Events":              { icon: CalendarDays, variant: "primary" },
-    "News":                { icon: Newspaper, variant: "info" },
-    "Milestone":           { icon: Send, variant: "success" },
-    "General":             { icon: Tag, variant: "secondary" },
+    Events: { icon: CalendarDays, variant: "primary" },
+    News: { icon: Newspaper, variant: "info" },
+    Milestone: { icon: Send, variant: "success" },
+    General: { icon: Tag, variant: "secondary" },
 };
 
-function BirthdayPostCard({ post, celebrants = [], menuOpen, onMenuToggle, onEdit, onDelete, deleting }) {
+function PostHtmlContent({ html, className = "" }) {
+    return (
+        <div
+            className={`overflow-x-hidden break-words [&_*]:max-w-full [&_a]:break-all [&_a]:text-blue-600 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-gray-200 [&_blockquote]:pl-4 [&_blockquote]:italic [&_b]:font-bold [&_em]:italic [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-bold [&_i]:italic [&_img]:my-3 [&_img]:rounded-xl [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_strong]:font-bold [&_strong]:text-gray-800 [&_table]:my-3 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-200 [&_td]:p-2 [&_th]:border [&_th]:border-gray-200 [&_th]:bg-gray-50 [&_th]:p-2 [&_ul]:list-disc [&_ul]:pl-5 ${className}`}
+            dangerouslySetInnerHTML={{ __html: html ?? "" }}
+        />
+    );
+}
+
+function BirthdayPostCard({
+    post,
+    celebrants = [],
+    menuOpen,
+    onMenuToggle,
+    onEdit,
+    onDelete,
+    deleting,
+}) {
     return (
         <Card
             variant="default"
@@ -41,7 +67,6 @@ function BirthdayPostCard({ post, celebrants = [], menuOpen, onMenuToggle, onEdi
                 </div>
             </div>
 
-            {/* Body */}
             <div className="px-5 py-4 flex flex-col gap-3">
                 {/* Author row */}
                 <div className="flex items-center justify-between">
@@ -75,10 +100,9 @@ function BirthdayPostCard({ post, celebrants = [], menuOpen, onMenuToggle, onEdi
                     />
                 </div>
 
-                {/* Message */}
-                <div
-                    className="text-sm text-gray-700 leading-relaxed prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: post.message }}
+                <PostHtmlContent
+                    html={post.message}
+                    className="text-sm text-gray-700 leading-relaxed"
                 />
 
                 {celebrants.length > 0 && (
@@ -138,9 +162,17 @@ function BirthdayPostCard({ post, celebrants = [], menuOpen, onMenuToggle, onEdi
     );
 }
 
-function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, deleting }) {
+function GeneralPostCard({
+    post,
+    menuOpen,
+    onMenuToggle,
+    onEdit,
+    onDelete,
+    deleting,
+}) {
     const categoryKey = post.category ?? "General";
-    const catConfig = CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
+    const catConfig =
+        CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
 
     return (
         <Card
@@ -191,16 +223,18 @@ function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, delet
 
             {/* Text content */}
             <div className="px-4 pb-3 flex flex-col gap-1">
-                <p className="font-semibold text-gray-900 text-sm">{post.headline}</p>
-                <div
-                    className="text-gray-600 text-sm leading-relaxed prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: post.message }}
+                <p className="font-semibold text-gray-900 text-sm">
+                    {post.headline}
+                </p>
+                <PostHtmlContent
+                    html={post.message}
+                    className="text-gray-600 text-sm leading-relaxed"
                 />
             </div>
 
             {/* Media */}
-            {post.media_url && (
-                post.media_type === "video" ? (
+            {post.media_url &&
+                (post.media_type === "video" ? (
                     <video
                         src={post.media_url}
                         controls
@@ -212,23 +246,31 @@ function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, delet
                         alt={post.headline}
                         className="w-full max-h-[480px] object-cover"
                     />
-                )
-            )}
+                ))}
 
             {/* Footer */}
             <div className="px-4 py-3 flex justify-between items-center text-gray-500 text-xs border-t border-gray-100">
                 <div className="flex items-center gap-4">
                     <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
-                        <Heart size={14} className="group-hover:scale-110 transition" />
+                        <Heart
+                            size={14}
+                            className="group-hover:scale-110 transition"
+                        />
                         <span className="font-medium text-gray-600">0</span>
                     </button>
                     <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
-                        <MessageSquare size={14} className="group-hover:scale-110 transition" />
+                        <MessageSquare
+                            size={14}
+                            className="group-hover:scale-110 transition"
+                        />
                         <span className="font-medium text-gray-600">0</span>
                     </button>
                 </div>
                 <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
-                    <Share2 size={14} className="group-hover:scale-110 transition" />
+                    <Share2
+                        size={14}
+                        className="group-hover:scale-110 transition"
+                    />
                     <span className="font-medium text-gray-600">Share</span>
                 </button>
             </div>
@@ -238,8 +280,15 @@ function GeneralPostCard({ post, menuOpen, onMenuToggle, onEdit, onDelete, delet
 
 export default function PostCardSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading, postsError, birthdays, birthdayMonth, postDeleting, pollVoting } =
-        useSelector((state) => state.activities);
+    const {
+        posts,
+        postsLoading,
+        postsError,
+        birthdays,
+        birthdayMonth,
+        postDeleting,
+        pollVotingPostId,
+    } = useSelector((state) => state.activities);
 
     // openMenuId: which post's menu is open (null = none)
     const [openMenuId, setOpenMenuId] = useState(null);
@@ -298,21 +347,23 @@ export default function PostCardSection() {
     return (
         <>
             <div className="w-full flex flex-col gap-4">
-                {posts.map((post) => {
+                {posts.filter((post) => !(post.type === "poll" && post.is_closed)).map((post) => {
                     if (post.type === "birthday") {
                         return (
-                        <BirthdayPostCard
-                            key={post.id}
-                            post={post}
-                            celebrants={
-                                post.month === birthdayMonth ? birthdays : []
-                            }
-                            menuOpen={openMenuId === post.id}
-                            onMenuToggle={() => handleMenuToggle(post.id)}
-                            onEdit={() => handleEdit(post)}
-                            onDelete={() => handleDelete(post.id)}
-                            deleting={postDeleting}
-                        />
+                            <BirthdayPostCard
+                                key={post.id}
+                                post={post}
+                                celebrants={
+                                    post.month === birthdayMonth
+                                        ? birthdays
+                                        : []
+                                }
+                                menuOpen={openMenuId === post.id}
+                                onMenuToggle={() => handleMenuToggle(post.id)}
+                                onEdit={() => handleEdit(post)}
+                                onDelete={() => handleDelete(post.id)}
+                                deleting={postDeleting}
+                            />
                         );
                     }
 
@@ -324,14 +375,20 @@ export default function PostCardSection() {
                             >
                                 <ActivityPollCard
                                     post={post}
-                                    pollVoting={pollVoting}
-                                    onVote={(optionId) => handleVote(post.id, optionId)}
+                                    pollVoting={pollVotingPostId === post.id}
+                                    onVote={(optionId) =>
+                                        handleVote(post.id, optionId)
+                                    }
                                     headerActions={
                                         <PostActionMenu
                                             open={openMenuId === post.id}
-                                            onToggle={() => handleMenuToggle(post.id)}
+                                            onToggle={() =>
+                                                handleMenuToggle(post.id)
+                                            }
                                             onEdit={() => handleEdit(post)}
-                                            onDelete={() => handleDelete(post.id)}
+                                            onDelete={() =>
+                                                handleDelete(post.id)
+                                            }
                                             deleting={postDeleting}
                                         />
                                     }
@@ -366,4 +423,3 @@ export default function PostCardSection() {
         </>
     );
 }
-

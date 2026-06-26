@@ -15,18 +15,35 @@ import { get_activity_posts_thunk } from "@/app/redux/activities-slice";
 
 const FALLBACK_IMAGE = "/images/building.jpg";
 const AUTHOR_COLORS = [
-    "bg-blue-900", "bg-purple-700", "bg-emerald-700",
-    "bg-rose-700", "bg-amber-700", "bg-indigo-700",
+    "bg-blue-900",
+    "bg-purple-700",
+    "bg-emerald-700",
+    "bg-rose-700",
+    "bg-amber-700",
+    "bg-indigo-700",
 ];
 const categoryVariant = {
     Milestone: "info",
     Achievement: "success",
     Strategy: "primary",
 };
-function stripHtml(html) { return html ? html.replace(/<[^>]+>/g, "").trim() : ""; }
+
 function formatDate(d) {
     if (!d) return "";
-    return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return new Date(d).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
+}
+
+function WysiwygContent({ html }) {
+    return (
+        <div
+            className="max-h-64 overflow-y-auto overflow-x-hidden pr-2 text-sm leading-7 text-gray-600 break-words md:text-base [&_*]:max-w-full [&_a]:break-all [&_a]:text-blue-600 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-gray-200 [&_blockquote]:pl-4 [&_blockquote]:italic [&_b]:font-bold [&_em]:italic [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-bold [&_i]:italic [&_img]:my-3 [&_img]:rounded-xl [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_strong]:font-bold [&_strong]:text-gray-800 [&_table]:my-3 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-200 [&_td]:p-2 [&_th]:border [&_th]:border-gray-200 [&_th]:bg-gray-50 [&_th]:p-2 [&_ul]:list-disc [&_ul]:pl-5"
+            dangerouslySetInnerHTML={{ __html: html ?? "" }}
+        />
+    );
 }
 
 export default function CompanyFeaturesSection() {
@@ -35,14 +52,16 @@ export default function CompanyFeaturesSection() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [previewImage, setPreviewImage] = useState(null);
 
-    useEffect(() => { dispatch(get_activity_posts_thunk()); }, [dispatch]);
+    useEffect(() => {
+        dispatch(get_activity_posts_thunk());
+    }, [dispatch]);
 
     const features = posts
         .filter((p) => p.category === "Milestone")
         .map((p, i) => ({
             id: p.id,
             title: p.headline,
-            description: stripHtml(p.message),
+            description: p.message,
             category: p.category,
             date: formatDate(p.published_at),
             author: p.author?.name ?? "Admin",
@@ -54,8 +73,14 @@ export default function CompanyFeaturesSection() {
             isFeatured: true,
         }));
 
-    const handlePrev = () => setCurrentIndex((prev) => (prev === 0 ? features.length - 1 : prev - 1));
-    const handleNext = () => setCurrentIndex((prev) => (prev === features.length - 1 ? 0 : prev + 1));
+    const handlePrev = () =>
+        setCurrentIndex((prev) =>
+            prev === 0 ? features.length - 1 : prev - 1,
+        );
+    const handleNext = () =>
+        setCurrentIndex((prev) =>
+            prev === features.length - 1 ? 0 : prev + 1,
+        );
 
     useEffect(() => {
         if (features.length <= 1) return;
@@ -63,14 +88,18 @@ export default function CompanyFeaturesSection() {
         return () => clearInterval(interval);
     }, [features.length]);
 
-    useEffect(() => { setCurrentIndex(0); }, [features.length]);
+    useEffect(() => {
+        setCurrentIndex(0);
+    }, [features.length]);
 
     if (postsLoading && features.length === 0) {
         return (
             <div className="w-full group">
                 <div className="flex items-center gap-2 mb-3">
                     <Award size={18} className="text-indigo-900" />
-                    <h2 className="text-sm font-bold text-indigo-950">Featured Highlights</h2>
+                    <h2 className="text-sm font-bold text-indigo-950">
+                        Featured Highlights
+                    </h2>
                 </div>
                 <div className="w-full h-64 rounded-2xl bg-gray-100 animate-pulse" />
             </div>
@@ -82,7 +111,9 @@ export default function CompanyFeaturesSection() {
             <div className="w-full group">
                 <div className="flex items-center gap-2 mb-3">
                     <Award size={18} className="text-indigo-900" />
-                    <h2 className="text-sm font-bold text-indigo-950">Featured Highlights</h2>
+                    <h2 className="text-sm font-bold text-indigo-950">
+                        Featured Highlights
+                    </h2>
                 </div>
                 <Card className="overflow-hidden rounded-2xl border">
                     <div className="flex items-center justify-center py-16 text-sm text-gray-400">
@@ -129,7 +160,7 @@ export default function CompanyFeaturesSection() {
             <Card className="overflow-hidden rounded-2xl border">
                 <div
                     key={currentFeature.id}
-                    className="flex h-[520px] flex-col animate-in fade-in duration-500 md:h-[360px] md:flex-row"
+                    className="flex h-[520px] flex-col animate-in fade-in duration-500 md:h-[480px] md:flex-row"
                 >
                     {/* Image */}
                     <button
@@ -170,9 +201,9 @@ export default function CompanyFeaturesSection() {
                                 {currentFeature.title}
                             </h3>
 
-                            <p className="max-h-32 overflow-y-auto overflow-x-hidden pr-2 text-sm text-gray-600 leading-relaxed break-words md:max-h-36">
-                                {currentFeature.description}
-                            </p>
+                            <WysiwygContent
+                                html={currentFeature.description}
+                            />
                         </div>
 
                         <div className="flex items-center justify-between pt-4 mt-6 border-t">
