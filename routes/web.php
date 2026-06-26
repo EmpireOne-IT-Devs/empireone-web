@@ -133,6 +133,8 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
             Route::inertia('/company_newsfeed', 'accounts/_administrator/activities/company_newsfeed/page');
             Route::inertia('/events_calendar', 'accounts/_administrator/activities/events_calendar/page');
             Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
+             Route::inertia('/poll_analytics', 'accounts/_administrator/activities/poll_analytics/page');
+Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_analytics/id/page');
         });
 
         Route::prefix('e_store')->group(function () {

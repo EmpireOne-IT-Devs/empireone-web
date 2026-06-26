@@ -17,7 +17,7 @@ export default function BirthdayPreviewTab({ headline, message }) {
     return (
         <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm bg-white p-4">
             {/* Banner */}
-            <div className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 p-6 relative flex flex-col items-center justify-center text-white text-center min-h-[130px]">
+            <div className="w-full bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 p-6 relative flex flex-col items-center justify-center text-white text-center min-h-[130px]">
                 <span className="absolute top-4 left-4 text-lg opacity-80 select-none">🎈</span>
                 <span className="absolute bottom-4 left-6 text-sm opacity-60 select-none">✨</span>
                 <span className="absolute top-4 right-4 text-lg opacity-80 select-none">🎁</span>

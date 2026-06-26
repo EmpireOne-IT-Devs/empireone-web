@@ -4,7 +4,7 @@ import { TbConfetti } from "react-icons/tb";
 
 export default function HeaderSection() {
     return (
-        <div className="w-full bg-gradient-to-r from-[#bb07f1] via-[#3a68ff] to-[#991aff] rounded-2xl p-6 md:p-7 shadow-sm text-white font-sans antialiased mb-4">
+        <div className="w-full bg-gradient-to-r from-[#ea580c] via-[#f97316] to-[#f59e0b] rounded-2xl p-6 md:p-7 shadow-sm text-white font-sans antialiased mb-4">
             <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2.5 text-[21px] font-bold tracking-tight">
                     <TbConfetti className="shrink-0 stroke-[2.2]" size={24} />

@@ -54,7 +54,7 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
             {/* ── Post Preview ─────────────────────────────────────── */}
             <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm bg-white">
                 {/* Banner */}
-                <div className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-5 py-4 flex items-center gap-3">
+                <div className="w-full bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 px-5 py-4 flex items-center gap-3">
                     <span className="text-2xl">🎂</span>
                     <div>
                         <p className="text-white font-bold text-sm leading-tight">
@@ -74,8 +74,8 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                     />
 
                     {birthdays.length > 0 && (
-                        <div className="border border-pink-100 bg-pink-50/50 rounded-xl p-3.5 flex flex-col gap-2">
-                            <p className="text-xs font-bold text-pink-500 uppercase tracking-wider">
+                        <div className="border border-purple-100 bg-purple-50/50 rounded-xl p-3.5 flex flex-col gap-2">
+                            <p className="text-xs font-bold text-purple-500 uppercase tracking-wider">
                                 🎂 Birthday Celebrant
                                 {birthdays.length !== 1 ? "s" : ""} of the Month
                             </p>
@@ -89,7 +89,7 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                                             {c.name}
                                         </span>
                                         {c.is_today && (
-                                            <span className="text-[10px] font-bold bg-pink-200 text-pink-700 px-2 py-0.5 rounded-full">
+                                            <span className="text-[10px] font-bold bg-purple-200 text-purple-700 px-2 py-0.5 rounded-full">
                                                 Today 🎂
                                             </span>
                                         )}
@@ -140,7 +140,7 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                         <Button
                             onClick={handlePublishNow}
                             disabled={publishing}
-                            className="bg-pink-500 hover:bg-pink-600 text-white gap-2"
+                            className="bg-purple-500 hover:bg-purple-600 text-white gap-2"
                         >
                             {publishing ? (
                                 <span className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full" />

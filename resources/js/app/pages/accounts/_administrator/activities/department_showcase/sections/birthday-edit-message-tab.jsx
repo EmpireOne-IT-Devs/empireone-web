@@ -46,7 +46,7 @@ export default function BirthdayEditMessageTab({
                 </p>
 
                 <div className="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm bg-white">
-                    <div className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-5 py-4 flex items-center gap-3">
+                    <div className="w-full bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 px-5 py-4 flex items-center gap-3">
                         <span className="text-2xl">🎂</span>
                         <div>
                             <p className="text-white font-bold text-sm leading-tight">
@@ -67,16 +67,16 @@ export default function BirthdayEditMessageTab({
                         />
 
                         {birthdays.length > 0 && (
-                            <div className="border border-pink-100 bg-pink-50/50 rounded-xl p-3.5 flex flex-col gap-2">
-                                <p className="text-xs font-bold text-pink-500 uppercase tracking-wider">
+                            <div className="border border-purple-100 bg-purple-50/50 rounded-xl p-3.5 flex flex-col gap-2">
+                                <p className="text-xs font-bold text-purple-500 uppercase tracking-wider">
                                     🎂 Birthday Celebrant{birthdays.length !== 1 ? "s" : ""} of the Month
                                 </p>
                                 <ul className="flex flex-col gap-1">
                                     {birthdays.map((c, index) => (
                                         <li key={c.user_id} className="flex items-center justify-between">
-                                            <span className="text-xs text-red-800 font-medium">{index + 1}. {c.name}</span>
+                                            <span className="text-xs text-gray-700 font-medium">{index + 1}. {c.name}</span>
                                             {c.is_today && (
-                                                <span className="text-[10px] font-bold bg-pink-200 text-pink-700 px-2 py-0.5 rounded-full">
+                                                <span className="text-[10px] font-bold bg-purple-200 text-purple-700 px-2 py-0.5 rounded-full">
                                                     Today 🎂
                                                 </span>
                                             )}
