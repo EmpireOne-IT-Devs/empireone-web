@@ -78,13 +78,7 @@ export default function SidebarSection() {
             current: path == "my_documents",
             is_incoming: false,
         },
-        {
-            name: "My Job Requisition",
-            href: `/accounts/${account_role}/my_requisition`,
-            icon: FcFeedback,
-            current: path == "my_requisition",
-            is_incoming: false,
-        },
+
         {
             name: "Messages",
             href: `/accounts/${account_role}/messages`,
@@ -94,137 +88,144 @@ export default function SidebarSection() {
         },
         ...(data?.user?.leader != null
             ? [
-                  { is_label: true, name: "Leader Hub" },
-                  {
-                      name: "My Team",
-                      href: `/accounts/${account_role}/my_team`,
-                      icon: FcConferenceCall,
-                      current: path === "my_team",
-                      is_incoming: false,
-                  },
-              ]
+                {
+                    name: "My Job Requisition",
+                    href: `/accounts/${account_role}/my_requisition`,
+                    icon: FcFeedback,
+                    current: path == "my_requisition",
+                    is_incoming: false,
+                },
+                { is_label: true, name: "Leader Hub" },
+                {
+                    name: "My Team",
+                    href: `/accounts/${account_role}/my_team`,
+                    icon: FcConferenceCall,
+                    current: path === "my_team",
+                    is_incoming: false,
+                },
+            ]
             : []),
         ...(account_role == "administrator"
             ? [
-                  { is_label: true, name: "Administration" },
-                  //   {
-                  //       name: "Users",
-                  //       href: `/accounts/${account_role}/users`,
-                  //       icon: FcConferenceCall,
-                  //       current: path == "users",
-                  //       is_incoming: true,
-                  //   },
-                  {
-                      name: "Talent Acquisition",
-                      href: `/accounts/${account_role}/talent_acquisition/dashboard`,
-                      icon: FcPortraitMode,
-                      current: path == "talent_acquisition",
-                      is_incoming: false,
-                  },
+                { is_label: true, name: "Administration" },
+                //   {
+                //       name: "Users",
+                //       href: `/accounts/${account_role}/users`,
+                //       icon: FcConferenceCall,
+                //       current: path == "users",
+                //       is_incoming: true,
+                //   },
+                {
+                    name: "Talent Acquisition",
+                    href: `/accounts/${account_role}/talent_acquisition/dashboard`,
+                    icon: FcPortraitMode,
+                    current: path == "talent_acquisition",
+                    is_incoming: false,
+                },
 
-                  {
-                      name: "Human Resources",
-                      href: `/accounts/${account_role}/human_resources/employees`,
-                      icon: FcPodiumWithAudience,
-                      current: path == "human_resources",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "Timekeeping",
-                      href: `/accounts/${account_role}/time_keeping/dashboard`,
-                      icon: FcOvertime,
-                      current: path == "time_keeping",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "Ticketing",
-                      href: `/accounts/${account_role}/ticketing`,
-                      icon: FcCustomerSupport,
-                      current: path == "ticketing",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "Activities",
-                      href: `/accounts/${account_role}/activities`,
-                      icon: FcSportsMode,
-                      current: path == "activities",
-                      is_incoming: false,
-                  },
+                {
+                    name: "Human Resources",
+                    href: `/accounts/${account_role}/human_resources/employees`,
+                    icon: FcPodiumWithAudience,
+                    current: path == "human_resources",
+                    is_incoming: false,
+                },
+                {
+                    name: "Timekeeping",
+                    href: `/accounts/${account_role}/time_keeping/dashboard`,
+                    icon: FcOvertime,
+                    current: path == "time_keeping",
+                    is_incoming: false,
+                },
+                {
+                    name: "Ticketing",
+                    href: `/accounts/${account_role}/ticketing`,
+                    icon: FcCustomerSupport,
+                    current: path == "ticketing",
+                    is_incoming: true,
+                },
+                {
+                    name: "Activities",
+                    href: `/accounts/${account_role}/activities`,
+                    icon: FcSportsMode,
+                    current: path == "activities",
+                    is_incoming: false,
+                },
 
-                  {
-                      name: "R & R",
-                      href: `/accounts/${account_role}/rnr/grand_rewards`,
-                      icon: FcDiploma1,
-                      current: path == "rnr",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "E-Store",
-                      href: `/accounts/${account_role}/e_store/rewards_items`,
-                      icon: FcShop,
-                      current: path == "e_store",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "Finance",
-                      href: `/accounts/${account_role}/finance/dashboard`,
-                      icon: FcSalesPerformance,
-                      current: path == "finance",
-                      is_incoming: true,
-                  },
-              ]
+                {
+                    name: "R & R",
+                    href: `/accounts/${account_role}/rnr/grand_rewards`,
+                    icon: FcDiploma1,
+                    current: path == "rnr",
+                    is_incoming: true,
+                },
+                {
+                    name: "E-Store",
+                    href: `/accounts/${account_role}/e_store/rewards_items`,
+                    icon: FcShop,
+                    current: path == "e_store",
+                    is_incoming: false,
+                },
+                {
+                    name: "Finance",
+                    href: `/accounts/${account_role}/finance/dashboard`,
+                    icon: FcSalesPerformance,
+                    current: path == "finance",
+                    is_incoming: true,
+                },
+            ]
             : []),
 
         ...(account_role == "employee"
             ? [
-                  { is_label: true, name: "Employee Hub" },
-                  {
-                      name: "Activities",
-                      href: `/accounts/${account_role}/activities`,
-                      icon: FcSportsMode,
-                      current: path == "activities",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "HR Services",
-                      href: `/accounts/${account_role}/hr_services`,
-                      icon: FcPortraitMode,
-                      current: path == "hr_services",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "RNR",
-                      href: `/accounts/${account_role}/rnr`,
-                      icon: FcCloseUpMode,
-                      current: path == "rnr",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "Reward Store",
-                      href: `/accounts/${account_role}/rewards_store`,
-                      icon: FcShop,
-                      current: path == "rewards_store",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "Loan",
-                      href: `/accounts/${account_role}/loan`,
-                      icon: () => (
-                          <FaMoneyBillWave className="text-purple-600" />
-                      ),
-                      current: path == "loan",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "Payroll",
-                      href: `/accounts/${account_role}/payroll`,
-                      icon: () => (
-                          <FaMoneyCheckAlt className="text-green-600" />
-                      ),
-                      current: path == "payroll",
-                      is_incoming: true,
-                  },
-              ]
+                { is_label: true, name: "Employee Hub" },
+                {
+                    name: "Activities",
+                    href: `/accounts/${account_role}/activities`,
+                    icon: FcSportsMode,
+                    current: path == "activities",
+                    is_incoming: true,
+                },
+                {
+                    name: "HR Services",
+                    href: `/accounts/${account_role}/hr_services`,
+                    icon: FcPortraitMode,
+                    current: path == "hr_services",
+                    is_incoming: true,
+                },
+                {
+                    name: "RNR",
+                    href: `/accounts/${account_role}/rnr`,
+                    icon: FcCloseUpMode,
+                    current: path == "rnr",
+                    is_incoming: true,
+                },
+                {
+                    name: "Reward Store",
+                    href: `/accounts/${account_role}/rewards_store`,
+                    icon: FcShop,
+                    current: path == "rewards_store",
+                    is_incoming: true,
+                },
+                {
+                    name: "Loan",
+                    href: `/accounts/${account_role}/loan`,
+                    icon: () => (
+                        <FaMoneyBillWave className="text-purple-600" />
+                    ),
+                    current: path == "loan",
+                    is_incoming: true,
+                },
+                {
+                    name: "Payroll",
+                    href: `/accounts/${account_role}/payroll`,
+                    icon: () => (
+                        <FaMoneyCheckAlt className="text-green-600" />
+                    ),
+                    current: path == "payroll",
+                    is_incoming: true,
+                },
+            ]
             : []),
     ];
 
