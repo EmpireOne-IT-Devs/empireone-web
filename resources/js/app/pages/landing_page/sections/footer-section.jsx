@@ -126,7 +126,7 @@ export default function FooterSection() {
                     </div>
 
                     {/* QUICK LINKS COL */}
-                    <div>
+                    {/* <div>
                         <h4 className="font-semibold text-base mb-5 bg-gradient-to-r from-purple-400 to-blue-400 text-transparent bg-clip-text">
                             Quick Links
                         </h4>
@@ -143,10 +143,10 @@ export default function FooterSection() {
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
 
                     {/* SERVICES COL */}
-                    <div>
+                    {/* <div>
                         <h4 className="font-semibold text-base mb-5 bg-gradient-to-r from-blue-400 to-orange-400 text-transparent bg-clip-text">
                             Our Services
                         </h4>
@@ -163,7 +163,7 @@ export default function FooterSection() {
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
                 </motion.div>
 
                 {/* DIVIDER */}
