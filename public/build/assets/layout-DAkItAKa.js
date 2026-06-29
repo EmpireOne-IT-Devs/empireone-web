@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-VKTzBTIy.js
-import{j as e}from"./app-C6UbSLC1.js";import i from"./header-section-DS1SV36U.js";import r from"./tabs-section-De32UfmV.js";import"./tabs-B2-iAw1o.js";function c({children:s}){return e.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[e.jsxs("div",{className:"shrink-0 bg-gray-100",children:[e.jsx(i,{}),e.jsx(r,{})]}),e.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:s})]})}export{c as default};
-========
-import{j as e}from"./app-CoIlDueg.js";import i from"./header-section-C6ckjAlg.js";import r from"./tabs-section-DeG1Iya3.js";import"./tabs-Bx1xXWlo.js";function c({children:s}){return e.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[e.jsxs("div",{className:"shrink-0 bg-gray-100",children:[e.jsx(i,{}),e.jsx(r,{})]}),e.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:s})]})}export{c as default};
->>>>>>>> 3f2ae3cbe389b7d9f06326390434b5ca890a344b:public/build/assets/layout-DAkItAKa.js

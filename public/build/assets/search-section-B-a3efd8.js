@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/search-section-B-a3efd8.js
-import{j as e}from"./app-C6UbSLC1.js";function t({searchQuery:r,setSearchQuery:n}){return e.jsx(e.Fragment,{children:e.jsx("div",{className:"mb-4 flex justify-end w-full",children:e.jsx("input",{type:"text",placeholder:"Search employees...",value:r,onChange:l=>n(l.target.value),className:"w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"})})})}export{t as default};
-========
-import{j as e}from"./app-CoIlDueg.js";function t({searchQuery:r,setSearchQuery:n}){return e.jsx(e.Fragment,{children:e.jsx("div",{className:"mb-4 flex justify-end w-full",children:e.jsx("input",{type:"text",placeholder:"Search employees...",value:r,onChange:l=>n(l.target.value),className:"w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"})})})}export{t as default};
->>>>>>>> 3f2ae3cbe389b7d9f06326390434b5ca890a344b:public/build/assets/search-section-B2-3qNqk.js
