@@ -15,11 +15,6 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // $firstNames = ['Marlou', 'John', 'Jane', 'Mark', 'Emily', 'Paul', 'Anna'];
-        // $middleNames = ['A.', 'B.', 'C.', 'D.', 'E.', 'F.', 'G.'];
-        // $lastNames = ['Dev', 'Doe', 'Smith', 'Johnson', 'Reyes', 'Santos', 'Lopez'];
-
-        // Specific users (like admin)
         $specificUsers = [
             [
                 'name' => 'Marlou Dev',
@@ -42,14 +37,14 @@ class UsersTableSeeder extends Seeder
                 'eogs_email' => "hiring@empireonegroup.com"
             ],
             [
-                'name' => 'Christi Ann',
-                'email' => 'christiann@empireonegroup.com',
+                'name' => 'Anabelle Marie Ubaldo',
+                'email' => 'bem@empireonegroup.com',
                 'role' => 1,
-                'first_name' => 'Christi',
+                'first_name' => 'Anabelle Marie',
                 'middle_name' => '',
-                'last_name' => 'Sanchez',
+                'last_name' => 'Ubaldo',
                 'position' => 'Talent Acquisition Manager',
-                'eogs_email' => "christiann@empireonegroup.com"
+                'eogs_email' => "bem@empireonegroup.com"
             ],
             [
                 'name' => 'Mark Valencia',
@@ -130,37 +125,5 @@ class UsersTableSeeder extends Seeder
                 'position' => $userData['position'],
             ]);
         }
-
-        // Generate 5 random users
-        // for ($i = 1; $i <= 5; $i++) {
-        //     $firstName = $firstNames[array_rand($firstNames)];
-        //     $middleName = $middleNames[array_rand($middleNames)];
-        //     $lastName = $lastNames[array_rand($lastNames)];
-
-        //     $user = User::create([
-        //         'name' => "$firstName $lastName",
-        //         'email' => strtolower($firstName) . $i . '@company.com',
-        //         'password' => Hash::make('password'),
-        //         'role' => rand(1, 3),
-        //         'email_verified_at' => now(),
-        //     ]);
-
-        //     AccountPersonalInformation::create([
-        //         'user_id' => $user->id,
-        //         'contact' => (string)rand(10000000000, 99999999999),
-        //         'first_name' => $firstName,
-        //         'middle_name' => $middleName,
-        //         'last_name' => $lastName,
-        //         'gender' => 'Not specified',
-        //         'date_of_birth' => now()->subYears(rand(20, 35))->format('Y-m-d'),
-        //         'region' => '',
-        //         'province' => '',
-        //         'city' => '',
-        //         'barangay' => '',
-        //         'street' => '',
-        //         'zip_code' => '',
-        //         'highest_level_of_education' => '',
-        //     ]);
-        // }
     }
 }
