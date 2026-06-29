@@ -13,6 +13,7 @@ import {
     Plus,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { setAlert } from "@/app/redux/app-slice";
 import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
 import Wysiwyg from "@/app/_components/wysiwyg";
@@ -152,6 +153,7 @@ export default function CreatePostCardSection() {
         if (publish_activity_post_thunk.fulfilled.match(result)) {
             await dispatch(get_activity_posts_thunk());
             await dispatch(get_upcoming_events_thunk());
+            dispatch(setAlert({ type: "success", title: "Post Published Successfully!" }));
             resetForm();
         }
     };
