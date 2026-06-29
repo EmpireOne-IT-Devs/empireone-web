@@ -5,43 +5,43 @@ import React, { useEffect, useRef, useState } from "react";
 const jobCards = [
     {
         role: "UI/UX Designer",
-        company: "TechCorp",
+
         type: "Remote",
         color: "#7c3aed",
     },
     {
         role: "Customer Support",
-        company: "HelperHub",
+
         type: "Full-time",
         color: "#0ea5e9",
     },
     {
         role: "Data Analyst",
-        company: "InsightCo",
+
         type: "Contract",
         color: "#10b981",
     },
     {
         role: "Sales Rep",
-        company: "GrowthLabs",
+
         type: "Remote",
         color: "#f97316",
     },
     {
-        role: "Virtual Assistant",
-        company: "AssistPro",
+        role: "Administrative Assistant",
+
         type: "Part-time",
         color: "#ec4899",
     },
     {
         role: "TA Staff",
-        company: "MediaX",
+
         type: "Freelance",
         color: "#f59e0b",
     },
     {
         role: "Account Manager",
-        company: "SalesForce",
+
         type: "Remote",
         color: "#6366f1",
     },
@@ -175,16 +175,16 @@ export default function HeroSection() {
                         more.
                     </p>
 
-                    {/* SEARCH */}
+                    {/* SEARCH
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-white/10 anim-fade-up delay-400 border border-white/10 rounded-xl p-3 sm:px-4 sm:py-3 max-w-md mx-auto lg:mx-0 gap-3 sm:gap-0">
                         <input
-                            placeholder='Try "Virtual Assistant"...'
+                            placeholder='Try "ustomer service"...'
                             className="bg-transparent outline-none flex-1 text-sm text-white/80 placeholder:text-white/30 min-w-0"
                         />
                         <Button className="sm:ml-3 px-4 py-2 sm:py-1.5 rounded-md bg-gradient-to-r from-purple-500 to-orange-500 text-sm font-semibold hover:from-purple-400 hover:to-orange-400 whitespace-nowrap">
                             Search
                         </Button>
-                    </div>
+                    </div> */}
 
                     {/* CTA */}
                     <div className="flex flex-wrap gap-2 px-4 sm:px-0 max-w-md mx-auto lg:mx-0 anim-fade-up delay-500">
@@ -297,7 +297,7 @@ export default function HeroSection() {
             </div>
             <div className="relative z-20 py-3 sm:py-4 border-y border-white/10 anim-fade-in delay-700">
                 {/* ROW 1 */}
-                <div className="overflow-hidden mb-1.5 sm:mb-2">    
+                <div className="overflow-hidden mb-1.5 sm:mb-2">
                     <div className="flex w-max ticker-left gap-2 sm:gap-3 lg:gap-4">
                         {[...jobCards, ...jobCards].map((job, i) => (
                             <div
@@ -308,12 +308,10 @@ export default function HeroSection() {
                                     className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded flex-shrink-0"
                                     style={{ background: job.color }}
                                 />
-                                <span className="text-xs sm:text-sm font-semibold text-white/85">   
+                                <span className="text-xs sm:text-sm font-semibold text-white/85">
                                     {job.role}
                                 </span>
-                                <span className="text-[10px] sm:text-xs text-white/40 hidden sm:inline">
-                                    {job.company}
-                                </span>
+
                                 <span className="text-[10px] sm:text-[11px] text-white/40 bg-white/5 px-1.5 sm:px-2 py-0.5 rounded hidden md:inline">
                                     {job.type}
                                 </span>
