@@ -3,6 +3,7 @@ import { FaPaperPlane } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "@inertiajs/react";
 import { publish_activity_post_thunk } from "@/app/redux/activities-slice";
+import { setAlert } from "@/app/redux/app-slice";
 
 import Button from "@/app/_components/button";
 export default function BirthdayPublishTab({ headline, message, onClose }) {
@@ -31,7 +32,10 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                 scheduled_at: null,
             }),
         );
-        if (publish_activity_post_thunk.fulfilled.match(result)) navigate();
+        if (publish_activity_post_thunk.fulfilled.match(result)) {
+            dispatch(setAlert({ type: "success", title: "Post Published Successfully!" }));
+            navigate();
+        }
     };
 
     const handleSchedule = async () => {
@@ -46,7 +50,10 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                 scheduled_at: scheduledAt,
             }),
         );
-        if (publish_activity_post_thunk.fulfilled.match(result)) navigate();
+        if (publish_activity_post_thunk.fulfilled.match(result)) {
+            dispatch(setAlert({ type: "success", title: "Post Scheduled Successfully!" }));
+            navigate();
+        }
     };
 
     return (

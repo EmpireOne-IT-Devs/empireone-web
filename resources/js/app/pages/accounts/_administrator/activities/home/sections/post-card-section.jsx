@@ -15,11 +15,11 @@ import Badge from "@/app/_components/badge";
 import ActivityPollCard from "../../_components/activity-poll-card";
 import {
     get_activity_posts_thunk,
-    delete_activity_post_thunk,
     cast_poll_vote_thunk,
 } from "@/app/redux/activities-slice";
 import PostActionMenu from "./post-action-menu";
 import EditPostModal from "./edit-post-modal";
+import { DeletePostSection } from "./delete-post-section";
 
 // ── Category config ──────────────────────────────────────────────────────────
 const CATEGORY_CONFIG = {
@@ -67,7 +67,7 @@ function BirthdayPostCard({
                 </div>
             </div>
 
-            <div className="px-5 py-4 flex flex-col gap-3">
+            <div className="px-5 py-4 flex flex-col gap-3   ">
                 {/* Author row */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -290,6 +290,8 @@ export default function PostCardSection() {
         pollVotingPostId,
     } = useSelector((state) => state.activities);
 
+    const { handleDelete } = DeletePostSection();
+
     // openMenuId: which post's menu is open (null = none)
     const [openMenuId, setOpenMenuId] = useState(null);
     // editingPost: the post object currently being edited (null = modal closed)
@@ -305,10 +307,6 @@ export default function PostCardSection() {
 
     function handleEdit(post) {
         setEditingPost(post);
-    }
-
-    function handleDelete(id) {
-        dispatch(delete_activity_post_thunk(id));
     }
 
     function handleVote(postId, optionId) {
