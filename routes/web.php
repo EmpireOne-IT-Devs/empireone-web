@@ -143,6 +143,12 @@ Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_
             Route::inertia('/redemption_history', 'accounts/_administrator/e_store/redemption_history/page');
             Route::inertia('/analytics', 'accounts/_administrator/e_store/analytics/page');
         });
+        Route::prefix('rnr')->group(function () {
+            Route::redirect('/', '/accounts/administrator/rnr/grand_rewards');
+            Route::inertia('/grand_rewards', 'accounts/_administrator/rnr/grand_rewards/page');
+            Route::inertia('/manage_rewards', 'accounts/_administrator/rnr/manage_rewards/page');
+            Route::inertia('/leaderboard', 'accounts/_administrator/rnr/leaderboard/page');
+        });
         Route::prefix('ticketing')->group(function () {
             Route::inertia('/', 'accounts/_administrator/ticketing/dashboard/page');
             Route::inertia('/my_tickets', 'accounts/_administrator/ticketing/my_tickets/page');

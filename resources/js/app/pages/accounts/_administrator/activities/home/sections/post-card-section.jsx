@@ -106,8 +106,8 @@ function BirthdayPostCard({
                 />
 
                 {celebrants.length > 0 && (
-                    <div className="border border-purple-100 bg-purp-50/50 rounded-xl p-3.5 flex flex-col gap-2">
-                        <p className="text-xs font-bold text-pur-500 uppercase tracking-wider">
+                    <div className="border border-purple-100 bg-purple-50/50 rounded-xl p-3.5 flex flex-col gap-2">
+                        <p className="text-xs font-bold text-purple-500 uppercase tracking-wider">
                             🎂 Birthday Celebrant
                             {celebrants.length !== 1 ? "s" : ""} of the Month
                         </p>

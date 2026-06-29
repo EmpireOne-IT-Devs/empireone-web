@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API\Jobs;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ApplicantRejected;
 use App\Mail\JobOfferMail;
-use App\Mail\SendEmailAccountCreation;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountEmployeeAllowance;
@@ -16,7 +16,6 @@ use App\Models\Jobs\JobOffer;
 use App\Models\Jobs\JobPosting;
 use App\Models\Jobs\JobRequisition;
 use App\Models\User;
-use App\Services\GoogleCalendarService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +35,11 @@ class JobApplicationController extends Controller
 
         // Decode Base64
         return base64_decode($data);
+    }
+
+    public function application_failed_notification(Request $request)
+    {
+        return 'hello';
     }
     public function employee_applicants(Request $request)
     {
@@ -57,7 +61,7 @@ class JobApplicationController extends Controller
                 }
             })
             ->get();
-            
+
         return response()->json([
             'data' => $applications,
             'status' => 'success',
@@ -453,7 +457,9 @@ class JobApplicationController extends Controller
     {
         $ja = JobApplication::with(['job_posting.job_requisition', 'applicant'])
             ->find($request->id);
-
+        if ($request->final_status == 'Failed' || $request->interview_status == 'Failed') {
+            Mail::to('webdev@empireonegroup.com')->send(new ApplicantRejected($ja));
+        }
         if (!$ja) {
             return response()->json([
                 'status' => 'error',

@@ -102,6 +102,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);
         Route::get('get_applicant_pooling',  [JobApplicationController::class, 'get_applicant_pooling']);
         Route::get('get_job_application_by_user',  [JobApplicationController::class, 'get_job_application_by_user']);
+        Route::post('application_failed_notification',  [JobApplicationController::class, 'application_failed_notification']);
 
         Route::get('get_applications_by_user',  [JobApplicationController::class, 'get_applications_by_user']);
         Route::post('update_job_application_status',  [JobApplicationController::class, 'update_job_application_status']);

@@ -40,27 +40,27 @@ export default function TableSection() {
             <Table
                 columns={columns}
                 data={job_offers?.data?.map((res) => ({
-                    name: res.user.name,
-                    email: res.user.email,
-                    role: res.role,
+                    name: res?.user?.name,
+                    email: res?.user?.email,
+                    role: res?.role,
                     position:
                         res?.job_application?.job_posting?.job_requisition
                             ?.title,
                     status: (
                         <Badge
-                            label={res.status}
-                            variant={getBadgeVariant(res.status)}
+                            label={res?.status}
+                            variant={getBadgeVariant(res?.status)}
                             className="rounded-md text-white"
                         />
                     ),
                     action: (
                         <div className="flex gap-3">
-                            {res.job_application.final_status !== 'Transferred' && res.status === "Declined Job Offer" && (
+                            {res?.job_application?.final_status !== 'Transferred' && res?.status === "Declined Job Offer" && (
                                 <>
                                     <ResendJobOfferSection data={res} />
                                 </>
                             )}
-                            {res.status == "Accepted Job Offer" &&
+                            {res?.status == "Accepted Job Offer" &&
                                 res?.job_application?.final_status ==
                                 "Accepted Job Offer" && (
                                     <>
