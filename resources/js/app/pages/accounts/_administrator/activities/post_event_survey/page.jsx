@@ -9,10 +9,14 @@ export default function Page() {
     return (
         <Layout>
             <ActivitiesLayout>
-                <HeaderSection/>
-                <CardSection/>
-                <SearchSection/>
-                <TableSection/>
+                <div className="flex flex-col  h-full min-h-0">
+                    <HeaderSection />
+                    <div className="flex-1 overflow-y-auto min-h-0 flex flex-col ">
+                        <CardSection />
+                        <SearchSection />
+                        <TableSection />
+                    </div>
+                </div>
             </ActivitiesLayout>
         </Layout>
     );

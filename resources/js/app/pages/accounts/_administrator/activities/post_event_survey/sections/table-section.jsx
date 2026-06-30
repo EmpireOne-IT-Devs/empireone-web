@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { get_post_event_surveys_thunk } from "@/app/redux/post-event-survey-slice";
+import OpenSurveySection from "./open-survey-section";
+import Skeleton from "@/app/_components/skeleton";
 import Table from "@/app/_components/table";
-import { TbFileText } from "react-icons/tb";
+
 
 const categoryColors = {
     "Events Calendar": "bg-indigo-100 text-indigo-600",
@@ -9,108 +13,91 @@ const categoryColors = {
     "Department Showcases": "bg-cyan-100 text-cyan-600",
 };
 
-const events = [
-    {
-        event_id: "EID-01",
-        title: "Q3 Townhall Meeting",
-        description: "Company-wide quarterly update covering goals and roadmap.",
-        category: "Events Calendar",
-        date: "Oct 15, 2025",
-        status: "Completed",
-    },
-    {
-        event_id: "EID-02",
-        title: "New Health Benefits Rollout",
-        description: "Announcing expanded medical and wellness coverage for all staff.",
-        category: "Company Newsfeed",
-        date: "Oct 10, 2025",
-        status: "Completed",
-    },
-    {
-        event_id: "EID-03",
-        title: "Annual Company Picnic",
-        description: "Family-friendly outdoor event with food, games and prizes.",
-        category: "Events Calendar",
-        date: "Oct 10, 2025",
-        status: "Completed",
-    },
-    {
-        event_id: "EID-04",
-        title: "Return to Office Preferences",
-        description: "Poll gathering employee preferences on hybrid work arrangements.",
-        category: "Polls",
-        date: "Oct 10, 2025",
-        status: "Completed",
-    },
-    {
-        event_id: "EID-05",
-        title: "Engineering Team Hackathon",
-        description: "48-hour internal hackathon showcasing the engineering department.",
-        category: "Department Showcases",
-        date: "Oct 10, 2025",
-        status: "Completed",
-    },
-];
-
 const columns = [
-    {
-        header: "Event ID",
-        accessor: "event_id",
-    },
-    {
-        header: "Event",
-        accessor: "event",
-    },
-    {
-        header: "Category",
-        accessor: "category",
-    },
-    {
-        header: "Date",
-        accessor: "date",
-    },
-    {
-        header: "Status",
-        accessor: "status",
-    },
-    {
-        header: "Survey",
-        accessor: "survey",
-    },
+    { header: "Event ID", accessor: "event_id" },
+    { header: "Event", accessor: "event" },
+    { header: "Category", accessor: "category" },
+    { header: "Date", accessor: "date" },
+    { header: "Status", accessor: "status" },
+    { header: "Survey", accessor: "survey" },
 ];
 
-const data = events.map((e) => ({
-    event_id: <span className="text-gray-600 text-sm">{e.event_id}</span>,
-    event: (
-        <div>
-            <p className="font-semibold text-gray-900">{e.title}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{e.description}</p>
-        </div>
-    ),
-    category: (
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${categoryColors[e.category]}`}>
-            {e.category}
-        </span>
-    ),
-    date: <span className="text-gray-600 text-sm">{e.date}</span>,
-    status: (
-        <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-600">
-            {e.status}
-        </span>
-    ),
-    survey: (
-        <button className="flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium px-4 py-2 rounded-lg transition">
-            <TbFileText className="text-base" />
-            Open Survey
-        </button>
-    ),
-}));
+const buildRows = (surveys = []) =>
+    surveys.map((survey) => ({
+        event_id: (
+            <span className="text-sm text-gray-600">
+                {`SID-${String(survey.id).padStart(2, "0")}`}
+            </span>
+        ),
+
+        event: (
+            <div>
+                <p className="font-semibold text-gray-900">
+                    {survey.event?.headline ?? "—"}
+                </p>
+                <p className="mt-0.5 text-xs text-gray-400">
+                    {survey.title ?? "No Title"}
+                </p>
+            </div>
+        ),
+
+        category: (
+            <span
+                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    categoryColors[survey.event?.category] ?? "bg-gray-100 text-gray-500"
+                }`}
+            >
+                {survey.event?.category ?? "—"}
+            </span>
+        ),
+
+        date: (
+            <span className="text-sm text-gray-600">
+                {survey.published_at ?? "—"}
+            </span>
+        ),
+
+        status: (
+            <span
+                className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                    survey.status === "Completed"
+                        ? "bg-green-100 text-green-600"
+                        : survey.status === "Draft"
+                        ? "bg-yellow-100 text-yellow-600"
+                        : survey.status === "Closed"
+                        ? "bg-red-100 text-red-600"
+                        : "bg-gray-100 text-gray-600"
+                }`}
+            >
+                {survey.status ?? "Unknown"}
+            </span>
+        ),
+
+        // Cleaned up to use the dedicated standalone component
+        survey: <OpenSurveySection survey={survey} />,
+    }));
 
 export default function TableSection() {
+    const dispatch = useDispatch();
+
+    const {
+        surveys = [],
+        surveysLoading = false,
+    } = useSelector((state) => state.post_event_surveys);
+
+    useEffect(() => {
+        dispatch(get_post_event_surveys_thunk());
+    }, [dispatch]);
+
     return (
         <div className="mt-3">
-            <Table columns={columns} data={data} />
+            {surveysLoading ? (
+                <div className="py-8 text-center text-sm text-gray-400">
+                    <Skeleton />
+                </div>
+            ) : (
+                <Table columns={columns} data={buildRows(surveys)} />
+            )}
         </div>
     );
 }
-

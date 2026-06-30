@@ -25,6 +25,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\API\Activities\ActivityBirthdayController;
 use App\Http\Controllers\API\Activities\ActivityPollController;
 use App\Http\Controllers\API\Activities\ActivityPostController;
+use App\Http\Controllers\API\Activities\PostEventSurveyController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -161,6 +162,12 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('polls/{id}/close', [ActivityPollController::class, 'close_poll']);
         Route::post('polls/{id}/reopen', [ActivityPollController::class, 'reopen_poll']);
         Route::post('polls/{id}/vote', [ActivityPollController::class, 'vote']);
+
+        // post event surveys
+        Route::get('surveys',         [PostEventSurveyController::class, 'index']);
+        Route::post('surveys',        [PostEventSurveyController::class, 'store']);
+        Route::get('surveys/{id}',    [PostEventSurveyController::class, 'show']);
+        Route::delete('surveys/{id}', [PostEventSurveyController::class, 'destroy']);
     });
 });
 
