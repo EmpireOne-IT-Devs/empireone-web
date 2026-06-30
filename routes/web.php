@@ -135,6 +135,9 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
             Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
              Route::inertia('/poll_analytics', 'accounts/_administrator/activities/poll_analytics/page');
 Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_analytics/id/page');
+
+            Route::inertia('/post_event_survey', 'accounts/_administrator/activities/post_event_survey/page');
+             Route::inertia('/company_gallery', 'accounts/_administrator/activities/company_gallery/page');
         });
 
         Route::prefix('e_store')->group(function () {

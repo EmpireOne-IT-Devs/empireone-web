@@ -27,6 +27,7 @@ import Tooltip from "@/app/_components/tooltip";
 import { Link, router } from "@inertiajs/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
+import { PackageIcon } from "lucide-react";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -152,6 +153,7 @@ export default function SidebarSection() {
                     is_incoming: false,
                 },
 
+
                 {
                     name: "R & R",
                     href: `/accounts/${account_role}/rnr/grand_rewards`,
@@ -171,6 +173,13 @@ export default function SidebarSection() {
                     href: `/accounts/${account_role}/finance/dashboard`,
                     icon: FcSalesPerformance,
                     current: path == "finance",
+                    is_incoming: true,
+                },
+                  {
+                    name: "Asset & Inventory",
+                    href: `/accounts/${account_role}/asset_inventory`,
+                    icon: PackageIcon,
+                    current: path == "asset_inventory",
                     is_incoming: true,
                 },
             ]
