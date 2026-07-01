@@ -4,7 +4,7 @@ import { get_post_event_surveys_thunk } from "@/app/redux/post-event-survey-slic
 import OpenSurveySection from "./open-survey-section";
 import Skeleton from "@/app/_components/skeleton";
 import Table from "@/app/_components/table";
-
+import moment from "moment";
 
 const categoryColors = {
     "Events Calendar": "bg-indigo-100 text-indigo-600",
@@ -44,7 +44,8 @@ const buildRows = (surveys = []) =>
         category: (
             <span
                 className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    categoryColors[survey.event?.category] ?? "bg-gray-100 text-gray-500"
+                    categoryColors[survey.event?.category] ??
+                    "bg-gray-100 text-gray-500"
                 }`}
             >
                 {survey.event?.category ?? "—"}
@@ -53,7 +54,9 @@ const buildRows = (surveys = []) =>
 
         date: (
             <span className="text-sm text-gray-600">
-                {survey.published_at ?? "—"}
+                {survey.published_at
+                    ? moment(survey.published_at).format("MMM DD, YYYY")
+                    : "—"}
             </span>
         ),
 
@@ -63,10 +66,10 @@ const buildRows = (surveys = []) =>
                     survey.status === "Completed"
                         ? "bg-green-100 text-green-600"
                         : survey.status === "Draft"
-                        ? "bg-yellow-100 text-yellow-600"
-                        : survey.status === "Closed"
-                        ? "bg-red-100 text-red-600"
-                        : "bg-gray-100 text-gray-600"
+                          ? "bg-yellow-100 text-yellow-600"
+                          : survey.status === "Closed"
+                            ? "bg-red-100 text-red-600"
+                            : "bg-gray-100 text-gray-600"
                 }`}
             >
                 {survey.status ?? "Unknown"}
@@ -80,10 +83,9 @@ const buildRows = (surveys = []) =>
 export default function TableSection() {
     const dispatch = useDispatch();
 
-    const {
-        surveys = [],
-        surveysLoading = false,
-    } = useSelector((state) => state.post_event_surveys);
+    const { surveys = [], surveysLoading = false } = useSelector(
+        (state) => state.post_event_surveys,
+    );
 
     useEffect(() => {
         dispatch(get_post_event_surveys_thunk());

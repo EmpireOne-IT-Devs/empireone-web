@@ -164,10 +164,15 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('polls/{id}/vote', [ActivityPollController::class, 'vote']);
 
         // post event surveys
-        Route::get('surveys',         [PostEventSurveyController::class, 'index']);
-        Route::post('surveys',        [PostEventSurveyController::class, 'store']);
-        Route::get('surveys/{id}',    [PostEventSurveyController::class, 'show']);
-        Route::delete('surveys/{id}', [PostEventSurveyController::class, 'destroy']);
+        Route::get('surveys',                    [PostEventSurveyController::class, 'index']);
+        Route::post('surveys',                   [PostEventSurveyController::class, 'store']);
+        Route::get('surveys/{id}',               [PostEventSurveyController::class, 'show']);
+        Route::post('surveys/{id}/submit',       [PostEventSurveyController::class, 'submit']);
+        Route::get('surveys/{id}/responses',     [PostEventSurveyController::class, 'responses']);
+        Route::get('surveys/{id}/analytics',     [PostEventSurveyController::class, 'analytics']);
+        Route::post('surveys/{id}/close',        [PostEventSurveyController::class, 'close']);
+        Route::post('surveys/{id}/reopen',       [PostEventSurveyController::class, 'reopen']);
+        Route::delete('surveys/{id}',            [PostEventSurveyController::class, 'destroy']);
     });
 });
 

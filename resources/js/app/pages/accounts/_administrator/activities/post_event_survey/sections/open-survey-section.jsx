@@ -1,9 +1,10 @@
 import React from 'react';
 import { TbFileText } from "react-icons/tb";
+import { router } from "@inertiajs/react";
 
 export default function OpenSurveySection({ survey }) {
   const handleOpen = () => {
-    console.log("Opening survey:", survey?.id);
+    router.visit(`/accounts/administrator/activities/post_event_survey/${survey?.id}`);
   };
 
   return (

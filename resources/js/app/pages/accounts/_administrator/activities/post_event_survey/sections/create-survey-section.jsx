@@ -15,7 +15,7 @@ const QUESTION_TYPES = [
     { value: "multiple_choice", label: "Multiple Choice" },
     { value: "checkboxes", label: "Checkboxes" },
     { value: "dropdown", label: "Dropdown" },
-    { value: "rating", label: "Rating (1â€“5)" },
+    { value: "rating", label: "Rating (1–5)" },
 ];
 
 const HAS_OPTIONS = new Set(["multiple_choice", "checkboxes", "dropdown"]);

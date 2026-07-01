@@ -3,6 +3,10 @@ import {
     get_post_event_surveys_service,
     get_post_event_survey_service,
     create_post_event_survey_service,
+    submit_post_event_survey_service,
+    get_survey_responses_service,
+    close_post_event_survey_service,
+    reopen_post_event_survey_service,
     delete_post_event_survey_service,
 } from "../services/post-event-survey-service";
 
@@ -54,6 +58,54 @@ export const delete_post_event_survey_thunk = createAsyncThunk(
     }
 );
 
+export const submit_post_event_survey_thunk = createAsyncThunk(
+    "postEventSurvey/submitSurvey",
+    async ({ id, answers }, { rejectWithValue }) => {
+        try {
+            const response = await submit_post_event_survey_service(id, { answers });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const get_survey_responses_thunk = createAsyncThunk(
+    "postEventSurvey/getResponses",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await get_survey_responses_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const close_post_event_survey_thunk = createAsyncThunk(
+    "postEventSurvey/closeSurvey",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await close_post_event_survey_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const reopen_post_event_survey_thunk = createAsyncThunk(
+    "postEventSurvey/reopenSurvey",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await reopen_post_event_survey_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
 const postEventSurveySlice = createSlice({
     name: "postEventSurvey",
     initialState: {
@@ -67,6 +119,17 @@ const postEventSurveySlice = createSlice({
 
         creating: false,
         createError: null,
+
+        submitting: false,
+        submitError: null,
+        submitted: false,
+
+        responses: null,
+        responsesLoading: false,
+        responsesError: null,
+
+        closing: false,
+        reopening: false,
 
         deleting: false,
         deleteError: null,
@@ -125,7 +188,54 @@ const postEventSurveySlice = createSlice({
             .addCase(delete_post_event_survey_thunk.rejected, (state, action) => {
                 state.deleting = false;
                 state.deleteError = action.payload;
-            });
+            })
+            // ── submit survey ───────────────────────────────────────────
+            .addCase(submit_post_event_survey_thunk.pending, (state) => {
+                state.submitting = true;
+                state.submitError = null;
+                state.submitted = false;
+            })
+            .addCase(submit_post_event_survey_thunk.fulfilled, (state) => {
+                state.submitting = false;
+                state.submitted = true;
+            })
+            .addCase(submit_post_event_survey_thunk.rejected, (state, action) => {
+                state.submitting = false;
+                state.submitError = action.payload;            })
+            // ── get response tracker ────────────────────────────────────
+            .addCase(get_survey_responses_thunk.pending, (state) => {
+                state.responsesLoading = true;
+                state.responsesError = null;
+            })
+            .addCase(get_survey_responses_thunk.fulfilled, (state, action) => {
+                state.responsesLoading = false;
+                state.responses = action.payload.data ?? null;
+            })
+            .addCase(get_survey_responses_thunk.rejected, (state, action) => {
+                state.responsesLoading = false;
+                state.responsesError = action.payload;
+            })
+            // ── close survey ────────────────────────────────────────────
+            .addCase(close_post_event_survey_thunk.pending, (state) => {
+                state.closing = true;
+            })
+            .addCase(close_post_event_survey_thunk.fulfilled, (state) => {
+                state.closing = false;
+                if (state.selectedSurvey) state.selectedSurvey.status = 'closed';
+            })
+            .addCase(close_post_event_survey_thunk.rejected, (state) => {
+                state.closing = false;
+            })
+            // ── reopen survey ───────────────────────────────────────────
+            .addCase(reopen_post_event_survey_thunk.pending, (state) => {
+                state.reopening = true;
+            })
+            .addCase(reopen_post_event_survey_thunk.fulfilled, (state) => {
+                state.reopening = false;
+                if (state.selectedSurvey) state.selectedSurvey.status = 'published';
+            })
+            .addCase(reopen_post_event_survey_thunk.rejected, (state) => {
+                state.reopening = false;            });
     },
 });
 

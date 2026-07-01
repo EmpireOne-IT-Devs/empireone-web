@@ -41,4 +41,9 @@ class PostEventSurvey extends Model
         return $this->hasMany(PostEventSurveyQuestion::class, 'post_event_survey_id')
             ->orderBy('sort_order');
     }
+
+    public function responses()
+    {
+        return $this->hasMany(PostEventSurveyResponse::class, 'post_event_survey_id');
+    }
 }
