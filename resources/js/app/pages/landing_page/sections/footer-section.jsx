@@ -37,27 +37,39 @@ export default function FooterSection() {
             name: "LinkedIn",
             href: "https://ca.linkedin.com/company/empireonebposolutions",
             icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
                     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                     <rect x="2" y="9" width="4" height="12" />
                     <circle cx="4" cy="4" r="2" />
                 </svg>
             ),
         },
-        {
-            name: "Twitter",
-            href: "#",
-            icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
-                </svg>
-            ),
-        },
+        // {
+        //     name: "Twitter",
+        //     href: "#",
+        //     icon: (
+        //         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        //             <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+        //         </svg>
+        //     ),
+        // },
         {
             name: "Facebook",
             href: "https://www.facebook.com/empireonebposolutionsinc",
             icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                 </svg>
             ),
@@ -66,10 +78,35 @@ export default function FooterSection() {
             name: "Instagram",
             href: "https://www.instagram.com/empireonebposolutions",
             icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+            ),
+        },
+        {
+            name: "YouTube",
+            href: "https://www.youtube.com/@empireonebposolutions",
+            icon: (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
+                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.94C18.88 4 12 4 12 4s-6.88 0-8.6.48a2.78 2.78 0 0 0-1.94 1.94A29.91 29.91 0 0 0 2 12a29.91 29.91 0 0 0 .48 5.58A2.78 2.78 0 0 0 4.42 19.5C6.12 20 12 20 12 20s6.88 0 8.6-.48a2.78 2.78 0 0 0 1.94-1.94A29.91 29.91 0 0 0 22 12a29.91 29.91 0 0 0-.46-5.58zM9.75 15.02V8.98l6.5 3.02-6.5 3.02z" />
                 </svg>
             ),
         },
@@ -81,8 +118,10 @@ export default function FooterSection() {
             style={{ colorScheme: "dark" }}
         >
             <div className="mx-auto max-w-7xl">
-           
-                <div className="pointer-events-none absolute inset-0 select-none" aria-hidden="true">
+                <div
+                    className="pointer-events-none absolute inset-0 select-none"
+                    aria-hidden="true"
+                >
                     <div className="absolute top-[-20%] left-[-10%] w-[52%] h-[62%] bg-[radial-gradient(circle,rgba(124,58,237,0.3)_0%,transparent_65%)] blur-[60px]" />
                     <div className="absolute top-[5%] right-[-8%] w-[42%] h-[52%] bg-[radial-gradient(circle,rgba(249,115,22,0.2)_0%,transparent_65%)] blur-[55px]" />
                     <div className="absolute bottom-0 left-[28%] w-[52%] h-[48%] bg-[radial-gradient(circle,rgba(59,130,246,0.22)_0%,transparent_65%)] blur-[55px]" />
@@ -107,7 +146,9 @@ export default function FooterSection() {
                                 />
                             </div>
                             <p className="text-sm text-white/50 leading-relaxed mb-6">
-                                Delivering outstanding customer support, efficient outsourcing solutions, and meaningful client connections that drive business growth.
+                                Delivering outstanding customer support,
+                                efficient outsourcing solutions, and meaningful
+                                client connections that drive business growth.
                             </p>
                         </div>
                         {/* Social Icons */}

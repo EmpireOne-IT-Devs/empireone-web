@@ -187,7 +187,7 @@ export default function HeroSection() {
                     </div> */}
 
                     {/* CTA */}
-                    <div className="flex flex-wrap gap-2 px-4 sm:px-0 max-w-md mx-auto lg:mx-0 anim-fade-up delay-500">
+                    {/* <div className="flex flex-wrap gap-2 px-4 sm:px-0 max-w-md mx-auto lg:mx-0 anim-fade-up delay-500">
                         <Button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/20 text-xs font-medium whitespace-nowrap">
                             Mobile App <Android className="w-3.5 h-3.5" />
                         </Button>
@@ -197,7 +197,7 @@ export default function HeroSection() {
                         <Button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/20 text-xs font-medium whitespace-nowrap">
                             Mac <Apple className="w-3.5 h-3.5" />
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* RIGHT */}
@@ -270,7 +270,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* ===================== FLOATING CARD 3 ===================== */}
-                    <div className="hidden sm:block absolute bottom-[2%] right-[-22%] lg:right-[-22%] md:right-[-10%] sm:right-[-15%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[160px] sm:max-w-none animate-bounce">
+                    {/* <div className="hidden sm:block absolute bottom-[2%] right-[-22%] lg:right-[-22%] md:right-[-10%] sm:right-[-15%] z-20 bg-black/70 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-xl float max-w-[160px] sm:max-w-none animate-bounce">
                         <p className="text-[10px] sm:text-xs text-white/40 mb-2">
                             Recent applicants
                         </p>
@@ -292,7 +292,7 @@ export default function HeroSection() {
                         <p className="text-[10px] sm:text-xs text-white/60">
                             Applied in the last hour
                         </p>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div className="relative z-20 py-3 sm:py-4 border-y border-white/10 anim-fade-in delay-700">

@@ -1,4 +1,9 @@
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import {
+    motion,
+    AnimatePresence,
+    useScroll,
+    useTransform,
+} from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 /* ─── Count-up hook ─────────────────────────────────────── */
@@ -25,10 +30,11 @@ function useCountUp(target, active, duration = 1800) {
 
 /* ─── Data ───────────────────────────────────────────────── */
 const stats = [
-    { value: "1000+", label: "Employees", icon: "◈" },
-    { value: "250+", label: "Skilled Experts", icon: "◆" },
-    { value: "10+", label: "Finished Projects", icon: "◉" },
-    { value: "1000+", label: "Media Posts", icon: "◇" },
+    { value: "800+", label: "Employees", icon: "◈" },
+    { value: "10+", label: "Years of Experience", icon: "◇" },
+    // { value: "250+", label: "Skilled Experts", icon: "◆" },
+    // { value: "10+", label: "Finished Projects", icon: "◉" },
+    // { value: "1000+", label: "Media Posts", icon: "◇" },
 ];
 
 const badgeDetails = [
@@ -48,7 +54,7 @@ const badgeDetails = [
         label: "SOC 2 Type II",
         img: "/images/SOC2-Logo.png",
         title: "SOC2 TYPE2",
-        desc: "The SOC 2 Type 2 badge is the gold standard for service organizations, representing a rigorous, independent audit of our internal controls. Unlike a \"snapshot\" audit, the Type 2 certification proves that our security protocols have been followed consistently and effectively over an extended period.",
+        desc: 'The SOC 2 Type 2 badge is the gold standard for service organizations, representing a rigorous, independent audit of our internal controls. Unlike a "snapshot" audit, the Type 2 certification proves that our security protocols have been followed consistently and effectively over an extended period.',
     },
     {
         label: "HIPAA Ready",
@@ -579,13 +585,17 @@ export default function AboutSection() {
                             ease: [0.22, 1, 0.36, 1],
                         }}
                     >
-                        <motion.button
+                        <motion.a
+                            href="https://empireonecx.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="btn-primary"
+                            style={{ textDecoration: "none", display: "inline-block" }}
                             whileHover={{ y: -2 }}
                             whileTap={{ scale: 0.97 }}
                         >
                             Explore More
-                        </motion.button>
+                        </motion.a>
                         <motion.a
                             href="#contact"
                             className="btn-ghost"
@@ -684,7 +694,7 @@ export default function AboutSection() {
                 </span>
                 <div className="strip-badges">
                     {badgeDetails.map((b) => (
-                        <BadgeItem key={b.label} {...b} />
+                        <BadgeItem key={b?.label} {...b} />
                     ))}
                 </div>
             </motion.div>
