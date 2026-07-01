@@ -181,7 +181,7 @@ export default function FooterSection() {
                     <p className="text-xs text-white/30">
                         © {year} EmpireOne. All rights reserved.
                     </p>
-                    {/* <div className="flex flex-wrap items-center gap-4 text-xs sm:gap-6">
+                    <div className="flex flex-wrap items-center gap-4 text-xs sm:gap-6">
                         <a
                             href="/privacy-policy"
                             className="text-white/30 transition-colors duration-200 hover:text-orange-400"
@@ -194,7 +194,7 @@ export default function FooterSection() {
                         >
                             Terms of Service
                         </a>
-                    </div> */}
+                    </div>
                 </motion.div>
             </div>
         </footer>
