@@ -70,7 +70,7 @@ const badgeDetails = [
     },
     {
         label: "BBB Accredited",
-        img: "/images/BBB-Logo.png",
+        img: "/images/BBB-logo.png",
         title: "BBB ACCREDITED BUSINESSES",
         desc: "The BBB Accredited Business seal is more than a rating; it is a public declaration of our commitment to ethical business practices. Accreditation signifies that we have been independently vetted and have pledged to uphold the BBB Standards for Trust—a comprehensive set of best practices for how businesses should treat their clients and the public.",
     },
