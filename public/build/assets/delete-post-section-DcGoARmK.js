@@ -1,0 +1,1 @@
+import{u as c,l as t,s as a}from"./app-DBArQXvj.js";function o(){const e=c();return{handleDelete:async s=>{const l=await e(t(s));t.fulfilled.match(l)&&e(a({type:"success",title:"Post Deleted Successfully!"}))}}}export{o as DeletePostSection};
