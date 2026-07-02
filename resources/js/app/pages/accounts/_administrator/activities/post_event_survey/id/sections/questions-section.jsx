@@ -54,8 +54,8 @@ function QuestionCard({ question, index }) {
             {question.question_type === "rating" && (
                 <div className="flex gap-2 pl-7">
                     {[1, 2, 3, 4, 5].map((n) => (
-                        <div key={n} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-xs text-gray-400">
-                            {n}
+                        <div key={n} className="w-8 h-8 rounded-md flex items-center justify-center text-gray-300">
+                            <Star size={16} />
                         </div>
                     ))}
                 </div>

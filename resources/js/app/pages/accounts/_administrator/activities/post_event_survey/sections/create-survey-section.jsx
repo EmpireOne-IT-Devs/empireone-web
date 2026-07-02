@@ -5,7 +5,7 @@ import Select from "@/app/_components/select";
 import Textarea from "@/app/_components/textarea";
 import { create_post_event_survey_thunk } from "@/app/redux/post-event-survey-slice";
 import { get_activity_posts_thunk } from "@/app/redux/activities-slice";
-import { Folder, PlusCircleIcon, Trash2, GripVertical, Plus } from "lucide-react";
+import { Folder, PlusCircleIcon, Trash2, GripVertical, Plus, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -247,14 +247,50 @@ export default function CreateSurveySection() {
                                         <button onClick={() => addOption(q.id)} className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-700 mt-1 transition">
                                             <Plus size={13} /> Add option
                                         </button>
+
+                                        {/* Preview: show how the question will appear to respondents */}
+                                        <div className="pt-3">
+                                            {q.question_type === "multiple_choice" && (
+                                                <div className="flex flex-col gap-2 text-sm text-gray-700">
+                                                    {q.options.map((opt, i) => (
+                                                        <label key={i} className="flex items-center gap-2">
+                                                            <input type="radio" disabled className="accent-blue-500" />
+                                                            {opt}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {q.question_type === "checkboxes" && (
+                                                <div className="flex flex-col gap-2 text-sm text-gray-700">
+                                                    {q.options.map((opt, i) => (
+                                                        <label key={i} className="flex items-center gap-2">
+                                                            <input type="checkbox" disabled className="accent-blue-500 rounded" />
+                                                            {opt}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {q.question_type === "dropdown" && (
+                                                <div>
+                                                    <select disabled className="w-full rounded-lg border px-3 py-2 text-sm bg-white border-gray-200">
+                                                        <option value="">Select an option</option>
+                                                        {q.options.map((opt, i) => (
+                                                            <option key={i} value={opt}>{opt}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
 
                                 {q.question_type === "rating" && (
                                     <div className="flex gap-2 pl-2">
                                         {[1, 2, 3, 4, 5].map((n) => (
-                                            <div key={n} className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-xs text-gray-400">
-                                                {n}
+                                            <div key={n} className="w-8 h-8 rounded-md flex items-center justify-center text-gray-300">
+                                                <Star size={16} />
                                             </div>
                                         ))}
                                     </div>

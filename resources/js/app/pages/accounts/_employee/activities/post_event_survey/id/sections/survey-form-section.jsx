@@ -47,12 +47,18 @@ function ParagraphInput({ value, onChange, hasError }) {
     );
 }
 
-function MultipleChoiceInput({ options, value, onChange, hasError }) {
+function MultipleChoiceInput({ options, value, onChange, hasError, name }) {
     return (
         <div className={`flex flex-col gap-2 ${hasError ? "p-2 rounded-lg border border-red-300 bg-red-50" : ""}`}>
             {options.map((opt) => (
                 <label key={opt.id} className="flex items-center gap-2 cursor-pointer text-sm text-gray-700">
-                    <input type="radio" checked={value === opt.option_text} onChange={() => onChange(opt.option_text)} className="accent-blue-500" />
+                    <input
+                        type="radio"
+                        name={name}
+                        checked={value === opt.option_text}
+                        onChange={() => onChange(opt.option_text)}
+                        className="accent-blue-500"
+                    />
                     {opt.option_text}
                 </label>
             ))}
@@ -97,10 +103,11 @@ function RatingInput({ value, onChange, hasError }) {
                 <button
                     key={n}
                     type="button"
+                    aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
                     onClick={() => onChange(String(n))}
-                    className={`w-10 h-10 rounded-full border-2 text-sm font-semibold transition ${value === String(n) ? "border-blue-500 bg-blue-500 text-white" : "border-gray-200 text-gray-400 hover:border-blue-300 hover:text-blue-400"}`}
+                    className={`p-1 rounded transition focus:outline-none ${value !== "" && parseInt(value, 10) >= n ? "text-yellow-400" : "text-gray-300 hover:text-yellow-300"}`}
                 >
-                    {n}
+                    <Star size={18} />
                 </button>
             ))}
         </div>
@@ -114,7 +121,7 @@ function QuestionCard({ question, index, answer, onChange, error }) {
         switch (question.question_type) {
             case "short_answer":    return <ShortAnswerInput value={answer ?? ""} onChange={onChange} hasError={!!error} />;
             case "paragraph":       return <ParagraphInput value={answer ?? ""} onChange={onChange} hasError={!!error} />;
-            case "multiple_choice": return <MultipleChoiceInput options={question.options} value={answer ?? ""} onChange={onChange} hasError={!!error} />;
+            case "multiple_choice": return <MultipleChoiceInput options={question.options} value={answer ?? ""} onChange={onChange} hasError={!!error} name={`q-${question.id}`} />;
             case "checkboxes":      return <CheckboxesInput options={question.options} value={answer ?? []} onChange={onChange} hasError={!!error} />;
             case "dropdown":        return <DropdownInput options={question.options} value={answer ?? ""} onChange={onChange} hasError={!!error} />;
             case "rating":          return <RatingInput value={answer ?? ""} onChange={onChange} hasError={!!error} />;

@@ -222,7 +222,7 @@ Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_
 
     // 4. EMPLOYEE Specific Routes
     Route::prefix('employee')->middleware(['role.redirect:2'])->group(function () {
-        Route::redirect('/activities', '/accounts/employee/activities/home');
+            Route::redirect('/activities', '/accounts/employee/activities/home');
         Route::inertia('/activities/home', 'accounts/_employee/activities/home/page');
         Route::inertia('/activities/company_newsfeed', 'accounts/_employee/activities/company_newsfeed/page');
         Route::inertia('/activities/events_calendar', 'accounts/_employee/activities/events_calendar/page');

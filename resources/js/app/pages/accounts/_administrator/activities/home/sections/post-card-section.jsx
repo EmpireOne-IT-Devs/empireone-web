@@ -292,11 +292,8 @@ export default function PostCardSection() {
 
     const { handleDelete } = DeletePostSection();
 
-    // openMenuId: which post's menu is open (null = none)
     const [openMenuId, setOpenMenuId] = useState(null);
-    // editingPost: the post object currently being edited (null = modal closed)
     const [editingPost, setEditingPost] = useState(null);
-
     useEffect(() => {
         dispatch(get_activity_posts_thunk());
     }, [dispatch]);

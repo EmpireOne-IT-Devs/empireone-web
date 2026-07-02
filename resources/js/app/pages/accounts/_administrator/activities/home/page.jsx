@@ -13,7 +13,7 @@ export default function Page() {
                 <div className="grid grid-cols-3 gap-6 mt-2 h-full min-h-0">
                     {/* Left Column - Posts */}
                     <div className="col-span-2 h-full min-h-0">
-                        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-3xl bg-white shadow-sm">
+                        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-3xl bg-gray-50 shadow-sm">
                             <div className="shrink-0 bg-white px-4 pt-4 pb-3 border-b border-gray-100">
                                 <CreatePostCardSection />
                             </div>

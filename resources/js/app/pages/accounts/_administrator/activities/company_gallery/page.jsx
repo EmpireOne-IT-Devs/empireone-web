@@ -10,7 +10,7 @@ export default function Page() {
         <Layout>
             <ActivitiesLayout>
                 <HeaderSection />
-                <SearchSection />
+                <SearchSection   />
             </ActivitiesLayout>
         </Layout>
     );
