@@ -133,14 +133,29 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
             Route::inertia('/company_newsfeed', 'accounts/_administrator/activities/company_newsfeed/page');
             Route::inertia('/events_calendar', 'accounts/_administrator/activities/events_calendar/page');
             Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
-             Route::inertia('/poll_analytics', 'accounts/_administrator/activities/poll_analytics/page');
-Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_analytics/id/page');
+            Route::inertia('/poll_analytics', 'accounts/_administrator/activities/poll_analytics/page');
+            Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_analytics/id/page');
 
             Route::inertia('/post_event_survey', 'accounts/_administrator/activities/post_event_survey/page');
             Route::inertia('/post_event_survey/{id}', 'accounts/_administrator/activities/post_event_survey/id/page');
-             Route::inertia('/company_gallery', 'accounts/_administrator/activities/company_gallery/page');
+            Route::inertia('/company_gallery', 'accounts/_administrator/activities/company_gallery/page');
         });
-
+        Route::prefix('asset_inventory')->group(function () {
+            Route::redirect('/', '/accounts/administrator/asset_inventory/dashboard');
+            Route::inertia('/dashboard','accounts/_administrator/asset_inventory/dashboard/page');
+            Route::inertia('/purchase_request','accounts/_administrator/asset_inventory/purchase_request/page');
+            Route::inertia('/item_request','accounts/_administrator/asset_inventory/item_request/page');
+            Route::inertia('/liability_form','accounts/_administrator/asset_inventory/liability_form/page');
+            Route::inertia('/devices','accounts/_administrator/asset_inventory/devices/page');
+            Route::inertia('/system_unit','accounts/_administrator/asset_inventory/system_unit/page');
+            Route::inertia('/monitors','accounts/_administrator/asset_inventory/monitors/page');
+            Route::inertia('/peripherals','accounts/_administrator/asset_inventory/peripherals/page');
+            Route::inertia('/parts_and_accessories','accounts/_administrator/asset_inventory/parts_and_accessories/page');
+            Route::inertia('/other_assets','accounts/_administrator/asset_inventory/other_assets/page');
+            Route::inertia('/device_return','accounts/_administrator/asset_inventory/device_return/page');
+            // Report
+            Route::inertia('/report',                'accounts/_administrator/asset_inventory/report/page');
+        });
         Route::prefix('e_store')->group(function () {
             Route::redirect('/', '/accounts/administrator/e_store/rewards_items');
             Route::inertia('/rewards_items', 'accounts/_administrator/e_store/rewards_item/page');
@@ -222,7 +237,7 @@ Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_
 
     // 4. EMPLOYEE Specific Routes
     Route::prefix('employee')->middleware(['role.redirect:2'])->group(function () {
-            Route::redirect('/activities', '/accounts/employee/activities/home');
+        Route::redirect('/activities', '/accounts/employee/activities/home');
         Route::inertia('/activities/home', 'accounts/_employee/activities/home/page');
         Route::inertia('/activities/company_newsfeed', 'accounts/_employee/activities/company_newsfeed/page');
         Route::inertia('/activities/events_calendar', 'accounts/_employee/activities/events_calendar/page');

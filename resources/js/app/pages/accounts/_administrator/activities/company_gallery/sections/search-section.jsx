@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Input from "@/app/_components/input";
 import { TbSearch } from "react-icons/tb";
-import UploadImage from "./upload-image-section-section";
+import UploadImageSection from "./upload-image-section";
 
 export default function SearchSection() {
     const [search, setSearch] = useState("");
@@ -18,7 +18,7 @@ export default function SearchSection() {
                     />
             </div>
 
-           <UploadImage />
+           <UploadImageSection />
         </div>
     );
 }

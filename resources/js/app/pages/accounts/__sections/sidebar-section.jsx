@@ -180,7 +180,7 @@ export default function SidebarSection() {
                     href: `/accounts/${account_role}/asset_inventory`,
                     icon: PackageIcon,
                     current: path == "asset_inventory",
-                    is_incoming: true,
+                    is_incoming: false,
                 },
             ]
             : []),
@@ -193,7 +193,7 @@ export default function SidebarSection() {
                     href: `/accounts/${account_role}/activities`,
                     icon: FcSportsMode,
                     current: path == "activities",
-                    is_incoming: false,
+                    is_incoming: true,
                 },
                 {
                     name: "HR Services",
