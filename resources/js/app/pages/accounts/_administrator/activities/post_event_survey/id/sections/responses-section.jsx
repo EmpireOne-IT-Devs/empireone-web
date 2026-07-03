@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { get_survey_responses_thunk } from "@/app/redux/post-event-survey-slice";
 import Skeleton from "@/app/_components/skeleton";
+import Table from "@/app/_components/table";
+import moment from "moment";
 
 const STATUS_STYLES = {
     Completed: "bg-green-100 text-green-600",
@@ -23,6 +25,25 @@ export default function ResponsesSection({ surveyId }) {
     }
 
     const { total_employees, total_responses, participation_rate, response_tracker } = responses;
+
+    const columns = [
+        { header: "Employee", accessor: "employee_name" },
+        { header: "Email", accessor: "email" },
+        { header: "Status", accessor: "status" },
+        { header: "Submitted At", accessor: "submitted_at" },
+    ];
+
+    const tableData = response_tracker.map((row) => ({
+        ...row,
+        status: (
+            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${STATUS_STYLES[row.status] ?? "bg-gray-100 text-gray-500"}`}>
+                {row.status}
+            </span>
+        ),
+        submitted_at: row.submitted_at
+    ? moment(row.submitted_at).format("MMM DD, YYYY")
+    : "—",
+    }));
 
     return (
         <div className="flex flex-col gap-5">
@@ -61,36 +82,8 @@ export default function ResponsesSection({ surveyId }) {
                 <div className="px-5 py-3 border-b border-gray-100">
                     <h3 className="text-sm font-semibold text-gray-700">Employee Response Tracker</h3>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide font-mono">
-                            <tr>
-                                <th className="px-5 py-3 text-left">Employee</th>
-                                <th className="px-5 py-3 text-left">Email</th>
-                                <th className="px-5 py-3 text-left">Status</th>
-                                <th className="px-5 py-3 text-left">Submitted At</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {response_tracker.map((row) => (
-                                <tr key={row.user_id} className="hover:bg-gray-50 transition">
-                                    <td className="px-5 py-3 font-medium text-gray-800">
-                                        {row.employee_name}
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-500">{row.email}</td>
-                                    <td className="px-5 py-3">
-                                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${STATUS_STYLES[row.status] ?? "bg-gray-100 text-gray-500"}`}>
-                                            {row.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-500">
-                                        {row.submitted_at ?? "—"}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-
+                <div className="p-4">
+                    <Table columns={columns} data={tableData} />
                     {response_tracker.length === 0 && (
                         <p className="px-5 py-6 text-sm text-gray-400 text-center">
                             No employees found.

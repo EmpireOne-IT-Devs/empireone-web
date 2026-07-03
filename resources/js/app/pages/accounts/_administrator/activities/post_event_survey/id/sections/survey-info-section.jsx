@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 
 const STATUS_STYLES = {
@@ -25,7 +26,8 @@ export default function SurveyInfoSection({ survey }) {
                 </div>
                 <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold capitalize shrink-0 ${
-                        STATUS_STYLES[survey.status] ?? "bg-gray-100 text-gray-500"
+                        STATUS_STYLES[survey.status] ??
+                        "bg-gray-100 text-gray-500"
                     }`}
                 >
                     {survey.status}
@@ -54,7 +56,11 @@ export default function SurveyInfoSection({ survey }) {
                         Published
                     </p>
                     <p className="font-semibold text-gray-800">
-                        {survey.published_at ?? "—"}
+                        {survey.published_at
+                            ? moment(survey.published_at).format(
+                                  "MMM DD, YYYY",
+                              )
+                            : "—"}
                     </p>
                 </div>
             </div>
