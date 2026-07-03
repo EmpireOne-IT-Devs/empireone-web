@@ -21,7 +21,7 @@ export default function TableSection() {
             <Table
                 columns={columns}
                 data={
-                    leaders?.data?.map((res) => ({
+                    leaders?.map((res) => ({
                         ...res,
                         employee_id: (
                             <Link

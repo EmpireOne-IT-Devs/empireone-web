@@ -9,7 +9,7 @@ import { get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 
 export default function Page() {
     useEffect(() => {
-        store.dispatch(get_job_requisitions_thunk());
+        // store.dispatch(get_job_requisitions_thunk());
         store.dispatch(get_leader_thunk())
     }, []);
     return (

@@ -13,7 +13,7 @@ class LocationsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $locations = ['San Carlos', 'Carcar', 'Cebu'];
+        $locations = ['San Carlos', 'Carcar', 'Cebu City'];
 
         foreach ($locations as $loc) {
             Location::create(['name' => $loc]);

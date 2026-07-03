@@ -12,9 +12,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 export default function CreateLeadSection() {
     const dispatch = useDispatch();
-    const { users } = useSelector((state) => state.job_requisitions);
-    const { leaders } = useSelector((store) => store.human_resources);
-
+    const { leaders,users } = useSelector((store) => store.human_resources);
+console.log('users',users)
     const [open, setOpen] = useState(false);
 
     const {
@@ -69,7 +68,7 @@ export default function CreateLeadSection() {
 
     // Filter out users whose ID already exists in the existingLeaderIds array
     const availableUsers =
-        users?.users?.filter((user) => !existingLeaderIds.includes(user.id)) ||
+        users?.filter((user) => !existingLeaderIds.includes(user.id)) ||
         [];
 
     return (

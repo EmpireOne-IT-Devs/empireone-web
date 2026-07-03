@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setJobPostings } from "./job-posting-slice";
 
 export const employeeRelationSlice = createSlice({
     name: "app",
@@ -15,6 +14,7 @@ export const employeeRelationSlice = createSlice({
         ecfs: [],
         ecf: [],
         applicants: [],
+        users: [],
     },
     reducers: {
         setEmployees: (state, action) => {
@@ -50,6 +50,9 @@ export const employeeRelationSlice = createSlice({
         setApplicants: (state, action) => {
             state.applicants = action.payload;
         },
+        setUsers: (state, action) => {
+            state.users = action.payload;
+        },
     },
 });
 export const {
@@ -58,6 +61,7 @@ export const {
     setProbationaries,
     setLeaders,
     setLeader,
+    setUsers,
     setEvaluations,
     setEvaluation,
     setRegulars,

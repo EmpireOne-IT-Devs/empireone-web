@@ -55,7 +55,7 @@ class GoogleController extends Controller
     }
     public function get_employee()
     {
-        $filename = public_path("csv/employee_data.xlsx - employee_data.csv");
+        $filename = public_path("csv/active_employees.csv");
         $employees = [];
 
         if (!file_exists($filename)) {
@@ -91,30 +91,36 @@ class GoogleController extends Controller
         // Initialize an array to track emails that were skipped
         $existing_emails = [];
         $inserted_emails = [];
-
+        $no_emails = [];
         foreach ($employees as $value) {
             if (!empty($value->email)) {
-                $has_user = User::where('email', $value->email)->first();
 
-                if (!$has_user) {
-                    // INSERTION LOGIC
-                    $user = User::create([
-                        'name' => $value->firstname . " " . $value->lastname,
-                        'email' => $value->email,
-                        'password' => bcrypt('Business12'),
-                        'role' => 2,
-                    ]);
+                // 1. UPDATE OR CREATE USER
+                // Using firstOrNew to avoid resetting passwords for existing users
+                $user = User::firstOrNew(['email' => $value->email]);
+                $user->name = $value->firstname . " " . $value->lastname;
+                if ($user->role != 1) {
+                    $user->role = 2;
+                }
 
-                    $location = Location::where('name', $value->site)->first();
+                // Only set the default password if this is a brand new user
+                if (!$user->exists) {
+                    $user->password = bcrypt('Business12');
+                }
+                $user->save();
 
-                    if ($location) {
-                        $site = Site::where('location_id', $location->id)->first();
+                // 2. UPDATE OR CREATE EMPLOYEE RECORD
+                $location = Location::where('name', $value->site)->first();
 
-                        $dateHired = \Carbon\Carbon::parse($value->datehired);
-                        $isRegular = $dateHired->diffInMonths(now()) >= 6;
+                if ($location) {
+                    $site = Site::where('location_id', $location->id)->first();
 
-                        AccountEmployee::create([
-                            'user_id'     => $user->id,
+                    $dateHired = \Carbon\Carbon::parse($value->datehired);
+                    $isRegular = $dateHired->diffInMonths(now()) >= 6;
+
+                    AccountEmployee::updateOrCreate(
+                        ['user_id' => $user->id], // The unique identifier to check against
+                        [
                             'employee_id' => $value->employee_id,
                             'eogs_email'  => $value->email,
                             'site_id'     => $site ? $site->id : null,
@@ -122,38 +128,44 @@ class GoogleController extends Controller
                             'started_at'  => $value->datehired,
                             'position'    => $value->position,
                             'status'      => $isRegular ? 'Regular' : 'Probationary'
-                        ]);
-                    }
-
-                    AccountPersonalInformation::create([
-                        'user_id' => $user->id,
-                        'first_name' => $value->firstname,
-                        'last_name' => $value->lastname,
-                        'date_of_birth' => $value->birthdate,
-                        'contact' => $value->mobileno,
-                        'philhealth' => $value->philhealth,
-                        'sss' => $value->sss,
-                        'pagibig' => $value->pagibig,
-                        'tin' => $value->tin,
-                    ]);
-
-                    $inserted_emails[] = $value->email;
+                        ]
+                    );
                 }
+
+                // 3. UPDATE OR CREATE PERSONAL INFORMATION
+                AccountPersonalInformation::updateOrCreate(
+                    ['user_id' => $user->id], // The unique identifier to check against
+                    [
+                        'first_name' => $value->firstname,
+                        'last_name'  => $value->lastname,
+                        'date_of_birth' => $value->birthdate ?? null,
+                        'contact' => $value->mobileno ?? null,
+                        'philhealth' => $value->philhealth,
+                        'sss'        => $value->sss,
+                        'pagibig'    => $value->pagibig,
+                        'tin'        => $value->tin,
+                    ]
+                );
+
+                // Tracking successfully processed (inserted OR updated) emails
+                $inserted_emails[] = $value->email;
             } else {
                 if ($value->site == "San Carlos") {
                     $existing_emails[] = $value;
                 }
+                $no_emails[] = $value;
             }
         }
 
         return response()->json([
             'message' => 'Processing complete',
-            // 'total' => count($employees),
+            'total' => count($employees),
             // 'employees'=>$employees,
-            // 'new_inserts_count' => count($inserted_emails),
-            // 'already_existed_count' => count($inserted_emails),
-            // 'skipped_emails_count' => count($existing_emails),
-            'skipped_emails' => $existing_emails,
+            'no emails' => $no_emails,
+            'new_inserts_count' => count($inserted_emails),
+            'already_existed_count' => count($inserted_emails),
+            'skipped_emails_count' => count($existing_emails),
+            // 'skipped_emails' => $existing_emails,
         ]);
     }
 

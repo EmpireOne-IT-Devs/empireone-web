@@ -16,9 +16,10 @@ class ERLeaderController extends Controller
     public function index()
     {
         $leaders = ERLeader::with('user')->withCount('subordinates')->get();
-
+        $users = User::get();
         return response()->json([
             'data' => $leaders,
+            'users' => $users,
             'status' => 'success',
         ], 200);
     }
@@ -35,6 +36,12 @@ class ERLeaderController extends Controller
             // 2. Values to update: Leave empty because there are no other fields to update
             []
         );
+        $user = User::where('id', $request->user_id)->first();
+        if ($user) {
+            $user->update([
+                'role' => 1
+            ]);
+        }
         return response()->json([
             'status' => 'success',
         ], 200);

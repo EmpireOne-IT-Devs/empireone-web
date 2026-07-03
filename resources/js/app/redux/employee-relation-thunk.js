@@ -60,6 +60,7 @@ export function get_leader_thunk() {
     return async function (dispatch, getState) {
         const result = await get_leader_service();
         dispatch(employeeRelationSlice.actions.setLeaders(result.data));
+        dispatch(employeeRelationSlice.actions.setUsers(result.users));
     };
 }
 

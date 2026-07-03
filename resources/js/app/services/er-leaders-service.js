@@ -5,7 +5,7 @@ export async function add_leader_service(data) {
 }
 
 export async function get_leader_service(data) {
-    return await axios.get("/api/er/leaders", data);
+    return (await axios.get("/api/er/leaders", data)).data;
 }
 
 export async function get_leader_by_id_service(id) {
