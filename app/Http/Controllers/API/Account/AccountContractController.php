@@ -8,6 +8,8 @@ use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
+use App\Models\ER\ERLeader;
+use App\Models\ER\ERSubordinate;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use App\Models\User;
@@ -110,7 +112,15 @@ class AccountContractController extends Controller
                 'allowance' => $request->allowance ?? null,
             ]
         );
-        // 🔥 Delete experiences not in request
+
+        $leader = ERLeader::find($request->e_r_leader_id);
+
+        if ($leader) {
+            ERSubordinate::updateOrCreate(
+                ['subordinate_id' => $request->user_id], // 1. The condition to search for
+                ['er_leader_id'   => $leader->id]       // 2. The data to update or create
+            );
+        }
         AccountWorkingExperience::where('user_id', $request->id)
             ->whereNotIn('id', $experienceIds)
             ->delete();

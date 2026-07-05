@@ -1,38 +1,46 @@
-import defaultTheme from 'tailwindcss/defaultTheme'
-import forms from '@tailwindcss/forms'
-import headlessui from '@headlessui/tailwindcss'
+import defaultTheme from "tailwindcss/defaultTheme";
+import forms from "@tailwindcss/forms";
 
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
-        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-        './storage/framework/views/*.php',
-        './resources/views/**/*.blade.php',
-        './resources/js/**/*.jsx', // for Breeze React/Inertia
+        "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
+        "./storage/framework/views/*.php",
+        "./resources/views/**/*.blade.php",
+        "./resources/js/**/*.{js,jsx}",
     ],
 
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ["Figtree", ...defaultTheme.fontFamily.sans],
             },
-             keyframes: {
-                shake: {
-                '0%, 100%': { transform: 'translateX(0)' },
-                '20%': { transform: 'translateX(-6px)' },
-                '40%': { transform: 'translateX(6px)' },
-                '60%': { transform: 'translateX(-4px)' },
-                '80%': { transform: 'translateX(4px)' },
+            keyframes: {
+                fadeInDown: {
+                    '0%': { opacity: '0', transform: 'translateY(-20px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                fadeInUp: {
+                    '0%': { opacity: '0', transform: 'translateY(20px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                fadeIn: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+                waveRise: {
+                    '0%': { transform: 'translateY(100%)' },
+                    '100%': { transform: 'translateY(4px)' },
                 },
             },
             animation: {
-                shake: 'shake 0.4s ease-in-out',
+                'fade-in-down': 'fadeInDown 0.6s ease-out both',
+                'fade-in-up': 'fadeInUp 0.6s ease-out both',
+                'fade-in': 'fadeIn 0.8s ease-out both',
+                'wave-rise': 'waveRise 0.8s ease-out both',
             },
         },
     },
 
-    plugins: [
-        forms,
-        headlessui
-    ],
-}
+    plugins: [forms],
+};

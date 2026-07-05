@@ -55,6 +55,8 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
     Route::get('/talent/{job_interview_id}/ai_interview', function () {
         return Inertia::render('accounts/ai_interview/page');
     });
+
+
     // 1. Map roles to their respective middleware IDs
     $roles = [
         'administrator' => 1,
@@ -80,9 +82,12 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
                 ->name("{$role}.performance_evaluation");
             Route::inertia('/job_offers/{id}', 'accounts/job_offers/id/page');
 
+            Route::get('/setup', function () {
+                return Inertia::render('accounts/setup/page');
+            })->withoutMiddleware(['info.complete']);
             // My Profile Sub-group
             Route::prefix('my_profile')->group(function () {
-                Route::inertia('/employee', 'accounts/my_profile/page')->withoutMiddleware(['info.complete']);
+                Route::inertia('/employee', 'accounts/my_profile/page');
                 Route::inertia('/personal', 'accounts/my_profile/page');
                 Route::inertia('/professional', 'accounts/my_profile/page');
                 Route::inertia('/documents', 'accounts/my_profile/page');
@@ -142,17 +147,17 @@ Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->gr
         });
         Route::prefix('asset_inventory')->group(function () {
             Route::redirect('/', '/accounts/administrator/asset_inventory/dashboard');
-            Route::inertia('/dashboard','accounts/_administrator/asset_inventory/dashboard/page');
-            Route::inertia('/purchase_request','accounts/_administrator/asset_inventory/purchase_request/page');
-            Route::inertia('/item_request','accounts/_administrator/asset_inventory/item_request/page');
-            Route::inertia('/liability_form','accounts/_administrator/asset_inventory/liability_form/page');
-            Route::inertia('/devices','accounts/_administrator/asset_inventory/devices/page');
-            Route::inertia('/system_unit','accounts/_administrator/asset_inventory/system_unit/page');
-            Route::inertia('/monitors','accounts/_administrator/asset_inventory/monitors/page');
-            Route::inertia('/peripherals','accounts/_administrator/asset_inventory/peripherals/page');
-            Route::inertia('/parts_and_accessories','accounts/_administrator/asset_inventory/parts_and_accessories/page');
-            Route::inertia('/other_assets','accounts/_administrator/asset_inventory/other_assets/page');
-            Route::inertia('/device_return','accounts/_administrator/asset_inventory/device_return/page');
+            Route::inertia('/dashboard', 'accounts/_administrator/asset_inventory/dashboard/page');
+            Route::inertia('/purchase_request', 'accounts/_administrator/asset_inventory/purchase_request/page');
+            Route::inertia('/item_request', 'accounts/_administrator/asset_inventory/item_request/page');
+            Route::inertia('/liability_form', 'accounts/_administrator/asset_inventory/liability_form/page');
+            Route::inertia('/devices', 'accounts/_administrator/asset_inventory/devices/page');
+            Route::inertia('/system_unit', 'accounts/_administrator/asset_inventory/system_unit/page');
+            Route::inertia('/monitors', 'accounts/_administrator/asset_inventory/monitors/page');
+            Route::inertia('/peripherals', 'accounts/_administrator/asset_inventory/peripherals/page');
+            Route::inertia('/parts_and_accessories', 'accounts/_administrator/asset_inventory/parts_and_accessories/page');
+            Route::inertia('/other_assets', 'accounts/_administrator/asset_inventory/other_assets/page');
+            Route::inertia('/device_return', 'accounts/_administrator/asset_inventory/device_return/page');
             // Report
             Route::inertia('/report',                'accounts/_administrator/asset_inventory/report/page');
         });

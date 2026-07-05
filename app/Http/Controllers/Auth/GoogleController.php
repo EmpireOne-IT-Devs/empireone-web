@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Models\Site;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Http\Request;
@@ -136,14 +137,15 @@ class GoogleController extends Controller
                 AccountPersonalInformation::updateOrCreate(
                     ['user_id' => $user->id], // The unique identifier to check against
                     [
-                        'first_name' => $value->firstname,
-                        'last_name'  => $value->lastname,
-                        'date_of_birth' => $value->birthdate ?? null,
-                        'contact' => $value->mobileno ?? null,
-                        'philhealth' => $value->philhealth,
-                        'sss'        => $value->sss,
-                        'pagibig'    => $value->pagibig,
-                        'tin'        => $value->tin,
+                        'first_name'    => $value->firstname,
+                        'last_name'     => $value->lastname,
+                        // Parse the date and format it, or return null if it doesn't exist
+                        'date_of_birth' => $value->birthdate ? Carbon::parse($value->birthdate)->format('F j, Y') : null,
+                        'contact'       => $value->mobileno ?? null,
+                        'philhealth'    => $value->philhealth,
+                        'sss'           => $value->sss,
+                        'pagibig'       => $value->pagibig,
+                        'tin'           => $value->tin,
                     ]
                 );
 
