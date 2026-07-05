@@ -95,7 +95,7 @@ export default function FormSection() {
                 <Input
                     label="Employee ID"
                     name="employee_id"
-                    disabled={data?.user?.account_employee?.employee_id}
+                    // disabled={data?.user?.account_employee?.employee_id}
                     {...register("employee_id", { required: true })}
                     error={errors.employee_id}
                     iconLeft={<Hash size={14} />}
@@ -105,12 +105,12 @@ export default function FormSection() {
                     label="Started At"
                     name="started_at"
                     type="date"
-                    disabled={data?.user?.account_employee?.started_at}
+                    // disabled={data?.user?.account_employee?.started_at}
                     {...register("started_at", { required: true })}
                     error={errors.started_at}
                 />
                 <Select
-                    disabled={data?.user?.account_employee?.position_level}
+                    // disabled={data?.user?.account_employee?.position_level}
                     label="Level of Position"
                     name="position_level"
                     value={form.position_level}
@@ -136,7 +136,7 @@ export default function FormSection() {
                     onChange={(val) => setValue("position_level", val)}
                 />
                 <Select
-                    disabled={data?.user?.account_employee?.e_r_leader_id}
+                    // disabled={data?.user?.account_employee?.e_r_leader_id}
                     label="Leader"
                     name="e_r_leader_id"
                     value={form.e_r_leader_id}
@@ -150,7 +150,7 @@ export default function FormSection() {
                 />
 
                 <Select
-                    disabled={data?.user?.account_employee?.account_id}
+                    // disabled={data?.user?.account_employee?.account_id}
                     label="Account"
                     name="account_id"
                     value={form.account_id}
@@ -166,7 +166,7 @@ export default function FormSection() {
                 <Select
                     label="Department"
                     name="department_id"
-                    disabled={data?.user?.account_employee?.department_id}
+                    // disabled={data?.user?.account_employee?.department_id}
                     value={form.department_id}
                     options={data?.departments?.map((res) => ({
                         ...res,
@@ -180,7 +180,7 @@ export default function FormSection() {
                 <Input
                     label="Position"
                     name="position"
-                    disabled={data?.user?.account_employee?.position}
+                    // disabled={data?.user?.account_employee?.position}
                     {...register("position", { required: true })}
                     iconLeft={<Briefcase size={14} />}
                     error={errors.position}
@@ -188,7 +188,7 @@ export default function FormSection() {
                 <Input
                     label="EOGS Email"
                     name="eogs_email"
-                    disabled={data?.user?.account_employee?.eogs_email}
+                    // disabled={data?.user?.account_employee?.eogs_email}
                     placeholder="eogs.yourname@gmail.com"
                     type="email"
                     {...register("eogs_email", { required: true })}
@@ -197,7 +197,7 @@ export default function FormSection() {
                 />
 
                 <Select
-                    disabled={data?.user?.account_employee?.status}
+                    // disabled={data?.user?.account_employee?.status}
                     label="Employment Status"
                     name="status"
                     {...register("status", { required: true })}
@@ -228,7 +228,7 @@ export default function FormSection() {
                     label="Basic Pay"
                     name="basic_pay"
                     type="number"
-                    disabled={data?.user?.account_employee?.basic_pay}
+                    // disabled={data?.user?.account_employee?.basic_pay}
                     {...register("basic_pay", { required: true })}
                     error={errors.basic_pay}
                 />
@@ -236,7 +236,7 @@ export default function FormSection() {
                 <Input
                     label="Allowance"
                     name="allowance"
-                    disabled={data?.user?.account_employee?.allowance}
+                    // disabled={data?.user?.account_employee?.allowance}
                     type="number"
                     {...register("allowance", { required: true })}
                     error={errors.allowance}
