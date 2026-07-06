@@ -2,7 +2,7 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
-import { Images, PlusCircleIcon, UploadCloud } from "lucide-react";
+import { Download, Images, UploadCloud } from "lucide-react";
 import React, { useRef, useState } from "react";
 
 const EVENT_OPTIONS = [
@@ -62,9 +62,9 @@ export default function UploadImageSection() {
 
     return (
         <div>
-            <Button variant="primary" onClick={() => setIsOpen(true)}>
-                <PlusCircleIcon size={16} className="mr-2" />
-                Upload Image
+            <Button variant="engagement" onClick={() => setIsOpen(true)}>
+                <Download size={16} className="mr-2" />
+                Upload Photo
             </Button>
 
             <Modal

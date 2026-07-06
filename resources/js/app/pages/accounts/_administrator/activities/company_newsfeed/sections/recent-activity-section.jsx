@@ -65,7 +65,6 @@ export default function RecentActivitySection() {
                     </p>
 
                     <div className="flex items-center justify-between border-t border-gray-50 pt-4">
-                      
                         <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-full bg-blue-700 flex items-center justify-center text-white font-medium text-sm shrink-0 shadow-sm">
                                 {activityItem.author.initial}
