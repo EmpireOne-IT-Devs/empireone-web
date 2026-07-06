@@ -95,7 +95,7 @@ export default function TableSection() {
         <div className="mt-3">
             {surveysLoading ? (
                 <div className="py-8 text-center text-sm text-gray-400">
-                    <Skeleton />
+                    <Skeleton variant="table" />
                 </div>
             ) : (
                 <Table columns={columns} data={buildRows(surveys)} />

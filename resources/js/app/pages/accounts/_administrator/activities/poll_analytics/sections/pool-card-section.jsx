@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BarChart2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
+import Skeleton from "@/app/_components/skeleton";
 import ActivityPollCard from "../../_components/activity-poll-card";
 import {
     get_activity_posts_thunk,
@@ -32,7 +33,7 @@ export default function PoolCardSection() {
     if (postsLoading && polls.length === 0) {
         return (
             <div className="w-full bg-[#f4f6f9] p-6 rounded-2xl font-sans antialiased">
-                <div className="h-64 rounded-2xl bg-white animate-pulse" />
+                <Skeleton variant="card" />
             </div>
         );
     }

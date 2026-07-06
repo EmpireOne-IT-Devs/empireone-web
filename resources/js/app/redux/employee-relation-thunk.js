@@ -23,8 +23,10 @@ import { employeeRelationSlice } from "./employee-relation-slice";
 
 export function get_employees_thunk() {
     return async function (dispatch, getState) {
+        dispatch(employeeRelationSlice.actions.setEmployeesLoading(true));
         const result = await get_employees_service();
         dispatch(employeeRelationSlice.actions.setEmployees(result.data));
+        dispatch(employeeRelationSlice.actions.setEmployeesLoading(false));
     };
 }
 
