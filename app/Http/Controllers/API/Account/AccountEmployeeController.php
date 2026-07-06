@@ -21,7 +21,7 @@ class AccountEmployeeController extends Controller
         // 1. Create or Update the base User
         $authUser = Auth::user();
         $user = User::updateOrCreate(
-            ['email' => $request->eogs_email],
+            ['email' => $request->email],
             [
                 'name' => $request->first_name . ' ' . $request->last_name,
                 'password' => Hash::make('Business12'),
@@ -31,6 +31,7 @@ class AccountEmployeeController extends Controller
         AccountEmployee::updateOrCreate(
             ['user_id' => $user->id],
             [
+                'email' => $request->eogs_email,
                 'employee_id'   => $request->employee_id,
                 'account_id'    => $request->account_id,
                 'department_id' => $request->department_id,

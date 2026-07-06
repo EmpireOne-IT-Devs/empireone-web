@@ -36,7 +36,8 @@ export default function AddEmployeeSection() {
             pagibig: '',
             tin: '',
             philhealth: '',
-            eogs_email: ''
+            eogs_email: '',
+            email: ''
         }
     });
 
@@ -66,7 +67,7 @@ export default function AddEmployeeSection() {
 
     return (
         <div className='flex items-center justify-center h-full'>
-            <Button 
+            <Button
                 className='py-5'
                 outlined
                 variant='secondary'
@@ -80,20 +81,20 @@ export default function AddEmployeeSection() {
                 isOpen={open}
                 onClose={() => setOpen(false)}
                 title={
-                                   <div className="flex items-center gap-3">
-                                       <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
-                                           <UserPlus />
-                                       </div>
-                                       <div>
-                                           <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
-                                               Human Resources
-                                           </p>
-                                           <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
-                                              Add Employee
-                                           </h2>
-                                       </div>
-                                   </div>
-                               }
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                            <UserPlus />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                                Human Resources
+                            </p>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                Add Employee
+                            </h2>
+                        </div>
+                    </div>
+                }
             >
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 px-3 mt-4 min-h-96">
 
@@ -310,6 +311,17 @@ export default function AddEmployeeSection() {
                         })}
                         iconLeft={<Mail size={14} />}
                         error={errors.eogs_email}
+                    />
+                    <Input
+                        label="Personal Email"
+                        name="email"
+                        placeholder="eogs.yourname@gmail.com"
+                        type="email"
+                        {...register("email", {
+                            required: true,
+                        })}
+                        iconLeft={<Mail size={14} />}
+                        error={errors.email}
                     />
                     <div className="flex justify-end pt-4 mt-2 border-t">
                         <Button

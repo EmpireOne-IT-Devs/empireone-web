@@ -29,9 +29,9 @@ const TAB_LABELS = {
     personal: "Personal Information",
     employee: "Employee Information",
     documents: "Government Information",
-    professional: "Experiences & Skills",
+    // professional: "Experiences & Skills",
     emergency: "Emergency Contact",
-    customization: "Customization",
+    // customization: "Customization",
 };
 
 export default function InfoTabsSection() {
