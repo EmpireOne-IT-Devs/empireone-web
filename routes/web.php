@@ -49,9 +49,9 @@ Route::get('/talent/application', function () {
 
 Route::get('/dashboard', function () {
     return route_page(); // ✅ remove $this
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-Route::prefix('accounts')->middleware(['auth', 'verified', 'info.complete'])->group(function () {
+Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function () {
     Route::get('/talent/{job_interview_id}/ai_interview', function () {
         return Inertia::render('accounts/ai_interview/page');
     });

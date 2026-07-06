@@ -85,6 +85,7 @@ class AccountEmployeeController extends Controller
 
         $employees = AccountEmployee::with(['user', 'personal_information', 'department', 'account', 'site', 'reporting_to'])
             ->whereNotNull('employee_id')
+            // ->where('location_id',$request->location_id)
             // 2. Filter by Role (as you had before)
             ->whereHas('user', function ($query) {
                 $query->whereIn('role', [1, 2]);
