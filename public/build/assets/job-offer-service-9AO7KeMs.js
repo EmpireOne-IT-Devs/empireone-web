@@ -1,1 +1,0 @@
-import{f as o}from"./app-nH4s2uEf.js";async function a(e={}){return await o.get("/api/job/get_job_offer_by_user",{params:e})}async function t(e){return await o.post("/api/job/submit_job_offer",e)}async function f(e){return(await o.get(`/api/job/offers/${e}`)).data}async function s(e){return await o.post("/api/job/transfer_job_offer",e)}export{f as a,a as g,t as s,s as t};

@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
-    FaReact,
-    FaEnvelope,
     FaLock,
     FaEye,
     FaEyeSlash,
-    FaCheckCircle,
-    FaExclamationTriangle,
-    FaGoogle,
-    FaGithub,
 } from "react-icons/fa";
 import { Link, router, useForm } from "@inertiajs/react";
 import { FcGoogle } from "react-icons/fc";
+import { FaRegUserCircle } from "react-icons/fa"
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 
@@ -20,8 +15,10 @@ const Page = ({ flash }) => {
     const params = new URLSearchParams(location.search);
     const error_message = params.get("error_message");
     const dispatch = useDispatch();
-    const { data, setData, post, processing, errors } = useForm({
-        email: "",
+
+    // 1. Destructured 'reset' and changed 'email' to 'login_id'
+    const { data, setData, post, processing, errors, reset } = useForm({
+        login_id: "",
         password: "",
         remember: false,
     });
@@ -43,7 +40,7 @@ const Page = ({ flash }) => {
         e.preventDefault();
         post(route("auth.login"), {
             onSuccess: async () => {
-                reset("email"); // Clear the email input
+                reset("login_id"); // 2. Reset login_id instead of email
                 await dispatch(
                     setAlert({
                         type: "success",
@@ -63,7 +60,6 @@ const Page = ({ flash }) => {
         >
             {/* --- INTERACTIVE BACKGROUND --- */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* Large Blurred Orbs */}
                 <motion.div
                     animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
                     transition={{
@@ -100,27 +96,10 @@ const Page = ({ flash }) => {
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                // Changed border and rounded classes here for mobile responsiveness
                 className="relative z-10 w-full max-w-md p-9 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/50 md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(59,130,246,0.3)]"
             >
                 {/* Header */}
                 <div className="flex flex-col items-center mb-8">
-                    {/* <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{
-                            duration: 15,
-                            repeat: Infinity,
-                            ease: "linear",
-                        }}
-                        className="text-5xl mb-6"
-                        style={{
-                            color: colors.cyan,
-                            filter: `drop-shadow(0 0 15px ${colors.cyan}66)`,
-                        }}
-                    >
-                        <FaReact />
-                    </motion.div> */}
-
                     <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
                         Welcome Back
                     </h2>
@@ -143,23 +122,28 @@ const Page = ({ flash }) => {
                             {error_message}
                         </div>
                     )}
-                    {/* Email */}
+
+                    {/* Email / Employee ID */}
                     <div className="group space-y-2 mb-8">
                         <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
-                            Email Address
+                            Employee ID | Email Address
                         </label>
                         <div className="relative">
-                            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
+                            <FaRegUserCircle className="absolute text-xl left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
                             <input
-                                type="email"
-                                value={data.email}
+                                type="text"
+                                value={data.login_id} // 3. Updated to login_id
                                 onChange={(e) =>
-                                    setData("email", e.target.value)
+                                    setData("login_id", e.target.value) // 4. Updated to login_id
                                 }
-                                className={`w-full bg-white/5 border ${errors.email ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
-                                placeholder="sample@empireonegroup.com"
+                                placeholder="22****01"
+                                className={`w-full bg-white/5 border ${errors.login_id ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                             />
                         </div>
+                        {/* 5. Display Validation Error if it exists */}
+                        {errors.login_id && (
+                            <p className="text-red-500 text-xs mt-1 ml-1">{errors.login_id}</p>
+                        )}
                     </div>
 
                     {/* Password */}
@@ -190,6 +174,10 @@ const Page = ({ flash }) => {
                                 )}
                             </button>
                         </div>
+                        {/* Display Validation Error if it exists */}
+                        {errors.password && (
+                            <p className="text-red-500 text-xs mt-1 ml-1">{errors.password}</p>
+                        )}
                     </div>
 
                     <div className="flex items-center justify-between py-1">
@@ -251,18 +239,20 @@ const Page = ({ flash }) => {
                             </>
                         )}
                     </motion.button>
+
                     {/* --- DIVIDER --- */}
-                    <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3 mb-6 mt-4">
                         <div className="flex-1 h-[1px] bg-white/10"></div>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                            Or continue with email
+                            Or continue with
                         </span>
                         <div className="flex-1 h-[1px] bg-white/10"></div>
                     </div>
+
                     {/* --- SSO LOGIN BUTTONS --- */}
                     <div className="flex gap-4 mb-6">
                         <a
-                            href="/api/auth/google/web" // Standard link, no /api, no Inertia
+                            href="/api/auth/google/web"
                             className="flex-1 flex items-center justify-center hover:bg-gray-200 gap-2 py-4 shadow-lg rounded-xl text-black font-black border border-white bg-white hover:border-white transition-all text-sm"
                         >
                             <FcGoogle className="text-lg" />
