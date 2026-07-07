@@ -15,7 +15,9 @@
     <meta property="og:title" content="{{ config('app.name', 'Laravel') }}">
     <meta property="og:description" content="Enter your comprehensive website description here. Make it engaging for search engines.">
     <meta property="og:image" content="{{ asset('/images/eo-full-logo.png') }}">
-
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/') }}">
     <meta name="twitter:title" content="{{ config('app.name', 'Laravel') }}">
