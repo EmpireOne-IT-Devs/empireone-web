@@ -61,8 +61,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             responsibilities: "",
             approver1_id: "",
             position_level: 'Rank and File',
-            approver2_id: 517,
-            approver3_id: 3,
+            approver2_id: "",
+            approver3_id: "",
         },
     });
 

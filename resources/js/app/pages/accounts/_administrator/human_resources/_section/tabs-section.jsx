@@ -16,7 +16,7 @@ export default function TabsSection() {
             active: currentPath === "pooling",
         },
         {
-            label: "Leads",
+            label: "Executives/Managers/Leaders",
             path: "/accounts/administrator/human_resources/leads",
             active: currentPath === "leads",
         },
