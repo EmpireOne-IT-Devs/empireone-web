@@ -16,7 +16,7 @@ import ActivityPollCard from "@/app/pages/accounts/_administrator/activities/_co
 import {
     get_activity_posts_thunk,
     cast_poll_vote_thunk,
-} from "@/app/redux/activities-slice";
+} from "@/app/redux/activities-thunk";
 
 const CATEGORY_CONFIG = {
     "Pinned Announcement": { icon: Megaphone, variant: "danger" },

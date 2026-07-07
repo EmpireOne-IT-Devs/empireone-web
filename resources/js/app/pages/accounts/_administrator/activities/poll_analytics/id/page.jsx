@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     get_poll_details_thunk,
     get_poll_vote_records_thunk,
-} from "@/app/redux/activities-slice";
+} from "@/app/redux/activities-thunk";
 import HeaderSection from "./sections/header-section";
 import PollInfoSection from "./poll-info-section";
 import PollResultsSection from "./poll-results-section";

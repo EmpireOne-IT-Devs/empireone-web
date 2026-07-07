@@ -7,7 +7,7 @@ import {
     TbChevronRight,
 } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
-import { get_activity_posts_thunk } from "@/app/redux/activities-slice";
+import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
 import Modal from "@/app/_components/modal";
 import Skeleton from "@/app/_components/skeleton";
 

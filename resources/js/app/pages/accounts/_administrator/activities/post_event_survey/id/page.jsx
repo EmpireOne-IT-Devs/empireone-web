@@ -61,6 +61,7 @@ export default function Page() {
                                 </button>
                             ))}
                         </div>
+                        
 
                         {activeTab === 0 && (
                             <QuestionsSection questions={selectedSurvey.questions} />

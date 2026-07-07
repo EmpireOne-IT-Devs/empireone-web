@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { X } from "lucide-react";
 import Wysiwyg from "@/app/_components/wysiwyg";
 import BirthdayEditMessageTab from "../../department_showcase/sections/birthday-edit-message-tab";
-import { update_activity_post_thunk } from "@/app/redux/activities-slice";
+import { update_activity_post_thunk } from "@/app/redux/activities-thunk";
 
 export default function EditPostModal({ post, onClose }) {
     const dispatch = useDispatch();

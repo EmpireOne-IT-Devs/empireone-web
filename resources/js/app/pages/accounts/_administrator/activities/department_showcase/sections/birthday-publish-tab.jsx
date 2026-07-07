@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "@inertiajs/react";
-import { publish_activity_post_thunk } from "@/app/redux/activities-slice";
+import { publish_activity_post_thunk } from "@/app/redux/activities-thunk";
 import { setAlert } from "@/app/redux/app-slice";
 
 import Button from "@/app/_components/button";

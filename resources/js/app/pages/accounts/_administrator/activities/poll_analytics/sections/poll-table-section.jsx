@@ -9,7 +9,7 @@ import {
     get_poll_analytics_thunk,
     get_activity_posts_thunk,
     reopen_poll_thunk,
-} from "@/app/redux/activities-slice";
+} from "@/app/redux/activities-thunk";
 import moment from "moment";
 
 const TotalVotesCell = ({ votes, percent }) => {

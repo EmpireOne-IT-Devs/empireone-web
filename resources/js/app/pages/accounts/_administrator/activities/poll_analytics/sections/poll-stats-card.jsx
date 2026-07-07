@@ -9,7 +9,7 @@ import {
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { get_poll_analytics_dashboard_thunk } from "@/app/redux/activities-slice";
+import { get_poll_analytics_dashboard_thunk } from "@/app/redux/activities-thunk";
 
 export default function PollStatsCard() {
     const dispatch = useDispatch();

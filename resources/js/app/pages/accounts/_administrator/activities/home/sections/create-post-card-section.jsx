@@ -21,7 +21,7 @@ import {
     publish_activity_post_thunk,
     get_activity_posts_thunk,
     get_upcoming_events_thunk,
-} from "@/app/redux/activities-slice";
+} from "@/app/redux/activities-thunk";
 import { FaPaperPlane } from "react-icons/fa";
 
 const POST_TABS = [
