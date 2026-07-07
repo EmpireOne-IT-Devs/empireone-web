@@ -25,7 +25,7 @@ export default function HeaderSection() {
                     Here's what's happening in your workspace today
                 </p>
                 <Link
-                    href={`/accounts/${user_role}/my_profile`}
+                    href={`/accounts/${user_role}/my_profile/personal`}
                     className="mt-2 inline-block w-fit border border-white text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-white hover:text-blue-700 transition"
                 >
                     View Profile
