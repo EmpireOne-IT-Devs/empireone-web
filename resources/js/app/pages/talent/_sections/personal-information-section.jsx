@@ -35,7 +35,6 @@ export default function PersonalInformationSection({
                             required: true,
                         })}
                         error={errors.first_name}
-                        placeholder="John"
                     />
                 </div>
                 <div className="flex flex-col w-full md:flex-1">
@@ -43,7 +42,6 @@ export default function PersonalInformationSection({
                         label="Middle Name"
                         name="middle_name"
                         {...register("middle_name")}
-                        placeholder="Quincy"
                     />
                 </div>
                 <div className="flex flex-col w-full md:flex-1">
@@ -54,7 +52,6 @@ export default function PersonalInformationSection({
                             required: true,
                         })}
                         error={errors.last_name}
-                        placeholder="Doe"
                     />
                 </div>
             </div>
@@ -74,7 +71,6 @@ export default function PersonalInformationSection({
                         required: true,
                     })}
                     error={errors.nationality}
-                    placeholder="Filipino"
                 />
                 <div className="flex flex-col flex-1 w-full">
                     <div className="flex flex-col flex-1 w-full">
@@ -142,7 +138,6 @@ export default function PersonalInformationSection({
                             },
                         })}
                         error={errors.email}
-                        placeholder="john@example.com"
                     />
                 </div>
                 <div className="flex flex-col">
@@ -157,7 +152,7 @@ export default function PersonalInformationSection({
                             },
                         })}
                         error={errors.contact}
-                        placeholder="09123456789"
+                        placeholder="09*********"
                     />
                 </div>
             </div>
@@ -210,7 +205,6 @@ export default function PersonalInformationSection({
                         name="school_name"
                         {...register("school_name", { required: true })}
                         error={errors.school_name}
-                        placeholder="Central Philippine State University"
                     />
                 </div>
                 <div className="flex flex-col w-full md:flex-1">
@@ -219,7 +213,6 @@ export default function PersonalInformationSection({
                         name="course"
                         {...register("course", { required: true })}
                         error={errors.course}
-                        placeholder="BSIT"
                     />
                 </div>
                 <div className="flex flex-col w-full md:flex-1">
@@ -230,7 +223,6 @@ export default function PersonalInformationSection({
                             required: true,
                         })}
                         error={errors.year_graduated}
-                        placeholder="2025"
                     />
                 </div>
 
