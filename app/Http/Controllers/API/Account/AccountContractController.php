@@ -15,6 +15,7 @@ use App\Models\Jobs\JobOffer;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class AccountContractController extends Controller
@@ -23,7 +24,7 @@ class AccountContractController extends Controller
 
     public function edit_information(Request $request)
     {
-        AccountPersonalInformation::where('user_id', $request->id)->update([
+        AccountPersonalInformation::where('user_id', Auth::id())->update([
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
@@ -64,7 +65,7 @@ class AccountContractController extends Controller
             $skill = AccountSkills::updateOrCreate(
                 ['id' => $value['id'] ?? null],
                 [
-                    'user_id' => $request->id,
+                    'user_id' => Auth::id(),
                     'skill' => $value['skill'] ?? null,
                     'percentage' => $value['percentage'] ?? null,
                 ]
@@ -74,7 +75,7 @@ class AccountContractController extends Controller
         }
 
         // 🔥 Delete skills not in request
-        AccountSkills::where('user_id', $request->id)
+        AccountSkills::where('user_id', Auth::id())
             ->whereNotIn('id', $skillIds)
             ->delete();
 
@@ -84,7 +85,7 @@ class AccountContractController extends Controller
             $exp = AccountWorkingExperience::updateOrCreate(
                 ['id' => $value['id'] ?? null],
                 [
-                    'user_id' => $request->id,
+                    'user_id' => Auth::id(),
                     'company_name' => $value['company_name'] ?? null,
                     'position' => $value['position'] ?? null,
                     'start_date' => $value['start_date'] ?? null,
@@ -97,7 +98,7 @@ class AccountContractController extends Controller
         }
 
         AccountEmployee::updateOrCreate(
-            ['user_id' => $request->id],
+            ['user_id' => Auth::id()],
             [
                 'employee_id' => $request->employee_id ?? null,
                 'account_id' => $request->account_id ?? null,
@@ -121,7 +122,7 @@ class AccountContractController extends Controller
                 ['er_leader_id'   => $leader->id]       // 2. The data to update or create
             );
         }
-        AccountWorkingExperience::where('user_id', $request->id)
+        AccountWorkingExperience::where('user_id', Auth::id())
             ->whereNotIn('id', $experienceIds)
             ->delete();
 
