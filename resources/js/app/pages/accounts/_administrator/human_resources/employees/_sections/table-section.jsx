@@ -1,10 +1,11 @@
 import Table from "@/app/_components/table";
+import Skeleton from "@/app/_components/skeleton";
 import { Link } from "@inertiajs/react";
 import React from "react";
 import { useSelector } from "react-redux";
 
 export default function TableSection() {
-    const { employees } = useSelector((store) => store.human_resources);
+    const { employees, employeesLoading } = useSelector((store) => store.human_resources);
    
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
@@ -19,9 +20,14 @@ export default function TableSection() {
     ];
     return (
         <div>
-            <Table
-                columns={columns}
-                data={
+            {employeesLoading ? (
+                <div className="py-8 text-center text-sm text-gray-400">
+                    <Skeleton variant="table" />
+                </div>
+            ) : (
+                <Table
+                    columns={columns}
+                    data={
                     employees?.map((res) => ({
                         ...res,
                         employee_id: (
@@ -42,6 +48,7 @@ export default function TableSection() {
                     })) ?? []
                 }
             />
+            )}
         </div>
     );
 }

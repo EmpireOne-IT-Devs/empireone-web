@@ -1,15 +1,11 @@
-import React from 'react'
-import Layout from '../../../layout'
+import React from "react";
+import Layout from "../../../layout";
 
 import AssetInventory from "../layout";
 export default function Page() {
-  return (
- 
+    return (
         <Layout>
-            <AssetInventory>
-Request Asset
-            </AssetInventory>
+            <AssetInventory>Request Asset</AssetInventory>
         </Layout>
- 
-  )
+    );
 }

@@ -1,4 +1,5 @@
 import Table from "@/app/_components/table";
+import Skeleton from "@/app/_components/skeleton";
 import React, { useEffect } from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Link } from "@inertiajs/react";
@@ -101,7 +102,13 @@ export default function PollTableSection() {
 
     return (
         <div>
-            <Table columns={columns} data={pollAnalyticsLoading ? [] : data} />
+            {pollAnalyticsLoading ? (
+                <div className="py-8 text-center text-sm text-gray-400">
+                    <Skeleton variant="table" />
+                </div>
+            ) : (
+                <Table columns={columns} data={data} />
+            )}
         </div>
     );
 }

@@ -30,7 +30,7 @@ export default function Page() {
                 <ActivitiesLayout>
                     <HeaderSection surveyId={id} />
                     <div className="px-6">
-                        <Skeleton lines={8} />
+                        <Skeleton variant="text" />
                     </div>
                 </ActivitiesLayout>
             </Layout>

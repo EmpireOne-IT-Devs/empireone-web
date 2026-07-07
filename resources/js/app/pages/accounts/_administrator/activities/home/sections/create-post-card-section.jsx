@@ -434,14 +434,16 @@ export default function CreatePostCardSection() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-slate-700">
-                            Category
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                            {CATEGORIES.map(renderCategoryButton)}
+                    {activeTab !== "poll" && (
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-700">
+                                Category
+                            </label>
+                            <div className="flex flex-wrap gap-2">
+                                {CATEGORIES.map(renderCategoryButton)}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="flex flex-col gap-5">
                         {renderFormBody()}
@@ -461,10 +463,12 @@ export default function CreatePostCardSection() {
                                 <FileText className="h-3.5 w-3.5" />
                                 <span>Company Newsfeed</span>
                             </div>
-                            <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">
-                                <Tag className="h-3.5 w-3.5" />
-                                <span>{selectedCategory}</span>
-                            </div>
+                            {activeTab !== "poll" && (
+                                <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">
+                                    <Tag className="h-3.5 w-3.5" />
+                                    <span>{selectedCategory}</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-3">
