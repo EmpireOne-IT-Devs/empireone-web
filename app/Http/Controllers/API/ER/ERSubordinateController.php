@@ -42,10 +42,11 @@ class ERSubordinateController extends Controller
         $subordinates = $request->subordinates;
         foreach ($subordinates as $subordinateId) {
             if ($subordinateId) {
-                ERSubordinate::firstOrCreate([
-                    'er_leader_id' => $leaderId,
-                    'subordinate_id' => $subordinateId
-                ]);
+                // Correct syntax for searching by one column, but creating with both
+                ERSubordinate::updateOrCreate(
+                    ['subordinate_id' => $subordinateId], // 1. Search for this
+                    ['er_leader_id' => $leaderId]         // 2. Add this if creating a new record
+                );
                 AccountEmployee::where('user_id', $subordinateId)->update([
                     'e_r_leader_id' => $leader->id,
                     'account_id' => $leader['employee']['account_id'] ?? null,

@@ -115,8 +115,7 @@ class AccountContractController extends Controller
         );
 
         $leader = ERLeader::find($request->e_r_leader_id);
-
-        if ($leader) {
+        if ($leader && $request->position_level != 'Executive') {
             ERSubordinate::updateOrCreate(
                 ['subordinate_id' => $request->user_id], // 1. The condition to search for
                 ['er_leader_id'   => $leader->id]       // 2. The data to update or create
@@ -125,9 +124,6 @@ class AccountContractController extends Controller
         AccountWorkingExperience::where('user_id', Auth::id())
             ->whereNotIn('id', $experienceIds)
             ->delete();
-
-
-
 
         return response()->json([
             'message' => 'Information record saved successfully',
