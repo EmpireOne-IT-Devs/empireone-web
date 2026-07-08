@@ -78,6 +78,8 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         defaultValues: defaultFormValues,
     });
 
+    console.log('leaders',leaders)
+
     const employee_information = props_data?.applicant?.account_employee;
     const leader_information = props_data?.applicant?.account_employee?.er_leader?.employee;
     const new_position_information = props_data?.job_posting?.job_requisition
@@ -787,10 +789,10 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                     </td>
                                     <td className="border border-black p-1">
                                         <Select
-                                            disabled
+                                            
                                             name="info_reporting_id_to"
                                             className="w-full text-center"
-                                            options={leaders?.data?.map((res) => ({
+                                            options={leaders?.map((res) => ({
                                                 label: res.user.name,
                                                 value: res.user_id,
                                             }))}
