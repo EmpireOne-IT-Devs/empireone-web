@@ -679,7 +679,6 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                     <td className="border border-black p-1">
                                         {watchedValues.is_edit_reporting_to ? (
                                             <Select
-                                                disabled
                                                 name="info_reporting_id_to"
                                                 className="w-full text-center"
                                                 options={leaders?.data?.map((res) => ({
