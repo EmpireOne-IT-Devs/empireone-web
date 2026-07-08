@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import ViewBirthdaySection from "./view-birthday-section";
 import CreateBirthdayPost from "./create-birthday-post";
-import { get_upcoming_birthdays_thunk } from "@/app/redux/activities-slice";
+import { get_upcoming_birthdays_thunk } from "@/app/redux/activities-thunk";
 
 export default function UpcomingBirthdaySection() {
     // Add this above the component

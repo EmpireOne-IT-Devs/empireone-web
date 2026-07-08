@@ -8,7 +8,7 @@ import ActivityPollCard from "../../_components/activity-poll-card";
 import {
     get_activity_posts_thunk,
     cast_poll_vote_thunk,
-} from "@/app/redux/activities-slice";
+} from "@/app/redux/activities-thunk";
 
 export default function PoolCardSection() {
     const dispatch = useDispatch();

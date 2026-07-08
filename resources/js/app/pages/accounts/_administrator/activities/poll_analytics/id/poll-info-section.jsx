@@ -4,7 +4,7 @@ import {
     close_poll_thunk,
     get_poll_details_thunk,
     reopen_poll_thunk,
-} from "@/app/redux/activities-slice";
+} from "@/app/redux/activities-thunk";
 import { export_poll_vote_records_service } from "@/app/services/activities-service";
 import moment from "moment";
 

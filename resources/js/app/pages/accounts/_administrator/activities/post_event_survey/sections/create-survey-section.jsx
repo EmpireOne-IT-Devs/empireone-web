@@ -4,7 +4,7 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import Textarea from "@/app/_components/textarea";
 import { create_post_event_survey_thunk } from "@/app/redux/post-event-survey-slice";
-import { get_activity_posts_thunk } from "@/app/redux/activities-slice";
+import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
 import { Folder, PlusCircleIcon, Trash2, GripVertical, Plus, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
-import { get_upcoming_birthdays_thunk, get_upcoming_events_thunk } from "@/app/redux/activities-slice";
+import { get_upcoming_birthdays_thunk, get_upcoming_events_thunk } from "@/app/redux/activities-thunk";
 
 const TYPE_STYLE = {
   birthday: {

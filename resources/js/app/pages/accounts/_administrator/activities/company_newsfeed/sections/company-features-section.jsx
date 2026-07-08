@@ -11,7 +11,7 @@ import {
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
-import { get_activity_posts_thunk } from "@/app/redux/activities-slice";
+import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
 
 const FALLBACK_IMAGE = "/images/building.jpg";
 const AUTHOR_COLORS = [

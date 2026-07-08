@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { delete_activity_post_thunk } from "@/app/redux/activities-slice";
+import { delete_activity_post_thunk } from "@/app/redux/activities-thunk";
 import { setAlert } from "@/app/redux/app-slice";
 
 export function DeletePostSection() {

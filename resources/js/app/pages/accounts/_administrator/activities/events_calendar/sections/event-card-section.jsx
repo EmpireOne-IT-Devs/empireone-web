@@ -3,7 +3,7 @@ import { Calendar, Clock, MapPin, Users, BarChart2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
-import { get_activity_posts_thunk } from "@/app/redux/activities-slice";
+import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
 
 const FALLBACK_IMAGE = "/images/building.jpg";
 

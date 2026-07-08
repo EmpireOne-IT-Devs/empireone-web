@@ -16,7 +16,7 @@ import ActivityPollCard from "../../_components/activity-poll-card";
 import {
     get_activity_posts_thunk,
     cast_poll_vote_thunk,
-} from "@/app/redux/activities-slice";
+} from "@/app/redux/activities-thunk";
 import PostActionMenu from "./post-action-menu";
 import EditPostModal from "./edit-post-modal";
 import { DeletePostSection } from "./delete-post-section";
