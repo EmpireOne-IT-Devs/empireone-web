@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Newspaper, Heart, MessageSquare, Share2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
 import ViewNewsSection from "./view-news-section";
 import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
+import { sync_post_interaction } from "@/app/redux/activities-slice";
+import { toggle_reaction_service } from "@/app/services/activities-service";
+
+const REFRESH_INTERVAL_MS = 30_000;
 
 const FALLBACK_IMAGE = "/images/test.jpg";
 
@@ -27,8 +31,59 @@ export default function NewsSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.activities);
     const [selectedItem, setSelectedItem] = useState(null);
+    // useRef instead of useState: changes to this set must not re-render all cards.
+    // The disabled attribute on each heart button reads from a separate per-item
+    // reacting state updated inside handleReact via the local reacting variable.
+    const reactingIds = useRef(new Set());
+    const [, forceUpdate] = useState(0); // minimal re-render trigger for disabled state
 
-    useEffect(() => { dispatch(get_activity_posts_thunk()); }, [dispatch]);
+    // Initial fetch + background refresh every 30 s.
+    // Skips when the tab is hidden to avoid wasted requests.
+    // The thunk's own `condition` guard prevents overlapping in-flight fetches.
+    useEffect(() => {
+        dispatch(get_activity_posts_thunk());
+        const interval = setInterval(() => {
+            if (!document.hidden) dispatch(get_activity_posts_thunk());
+        }, REFRESH_INTERVAL_MS);
+        return () => clearInterval(interval);
+    }, [dispatch]);
+
+    async function handleReact(e, item) {
+        e.stopPropagation();
+        if (reactingIds.current.has(item.id)) return;
+
+        reactingIds.current.add(item.id);
+        forceUpdate((n) => n + 1); // re-render to apply disabled state
+
+        // Optimistic update
+        const wasReacted = item.user_has_reacted;
+        const prevCount  = item.reaction_count;
+        dispatch(
+            sync_post_interaction({
+                postId:           item.id,
+                reaction_count:   wasReacted ? prevCount - 1 : prevCount + 1,
+                user_has_reacted: !wasReacted,
+            }),
+        );
+
+        try {
+            const res = await toggle_reaction_service(item.id, "heart");
+            const { reaction_count, user_has_reacted } = res.data.data;
+            dispatch(sync_post_interaction({ postId: item.id, reaction_count, user_has_reacted }));
+        } catch {
+            // Rollback on error
+            dispatch(
+                sync_post_interaction({
+                    postId:           item.id,
+                    reaction_count:   prevCount,
+                    user_has_reacted: wasReacted,
+                }),
+            );
+        } finally {
+            reactingIds.current.delete(item.id);
+            forceUpdate((n) => n + 1); // re-render to clear disabled state
+        }
+    }
 
     const newsItems = posts
         .filter((p) => p.category === "News")
@@ -40,8 +95,9 @@ export default function NewsSection() {
             title: p.headline,
             description: stripHtml(p.message),
             contentHtml: p.message,
-            likes: 0,
-            comments: 0,
+            reaction_count:   p.reaction_count   ?? 0,
+            comment_count:    p.comment_count    ?? 0,
+            user_has_reacted: p.user_has_reacted ?? false,
         }));
 
     return (
@@ -99,16 +155,33 @@ export default function NewsSection() {
                                 </div>
                                 <div className="flex items-center justify-between border-t border-gray-100 pt-3 mt-auto text-xs font-semibold text-gray-400">
                                     <div className="flex items-center gap-4">
-                                        <button className="flex items-center gap-1.5 hover:text-red-500 transition-colors">
-                                            <Heart size={14} className="stroke-[2.5]" />
-                                            <span>{item.likes}</span>
+                                        <button
+                                            onClick={(e) => handleReact(e, item)}
+                                            disabled={reactingIds.current.has(item.id)}
+                                            className={`flex items-center gap-1.5 transition-colors ${
+                                                item.user_has_reacted
+                                                    ? "text-red-500"
+                                                    : "hover:text-red-500"
+                                            }`}
+                                        >
+                                            <Heart
+                                                size={14}
+                                                className={`stroke-[2.5] ${item.user_has_reacted ? "fill-red-500" : ""}`}
+                                            />
+                                            <span>{item.reaction_count > 0 ? item.reaction_count : ""}</span>
                                         </button>
-                                        <button className="flex items-center gap-1.5 hover:text-blue-600 transition-colors">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setSelectedItem(item); }}
+                                            className="flex items-center gap-1.5 hover:text-blue-600 transition-colors"
+                                        >
                                             <MessageSquare size={14} className="stroke-[2.5]" />
-                                            <span>{item.comments}</span>
+                                            <span>{item.comment_count > 0 ? item.comment_count : ""}</span>
                                         </button>
                                     </div>
-                                    <button className="flex items-center gap-1 hover:text-gray-600 transition-colors">
+                                    <button
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="flex items-center gap-1 hover:text-gray-600 transition-colors"
+                                    >
                                         <Share2 size={14} className="stroke-[2.5]" />
                                         <span>Share</span>
                                     </button>

@@ -25,6 +25,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\API\Activities\ActivityBirthdayController;
 use App\Http\Controllers\API\Activities\ActivityPollController;
 use App\Http\Controllers\API\Activities\ActivityPostController;
+use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
@@ -153,6 +154,11 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('posts',             [ActivityPostController::class,    'store']);
         Route::put('posts/{activityPost}',    [ActivityPostController::class, 'update']);
         Route::delete('posts/{activityPost}', [ActivityPostController::class, 'destroy']);
+
+        Route::post('posts/{id}/react',                      [ActivityPostInteractionController::class, 'toggle_reaction']);
+        Route::get('posts/{id}/comments',                    [ActivityPostInteractionController::class, 'get_comments']);
+        Route::post('posts/{id}/comments',                   [ActivityPostInteractionController::class, 'add_comment']);
+        Route::delete('posts/{id}/comments/{commentId}',     [ActivityPostInteractionController::class, 'delete_comment']);
         Route::get('upcoming_events',    [ActivityPostController::class,    'upcoming_events']);
         Route::get('polls/analytics/dashboard', [ActivityPollController::class, 'dashboard']);
         Route::get('polls/analytics', [ActivityPollController::class, 'index']);

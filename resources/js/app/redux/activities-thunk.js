@@ -36,6 +36,13 @@ export const get_activity_posts_thunk = createAsyncThunk(
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
         }
+    },
+    {
+        // Prevent duplicate in-flight requests. Multiple components on the same
+        // page all dispatch this thunk on mount; only the first should proceed.
+        // Uses postsFetching (not postsLoading) because postsLoading starts as
+        // true in the initial state and would block the very first fetch.
+        condition: (_, { getState }) => !getState().activities.postsFetching,
     }
 );
 

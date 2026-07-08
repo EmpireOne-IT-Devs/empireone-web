@@ -83,3 +83,20 @@ export async function update_activity_post_service(id, data) {
 export async function delete_activity_post_service(id) {
     return await axios.delete(`/api/activities/posts/${id}`);
 }
+
+
+export async function toggle_reaction_service(postId, type = 'heart') {
+    return await axios.post(`/api/activities/posts/${postId}/react`, { type });
+}
+
+export async function get_post_comments_service(postId) {
+    return await axios.get(`/api/activities/posts/${postId}/comments`);
+}
+
+export async function add_post_comment_service(postId, body) {
+    return await axios.post(`/api/activities/posts/${postId}/comments`, { body });
+}
+
+export async function delete_post_comment_service(postId, commentId) {
+    return await axios.delete(`/api/activities/posts/${postId}/comments/${commentId}`);
+}

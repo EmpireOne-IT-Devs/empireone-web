@@ -19,6 +19,8 @@ class ActivityPostController extends Controller
                 'user:id,name,avatar',
                 'pollOptions',
                 'pollVotes',
+                'reactions:id,activity_post_id,user_id,type',
+                'comments:id,activity_post_id',
             ])
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
@@ -80,6 +82,10 @@ class ActivityPostController extends Controller
                     'user_has_voted'     => $userVote !== null,
                     'user_voted_option'  => $userVote?->activity_poll_option_id,
                     'is_closed'          => $isPoll && $post->closed_at !== null,
+                    // ── interaction counts ────────────────────────────────
+                    'reaction_count'     => $post->reactions->count(),
+                    'comment_count'      => $post->comments->count(),
+                    'user_has_reacted'   => $post->reactions->contains('user_id', Auth::id()),
                 ];
             });
 

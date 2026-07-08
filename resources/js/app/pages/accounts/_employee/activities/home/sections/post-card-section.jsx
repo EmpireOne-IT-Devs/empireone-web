@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Heart,
     MessageSquare,
@@ -13,10 +13,16 @@ import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
 import ActivityPollCard from "@/app/pages/accounts/_administrator/activities/_components/activity-poll-card";
+import PostViewModal from "@/app/pages/accounts/_administrator/activities/home/sections/post-view-modal";
 import {
     get_activity_posts_thunk,
+    get_upcoming_birthdays_thunk,
     cast_poll_vote_thunk,
 } from "@/app/redux/activities-thunk";
+import { sync_post_interaction } from "@/app/redux/activities-slice";
+import { toggle_reaction_service } from "@/app/services/activities-service";
+
+const REFRESH_INTERVAL_MS = 30_000;
 
 const CATEGORY_CONFIG = {
     "Pinned Announcement": { icon: Megaphone, variant: "danger" },
@@ -35,9 +41,9 @@ function PostHtmlContent({ html, className = "" }) {
     );
 }
 
-function BirthdayPostCard({ post, celebrants = [] }) {
+function BirthdayPostCard({ post, celebrants = [], onReact, onView }) {
     return (
-        <Card variant="default" padding="p-0" className="w-full overflow-hidden font-sans">
+        <Card variant="default" padding="p-0" className="w-full overflow-hidden font-sans cursor-pointer" onClick={onView}>
             <div className="w-full bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 px-5 py-4 flex items-center gap-3">
                 <span className="text-2xl">🎂</span>
                 <div>
@@ -85,18 +91,21 @@ function BirthdayPostCard({ post, celebrants = [] }) {
                     </div>
                 )}
 
-                <div className="flex justify-between items-center pt-2 border-t border-gray-100 text-gray-500 text-xs">
+                <div className="flex justify-between items-center pt-2 border-t border-gray-100 text-gray-500 text-xs" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-4">
-                        <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
-                            <Heart size={14} className="group-hover:scale-110 transition" />
-                            <span className="font-medium text-gray-600">0</span>
+                        <button
+                            onClick={onReact}
+                            className={`flex items-center gap-1.5 transition group ${post.user_has_reacted ? "text-red-500" : "hover:text-red-500"}`}
+                        >
+                            <Heart size={14} className={`group-hover:scale-110 transition ${post.user_has_reacted ? "fill-red-500" : ""}`} />
+                            <span className="font-medium text-gray-600">{post.reaction_count > 0 ? post.reaction_count : ""}</span>
                         </button>
-                        <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
+                        <button onClick={onView} className="flex items-center gap-1.5 hover:text-blue-500 transition group">
                             <MessageSquare size={14} className="group-hover:scale-110 transition" />
-                            <span className="font-medium text-gray-600">0</span>
+                            <span className="font-medium text-gray-600">{post.comment_count > 0 ? post.comment_count : ""}</span>
                         </button>
                     </div>
-                    <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
+                    <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 hover:text-green-600 transition group">
                         <Share2 size={14} className="group-hover:scale-110 transition" />
                         <span className="font-medium text-gray-600">Share</span>
                     </button>
@@ -106,13 +115,13 @@ function BirthdayPostCard({ post, celebrants = [] }) {
     );
 }
 
-function GeneralPostCard({ post }) {
+function GeneralPostCard({ post, onReact, onView }) {
     const categoryKey = post.category ?? "General";
     const catConfig = CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
 
     return (
-        <Card variant="default" padding="p-0" className="w-full overflow-hidden font-sans">
-            <div className="px-4 pt-4 pb-3 flex justify-between items-start w-full">
+        <Card variant="default" padding="p-0" className="w-full overflow-hidden font-sans cursor-pointer" onClick={onView}>
+            <div className="px-4 pt-4 pb-3 flex justify-between items-start w-full" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-2.5">
                     {post.author.avatar ? (
                         <img src={post.author.avatar} alt={post.author.name} className="w-9 h-9 rounded-full object-cover" />
@@ -139,24 +148,27 @@ function GeneralPostCard({ post }) {
 
             {post.media_url && (
                 post.media_type === "video" ? (
-                    <video src={post.media_url} controls className="w-full max-h-[480px] object-contain bg-black" />
+                    <video src={post.media_url} controls className="w-full max-h-[480px] object-contain bg-black" onClick={(e) => e.stopPropagation()} />
                 ) : (
                     <img src={post.media_url} alt={post.headline} className="w-full max-h-[480px] object-cover" />
                 )
             )}
 
-            <div className="px-4 py-3 flex justify-between items-center text-gray-500 text-xs border-t border-gray-100">
+            <div className="px-4 py-3 flex justify-between items-center text-gray-500 text-xs border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
-                        <Heart size={14} className="group-hover:scale-110 transition" />
-                        <span className="font-medium text-gray-600">0</span>
+                    <button
+                        onClick={onReact}
+                        className={`flex items-center gap-1.5 transition group ${post.user_has_reacted ? "text-red-500" : "hover:text-red-500"}`}
+                    >
+                        <Heart size={14} className={`group-hover:scale-110 transition ${post.user_has_reacted ? "fill-red-500" : ""}`} />
+                        <span className="font-medium text-gray-600">{post.reaction_count > 0 ? post.reaction_count : ""}</span>
                     </button>
-                    <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
+                    <button onClick={onView} className="flex items-center gap-1.5 hover:text-blue-500 transition group">
                         <MessageSquare size={14} className="group-hover:scale-110 transition" />
-                        <span className="font-medium text-gray-600">0</span>
+                        <span className="font-medium text-gray-600">{post.comment_count > 0 ? post.comment_count : ""}</span>
                     </button>
                 </div>
-                <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
+                <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 hover:text-green-600 transition group">
                     <Share2 size={14} className="group-hover:scale-110 transition" />
                     <span className="font-medium text-gray-600">Share</span>
                 </button>
@@ -170,12 +182,56 @@ export default function PostCardSection() {
     const { posts, postsLoading, postsError, birthdays, birthdayMonth, pollVotingPostId } =
         useSelector((state) => state.activities);
 
+    const [viewPostId, setViewPostId] = useState(null);
+    const reactingIds = useRef(new Set());
+
+    // Derive view post from live Redux state so modal always reflects latest counts
+    const viewPost = viewPostId ? (posts.find((p) => p.id === viewPostId) ?? null) : null;
+
+    // Initial fetch + background refresh every 30 s to stay in sync with admin changes.
+    // Skips when the tab is hidden; the thunk's condition guard prevents overlapping fetches.
     useEffect(() => {
+        dispatch(get_upcoming_birthdays_thunk()); // ensure celebrants are always loaded
         dispatch(get_activity_posts_thunk());
+        const interval = setInterval(() => {
+            if (!document.hidden) dispatch(get_activity_posts_thunk());
+        }, REFRESH_INTERVAL_MS);
+        return () => clearInterval(interval);
     }, [dispatch]);
 
-    function handleVote(postId, optionId) {
+    function handleVote(postId, optionId) { 
         dispatch(cast_poll_vote_thunk({ postId, optionId }));
+    }
+
+    async function handleReact(e, post) {
+        e.stopPropagation();
+        if (reactingIds.current.has(post.id)) return;
+        reactingIds.current.add(post.id);
+
+        const wasReacted = post.user_has_reacted;
+        dispatch(
+            sync_post_interaction({
+                postId:           post.id,
+                reaction_count:   wasReacted ? post.reaction_count - 1 : post.reaction_count + 1,
+                user_has_reacted: !wasReacted,
+            }),
+        );
+
+        try {
+            const res = await toggle_reaction_service(post.id, "heart");
+            const { reaction_count, user_has_reacted } = res.data.data;
+            dispatch(sync_post_interaction({ postId: post.id, reaction_count, user_has_reacted }));
+        } catch {
+            dispatch(
+                sync_post_interaction({
+                    postId:           post.id,
+                    reaction_count:   post.reaction_count,
+                    user_has_reacted: wasReacted,
+                }),
+            );
+        } finally {
+            reactingIds.current.delete(post.id);
+        }
     }
 
     if (postsLoading) {
@@ -205,39 +261,57 @@ export default function PostCardSection() {
     }
 
     return (
-        <div className="w-full flex flex-col gap-4">
-            {posts
-                .filter((post) => !(post.type === "poll" && post.is_closed))
-                .map((post) => {
-                    if (post.type === "birthday") {
+        <>
+            <div className="w-full flex flex-col gap-4">
+                {posts
+                    .filter((post) => !(post.type === "poll" && post.is_closed))
+                    .map((post) => {
+                        if (post.type === "birthday") {
+                            return (
+                                <BirthdayPostCard
+                                    key={post.id}
+                                    post={post}
+                                    celebrants={post.month === birthdayMonth ? birthdays : []}
+                                    onReact={(e) => handleReact(e, post)}
+                                    onView={() => setViewPostId(post.id)}
+                                />
+                            );
+                        }
+
+                        if (post.type === "poll") {
+                            return (
+                                <div key={post.id} className="w-full bg-[#f4f6f9] p-6 rounded-2xl font-sans antialiased">
+                                    <ActivityPollCard
+                                        post={post}
+                                        pollVoting={pollVotingPostId === post.id}
+                                        onVote={(optionId) => handleVote(post.id, optionId)}
+                                        footerMeta={
+                                            <span className="text-gray-400 font-medium">
+                                                Activities • {post.time_ago}
+                                            </span>
+                                        }
+                                    />
+                                </div>
+                            );
+                        }
+
                         return (
-                            <BirthdayPostCard
+                            <GeneralPostCard
                                 key={post.id}
                                 post={post}
-                                celebrants={post.month === birthdayMonth ? birthdays : []}
+                                onReact={(e) => handleReact(e, post)}
+                                onView={() => setViewPostId(post.id)}
                             />
                         );
-                    }
+                    })}
+            </div>
 
-                    if (post.type === "poll") {
-                        return (
-                            <div key={post.id} className="w-full bg-[#f4f6f9] p-6 rounded-2xl font-sans antialiased">
-                                <ActivityPollCard
-                                    post={post}
-                                    pollVoting={pollVotingPostId === post.id}
-                                    onVote={(optionId) => handleVote(post.id, optionId)}
-                                    footerMeta={
-                                        <span className="text-gray-400 font-medium">
-                                            Activities • {post.time_ago}
-                                        </span>
-                                    }
-                                />
-                            </div>
-                        );
-                    }
-
-                    return <GeneralPostCard key={post.id} post={post} />;
-                })}
-        </div>
+            <PostViewModal
+                post={viewPost}
+                isOpen={!!viewPostId}
+                onClose={() => setViewPostId(null)}
+            />
+        </>
     );
 }
+
