@@ -145,11 +145,11 @@ class JobPostingController extends Controller
     {
         $user = Auth::user(); // Administrator
         $query = JobPosting::where('status', 'Active')->with(['job_requisition', 'applications', 'applicant']);
-        if ($user && ($user->role == 2 || $user->role == 1)) { // Employee 
-            $query->whereIn('target_audience', ['Internal', 'Both']);
-        } elseif ($user && $user->role == 3) { // Applicant
-            $query->whereIn('target_audience', ['External', 'Both']);
-        }
+        // if ($user && ($user->role == 2 || $user->role == 1)) { // Employee 
+        //     $query->whereIn('target_audience', ['Internal', 'Both']);
+        // } elseif ($user && $user->role == 3) { // Applicant
+        //     $query->whereIn('target_audience', ['External', 'Both']);
+        // }
         $query->whereIn('target_audience', ['External', 'Both']);
         $jobPostings = $query->orderBy('created_at', 'desc')->get();
         $jobPostings->map(function ($job) use ($user) {
