@@ -150,7 +150,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                 info_reporting_to: `${new_position_information?.user?.personal_information?.first_name} ${new_position_information?.user?.personal_information?.last_name}`,
                 position: employee_information?.position,
                 department: employee_information?.department?.name,
-                account: employee_information?.account?.name,
+                account: employee_information?.account?.name??'',
                 reporting_to: reportingName,
             };
 
@@ -345,9 +345,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                     <td className="border border-black p-1 px-2 text-center">
                                         <Input
                                             type="text"
-                                            {...register("account", {
-                                                required: true,
-                                            })}
+                                            {...register("account")}
                                             disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                             error={errors.account}
@@ -669,9 +667,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                     <td className="border border-black p-1">
                                         <Input
                                             type="text"
-                                            {...register("info_account_from", {
-                                                required: true,
-                                            })}
+                                            {...register("info_account_from")}
                                             disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                         />
