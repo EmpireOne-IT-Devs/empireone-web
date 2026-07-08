@@ -351,66 +351,40 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                 )}
                             </div>
                         </div>
-                        <div className="px-1 sm:px-3">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-4">
-                                Position Details
-                            </h3>
 
-                            <div className="space-y-4">
-                                <div className="flex flex-col md:flex-row gap-4">
-                                    <div className="flex-1 w-full">
-                                        <Input
-                                            {...register("title", {
-                                                required: "Title is required",
-                                            })}
-                                            error={errors.title?.message}
-                                            label="Position Title"
-                                            placeholder="e.g. Senior Software Engineer"
-                                        />
-                                    </div>
+                        {
+                            positionType && <>
+                                <div className="px-1 sm:px-3">
+                                    <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                                        Position Details
+                                    </h3>
 
-                                    <div className="flex-1 w-full">
-                                        <Controller
-                                            name="department_id"
-                                            control={control}
-                                            rules={{
-                                                required:
-                                                    "Department is required",
-                                            }}
-                                            render={({ field }) => (
-                                                <Select
-                                                    {...field}
-                                                    label="Select Department"
-                                                    options={data?.departments?.map(
-                                                        (res) => ({
-                                                            ...res,
-                                                            label: res.name,
-                                                            value: res.id,
-                                                        }),
-                                                    )}
-                                                    error={
-                                                        errors.department_id
-                                                            ?.message
-                                                    }
+                                    <div className="space-y-4">
+                                        <div className="flex flex-col md:flex-row gap-4">
+                                            <div className="flex-1 w-full">
+                                                <Input
+                                                    {...register("title", {
+                                                        required: "Title is required",
+                                                    })}
+                                                    error={errors.title?.message}
+                                                    label="Position Title"
+                                                    placeholder="e.g. Senior Software Engineer"
                                                 />
-                                            )}
-                                        />
-                                    </div>
-                                    {String(watchedValues.department_id) ===
-                                        "4" && (
+                                            </div>
+
                                             <div className="flex-1 w-full">
                                                 <Controller
-                                                    name="account_id"
+                                                    name="department_id"
                                                     control={control}
                                                     rules={{
                                                         required:
-                                                            "Account is required",
+                                                            "Department is required",
                                                     }}
                                                     render={({ field }) => (
                                                         <Select
                                                             {...field}
-                                                            label="Select Account"
-                                                            options={data?.accounts?.map(
+                                                            label="Select Department"
+                                                            options={data?.departments?.map(
                                                                 (res) => ({
                                                                     ...res,
                                                                     label: res.name,
@@ -418,551 +392,584 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                                 }),
                                                             )}
                                                             error={
-                                                                errors.account_id
+                                                                errors.department_id
                                                                     ?.message
                                                             }
                                                         />
                                                     )}
                                                 />
                                             </div>
-                                        )}
+                                            {String(watchedValues.department_id) ===
+                                                "4" && (
+                                                    <div className="flex-1 w-full">
+                                                        <Controller
+                                                            name="account_id"
+                                                            control={control}
+                                                            rules={{
+                                                                required:
+                                                                    "Account is required",
+                                                            }}
+                                                            render={({ field }) => (
+                                                                <Select
+                                                                    {...field}
+                                                                    label="Select Account"
+                                                                    options={data?.accounts?.map(
+                                                                        (res) => ({
+                                                                            ...res,
+                                                                            label: res.name,
+                                                                            value: res.id,
+                                                                        }),
+                                                                    )}
+                                                                    error={
+                                                                        errors.account_id
+                                                                            ?.message
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </div>
+                                                )}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <Controller
+                                                name="employment_type"
+                                                control={control}
+                                                rules={{
+                                                    required:
+                                                        "Employment type is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        label="Employment Type"
+                                                        options={[
+                                                            {
+                                                                value: "Full-time",
+                                                                label: "Full-time",
+                                                            },
+                                                            {
+                                                                value: "Part-time",
+                                                                label: "Part-time",
+                                                            },
+                                                            {
+                                                                value: "Contract",
+                                                                label: "Contract",
+                                                            },
+                                                            {
+                                                                value: "Temporary",
+                                                                label: "Temporary",
+                                                            },
+                                                        ]}
+                                                        error={
+                                                            errors.employment_type
+                                                                ?.message
+                                                        }
+                                                    />
+                                                )}
+                                            />
+
+                                            <Input
+                                                {...register("number_of_positions", {
+                                                    required:
+                                                        "Number of Positions is required",
+                                                })}
+                                                error={
+                                                    errors.number_of_positions?.message
+                                                }
+                                                type="number"
+                                                label="Number of Positions"
+                                                placeholder="e.g. 2"
+                                            />
+
+                                            <Controller
+                                                name="priority"
+                                                control={control}
+                                                rules={{
+                                                    required: "Priority is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        label="Priority"
+                                                        options={[
+                                                            {
+                                                                value: "Low",
+                                                                label: "Low",
+                                                            },
+                                                            {
+                                                                value: "Medium",
+                                                                label: "Medium",
+                                                            },
+                                                            {
+                                                                value: "High",
+                                                                label: "High",
+                                                            },
+                                                        ]}
+                                                        error={errors.priority?.message}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <Controller
+                                                name="erf_classification"
+                                                control={control}
+                                                rules={{
+                                                    required:
+                                                        "ERF Classification is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        label="ERF Classification"
+                                                        options={[
+                                                            {
+                                                                value: "New Role",
+                                                                label: "New Role",
+                                                            },
+                                                            {
+                                                                value: "Additional Manpower",
+                                                                label: "Additional Manpower",
+                                                            },
+                                                            {
+                                                                value: "Internal Job Posting",
+                                                                label: "Internal Job Posting",
+                                                            },
+                                                            {
+                                                                value: "Replacement (due to resignation/termination/personnel movement)",
+                                                                label: "Replacement (due to resignation/termination/personnel movement)",
+                                                            },
+                                                        ]}
+                                                        error={
+                                                            errors.erf_classification
+                                                                ?.message
+                                                        }
+                                                    />
+                                                )}
+                                            />
+
+                                            <Controller
+                                                name="target_audience"
+                                                control={control}
+                                                rules={{
+                                                    required:
+                                                        "Target Audience is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        label="Target Audience"
+                                                        options={[
+                                                            {
+                                                                value: "Both",
+                                                                label: "Both",
+                                                            },
+                                                            {
+                                                                value: "Internal",
+                                                                label: "Internal",
+                                                            },
+                                                            {
+                                                                value: "External",
+                                                                label: "External",
+                                                            },
+                                                        ]}
+                                                        error={
+                                                            errors.target_audience
+                                                                ?.message
+                                                        }
+                                                    />
+                                                )}
+                                            />
+                                            <Controller
+                                                name="position_level"
+                                                control={control}
+                                                rules={{
+                                                    required:
+                                                        "Position Level is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        label="Position Level"
+                                                        options={[
+                                                            {
+                                                                value: "Rank and File",
+                                                                label: "Rank and File",
+                                                            },
+                                                            {
+                                                                value: "Supervisor",
+                                                                label: "Supervisor",
+                                                            },
+                                                            {
+                                                                value: "Manager",
+                                                                label: "Manager",
+                                                            },
+                                                            {
+                                                                value: "Executive",
+                                                                label: "Executive",
+                                                            },
+                                                        ]}
+                                                        error={
+                                                            errors.position_level
+                                                                ?.message
+                                                        }
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <Controller
+                                                name="location_id"
+                                                control={control}
+                                                rules={{
+                                                    required: "Location is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        label="Select Location"
+                                                        options={data?.locations?.map(
+                                                            (res) => ({
+                                                                label: res.name,
+                                                                value: res.id,
+                                                            }),
+                                                        )}
+                                                        error={
+                                                            errors.location_id?.message
+                                                        }
+                                                    />
+                                                )}
+                                            />
+
+                                            <Controller
+                                                name="site_id"
+                                                control={control}
+                                                rules={{ required: "Site is required" }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        {...field}
+                                                        label="Select Site"
+                                                        options={sites?.map((res) => ({
+                                                            label: `${res.name} (${res.address})`,
+                                                            value: res.id,
+                                                        }))}
+                                                        error={errors.site_id?.message}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                            <div className="flex flex-col sm:flex-row gap-3 bg-gray-50 border border-gray-200 rounded-lg p-2">
+                                                <div className="flex-1">
+                                                    <Input
+                                                        {...register(
+                                                            "salary_range_from",
+                                                            {
+                                                                required:
+                                                                    "Salary Range is required",
+                                                            },
+                                                        )}
+                                                        error={
+                                                            errors.salary_range_from
+                                                                ?.message
+                                                        }
+                                                        iconLeft="₱"
+                                                        label="Salary Range From"
+                                                        placeholder="e.g. 50,000"
+                                                    />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <Input
+                                                        {...register(
+                                                            "salary_range_to",
+                                                            {
+                                                                required:
+                                                                    "Salary Range is required",
+                                                            },
+                                                        )}
+                                                        error={
+                                                            errors.salary_range_to
+                                                                ?.message
+                                                        }
+                                                        iconLeft="₱"
+                                                        label="To"
+                                                        placeholder="e.g. 70,000"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex mt-2">
+                                                <Input
+                                                    type="date"
+                                                    {...register("target_start_date", {
+                                                        required:
+                                                            "Target Start Date is required",
+                                                    })}
+                                                    error={
+                                                        errors.target_start_date
+                                                            ?.message
+                                                    }
+                                                    label="Target Start Date"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <Controller
-                                        name="employment_type"
-                                        control={control}
-                                        rules={{
-                                            required:
-                                                "Employment type is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Employment Type"
-                                                options={[
-                                                    {
-                                                        value: "Full-time",
-                                                        label: "Full-time",
-                                                    },
-                                                    {
-                                                        value: "Part-time",
-                                                        label: "Part-time",
-                                                    },
-                                                    {
-                                                        value: "Contract",
-                                                        label: "Contract",
-                                                    },
-                                                    {
-                                                        value: "Temporary",
-                                                        label: "Temporary",
-                                                    },
-                                                ]}
-                                                error={
-                                                    errors.employment_type
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
-                                    />
+                                <div className="px-1 sm:px-3">
+                                    <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                                        Interviewer Detail
+                                    </h3>
 
-                                    <Input
-                                        {...register("number_of_positions", {
-                                            required:
-                                                "Number of Positions is required",
-                                        })}
-                                        error={
-                                            errors.number_of_positions?.message
-                                        }
-                                        type="number"
-                                        label="Number of Positions"
-                                        placeholder="e.g. 2"
-                                    />
-
-                                    <Controller
-                                        name="priority"
-                                        control={control}
-                                        rules={{
-                                            required: "Priority is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Priority"
-                                                options={[
-                                                    {
-                                                        value: "Low",
-                                                        label: "Low",
-                                                    },
-                                                    {
-                                                        value: "Medium",
-                                                        label: "Medium",
-                                                    },
-                                                    {
-                                                        value: "High",
-                                                        label: "High",
-                                                    },
-                                                ]}
-                                                error={errors.priority?.message}
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <Input
+                                                {...register("interviewer1", {
+                                                    required: "Interviewer is required",
+                                                })}
+                                                error={errors.interviewer1?.message}
+                                                label="Interviewer "
+                                                placeholder="e.g. John Doe"
                                             />
-                                        )}
-                                    />
+
+                                            <div className="flex gap-2">
+                                                <Controller
+                                                    name="week_from1"
+                                                    control={control}
+                                                    rules={{
+                                                        required: "From is required",
+                                                    }}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            {...field}
+                                                            label="From"
+                                                            options={weeks}
+                                                            error={
+                                                                errors.week_from1
+                                                                    ?.message
+                                                            }
+                                                        />
+                                                    )}
+                                                />
+                                                <div className="text-center flex items-center justify-center">
+                                                    -
+                                                </div>
+                                                <Controller
+                                                    name="week_to1"
+                                                    control={control}
+                                                    rules={{
+                                                        required: "To is required",
+                                                    }}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            {...field}
+                                                            label="To "
+                                                            options={weeks}
+                                                            error={
+                                                                errors.week_to1?.message
+                                                            }
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+
+                                            <Input
+                                                type="time"
+                                                {...register("interview_time1", {
+                                                    required:
+                                                        "Interview time is required",
+                                                })}
+                                                error={errors.interview_time1?.message}
+                                                label="Interview Time"
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <Input
+                                                {...register("interviewer2")}
+                                                error={errors.interviewer2?.message}
+                                                label="Interviewer 2 (optional)"
+                                                placeholder="e.g. John Doe"
+                                            />
+
+                                            <div className="flex gap-2">
+                                                <Controller
+                                                    name="week_from2"
+                                                    control={control}
+                                                    rules={{
+                                                        required:
+                                                            "From 1 1 is required",
+                                                    }}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            {...field}
+                                                            label="From"
+                                                            options={weeks}
+                                                            error={
+                                                                errors.week_from2
+                                                                    ?.message
+                                                            }
+                                                        />
+                                                    )}
+                                                />
+                                                <div className="text-center flex items-center justify-center">
+                                                    -
+                                                </div>
+                                                <Controller
+                                                    name="week_to2"
+                                                    control={control}
+                                                    rules={{
+                                                        required: "To is required",
+                                                    }}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            {...field}
+                                                            label="To"
+                                                            options={weeks}
+                                                            error={
+                                                                errors.week_to2?.message
+                                                            }
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+
+                                            <Input
+                                                type="time"
+                                                {...register("interview_time2")}
+                                                error={errors.interview_time2?.message}
+                                                label="Interview Time 2 (optional)"
+                                            />
+                                        </div>
+
+                                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                            <p className="text-sm text-gray-600">
+                                                <span className="font-medium">
+                                                    Note:
+                                                </span>{" "}
+                                                The final interviewer will conduct the
+                                                last round of interviews, while the
+                                                sub-interviewer will assist in the
+                                                initial screening process.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <Controller
-                                        name="erf_classification"
-                                        control={control}
-                                        rules={{
-                                            required:
-                                                "ERF Classification is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="ERF Classification"
-                                                options={[
-                                                    {
-                                                        value: "New Role",
-                                                        label: "New Role",
-                                                    },
-                                                    {
-                                                        value: "Additional Manpower",
-                                                        label: "Additional Manpower",
-                                                    },
-                                                    {
-                                                        value: "Internal Job Posting",
-                                                        label: "Internal Job Posting",
-                                                    },
-                                                    {
-                                                        value: "Replacement (due to resignation/termination/personnel movement)",
-                                                        label: "Replacement (due to resignation/termination/personnel movement)",
-                                                    },
-                                                ]}
-                                                error={
-                                                    errors.erf_classification
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
-                                    />
+                                <div className="px-1 sm:px-3">
+                                    <h3 className="text-sm font-semibold text-gray-700 mb-4">
+                                        Approvers
+                                    </h3>
 
-                                    <Controller
-                                        name="target_audience"
-                                        control={control}
-                                        rules={{
-                                            required:
-                                                "Target Audience is required",
-                                        }}
-                                        render={({ field }) => (
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <Select
-                                                {...field}
-                                                label="Target Audience"
-                                                options={[
-                                                    {
-                                                        value: "Both",
-                                                        label: "Both",
-                                                    },
-                                                    {
-                                                        value: "Internal",
-                                                        label: "Internal",
-                                                    },
-                                                    {
-                                                        value: "External",
-                                                        label: "External",
-                                                    },
-                                                ]}
-                                                error={
-                                                    errors.target_audience
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
-                                    />
-                                    <Controller
-                                        name="position_level"
-                                        control={control}
-                                        rules={{
-                                            required:
-                                                "Position Level is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Position Level"
-                                                options={[
-                                                    {
-                                                        value: "Rank and File",
-                                                        label: "Rank and File",
-                                                    },
-                                                    {
-                                                        value: "Supervisor",
-                                                        label: "Supervisor",
-                                                    },
-                                                    {
-                                                        value: "Manager",
-                                                        label: "Manager",
-                                                    },
-                                                    {
-                                                        value: "Executive",
-                                                        label: "Executive",
-                                                    },
-                                                ]}
-                                                error={
-                                                    errors.position_level
-                                                        ?.message
-                                                }
-                                            />
-                                        )}
-                                    />
-                                </div>
-
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <Controller
-                                        name="location_id"
-                                        control={control}
-                                        rules={{
-                                            required: "Location is required",
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Select Location"
-                                                options={data?.locations?.map(
-                                                    (res) => ({
+                                                label="Approver 1 "
+                                                required
+                                                name="approver1_id"
+                                                options={
+                                                    users?.users?.map((res) => ({
+                                                        ...res,
                                                         label: res.name,
                                                         value: res.id,
-                                                    }),
-                                                )}
-                                                error={
-                                                    errors.location_id?.message
+                                                    })) || []
                                                 }
+                                                value={watchedValues.approver1_id}
+                                                onChange={(val) =>
+                                                    setValue("approver1_id", val)
+                                                }
+                                                error={errors.approver1_id?.message}
+                                            />
+                                            <Select
+                                                label="Approver 2 "
+                                                required
+                                                name="approver2_id"
+                                                options={
+                                                    users?.users?.map((res) => ({
+                                                        ...res,
+                                                        label: res.name,
+                                                        value: res.id,
+                                                    })) || []
+                                                }
+                                                value={watchedValues.approver2_id}
+                                                error={errors.approver2_id?.message}
+                                                onChange={(val) =>
+                                                    setValue("approver2_id", val)
+                                                }
+                                            />
+                                            <Select
+                                                label="Approver 3 "
+                                                required
+                                                name="approver3_id"
+                                                options={
+                                                    users?.users?.map((res) => ({
+                                                        ...res,
+                                                        label: res.name,
+                                                        value: res.id,
+                                                    })) || []
+                                                }
+                                                value={watchedValues.approver3_id}
+                                                onChange={(val) =>
+                                                    setValue("approver3_id", val)
+                                                }
+                                                error={errors.approver3_id?.message}
+                                            />
+                                        </div>
+
+                                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                            <p className="text-sm text-gray-600">
+                                                <span className="font-medium">
+                                                    Note:
+                                                </span>{" "}
+                                                The request is approved by the 1st
+                                                approver, Director, and TA Manager, then
+                                                assigned to a recruiter.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="px-1 sm:px-3 space-y-4">
+                                    <Controller
+                                        name="qualifications"
+                                        control={control}
+                                        rules={{
+                                            required:
+                                                "Position Requirements is required",
+                                        }}
+                                        render={({ field }) => (
+                                            <Wysiwyg
+                                                label="Job / Position Requirements"
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                error={errors.qualifications?.message}
                                             />
                                         )}
                                     />
 
                                     <Controller
-                                        name="site_id"
+                                        name="responsibilities"
                                         control={control}
-                                        rules={{ required: "Site is required" }}
+                                        rules={{
+                                            required: "Responsibility is required",
+                                        }}
                                         render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                label="Select Site"
-                                                options={sites?.map((res) => ({
-                                                    label: `${res.name} (${res.address})`,
-                                                    value: res.id,
-                                                }))}
-                                                error={errors.site_id?.message}
+                                            <Wysiwyg
+                                                label="Job Description / Responsibility"
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                error={errors.responsibilities?.message}
                                             />
                                         )}
                                     />
                                 </div>
+                            </>
+                        }
 
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                    <div className="flex flex-col sm:flex-row gap-3 bg-gray-50 border border-gray-200 rounded-lg p-2">
-                                        <div className="flex-1">
-                                            <Input
-                                                {...register(
-                                                    "salary_range_from",
-                                                    {
-                                                        required:
-                                                            "Salary Range is required",
-                                                    },
-                                                )}
-                                                error={
-                                                    errors.salary_range_from
-                                                        ?.message
-                                                }
-                                                iconLeft="₱"
-                                                label="Salary Range From"
-                                                placeholder="e.g. 50,000"
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <Input
-                                                {...register(
-                                                    "salary_range_to",
-                                                    {
-                                                        required:
-                                                            "Salary Range is required",
-                                                    },
-                                                )}
-                                                error={
-                                                    errors.salary_range_to
-                                                        ?.message
-                                                }
-                                                iconLeft="₱"
-                                                label="To"
-                                                placeholder="e.g. 70,000"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex mt-2">
-                                        <Input
-                                            type="date"
-                                            {...register("target_start_date", {
-                                                required:
-                                                    "Target Start Date is required",
-                                            })}
-                                            error={
-                                                errors.target_start_date
-                                                    ?.message
-                                            }
-                                            label="Target Start Date"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div className="px-1 sm:px-3">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-4">
-                                Interviewer Detail
-                            </h3>
-
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <Input
-                                        {...register("interviewer1", {
-                                            required: "Interviewer is required",
-                                        })}
-                                        error={errors.interviewer1?.message}
-                                        label="Interviewer "
-                                        placeholder="e.g. John Doe"
-                                    />
-
-                                    <div className="flex gap-2">
-                                        <Controller
-                                            name="week_from1"
-                                            control={control}
-                                            rules={{
-                                                required: "From is required",
-                                            }}
-                                            render={({ field }) => (
-                                                <Select
-                                                    {...field}
-                                                    label="From"
-                                                    options={weeks}
-                                                    error={
-                                                        errors.week_from1
-                                                            ?.message
-                                                    }
-                                                />
-                                            )}
-                                        />
-                                        <div className="text-center flex items-center justify-center">
-                                            -
-                                        </div>
-                                        <Controller
-                                            name="week_to1"
-                                            control={control}
-                                            rules={{
-                                                required: "To is required",
-                                            }}
-                                            render={({ field }) => (
-                                                <Select
-                                                    {...field}
-                                                    label="To "
-                                                    options={weeks}
-                                                    error={
-                                                        errors.week_to1?.message
-                                                    }
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    <Input
-                                        type="time"
-                                        {...register("interview_time1", {
-                                            required:
-                                                "Interview time is required",
-                                        })}
-                                        error={errors.interview_time1?.message}
-                                        label="Interview Time"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <Input
-                                        {...register("interviewer2")}
-                                        error={errors.interviewer2?.message}
-                                        label="Interviewer 2 (optional)"
-                                        placeholder="e.g. John Doe"
-                                    />
-
-                                    <div className="flex gap-2">
-                                        <Controller
-                                            name="week_from2"
-                                            control={control}
-                                            rules={{
-                                                required:
-                                                    "From 1 1 is required",
-                                            }}
-                                            render={({ field }) => (
-                                                <Select
-                                                    {...field}
-                                                    label="From"
-                                                    options={weeks}
-                                                    error={
-                                                        errors.week_from2
-                                                            ?.message
-                                                    }
-                                                />
-                                            )}
-                                        />
-                                        <div className="text-center flex items-center justify-center">
-                                            -
-                                        </div>
-                                        <Controller
-                                            name="week_to2"
-                                            control={control}
-                                            rules={{
-                                                required: "To is required",
-                                            }}
-                                            render={({ field }) => (
-                                                <Select
-                                                    {...field}
-                                                    label="To"
-                                                    options={weeks}
-                                                    error={
-                                                        errors.week_to2?.message
-                                                    }
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    <Input
-                                        type="time"
-                                        {...register("interview_time2")}
-                                        error={errors.interview_time2?.message}
-                                        label="Interview Time 2 (optional)"
-                                    />
-                                </div>
-
-                                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                                    <p className="text-sm text-gray-600">
-                                        <span className="font-medium">
-                                            Note:
-                                        </span>{" "}
-                                        The final interviewer will conduct the
-                                        last round of interviews, while the
-                                        sub-interviewer will assist in the
-                                        initial screening process.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="px-1 sm:px-3">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-4">
-                                Approvers
-                            </h3>
-
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <Select
-                                        label="Approver 1 "
-                                        required
-                                        name="approver1_id"
-                                        options={
-                                            users?.users?.map((res) => ({
-                                                ...res,
-                                                label: res.name,
-                                                value: res.id,
-                                            })) || []
-                                        }
-                                        value={watchedValues.approver1_id}
-                                        onChange={(val) =>
-                                            setValue("approver1_id", val)
-                                        }
-                                        error={errors.approver1_id?.message}
-                                    />
-                                    <Select
-                                        label="Approver 2 "
-                                        required
-                                        name="approver2_id"
-                                        options={
-                                            users?.users?.map((res) => ({
-                                                ...res,
-                                                label: res.name,
-                                                value: res.id,
-                                            })) || []
-                                        }
-                                        value={watchedValues.approver2_id}
-                                        error={errors.approver2_id?.message}
-                                        onChange={(val) =>
-                                            setValue("approver2_id", val)
-                                        }
-                                    />
-                                    <Select
-                                        label="Approver 3 "
-                                        required
-                                        name="approver3_id"
-                                        options={
-                                            users?.users?.map((res) => ({
-                                                ...res,
-                                                label: res.name,
-                                                value: res.id,
-                                            })) || []
-                                        }
-                                        value={watchedValues.approver3_id}
-                                        onChange={(val) =>
-                                            setValue("approver3_id", val)
-                                        }
-                                        error={errors.approver3_id?.message}
-                                    />
-                                </div>
-
-                                <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                                    <p className="text-sm text-gray-600">
-                                        <span className="font-medium">
-                                            Note:
-                                        </span>{" "}
-                                        The request is approved by the 1st
-                                        approver, Director, and TA Manager, then
-                                        assigned to a recruiter.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="px-1 sm:px-3 space-y-4">
-                            <Controller
-                                name="qualifications"
-                                control={control}
-                                rules={{
-                                    required:
-                                        "Position Requirements is required",
-                                }}
-                                render={({ field }) => (
-                                    <Wysiwyg
-                                        label="Job / Position Requirements"
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        error={errors.qualifications?.message}
-                                    />
-                                )}
-                            />
-
-                            <Controller
-                                name="responsibilities"
-                                control={control}
-                                rules={{
-                                    required: "Responsibility is required",
-                                }}
-                                render={({ field }) => (
-                                    <Wysiwyg
-                                        label="Job Description / Responsibility"
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        error={errors.responsibilities?.message}
-                                    />
-                                )}
-                            />
-                        </div>
                     </div>
 
                     <div className="sticky bottom-0 bg-white border-t pt-4 mt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 pb-2 px-1 sm:px-3">

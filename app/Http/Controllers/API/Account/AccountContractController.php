@@ -121,6 +121,7 @@ class AccountContractController extends Controller
                 ['er_leader_id'   => $leader->id]       // 2. The data to update or create
             );
         }
+        
         AccountWorkingExperience::where('user_id', Auth::id())
             ->whereNotIn('id', $experienceIds)
             ->delete();

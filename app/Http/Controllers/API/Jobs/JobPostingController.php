@@ -145,7 +145,7 @@ class JobPostingController extends Controller
     {
         $user = Auth::user(); // Administrator
         $query = JobPosting::where('status', 'Active')->with(['job_requisition', 'applications', 'applicant']);
-        if ($user && $user->role == 2) { // Employee 
+        if ($user && $user->role == 2 || $user->role == 1) { // Employee 
             $query->whereIn('target_audience', ['Internal', 'Both']);
         } elseif ($user && $user->role == 3) { // Applicant
             $query->whereIn('target_audience', ['External', 'Both']);
