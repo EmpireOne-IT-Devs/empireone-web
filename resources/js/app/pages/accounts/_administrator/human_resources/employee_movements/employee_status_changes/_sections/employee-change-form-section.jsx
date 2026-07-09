@@ -47,7 +47,6 @@ const defaultFormValues = {
     info_basic_pay_to: null,
     info_allowances_from: null,
     info_allowances_to: null,
-    prepaired_by_id: 50,
     ack_date: null,
     is_edit_status: false,
     is_edit_reporting_to: false,

@@ -134,7 +134,7 @@ export default function ApplicantTableSection() {
                         size="sm"
                         onClick={() => router.visit(`/accounts/administrator/human_resources/employee_movements/assessment_process/promotions?employee_id=${res?.applicant?.account_employee?.employee_id}`)}
                     >
-                        CREATE ERF
+                        CREATE ECF
                     </Button>
                 }
                 <ShowApplicantDetailsSection data={res} />

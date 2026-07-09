@@ -17,20 +17,48 @@ class EnsureAccountEmployeeComplete
             return redirect()->route('login');
         }
 
+        // 🔥 INFINITE LOOP PREVENTION
+        // If the user is ALREADY on a setup page or the signature page, let them through immediately!
+        // The asterisk (*) is a wildcard that matches 'administrator' or 'employee' and 'setup1' or 'setup2'
+        if ($request->is('accounts/*/setup*') || $request->is('accounts/*/my_profile/signature')) {
+            return $next($request);
+        }
+
         // 2. Applicants (role 3) don't have an account_employee record — skip check
         if ($user->role === 3) {
             return $next($request);
         }
 
         $info = $user->account_employee;
+        $info2 = $user->personal_information;
 
-        // 3. If the record doesn't exist at all, redirect them
-        if (!$info) {
-            return redirect()->route('dashboard');
-        }
+        $accountType = ($user->role == 1) ? 'administrator' : 'employee';
+
+        // 3. If EITHER record doesn't exist at all, start them at step 1
+        // if (!$info || !$info2) {
+        //     return redirect("/accounts/{$accountType}/setup1");
+        // }
+
+        $requiredFields1 = [
+            'first_name',
+            'last_name',
+            'gender',
+            'date_of_birth',
+            'year_graduated',
+            'contact',
+            'region',
+            'province',
+            'city',
+            'barangay',
+            'street',
+            'zip_code',
+            'degree',
+            'school_name',
+            'course',
+        ];
 
         // 4. List of required database columns
-        $requiredFields = [
+        $requiredFields2 = [
             'employee_id',
             'started_at',
             'position_level',
@@ -42,21 +70,31 @@ class EnsureAccountEmployeeComplete
             'signature'
         ];
 
+
+
         // 5. Check if required fields are filled for Admins (1) and Employees (2)
         if ($user->role == 2 || $user->role == 1) {
-            foreach ($requiredFields as $field) {
+
+            // STEP 1: Check personal_information fields first (Redirects to setup1)
+            foreach ($requiredFields1 as $field) {
+                if (blank($info2->{$field})) {
+                    return redirect("/accounts/{$accountType}/setup1");
+                }
+            }
+
+            // STEP 2: Check account_employee fields next (Redirects to setup2)
+            foreach ($requiredFields2 as $field) {
                 if (blank($info->{$field})) {
-                    $accountType = ($user->role == 1) ? 'administrator' : 'employee';
                     if ($field == 'signature') {
+                        // If they only missed the signature, send them specifically there
                         return redirect("/accounts/{$accountType}/my_profile/signature");
-                    } else {
-                        return redirect("/accounts/{$accountType}/setup");
                     }
+                    return redirect("/accounts/{$accountType}/setup2");
                 }
             }
         }
 
-        // 6. If everything is filled out, let the request proceed
+        // 6. If everything is filled out, let the request proceed normally
         return $next($request);
     }
 }

@@ -82,8 +82,13 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
                 ->name("{$role}.performance_evaluation");
             Route::inertia('/job_offers/{id}', 'accounts/job_offers/id/page');
 
-            Route::get('/setup', function () {
-                return Inertia::render('accounts/setup/page');
+            Route::prefix('')->group(function () {
+                Route::get('/setup1', function () {
+                    return Inertia::render('accounts/setup/setup1/page');
+                });
+                Route::get('/setup2', function () {
+                    return Inertia::render('accounts/setup/setup2/page');
+                });
             })->withoutMiddleware(['info.complete']);
             // My Profile Sub-group
             Route::prefix('my_profile')->group(function () {

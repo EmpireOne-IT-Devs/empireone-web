@@ -11,6 +11,7 @@ use App\Models\ER\ERSubordinate;
 use App\Models\Jobs\JobPosting;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class EREmployeeChangeFormController extends Controller
@@ -97,7 +98,10 @@ class EREmployeeChangeFormController extends Controller
     }
     public function store(Request $request)
     {
-        $ecf = EREmployeeChangeForm::create($request->all());
+        $ecf = EREmployeeChangeForm::create([
+            ...$request->all(),
+            'prepaired_by_id' => Auth::id()
+        ]);
         $user = User::where('id', $request->user_id)->with(['account_employee'])->first();
         $url = url("/accounts/my_documents/" . $ecf->id . "/employee_change_form");
         Mail::to($user->account_employee['eogs_email'] ?? $user->email)->send(new ChangeFormEmail($user, $url));
