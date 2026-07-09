@@ -1,0 +1,1 @@
+import{u as c,v as t,s as a}from"./app-Dr2s5l3K.js";function o(){const e=c();return{handleDelete:async s=>{const l=await e(t(s));t.fulfilled.match(l)&&e(a({type:"success",title:"Post Deleted Successfully!"}))}}}export{o as DeletePostSection};

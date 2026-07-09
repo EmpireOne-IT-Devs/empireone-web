@@ -143,22 +143,36 @@ class JobPostingController extends Controller
 
     public function index()
     {
-        $user = Auth::user(); // Administrator
-        $query = JobPosting::where('status', 'Active')->with(['job_requisition', 'applications', 'applicant']);
-        if ($user && $user->role == 2) { // Employee 
+        $user = Auth::user();
+
+        $query = JobPosting::where('status', 'Active')
+            ->with(['job_requisition', 'applications', 'applicant']);
+
+        // Check target audience based on user role
+        if ($user && in_array($user->role, [1, 2])) {
+            // Employees and Admins (Roles 1 & 2) see Internal and Both. 
+            // Note: Add 'External' to this array if internal staff should also see external jobs.
             $query->whereIn('target_audience', ['Internal', 'Both']);
-        } elseif ($user && $user->role == 3) { // Applicant
+        } else {
+            // Role 3 (External Applicants) and Guests (Not logged in) see External and Both
             $query->whereIn('target_audience', ['External', 'Both']);
         }
-        $query->whereIn('target_audience', ['External', 'Both']);
+
         $jobPostings = $query->orderBy('created_at', 'desc')->get();
+
+        // Map through the results to append 'is_applied'
         $jobPostings->map(function ($job) use ($user) {
-            $job->is_applied = $job->applications()->where('user_id', $user->id ?? 0)->exists();
+            if ($user) {
+                $job->is_applied = $job->applications()->where('user_id', $user->id)->exists();
+            } else {
+                $job->is_applied = false; // Guests cannot have applied
+            }
+
             return $job;
         });
+
         return response()->json($jobPostings);
     }
-
     public function store(Request $request)
     {
 

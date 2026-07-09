@@ -209,47 +209,20 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                         <div className="mt-2 space-y-6 text-gray-800">
                             {data?.job_requisition
                                 ?.justification_for_position && (
-                                <div>
-                                    <h3 className="font-semibold text-lg mb-2">
-                                        Job Description
-                                    </h3>
-                                    <div
-                                        className="prose max-w-none"
-                                        dangerouslySetInnerHTML={{
-                                            __html: data?.job_requisition
-                                                ?.justification_for_position,
-                                        }}
-                                    />
-                                </div>
-                            )}
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-2">
+                                            Job Description
+                                        </h3>
+                                        <div
+                                            className="prose max-w-none"
+                                            dangerouslySetInnerHTML={{
+                                                __html: data?.job_requisition
+                                                    ?.justification_for_position,
+                                            }}
+                                        />
+                                    </div>
+                                )}
 
-                            {data?.job_requisition?.qualifications && (
-                                <div>
-                                    <h3 className="font-semibold text-lg mb-2">
-                                        Requirements
-                                    </h3>
-                                    <ul className="space-y-2">
-                                        {data.job_requisition.qualifications
-                                            .replace(/<\/?ul>/g, "")
-                                            .split(/<\/?li>/)
-                                            .map((item) =>
-                                                item
-                                                    .replace(/<[^>]+>/g, "")
-                                                    .trim(),
-                                            )
-                                            .filter(Boolean)
-                                            .map((item, index) => (
-                                                <li
-                                                    key={index}
-                                                    className="flex items-center gap-2 text-gray-700"
-                                                >
-                                                    <CheckCircle className="w-4 h-4 text-green-500" />
-                                                    {item}
-                                                </li>
-                                            ))}
-                                    </ul>
-                                </div>
-                            )}
                         </div>
                     </div>
 
@@ -279,6 +252,47 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                         </div>
                     </div>
 
+                    <div className="mt-4 space-y-6 pt-4 text-gray-800 text-sm sm:text-base">
+                        {data?.job_requisition.justification_for_position && (
+                            <div>
+                                <h3 className="font-semibold text-lg mb-2">
+                                    Justification for Position
+                                </h3>
+                                <div
+                                    className="prose max-w-none"
+                                    dangerouslySetInnerHTML={{
+                                        __html: data?.job_requisition.justification_for_position,
+                                    }}
+                                />
+                            </div>
+                        )}
+                        {data?.job_requisition.qualifications && (
+                            <div>
+                                <h3 className="font-semibold text-lg mb-2">
+                                    Qualifications
+                                </h3>
+                                <div
+                                    className="prose max-w-none"
+                                    dangerouslySetInnerHTML={{
+                                        __html: data?.job_requisition.qualifications,
+                                    }}
+                                />
+                            </div>
+                        )}
+                        {data?.job_requisition.responsibilities && (
+                            <div>
+                                <h3 className="font-semibold text-lg mb-2">
+                                    Responsibilities
+                                </h3>
+                                <div
+                                    className="prose max-w-none"
+                                    dangerouslySetInnerHTML={{
+                                        __html: data?.job_requisition.responsibilities,
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </div>
                     <div className="sticky bottom-0 bg-white border-t pt-4 flex justify-between gap-3">
                         <Button
                             variant="secondary"
