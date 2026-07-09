@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/trash-DbV4FBL0.js
-import{c as a}from"./createLucideIcon-BaV0HB72.js";const t=[["path",{d:"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6",key:"miytrc"}],["path",{d:"M3 6h18",key:"d0wm0j"}],["path",{d:"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",key:"e791ji"}]],c=a("trash",t);export{c as T};
-========
-import{c as a}from"./createLucideIcon-BcdOOl_X.js";const t=[["path",{d:"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6",key:"miytrc"}],["path",{d:"M3 6h18",key:"d0wm0j"}],["path",{d:"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",key:"e791ji"}]],c=a("trash",t);export{c as T};
->>>>>>>> origin/HEAD:public/build/assets/trash-BLIUnR6Y.js

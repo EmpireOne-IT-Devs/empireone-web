@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/job-requisition-thunk-Dn6BNflc.js
-import{g as o,a as n}from"./job-requisition-service-DegUWtvi.js";import{I as e}from"./app-BcgFT2UZ.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
-========
-import{g as o,a as n}from"./job-requisition-service-1AX5cIjs.js";import{P as e}from"./app-BmrEqltX.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
->>>>>>>> origin/HEAD:public/build/assets/job-requisition-thunk-DyJmrMw5.js

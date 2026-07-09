@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-B2kWCtCj.js
-import{j as e}from"./app-BcgFT2UZ.js";import r from"./header-section-BgKBETP0.js";import"./index-Ce9oSSji.js";import"./select-gqoy0WaP.js";import t from"./tabs-section-Crr5EdyA.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
-========
-import{j as e}from"./app-BmrEqltX.js";import r from"./header-section-DOb3hNep.js";import"./index-DfSraTG4.js";import"./select-Czei1nWi.js";import t from"./tabs-section-J4pTDbwi.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
->>>>>>>> origin/HEAD:public/build/assets/layout-Bts1fSLJ.js
