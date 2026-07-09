@@ -44,6 +44,7 @@ const activitiesSlice = createSlice({
         // posts feed
         posts: [],
         postsLoading: true,
+        postsFetching: false, // true only while an HTTP request is in-flight (used for dedup)
         postsError: null,
         // upcoming scheduled events
         upcomingEvents: [],
@@ -72,7 +73,17 @@ const activitiesSlice = createSlice({
         pollStatusUpdating: false,
         pollStatusUpdateError: null,
     },
-    reducers: {},
+    reducers: {
+       
+        sync_post_interaction(state, action) {
+            const { postId, reaction_count, user_has_reacted, comment_count } = action.payload;
+            const idx = state.posts.findIndex((p) => p.id === postId);
+            if (idx === -1) return;
+            if (reaction_count !== undefined)   state.posts[idx].reaction_count   = reaction_count;
+            if (user_has_reacted !== undefined) state.posts[idx].user_has_reacted = user_has_reacted;
+            if (comment_count !== undefined)    state.posts[idx].comment_count    = comment_count;
+        },
+    },
     extraReducers: (builder) => {
         builder
             // ── upcoming birthdays ──────────────────────────────────────
@@ -93,14 +104,17 @@ const activitiesSlice = createSlice({
             // ── activity posts feed ─────────────────────────────────────
             .addCase(get_activity_posts_thunk.pending, (state) => {
                 state.postsLoading = true;
+                state.postsFetching = true;
                 state.postsError = null;
             })
             .addCase(get_activity_posts_thunk.fulfilled, (state, action) => {
                 state.postsLoading = false;
+                state.postsFetching = false;
                 state.posts = action.payload.data ?? [];
             })
             .addCase(get_activity_posts_thunk.rejected, (state, action) => {
                 state.postsLoading = false;
+                state.postsFetching = false;
                 state.postsError = action.payload;
             })
             // ── publish post ────────────────────────────────────────────
@@ -266,4 +280,6 @@ const activitiesSlice = createSlice({
 });
 
 export default activitiesSlice.reducer;
+
+export const { sync_post_interaction } = activitiesSlice.actions;
 

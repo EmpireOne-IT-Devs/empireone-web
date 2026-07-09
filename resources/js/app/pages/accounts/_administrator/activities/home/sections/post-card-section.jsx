@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Heart,
     MessageSquare,
@@ -15,11 +15,15 @@ import Badge from "@/app/_components/badge";
 import ActivityPollCard from "../../_components/activity-poll-card";
 import {
     get_activity_posts_thunk,
+    get_upcoming_birthdays_thunk,
     cast_poll_vote_thunk,
 } from "@/app/redux/activities-thunk";
+import { sync_post_interaction } from "@/app/redux/activities-slice";
+import { toggle_reaction_service } from "@/app/services/activities-service";
 import PostActionMenu from "./post-action-menu";
 import EditPostModal from "./edit-post-modal";
 import { DeletePostSection } from "./delete-post-section";
+import PostViewModal from "./post-view-modal";
 
 // ── Category config ──────────────────────────────────────────────────────────
 const CATEGORY_CONFIG = {
@@ -47,12 +51,15 @@ function BirthdayPostCard({
     onEdit,
     onDelete,
     deleting,
+    onView,
+    onReact,
 }) {
     return (
         <Card
             variant="default"
             padding="p-0"
-            className="w-full overflow-hidden font-sans"
+            className="w-full overflow-hidden font-sans cursor-pointer"
+            onClick={onView}
         >
             {/* Gradient banner */}
             <div className="w-full bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 px-5 py-4 flex items-center gap-3">
@@ -67,9 +74,12 @@ function BirthdayPostCard({
                 </div>
             </div>
 
-            <div className="px-5 py-4 flex flex-col gap-3   ">
+            <div className="px-5 py-4 flex flex-col gap-3">
                 {/* Author row */}
-                <div className="flex items-center justify-between">
+                <div
+                    className="flex items-center justify-between"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <div className="flex items-center gap-2.5">
                         {post.author.avatar ? (
                             <img
@@ -132,21 +142,40 @@ function BirthdayPostCard({
                 )}
 
                 {/* Footer */}
-                <div className="flex justify-between items-center pt-2 border-t border-gray-100 text-gray-500 text-xs">
+                <div
+                    className="flex justify-between items-center pt-2 border-t border-gray-100 text-gray-500 text-xs"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <div className="flex items-center gap-4">
-                        <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
+                        <button
+                            className={`flex items-center gap-1.5 transition group ${
+                                post.user_has_reacted
+                                    ? "text-red-500"
+                                    : "hover:text-red-500"
+                            }`}
+                            onClick={onReact}
+                        >
                             <Heart
                                 size={14}
-                                className="group-hover:scale-110 transition"
+                                className={`group-hover:scale-110 transition ${
+                                    post.user_has_reacted ? "fill-red-500" : ""
+                                }`}
                             />
-                            <span className="font-medium text-gray-600">0</span>
+                            <span className="font-medium text-gray-600">
+                                {post.reaction_count > 0 ? post.reaction_count : ""}
+                            </span>
                         </button>
-                        <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
+                        <button
+                            className="flex items-center gap-1.5 hover:text-blue-500 transition group"
+                            onClick={onView}
+                        >
                             <MessageSquare
                                 size={14}
                                 className="group-hover:scale-110 transition"
                             />
-                            <span className="font-medium text-gray-600">0</span>
+                            <span className="font-medium text-gray-600">
+                                {post.comment_count > 0 ? post.comment_count : ""}
+                            </span>
                         </button>
                     </div>
                     <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
@@ -169,6 +198,8 @@ function GeneralPostCard({
     onEdit,
     onDelete,
     deleting,
+    onView,
+    onReact,
 }) {
     const categoryKey = post.category ?? "General";
     const catConfig =
@@ -178,10 +209,14 @@ function GeneralPostCard({
         <Card
             variant="default"
             padding="p-0"
-            className="w-full overflow-hidden font-sans"
+            className="w-full overflow-hidden font-sans cursor-pointer"
+            onClick={onView}
         >
             {/* Header */}
-            <div className="px-4 pt-4 pb-3 flex justify-between items-start w-full">
+            <div
+                className="px-4 pt-4 pb-3 flex justify-between items-start w-full"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="flex items-center gap-2.5">
                     {post.author.avatar ? (
                         <img
@@ -239,6 +274,7 @@ function GeneralPostCard({
                         src={post.media_url}
                         controls
                         className="w-full max-h-[480px] object-contain bg-black"
+                        onClick={(e) => e.stopPropagation()}
                     />
                 ) : (
                     <img
@@ -249,21 +285,40 @@ function GeneralPostCard({
                 ))}
 
             {/* Footer */}
-            <div className="px-4 py-3 flex justify-between items-center text-gray-500 text-xs border-t border-gray-100">
+            <div
+                className="px-4 py-3 flex justify-between items-center text-gray-500 text-xs border-t border-gray-100"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-1.5 hover:text-red-500 transition group">
+                    <button
+                        className={`flex items-center gap-1.5 transition group ${
+                            post.user_has_reacted
+                                ? "text-red-500"
+                                : "hover:text-red-500"
+                        }`}
+                        onClick={onReact}
+                    >
                         <Heart
                             size={14}
-                            className="group-hover:scale-110 transition"
+                            className={`group-hover:scale-110 transition ${
+                                post.user_has_reacted ? "fill-red-500" : ""
+                            }`}
                         />
-                        <span className="font-medium text-gray-600">0</span>
+                        <span className="font-medium text-gray-600">
+                            {post.reaction_count > 0 ? post.reaction_count : ""}
+                        </span>
                     </button>
-                    <button className="flex items-center gap-1.5 hover:text-blue-500 transition group">
+                    <button
+                        className="flex items-center gap-1.5 hover:text-blue-500 transition group"
+                        onClick={onView}
+                    >
                         <MessageSquare
                             size={14}
                             className="group-hover:scale-110 transition"
                         />
-                        <span className="font-medium text-gray-600">0</span>
+                        <span className="font-medium text-gray-600">
+                            {post.comment_count > 0 ? post.comment_count : ""}
+                        </span>
                     </button>
                 </div>
                 <button className="flex items-center gap-1.5 hover:text-green-600 transition group">
@@ -292,10 +347,17 @@ export default function PostCardSection() {
 
     const { handleDelete } = DeletePostSection();
 
-    const [openMenuId, setOpenMenuId] = useState(null);
+    const [openMenuId, setOpenMenuId]   = useState(null);
     const [editingPost, setEditingPost] = useState(null);
+    const [viewPostId, setViewPostId]   = useState(null);
+    const reactingIds = useRef(new Set()); // guard against rapid card-level reaction clicks
+
+    // Always derive from live Redux state so the modal reflects latest counts
+    const viewPost = viewPostId ? (posts.find((p) => p.id === viewPostId) ?? null) : null;
+
     useEffect(() => {
         dispatch(get_activity_posts_thunk());
+        dispatch(get_upcoming_birthdays_thunk()); // ensure celebrants are always loaded
     }, [dispatch]);
 
     function handleMenuToggle(id) {
@@ -308,6 +370,36 @@ export default function PostCardSection() {
 
     function handleVote(postId, optionId) {
         dispatch(cast_poll_vote_thunk({ postId, optionId }));
+    }
+
+    async function handleReact(post) {
+        if (reactingIds.current.has(post.id)) return;
+        reactingIds.current.add(post.id);
+
+        const wasReacted = post.user_has_reacted;
+        // Optimistic update
+        dispatch(
+            sync_post_interaction({
+                postId: post.id,
+                reaction_count:   wasReacted ? post.reaction_count - 1 : post.reaction_count + 1,
+                user_has_reacted: !wasReacted,
+            })
+        );
+        try {
+            const res = await toggle_reaction_service(post.id, "heart");
+            dispatch(sync_post_interaction({ postId: post.id, ...res.data.data }));
+        } catch {
+            // rollback
+            dispatch(
+                sync_post_interaction({
+                    postId: post.id,
+                    reaction_count:   post.reaction_count,
+                    user_has_reacted: wasReacted,
+                })
+            );
+        } finally {
+            reactingIds.current.delete(post.id);
+        }
     }
 
     if (postsLoading) {
@@ -358,6 +450,8 @@ export default function PostCardSection() {
                                 onEdit={() => handleEdit(post)}
                                 onDelete={() => handleDelete(post.id)}
                                 deleting={postDeleting}
+                                onView={() => setViewPostId(post.id)}
+                                onReact={(e) => { e.stopPropagation(); handleReact(post); }}
                             />
                         );
                     }
@@ -406,6 +500,8 @@ export default function PostCardSection() {
                             onEdit={() => handleEdit(post)}
                             onDelete={() => handleDelete(post.id)}
                             deleting={postDeleting}
+                            onView={() => setViewPostId(post.id)}
+                            onReact={(e) => { e.stopPropagation(); handleReact(post); }}
                         />
                     );
                 })}
@@ -414,6 +510,12 @@ export default function PostCardSection() {
             <EditPostModal
                 post={editingPost}
                 onClose={() => setEditingPost(null)}
+            />
+
+            <PostViewModal
+                post={viewPost}
+                isOpen={!!viewPostId}
+                onClose={() => setViewPostId(null)}
             />
         </>
     );

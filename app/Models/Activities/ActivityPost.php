@@ -47,4 +47,14 @@ class ActivityPost extends Model
     {
         return $this->hasMany(ActivityPollVote::class, 'activity_post_id');
     }
+
+    public function reactions()
+    {
+        return $this->hasMany(ActivityPostReaction::class, 'activity_post_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(ActivityPostComment::class, 'activity_post_id');
+    }
 }

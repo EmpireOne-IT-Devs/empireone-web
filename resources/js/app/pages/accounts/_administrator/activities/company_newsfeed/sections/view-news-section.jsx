@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Heart, MessageSquare, Share2, Send, Newspaper } from "lucide-react";
+import React, { useEffect } from "react";
+import { Newspaper } from "lucide-react";
 import Badge from "@/app/_components/badge";
 import Modal from "@/app/_components/modal";
+import PostInteractionPanel from "../../_components/post-interaction-panel";
 
 const categoryVariantMap = {
     Business: "primary",
@@ -23,14 +24,7 @@ function WysiwygContent({ html, collapsed }) {
 }
 
 export default function ViewNewsSection({ item, isOpen, onClose }) {
-    const [comment, setComment] = useState("");
-    const [expanded, setExpanded] = useState(false);
-
-    const handleSendComment = (e) => {
-        e.preventDefault();
-        if (!comment.trim()) return;
-        setComment("");
-    };
+    const [expanded, setExpanded] = React.useState(false);
 
     const description = item?.description ?? "";
     const contentHtml = item?.contentHtml ?? description;
@@ -134,52 +128,12 @@ export default function ViewNewsSection({ item, isOpen, onClose }) {
 
                         <hr className="border-gray-100 my-5" />
 
-                        <form
-                            onSubmit={handleSendComment}
-                            className="relative flex items-center p-2"
-                        >
-                            <input
-                                type="text"
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                placeholder="Write a comment..."
-                                className="w-full pl-4 pr-12 py-2.5 bg-gray-50 hover:bg-gray-100/70 focus:bg-white border border-gray-200 focus:border-blue-500 rounded-xl outline-none text-sm text-gray-800 placeholder-gray-400 transition-all"
-                            />
-                            <button
-                                type="submit"
-                                disabled={!comment.trim()}
-                                className="absolute right-2 p-1.5 rounded-lg text-gray-400 hover:text-blue-600 disabled:hover:text-gray-400 disabled:opacity-40 transition-colors"
-                            >
-                                <Send size={16} className="m-2" />
-                            </button>
-                        </form>
-                    </div>
-
-                    {/* Footer Actions Panel */}
-                    <div className="flex items-center justify-between gap-2 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-600">
-                        <div className="flex items-center gap-1">
-                            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-red-50 hover:text-red-600 transition-all group">
-                                <Heart
-                                    size={16}
-                                    className="group-hover:scale-110 transition-transform"
-                                />
-                                <span>Like</span>
-                            </button>
-                            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all group">
-                                <MessageSquare
-                                    size={16}
-                                    className="group-hover:scale-110 transition-transform"
-                                />
-                                <span>Comment</span>
-                            </button>
-                        </div>
-                        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-green-50 hover:text-green-600 transition-all group">
-                            <Share2
-                                size={16}
-                                className="group-hover:scale-110 transition-transform"
-                            />
-                            <span>Share</span>
-                        </button>
+                        <PostInteractionPanel
+                            postId={item.id}
+                            reactionCount={item.reaction_count ?? 0}
+                            commentCount={item.comment_count ?? 0}
+                            userHasReacted={item.user_has_reacted ?? false}
+                        />
                     </div>
                 </div>
             )}
