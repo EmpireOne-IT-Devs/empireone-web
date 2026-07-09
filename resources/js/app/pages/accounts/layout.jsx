@@ -11,8 +11,9 @@ export default function Layout({ children }) {
     useEffect(() => {
         store.dispatch(get_app_data_thunk());
     }, []);
+
     return (
-        <div className="h-full bg-white ">
+        <div className="h-full bg-white">
             <SidebarSection />
             <div
                 className={`${
@@ -21,9 +22,14 @@ export default function Layout({ children }) {
             >
                 <TopbarSection />
                 <main
-                    className={`flex-1 p-6 bg-gray-100  ${desktopCollapsed ? "ml-20" : ""}`}
+                    className={`flex-1 p-6 bg-gray-100 ${
+                        desktopCollapsed ? "ml-20" : ""
+                    }`}
                 >
-                    {children}
+                    {/* Added the animation wrapper here */}
+                    <div className="animate-slideUp">
+                        {children}
+                    </div>
                 </main>
             </div>
         </div>

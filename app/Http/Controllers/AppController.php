@@ -70,7 +70,6 @@ class AppController extends Controller
         $requiredFields = collect([
             'first_name',
             'last_name',
-            'gender',
             'date_of_birth',
             'year_graduated',
             'contact',

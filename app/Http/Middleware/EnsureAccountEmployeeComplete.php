@@ -42,7 +42,6 @@ class EnsureAccountEmployeeComplete
         $requiredFields1 = [
             'first_name',
             'last_name',
-            'gender',
             'date_of_birth',
             'year_graduated',
             'contact',
