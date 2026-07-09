@@ -2,18 +2,35 @@
 
 namespace App\Models\Engagement;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Request;
 
 class EngagementPostEvent extends Model
 {
-    public function index() {
-        return 'hello world';
-    }
-    public function store(Request $request) {
-         return 'hello world';
-    }
-    public function show() {}
+    protected $fillable = [
+        'user_id',
+        'title',
+        'content',
+        'category',
+    ];
 
-    public function put() {}
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(EngagementPostEventFile::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(EngagementPostEventComment::class);
+    }
+
+    public function reactions()
+    {
+        return $this->hasMany(EngagementPostEventReact::class);
+    }
 }

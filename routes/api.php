@@ -27,12 +27,12 @@ use App\Http\Controllers\API\Activities\ActivityPollController;
 use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
+use App\Http\Controllers\API\Engagement\EngagementPostEventController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SiteController;
-use App\Models\Engagement\EngagementPostEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -142,8 +142,9 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
 
     Route::prefix('engagement')->group(function () {
-        Route::resource('post_events', EngagementPostEvent::class);
+        Route::resource('post_events', EngagementPostEventController::class);
     });
+    
     Route::prefix('er')->group(function () {
         Route::resource('leaders', ERLeaderController::class);
         Route::resource('subordinates', ERSubordinateController::class);
