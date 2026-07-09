@@ -176,7 +176,7 @@ export default function PersonalInfoSection({
                     <Select
                         label={
                             <div className="flex">
-                                Degree
+                                Educational Attainment
                                 <div className="text-red-500 font-black">*</div>
                             </div>
                         }

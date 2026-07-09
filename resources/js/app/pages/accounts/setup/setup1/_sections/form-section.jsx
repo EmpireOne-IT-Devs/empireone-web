@@ -275,7 +275,6 @@ export default function FormSection() {
                             <div className="text-red-500 font-black">*</div>
                         </div>
                     }
-                    placeholder="Middlename || NA"
                     name="middle_name"
                     {...register("middle_name")}
                     iconLeft={<User size={14} />}
@@ -321,7 +320,6 @@ export default function FormSection() {
                         required: "Required",
                     })}
                     error={errors.year_graduated}
-                    placeholder="2025"
                 />
                 <Input
                     label="Contact #"
@@ -341,7 +339,6 @@ export default function FormSection() {
                         required: "Required",
                     })}
                     error={errors.school_name}
-                    placeholder="Name of School *"
                 />
                 <Input
                     label={
@@ -355,13 +352,12 @@ export default function FormSection() {
                         required: "Required",
                     })}
                     error={errors.course}
-                    placeholder="BSIT"
                 />
 
                 <Select
                     label={
                         <div className="flex">
-                            Degree
+                            Educational Attainment
                             <div className="text-red-500 font-black">*</div>
                         </div>
                     }
@@ -466,7 +462,6 @@ export default function FormSection() {
                                     },
                                 })}
                                 error={errors.zip_code}
-                                placeholder="e.g. 6127"
                             />
                         </div>
                     </div>
@@ -476,7 +471,6 @@ export default function FormSection() {
                                 label="House/Lot/Street/ Purok/Sitio etc."
                                 {...register("street", { required: true })}
                                 error={errors.street}
-                                placeholder="Blk 1 Lot 2"
                             />
                         </div>
                     </div>

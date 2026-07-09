@@ -230,7 +230,7 @@ export default function PersonalInformationSection({
                 <div className="flex flex-wrap md:flex-nowrap w-full gap-4 mb-4">
                     <div className="flex flex-col w-full md:flex-1">
                         <Select
-                            label="Degree"
+                            label="Educational Attainment"
                             name="degree"
                             {...register("degree", { required: true })}
                             options={[
