@@ -1,4 +1,13 @@
-php artisan make:model ER/EmployeeChangeForm -mcr
+php artisan make:model Engagement/EngagementPostEvent -mcr
+php artisan make:model Engagement/EngagementPostEventSurvey -mcr
+php artisan make:model Engagement/EngagementPostEventRating -mcr
+php artisan make:model Engagement/EngagementPostEventQuestion -mcr
+php artisan make:model Engagement/EngagementPostEventFile -mcr
+php artisan make:model Engagement/EngagementPostEventComment -mcr
+php artisan make:model Engagement/EngagementPostEventReact -mcr
+
+
+
 
 - add emergency contract
 - add parents name.

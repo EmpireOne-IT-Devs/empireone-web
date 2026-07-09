@@ -32,6 +32,7 @@ use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\SiteController;
+use App\Models\Engagement\EngagementPostEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -139,6 +140,10 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_201_files_by_user/{user_id}',  [AccountDocumentController::class, 'get_201_files_by_user']);
     });
 
+
+    Route::prefix('engagement')->group(function () {
+        Route::resource('post_events', EngagementPostEvent::class);
+    });
     Route::prefix('er')->group(function () {
         Route::resource('leaders', ERLeaderController::class);
         Route::resource('subordinates', ERSubordinateController::class);
@@ -147,6 +152,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('accept_employee_change_form',  [EREmployeeChangeFormController::class, 'accept_employee_change_form']);
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
+
 
     Route::prefix('activities')->group(function () {
         Route::get('upcoming_birthdays', [ActivityBirthdayController::class, 'upcoming_birthdays']);
