@@ -9,7 +9,7 @@ import { Provider, useSelector } from "react-redux";
 import store from "./app/store/store";
 import Alert from "./app/_components/alert";
 
-const appName = import.meta.env.VITE_APP_NAME || "Laravel";
+const appName = import.meta.env.VITE_APP_NAME || "EmpireOneCX | Customer Experience & Global Outsourcing Services";
 
 /* -------------------------------------------------
  * Global UI Wrapper (Redux-aware)
