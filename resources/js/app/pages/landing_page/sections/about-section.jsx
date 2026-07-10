@@ -512,7 +512,7 @@ export default function AboutSection() {
 
             {/* ── Video background ───────────────────────────────── */}
             <div className="about-video-wrap">
-                <video src="/video/about.mp4" autoPlay loop muted playsInline />
+                <video src="/video/eo.mp4" autoPlay loop muted playsInline />
             </div>
             <div className="about-grain" />
 
@@ -528,7 +528,7 @@ export default function AboutSection() {
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <span className="eyebrow-line" />
-                        About EmpireOne BPO Solutions Inc.
+                        About EmpireOneCX
                     </motion.div>
 
                     <motion.h2
@@ -690,7 +690,7 @@ export default function AboutSection() {
                 transition={{ duration: 0.8, delay: 0.2 }}
             >
                 <span className="strip-text">
-                    EmpireOne BPO · Trusted Worldwide
+                    EmpireOneCX · Trusted Worldwide
                 </span>
                 <div className="strip-badges">
                     {badgeDetails.map((b) => (

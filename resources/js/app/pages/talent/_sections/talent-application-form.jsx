@@ -248,7 +248,7 @@ const TalentApplicationForm = () => {
                             (e.currentTarget.style.color = "#9333ea")
                         }
                     >
-                        ← Back to homepage
+                        ← Back to careerpage
                     </button>
 
                     {/* Step dots + label */}

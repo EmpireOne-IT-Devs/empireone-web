@@ -220,7 +220,7 @@ export default function FooterSection() {
                     className="relative z-10 flex flex-col items-start justify-between gap-3 pt-6 sm:flex-row sm:items-center"
                 >
                     <p className="text-xs text-white/30">
-                        © {year} EmpireOne. All rights reserved.
+                        © {year} EmpireOneCX. All rights reserved.
                     </p>
                     {/* <div className="flex flex-wrap items-center gap-4 text-xs sm:gap-6">
                         <a

@@ -267,13 +267,13 @@ const Page = ({ flash }) => {
                         href="/"
                         className="hover:text-[#e85c0d] transition-colors underline decoration-[#e85c0d]/30 underline-offset-4"
                     >
-                        Return to Homepage
+                        Return to Careerpage
                     </Link>
                 </div>
             </motion.div>
 
             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-                Built with{" "}
+                Built by{" "}
                 <span className="text-[#e85c0d] font-bold">EmpireOne Dev Team</span>{" "}
                 &copy; {new Date().getFullYear()}
             </div>
