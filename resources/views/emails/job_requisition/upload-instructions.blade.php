@@ -91,7 +91,7 @@
 <body class="body">
     <div class="card">
         <div class="header">
-            <img src="https://empireone-bpo.com/images/logo.png" alt="Empire One BPO" class="logo">
+            <img src="https://careers.empireonecx.com/images/logo.png" alt="Empire One BPO" class="logo">
             <h2 style="margin:0; font-size: 20px; letter-spacing: 1px; color: #ffffff; font-weight: bold;">
                 201 FILE UPLOAD
             </h2>

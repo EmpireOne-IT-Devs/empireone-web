@@ -84,7 +84,7 @@ const pillars = [
     },
     {
         num: "02",
-        title: "Expert BPO Solutions",
+        title: "Expert CX & BPO Solutions",
         body: "End-to-end back-office operations engineered for precision, compliance, and cost efficiency.",
     },
     {
@@ -560,7 +560,7 @@ export default function AboutSection() {
                             ease: [0.22, 1, 0.36, 1],
                         }}
                     >
-                        At EmpireOne, we deliver world-class BPO solutions that
+                        At EmpireOneCX, we deliver world-class CX & BPO solutions that
                         help businesses optimize operations, reduce costs, and
                         scale efficiently — from customer support to back-office
                         operations, across the globe.

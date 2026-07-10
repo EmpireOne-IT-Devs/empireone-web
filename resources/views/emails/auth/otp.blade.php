@@ -111,7 +111,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://eo-unified-ims.com/images/logo.png" alt="EmpireOne BPO Solutions Inc.">
+            <img src="https://careers.empireonecx.com/images/logo.png" alt="EmpireOne BPO Solutions Inc.">
             <h1>ONE-TIME Password (OTP)</h1>
             <p><strong>EMPIREONE BPO SOLUTIONS INC.</strong></p>
             <p>IT Department</p>

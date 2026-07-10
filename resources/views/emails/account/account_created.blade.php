@@ -99,7 +99,7 @@
     <div class="wrapper">
         <div class="card">
             <div class="header">
-                <img src="https://empireone-bpo.com/images/logo.png" alt="{{ config('app.name') }}" class="logo">
+                <img src="https://careers.empireonecx.com/images/logo.png" alt="{{ config('app.name') }}" class="logo">
                 <h2 style="margin:0;">Account Created!</h2>
             </div>
 

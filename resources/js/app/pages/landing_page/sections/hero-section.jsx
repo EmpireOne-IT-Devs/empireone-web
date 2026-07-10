@@ -170,7 +170,7 @@ export default function HeroSection() {
                     </h1>
 
                     <p className="text-white/60 max-w-md mx-auto lg:mx-0 text-base sm:text-lg px-4 sm:px-0 anim-fade-up delay-300">
-                        Join the leading BPO platform of independent
+                        Join the leading CX & BPO platform of independent
                         professionals. Get hired faster, work smarter, earn
                         more.
                     </p>
