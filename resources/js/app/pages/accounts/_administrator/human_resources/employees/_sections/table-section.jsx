@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 export default function TableSection() {
     const { employees, employeesLoading } = useSelector((store) => store.human_resources);
-   
+
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
         { header: "Fullname", accessor: "name" },
@@ -14,10 +14,11 @@ export default function TableSection() {
         { header: "Department", accessor: "department" },
         { header: "Account", accessor: "account" },
         { header: "Contact", accessor: "contact" },
-        { header: "Site", accessor: "site" },
+        { header: "Location", accessor: "location" },
         { header: "Status", accessor: "status" },
         { header: "Action", accessor: "action" },
     ];
+    console.log('employees', employees)
     return (
         <div>
             {employeesLoading ? (
@@ -28,26 +29,26 @@ export default function TableSection() {
                 <Table
                     columns={columns}
                     data={
-                    employees?.map((res) => ({
-                        ...res,
-                        employee_id: (
-                            <Link
-                                target="_blnak"
-                                className="underline text-blue-500 hover:text-blue-600"
-                                href={`/accounts/administrator/human_resources/${res?.user_id}/personal_information`}
-                            >
-                                {res?.employee_id}
-                            </Link>
-                        ),
-                        name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
-                        department: res?.department?.name,
-                        account: res?.account?.name,
-                        contact: res?.personal_information?.contact,
-                        site: res?.site?.name,
-                        status: res?.status,
-                    })) ?? []
-                }
-            />
+                        employees?.map((res) => ({
+                            ...res,
+                            employee_id: (
+                                <Link
+                                    target="_blnak"
+                                    className="underline text-blue-500 hover:text-blue-600"
+                                    href={`/accounts/administrator/human_resources/${res?.user_id}/personal_information`}
+                                >
+                                    {res?.employee_id}
+                                </Link>
+                            ),
+                            name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
+                            department: res?.department?.name,
+                            account: res?.account?.name ?? 'N/A',
+                            contact: res?.personal_information?.contact,
+                            location: res?.site?.location?.name,
+                            status: res?.status,
+                        })) ?? []
+                    }
+                />
             )}
         </div>
     );
