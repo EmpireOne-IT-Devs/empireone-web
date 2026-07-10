@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <meta name="description" content="EmpireOneCX delivers AI-assisted customer experience, BPO, back-office, and customer support outsourcing solutions that help teams scale faster.">
-    <meta name="keywords" content="EmpireOneCX, customer experience, BPO, back-office, customer support, outsourcing solutions">
-    <meta name="author" content="EmpireOneCX">
+    <meta name="keywords" content="EmpireOneCX | Customer Experience & Global Outsourcing Services, professional services, innovative solutions, expert guidance, business growth">
+    <meta name="author" content="EmpireOneCX | Customer Experience & Global Outsourcing Services">
     <meta name="robots" content="index, follow">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="{{ config('app.name', 'EmpireOneCX') }}">
+    <meta property="og:title" content="{{ config('app.name', 'EmpireOneCX | Customer Experience & Global Outsourcing Services') }}">
     <meta property="og:description" content="EmpireOneCX delivers AI-assisted customer experience, BPO, back-office, and customer support outsourcing solutions that help teams scale faster.">
     <meta property="og:image" content="{{ asset('/images/empireone.png.png') }}">
     <meta property="og:image:width" content="800">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url('/') }}">
-    <meta name="twitter:title" content="{{ config('app.name', 'EmpireOneCX') }}">
+    <meta name="twitter:title" content="{{ config('app.name', 'EmpireOneCX | Customer Experience & Global Outsourcing Services') }}">
     <meta name="twitter:description" content="EmpireOneCX delivers AI-assisted customer experience, BPO, back-office, and customer support outsourcing solutions that help teams scale faster.">
     <meta name="twitter:image" content="{{ asset('/images/empireone.png.png') }}">
 
