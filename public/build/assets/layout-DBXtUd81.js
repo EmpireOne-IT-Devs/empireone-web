@@ -1,0 +1,1 @@
+import{r as e,j as t}from"./app-D0tKdDT5.js";import o from"./tabs-section-lUZlKzHw.js";import"./tabs-DDauUEp3.js";import"./chevron-down-CE9sHSDj.js";import"./createLucideIcon-DpaOokhN.js";function n({children:r}){return e.useEffect(()=>{},[]),t.jsxs(t.Fragment,{children:[t.jsx(o,{}),t.jsx("div",{className:"py-3",children:r})]})}export{n as default};
