@@ -23,7 +23,7 @@ export default function Page() {
                 <div className="flex flex-col gap-3">
                     {/* <HeaderSection /> */}
                     {/* <CardSection /> */}
-                    <SearchStatusSection />
+                    {/* <SearchStatusSection /> */}
 
                     {/* Search and Stats trigger the scroll */}
                     <StatusesCardSection />

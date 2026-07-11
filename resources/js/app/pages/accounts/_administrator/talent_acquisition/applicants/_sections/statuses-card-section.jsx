@@ -1,11 +1,50 @@
 import React, { useState } from 'react';
-import { UserCheck, UserX, Award, XOctagon, X, Search } from 'lucide-react';
+import { 
+    UserCheck, 
+    UserX, 
+    Award, 
+    XOctagon, 
+    X, 
+    Search, 
+    Users, 
+    Clock, 
+    CalendarClock, 
+    Layers, 
+    UserMinus,
+    Mail,
+    ThumbsUp,
+    ThumbsDown,
+    Briefcase,
+    Ban,
+    ClipboardCheck
+} from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { router } from '@inertiajs/react';
 
-// Reusable Card Component for consistent styling and animations
+// Upgraded Reusable Card Component 
 const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
-    const isSuccess = type === 'success';
+    const theme = {
+        success: {
+            border: 'hover:border-emerald-500',
+            bg: 'bg-emerald-500',
+            icon: 'bg-emerald-100 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white'
+        },
+        danger: {
+            border: 'hover:border-rose-500',
+            bg: 'bg-rose-500',
+            icon: 'bg-rose-100 text-rose-600 group-hover:bg-rose-500 group-hover:text-white'
+        },
+        pending: {
+            border: 'hover:border-amber-500',
+            bg: 'bg-amber-500',
+            icon: 'bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white'
+        },
+        info: {
+            border: 'hover:border-blue-500',
+            bg: 'bg-blue-500',
+            icon: 'bg-blue-100 text-blue-600 group-hover:bg-blue-500 group-hover:text-white'
+        }
+    }[type] || theme.info; 
 
     return (
         <div
@@ -14,14 +53,13 @@ const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
                 relative overflow-hidden rounded-2xl p-6 bg-white border 
                 transition-all duration-300 ease-in-out cursor-pointer
                 hover:-translate-y-1 hover:shadow-xl group
-                ${isSuccess ? 'hover:border-emerald-500' : 'hover:border-rose-500'}
+                ${theme.border}
             `}
         >
-            {/* Background Decorative Blob on Hover */}
             <div className={`
                 absolute -right-10 -top-10 w-32 h-32 rounded-full opacity-0 
                 transition-opacity duration-500 blur-2xl group-hover:opacity-10
-                ${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'}
+                ${theme.bg}
             `} />
 
             <div className="flex items-start justify-between relative z-10">
@@ -32,19 +70,13 @@ const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
                     </h3>
                 </div>
 
-                <div className={`
-                    p-3 rounded-xl transition-colors duration-300
-                    ${isSuccess
-                        ? 'bg-emerald-100 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white'
-                        : 'bg-rose-100 text-rose-600 group-hover:bg-rose-500 group-hover:text-white'}
-                `}>
+                <div className={`p-3 rounded-xl transition-colors duration-300 ${theme.icon}`}>
                     <Icon size={24} strokeWidth={2.5} />
                 </div>
             </div>
         </div>
     );
 };
-// ... (imports and StatCard component remain exactly the same)
 
 export default function StatusesCardSection() {
     const [search, setSearch] = useState('');
@@ -52,21 +84,27 @@ export default function StatusesCardSection() {
     // Pulling statuses from Redux store
     const { statuses } = useSelector((store) => store.job_postings);
 
-    // Default fallback data if the API hasn't loaded yet
+    // Updated fallback data with ALL new statuses
     const data = statuses || {
         initial_passed: 0,
         initial_failed: 0,
         final_passed: 0,
         final_failed: 0,
+        final_withdrawn: 0,
         final_pooled: 0,
-        no_shows: 0
+        final_sent_job_offer: 0,
+        final_accepted_job_offer: 0,
+        final_declined_job_offer: 0,
+        final_passed_with_condition: 0,
+        final_hired: 0,
+        final_rejected: 0,
+        no_shows: 0,
+        total_applicant: 0,
+        for_initial: 0,
+        for_final: 0
     };
 
-    console.log('statuses', statuses);
-    const [activeFilter, setActiveFilter] = useState(null);
-
     const handleCardClick = (table, status) => {
-        // setActiveFilter(activeFilter === filterName ? null : filterName);
         router.visit(`?${table}=${status}`, {
             preserveState: true,
             preserveScroll: true,
@@ -79,15 +117,12 @@ export default function StatusesCardSection() {
         });
     };
 
-    // --- FIX APPLIED HERE ---
     const handleSearch = (e) => {
         e.preventDefault();
-
         router.visit('?search=' + search, {
             preserveState: true,
-            preserveScroll: true, // Prevent snapping to top
+            preserveScroll: true,
             onSuccess: () => {
-                // Smooth scroll to table
                 const resultsSection = document.getElementById('results-table');
                 if (resultsSection) {
                     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -97,13 +132,8 @@ export default function StatusesCardSection() {
     };
 
     const clearSearch = (e) => {
-        // Prevent default isn't strictly necessary for a type="button", but it doesn't hurt.
         if (e) e.preventDefault();
-
-        // Clear local state
         setSearch('');
-
-        // Clear the URL search parameter
         router.visit(window.location.pathname, {
             preserveState: true,
             preserveScroll: true,
@@ -121,70 +151,131 @@ export default function StatusesCardSection() {
 
             {/* Stat Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                {/* --- PIPELINE OVERVIEW --- */}
                 <StatCard
                     title="Total Applicant"
                     count={data.total_applicant}
-                    type="success"
-                    icon={UserCheck}
-                    onClick={() => handleCardClick('total_applicant')}
+                    type="info"
+                    icon={Users}
+                    onClick={() => handleCardClick('', '')}
                 />
+                <StatCard
+                    title="For Initial Interview"
+                    count={data.for_initial}
+                    type="pending"
+                    icon={Clock}
+                    onClick={() => handleCardClick('statuses', 'For Initial Interview')}
+                />
+                <StatCard
+                    title="For Final Interview"
+                    count={data.for_final}
+                    type="pending"
+                    icon={CalendarClock}
+                    onClick={() => handleCardClick('statuses', 'For Final Interview')}
+                />
+                <StatCard
+                    title="Pool"
+                    count={data.final_pooled}
+                    type="info"
+                    icon={Layers}
+                    onClick={() => handleCardClick('final_status', 'Pooled')}
+                />
+
+                {/* --- INTERVIEW RESULTS --- */}
                 <StatCard
                     title="Initial Passed"
                     count={data.initial_passed}
                     type="success"
                     icon={UserCheck}
-                    onClick={() => handleCardClick('initial_passed')}
+                    onClick={() => handleCardClick('interview_status', 'Passed')}
                 />
                 <StatCard
                     title="Initial Failed"
                     count={data.initial_failed}
                     type="danger"
                     icon={UserX}
-                    onClick={() => handleCardClick('initial_failed')}
+                    onClick={() => handleCardClick('interview_status', 'Failed')}
                 />
                 <StatCard
                     title="Final Passed"
                     count={data.final_passed}
                     type="success"
                     icon={Award}
-                    onClick={() => handleCardClick('final_passed', 'Passed')}
+                    onClick={() => handleCardClick('final_status', 'Passed')}
                 />
                 <StatCard
                     title="Final Failed"
                     count={data.final_failed}
                     type="danger"
-                    icon={XOctagon}
-                    onClick={() => handleCardClick('final_failed')}
+                    icon={UserX}
+                    onClick={() => handleCardClick('final_status', 'Failed')}
                 />
                 <StatCard
-                    title="Pool"
-                    count={data.final_pooled}
-                    type="success"
-                    icon={UserCheck}
-                    onClick={() => handleCardClick('final_pooled', 'Pool')}
+                    title="Passed w/ Condition"
+                    count={data.final_passed_with_condition}
+                    type="pending"
+                    icon={ClipboardCheck}
+                    onClick={() => handleCardClick('final_status', 'Passed with Condition')}
                 />
 
+                {/* --- JOB OFFERS --- */}
+                <StatCard
+                    title="Sent Job Offer"
+                    count={data.final_sent_job_offer}
+                    type="info"
+                    icon={Mail}
+                    onClick={() => handleCardClick('final_status', 'Sent Job Offer')}
+                />
+                <StatCard
+                    title="Accepted Job Offer"
+                    count={data.final_accepted_job_offer}
+                    type="success"
+                    icon={ThumbsUp}
+                    onClick={() => handleCardClick('final_status', 'Accepted Job Offer')}
+                />
+                <StatCard
+                    title="Declined Job Offer"
+                    count={data.final_declined_job_offer}
+                    type="danger"
+                    icon={ThumbsDown}
+                    onClick={() => handleCardClick('final_status', 'Declined Job Offer')}
+                />
+
+                {/* --- FINAL OUTCOMES --- */}
+                <StatCard
+                    title="Hired"
+                    count={data.final_hired}
+                    type="success"
+                    icon={Briefcase}
+                    onClick={() => handleCardClick('final_status', 'Hired')}
+                />
+                <StatCard
+                    title="Rejected"
+                    count={data.final_rejected}
+                    type="danger"
+                    icon={XOctagon}
+                    onClick={() => handleCardClick('final_status', 'Rejected')}
+                />
+                <StatCard
+                    title="Withdrawn"
+                    count={data.final_withdrawn}
+                    type="danger"
+                    icon={Ban}
+                    onClick={() => handleCardClick('final_status', 'Withdrawn')}
+                />
                 <StatCard
                     title="No Shows"
                     count={data.no_shows}
                     type="danger"
-                    icon={XOctagon}
-                    onClick={() => handleCardClick('no_shows')}
-                />
-
-                <StatCard
-                    title="Remaining Applicants"
-                    count={data.remaining_applicants}
-                    type="danger"
-                    icon={XOctagon}
-                    onClick={() => handleCardClick('remaining_applicants')}
+                    icon={UserMinus}
+                    onClick={() => handleCardClick('final_status', 'No Show')}
                 />
 
             </div>
 
             <div className="mt-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
                     {/* Title Section */}
                     <div>
                         <h2 className="text-2xl font-bold text-gray-800">Today's Pipeline</h2>
@@ -193,12 +284,10 @@ export default function StatusesCardSection() {
 
                     {/* Interactive Search Form */}
                     <form onSubmit={handleSearch} className="relative w-full md:w-80 group">
-                        {/* Search Icon */}
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300">
                             <Search size={18} strokeWidth={2.5} />
                         </div>
 
-                        {/* Input Field */}
                         <input
                             type="text"
                             value={search}
@@ -211,7 +300,6 @@ export default function StatusesCardSection() {
                             "
                         />
 
-                        {/* Clear Button (Only shows when there is text) */}
                         {search && (
                             <button
                                 type="button"

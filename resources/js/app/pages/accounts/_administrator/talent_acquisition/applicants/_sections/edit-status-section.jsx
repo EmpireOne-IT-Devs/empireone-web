@@ -132,7 +132,7 @@ export default function EditStatusSection({ data, table_status }) {
                         {table_status == "final_status" &&
                             final_status.map((option) => (
                                 <option key={option} value={option}>
-                                    {option}
+                                    {option == 'Pooled' ? 'Pool' : option}
                                 </option>
                             ))}
                     </select>

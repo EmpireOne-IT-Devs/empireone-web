@@ -552,60 +552,71 @@ class JobApplicationController extends Controller
     {
         $locationId = Auth::user()->account_employee->location_id;
 
-        // 1. Create a base query to avoid repeating the location filter
+        // 1. Create a base query ONLY for the location (so the dashboard counts stay accurate)
         $baseQuery = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
         });
 
         // 2. Fetch the paginated applications
         $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information'])
+
+            // A. Apply TEXT search only if a search term exists
             ->when($request->search, function ($query) use ($request) {
                 $searchTerm = '%' . $request->search . '%';
-
-                // Group the search conditions so it acts as (User Matches OR Personal Info Matches)
                 $query->where(function ($subQuery) use ($searchTerm) {
-
-                    // 1. Search the User relationship
                     $subQuery->whereHas('user', function ($q) use ($searchTerm) {
                         $q->where('name', 'like', $searchTerm)
                             ->orWhere('email', 'like', $searchTerm);
-                    });
-
-                    // 2. Search the Personal Information relationship
-                    /* * Note: If 'personal_information' belongs directly to the Application model, use this:
-             */
-                    $subQuery->orWhereHas('personal_information', function ($q) use ($searchTerm) {
+                    })->orWhereHas('personal_information', function ($q) use ($searchTerm) {
                         $q->where('first_name', 'like', $searchTerm)
                             ->orWhere('last_name', 'like', $searchTerm);
                     });
-
-                    /*
-             * ALTERNATIVE: If 'personal_information' actually belongs to the 'applicant' model, 
-             * you can chain them using dot notation inside orWhereHas like this:
-             *
-             * $subQuery->orWhereHas('applicant.personal_information', function ($q) use ($searchTerm) {
-             * $q->where('first_name', 'like', $searchTerm)
-             * ->orWhere('last_name', 'like', $searchTerm);
-             * });
-             */
                 });
             })
-            ->paginate();
 
-        // 3. Count today's statuses using conditional aggregates
-        // Note: I am assuming "initial" refers to `interview_status`. If you meant `screening_status`, simply swap the column names below.
+            // B. Apply STATUS filters independently of the text search
+            ->when($request->final_status, function ($query) use ($request) {
+                $query->where('final_status', $request->final_status);
+            })
+
+            ->when($request->statuses == 'For Initial Interview', function ($query) {
+                $query->whereNull('interview_status')
+                    ->whereNull('final_status');
+            })
+            ->when($request->statuses == 'For Final Interview', function ($query) {
+                $query->where('interview_status', 'Passed')
+                    ->whereNull('final_status');
+            })
+            ->paginate()
+            ->withQueryString();
+        // 3. Count today's statuses using the UNFILTERED base query
         $statuses = (clone $baseQuery)
-            ->whereDate('updated_at', now()->toDateString())
+            // ->whereDate('updated_at', now()->toDateString())
             ->selectRaw("
-        SUM(CASE WHEN interview_status = 'Passed' THEN 1 ELSE 0 END) as initial_passed,
-        SUM(CASE WHEN interview_status = 'Failed' THEN 1 ELSE 0 END) as initial_failed,
-        SUM(CASE WHEN final_status = 'Passed' THEN 1 ELSE 0 END) as final_passed,
-        SUM(CASE WHEN final_status = 'Failed' THEN 1 ELSE 0 END) as final_failed,
-        SUM(CASE WHEN final_status = 'Pooled' THEN 1 ELSE 0 END) as final_pooled,
-        SUM(CASE WHEN final_status = 'No Show' THEN 1 ELSE 0 END) as no_shows,
-        SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as remaining_applicants,
-        COUNT(id) as total_applicant
-    ")
+            -- Initial Statuses
+            SUM(CASE WHEN interview_status = 'Passed' THEN 1 ELSE 0 END) as initial_passed,
+            SUM(CASE WHEN interview_status = 'Failed' THEN 1 ELSE 0 END) as initial_failed,
+            
+            -- Final Statuses (From Image)
+            SUM(CASE WHEN final_status = 'Passed' THEN 1 ELSE 0 END) as final_passed,
+            SUM(CASE WHEN final_status = 'Failed' THEN 1 ELSE 0 END) as final_failed,
+            SUM(CASE WHEN final_status = 'Withdrawn' THEN 1 ELSE 0 END) as final_withdrawn,
+            SUM(CASE WHEN final_status = 'Pooled' THEN 1 ELSE 0 END) as final_pooled,
+            SUM(CASE WHEN final_status = 'Sent Job Offer' THEN 1 ELSE 0 END) as final_sent_job_offer,
+            SUM(CASE WHEN final_status = 'Accepted Job Offer' THEN 1 ELSE 0 END) as final_accepted_job_offer,
+            SUM(CASE WHEN final_status = 'Declined Job Offer' THEN 1 ELSE 0 END) as final_declined_job_offer,
+            SUM(CASE WHEN final_status = 'Passed With Condition' THEN 1 ELSE 0 END) as final_passed_with_condition,
+            SUM(CASE WHEN final_status = 'Hired' THEN 1 ELSE 0 END) as final_hired,
+            SUM(CASE WHEN final_status = 'Rejected' THEN 1 ELSE 0 END) as final_rejected,
+            SUM(CASE WHEN final_status = 'No Show' THEN 1 ELSE 0 END) as no_shows,
+            
+            -- Pipeline Computations
+            SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as remaining_applicants,
+            SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as for_initial,
+            SUM(CASE WHEN interview_status = 'Passed' AND final_status IS NULL THEN 1 ELSE 0 END) as for_final,
+            
+            COUNT(id) as total_applicant
+        ")
             ->first();
 
         return response()->json([
@@ -613,12 +624,25 @@ class JobApplicationController extends Controller
             'statuses' => [
                 'initial_passed' => (int) $statuses->initial_passed,
                 'initial_failed' => (int) $statuses->initial_failed,
+
+                // Final Statuses
                 'final_passed' => (int) $statuses->final_passed,
                 'final_failed' => (int) $statuses->final_failed,
+                'final_withdrawn' => (int) $statuses->final_withdrawn,
                 'final_pooled' => (int) $statuses->final_pooled,
-                'total_applicant' => (int) $statuses->total_applicant,
-                'remaining_applicants' => (int) $statuses->remaining_applicants,
+                'final_sent_job_offer' => (int) $statuses->final_sent_job_offer,
+                'final_accepted_job_offer' => (int) $statuses->final_accepted_job_offer,
+                'final_declined_job_offer' => (int) $statuses->final_declined_job_offer,
+                'final_passed_with_condition' => (int) $statuses->final_passed_with_condition,
+                'final_hired' => (int) $statuses->final_hired,
+                'final_rejected' => (int) $statuses->final_rejected,
                 'no_shows' => (int) $statuses->no_shows,
+
+                // Pipeline
+                'for_initial' => (int) $statuses->for_initial,
+                'for_final' => (int) $statuses->for_final,
+                'remaining_applicants' => (int) $statuses->remaining_applicants,
+                'total_applicant' => (int) $statuses->total_applicant,
             ],
             'status' => 'success',
         ], 200);
