@@ -59,6 +59,7 @@ export default function StatusesCardSection() {
         final_failed: 0,
     };
 
+    console.log('statuses',statuses)
     const [activeFilter, setActiveFilter] = useState(null);
 
     const handleCardClick = (filterName) => {

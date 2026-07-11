@@ -562,6 +562,7 @@ class JobApplicationController extends Controller
             ->when($request->search, function ($query) use ($request) {
                 $query->whereHas('user', function ($q) use ($request) {
                     $q->where('name', 'like', '%' . $request->search . '%');
+                    $q->orWhere('email', 'like', '%' . $request->search . '%');
                 });
             })
             ->paginate();

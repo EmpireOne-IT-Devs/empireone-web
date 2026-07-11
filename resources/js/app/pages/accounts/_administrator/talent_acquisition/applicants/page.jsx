@@ -14,6 +14,7 @@ import StatusesCardSection from "./_sections/statuses-card-section";
 export default function Page() {
     useEffect(() => {
         store.dispatch(get_applicants_thunk());
+        store.dispatch(get_job_posting_thunk())
     }, [window.location.search]);
 
     return (

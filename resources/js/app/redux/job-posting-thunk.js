@@ -7,7 +7,6 @@ export function get_job_posting_thunk() {
     return async function (dispatch, getState) {
         const result = await get_job_postings_service();
         dispatch(jobPostingsSlice.actions.setJobPostings(result.data));
-        dispatch(jobPostingsSlice.actions.setStatuses(result.statuses));
     };
 }
 
@@ -30,7 +29,8 @@ export function get_job_offers_by_job_posting_thunk(id) {
 export function get_applicants_thunk() {
     return async function (dispatch, getState) {
         const result = await get_applicants_service();
-        dispatch(jobPostingsSlice.actions.setApplicants(result.data.data));
+        dispatch(jobPostingsSlice.actions.setStatuses(result?.data?.statuses));
+        dispatch(jobPostingsSlice.actions.setApplicants(result?.data?.data));
     };
 }
 
