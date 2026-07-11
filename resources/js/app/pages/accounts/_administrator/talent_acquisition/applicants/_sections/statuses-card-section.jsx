@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { 
-    UserCheck, 
-    UserX, 
-    Award, 
-    XOctagon, 
-    X, 
-    Search, 
-    Users, 
-    Clock, 
-    CalendarClock, 
-    Layers, 
+import {
+    UserCheck,
+    UserX,
+    Award,
+    XOctagon,
+    X,
+    Search,
+    Users,
+    Clock,
+    CalendarClock,
+    Layers,
     UserMinus,
     Mail,
     ThumbsUp,
@@ -44,7 +44,7 @@ const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
             bg: 'bg-blue-500',
             icon: 'bg-blue-100 text-blue-600 group-hover:bg-blue-500 group-hover:text-white'
         }
-    }[type] || theme.info; 
+    }[type] || theme.info;
 
     return (
         <div
@@ -150,7 +150,8 @@ export default function StatusesCardSection() {
         <div className="w-full py-6">
 
             {/* Stat Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Changed lg:grid-cols-4 to lg:grid-cols-5 here 👇 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
 
                 {/* --- PIPELINE OVERVIEW --- */}
                 <StatCard
@@ -175,29 +176,6 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('statuses', 'For Final Interview')}
                 />
                 <StatCard
-                    title="Pool"
-                    count={data.final_pooled}
-                    type="info"
-                    icon={Layers}
-                    onClick={() => handleCardClick('final_status', 'Pooled')}
-                />
-
-                {/* --- INTERVIEW RESULTS --- */}
-                <StatCard
-                    title="Initial Passed"
-                    count={data.initial_passed}
-                    type="success"
-                    icon={UserCheck}
-                    onClick={() => handleCardClick('interview_status', 'Passed')}
-                />
-                <StatCard
-                    title="Initial Failed"
-                    count={data.initial_failed}
-                    type="danger"
-                    icon={UserX}
-                    onClick={() => handleCardClick('interview_status', 'Failed')}
-                />
-                <StatCard
                     title="Final Passed"
                     count={data.final_passed}
                     type="success"
@@ -205,12 +183,13 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_status', 'Passed')}
                 />
                 <StatCard
-                    title="Final Failed"
-                    count={data.final_failed}
-                    type="danger"
-                    icon={UserX}
-                    onClick={() => handleCardClick('final_status', 'Failed')}
+                    title="Pool"
+                    count={data.final_pooled}
+                    type="info"
+                    icon={Layers}
+                    onClick={() => handleCardClick('final_status', 'Pooled')}
                 />
+
                 <StatCard
                     title="Passed w/ Condition"
                     count={data.final_passed_with_condition}
@@ -219,7 +198,21 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_status', 'Passed with Condition')}
                 />
 
-                {/* --- JOB OFFERS --- */}
+                <StatCard
+                    title="Accepted Job Offer"
+                    count={data.final_accepted_job_offer}
+                    type="success"
+                    icon={ThumbsUp}
+                    onClick={() => handleCardClick('final_status', 'Accepted Job Offer')}
+                />
+
+                <StatCard
+                    title="Hired"
+                    count={data.final_hired}
+                    type="success"
+                    icon={Briefcase}
+                    onClick={() => handleCardClick('final_status', 'Hired')}
+                />
                 <StatCard
                     title="Sent Job Offer"
                     count={data.final_sent_job_offer}
@@ -228,12 +221,37 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_status', 'Sent Job Offer')}
                 />
                 <StatCard
-                    title="Accepted Job Offer"
-                    count={data.final_accepted_job_offer}
-                    type="success"
-                    icon={ThumbsUp}
-                    onClick={() => handleCardClick('final_status', 'Accepted Job Offer')}
+                    title="No Shows"
+                    count={data.no_shows}
+                    type="danger"
+                    icon={UserMinus}
+                    onClick={() => handleCardClick('final_status', 'No Show')}
                 />
+
+                {/* <StatCard
+                    title="Initial Passed"
+                    count={data.initial_passed}
+                    type="success"
+                    icon={UserCheck}
+                    onClick={() => handleCardClick('interview_status', 'Passed')}
+                /> */}
+                <StatCard
+                    title="Initial Failed"
+                    count={data.initial_failed}
+                    type="danger"
+                    icon={UserX}
+                    onClick={() => handleCardClick('interview_status', 'Failed')}
+                />
+                <StatCard
+                    title="Final Failed"
+                    count={data.final_failed}
+                    type="danger"
+                    icon={UserX}
+                    onClick={() => handleCardClick('final_status', 'Failed')}
+                />
+
+
+
                 <StatCard
                     title="Declined Job Offer"
                     count={data.final_declined_job_offer}
@@ -242,14 +260,7 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_status', 'Declined Job Offer')}
                 />
 
-                {/* --- FINAL OUTCOMES --- */}
-                <StatCard
-                    title="Hired"
-                    count={data.final_hired}
-                    type="success"
-                    icon={Briefcase}
-                    onClick={() => handleCardClick('final_status', 'Hired')}
-                />
+
                 <StatCard
                     title="Rejected"
                     count={data.final_rejected}
@@ -263,13 +274,6 @@ export default function StatusesCardSection() {
                     type="danger"
                     icon={Ban}
                     onClick={() => handleCardClick('final_status', 'Withdrawn')}
-                />
-                <StatCard
-                    title="No Shows"
-                    count={data.no_shows}
-                    type="danger"
-                    icon={UserMinus}
-                    onClick={() => handleCardClick('final_status', 'No Show')}
                 />
 
             </div>
