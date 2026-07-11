@@ -579,6 +579,10 @@ class JobApplicationController extends Controller
                 $query->where('final_status', $request->final_status);
             })
 
+            ->when($request->interview_status, function ($query) use ($request) {
+                $query->where('interview_status', $request->interview_status);
+            })
+
             ->when($request->statuses == 'For Initial Interview', function ($query) {
                 $query->whereNull('interview_status')
                     ->whereNull('final_status');
