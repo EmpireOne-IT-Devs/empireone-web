@@ -10,6 +10,7 @@ import ApplicantTableSection from "./_sections/applicant-table-section";
 import SearchStatusSection from "./_sections/search-status-section";
 import PaginationSection from "./_sections/pagination-section";
 import StatusesCardSection from "./_sections/statuses-card-section";
+import ExportApplicantSection from "./_sections/export-applicant-section";
 
 export default function Page() {
     useEffect(() => {
@@ -26,6 +27,7 @@ export default function Page() {
                     {/* <SearchStatusSection /> */}
 
                     {/* Search and Stats trigger the scroll */}
+                    <ExportApplicantSection />
                     <StatusesCardSection />
 
                     {/* Added the target ID wrapper here so the scroll knows where to land */}

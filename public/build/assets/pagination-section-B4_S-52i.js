@@ -1,1 +1,0 @@
-import{a as n,j as o}from"./app-ChiB4lVb.js";import{P as s}from"./pagination-2kjulw9w.js";function i(){const{job_offers:t}=n(a=>a.job_postings);return o.jsx(o.Fragment,{children:o.jsx(s,{data:t})})}export{i as default};

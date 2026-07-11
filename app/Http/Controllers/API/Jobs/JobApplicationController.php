@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Response;
 
 class JobApplicationController extends Controller
 {
@@ -548,6 +549,97 @@ class JobApplicationController extends Controller
         ], 200);
     }
 
+    public function export_applicant_csv(Request $request)
+    {
+        $locationId = Auth::user()->account_employee->location_id;
+
+        // 1. Fetch the data (matching your dashboard's location filter)
+        $applications = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+            $query->where('location_id', $locationId);
+            $query->where('interview_status', 'Passed');
+        })
+            ->with(['user', 'personal_information'])
+            ->get();
+
+        $filename = "applicants_export_" . now()->format('Y-m-d_H-i') . ".csv";
+
+        // 2. Set headers to force a file download
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        // 3. Define the exact columns from your image
+        $columns = [
+            'DATE',
+            'FIRST NAME',
+            'FAMILY NAME',
+            'ADDRESS',
+            'eMAIL ADDRESS',
+            'MOBILE NUMBER',
+            'PASSED INI',
+            'POOL',
+            'for FI',
+            'FI',
+            'FAILED FI',
+            'PASSED FI',
+            'PASSSED FI w/ CONDITIONS',
+            'NO SHOW',
+        ];
+
+        // 4. Stream the data directly into the CSV
+        $callback = function () use ($applications, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns); // Write the Header Row
+
+            foreach ($applications as $app) {
+                $pi = $app->personal_information;
+                $user = $app->user;
+
+                // Map the statuses to "Yes" or blank for the CSV columns
+                $passedIni = $app->interview_status === 'Passed' ? 'Yes' : 'No';
+                $pool = $app->final_status === 'Pooled' ? 'Yes' : 'No';
+
+                // "For FI" usually means they passed initial but haven't taken final yet
+                $forFi = ($app->interview_status === 'Passed' && is_null($app->final_status)) ? 'Yes' : 'No';
+
+                // "FI" flag (assuming this means they attended the Final Interview)
+                $fi = !is_null($app->final_status) ? 'Yes' : 'No';
+
+                $failedFi = $app->final_status === 'Failed' ? 'Yes' : 'No';
+                $passedFi = $app->final_status === 'Passed' ? 'Yes' : 'No';
+                $passedFiCond = $app->final_status === 'Passed with Condition' ? 'Yes' : 'No';
+                $noShow = $app->final_status === 'No Show' ? 'Yes' : 'No';
+
+                // Write the row
+                $row = [
+                    $app->created_at ? $app->created_at->format('M d, Y') : '',
+                    $pi->first_name ?? '',
+                    $pi->last_name ?? '',
+                    $pi->street . ' ' . $pi->barangay . ' ' . $pi->city . ' ' . $pi->province . ' ' . $pi->zip_code ?? '',
+                    $user->email ?? '',
+                    $pi->contact ?? '', // Swap with your actual phone column name
+                    $passedIni,
+                    $pool,
+                    $forFi,
+                    $fi,
+                    $failedFi,
+                    $passedFi,
+                    $passedFiCond,
+                    $noShow
+                ];
+
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
     public function applicants(Request $request)
     {
         $locationId = Auth::user()->account_employee->location_id;
