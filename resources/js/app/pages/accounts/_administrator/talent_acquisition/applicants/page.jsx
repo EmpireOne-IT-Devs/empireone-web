@@ -24,8 +24,15 @@ export default function Page() {
                     {/* <HeaderSection /> */}
                     <CardSection />
                     <SearchStatusSection />
+
+                    {/* Search and Stats trigger the scroll */}
                     <StatusesCardSection />
-                    <ApplicantTableSection />
+
+                    {/* Added the target ID wrapper here so the scroll knows where to land */}
+                    <div id="results-table" className="scroll-mt-6">
+                        <ApplicantTableSection />
+                    </div>
+
                     <PaginationSection />
                 </div>
             </JobPostingLayout>

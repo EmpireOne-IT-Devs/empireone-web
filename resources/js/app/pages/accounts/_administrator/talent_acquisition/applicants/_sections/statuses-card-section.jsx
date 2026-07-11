@@ -44,6 +44,7 @@ const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
         </div>
     );
 };
+// ... (imports and StatCard component remain exactly the same)
 
 export default function StatusesCardSection() {
     const [search, setSearch] = useState('');
@@ -59,28 +60,52 @@ export default function StatusesCardSection() {
         final_failed: 0,
     };
 
-    console.log('statuses', statuses)
+    console.log('statuses', statuses);
     const [activeFilter, setActiveFilter] = useState(null);
 
     const handleCardClick = (filterName) => {
         setActiveFilter(activeFilter === filterName ? null : filterName);
     };
 
+    // --- FIX APPLIED HERE ---
     const handleSearch = (e) => {
         e.preventDefault();
-        // Uses Inertia to hit your Laravel controller with the search query
-        router.visit('?search=' + search, { preserveState: true });
+
+        router.visit('?search=' + search, {
+            preserveState: true,
+            preserveScroll: true, // Prevent snapping to top
+            onSuccess: () => {
+                // Smooth scroll to table
+                const resultsSection = document.getElementById('results-table');
+                if (resultsSection) {
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
     };
 
-    const clearSearch = () => {
+    const clearSearch = (e) => {
+        // Prevent default isn't strictly necessary for a type="button", but it doesn't hurt.
+        if (e) e.preventDefault();
+
+        // Clear local state
         setSearch('');
-        // Reset the URL back to the base route without the search query
-        router.visit(window.location.pathname, { preserveState: true });
+
+        // Clear the URL search parameter
+        router.visit(window.location.pathname, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                const resultsSection = document.getElementById('results-table');
+                if (resultsSection) {
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
     };
 
     return (
         <div className="w-full py-6">
-
 
             {/* Stat Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -113,6 +138,7 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_failed')}
                 />
             </div>
+
             <div className="mt-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
