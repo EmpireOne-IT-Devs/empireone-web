@@ -23,8 +23,8 @@ export default function Page() {
                 <div className="flex flex-col gap-3">
                     {/* <HeaderSection /> */}
                     <CardSection />
-                    <StatusesCardSection />
                     <SearchStatusSection />
+                    <StatusesCardSection />
                     <ApplicantTableSection />
                     <PaginationSection />
                 </div>

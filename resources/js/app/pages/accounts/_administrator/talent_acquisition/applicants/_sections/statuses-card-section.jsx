@@ -59,7 +59,7 @@ export default function StatusesCardSection() {
         final_failed: 0,
     };
 
-    console.log('statuses',statuses)
+    console.log('statuses', statuses)
     const [activeFilter, setActiveFilter] = useState(null);
 
     const handleCardClick = (filterName) => {
@@ -80,7 +80,40 @@ export default function StatusesCardSection() {
 
     return (
         <div className="w-full py-6">
-            <div className="mb-6">
+
+
+            {/* Stat Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard
+                    title="Initial Passed"
+                    count={data.initial_passed}
+                    type="success"
+                    icon={UserCheck}
+                    onClick={() => handleCardClick('initial_passed')}
+                />
+                <StatCard
+                    title="Initial Failed"
+                    count={data.initial_failed}
+                    type="danger"
+                    icon={UserX}
+                    onClick={() => handleCardClick('initial_failed')}
+                />
+                <StatCard
+                    title="Final Passed"
+                    count={data.final_passed}
+                    type="success"
+                    icon={Award}
+                    onClick={() => handleCardClick('final_passed')}
+                />
+                <StatCard
+                    title="Final Failed"
+                    count={data.final_failed}
+                    type="danger"
+                    icon={XOctagon}
+                    onClick={() => handleCardClick('final_failed')}
+                />
+            </div>
+            <div className="mt-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                     {/* Title Section */}
@@ -121,38 +154,6 @@ export default function StatusesCardSection() {
                         )}
                     </form>
                 </div>
-            </div>
-
-            {/* Stat Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard
-                    title="Initial Passed"
-                    count={data.initial_passed}
-                    type="success"
-                    icon={UserCheck}
-                    onClick={() => handleCardClick('initial_passed')}
-                />
-                <StatCard
-                    title="Initial Failed"
-                    count={data.initial_failed}
-                    type="danger"
-                    icon={UserX}
-                    onClick={() => handleCardClick('initial_failed')}
-                />
-                <StatCard
-                    title="Final Passed"
-                    count={data.final_passed}
-                    type="success"
-                    icon={Award}
-                    onClick={() => handleCardClick('final_passed')}
-                />
-                <StatCard
-                    title="Final Failed"
-                    count={data.final_failed}
-                    type="danger"
-                    icon={XOctagon}
-                    onClick={() => handleCardClick('final_failed')}
-                />
             </div>
         </div>
     );
