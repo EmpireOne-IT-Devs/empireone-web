@@ -572,11 +572,14 @@ class JobApplicationController extends Controller
         $statuses = (clone $baseQuery)
             ->whereDate('updated_at', now()->toDateString())
             ->selectRaw("
-            SUM(CASE WHEN interview_status = 'Passed' THEN 1 ELSE 0 END) as initial_passed,
-            SUM(CASE WHEN interview_status = 'Failed' THEN 1 ELSE 0 END) as initial_failed,
-            SUM(CASE WHEN final_status = 'Passed' THEN 1 ELSE 0 END) as final_passed,
-            SUM(CASE WHEN final_status = 'Failed' THEN 1 ELSE 0 END) as final_failed
-        ")
+        SUM(CASE WHEN interview_status = 'Passed' THEN 1 ELSE 0 END) as initial_passed,
+        SUM(CASE WHEN interview_status = 'Failed' THEN 1 ELSE 0 END) as initial_failed,
+        SUM(CASE WHEN final_status = 'Passed' THEN 1 ELSE 0 END) as final_passed,
+        SUM(CASE WHEN final_status = 'Failed' THEN 1 ELSE 0 END) as final_failed,
+        SUM(CASE WHEN final_status = 'Pooled' THEN 1 ELSE 0 END) as final_pooled,
+        SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as remaining_applicants,
+        COUNT(id) as total_applicant
+    ")
             ->first();
 
         return response()->json([
@@ -586,6 +589,9 @@ class JobApplicationController extends Controller
                 'initial_failed' => (int) $statuses->initial_failed,
                 'final_passed' => (int) $statuses->final_passed,
                 'final_failed' => (int) $statuses->final_failed,
+                'final_pooled' => (int) $statuses->final_pooled,
+                'total_applicant' => (int) $statuses->total_applicant,
+                'remaining_applicants' => (int) $statuses->remaining_applicants,
             ],
             'status' => 'success',
         ], 200);

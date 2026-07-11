@@ -22,7 +22,7 @@ export default function Page() {
             <JobPostingLayout>
                 <div className="flex flex-col gap-3">
                     {/* <HeaderSection /> */}
-                    <CardSection />
+                    {/* <CardSection /> */}
                     <SearchStatusSection />
 
                     {/* Search and Stats trigger the scroll */}

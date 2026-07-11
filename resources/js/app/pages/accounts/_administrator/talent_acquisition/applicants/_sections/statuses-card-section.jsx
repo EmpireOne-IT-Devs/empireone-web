@@ -58,6 +58,7 @@ export default function StatusesCardSection() {
         initial_failed: 0,
         final_passed: 0,
         final_failed: 0,
+        final_pooled: 0
     };
 
     console.log('statuses', statuses);
@@ -109,6 +110,13 @@ export default function StatusesCardSection() {
 
             {/* Stat Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                 <StatCard
+                    title="Total Applicant"
+                    count={data.total_applicant}
+                    type="success"
+                    icon={UserCheck}
+                    onClick={() => handleCardClick('total_applicant')}
+                />
                 <StatCard
                     title="Initial Passed"
                     count={data.initial_passed}
@@ -137,6 +145,22 @@ export default function StatusesCardSection() {
                     icon={XOctagon}
                     onClick={() => handleCardClick('final_failed')}
                 />
+                <StatCard
+                    title="Pool"
+                    count={data.final_pooled}
+                    type="success"
+                    icon={UserCheck}
+                    onClick={() => handleCardClick('final_pooled')}
+                />
+
+                 <StatCard
+                    title="Remaining Applicants"
+                    count={data.remaining_applicants}
+                    type="danger"
+                    icon={XOctagon}
+                    onClick={() => handleCardClick('remaining_applicants')}
+                />
+
             </div>
 
             <div className="mt-6">
