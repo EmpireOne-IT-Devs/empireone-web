@@ -1,0 +1,1 @@
+import{j as r}from"./app-Wna6mwrs.js";import{B as t}from"./button-CIF4KshH.js";import"./index-CuBEKolq.js";function a(){return r.jsx("div",{children:r.jsx(t,{variant:"primary",children:"Add Category"})})}export{a as default};

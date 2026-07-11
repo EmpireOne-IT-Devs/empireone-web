@@ -65,8 +65,18 @@ export default function StatusesCardSection() {
     console.log('statuses', statuses);
     const [activeFilter, setActiveFilter] = useState(null);
 
-    const handleCardClick = (filterName) => {
-        setActiveFilter(activeFilter === filterName ? null : filterName);
+    const handleCardClick = (table, status) => {
+        // setActiveFilter(activeFilter === filterName ? null : filterName);
+        router.visit(`?${table}=${status}`, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                const resultsSection = document.getElementById('results-table');
+                if (resultsSection) {
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
     };
 
     // --- FIX APPLIED HERE ---
@@ -137,7 +147,7 @@ export default function StatusesCardSection() {
                     count={data.final_passed}
                     type="success"
                     icon={Award}
-                    onClick={() => handleCardClick('final_passed')}
+                    onClick={() => handleCardClick('final_passed', 'Passed')}
                 />
                 <StatCard
                     title="Final Failed"
@@ -151,7 +161,7 @@ export default function StatusesCardSection() {
                     count={data.final_pooled}
                     type="success"
                     icon={UserCheck}
-                    onClick={() => handleCardClick('final_pooled')}
+                    onClick={() => handleCardClick('final_pooled', 'Pool')}
                 />
 
                 <StatCard
