@@ -548,16 +548,44 @@ class JobApplicationController extends Controller
         ], 200);
     }
 
-    public function applicants()
+    public function applicants(Request $request)
     {
         $locationId = Auth::user()->account_employee->location_id;
-        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer', 'user'])
-            ->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
-                $query->where('location_id', $locationId);
+
+        // 1. Create a base query to avoid repeating the location filter
+        $baseQuery = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+            $query->where('location_id', $locationId);
+        });
+
+        // 2. Fetch the paginated applications
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user'])
+            ->when($request->search, function ($query) use ($request) {
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%');
+                });
             })
             ->paginate();
+
+        // 3. Count today's statuses using conditional aggregates
+        // Note: I am assuming "initial" refers to `interview_status`. If you meant `screening_status`, simply swap the column names below.
+        $statuses = (clone $baseQuery)
+            ->whereDate('updated_at', now()->toDateString())
+            ->selectRaw("
+            SUM(CASE WHEN interview_status = 'Passed' THEN 1 ELSE 0 END) as initial_passed,
+            SUM(CASE WHEN interview_status = 'Failed' THEN 1 ELSE 0 END) as initial_failed,
+            SUM(CASE WHEN final_status = 'Passed' THEN 1 ELSE 0 END) as final_passed,
+            SUM(CASE WHEN final_status = 'Failed' THEN 1 ELSE 0 END) as final_failed
+        ")
+            ->first();
+
         return response()->json([
             'data' => $applications,
+            'statuses' => [
+                'initial_passed' => (int) $statuses->initial_passed,
+                'initial_failed' => (int) $statuses->initial_failed,
+                'final_passed' => (int) $statuses->final_passed,
+                'final_failed' => (int) $statuses->final_failed,
+            ],
             'status' => 'success',
         ], 200);
     }

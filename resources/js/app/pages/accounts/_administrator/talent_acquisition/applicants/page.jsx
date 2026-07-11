@@ -9,6 +9,7 @@ import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-pos
 import ApplicantTableSection from "./_sections/applicant-table-section";
 import SearchStatusSection from "./_sections/search-status-section";
 import PaginationSection from "./_sections/pagination-section";
+import StatusesCardSection from "./_sections/statuses-card-section";
 
 export default function Page() {
     useEffect(() => {
@@ -22,7 +23,7 @@ export default function Page() {
                 <div className="flex flex-col gap-3">
                     {/* <HeaderSection /> */}
                     <CardSection />
-
+                    <StatusesCardSection />
                     <SearchStatusSection />
                     <ApplicantTableSection />
                     <PaginationSection />
