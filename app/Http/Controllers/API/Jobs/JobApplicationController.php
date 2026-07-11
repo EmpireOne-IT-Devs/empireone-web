@@ -602,6 +602,7 @@ class JobApplicationController extends Controller
         SUM(CASE WHEN final_status = 'Passed' THEN 1 ELSE 0 END) as final_passed,
         SUM(CASE WHEN final_status = 'Failed' THEN 1 ELSE 0 END) as final_failed,
         SUM(CASE WHEN final_status = 'Pooled' THEN 1 ELSE 0 END) as final_pooled,
+        SUM(CASE WHEN final_status = 'No Show' THEN 1 ELSE 0 END) as no_shows,
         SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as remaining_applicants,
         COUNT(id) as total_applicant
     ")
@@ -617,6 +618,7 @@ class JobApplicationController extends Controller
                 'final_pooled' => (int) $statuses->final_pooled,
                 'total_applicant' => (int) $statuses->total_applicant,
                 'remaining_applicants' => (int) $statuses->remaining_applicants,
+                'no_shows' => (int) $statuses->no_shows,
             ],
             'status' => 'success',
         ], 200);
