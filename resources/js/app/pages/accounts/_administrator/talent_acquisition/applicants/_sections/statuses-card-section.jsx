@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { UserCheck, UserX, Award, XOctagon } from 'lucide-react';
+import { UserCheck, UserX, Award, XOctagon, X, Search } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { router } from '@inertiajs/react';
 
 // Reusable Card Component for consistent styling and animations
 const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
@@ -64,11 +65,47 @@ export default function StatusesCardSection() {
         // You can pass this state up to a parent component to filter your datatable!
     };
 
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        router.visit('?search=' + value)
+    };
+
+
     return (
         <div className="w-full py-6">
             <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Today's Pipeline</h2>
-                <p className="text-sm text-gray-500">Overview of application statuses updated today.</p>
+                <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                    {/* Title Section */}
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-800">Today's Pipeline</h2>
+                        <p className="text-sm text-gray-500">Overview of application statuses updated today.</p>
+                    </div>
+
+                    {/* Interactive Search Input */}
+                    <div className="relative w-full md:w-80 group">
+                        {/* Search Icon */}
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300">
+                            <Search size={18} strokeWidth={2.5} />
+                        </div>
+
+                        {/* Input Field */}
+                        <input
+                            type="text"
+                            onChange={handleSearchChange}
+                            placeholder="Search applicants by name..."
+                            className="
+            w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700
+            shadow-sm transition-all duration-300 ease-in-out
+            focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-gray-300
+          "
+                        />
+
+                        {/* Clear Button (Only shows when there is text) */}
+
+                    </div>
+
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,0 +1,1 @@
+import{m as n}from"./app-9L1xJ0cy.js";async function r(a){return await n.post("/api/accounts/contract",a)}async function t(a){return await n.post("/api/accounts/agree_onboarding",a)}export{r as a,t as b};
