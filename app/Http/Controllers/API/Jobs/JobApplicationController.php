@@ -558,11 +558,36 @@ class JobApplicationController extends Controller
         });
 
         // 2. Fetch the paginated applications
-        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user'])
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information'])
             ->when($request->search, function ($query) use ($request) {
-                $query->whereHas('user', function ($q) use ($request) {
-                    $q->where('name', 'like', '%' . $request->search . '%');
-                    $q->orWhere('email', 'like', '%' . $request->search . '%');
+                $searchTerm = '%' . $request->search . '%';
+
+                // Group the search conditions so it acts as (User Matches OR Personal Info Matches)
+                $query->where(function ($subQuery) use ($searchTerm) {
+
+                    // 1. Search the User relationship
+                    $subQuery->whereHas('user', function ($q) use ($searchTerm) {
+                        $q->where('name', 'like', $searchTerm)
+                            ->orWhere('email', 'like', $searchTerm);
+                    });
+
+                    // 2. Search the Personal Information relationship
+                    /* * Note: If 'personal_information' belongs directly to the Application model, use this:
+             */
+                    $subQuery->orWhereHas('personal_information', function ($q) use ($searchTerm) {
+                        $q->where('first_name', 'like', $searchTerm)
+                            ->orWhere('last_name', 'like', $searchTerm);
+                    });
+
+                    /*
+             * ALTERNATIVE: If 'personal_information' actually belongs to the 'applicant' model, 
+             * you can chain them using dot notation inside orWhereHas like this:
+             *
+             * $subQuery->orWhereHas('applicant.personal_information', function ($q) use ($searchTerm) {
+             * $q->where('first_name', 'like', $searchTerm)
+             * ->orWhere('last_name', 'like', $searchTerm);
+             * });
+             */
                 });
             })
             ->paginate();

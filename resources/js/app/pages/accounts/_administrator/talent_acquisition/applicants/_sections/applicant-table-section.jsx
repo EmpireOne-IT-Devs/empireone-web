@@ -93,7 +93,7 @@ export default function ApplicantTableSection() {
                 >
                     {res?.applicant?.personal_information?.previous_employee_status && <FcButtingIn className="text-2xl" />}
                 </Tooltip>
-                <span>{res?.applicant?.name}</span>
+                <span>{res?.applicant?.personal_information?.first_name} {res?.applicant?.personal_information?.last_name}</span>
             </div>
         ),
         position: res?.job_posting?.job_requisition?.title,
