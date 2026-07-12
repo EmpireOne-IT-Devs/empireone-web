@@ -551,12 +551,11 @@ class JobApplicationController extends Controller
 
     public function export_applicant_csv(Request $request)
     {
+        $locationId = $request->location_id ?? Auth::user()->account_employee->location_id;
 
-        $locationId =  $request->location_id ?? Auth::user()->account_employee->location_id;
         // 1. Fetch the data (matching your dashboard's location filter)
         $applications = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
-            // $query->where('interview_status', 'Passed');
         })
             ->with(['user', 'personal_information'])
             ->get();
@@ -595,24 +594,41 @@ class JobApplicationController extends Controller
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns); // Write the Header Row
 
+            // --- NEW: Initialize tracking counters for totals ---
+            $totals = [
+                'passedIni'    => 0,
+                'pool'         => 0,
+                'forFi'        => 0,
+                'fi'           => 0,
+                'failedFi'     => 0,
+                'passedFi'     => 0,
+                'passedFiCond' => 0,
+                'noShow'       => 0,
+            ];
+
             foreach ($applications as $app) {
                 $pi = $app->personal_information;
                 $user = $app->user;
 
-                // Map the statuses to "Yes" or blank for the CSV columns
+                // Map the statuses to "Yes" or "No" for the CSV columns
                 $passedIni = $app->interview_status === 'Passed' ? 'Yes' : 'No';
                 $pool = $app->final_status === 'Pooled' ? 'Yes' : 'No';
-
-                // "For FI" usually means they passed initial but haven't taken final yet
                 $forFi = ($app->interview_status === 'Passed' && is_null($app->final_status)) ? 'Yes' : 'No';
-
-                // "FI" flag (assuming this means they attended the Final Interview)
                 $fi = !is_null($app->final_status) ? 'Yes' : 'No';
-
                 $failedFi = $app->final_status === 'Failed' ? 'Yes' : 'No';
                 $passedFi = $app->final_status === 'Passed' ? 'Yes' : 'No';
                 $passedFiCond = $app->final_status === 'Passed with Condition' ? 'Yes' : 'No';
                 $noShow = $app->final_status === 'No Show' ? 'Yes' : 'No';
+
+                // --- NEW: Increment summary totals if condition is 'Yes' ---
+                if ($passedIni === 'Yes')    $totals['passedIni']++;
+                if ($pool === 'Yes')         $totals['pool']++;
+                if ($forFi === 'Yes')        $totals['forFi']++;
+                if ($fi === 'Yes')           $totals['fi']++;
+                if ($failedFi === 'Yes')     $totals['failedFi']++;
+                if ($passedFi === 'Yes')     $totals['passedFi']++;
+                if ($passedFiCond === 'Yes') $totals['passedFiCond']++;
+                if ($noShow === 'Yes')       $totals['noShow']++;
 
                 // Write the row
                 $row = [
@@ -621,7 +637,7 @@ class JobApplicationController extends Controller
                     $pi->last_name ?? '',
                     $pi->street . ' ' . $pi->barangay . ' ' . $pi->city . ' ' . $pi->province . ' ' . $pi->zip_code ?? '',
                     $user->email ?? '',
-                    $pi->contact ?? '', // Swap with your actual phone column name
+                    $pi->contact ?? '',
                     $passedIni,
                     $pool,
                     $forFi,
@@ -634,6 +650,26 @@ class JobApplicationController extends Controller
 
                 fputcsv($file, $row);
             }
+
+            // --- NEW: Append the Total Row at the bottom ---
+            $totalRow = [
+                'TOTAL', // DATE Column cell
+                '',      // FIRST NAME
+                '',      // FAMILY NAME
+                '',      // ADDRESS
+                '',      // eMAIL ADDRESS
+                '',      // MOBILE NUMBER
+                $totals['passedIni'],
+                $totals['pool'],
+                $totals['forFi'],
+                $totals['fi'],
+                $totals['failedFi'],
+                $totals['passedFi'],
+                $totals['passedFiCond'],
+                $totals['noShow']
+            ];
+
+            fputcsv($file, $totalRow);
 
             fclose($file);
         };
@@ -650,7 +686,7 @@ class JobApplicationController extends Controller
         });
 
         // 2. Fetch the paginated applications
-        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information','schedule'])
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule'])
 
             // A. Apply TEXT search only if a search term exists
             ->when($request->search, function ($query) use ($request) {
