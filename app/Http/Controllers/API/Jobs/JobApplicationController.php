@@ -551,8 +551,8 @@ class JobApplicationController extends Controller
 
     public function export_applicant_csv(Request $request)
     {
-        $locationId = Auth::user()->account_employee->location_id;
 
+        $locationId =  $request->location_id ?? Auth::user()->account_employee->location_id;
         // 1. Fetch the data (matching your dashboard's location filter)
         $applications = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
@@ -642,7 +642,7 @@ class JobApplicationController extends Controller
     }
     public function applicants(Request $request)
     {
-        $locationId = Auth::user()->account_employee->location_id;
+        $locationId =  $request->location_id ?? Auth::user()->account_employee->location_id;
 
         // 1. Create a base query ONLY for the location (so the dashboard counts stay accurate)
         $baseQuery = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {

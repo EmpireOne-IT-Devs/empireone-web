@@ -31,7 +31,7 @@ export default function Page() {
                     <StatusesCardSection />
 
                     {/* Added the target ID wrapper here so the scroll knows where to land */}
-                    <div id="results-table" className="scroll-mt-6">
+                    <div id="results-table" className="scroll-mt-36">
                         <ApplicantTableSection />
                     </div>
 

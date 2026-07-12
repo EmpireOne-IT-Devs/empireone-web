@@ -19,7 +19,9 @@ import {
     ClipboardCheck
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import Input from "@/app/_components/input";
 import { router } from '@inertiajs/react';
+import Select from '@/app/_components/select';
 
 // Upgraded Reusable Card Component 
 const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
@@ -81,8 +83,11 @@ const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
 export default function StatusesCardSection() {
     const [search, setSearch] = useState('');
 
-    // Pulling statuses from Redux store
     const { statuses } = useSelector((store) => store.job_postings);
+    const { data: app_data } = useSelector((store) => store.app);
+    console.log('app_data', app_data?.user?.account_employee?.location_id);
+    const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const currentLocationId = searchParams.get('location_id') || app_data?.user?.account_employee?.location_id;
 
     // Updated fallback data with ALL new statuses
     const data = statuses || {
@@ -105,7 +110,27 @@ export default function StatusesCardSection() {
     };
 
     const handleCardClick = (table, status) => {
-        router.visit(`?${table}=${status}`, {
+        const searchParams = new URLSearchParams(window.location.search);
+
+        // If clicking a specific status card, set the new params
+        if (table && status) {
+            // Optional: You might want to clear other status types if they are mutually exclusive
+            searchParams.delete('statuses');
+            searchParams.delete('final_status');
+            searchParams.delete('interview_status');
+
+            searchParams.set(table, status);
+        } else {
+            // If clicking "Total Applicant" (empty strings), clear all status filters
+            searchParams.delete('statuses');
+            searchParams.delete('final_status');
+            searchParams.delete('interview_status');
+        }
+
+        const newQueryString = searchParams.toString();
+        const url = newQueryString ? `?${newQueryString}` : window.location.pathname;
+
+        router.visit(url, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -119,7 +144,15 @@ export default function StatusesCardSection() {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        router.visit('?search=' + search, {
+        const searchParams = new URLSearchParams(window.location.search);
+
+        if (search) {
+            searchParams.set('search', search);
+        } else {
+            searchParams.delete('search');
+        }
+
+        router.visit(`?${searchParams.toString()}`, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -134,7 +167,13 @@ export default function StatusesCardSection() {
     const clearSearch = (e) => {
         if (e) e.preventDefault();
         setSearch('');
-        router.visit(window.location.pathname, {
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete('search');
+
+        const newQueryString = searchParams.toString();
+        const url = newQueryString ? `?${newQueryString}` : window.location.pathname;
+
+        router.visit(url, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -147,12 +186,9 @@ export default function StatusesCardSection() {
     };
 
     return (
-        <div className="w-full py-6">
-
+        <div className="w-full">
             {/* Stat Cards Grid */}
-            {/* Changed lg:grid-cols-4 to lg:grid-cols-5 here 👇 */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-
                 {/* --- PIPELINE OVERVIEW --- */}
                 <StatCard
                     title="Total Applicant"
@@ -228,13 +264,6 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_status', 'No Show')}
                 />
 
-                {/* <StatCard
-                    title="Initial Passed"
-                    count={data.initial_passed}
-                    type="success"
-                    icon={UserCheck}
-                    onClick={() => handleCardClick('interview_status', 'Passed')}
-                /> */}
                 <StatCard
                     title="Initial Failed"
                     count={data.initial_failed}
@@ -250,8 +279,6 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_status', 'Failed')}
                 />
 
-
-
                 <StatCard
                     title="Declined Job Offer"
                     count={data.final_declined_job_offer}
@@ -259,7 +286,6 @@ export default function StatusesCardSection() {
                     icon={ThumbsDown}
                     onClick={() => handleCardClick('final_status', 'Declined Job Offer')}
                 />
-
 
                 <StatCard
                     title="Rejected"
@@ -275,7 +301,6 @@ export default function StatusesCardSection() {
                     icon={Ban}
                     onClick={() => handleCardClick('final_status', 'Withdrawn')}
                 />
-
             </div>
 
             <div className="mt-6">
@@ -287,33 +312,44 @@ export default function StatusesCardSection() {
                     </div>
 
                     {/* Interactive Search Form */}
-                    <form onSubmit={handleSearch} className="relative w-full md:w-80 group">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300">
-                            <Search size={18} strokeWidth={2.5} />
-                        </div>
-
-                        <input
-                            type="text"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search applicants by name..."
-                            className="
-                                w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700
-                                shadow-sm transition-all duration-300 ease-in-out
-                                focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-gray-300
-                            "
-                        />
-
-                        {search && (
-                            <button
-                                type="button"
-                                onClick={clearSearch}
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-rose-500 transition-colors duration-200"
-                            >
-                                <X size={18} strokeWidth={2.5} />
-                            </button>
-                        )}
-                    </form>
+                    <div className='flex gap-3'>
+                        <>
+                            <Select
+                                label="Location"
+                                name="location_id"
+                                className="w-full"
+                                value={Number(currentLocationId)}
+                                options={app_data?.locations?.map(res => ({
+                                    label: res.name,
+                                    value: res.id
+                                }))}
+                                onChange={(val) =>
+                                    // --- NEW: Added preserveState/preserveScroll so the UI doesn't visually jump ---
+                                    router.visit(`?location_id=${val}`, {
+                                        preserveState: true,
+                                        preserveScroll: true
+                                    })
+                                }
+                            />
+                        </>
+                        <form onSubmit={handleSearch} className="relative w-full md:w-80 group">
+                            <Input
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                iconLeft={<Search size={18} strokeWidth={2.5} />}
+                                label="Search applicants by name..."
+                            />
+                            {search && (
+                                <button
+                                    type="button"
+                                    onClick={clearSearch}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-rose-500 transition-colors duration-200"
+                                >
+                                    <X size={18} strokeWidth={2.5} />
+                                </button>
+                            )}
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

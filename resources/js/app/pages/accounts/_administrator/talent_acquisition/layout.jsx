@@ -14,10 +14,11 @@ export default function JobPostingLayout({ children }) {
             active: path === 'dashboard',
         },
         {
-            label: "Job Requisition",
-            path: "/accounts/administrator/talent_acquisition/job_requisition",
-            active: path === "job_requisition",
+            label: "Applicants",
+            path: "/accounts/administrator/talent_acquisition/applicants",
+            active: path === "applicants",
         },
+
         {
             label: "Job Postings",
             path: "/accounts/administrator/talent_acquisition/job_posting",
@@ -28,23 +29,22 @@ export default function JobPostingLayout({ children }) {
             path: "/accounts/administrator/talent_acquisition/job_offers",
             active: path === "job_offers",
         },
-
-        {
-            label: "Applicants",
-            path: "/accounts/administrator/talent_acquisition/applicants",
-            active: path === "applicants",
-        },
         {
             label: "Calendar",
             path: "/accounts/administrator/talent_acquisition/calendar",
             active: path === "calendar",
+        },
+        {
+            label: "Job Requisition",
+            path: "/accounts/administrator/talent_acquisition/job_requisition",
+            active: path === "job_requisition",
         },
         //    {
         //     label: "AI Interviews",
         //     path: "/accounts/administrator/talent_acquisition/ai_interviews",
         //     active: path === "ai_interviews",
         // },
-        
+
         // {
         //     label: "QR Codes",
         //     path: "/accounts/administrator/talent_acquisition/qr_code",
