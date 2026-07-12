@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     UserCheck,
     UserX,
@@ -88,7 +88,9 @@ export default function StatusesCardSection() {
     console.log('app_data', app_data?.user?.account_employee?.location_id);
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     const currentLocationId = searchParams.get('location_id') || app_data?.user?.account_employee?.location_id;
-
+    useEffect(() => {
+        setSearch(searchParams.get('search'))
+    },[])
     // Updated fallback data with ALL new statuses
     const data = statuses || {
         initial_passed: 0,
