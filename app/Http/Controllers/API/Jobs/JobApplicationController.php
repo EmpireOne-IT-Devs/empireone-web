@@ -650,7 +650,7 @@ class JobApplicationController extends Controller
         });
 
         // 2. Fetch the paginated applications
-        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information'])
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information','schedule'])
 
             // A. Apply TEXT search only if a search term exists
             ->when($request->search, function ($query) use ($request) {
