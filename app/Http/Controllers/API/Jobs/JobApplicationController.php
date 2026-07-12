@@ -556,7 +556,7 @@ class JobApplicationController extends Controller
         // 1. Fetch the data (matching your dashboard's location filter)
         $applications = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
-            $query->where('interview_status', 'Passed');
+            // $query->where('interview_status', 'Passed');
         })
             ->with(['user', 'personal_information'])
             ->get();
