@@ -16,8 +16,7 @@ export default function AddInterviewerSection({ autoOpen = false } = {}) {
         if (autoOpen) setOpen(true);
     }, [autoOpen]);
 
-    const { users } = useSelector((state) => state.job_requisitions);
-    const { interviewers } = useSelector((store) => store.app);
+    const { interviewers,tas } = useSelector((store) => store.app);
 
     const {
         control,
@@ -36,7 +35,6 @@ export default function AddInterviewerSection({ autoOpen = false } = {}) {
             break_time_end: "",
         },
     });
-
     const weeks = [
         { label: "Monday", value: "1" },
         { label: "Tuesday", value: "2" },
@@ -49,18 +47,18 @@ export default function AddInterviewerSection({ autoOpen = false } = {}) {
 
     // Filter out users who are already interviewers
     const interviewerOptions =
-        users?.users
-            ?.filter(
+        tas?.filter(
                 (user) =>
                     !interviewers?.some(
-                        (interviewer) => interviewer.interviewer_id === user.id,
+                        (interviewer) => interviewer.interviewer_id === user.user_id,
                     ),
             )
             ?.map((res) => ({
-                label: res.name,
+                label: `${res.personal_information.first_name} ${res.personal_information.last_name}`,
                 value: res.id,
             })) || [];
 
+console.log('tas',tas)
     const onSubmit = async (data) => {
         try {
             await create_job_interviewer_schedule_service({

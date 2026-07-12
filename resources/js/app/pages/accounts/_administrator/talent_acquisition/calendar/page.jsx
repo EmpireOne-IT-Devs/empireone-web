@@ -16,7 +16,7 @@ export default function Page() {
     useEffect(() => {
         store.dispatch(get_job_applicant_schedule_thunk());
         store.dispatch(get_job_interviewer_schedule_thunk());
-        store.dispatch(get_job_requisitions_thunk());
+        // store.dispatch(get_job_requisitions_thunk());
     }, []);
     return (
         <Layout>
