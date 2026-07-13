@@ -2,6 +2,7 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account\AccountPersonalInformation;
 use App\Models\ER\EREmployeeChangeForm;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -27,9 +28,17 @@ class JobApplication extends Model
     {
         return $this->hasMany(JobPosting::class, 'id', 'job_posting_id')->with(['applicant', 'personal_information', 'job_requisition']);
     }
+    public function schedule(): HasOne
+    {
+        return $this->hasOne(JobApplicantSchedule::class, 'application_id', 'id');
+    }
     public function applicant(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information', 'cover_letter', 'resume', 'account_employee', 'working_experience', 'skills']);
+    }
+    public function personal_information(): HasOne
+    {
+        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id');
     }
     public function change_form(): HasOne
     {

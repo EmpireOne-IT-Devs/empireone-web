@@ -185,6 +185,7 @@ export default function PersonalInfoSection({
                             required: true,
                         })}
                         options={[
+                            { value: "N/A", label: "N/A" },
                             { value: "Elementary", label: "Elementary" },
                             {
                                 value: "High School Junior",
@@ -195,8 +196,11 @@ export default function PersonalInfoSection({
                                 label: "High School Senior",
                             },
                             { value: "College", label: "College" },
+                            { value: "Undergraduate", label: "Undergraduate" },
+                            { value: "Degree Holder", label: "Degree Holder" },
                             { value: "Masteral", label: "Masteral" },
                             { value: "Doctoral", label: "Doctoral" },
+                            { value: "Vocational", label: "Vocational" },
                         ]}
                         error={errors.degree}
                         value={watchedValues.degree}

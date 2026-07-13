@@ -292,7 +292,7 @@ const OfferLetterPDF = (data) => (
             <View style={styles.signatureContainer}>
                 <Text>Very truly yours,</Text>
                 <Text style={[styles.bold, { marginTop: 10 }]}>
-                    CHRISTI ANN SANCHEZ
+                    Anabelle Marie Ubaldo
                 </Text>
                 <Text>Talent Acquisition Manager</Text>
             </View>
@@ -500,7 +500,7 @@ const OfferLetterPDF = (data) => (
 );
 
 // Example wrapper for preViewing
-const SupportOfferLetterPreview = ({ name, type,applicant_signature }) => {
+const SupportOfferLetterPreview = ({ name, type, applicant_signature }) => {
     const { job_offer } = useSelector((store) => store.applicants);
     const { document } = useSelector((store) => store.app);
     const dispatch = useDispatch();
@@ -533,9 +533,8 @@ const SupportOfferLetterPreview = ({ name, type,applicant_signature }) => {
             `${Number(job_offer?.salary) * 12 + Number(job_offer?.salary)}`,
         ),
         allowances: job_offer?.allowances,
-        talent_acquisition_manager: "CHRISTI ANN SANCHEZ",
-        talent_acquisition_manager_signature:
-            "/images/talent_acquisition_manager_signature.png",
+        talent_acquisition_manager: `${job_offer?.manager?.personal_information?.first_name || ""} ${job_offer?.manager?.personal_information?.last_name || ""}`.trim(),
+        talent_acquisition_manager_signature: job_offer?.manager?.account_employee?.signature,
     };
     console.log("job_offer", job_offer);
 

@@ -13,6 +13,7 @@ export const jobPostingsSlice = createSlice({
             final_status: "",
         },
         job_offers: [],
+        statuses:{}
     },
     reducers: {
         setJobPostings: (state, action) => {
@@ -33,12 +34,16 @@ export const jobPostingsSlice = createSlice({
         setJobOffers: (state, action) => {
             state.job_offers = action.payload;
         },
+        setStatuses: (state, action) => {
+            state.statuses = action.payload;
+        },
     },
 });
 export const {
     setJobPostings,
     setJobApplications,
     setJobApplication,
+    setStatuses,
     setApplicants,
     setSearchApplicantStatus,
     setJobOffers,

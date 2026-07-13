@@ -16,7 +16,7 @@ import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import SendJobOfferSection from "./send-job-offer-section";
 import ResendJobOfferSection from "./resend-job-offer-section";
 import SendDocumentsSection from "./send-documents-section";
-import { FcApproval, FcButtingIn } from "react-icons/fc";
+import { FcApproval, FcButtingIn, FcVideoCall } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import Button from "@/app/_components/button";
 import { router } from "@inertiajs/react";
@@ -28,6 +28,10 @@ export default function ApplicantTableSection() {
     console.log("applicants", applicants.data);
 
     const columns = [
+        {
+            header: "Interview Date",
+            accessor: "interview",
+        },
         {
             header: "Applicant Name",
             accessor: "name",
@@ -42,7 +46,7 @@ export default function ApplicantTableSection() {
         },
 
         {
-            header: "Screening Status",
+            header: "Assessment Status",
             accessor: "screening_status",
         },
         {
@@ -64,83 +68,117 @@ export default function ApplicantTableSection() {
             search_applicant_status;
 
         const screeningMatch = screening_status
-            ? res.screening_status === screening_status
+            ? res.screening_status == screening_status
             : true;
         const interviewMatch = interview_status
-            ? res.interview_status === interview_status
+            ? res.interview_status == interview_status
             : true;
         const finalMatch = final_status
-            ? res.final_status === final_status
+            ? res.final_status == final_status
             : true;
 
         return screeningMatch && interviewMatch && finalMatch;
     });
 
     console.log("filteredApplications", filteredApplications);
+    // 
+    const tableData = filteredApplications?.map((res) => {
+        // 1. Safe parsing and dynamic "Today" check for Interview details
+        const hasSchedule = res?.schedule?.scheduled_date;
 
-    const tableData = filteredApplications?.map((res) => ({
-        name: (
+        // Check if the scheduled interview date matches today's date
+        const isScheduledForToday = hasSchedule && moment(res.schedule.scheduled_date).isSame(moment(), 'day');
+
+        const interviewElement = hasSchedule ? (
+            <a
+                href={res?.schedule?.meeting_link}
+                target="_blank"
+                className="flex items-center gap-3 justify-center">
+                <FcVideoCall className="text-3xl shrink-0" />
+                <div className="flex flex-col items-start text-left leading-tight">
+                    <span className={`font-semibold text-sm ${isScheduledForToday ? 'text-rose-600 font-bold' : 'text-gray-900'}`}>
+                        {isScheduledForToday ? 'Today' : moment(res.schedule.scheduled_date).format('MMM DD, YYYY')}
+                    </span>
+                    <span className={`text-xs font-medium ${isScheduledForToday ? 'text-rose-500/90' : 'text-gray-500'}`}>
+                        {moment(res.schedule.start_time, 'HH:mm:ss').format('h:mm A')} - {moment(res.schedule.end_time, 'HH:mm:ss').format('h:mm A')}
+                    </span>
+                </div>
+            </a>
+        ) : (
+            <span className="text-xs text-gray-400 italic">Not Scheduled</span>
+        );
+
+        // 2. Clear Badging for Current/Former Employee Badges
+        const isCurrentEmployee = res?.applicant?.account_employee?.employee_id;
+        const previousStatus = res?.applicant?.personal_information?.previous_employee_status;
+        const firstName = res?.applicant?.personal_information?.first_name || '';
+        const lastName = res?.applicant?.personal_information?.last_name || '';
+
+        const nameElement = (
             <div className="flex items-center gap-2">
-                <Tooltip
-                    title="Current Employee"
-                >
-                    {
-                        res?.applicant?.account_employee?.employee_id && <FcApproval className="text-2xl" />
-                    }
-                </Tooltip>
-                <Tooltip
-                    title={`Former employee in the ${res?.applicant?.personal_information?.previous_employee_status}`}
-                >
-                    {res?.applicant?.personal_information?.previous_employee_status && <FcButtingIn className="text-2xl" />}
-                </Tooltip>
-                <span>{res?.applicant?.name}</span>
+                {isCurrentEmployee && (
+                    <Tooltip title="Current Employee">
+                        <FcApproval className="text-2xl shrink-0" />
+                    </Tooltip>
+                )}
+                {previousStatus && (
+                    <Tooltip title={`Former employee in the ${previousStatus}`}>
+                        <FcButtingIn className="text-2xl shrink-0" />
+                    </Tooltip>
+                )}
+                <span className="font-medium text-gray-900">{`${firstName} ${lastName}`.trim() || 'Unknown Applicant'}</span>
             </div>
-        ),
-        position: res?.job_posting?.job_requisition?.title,
-        recruiter: res?.job_posting?.job_requisition?.recruiter?.name,
-        applied_at: moment(res.created_at).format("LLL"),
-        screening_status: (
-            <EditStatusSection data={res} table_status="screening_status" />
-        ),
-        interview_status: (
-            <EditStatusSection data={res} table_status="interview_status" />
-        ),
-        final_status: (
-            <EditStatusSection data={res} table_status="final_status" />
-        ),
-        action: (
-            <div className="flex gap-3">
-                {
-                    res?.user?.role == "3" &&
-                    (res.final_status == "Passed" ||
-                        res.final_status == "Pooled") && (
+        );
+
+        return {
+            interview: interviewElement,
+            name: nameElement,
+            position: res?.job_posting?.job_requisition?.title || 'N/A',
+            recruiter: res?.job_posting?.job_requisition?.recruiter?.name || 'Unassigned',
+            applied_at: res?.created_at ? moment(res.created_at).format("LLL") : 'N/A',
+
+            screening_status: (
+                <EditStatusSection data={res} table_status="screening_status" />
+            ),
+            interview_status: (
+                <EditStatusSection data={res} table_status="interview_status" />
+            ),
+            final_status: (
+                <EditStatusSection data={res} table_status="final_status" />
+            ),
+
+            action: (
+                <div className="flex items-center gap-3">
+                    {res?.user?.role == "3" && (res?.final_status == "Passed" || res?.final_status == "Pooled") && (
                         <SendJobOfferSection data={res} />
                     )}
-                {res.final_status === "Declined Job Offer" && (
-                    <>
+
+                    {/* Resend Job Offer Condition */}
+                    {res?.final_status == "Declined Job Offer" && (
                         <ResendJobOfferSection data={res} />
-                    </>
-                )}
+                    )}
 
-                {res?.final_status == "Accepted Job Offer" && (
-                    <>
+                    {/* Document Request Condition */}
+                    {res?.final_status == "Accepted Job Offer" && (
                         <SendDocumentsSection data={res} />
-                    </>
-                )}
+                    )}
 
-                {
-                    (res.final_status == "Passed" && res?.applicant?.account_employee?.employee_id) && <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => router.visit(`/accounts/administrator/human_resources/employee_movements/assessment_process/promotions?employee_id=${res?.applicant?.account_employee?.employee_id}`)}
-                    >
-                        CREATE ECF
-                    </Button>
-                }
-                <ShowApplicantDetailsSection data={res} />
-            </div>
-        ),
-    }));
+                    {/* Promotions / Internal Movement ECF Condition */}
+                    {res?.final_status == "Passed" && isCurrentEmployee && (
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => router.visit(`/accounts/administrator/human_resources/employee_movements/assessment_process/promotions?employee_id=${isCurrentEmployee}`)}
+                        >
+                            CREATE ECF
+                        </Button>
+                    )}
+
+                    <ShowApplicantDetailsSection data={res} />
+                </div>
+            ),
+        };
+    });
     return (
         <div className="flex flex-col gap-3">
             <Table columns={columns} data={tableData} />

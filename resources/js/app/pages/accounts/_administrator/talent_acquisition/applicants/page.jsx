@@ -9,22 +9,32 @@ import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-pos
 import ApplicantTableSection from "./_sections/applicant-table-section";
 import SearchStatusSection from "./_sections/search-status-section";
 import PaginationSection from "./_sections/pagination-section";
+import StatusesCardSection from "./_sections/statuses-card-section";
+import ExportApplicantSection from "./_sections/export-applicant-section";
 
 export default function Page() {
     useEffect(() => {
         store.dispatch(get_applicants_thunk());
         store.dispatch(get_job_posting_thunk())
-    }, []);
+    }, [window.location.search]);
 
     return (
         <Layout>
             <JobPostingLayout>
                 <div className="flex flex-col gap-3">
                     {/* <HeaderSection /> */}
-                    <CardSection />
+                    {/* <CardSection /> */}
+                    {/* <SearchStatusSection /> */}
 
-                    <SearchStatusSection />
-                    <ApplicantTableSection />
+                    {/* Search and Stats trigger the scroll */}
+                    <ExportApplicantSection />
+                    <StatusesCardSection />
+
+                    {/* Added the target ID wrapper here so the scroll knows where to land */}
+                    <div id="results-table" className="scroll-mt-36">
+                        <ApplicantTableSection />
+                    </div>
+
                     <PaginationSection />
                 </div>
             </JobPostingLayout>

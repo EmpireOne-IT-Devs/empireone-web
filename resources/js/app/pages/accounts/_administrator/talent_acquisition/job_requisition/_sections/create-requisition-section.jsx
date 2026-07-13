@@ -73,8 +73,9 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     const existingPositionId = watch("existing_position_id");
 
     const selectedPosition = data?.position?.find(
-        (res) => String(res.id) === String(existingPositionId),
+        (res) => String(res.id) == String(existingPositionId),
     );
+    console.log('selectedPosition',selectedPosition)
     useEffect(() => {
         if (String(watchedValues.department_id) !== "4") {
             setValue("account_id", "");
@@ -112,7 +113,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             setValue("number_of_positions", req?.number_of_positions || "");
             setValue("salary_range_from", salaryFrom.replace("₱", "").trim());
             setValue("salary_range_to", salaryTo.replace("₱", "").trim());
-            setValue("existing_position_id", req?.id || "");
+            setValue("existing_position_id", selectedPosition?.id || "");
 
             setValue("qualifications", req?.qualifications || "");
             setValue("responsibilities", req?.responsibilities || "");
@@ -800,10 +801,10 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 <Controller
                                                     name="week_from2"
                                                     control={control}
-                                                    rules={{
-                                                        required:
-                                                            "From 1 1 is required",
-                                                    }}
+                                                    // rules={{
+                                                    //     required:
+                                                    //         "From 1 1 is required",
+                                                    // }}
                                                     render={({ field }) => (
                                                         <Select
                                                             {...field}
@@ -822,9 +823,9 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 <Controller
                                                     name="week_to2"
                                                     control={control}
-                                                    rules={{
-                                                        required: "To is required",
-                                                    }}
+                                                    // rules={{
+                                                    //     required: "To is required",
+                                                    // }}
                                                     render={({ field }) => (
                                                         <Select
                                                             {...field}

@@ -377,8 +377,11 @@ export default function FormSection() {
                             label: "High School Senior",
                         },
                         { value: "College", label: "College" },
+                        { value: "Undergraduate", label: "Undergraduate" },
+                        { value: "Degree Holder", label: "Degree Holder" },
                         { value: "Masteral", label: "Masteral" },
                         { value: "Doctoral", label: "Doctoral" },
+                        { value: "Vocational", label: "Vocational" },
                     ]}
                     error={errors.degree}
                     value={form?.degree}

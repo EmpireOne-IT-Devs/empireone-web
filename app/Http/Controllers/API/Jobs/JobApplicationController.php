@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Response;
 
 class JobApplicationController extends Controller
 {
@@ -223,6 +224,7 @@ class JobApplicationController extends Controller
         }
 
         $ja = JobApplication::where('id', $request->job_application_id)->with(['job_posting'])->first();
+        $manager = AccountEmployee::where('position', 'PH Lead, Talent Acquisition')->orderBy('id', 'desc')->first();
         if ($ja) {
             if ($ja->job_posting_id != $request->job_posting_id) {
                 $ja->update([
@@ -236,6 +238,7 @@ class JobApplicationController extends Controller
                     'final_status' => 'Sent Job Offer',
                 ]);
                 $jo = JobOffer::create([
+                    'talent_acquisition_manager_id' => $manager->user_id,
                     'user_id' => $request->user_id,
                     'job_application_id' => $nja->id,
                     'status' => 'Pending',
@@ -250,6 +253,7 @@ class JobApplicationController extends Controller
                     'job_posting_id' => $request->job_posting_id,
                 ]);
                 $jo = JobOffer::create([
+                    'talent_acquisition_manager_id' => $manager->user_id,
                     'user_id' => $request->user_id,
                     'job_application_id' => $ja->id,
                     'status' => 'Pending',
@@ -421,14 +425,24 @@ class JobApplicationController extends Controller
             //     ])
             // );
 
-            // 7. Handle Resume Upload
+
             if ($request->file) {
-                $fileContent = $this->base64ToFile($request->file);
-                $fileName = 'resume_' . time();
-                $path = "unified/account/resume";
-                Storage::disk('s3')->put($path, $fileContent);
+                // 1. Decode the base64 string and extract data
+                $commaPosition = strpos($request->file, ',');
+                $base64Data = $commaPosition !== false ? substr($request->file, $commaPosition + 1) : $request->file;
+                $fileData = base64_decode($base64Data);
+
+                $extension = 'pdf';
+                $timestamp = date("YmdHis");
+                $fileName = $timestamp . '.' . $extension;
+                $path = date("Y") . '/' . 'unified/' . 'resume/' . $fileName;
+                // 3. Upload directly to S3
+                Storage::disk('s3')->put($path, $fileData);
+
+                // 4. Get the public S3 URL
                 $url = Storage::disk('s3')->url($path);
 
+                // 5. Save or update the record in the database
                 AccountDocument::updateOrCreate(
                     [
                         'user_id' => $user->id,
@@ -442,10 +456,6 @@ class JobApplicationController extends Controller
                 );
             }
         }
-
-
-
-        // 8. Send Email & Return Response
 
 
         return response()->json([
@@ -548,16 +558,241 @@ class JobApplicationController extends Controller
         ], 200);
     }
 
-    public function applicants()
+    public function export_applicant_csv(Request $request)
     {
-        $locationId = Auth::user()->account_employee->location_id;
-        $applications = JobApplication::with(['job_posting', 'applicant', 'job_offer', 'user'])
-            ->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
-                $query->where('location_id', $locationId);
+        $locationId = $request->location_id ?? Auth::user()->account_employee->location_id;
+
+        // 1. Fetch the data (matching your dashboard's location filter)
+        $applications = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+            $query->where('location_id', $locationId);
+        })
+            ->with(['user', 'personal_information'])
+            ->get();
+
+        $filename = "applicants_export_" . now()->format('Y-m-d_H-i') . ".csv";
+
+        // 2. Set headers to force a file download
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        // 3. Define the exact columns from your image
+        $columns = [
+            'DATE',
+            'FIRST NAME',
+            'FAMILY NAME',
+            'ADDRESS',
+            'eMAIL ADDRESS',
+            'MOBILE NUMBER',
+            'PASSED INI',
+            'POOL',
+            'for FI',
+            'FI',
+            'FAILED FI',
+            'PASSED FI',
+            'PASSSED FI w/ CONDITIONS',
+            'NO SHOW',
+        ];
+
+        // 4. Stream the data directly into the CSV
+        $callback = function () use ($applications, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns); // Write the Header Row
+
+            // --- NEW: Initialize tracking counters for totals ---
+            $totals = [
+                'passedIni'    => 0,
+                'pool'         => 0,
+                'forFi'        => 0,
+                'fi'           => 0,
+                'failedFi'     => 0,
+                'passedFi'     => 0,
+                'passedFiCond' => 0,
+                'noShow'       => 0,
+            ];
+
+            foreach ($applications as $app) {
+                $pi = $app->personal_information;
+                $user = $app->user;
+
+                // Map the statuses to "Yes" or "No" for the CSV columns
+                $passedIni = $app->interview_status === 'Passed' ? 'Yes' : 'No';
+                $pool = $app->final_status === 'Pooled' ? 'Yes' : 'No';
+                $forFi = ($app->interview_status === 'Passed' && is_null($app->final_status)) ? 'Yes' : 'No';
+                $fi = !is_null($app->final_status) ? 'Yes' : 'No';
+                $failedFi = $app->final_status === 'Failed' ? 'Yes' : 'No';
+                $passedFi = $app->final_status === 'Passed' ? 'Yes' : 'No';
+                $passedFiCond = $app->final_status === 'Passed with Condition' ? 'Yes' : 'No';
+                $noShow = $app->final_status === 'No Show' ? 'Yes' : 'No';
+
+                // --- NEW: Increment summary totals if condition is 'Yes' ---
+                if ($passedIni === 'Yes')    $totals['passedIni']++;
+                if ($pool === 'Yes')         $totals['pool']++;
+                if ($forFi === 'Yes')        $totals['forFi']++;
+                if ($fi === 'Yes')           $totals['fi']++;
+                if ($failedFi === 'Yes')     $totals['failedFi']++;
+                if ($passedFi === 'Yes')     $totals['passedFi']++;
+                if ($passedFiCond === 'Yes') $totals['passedFiCond']++;
+                if ($noShow === 'Yes')       $totals['noShow']++;
+
+                // Write the row
+                $row = [
+                    $app->created_at ? $app->created_at->format('M d, Y') : '',
+                    $pi->first_name ?? '',
+                    $pi->last_name ?? '',
+                    $pi->street . ' ' . $pi->barangay . ' ' . $pi->city . ' ' . $pi->province . ' ' . $pi->zip_code ?? '',
+                    $user->email ?? '',
+                    $pi->contact ?? '',
+                    $passedIni,
+                    $pool,
+                    $forFi,
+                    $fi,
+                    $failedFi,
+                    $passedFi,
+                    $passedFiCond,
+                    $noShow
+                ];
+
+                fputcsv($file, $row);
+            }
+
+            // --- NEW: Append the Total Row at the bottom ---
+            $totalRow = [
+                'TOTAL', // DATE Column cell
+                '',      // FIRST NAME
+                '',      // FAMILY NAME
+                '',      // ADDRESS
+                '',      // eMAIL ADDRESS
+                '',      // MOBILE NUMBER
+                $totals['passedIni'],
+                $totals['pool'],
+                $totals['forFi'],
+                $totals['fi'],
+                $totals['failedFi'],
+                $totals['passedFi'],
+                $totals['passedFiCond'],
+                $totals['noShow']
+            ];
+
+            fputcsv($file, $totalRow);
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+    public function applicants(Request $request)
+    {
+        $locationId = $request->location_id ?? Auth::user()->account_employee->location_id;
+        $searchDate = $request->search_date;
+
+        // 1. Start the query on JobApplication
+        $baseQuery = JobApplication::query();
+
+        // 2. Filter by location via the relationship
+        $baseQuery->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+            $query->where('location_id', $locationId);
+        });
+
+        // 3. CORRECTED: Filter by application date directly on the base table
+        if (!empty($searchDate)) {
+            // This now correctly targets job_applications.created_at
+            $baseQuery->whereDate('created_at', $searchDate);
+        }
+        // 2. Fetch the paginated applications
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule'])
+            // A. Apply TEXT search only if a search term exists
+            ->when($request->search, function ($query) use ($request) {
+                $searchTerm = '%' . $request->search . '%';
+                $query->where(function ($subQuery) use ($searchTerm) {
+                    $subQuery->whereHas('user', function ($q) use ($searchTerm) {
+                        $q->where('name', 'like', $searchTerm)
+                            ->orWhere('email', 'like', $searchTerm);
+                    })->orWhereHas('personal_information', function ($q) use ($searchTerm) {
+                        $q->where('first_name', 'like', $searchTerm)
+                            ->orWhere('last_name', 'like', $searchTerm);
+                    });
+                });
             })
-            ->paginate();
+
+            // B. Apply STATUS filters independently of the text search
+            ->when($request->final_status, function ($query) use ($request) {
+                $query->where('final_status', $request->final_status);
+            })
+
+            ->when($request->interview_status, function ($query) use ($request) {
+                $query->where('interview_status', $request->interview_status);
+            })
+
+            ->when($request->statuses == 'For Initial Interview', function ($query) {
+                $query->whereNull('interview_status')
+                    ->whereNull('final_status');
+            })
+            ->when($request->statuses == 'For Final Interview', function ($query) {
+                $query->where('interview_status', 'Passed')
+                    ->whereNull('final_status');
+            })
+            ->paginate(10)
+            ->withQueryString();
+        // 3. Count today's statuses using the UNFILTERED base query
+        $statuses = (clone $baseQuery)
+            // ->whereDate('updated_at', now()->toDateString())
+            ->selectRaw("
+            -- Initial Statuses
+            SUM(CASE WHEN interview_status = 'Passed' THEN 1 ELSE 0 END) as initial_passed,
+            SUM(CASE WHEN interview_status = 'Failed' THEN 1 ELSE 0 END) as initial_failed,
+            
+            -- Final Statuses (From Image)
+            SUM(CASE WHEN final_status = 'Passed' THEN 1 ELSE 0 END) as final_passed,
+            SUM(CASE WHEN final_status = 'Failed' THEN 1 ELSE 0 END) as final_failed,
+            SUM(CASE WHEN final_status = 'Withdrawn' THEN 1 ELSE 0 END) as final_withdrawn,
+            SUM(CASE WHEN final_status = 'Pooled' THEN 1 ELSE 0 END) as final_pooled,
+            SUM(CASE WHEN final_status = 'Sent Job Offer' THEN 1 ELSE 0 END) as final_sent_job_offer,
+            SUM(CASE WHEN final_status = 'Accepted Job Offer' THEN 1 ELSE 0 END) as final_accepted_job_offer,
+            SUM(CASE WHEN final_status = 'Declined Job Offer' THEN 1 ELSE 0 END) as final_declined_job_offer,
+            SUM(CASE WHEN final_status = 'Passed With Condition' THEN 1 ELSE 0 END) as final_passed_with_condition,
+            SUM(CASE WHEN final_status = 'Hired' THEN 1 ELSE 0 END) as final_hired,
+            SUM(CASE WHEN final_status = 'Rejected' THEN 1 ELSE 0 END) as final_rejected,
+            SUM(CASE WHEN final_status = 'No Show' THEN 1 ELSE 0 END) as no_shows,
+            
+            -- Pipeline Computations
+            SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as remaining_applicants,
+            SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as for_initial,
+            SUM(CASE WHEN interview_status = 'Passed' AND final_status IS NULL THEN 1 ELSE 0 END) as for_final,
+            
+            COUNT(id) as total_applicant
+        ")
+            ->first();
+
         return response()->json([
             'data' => $applications,
+            'statuses' => [
+                'initial_passed' => (int) $statuses->initial_passed,
+                'initial_failed' => (int) $statuses->initial_failed,
+
+                // Final Statuses
+                'final_passed' => (int) $statuses->final_passed,
+                'final_failed' => (int) $statuses->final_failed,
+                'final_withdrawn' => (int) $statuses->final_withdrawn,
+                'final_pooled' => (int) $statuses->final_pooled,
+                'final_sent_job_offer' => (int) $statuses->final_sent_job_offer,
+                'final_accepted_job_offer' => (int) $statuses->final_accepted_job_offer,
+                'final_declined_job_offer' => (int) $statuses->final_declined_job_offer,
+                'final_passed_with_condition' => (int) $statuses->final_passed_with_condition,
+                'final_hired' => (int) $statuses->final_hired,
+                'final_rejected' => (int) $statuses->final_rejected,
+                'no_shows' => (int) $statuses->no_shows,
+
+                // Pipeline
+                'for_initial' => (int) $statuses->for_initial,
+                'for_final' => (int) $statuses->for_final,
+                'remaining_applicants' => (int) $statuses->remaining_applicants,
+                'total_applicant' => (int) $statuses->total_applicant,
+            ],
             'status' => 'success',
         ], 200);
     }

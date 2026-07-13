@@ -26,6 +26,7 @@ export function get_job_interviewer_schedule_thunk() {
     return async function (dispatch, getState) {
         const result = await get_job_interviewer_schedule_service();
         dispatch(appSlice.actions.setInterviewers(result.data));
+        dispatch(appSlice.actions.setTAs(result.tas));
     };
 }
 

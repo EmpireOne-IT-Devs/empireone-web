@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Jobs;
 
 use App\Models\Jobs\JobInterviewerSchedule;
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountEmployee;
 use Illuminate\Http\Request;
 
 class JobInterviewerScheduleController extends Controller
@@ -18,10 +19,13 @@ class JobInterviewerScheduleController extends Controller
             ->sortBy(function ($schedule) {
                 return $schedule->interviewer->name ?? '';
             })
-            ->values(); // Reset keys to maintain a clean JSON array
+            ->values();
+
+        $tas = AccountEmployee::where('position', 'like', '%Talent%')->with(['personal_information'])->get();
 
         return response()->json([
             'data' => $interviewers,
+            'tas'  => $tas
         ], 200);
     }
 
