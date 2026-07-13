@@ -1,1 +1,0 @@
-import{m as n}from"./app-DKCyGi4m.js";async function r(a){return await n.post("/api/accounts/contract",a)}async function t(a){return await n.post("/api/accounts/agree_onboarding",a)}export{r as a,t as b};
