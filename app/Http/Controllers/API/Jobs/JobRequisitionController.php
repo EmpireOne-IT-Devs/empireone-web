@@ -206,6 +206,14 @@ class JobRequisitionController extends Controller
             'user_id' =>  $auth->id,
         ]);
 
+        $jr = JobRequisition::where('title', $request->title)->where('type', 'New Position')->first();
+        if ($jr) {
+            $jr->update([
+                'qualifications' => $request->qualifications,
+                'responsibilities' => $request->responsibilities,
+            ]);
+        }
+
         $account = AccountEmployee::where('user_id', $request->approver1_id)->first();
 
         JobPosition::firstOrCreate(
