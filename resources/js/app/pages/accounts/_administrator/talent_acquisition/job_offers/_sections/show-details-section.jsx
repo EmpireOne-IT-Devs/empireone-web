@@ -138,13 +138,13 @@ export default function ShowDetailsSection({ data }) {
                                 Allowances
                             </p>
                         </div>
-                        {data?.allowances.length === 0 ? (
+                        {data?.allowances?.length === 0 ? (
                             <p className="text-xs text-red-500 px-4 py-3">
                                 No Allowance
                             </p>
                         ) : (
                             <div className="divide-y divide-gray-100">
-                                {data?.allowances.map((res, index) => (
+                                {data?.allowances?.map((res, index) => (
                                     <div
                                         key={index}
                                         className="grid grid-cols-2 gap-x-6 gap-y-2.5 px-4 py-3 text-sm text-gray-700"
@@ -154,7 +154,7 @@ export default function ShowDetailsSection({ data }) {
                                                 Allowance Type
                                             </p>
                                             <p className="font-medium text-neutral-800">
-                                                {res.allowance_type}
+                                                {res?.allowance_type}
                                             </p>
                                         </div>
                                         <div>
@@ -162,7 +162,7 @@ export default function ShowDetailsSection({ data }) {
                                                 Amount
                                             </p>
                                             <p className="font-medium text-neutral-800">
-                                                {peso_format(res.allowance)}
+                                                {peso_format(res?.allowance)}
                                             </p>
                                         </div>
                                     </div>
