@@ -41,7 +41,7 @@ export default function ShowDetailsSection({ data }) {
                         <p className="text-xs text-blue-700 leading-relaxed">
                             Current Status:{" "}
                             <span className="font-semibold uppercase">
-                                {data.status}
+                                {data?.status}
                             </span>
                         </p>
                     </div>
@@ -54,7 +54,7 @@ export default function ShowDetailsSection({ data }) {
                             <p className="text-xs text-red-700 leading-relaxed">
                                 Declined Reason:{" "}
                                 <span className="font-semibold">
-                                    {data.declined_reason}
+                                    {data?.declined_reason}
                                 </span>
                             </p>
                         </div>
@@ -72,7 +72,7 @@ export default function ShowDetailsSection({ data }) {
                                     Name
                                 </p>
                                 <p className="font-medium text-neutral-800">
-                                    {data.user.name}
+                                    {data?.user?.name}
                                 </p>
                             </div>
                             <div>
@@ -80,7 +80,7 @@ export default function ShowDetailsSection({ data }) {
                                     Email
                                 </p>
                                 <p className="font-medium text-neutral-800">
-                                    {data.user.email}
+                                    {data?.user?.email}
                                 </p>
                             </div>
                             <div>
@@ -89,7 +89,7 @@ export default function ShowDetailsSection({ data }) {
                                 </p>
                                 <p className="font-medium text-neutral-800">
                                     {
-                                        data.job_application?.job_posting?.job_requisition?.title
+                                        data?.job_application?.job_posting?.job_requisition?.title
                                     }
                                 </p>
                             </div>
@@ -99,7 +99,7 @@ export default function ShowDetailsSection({ data }) {
                                 </p>
                                 <p className="font-medium text-neutral-800">
                                     {
-                                        data.job_application?.job_posting?.job_requisition?.department?.name
+                                        data?.job_application?.job_posting?.job_requisition?.department?.name
                                     }
                                 </p>
                             </div>
@@ -118,7 +118,7 @@ export default function ShowDetailsSection({ data }) {
                                     Salary
                                 </p>
                                 <p className="font-medium text-neutral-800">
-                                    {peso_format(data.salary)}
+                                    {peso_format(data?.salary)}
                                 </p>
                             </div>
                             <div>
@@ -126,7 +126,7 @@ export default function ShowDetailsSection({ data }) {
                                     Role
                                 </p>
                                 <p className="font-medium text-neutral-800">
-                                    {data.role}
+                                    {data?.role}
                                 </p>
                             </div>
                         </div>
@@ -138,13 +138,13 @@ export default function ShowDetailsSection({ data }) {
                                 Allowances
                             </p>
                         </div>
-                        {data.allowances.length === 0 ? (
+                        {data?.allowances.length === 0 ? (
                             <p className="text-xs text-red-500 px-4 py-3">
                                 No Allowance
                             </p>
                         ) : (
                             <div className="divide-y divide-gray-100">
-                                {data.allowances.map((res, index) => (
+                                {data?.allowances.map((res, index) => (
                                     <div
                                         key={index}
                                         className="grid grid-cols-2 gap-x-6 gap-y-2.5 px-4 py-3 text-sm text-gray-700"
