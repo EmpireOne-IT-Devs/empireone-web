@@ -46,7 +46,7 @@ export default function ApplicantTableSection() {
         },
 
         {
-            header: "Screening Status",
+            header: "Assessment Status",
             accessor: "screening_status",
         },
         {
