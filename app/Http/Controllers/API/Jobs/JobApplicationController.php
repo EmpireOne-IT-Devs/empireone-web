@@ -224,6 +224,7 @@ class JobApplicationController extends Controller
         }
 
         $ja = JobApplication::where('id', $request->job_application_id)->with(['job_posting'])->first();
+        $manager = AccountEmployee::where('position', 'PH Lead, Talent Acquisition')->orderBy('id', 'desc')->first();
         if ($ja) {
             if ($ja->job_posting_id != $request->job_posting_id) {
                 $ja->update([
@@ -237,6 +238,7 @@ class JobApplicationController extends Controller
                     'final_status' => 'Sent Job Offer',
                 ]);
                 $jo = JobOffer::create([
+                    'talent_acquisition_manager_id' => $manager->user_id,
                     'user_id' => $request->user_id,
                     'job_application_id' => $nja->id,
                     'status' => 'Pending',
@@ -251,6 +253,7 @@ class JobApplicationController extends Controller
                     'job_posting_id' => $request->job_posting_id,
                 ]);
                 $jo = JobOffer::create([
+                    'talent_acquisition_manager_id' => $manager->user_id,
                     'user_id' => $request->user_id,
                     'job_application_id' => $ja->id,
                     'status' => 'Pending',

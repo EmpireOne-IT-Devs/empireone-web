@@ -14,6 +14,7 @@ class JobOffer extends Model
 {
     protected $fillable = [
         'user_id',
+        'talent_acquisition_manager_id',
         'job_application_id',
         'salary',
         'declined_reason',
@@ -26,11 +27,15 @@ class JobOffer extends Model
     {
         return $this->hasOne(JobApplication::class, 'id', 'job_application_id')->with(['job_posting']);
     }
+    public function manager(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'talent_acquisition_manager_id')->with(['account_employee','personal_information']);
+    }
     public function user(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id')->with(['personal_information']);
     }
-     public function employee(): HasOne
+    public function employee(): HasOne
     {
         return $this->hasOne(AccountEmployee::class, 'id', 'user_id');
     }
@@ -38,7 +43,7 @@ class JobOffer extends Model
     {
         return $this->hasMany(AccountEmployeeAllowance::class, 'job_offer_id', 'id');
     }
-     public function documents(): HasMany
+    public function documents(): HasMany
     {
         return $this->hasMany(AccountDocument::class, 'user_id', 'user_id');
     }

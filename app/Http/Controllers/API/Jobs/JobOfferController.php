@@ -93,7 +93,7 @@ class JobOfferController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
-        
+
         $query = JobOffer::where('user_id', Auth::id())->with(['job_application', 'user', 'allowances']);
 
         // Apply search filter (searching in role and position/title)
@@ -119,7 +119,7 @@ class JobOfferController extends Controller
         }
 
         $jo = $query->orderBy('id', 'desc')->get();
-        
+
         return response()->json([
             'data' => $jo,
             'status' => 'success',
@@ -170,7 +170,7 @@ class JobOfferController extends Controller
      */
     public function show($id)
     {
-        $jobOffers = JobOffer::where('id', $id)->with(['job_application', 'user', 'employee', 'documents', 'allowances'])->first();
+        $jobOffers = JobOffer::where('id', $id)->with(['job_application', 'user', 'employee', 'documents', 'allowances', 'manager'])->first();
         return response()->json([
             'data' => $jobOffers,
             'status' => 'success',

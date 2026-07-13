@@ -17,6 +17,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+            $table->foreignId('talent_acquisition_manager_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->foreignId('job_application_id')
                 ->nullable()
                 ->constrained('job_applications')

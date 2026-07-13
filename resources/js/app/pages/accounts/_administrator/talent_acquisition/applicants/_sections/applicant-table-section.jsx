@@ -68,13 +68,13 @@ export default function ApplicantTableSection() {
             search_applicant_status;
 
         const screeningMatch = screening_status
-            ? res.screening_status === screening_status
+            ? res.screening_status == screening_status
             : true;
         const interviewMatch = interview_status
-            ? res.interview_status === interview_status
+            ? res.interview_status == interview_status
             : true;
         const finalMatch = final_status
-            ? res.final_status === final_status
+            ? res.final_status == final_status
             : true;
 
         return screeningMatch && interviewMatch && finalMatch;
@@ -150,22 +150,22 @@ export default function ApplicantTableSection() {
             action: (
                 <div className="flex items-center gap-3">
                     {/* Send Job Offer Condition */}
-                    {res?.user?.role === "3" && (res?.final_status === "Passed" || res?.final_status === "Pooled") && (
+                    {res?.user?.role == "3" && (res?.final_status == "Passed" || res?.final_status == "Pooled") && (
                         <SendJobOfferSection data={res} />
                     )}
 
                     {/* Resend Job Offer Condition */}
-                    {res?.final_status === "Declined Job Offer" && (
+                    {res?.final_status == "Declined Job Offer" && (
                         <ResendJobOfferSection data={res} />
                     )}
 
                     {/* Document Request Condition */}
-                    {res?.final_status === "Accepted Job Offer" && (
+                    {res?.final_status == "Accepted Job Offer" && (
                         <SendDocumentsSection data={res} />
                     )}
 
                     {/* Promotions / Internal Movement ECF Condition */}
-                    {res?.final_status === "Passed" && isCurrentEmployee && (
+                    {res?.final_status == "Passed" && isCurrentEmployee && (
                         <Button
                             variant="primary"
                             size="sm"
