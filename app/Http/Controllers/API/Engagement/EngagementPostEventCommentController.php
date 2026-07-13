@@ -1,65 +1,103 @@
 <?php
 namespace App\Http\Controllers\API\Engagement;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
+use App\Models\Engagement\EngagementPostEvent;
 use App\Models\Engagement\EngagementPostEventComment;
+use App\Models\Engagement\EngagementPostEventReact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EngagementPostEventCommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index($id)
     {
-        //
+        EngagementPostEvent::findOrFail($id);
+
+        $comments = EngagementPostEventComment::with('user:id,name,avatar')
+            ->where('engagement_post_event_id', $id)
+            ->latest()
+            ->get()
+            ->map(function ($comment) {
+                $user  = $comment->user;
+                $name  = $user?->name ?? 'Unknown';
+                $parts = explode(' ', trim($name));
+                $initials = strtoupper(
+                    mb_substr($parts[0] ?? '', 0, 1) .
+                    mb_substr($parts[1] ?? '', 0, 1)
+                );
+                return [
+                    'id'       => $comment->id,
+                    'user_id'  => $comment->user_id,
+                    'body'     => $comment->comment,
+                    'time_ago' => $comment->created_at->diffForHumans(),
+                    'author'   => [
+                        'name'     => $name,
+                        'initials' => $initials,
+                        'avatar'   => $user?->avatar,
+                    ],
+                ];
+            });
+
+        $reactionCount = EngagementPostEventReact::where('engagement_post_event_id', $id)->count();
+        $userHasReacted = EngagementPostEventReact::where('engagement_post_event_id', $id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        return response()->json([
+            'data'             => $comments,
+            'reaction_count'   => $reactionCount,
+            'user_has_reacted' => $userHasReacted,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request, $id)
     {
-        //
+        $request->validate(['body' => ['required', 'string', 'max:1000']]);
+
+        EngagementPostEvent::findOrFail($id);
+
+        $comment = EngagementPostEventComment::create([
+            'engagement_post_event_id' => $id,
+            'user_id'                  => Auth::id(),
+            'comment'                  => $request->body,
+        ]);
+
+        $comment->load('user:id,name,avatar');
+        $user     = $comment->user;
+        $name     = $user?->name ?? 'Unknown';
+        $parts    = explode(' ', trim($name));
+        $initials = strtoupper(
+            mb_substr($parts[0] ?? '', 0, 1) .
+            mb_substr($parts[1] ?? '', 0, 1)
+        );
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => [
+                'id'       => $comment->id,
+                'user_id'  => $comment->user_id,
+                'body'     => $comment->comment,
+                'time_ago' => $comment->created_at->diffForHumans(),
+                'author'   => [
+                    'name'     => $name,
+                    'initials' => $initials,
+                    'avatar'   => $user?->avatar,
+                ],
+            ],
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function destroy($id, $commentId)
     {
-        //
-    }
+        $comment = EngagementPostEventComment::where('engagement_post_event_id', $id)
+            ->where('id', $commentId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(EngagementPostEventComment $engagementPostEventComment)
-    {
-        //
-    }
+        $comment->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EngagementPostEventComment $engagementPostEventComment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, EngagementPostEventComment $engagementPostEventComment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(EngagementPostEventComment $engagementPostEventComment)
-    {
-        //
+        return response()->json(['status' => 'success']);
     }
 }
+

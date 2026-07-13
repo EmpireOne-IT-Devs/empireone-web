@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+﻿import React, { useRef, useState } from "react";
 import {
     Send,
     FileText,
@@ -7,6 +7,8 @@ import {
     Megaphone,
     Tag,
     User,
+    ImagePlus,
+    X,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -33,6 +35,9 @@ export default function CreatePostCardSection() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("Event");
+    const [images, setImages] = useState([]);
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef(null);
 
     const {
         register,
@@ -54,7 +59,35 @@ export default function CreatePostCardSection() {
     const resetForm = () => {
         reset();
         setSelectedCategory("Event");
+        setImages([]);
         setIsOpen(false);
+    };
+
+    const addImages = (files) => {
+        const valid = Array.from(files).filter((f) =>
+            f.type.startsWith("image/"),
+        );
+        setImages((prev) => [...prev, ...valid]);
+    };
+
+    const removeImage = (index) => {
+        setImages((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        addImages(e.dataTransfer.files);
     };
 
     const onSubmit = async (data) => {
@@ -62,6 +95,7 @@ export default function CreatePostCardSection() {
             create_engagement_post_thunk({
                 ...data,
                 category: selectedCategory,
+                images,
             }),
         );
 
@@ -193,6 +227,74 @@ export default function CreatePostCardSection() {
                             <p className="text-xs text-red-500">
                                 {errors.content.message}
                             </p>
+                        )}
+                    </div>
+
+                    {/* Image Upload */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-semibold text-slate-700">
+                            Images{" "}
+                            <span className="text-xs font-normal text-slate-400">
+                                (optional)
+                            </span>
+                        </label>
+
+                        {/* Drop zone */}
+                        <div
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            onClick={() => fileInputRef.current?.click()}
+                            className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-5 transition-colors ${
+                                isDragging
+                                    ? "border-indigo-400 bg-indigo-50"
+                                    : "border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100"
+                            }`}
+                        >
+                            <ImagePlus className="h-6 w-6 text-slate-400" />
+                            <p className="text-xs text-slate-500">
+                                <span className="font-semibold text-indigo-600">
+                                    Click to upload
+                                </span>{" "}
+                                or drag &amp; drop
+                            </p>
+                            <p className="text-[11px] text-slate-400">
+                                JPG, PNG, GIF, WEBP — max 5 MB each
+                            </p>
+                        </div>
+
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/jpg,image/jpeg,image/png,image/gif,image/webp"
+                            multiple
+                            className="hidden"
+                            onChange={(e) => addImages(e.target.files)}
+                        />
+
+                        {/* Previews */}
+                        {images.length > 0 && (
+                            <div className="mt-1 grid grid-cols-4 gap-2 sm:grid-cols-6">
+                                {images.map((img, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
+                                    >
+                                        <img
+                                            src={URL.createObjectURL(img)}
+                                            alt={img.name}
+                                            className="h-full w-full object-cover"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(idx)}
+                                            className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
 

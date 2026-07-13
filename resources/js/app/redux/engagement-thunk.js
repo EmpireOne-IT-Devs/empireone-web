@@ -25,7 +25,18 @@ export const create_engagement_post_thunk = createAsyncThunk(
     "engagement/createPost",
     async (data, { rejectWithValue }) => {
         try {
-            const response = await create_post_event_service(data);
+            const formData = new FormData();
+            formData.append("title", data.title);
+            formData.append("content", data.content);
+            formData.append("category", data.category);
+
+            if (data.images && data.images.length > 0) {
+                data.images.forEach((image) => {
+                    formData.append("images[]", image);
+                });
+            }
+
+            const response = await create_post_event_service(formData);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

@@ -4,22 +4,16 @@ namespace App\Models\Engagement;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EngagementPostEventAnswer extends Model
+class EngagementPostEventQuestionOption extends Model
 {
     protected $fillable = [
-        'engagement_post_event_survey_response_id',
         'engagement_post_event_question_id',
-        'user_id',
-        'answer',
+        'option_text',
+        'sort_order',
     ];
 
     public function question()
     {
         return $this->belongsTo(EngagementPostEventQuestion::class, 'engagement_post_event_question_id');
-    }
-
-    public function response()
-    {
-        return $this->belongsTo(EngagementPostEventSurveyResponse::class, 'engagement_post_event_survey_response_id');
     }
 }

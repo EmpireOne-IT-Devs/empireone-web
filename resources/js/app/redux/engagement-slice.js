@@ -27,9 +27,17 @@ const engagementSlice = createSlice({
         deleting: false,
         deleteError: null,
     },
-    reducers: {},
+    reducers: {
+        syncInteraction(state, action) {
+            const { postId, reaction_count, user_has_reacted, comment_count } = action.payload;
+            const idx = state.posts.findIndex((p) => p.id === postId);
+            if (idx === -1) return;
+            if (reaction_count   !== undefined) state.posts[idx].reaction_count   = reaction_count;
+            if (user_has_reacted !== undefined) state.posts[idx].user_has_reacted = user_has_reacted;
+            if (comment_count    !== undefined) state.posts[idx].comment_count    = comment_count;
+        },
+    },
     extraReducers: (builder) => {
-        // ── get posts ─────────────────────────────────────────────────────────
         builder
             .addCase(get_engagement_posts_thunk.pending, (state) => {
                 state.fetching = true;
@@ -47,7 +55,6 @@ const engagementSlice = createSlice({
                 state.postsError = action.payload;
             });
 
-        // ── create post ───────────────────────────────────────────────────────
         builder
             .addCase(create_engagement_post_thunk.pending, (state) => {
                 state.creating = true;
@@ -64,7 +71,6 @@ const engagementSlice = createSlice({
                 state.createError = action.payload;
             });
 
-        // ── update post ───────────────────────────────────────────────────────
         builder
             .addCase(update_engagement_post_thunk.pending, (state) => {
                 state.updating = true;
@@ -100,4 +106,5 @@ const engagementSlice = createSlice({
     },
 });
 
+export const { syncInteraction } = engagementSlice.actions;
 export default engagementSlice.reducer;

@@ -11,6 +11,11 @@ use App\Http\Controllers\API\ER\EREmployeeChangeFormController;
 use App\Http\Controllers\API\ER\ERLeaderController;
 use App\Http\Controllers\API\ER\ERPerformanceEvaluationFormController;
 use App\Http\Controllers\API\ER\ERSubordinateController;
+use App\Http\Controllers\API\Engagement\EngagementPostEventCommentController;
+use App\Http\Controllers\API\Engagement\EngagementPostEventReactController;
+use App\Http\Controllers\API\Engagement\EngagementPostEventSurveyController;
+use App\Http\Controllers\API\Engagement\EngagementPollController;
+use App\Http\Controllers\API\Engagement\EngagementBirthdayController;
 use App\Http\Controllers\API\Jobs\JobAIInterviewController;
 use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
@@ -143,6 +148,35 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('engagement')->group(function () {
         Route::resource('post_events', EngagementPostEventController::class);
+        Route::get('post_events/{id}/comments',                     [EngagementPostEventCommentController::class, 'index']);
+        Route::post('post_events/{id}/comments',                    [EngagementPostEventCommentController::class, 'store']);
+        Route::delete('post_events/{id}/comments/{commentId}',      [EngagementPostEventCommentController::class, 'destroy']);
+        Route::post('post_events/{id}/react',                       [EngagementPostEventReactController::class,   'toggle']);
+
+        // ── migrated from activities ──────────────────────────────────────────
+        Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
+        Route::get('upcoming_events',    [EngagementPostEventController::class, 'upcoming_events']);
+
+        // Polls
+        Route::get('polls/analytics/dashboard',        [EngagementPollController::class, 'dashboard']);
+        Route::get('polls/analytics',                  [EngagementPollController::class, 'index']);
+        Route::get('polls/{id}/vote-records/export',   [EngagementPollController::class, 'export_vote_records']);
+        Route::get('polls/{id}/vote-records',          [EngagementPollController::class, 'vote_records']);
+        Route::get('polls/{id}',                       [EngagementPollController::class, 'show']);
+        Route::post('polls/{id}/close',                [EngagementPollController::class, 'close_poll']);
+        Route::post('polls/{id}/reopen',               [EngagementPollController::class, 'reopen_poll']);
+        Route::post('polls/{id}/vote',                 [EngagementPollController::class, 'vote']);
+
+        // Post-event surveys
+        Route::get('surveys',                [EngagementPostEventSurveyController::class, 'index']);
+        Route::post('surveys',               [EngagementPostEventSurveyController::class, 'store']);
+        Route::get('surveys/{id}',           [EngagementPostEventSurveyController::class, 'show']);
+        Route::post('surveys/{id}/submit',   [EngagementPostEventSurveyController::class, 'submit']);
+        Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
+        Route::get('surveys/{id}/analytics', [EngagementPostEventSurveyController::class, 'analytics']);
+        Route::post('surveys/{id}/close',    [EngagementPostEventSurveyController::class, 'close']);
+        Route::post('surveys/{id}/reopen',   [EngagementPostEventSurveyController::class, 'reopen']);
+        Route::delete('surveys/{id}',        [EngagementPostEventSurveyController::class, 'destroy']);
     });
     
     Route::prefix('er')->group(function () {

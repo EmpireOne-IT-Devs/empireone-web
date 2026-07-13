@@ -10,6 +10,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaRegUserCircle } from "react-icons/fa"
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
+import HeaderSection from "../../landing_page/sections/header-section";
 
 const Page = ({ flash }) => {
     const params = new URLSearchParams(location.search);
@@ -53,11 +54,13 @@ const Page = ({ flash }) => {
 
     return (
         <div
+        
             className={`min-h-screen flex flex-col gap-3 items-center justify-center font-sans overflow-hidden relative`}
             style={{
                 background: `linear-gradient(135deg, ${colors.deepPurple} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
             }}
         >
+              <HeaderSection variant="rounded" />
             {/* --- INTERACTIVE BACKGROUND --- */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <motion.div

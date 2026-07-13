@@ -16,6 +16,7 @@ import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
 import { BriefcaseIcon } from "lucide-react";
 import SetScheduleSection from "./set-schedule-section";
+import HeaderSection from "../../landing_page/sections/header-section";
 
 const TalentApplicationForm = () => {
     // ✅ Load saved step + data
@@ -235,7 +236,7 @@ const TalentApplicationForm = () => {
                     className="px-5 pt-6 pb-5 lg:px-10 border-b"
                     style={{ borderColor: "rgba(168,85,247,0.15)" }}
                 >
-                    {/* Back button */}
+                    {/* Back button
                     <button
                         type="button"
                         onClick={() => router.visit("/")}
@@ -249,7 +250,8 @@ const TalentApplicationForm = () => {
                         }
                     >
                         ← Back to careerpage
-                    </button>
+                    </button> */}
+                    <HeaderSection variant="rounded" />
 
                     {/* Step dots + label */}
                     <div className="flex items-center mb-4">

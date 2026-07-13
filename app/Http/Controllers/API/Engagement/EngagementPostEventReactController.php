@@ -1,64 +1,43 @@
 <?php
 namespace App\Http\Controllers\API\Engagement;
+
 use App\Http\Controllers\Controller;
+use App\Models\Engagement\EngagementPostEvent;
 use App\Models\Engagement\EngagementPostEventReact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EngagementPostEventReactController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function toggle($id)
     {
-        //
-    }
+        EngagementPostEvent::findOrFail($id);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $existing = EngagementPostEventReact::where('engagement_post_event_id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($existing) {
+            $existing->delete();
+            $userHasReacted = false;
+        } else {
+            EngagementPostEventReact::create([
+                'engagement_post_event_id' => $id,
+                'user_id'                  => Auth::id(),
+                'react'                    => 'Heart',
+            ]);
+            $userHasReacted = true;
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(EngagementPostEventReact $engagementPostEventReact)
-    {
-        //
-    }
+        $reactionCount = EngagementPostEventReact::where('engagement_post_event_id', $id)->count();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EngagementPostEventReact $engagementPostEventReact)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, EngagementPostEventReact $engagementPostEventReact)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(EngagementPostEventReact $engagementPostEventReact)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data'   => [
+                'reaction_count'   => $reactionCount,
+                'user_has_reacted' => $userHasReacted,
+            ],
+        ]);
     }
 }
+

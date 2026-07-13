@@ -12,7 +12,28 @@ class EngagementPostEvent extends Model
         'title',
         'content',
         'category',
+        'type',
+        'headline',
+        'message',
+        'media_path',
+        'media_type',
+        'month',
+        'year',
+        'publish_to',
+        'scheduled_at',
+        'published_at',
+        'closed_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'scheduled_at' => 'datetime',
+            'published_at' => 'datetime',
+            'closed_at'    => 'datetime',
+            'year'         => 'integer',
+        ];
+    }
 
     public function user()
     {
@@ -32,5 +53,16 @@ class EngagementPostEvent extends Model
     public function reactions()
     {
         return $this->hasMany(EngagementPostEventReact::class);
+    }
+
+    public function pollOptions()
+    {
+        return $this->hasMany(EngagementPollOption::class, 'engagement_post_event_id')
+            ->orderBy('sort_order');
+    }
+
+    public function pollVotes()
+    {
+        return $this->hasMany(EngagementPollVote::class, 'engagement_post_event_id');
     }
 }
