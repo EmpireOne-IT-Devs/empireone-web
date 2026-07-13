@@ -426,13 +426,33 @@ class JobApplicationController extends Controller
             // );
 
             // 7. Handle Resume Upload
+            // if ($request->hasFile('file')) {
+            //     $path = $request->file('file')->store(date("Y"), 's3');
+            //     $url = Storage::disk('s3')->url($path);
+            //     File::create([
+            //         'ticket_id' => $request->ticket_id,
+            //         'url' => $url,
+            //         'type' => 'rma_upload',
+            //     ]);
+            // }
             if ($request->file) {
-                $fileContent = $this->base64ToFile($request->file);
-                $fileName = 'resume_' . time();
-                $path = "unified/account/resume";
-                Storage::disk('s3')->put($path, $fileContent);
+                // 1. Decode the base64 string and extract data
+                $commaPosition = strpos($request->file, ',');
+                $base64Data = $commaPosition !== false ? substr($request->file, $commaPosition + 1) : $request->file;
+                $fileData = base64_decode($base64Data);
+
+                $extension = 'pdf';
+                $timestamp = date("YmdHis");
+                $fileName = $timestamp . '.' . $extension;
+                $path = date("Y") . '/' . 'resume/' . $fileName;
+
+                // 3. Upload directly to S3
+                Storage::disk('s3')->put($path, $fileData);
+
+                // 4. Get the public S3 URL
                 $url = Storage::disk('s3')->url($path);
 
+                // 5. Save or update the record in the database
                 AccountDocument::updateOrCreate(
                     [
                         'user_id' => $user->id,
