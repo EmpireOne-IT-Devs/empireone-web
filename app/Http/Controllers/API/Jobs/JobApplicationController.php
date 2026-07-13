@@ -435,7 +435,7 @@ class JobApplicationController extends Controller
                 $extension = 'pdf';
                 $timestamp = date("YmdHis");
                 $fileName = $timestamp . '.' . $extension;
-                $path = date("Y") . 'unified/' . 'resume/' . $fileName;
+                $path = date("Y") . '/' . 'unified/' . 'resume/' . $fileName;
                 // 3. Upload directly to S3
                 Storage::disk('s3')->put($path, $fileData);
 
