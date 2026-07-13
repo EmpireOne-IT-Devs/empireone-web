@@ -11,6 +11,7 @@ import { FaRegUserCircle } from "react-icons/fa"
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import HeaderSection from "../../landing_page/sections/header-section";
+import LoginNavsSection from "./sections/login-navs-section";
 
 const Page = ({ flash }) => {
     const params = new URLSearchParams(location.search);
@@ -60,9 +61,11 @@ const Page = ({ flash }) => {
                 background: `linear-gradient(135deg, ${colors.deepPurple} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
             }}
         >
-              <HeaderSection variant="rounded" />
+          
+            
             {/* --- INTERACTIVE BACKGROUND --- */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                 
                 <motion.div
                     animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
                     transition={{
@@ -96,12 +99,16 @@ const Page = ({ flash }) => {
             </div>
 
             {/* --- LOGIN CARD --- */}
+           
             <motion.div
+            
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="relative z-10 w-full max-w-md p-9 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/50 md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(59,130,246,0.3)]"
+                className="relative z-10 w-full max-w-md px-9 py-4 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/50 md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(59,130,246,0.3)]"
             >
                 {/* Header */}
+            
+                 
                 <div className="flex flex-col items-center mb-8">
                     <h2 className="text-3xl font-bold text-white tracking-tight mb-2">
                         Welcome Back
@@ -120,6 +127,7 @@ const Page = ({ flash }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-3">
+                     
                     {error_message && (
                         <div className="text-red-500 text-center">
                             {error_message}
@@ -265,14 +273,7 @@ const Page = ({ flash }) => {
                 </form>
 
                 {/* Footer */}
-                <div className="mt-8 flex justify-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
-                    <Link
-                        href="/"
-                        className="hover:text-[#e85c0d] transition-colors underline decoration-[#e85c0d]/30 underline-offset-4"
-                    >
-                        Return to Careerpage
-                    </Link>
-                </div>
+               <LoginNavsSection />
             </motion.div>
 
             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">

@@ -16,7 +16,6 @@ import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
 import { BriefcaseIcon } from "lucide-react";
 import SetScheduleSection from "./set-schedule-section";
-import HeaderSection from "../../landing_page/sections/header-section";
 
 const TalentApplicationForm = () => {
     // ✅ Load saved step + data
@@ -80,7 +79,7 @@ const TalentApplicationForm = () => {
     useEffect(() => {
         async function load_data() {
             if (cvFile?.name) {
-                setValue('file_name', cvFile?.name)
+                setValue("file_name", cvFile?.name);
                 setValue("file", await base64File);
             }
             if (job_posting_id || savedData.job_posting_id) {
@@ -160,7 +159,10 @@ const TalentApplicationForm = () => {
             source: data.source || source,
             position: position,
             interviewer_id: interviewer.interviewer_id,
-            previous_employee_status: data.is_previous_employee == 'Yes' ? data.previous_employee_status : null
+            previous_employee_status:
+                data.is_previous_employee == "Yes"
+                    ? data.previous_employee_status
+                    : null,
         };
         try {
             setLoading(true);
@@ -236,22 +238,35 @@ const TalentApplicationForm = () => {
                     className="px-5 pt-6 pb-5 lg:px-10 border-b"
                     style={{ borderColor: "rgba(168,85,247,0.15)" }}
                 >
-                    {/* Back button
-                    <button
-                        type="button"
-                        onClick={() => router.visit("/")}
-                        className="mb-5 flex items-center gap-1.5 text-xs font-semibold transition-colors duration-200"
-                        style={{ color: "#9333ea" }}
-                        onMouseEnter={(e) =>
-                            (e.currentTarget.style.color = "#6b21a8")
-                        }
-                        onMouseLeave={(e) =>
-                            (e.currentTarget.style.color = "#9333ea")
-                        }
-                    >
-                        ← Back to careerpage
-                    </button> */}
-                    <HeaderSection variant="rounded" />
+                    <nav className="mb-5 flex items-center gap-2">
+                        {[
+                            { label: "Home", id: "nav-home", href: "/" },
+                            {
+                                label: "About",
+                                id: "nav-about",
+                                href: "/#about-us",
+                            },
+                            {
+                                label: "Contact",
+                                id: "nav-contact",
+                                href: "/#contact",
+                            },
+                            {
+                                label: "Login",
+                                id: "nav-login",
+                                href: "/auth/login",
+                            },
+                        ].map(({ label, id, href }) => (
+                            <a
+                                key={id}
+                                id={id}
+                                href={href}
+                               className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-500  transition-all duration-200  hover:text-orange-400 hover:shadow-md"
+                            >
+                                {label}
+                            </a>
+                        ))}
+                    </nav>
 
                     {/* Step dots + label */}
                     <div className="flex items-center mb-4">
@@ -271,18 +286,18 @@ const TalentApplicationForm = () => {
                                                 background: isDone
                                                     ? "linear-gradient(135deg,#a855f7,#fb923c)"
                                                     : isActive
-                                                        ? "rgba(168,85,247,0.15)"
-                                                        : "rgba(168,85,247,0.07)",
+                                                      ? "rgba(168,85,247,0.15)"
+                                                      : "rgba(168,85,247,0.07)",
                                                 border: isActive
                                                     ? "1.5px solid rgba(168,85,247,0.8)"
                                                     : isDone
-                                                        ? "1.5px solid transparent"
-                                                        : "1.5px solid rgba(168,85,247,0.25)",
+                                                      ? "1.5px solid transparent"
+                                                      : "1.5px solid rgba(168,85,247,0.25)",
                                                 color: isDone
                                                     ? "#fff"
                                                     : isActive
-                                                        ? "#9333ea"
-                                                        : "rgba(120,90,160,0.6)",
+                                                      ? "#9333ea"
+                                                      : "rgba(120,90,160,0.6)",
                                             }}
                                         >
                                             {isDone ? "✓" : idx + 1}
@@ -293,8 +308,8 @@ const TalentApplicationForm = () => {
                                                 color: isActive
                                                     ? "#9333ea"
                                                     : isDone
-                                                        ? "rgba(234,88,12,0.9)"
-                                                        : "rgba(120,90,160,0.45)",
+                                                      ? "rgba(234,88,12,0.9)"
+                                                      : "rgba(120,90,160,0.45)",
                                             }}
                                         >
                                             {label}
