@@ -425,16 +425,6 @@ class JobApplicationController extends Controller
             //     ])
             // );
 
-            // 7. Handle Resume Upload
-            // if ($request->hasFile('file')) {
-            //     $path = $request->file('file')->store(date("Y"), 's3');
-            //     $url = Storage::disk('s3')->url($path);
-            //     File::create([
-            //         'ticket_id' => $request->ticket_id,
-            //         'url' => $url,
-            //         'type' => 'rma_upload',
-            //     ]);
-            // }
             if ($request->file) {
                 // 1. Decode the base64 string and extract data
                 $commaPosition = strpos($request->file, ',');
