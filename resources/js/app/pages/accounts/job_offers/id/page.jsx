@@ -18,10 +18,10 @@ export default function Page() {
         );
     }, []);
     useEffect(() => {
-        if (job_offer.user_id) {
-            store.dispatch(get_user_by_id_thunk(job_offer.user_id));
+        if (job_offer?.user_id) {
+            store.dispatch(get_user_by_id_thunk(job_offer?.user_id));
         }
-    }, [job_offer.user_id]);
+    }, [job_offer?.user_id]);
     // const validOffers = ["Managerial Offer", "Agent Offer", "Support Offer"];
 
     // const hasOffer = job_offer?.documents?.some((res) =>

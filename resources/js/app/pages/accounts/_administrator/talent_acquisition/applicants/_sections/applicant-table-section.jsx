@@ -149,7 +149,6 @@ export default function ApplicantTableSection() {
 
             action: (
                 <div className="flex items-center gap-3">
-                    {/* Send Job Offer Condition */}
                     {res?.user?.role == "3" && (res?.final_status == "Passed" || res?.final_status == "Pooled") && (
                         <SendJobOfferSection data={res} />
                     )}

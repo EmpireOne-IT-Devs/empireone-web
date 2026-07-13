@@ -85,13 +85,19 @@ export default function StatusesCardSection() {
 
     const { statuses } = useSelector((store) => store.job_postings);
     const { data: app_data } = useSelector((store) => store.app);
-    console.log('app_data', app_data?.user?.account_employee?.location_id);
+    
+    // Parse URL Search Parameters safely
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     const currentLocationId = searchParams.get('location_id') || app_data?.user?.account_employee?.location_id;
+    
+    // NEW: Extract current date param to bind it to the controlled date input
+    const currentSearchDate = searchParams.get('search_date') || '';
+
     useEffect(() => {
-        setSearch(searchParams.get('search'))
-    },[])
-    // Updated fallback data with ALL new statuses
+        setSearch(searchParams.get('search') || '');
+    }, []);
+
+    // Fallback numbers for UI counters
     const data = statuses || {
         initial_passed: 0,
         initial_failed: 0,
@@ -112,24 +118,20 @@ export default function StatusesCardSection() {
     };
 
     const handleCardClick = (table, status) => {
-        const searchParams = new URLSearchParams(window.location.search);
+        const currentParams = new URLSearchParams(window.location.search);
 
-        // If clicking a specific status card, set the new params
         if (table && status) {
-            // Optional: You might want to clear other status types if they are mutually exclusive
-            searchParams.delete('statuses');
-            searchParams.delete('final_status');
-            searchParams.delete('interview_status');
-
-            searchParams.set(table, status);
+            currentParams.delete('statuses');
+            currentParams.delete('final_status');
+            currentParams.delete('interview_status');
+            currentParams.set(table, status);
         } else {
-            // If clicking "Total Applicant" (empty strings), clear all status filters
-            searchParams.delete('statuses');
-            searchParams.delete('final_status');
-            searchParams.delete('interview_status');
+            currentParams.delete('statuses');
+            currentParams.delete('final_status');
+            currentParams.delete('interview_status');
         }
 
-        const newQueryString = searchParams.toString();
+        const newQueryString = currentParams.toString();
         const url = newQueryString ? `?${newQueryString}` : window.location.pathname;
 
         router.visit(url, {
@@ -146,15 +148,15 @@ export default function StatusesCardSection() {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        const searchParams = new URLSearchParams(window.location.search);
+        const currentParams = new URLSearchParams(window.location.search);
 
         if (search) {
-            searchParams.set('search', search);
+            currentParams.set('search', search);
         } else {
-            searchParams.delete('search');
+            currentParams.delete('search');
         }
 
-        router.visit(`?${searchParams.toString()}`, {
+        router.visit(`?${currentParams.toString()}`, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -169,13 +171,35 @@ export default function StatusesCardSection() {
     const clearSearch = (e) => {
         if (e) e.preventDefault();
         setSearch('');
-        const searchParams = new URLSearchParams(window.location.search);
-        searchParams.delete('search');
+        const currentParams = new URLSearchParams(window.location.search);
+        currentParams.delete('search');
 
-        const newQueryString = searchParams.toString();
+        const newQueryString = currentParams.toString();
         const url = newQueryString ? `?${newQueryString}` : window.location.pathname;
 
         router.visit(url, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                const resultsSection = document.getElementById('results-table');
+                if (resultsSection) {
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    };
+
+    // NEW: Handle dynamic date queries securely preserving existing active parameters
+    const handleDateChange = (dateValue) => {
+        const currentParams = new URLSearchParams(window.location.search);
+
+        if (dateValue) {
+            currentParams.set('search_date', dateValue);
+        } else {
+            currentParams.delete('search_date');
+        }
+
+        router.visit(`?${currentParams.toString()}`, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
@@ -191,7 +215,6 @@ export default function StatusesCardSection() {
         <div className="w-full">
             {/* Stat Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                {/* --- PIPELINE OVERVIEW --- */}
                 <StatCard
                     title="Total Applicant"
                     count={data.total_applicant}
@@ -227,7 +250,6 @@ export default function StatusesCardSection() {
                     icon={Layers}
                     onClick={() => handleCardClick('final_status', 'Pooled')}
                 />
-
                 <StatCard
                     title="Passed w/ Condition"
                     count={data.final_passed_with_condition}
@@ -235,7 +257,6 @@ export default function StatusesCardSection() {
                     icon={ClipboardCheck}
                     onClick={() => handleCardClick('final_status', 'Passed with Condition')}
                 />
-
                 <StatCard
                     title="Accepted Job Offer"
                     count={data.final_accepted_job_offer}
@@ -243,7 +264,6 @@ export default function StatusesCardSection() {
                     icon={ThumbsUp}
                     onClick={() => handleCardClick('final_status', 'Accepted Job Offer')}
                 />
-
                 <StatCard
                     title="Hired"
                     count={data.final_hired}
@@ -265,7 +285,6 @@ export default function StatusesCardSection() {
                     icon={UserMinus}
                     onClick={() => handleCardClick('final_status', 'No Show')}
                 />
-
                 <StatCard
                     title="Initial Failed"
                     count={data.initial_failed}
@@ -280,7 +299,6 @@ export default function StatusesCardSection() {
                     icon={UserX}
                     onClick={() => handleCardClick('final_status', 'Failed')}
                 />
-
                 <StatCard
                     title="Declined Job Offer"
                     count={data.final_declined_job_offer}
@@ -288,7 +306,6 @@ export default function StatusesCardSection() {
                     icon={ThumbsDown}
                     onClick={() => handleCardClick('final_status', 'Declined Job Offer')}
                 />
-
                 <StatCard
                     title="Rejected"
                     count={data.final_rejected}
@@ -305,17 +322,19 @@ export default function StatusesCardSection() {
                 />
             </div>
 
+            {/* Title & Filtering Row */}
             <div className="mt-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
                     {/* Title Section */}
-                    <div>
+                    <div className="shrink-0">
                         <h2 className="text-2xl font-bold text-gray-800">Today's Pipeline</h2>
                         <p className="text-sm text-gray-500">Overview of application statuses updated today.</p>
                     </div>
 
-                    {/* Interactive Search Form */}
-                    <div className='flex gap-3'>
-                        <>
+                    {/* Mobile-Responsive Inputs Container */}
+                    <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end w-full lg:justify-end">
+                        {/* Location Select */}
+                        <div className="w-full md:w-64">
                             <Select
                                 label="Location"
                                 name="location_id"
@@ -324,22 +343,38 @@ export default function StatusesCardSection() {
                                 options={app_data?.locations?.map(res => ({
                                     label: res.name,
                                     value: res.id
-                                }))}
-                                onChange={(val) =>
-                                    // --- NEW: Added preserveState/preserveScroll so the UI doesn't visually jump ---
-                                    router.visit(`?location_id=${val}`, {
+                }))}
+                                onChange={(val) => {
+                                    const currentParams = new URLSearchParams(window.location.search);
+                                    currentParams.set('location_id', val);
+                                    router.visit(`?${currentParams.toString()}`, {
                                         preserveState: true,
                                         preserveScroll: true
-                                    })
-                                }
+                                    });
+                                }}
                             />
-                        </>
+                        </div>
+
+                        {/* Search Date Input */}
+                        <div className="w-full md:w-64">
+                            <Input
+                                type="date"
+                                label="Search Date"
+                                name="search_date"
+                                value={currentSearchDate}
+                                onChange={(e) => handleDateChange(e.target.value)}
+                                className="w-full"
+                            />
+                        </div>
+
+                        {/* Search Input Form */}
                         <form onSubmit={handleSearch} className="relative w-full md:w-80 group">
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 iconLeft={<Search size={18} strokeWidth={2.5} />}
                                 label="Search applicants by name..."
+                                className="w-full"
                             />
                             {search && (
                                 <button

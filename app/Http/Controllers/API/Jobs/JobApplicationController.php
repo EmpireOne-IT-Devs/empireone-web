@@ -687,16 +687,24 @@ class JobApplicationController extends Controller
     }
     public function applicants(Request $request)
     {
-        $locationId =  $request->location_id ?? Auth::user()->account_employee->location_id;
+        $locationId = $request->location_id ?? Auth::user()->account_employee->location_id;
+        $searchDate = $request->search_date;
 
-        // 1. Create a base query ONLY for the location (so the dashboard counts stay accurate)
-        $baseQuery = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+        // 1. Start the query on JobApplication
+        $baseQuery = JobApplication::query();
+
+        // 2. Filter by location via the relationship
+        $baseQuery->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
         });
 
+        // 3. CORRECTED: Filter by application date directly on the base table
+        if (!empty($searchDate)) {
+            // This now correctly targets job_applications.created_at
+            $baseQuery->whereDate('created_at', $searchDate);
+        }
         // 2. Fetch the paginated applications
         $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule'])
-
             // A. Apply TEXT search only if a search term exists
             ->when($request->search, function ($query) use ($request) {
                 $searchTerm = '%' . $request->search . '%';
@@ -728,7 +736,7 @@ class JobApplicationController extends Controller
                 $query->where('interview_status', 'Passed')
                     ->whereNull('final_status');
             })
-            ->paginate()
+            ->paginate(10)
             ->withQueryString();
         // 3. Count today's statuses using the UNFILTERED base query
         $statuses = (clone $baseQuery)
