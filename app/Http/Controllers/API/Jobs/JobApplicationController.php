@@ -425,6 +425,7 @@ class JobApplicationController extends Controller
             //     ])
             // );
 
+
             if ($request->file) {
                 // 1. Decode the base64 string and extract data
                 $commaPosition = strpos($request->file, ',');
@@ -434,8 +435,7 @@ class JobApplicationController extends Controller
                 $extension = 'pdf';
                 $timestamp = date("YmdHis");
                 $fileName = $timestamp . '.' . $extension;
-                $path = date("Y") . '/' . 'resume/' . $fileName;
-
+                $path = date("Y") . 'unified/' . 'resume/' . $fileName;
                 // 3. Upload directly to S3
                 Storage::disk('s3')->put($path, $fileData);
 
@@ -456,10 +456,6 @@ class JobApplicationController extends Controller
                 );
             }
         }
-
-
-
-        // 8. Send Email & Return Response
 
 
         return response()->json([
