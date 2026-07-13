@@ -508,7 +508,7 @@ export default function PostCardSection() {
             if (!document.hidden) dispatch(get_engagement_posts_thunk());
         }, REFRESH_INTERVAL_MS);
         return () => clearInterval(interval);
-    }, [dispatch]);
+    }, [dispatch]); 
 
     async function handleDelete(id) {
         const result = await dispatch(delete_engagement_post_thunk(id));
