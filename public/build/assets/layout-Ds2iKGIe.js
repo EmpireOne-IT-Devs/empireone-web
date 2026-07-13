@@ -1,0 +1,1 @@
+import{j as o}from"./app-CcxlSBH3.js";import r from"./header-section-Dw80h8F_.js";import e from"./tabs-section-D7Yk-5Hm.js";import"./tabs-pjYE1Lwb.js";import"./chevron-down-Cq4eE77B.js";import"./createLucideIcon-DbRfSDrZ.js";function x({children:t}){return o.jsxs(o.Fragment,{children:[o.jsx(r,{}),o.jsx(e,{}),t]})}export{x as default};

@@ -124,7 +124,19 @@ export default function ResendJobOfferSection({ data }) {
                                 {data?.job_posting?.job_requisition?.title}
                             </p>
                         </div>
-
+                        {data?.job_offer?.declined_reason && (
+                            <div className="mt-2 flex items-start gap-2.5 p-3 rounded-xl bg-rose-50/50 border border-rose-100 text-rose-700 transition-all duration-300 hover:bg-rose-50">
+                                <span className="flex-shrink-0 w-2 h-2 rounded-full bg-rose-400 mt-1.5 animate-pulse" />
+                                <div className="flex flex-col gap-0.5">
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-rose-500">
+                                        Reason for Declining
+                                    </span>
+                                    <p className="text-sm font-medium leading-relaxed">
+                                        {data?.job_offer?.declined_reason}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         <div className="grid grid-cols-2 gap-y-5 gap-5 mt-6">
                             <Select
                                 label="Select Existing Position"
