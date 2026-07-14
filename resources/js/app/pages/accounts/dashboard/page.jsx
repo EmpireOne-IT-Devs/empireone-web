@@ -16,7 +16,7 @@ export default function Page() {
             <div className="mx-auto w-full mt-4">
                 <CardSection />
 
-                <div className="mt-2">
+                {/* <div className="mt-2">
                     <QuickActionSection />
                 </div>
                 <div className="flex flex-col lg:flex-row gap-6 items-start mt-6">
@@ -35,7 +35,7 @@ export default function Page() {
                     <div className="w-full lg:flex-1 min-w-0">
                         <TopNewsCardSection />
                     </div>
-                </div>
+                </div> */}
             </div>
         </Layout>
     );
