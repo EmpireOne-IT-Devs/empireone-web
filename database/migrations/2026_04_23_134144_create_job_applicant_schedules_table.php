@@ -26,6 +26,7 @@ return new class extends Migration
             $table->time('end_time')->nullable();
             $table->string('status')->default('Pending');
             $table->string('meeting_link')->nullable();
+            $table->string('google_calendar_event_id')->nullable();
             $table->timestamps();
         });
     }

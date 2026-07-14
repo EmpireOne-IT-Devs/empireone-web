@@ -1,1 +1,0 @@
-import{j as r}from"./app-CmrBrLGr.js";import{B as t}from"./button-CNSkAVYx.js";import{F as i}from"./index-BinviALv.js";import"./index-B-MFV2II.js";import"./iconBase-BSSD_MMO.js";function n(){return r.jsx("div",{children:r.jsxs(t,{variant:"primary",children:[r.jsx(i,{size:18,className:"mr-2"}),"Create Floor Activity"]})})}export{n as default};

@@ -103,6 +103,9 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
 
         Route::resource('job_applicant_schedules', JobApplicantScheduleController::class);
+        Route::post('change_job_applicant_schedule',  [JobApplicantScheduleController::class, 'change_job_applicant_schedule']);
+
+        
         Route::resource('account_access', AccountAccessController::class);
         Route::get('get_job_offer_by_user',  [JobOfferController::class, 'get_job_offer_by_user']);
         Route::post('submit_job_offer',  [JobOfferController::class, 'submit_job_offer']);

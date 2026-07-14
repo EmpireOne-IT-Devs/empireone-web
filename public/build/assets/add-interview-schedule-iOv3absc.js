@@ -1,1 +1,0 @@
-import{j as r}from"./app-CmrBrLGr.js";import{M as i}from"./modal-DPa8GPOL.js";import"./index-BinviALv.js";import"./iconBase-BSSD_MMO.js";function p({open:t,onClose:e}){return r.jsx(i,{isOpen:t,onClose:e,title:"Add Interview Schedule",width:"max-w-lg"})}export{p as default};

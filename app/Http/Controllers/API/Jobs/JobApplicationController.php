@@ -408,10 +408,11 @@ class JobApplicationController extends Controller
 
             $googleData = json_decode($result, true);
             $meetLink = $googleData['eventId']['meetLink'];
-            // $eventId = $googleData['eventId']['eventId'];
+            $eventId = $googleData['eventId']['eventId'];
             $schedule->update([
                 'meeting_link' => $meetLink,
-                'status'       => 'Scheduled' // Change status since it is officially booked
+                'status'       => 'Scheduled',
+                'google_calendar_event_id' => $eventId,
             ]);
 
             // Mail::to($user->email)->send(
