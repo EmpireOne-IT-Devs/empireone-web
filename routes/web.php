@@ -19,6 +19,7 @@ function route_page()
 }
 
 Route::get('/', function () {
+    
     // if (Auth::user()) {
     //     return route_page();
     // }
