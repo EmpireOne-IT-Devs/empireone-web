@@ -27,6 +27,7 @@ import EditPostModal from "./edit-post-modal";
 
 const REFRESH_INTERVAL_MS = 30_000;
 
+// Engagement-specific services passed to PostInteractionPanel
 const engagementServices = {
     getComments: get_engagement_post_comments_service,
     toggleReaction: (postId) => toggle_engagement_reaction_service(postId),
@@ -51,7 +52,7 @@ function PostContent({ content, className = "" }) {
     );
 }
 
-// ── Fixed Image Grid (Stable Grid & Aspect Ratios) ───────────────────────────
+// ── FIXED: Image Grid (Reliable Grid & Multi-Image Collage) ──────────────────
 function ImageGrid({ files, clickable = false }) {
     const count = files.length;
     if (count === 0) return null;
@@ -70,7 +71,7 @@ function ImageGrid({ files, clickable = false }) {
         </div>
     );
 
-    // Case 1: Single Image (Natural or fixed max aspect ratio)
+    // Case 1: Single Image
     if (count === 1) {
         return (
             <div
@@ -86,7 +87,7 @@ function ImageGrid({ files, clickable = false }) {
         );
     }
 
-    // Case 2: Two Images (Side-by-side)
+    // Case 2: Two Images (Split horizontally)
     if (count === 2) {
         return (
             <div className="grid grid-cols-2 gap-1 h-[280px]">
@@ -95,7 +96,7 @@ function ImageGrid({ files, clickable = false }) {
         );
     }
 
-    // Case 3: Three Images (Left-main vertical layout, 2 small on the right)
+    // Case 3: Three Images (Large main on left, stacked on right)
     if (count === 3) {
         return (
             <div className="grid grid-cols-2 grid-rows-2 gap-1 h-[340px]">
@@ -106,7 +107,7 @@ function ImageGrid({ files, clickable = false }) {
         );
     }
 
-    // Case 4+: Four or more Images (2x2 equal grid with an overflow counter)
+    // Case 4+: Four or more images with overflow overlay
     const visible = files.slice(0, 4);
     const overflow = count - 4;
 
@@ -179,12 +180,12 @@ function EngagementPostCard({
                             {post.author?.name}
                         </p>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-orange-400">
                                 {post.time_ago}
                             </span>
                             <span className="text-gray-300 text-[10px]">·</span>
-                            <CategoryIcon className="h-3 w-3 text-gray-400" />
-                            <span className="text-xs text-gray-400">
+                            <CategoryIcon className="h-3 w-3 text-purple-600" />
+                            <span className="text-xs text-purple-400">
                                 {categoryKey}
                             </span>
                         </div>
@@ -207,7 +208,7 @@ function EngagementPostCard({
                 <PostContent content={post.content} />
             </div>
 
-            {/* Fixed Images Section */}
+            {/* Images */}
             {post.files?.length > 0 && (
                 <div className="w-full border-y border-gray-100">
                     <ImageGrid files={post.files} />
@@ -234,6 +235,7 @@ function EngagementPostCard({
     );
 }
 
+// ── Post Card Section Component ───────────────────────────────────────
 export default function PostCardSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading, postsError, deleting } = useSelector(
@@ -277,7 +279,8 @@ export default function PostCardSection() {
         }
     }
 
-    if (postsLoading) {
+    // ── FIXED: Only show loading skeleton on first load (when we have no posts yet) ──
+    if (postsLoading && posts.length === 0) {
         return (
             <div className="flex flex-col gap-4">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -290,7 +293,7 @@ export default function PostCardSection() {
         );
     }
 
-    if (postsError) {
+    if (postsError && posts.length === 0) {
         return (
             <div className="flex items-center justify-center py-16 text-sm text-red-400">
                 Failed to load posts. Please refresh and try again.
@@ -298,7 +301,7 @@ export default function PostCardSection() {
         );
     }
 
-    if (posts.length === 0) {
+    if (posts.length === 0 && !postsLoading) {
         return (
             <div className="flex items-center justify-center py-16 text-sm text-gray-400">
                 No posts yet.

@@ -26,9 +26,9 @@ export default function PostActionMenu({
         <div className="relative" ref={ref}>
             <button
                 onClick={onToggle}
-                className="text-gray-400 hover:text-gray-600 p-1 transition rounded"
+                className="text-orange-400 hover:text-orange-600 p-1 transition rounded"
             >
-                <MoreHorizontal size={16} />
+                <MoreHorizontal size={22} />
             </button>
 
             {open && (
