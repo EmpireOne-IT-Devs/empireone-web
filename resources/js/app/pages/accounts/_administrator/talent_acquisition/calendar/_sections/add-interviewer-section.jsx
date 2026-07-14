@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
@@ -8,6 +8,7 @@ import Input from "@/app/_components/input";
 import store from "@/app/store/store";
 import { create_job_interviewer_schedule_service } from "@/app/services/job-interviewer-schedule-service";
 import { get_job_interviewer_schedule_thunk } from "@/app/redux/app-thunk";
+import { setAlert } from "@/app/redux/app-slice";
 
 export default function AddInterviewerSection({ autoOpen = false } = {}) {
     const [open, setOpen] = useState(false);
@@ -16,8 +17,9 @@ export default function AddInterviewerSection({ autoOpen = false } = {}) {
         if (autoOpen) setOpen(true);
     }, [autoOpen]);
 
-    const { interviewers,tas } = useSelector((store) => store.app);
+    const { interviewers, tas } = useSelector((store) => store.app);
 
+    const dispatch = useDispatch()
     const {
         control,
         handleSubmit,
@@ -48,17 +50,17 @@ export default function AddInterviewerSection({ autoOpen = false } = {}) {
     // Filter out users who are already interviewers
     const interviewerOptions =
         tas?.filter(
-                (user) =>
-                    !interviewers?.some(
-                        (interviewer) => interviewer.interviewer_id === user.user_id,
-                    ),
-            )
+            (user) =>
+                !interviewers?.some(
+                    (interviewer) => interviewer.interviewer_id === user.user_id,
+                ),
+        )
             ?.map((res) => ({
                 label: `${res.personal_information.first_name} ${res.personal_information.last_name}`,
                 value: res.id,
             })) || [];
 
-console.log('tas',tas)
+    console.log('tas', tas)
     const onSubmit = async (data) => {
         try {
             await create_job_interviewer_schedule_service({
@@ -69,6 +71,15 @@ console.log('tas',tas)
                 break_time_end: data.break_time_end + ":00",
             });
             await store.dispatch(get_job_interviewer_schedule_thunk());
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Updated Successfully!",
+                    message:
+                        "The change Form has been created and is ready for review.",
+                    open: true,
+                }),
+            );
             setOpen(false);
             reset();
         } catch (error) {

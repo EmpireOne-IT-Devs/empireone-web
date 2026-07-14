@@ -180,14 +180,14 @@ export default function CalendarSection() {
                     onDragOver={(e) => handleDragOver(e, dateString)}
                     onDragLeave={handleDragLeave}
                     onDrop={(e) => handleDrop(e, dateObj)}
-                    className={`p-2 border-r border-b border-gray-100 transition-all flex flex-col gap-1 h-[110px] cursor-pointer relative group
+                    className={`px-2 border-r border-b border-gray-100 transition-all flex flex-col gap-1 h-[110px] cursor-pointer relative group
                         ${isSelected ? "bg-blue-50/50 ring-1 ring-inset ring-blue-200 z-10" : "bg-white hover:bg-gray-50"}
                         ${isHoveredDropTarget ? "bg-blue-100/60 ring-2 ring-dashed ring-blue-400 z-20 scale-[0.98]" : ""}
                     `}
                 >
                     <div className="flex justify-between items-start">
                         <span
-                            className={`text-sm font-semibold w-4 h-4 flex items-center justify-center rounded-lg transition-colors
+                            className={`text-sm font-semibold p-3 w-4 mt-2 h-4 flex items-center justify-center rounded-lg transition-colors
                             ${isToday ? "bg-blue-600 text-white shadow-md" : isSelected ? "text-blue-600" : "text-gray-700 group-hover:text-blue-600"}
                         `}
                         >
@@ -217,7 +217,7 @@ export default function CalendarSection() {
                         ))}
                     </div>
                     {daySchedules.length > 3 && (
-                        <span className="text-[9px] text-gray-400 font-bold px-1 mt-auto pt-1 block shrink-0">
+                        <span className="text-[8px] text-gray-400 font-bold px-1 block shrink-0">
                             + {daySchedules.length - 3} more
                         </span>
                     )}

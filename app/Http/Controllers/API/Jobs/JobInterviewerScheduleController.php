@@ -42,12 +42,16 @@ class JobInterviewerScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        JobInterviewerSchedule::create($request->all());
+        $schedule = JobInterviewerSchedule::updateOrCreate(
+            ['interviewer_id' => $request->interviewer_id],
+            $request->except('interviewer_id')
+        );
+
         return response()->json([
-            'data' =>  'sucess',
+            'message' => 'success',
+            'data'    => $schedule,
         ], 200);
     }
-
     /**
      * Display the specified resource.
      */

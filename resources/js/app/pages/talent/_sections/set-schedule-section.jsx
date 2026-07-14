@@ -13,7 +13,7 @@ export default function SetScheduleSection({
     errors
 }) {
     const { interviewer } = useSelector((store) => store.app);
-    console.log("interviewer", interviewer?.upcoming_schedules);
+    console.log("interviewer", interviewer);
 
     // ---------------------------------------------------------
     // Initialize State with Default Values
@@ -205,7 +205,27 @@ export default function SetScheduleSection({
     const days = Array.from({ length: daysInMonth }, (_, i) => {
         const day = i + 1;
         const loopDate = new Date(currentYear, currentMonth, day);
+        const dayOfWeek = loopDate.getDay(); // 0 (Sun) to 6 (Sat)
+
         const isPast = loopDate <= today;
+
+        // Check if the current loop date falls within the working days
+        let isWorkingDay = true;
+        const fromDay = interviewer?.day_of_week_from;
+        const toDay = interviewer?.day_of_week_to;
+
+        if (fromDay != null && toDay != null) {
+            if (fromDay <= toDay) {
+                // Standard schedule (e.g., Mon-Fri / 1 to 5)
+                isWorkingDay = dayOfWeek >= fromDay && dayOfWeek <= toDay;
+            } else {
+                // Wrap-around schedule (e.g., Thu-Mon / 4 to 1)
+                isWorkingDay = dayOfWeek >= fromDay || dayOfWeek <= toDay;
+            }
+        }
+
+        // The button should be disabled if it's in the past OR it's not a working day
+        const isDisabled = isPast || !isWorkingDay;
 
         const isSelected =
             selectedDate?.getDate() === day &&
@@ -222,15 +242,15 @@ export default function SetScheduleSection({
                 key={day}
                 type="button"
                 onClick={() => handleDateClick(day)}
-                disabled={isPast}
+                disabled={isDisabled}
                 className={`p-2 w-10 h-10 mx-auto rounded-full flex items-center justify-center transition-all duration-200
-                    ${isPast
-                        ? "text-gray-300 cursor-not-allowed"
+                    ${isDisabled
+                        ? "text-gray-300 bg-gray-50 cursor-not-allowed"
                         : isSelected
                             ? "bg-blue-600 text-white shadow-md"
                             : "hover:bg-blue-100 text-gray-700"
                     }
-                    ${isToday && !isSelected && !isPast ? "border-2 border-blue-600 font-bold" : ""}
+                    ${isToday && !isSelected && !isDisabled ? "border-2 border-blue-600 font-bold" : ""}
                 `}
             >
                 {day}

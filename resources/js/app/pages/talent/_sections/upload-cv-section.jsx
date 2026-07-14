@@ -93,7 +93,9 @@ export default function UploadCvSection({
                             type="file"
                             accept=".pdf,.doc,.docx,image/*"
                             className="hidden"
-                            {...register("cv", { required: true })}
+                            {...register("cv", {
+                                required: watchedValues.file ? false : true,
+                            })}
                         />
                     </label>
                 </div>
