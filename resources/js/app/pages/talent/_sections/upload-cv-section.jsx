@@ -29,8 +29,8 @@ export default function UploadCvSection({
                             errors.cv
                                 ? { borderColor: "rgba(248,113,113,0.5)", background: "rgba(248,113,113,0.05)" }
                                 : fileName || watchedValues.file
-                                ? { borderColor: "rgba(52,211,153,0.45)", background: "rgba(52,211,153,0.05)" }
-                                : { borderColor: "rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.05)" }
+                                    ? { borderColor: "rgba(52,211,153,0.45)", background: "rgba(52,211,153,0.05)" }
+                                    : { borderColor: "rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.05)" }
                         }
                     >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -91,9 +91,9 @@ export default function UploadCvSection({
                         <input
                             id="cv-upload"
                             type="file"
-                            accept=".pdf,.doc,.docx"
+                            accept=".pdf,.doc,.docx,image/*"
                             className="hidden"
-                            {...register("cv")}
+                            {...register("cv", { required: true })}
                         />
                     </label>
                 </div>

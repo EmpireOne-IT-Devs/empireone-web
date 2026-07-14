@@ -19,10 +19,16 @@ function route_page()
 }
 
 Route::get('/', function () {
+<<<<<<< HEAD
     
     // if (Auth::user()) {
     //     return route_page();
     // }
+=======
+    if (Auth::user()) {
+        return route_page();
+    }
+>>>>>>> fe6cdd77eabd953498c63f93e2cc0e3b93354432
     return Inertia::render('landing_page/page');
 });
 
