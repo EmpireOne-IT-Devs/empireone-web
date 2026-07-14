@@ -11,7 +11,8 @@ import {
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
-import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
+// 1. Updated Redux Thunk import to use engagement
+import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
 
 const FALLBACK_IMAGE = "/images/building.jpg";
 const AUTHOR_COLORS = [
@@ -48,30 +49,43 @@ function WysiwygContent({ html }) {
 
 export default function CompanyFeaturesSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading } = useSelector((s) => s.activities);
+    
+    // 2. Switched target from state.activities to state.engagement
+    const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [previewImage, setPreviewImage] = useState(null);
 
+    // 3. Updated dispatch to fetch the correct engagement posts thunk
     useEffect(() => {
-        dispatch(get_activity_posts_thunk());
+        dispatch(get_engagement_posts_thunk());
     }, [dispatch]);
 
-    const features = posts
+    const postArray = Array.isArray(posts) ? posts : [];
+
+    const features = postArray
         .filter((p) => p.category === "Milestone")
-        .map((p, i) => ({
-            id: p.id,
-            title: p.headline,
-            description: p.message,
-            category: p.category,
-            date: formatDate(p.published_at),
-            author: p.author?.name ?? "Admin",
-            authorInitial: (p.author?.name ?? "A")[0].toUpperCase(),
-            authorBg: AUTHOR_COLORS[i % AUTHOR_COLORS.length],
-            likes: 0,
-            comments: 0,
-            image: p.media_url ?? FALLBACK_IMAGE,
-            isFeatured: true,
-        }));
+        .map((p, i) => {
+            // 4. Fallback schemas for headline/title and message/content
+            const rawMessage = p.message || p.content || "";
+            const rawTitle = p.headline || p.title || "Untitled Milestone";
+
+            return {
+                id: p.id,
+                title: rawTitle,
+                description: rawMessage,
+                category: p.category,
+                date: formatDate(p.published_at || p.created_at),
+                author: p.author?.name ?? "Admin",
+                authorInitial: (p.author?.name ?? "A")[0].toUpperCase(),
+                authorBg: AUTHOR_COLORS[i % AUTHOR_COLORS.length],
+                // 5. Connect real reaction and comment metrics from the engagement slice
+                likes: p.reaction_count ?? 0,
+                comments: p.comment_count ?? 0,
+                user_has_reacted: p.user_has_reacted ?? false,
+                image: p.files?.[0]?.url || p.media_url || FALLBACK_IMAGE,
+                isFeatured: true,
+            };
+        });
 
     const handlePrev = () =>
         setCurrentIndex((prev) =>
@@ -140,15 +154,17 @@ export default function CompanyFeaturesSection() {
                 {features.length > 1 && (
                     <div className="flex gap-1">
                         <button
+                            type="button"
                             onClick={handlePrev}
-                            className="p-1.5 rounded-lg border hover:bg-gray-50"
+                            className="p-1.5 rounded-lg border hover:bg-gray-50 transition-colors"
                         >
                             <ChevronLeft size={16} />
                         </button>
 
                         <button
+                            type="button"
                             onClick={handleNext}
-                            className="p-1.5 rounded-lg border hover:bg-gray-50"
+                            className="p-1.5 rounded-lg border hover:bg-gray-50 transition-colors"
                         >
                             <ChevronRight size={16} />
                         </button>
@@ -219,18 +235,18 @@ export default function CompanyFeaturesSection() {
                                 </span>
                             </div>
 
-                            <div className="flex items-center gap-4 text-sm">
-                                <div className="flex items-center gap-1">
-                                    <Heart size={14} />
-                                    {currentFeature.likes}
+                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                                <div className={`flex items-center gap-1 transition-colors ${currentFeature.user_has_reacted ? "text-red-500" : ""}`}>
+                                    <Heart size={14} className={currentFeature.user_has_reacted ? "fill-red-500" : ""} />
+                                    <span>{currentFeature.likes > 0 ? currentFeature.likes : ""}</span>
                                 </div>
 
                                 <div className="flex items-center gap-1">
                                     <MessageCircle size={14} />
-                                    {currentFeature.comments}
+                                    <span>{currentFeature.comments > 0 ? currentFeature.comments : ""}</span>
                                 </div>
 
-                                <Share2 size={14} />
+                                <Share2 size={14} className="hover:text-gray-700 cursor-pointer transition-colors" />
                             </div>
                         </div>
                     </div>
@@ -270,6 +286,7 @@ export default function CompanyFeaturesSection() {
                 <div className="flex justify-center gap-2 mt-3">
                     {features.map((_, index) => (
                         <button
+                            type="button"
                             key={index}
                             onClick={() => setCurrentIndex(index)}
                             className={`h-2 rounded-full transition-all ${

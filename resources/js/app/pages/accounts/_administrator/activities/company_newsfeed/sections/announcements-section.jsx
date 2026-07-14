@@ -7,7 +7,6 @@ import {
     TbChevronRight,
 } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
-// 1. Updated the Redux thunk import path from activities to engagement
 import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
 import Modal from "@/app/_components/modal";
 import Skeleton from "@/app/_components/skeleton";
@@ -87,12 +86,10 @@ function AnnouncementCard({ announcement, index, onClick }) {
                     </span>
                 </div>
 
-                {/* Preview text */}
                 <p className="text-[12px] text-gray-500 leading-relaxed line-clamp-3 mb-4">
                     {announcement.description}
                 </p>
 
-                {/* Footer */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
                         <TbCalendar size={12} />
@@ -128,32 +125,27 @@ function AnnouncementCard({ announcement, index, onClick }) {
 
 export default function AnnouncementsSection() {
     const dispatch = useDispatch();
-    
-    // 2. Updated Redux selector key from .activities to .engagement
     const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
 
     useEffect(() => {
-        // 3. Updated dispatched action to the engagement thunk equivalent
         dispatch(get_engagement_posts_thunk());
     }, [dispatch]);
 
-    // Ensure array safety
     const postArray = Array.isArray(posts) ? posts : [];
 
     const announcements = postArray
         .filter((p) => p.category === "Pinned Announcement" || p.category === "Announcement")
         .map((p) => {
-            // 4. Handle dynamic backend schemas fallback: (message -> content) & (headline -> title)
             const rawMessage = p.message || p.content || "";
             const rawTitle = p.headline || p.title || "Untitled Announcement";
-            
             const fullDescription = stripHtml(rawMessage);
+            
             return {
                 id: p.id,
                 title: rawTitle,
-                image: p.media_url,
+                image: p.files?.[0]?.url || p.media_url || null,
                 description:
                     fullDescription.substring(0, 130) +
                     (fullDescription.length > 130 ? "…" : ""),
@@ -175,7 +167,6 @@ export default function AnnouncementsSection() {
 
     return (
         <div className="w-full bg-[#f0f2f7] p-6 rounded-2xl font-sans antialiased">
-            {/* Section header */}
             <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
                     <div className="flex h-8 w-8 items-center justify-center">
@@ -223,7 +214,7 @@ export default function AnnouncementsSection() {
                     </p>
                 </div>
             ) : (
-                <div className=" flex flex-col gap-4 items-start">
+                <div className="flex flex-col gap-4 items-start">
                     {announcements.map((a, i) => (
                         <AnnouncementCard
                             key={a.id}
@@ -260,7 +251,6 @@ export default function AnnouncementsSection() {
             >
                 {selectedAnnouncement && (
                     <div className="border-t border-gray-100 pt-5 overflow-x-hidden">
-                        {/* Meta chips */}
                         <div className="flex flex-wrap items-center gap-2 mb-5">
                             <span
                                 className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold"
@@ -295,6 +285,9 @@ export default function AnnouncementsSection() {
                                     src={selectedAnnouncement.image}
                                     alt={selectedAnnouncement.title}
                                     className="max-h-80 w-full object-cover"
+                                    onError={(e) => {
+                                        e.currentTarget.parentElement.style.display = "none";
+                                    }}
                                 />
                             </div>
                         )}

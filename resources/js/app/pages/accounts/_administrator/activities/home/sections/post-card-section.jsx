@@ -23,12 +23,10 @@ import {
     toggle_engagement_reaction_service,
 } from "@/app/services/engagement-service";
 import PostCardModalSection from "./post-card-modal-section";
-// Import the newly extracted EditPostModal component
 import EditPostModal from "./edit-post-modal";
 
 const REFRESH_INTERVAL_MS = 30_000;
 
-// Engagement-specific services passed to PostInteractionPanel
 const engagementServices = {
     getComments: get_engagement_post_comments_service,
     toggleReaction: (postId) => toggle_engagement_reaction_service(postId),
@@ -53,76 +51,80 @@ function PostContent({ content, className = "" }) {
     );
 }
 
-// ── Image Grid (Facebook-style collage) ───────────────────────────────────────
+// ── Fixed Image Grid (Stable Grid & Aspect Ratios) ───────────────────────────
 function ImageGrid({ files, clickable = false }) {
     const count = files.length;
     if (count === 0) return null;
 
     const wrap = (file, idx, className = "") => (
         <div
-            key={file.id}
-            className={`relative overflow-hidden bg-slate-100 ${className}`}
+            key={file.id || idx}
+            className={`relative overflow-hidden bg-slate-100 cursor-pointer ${className}`}
             onClick={clickable ? undefined : (e) => e.stopPropagation()}
         >
             <img
                 src={file.url}
                 alt={file.name ?? ""}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover hover:scale-[1.02] transition-transform duration-300 ease-out"
             />
         </div>
     );
 
+    // Case 1: Single Image (Natural or fixed max aspect ratio)
     if (count === 1) {
         return (
             <div
-                className="w-full overflow-hidden bg-black"
+                className="w-full overflow-hidden bg-black max-h-[450px] flex items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
             >
                 <img
                     src={files[0].url}
                     alt={files[0].name ?? ""}
-                    className="w-full max-h-[420px] object-contain"
+                    className="w-full max-h-[450px] object-cover"
                 />
             </div>
         );
     }
 
+    // Case 2: Two Images (Side-by-side)
     if (count === 2) {
         return (
-            <div className="grid grid-cols-2 gap-0.5 h-56">
+            <div className="grid grid-cols-2 gap-1 h-[280px]">
                 {files.map((f, i) => wrap(f, i, "h-full"))}
             </div>
         );
     }
 
+    // Case 3: Three Images (Left-main vertical layout, 2 small on the right)
     if (count === 3) {
         return (
-            <div className="grid grid-cols-2 gap-0.5 h-64">
-                {wrap(files[0], 0, "row-span-2 h-64")}
-                {wrap(files[1], 1, "h-[calc(50%-1px)]")}
-                {wrap(files[2], 2, "h-[calc(50%-1px)]")}
+            <div className="grid grid-cols-2 grid-rows-2 gap-1 h-[340px]">
+                {wrap(files[0], 0, "row-span-2 col-span-1 h-full")}
+                {wrap(files[1], 1, "h-full")}
+                {wrap(files[2], 2, "h-full")}
             </div>
         );
     }
 
-    // 4+ — show max 4 with overflow badge
+    // Case 4+: Four or more Images (2x2 equal grid with an overflow counter)
     const visible = files.slice(0, 4);
     const overflow = count - 4;
+
     return (
-        <div className="grid grid-cols-2 gap-0.5">
+        <div className="grid grid-cols-2 grid-rows-2 gap-1 h-[360px]">
             {visible.map((file, idx) => (
                 <div
-                    key={file.id}
-                    className="relative h-44 overflow-hidden bg-slate-100"
-                    onClick={(e) => e.stopPropagation()}
+                    key={file.id || idx}
+                    className="relative overflow-hidden bg-slate-100"
+                    onClick={clickable ? undefined : (e) => e.stopPropagation()}
                 >
                     <img
                         src={file.url}
                         alt={file.name ?? ""}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover hover:scale-[1.02] transition-transform duration-300 ease-out"
                     />
                     {idx === 3 && overflow > 0 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-white font-bold text-2xl">
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white font-bold text-2xl transition-all select-none hover:bg-black/50">
                             +{overflow}
                         </div>
                     )}
@@ -152,7 +154,7 @@ function EngagementPostCard({
         <Card
             variant="default"
             padding="p-0"
-            className="w-full overflow-hidden font-sans rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+            className="w-full overflow-hidden font-sans rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-100"
             onClick={onView}
         >
             {/* Header */}
@@ -205,8 +207,12 @@ function EngagementPostCard({
                 <PostContent content={post.content} />
             </div>
 
-            {/* Images */}
-            {post.files?.length > 0 && <ImageGrid files={post.files} />}
+            {/* Fixed Images Section */}
+            {post.files?.length > 0 && (
+                <div className="w-full border-y border-gray-100">
+                    <ImageGrid files={post.files} />
+                </div>
+            )}
 
             {/* Interaction */}
             <div onClick={(e) => e.stopPropagation()}>
