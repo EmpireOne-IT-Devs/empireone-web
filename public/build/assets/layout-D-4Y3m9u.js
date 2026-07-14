@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-B5OAePCY.js
-import{j as e}from"./app-DZMAbIuk.js";import r from"./header-section-CMHopVAU.js";import"./index-Gaf4wysQ.js";import"./select-B-DOwXX5.js";import t from"./tabs-section-C5jLy1ZP.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
-========
-import{j as e}from"./app--oPLbARF.js";import r from"./header-section-BOBiDq7W.js";import"./index-jqTLBIxv.js";import"./select-CmaJvln2.js";import t from"./tabs-section-IDQt05VS.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
->>>>>>>> origin/main:public/build/assets/layout-D-4Y3m9u.js

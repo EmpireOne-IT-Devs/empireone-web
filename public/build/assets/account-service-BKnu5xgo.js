@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/account-service-D3jnECCR.js
-import{m as t}from"./app-DZMAbIuk.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
-========
-import{m as t}from"./app--oPLbARF.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
->>>>>>>> origin/main:public/build/assets/account-service-BKnu5xgo.js

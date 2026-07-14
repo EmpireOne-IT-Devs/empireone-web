@@ -1,0 +1,1 @@
+import{j as t}from"./app-CmrBrLGr.js";import{l as r}from"./index-DaQ-ZEu0.js";import"./iconBase-BSSD_MMO.js";function i(){return t.jsx("div",{children:t.jsx(r,{className:"text-2xl cursor-pointer text-red-600"})})}export{i as default};

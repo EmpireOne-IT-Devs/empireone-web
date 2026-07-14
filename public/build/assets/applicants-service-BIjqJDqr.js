@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/applicants-service-BIjqJDqr.js
-import{m as a}from"./app-DZMAbIuk.js";async function t(){return await a.get(`/api/job/applicants${window.location.search}`)}async function e(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function n(){return await a.get("/api/job/get_applicant_pooling")}export{n as a,e as b,t as g};
-========
-import{m as a}from"./app--oPLbARF.js";async function t(){return await a.get(`/api/job/applicants${window.location.search}`)}async function e(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function n(){return await a.get("/api/job/get_applicant_pooling")}export{n as a,e as b,t as g};
->>>>>>>> origin/main:public/build/assets/applicants-service-Co3vdVJd.js
