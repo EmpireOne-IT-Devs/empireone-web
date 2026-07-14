@@ -7,7 +7,8 @@ import {
     TbChevronRight,
 } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
-import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
+// 1. Updated the Redux thunk import path from activities to engagement
+import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
 import Modal from "@/app/_components/modal";
 import Skeleton from "@/app/_components/skeleton";
 
@@ -127,28 +128,38 @@ function AnnouncementCard({ announcement, index, onClick }) {
 
 export default function AnnouncementsSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading } = useSelector((s) => s.activities);
+    
+    // 2. Updated Redux selector key from .activities to .engagement
+    const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
 
     useEffect(() => {
-        dispatch(get_activity_posts_thunk());
+        // 3. Updated dispatched action to the engagement thunk equivalent
+        dispatch(get_engagement_posts_thunk());
     }, [dispatch]);
 
-    const announcements = posts
-        .filter((p) => p.category === "Pinned Announcement")
+    // Ensure array safety
+    const postArray = Array.isArray(posts) ? posts : [];
+
+    const announcements = postArray
+        .filter((p) => p.category === "Pinned Announcement" || p.category === "Announcement")
         .map((p) => {
-            const fullDescription = stripHtml(p.message);
+            // 4. Handle dynamic backend schemas fallback: (message -> content) & (headline -> title)
+            const rawMessage = p.message || p.content || "";
+            const rawTitle = p.headline || p.title || "Untitled Announcement";
+            
+            const fullDescription = stripHtml(rawMessage);
             return {
                 id: p.id,
-                title: p.headline,
+                title: rawTitle,
                 image: p.media_url,
                 description:
                     fullDescription.substring(0, 130) +
                     (fullDescription.length > 130 ? "…" : ""),
                 fullDescription,
-                contentHtml: p.message,
-                date: formatDate(p.published_at),
+                contentHtml: rawMessage,
+                date: formatDate(p.published_at || p.created_at),
             };
         });
 

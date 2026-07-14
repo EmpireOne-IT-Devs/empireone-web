@@ -1,4 +1,3 @@
-// edit-post-modal.jsx
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CalendarDays, Newspaper, Send, Megaphone } from "lucide-react";

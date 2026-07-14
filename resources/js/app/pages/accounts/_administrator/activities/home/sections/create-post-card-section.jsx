@@ -1,14 +1,13 @@
-﻿import React, { useRef, useState } from "react";
+﻿import React, { useRef, useState, useEffect } from "react";
 import {
     Send,
-    FileText,
     CalendarDays,
     Newspaper,
     Megaphone,
-    Tag,
     User,
     ImagePlus,
     X,
+    Tag,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -45,13 +44,33 @@ export default function CreatePostCardSection() {
         reset,
         setValue,
         watch,
+        trigger,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: { title: "", content: "" },
     });
 
+    // Register custom content field for proper react-hook-form validation
+    useEffect(() => {
+        register("content", { required: "Content is required" });
+    }, [register]);
+
     const content = watch("content");
     const title = watch("title");
+
+    // Memoize object URLs to prevent infinite recreations and memory leaks
+    const [previewUrls, setPreviewUrls] = useState([]);
+
+    useEffect(() => {
+        // Create previews
+        const urls = images.map((img) => URL.createObjectURL(img));
+        setPreviewUrls(urls);
+
+        // Cleanup function to revoke URLs when images change or component unmounts
+        return () => {
+            urls.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [images]);
 
     const canPublish =
         title?.trim() && (content ?? "").replace(/<[^>]+>/g, "").trim();
@@ -70,7 +89,8 @@ export default function CreatePostCardSection() {
         setImages((prev) => [...prev, ...valid]);
     };
 
-    const removeImage = (index) => {
+    const removeImage = (index, e) => {
+        e.stopPropagation(); // Prevent opening file explorer when clicking remove
         setImages((prev) => prev.filter((_, i) => i !== index));
     };
 
@@ -88,6 +108,12 @@ export default function CreatePostCardSection() {
         e.preventDefault();
         setIsDragging(false);
         addImages(e.dataTransfer.files);
+    };
+
+    const handleWysiwygChange = (val) => {
+        setValue("content", val);
+        // Trigger validation so errors disappear/appear dynamically
+        trigger("content");
     };
 
     const onSubmit = async (data) => {
@@ -221,7 +247,7 @@ export default function CreatePostCardSection() {
                         </label>
                         <Wysiwyg
                             value={content ?? ""}
-                            onChange={(val) => setValue("content", val)}
+                            onChange={handleWysiwygChange}
                         />
                         {errors.content && (
                             <p className="text-xs text-red-500">
@@ -281,13 +307,13 @@ export default function CreatePostCardSection() {
                                         className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
                                     >
                                         <img
-                                            src={URL.createObjectURL(img)}
+                                            src={previewUrls[idx]}
                                             alt={img.name}
                                             className="h-full w-full object-cover"
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => removeImage(idx)}
+                                            onClick={(e) => removeImage(idx, e)}
                                             className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
                                         >
                                             <X className="h-3 w-3" />

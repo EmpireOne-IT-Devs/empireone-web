@@ -137,8 +137,6 @@ export default function UpcomingEventSection() {
                 </div>
               </div>
             </div>
-
-            {/* Right Content: Modern Status Action Button */}
             <div className="flex-shrink-0 ml-2">
               <button className={`text-[10px] font-bold tracking-wider px-3 py-1.5 rounded-lg transition-colors duration-150 uppercase ${event.pillBg}`}>
                 {event.status}

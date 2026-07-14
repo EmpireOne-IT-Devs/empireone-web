@@ -10,6 +10,7 @@ export default function JobPostingCardSection() {
     const { job_postings, loading } = useSelector(
         (state) => state.job_postings,
     );
+    const user_role = window.location.pathname.split("/")[2];
     console.log("job_postings", job_postings);
 
     // Get filter parameters from URL
@@ -91,11 +92,13 @@ export default function JobPostingCardSection() {
                                     label={job.status}
                                 />
 
-                                <Badge
-                                    showDot={false}
-                                    variant="purple"
-                                    label={`Recruiter: ${job?.job_requisition?.recruiter?.name}`}
-                                />
+                                {user_role !== "applicant" && user_role !== "employee" && (
+                                    <Badge
+                                        showDot={false}
+                                        variant="purple"
+                                        label={`Recruiter: ${job?.job_requisition?.recruiter?.name}`}
+                                    />
+                                )}
                             </div>
                             <div>
                                 <ShareJobSection data={job} />
@@ -121,11 +124,13 @@ export default function JobPostingCardSection() {
                                             ? `${job?.job_requisition?.salary_range}`
                                             : "Salary not specified"}
                                     </div> */}
-                                    <div className="flex items-center gap-2 text-gray-600 font-medium">
-                                        <TbUsers />
-                                        {job?.applications?.length ?? 0}{" "}
-                                        applicants
-                                    </div>
+                                    {user_role !== "applicant" && user_role !== "employee" && (
+                                        <div className="flex items-center gap-2 text-gray-600 font-medium">
+                                            <TbUsers />
+                                            {job?.applications?.length ?? 0}{" "}
+                                            applicants
+                                        </div>
+                                    )}
                                 </div>
 
                                 <hr />

@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Heart, MessageSquare, Send, Trash2 } from "lucide-react";
+// Added Share2 import
+import { Heart, MessageSquare, Send, Share2, Trash2 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { usePage } from "@inertiajs/react";
 import { sync_post_interaction } from "@/app/redux/activities-slice";
@@ -12,21 +13,6 @@ import {
 
 const POLL_INTERVAL_MS = 15_000;
 
-/**
- * Reusable reaction + comment panel.
- *
- * Props:
- *   postId           â€“ number    (required)
- *   reactionCount    â€“ number    initial count from the feed
- *   commentCount     â€“ number    initial count from the feed
- *   userHasReacted   â€“ boolean   whether the current user already reacted
- *   showComments     â€“ boolean   show the comment list + input (default true)
- *   onCommentClick   â€“ function  override for the Comment button (e.g. open a modal)
- *   services         â€“ object    { getComments, toggleReaction, addComment, deleteComment }
- *                                defaults to activities services
- *   onSync           â€“ function  (payload) => void  override for Redux sync
- *                                defaults to dispatch(sync_post_interaction)
- */
 export default function PostInteractionPanel({
     postId,
     reactionCount  = 0,
@@ -38,7 +24,9 @@ export default function PostInteractionPanel({
     onSync,
 }) {
     const dispatch      = useDispatch();
-    const currentUserId = usePage().props.auth?.user?.id;
+    const currentProps  = usePage().props;
+    const currentUser   = currentProps.auth?.user;
+    const currentUserId = currentUser?.id;
 
     const {
         getComments    = defaultGetComments,
@@ -51,13 +39,11 @@ export default function PostInteractionPanel({
         onSync ? onSync(payload) : dispatch(sync_post_interaction(payload));
     }
 
-    // â”€â”€ local reaction state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const [localReactionCount,  setLocalReactionCount]  = useState(reactionCount);
     const [localUserHasReacted, setLocalUserHasReacted] = useState(userHasReacted);
     const [reacting,            setReacting]            = useState(false);
     const reactingRef = useRef(false);
 
-    // â”€â”€ comment list state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const [comments,        setComments]        = useState([]);
     const [commentsLoading, setCommentsLoading] = useState(showComments);
     const [commentInput,    setCommentInput]    = useState("");
@@ -69,7 +55,6 @@ export default function PostInteractionPanel({
     useEffect(() => { setLocalReactionCount(reactionCount);   }, [reactionCount]);
     useEffect(() => { setLocalUserHasReacted(userHasReacted); }, [userHasReacted]);
 
-    // â”€â”€ fetch + poll (skipped when showComments = false) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const fetchComments = useCallback(async () => {
         try {
             const res = await getComments(postId);
@@ -80,7 +65,7 @@ export default function PostInteractionPanel({
                 setLocalUserHasReacted(user_has_reacted ?? false);
             }
             syncData({ postId, reaction_count, user_has_reacted, comment_count: (data ?? []).length });
-        } catch { /* silent â€” polling will retry */ }
+        } catch { /* silent — polling will retry */ }
     }, [postId, getComments]);
 
     useEffect(() => {
@@ -93,7 +78,6 @@ export default function PostInteractionPanel({
         return () => clearInterval(pollRef.current);
     }, [fetchComments, showComments]);
 
-    // â”€â”€ reaction toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function handleReact() {
         if (reactingRef.current) return;
         reactingRef.current = true;
@@ -103,6 +87,7 @@ export default function PostInteractionPanel({
         setLocalUserHasReacted(!wasReacted);
         setLocalReactionCount((c) => (wasReacted ? c - 1 : c + 1));
         try {
+            // Keep unchanged backend payload string indicator
             const res = await toggleReaction(postId, "heart");
             const { reaction_count, user_has_reacted } = res.data.data;
             setLocalReactionCount(reaction_count);
@@ -117,7 +102,6 @@ export default function PostInteractionPanel({
         }
     }
 
-    // â”€â”€ add comment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function handleSubmitComment(e) {
         e.preventDefault();
         const body = commentInput.trim();
@@ -132,7 +116,6 @@ export default function PostInteractionPanel({
         finally { setSubmitting(false); }
     }
 
-    // â”€â”€ delete comment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function handleDeleteComment(commentId) {
         if (deletingId) return;
         setDeletingId(commentId);
@@ -146,113 +129,148 @@ export default function PostInteractionPanel({
 
     const displayCount = showComments ? comments.length : commentCount;
 
-    // â”€â”€ render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
-        <div className="flex flex-col gap-4">
-            {/* Action bar */}
-            <div className="flex items-center justify-between gap-2 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-600">
-                <div className="flex items-center gap-1">
-                    <button
-                        type="button"
-                        onClick={handleReact}
-                        disabled={reacting}
-                        className={`flex items-center gap-2 rounded-lg px-3 py-1.5 transition-all group ${
-                            localUserHasReacted
-                                ? "text-red-600 bg-red-50 hover:bg-red-100"
-                                : "hover:bg-red-50 hover:text-red-600"
-                        }`}
-                    >
-                        <Heart
-                            size={16}
-                            className={`transition-transform group-hover:scale-110 ${
-                                localUserHasReacted ? "fill-red-500" : ""
-                            }`}
-                        />
-                        <span>{localReactionCount > 0 ? localReactionCount : "Like"}</span>
-                    </button>
-
-                    <button
-                        type="button"
-                        onClick={onCommentClick ?? (() => inputRef.current?.focus())}
-                        className="flex items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-blue-50 hover:text-blue-600 transition-all group"
-                    >
-                        <MessageSquare size={16} className="group-hover:scale-110 transition-transform" />
-                        <span>
-                            {displayCount > 0
-                                ? `${displayCount} Comment${displayCount !== 1 ? "s" : ""}`
-                                : "Comment"}
-                        </span>
-                    </button>
+        <div className="w-full bg-white text-gray-500 text-sm font-normal">
+            {/* Meta info header row (Total Hearts / Comments counts) */}
+            {(localReactionCount > 0 || displayCount > 0) && (
+                <div className="flex items-center justify-between px-3 py-2 text-[13px] text-gray-500 border-b border-gray-200">
+                    <div className="flex items-center gap-1.5">
+                        {localReactionCount > 0 && (
+                            <>
+                                <div className="flex items-center justify-center w-4 h-4 rounded-full bg-red-500 text-white">
+                                    <Heart size={10} className="fill-white text-white" />
+                                </div>
+                                <span className="hover:underline cursor-pointer">{localReactionCount}</span>
+                            </>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                        {displayCount > 0 && (
+                            <span className="hover:underline cursor-pointer">
+                                {displayCount} {displayCount === 1 ? "comment" : "comments"}
+                            </span>
+                        )}
+                    </div>
                 </div>
+            )}
+
+            {/* Main Interactive Button Feed Action Bar */}
+            <div className="flex items-center justify-between px-1 py-1 border-b border-gray-200">
+                <button
+                    type="button"
+                    onClick={handleReact}
+                    disabled={reacting}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 font-semibold rounded-md hover:bg-gray-100 transition-colors ${
+                        localUserHasReacted ? "text-red-600" : "text-gray-600"
+                    }`}
+                >
+                    <Heart size={18} className={localUserHasReacted ? "fill-red-500 text-red-600" : ""} />
+                    <span>Love</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={onCommentClick ?? (() => inputRef.current?.focus())}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 font-semibold text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
+                >
+                    <MessageSquare size={18} />
+                    <span>Comment</span>
+                </button>
+
+                {/* Static Share Button */}
+                <button
+                    type="button"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 font-semibold text-gray-600 rounded-md hover:bg-gray-100 transition-colors"
+                >
+                    <Share2 size={18} />
+                    <span>Share</span>
+                </button>
             </div>
 
-            {/* Comment list + input â€” only when showComments = true */}
+            {/* Comment Area container wrapper */}
             {showComments && (
-                <>
+                <div className="px-4 py-3 flex flex-col gap-3">
+                    {/* Top Inline Comment input row with current user's profile image context */}
+                    <div className="flex items-start gap-2">
+                        {currentUser?.avatar ? (
+                            <img src={currentUser.avatar} alt={currentUser.name} className="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
+                        ) : (
+                            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-bold text-xs shrink-0 mt-0.5">
+                                {currentUser?.name?.charAt(0).toUpperCase() || "?"}
+                            </div>
+                        )}
+                        <form onSubmit={handleSubmitComment} className="relative flex-1 flex items-center">
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={commentInput}
+                                onChange={(e) => setCommentInput(e.target.value)}
+                                placeholder="Write a comment..."
+                                className="w-full pl-3 pr-10 py-1.5 bg-gray-100 hover:bg-gray-200/80 focus:bg-gray-100 border-none rounded-2xl outline-none text-[13px] text-gray-800 placeholder-gray-500 focus:ring-0 transition-all"
+                            />
+                            {commentInput.trim() && (
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="absolute right-2 p-1 text-blue-600 hover:bg-gray-200/50 rounded-full disabled:opacity-40 transition-colors"
+                                >
+                                    <Send size={14} />
+                                </button>
+                            )}
+                        </form>
+                    </div>
+
+                    {/* Render existing comments dynamic list */}
                     <div className="flex flex-col gap-2">
                         {commentsLoading && comments.length === 0 ? (
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 mt-2">
                                 {[1, 2].map((i) => (
-                                    <div key={i} className="h-10 rounded-xl bg-gray-100 animate-pulse" />
+                                    <div key={i} className="h-9 rounded-2xl bg-gray-100 animate-pulse w-2/3" />
                                 ))}
                             </div>
-                        ) : comments.length === 0 ? (
-                            <p className="text-xs text-gray-400 text-center py-3">
-                                No comments yet. Be the first to comment!
-                            </p>
                         ) : (
-                            <ul className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
+                            <ul className="flex flex-col gap-3 max-h-80 overflow-y-auto pr-1 mt-1">
                                 {comments.map((c) => (
-                                    <li key={c.id} className="flex items-start gap-2.5 group">
+                                    <li key={c.id} className="flex items-start gap-2 group">
                                         {c.author.avatar ? (
-                                            <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5" />
+                                            <img src={c.author.avatar} alt={c.author.name} className="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
                                         ) : (
-                                            <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-[10px] shrink-0 mt-0.5">
+                                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs shrink-0 mt-0.5">
                                                 {c.author.initials}
                                             </div>
                                         )}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="inline-block max-w-full rounded-2xl rounded-tl-sm bg-gray-100 px-3 py-2">
-                                                <p className="text-xs font-semibold text-gray-900 leading-tight mb-0.5">{c.author.name}</p>
-                                                <p className="text-sm text-gray-700 break-words">{c.body}</p>
+                                        <div className="flex-1 min-w-0 flex flex-col items-start">
+                                            {/* Bubble background layout inside Facebook comments */}
+                                            <div className="inline-block max-w-[90%] rounded-2xl bg-gray-100 px-3 py-2">
+                                                <p className="text-[12px] font-bold text-gray-900 hover:underline cursor-pointer leading-tight mb-0.5">
+                                                    {c.author.name}
+                                                </p>
+                                                <p className="text-[13px] text-gray-800 break-words font-normal leading-normal">{c.body}</p>
                                             </div>
-                                            <p className="mt-1 pl-1 text-[10px] text-gray-400">{c.time_ago}</p>
+                                            
+                                            {/* Timestamp label action parameters below text block */}
+                                            <div className="flex items-center gap-3 mt-0.5 pl-2 text-[11px] text-gray-500 font-medium">
+                                                <span className="hover:underline cursor-pointer">{c.time_ago}</span>
+                                                {c.user_id === currentUserId && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteComment(c.id)}
+                                                        disabled={deletingId === c.id}
+                                                        className="text-gray-400 hover:text-red-500 transition-colors flex items-center gap-0.5"
+                                                        title="Delete comment"
+                                                    >
+                                                        <Trash2 size={11} />
+                                                        <span>Delete</span>
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
-                                        {c.user_id === currentUserId && (
-                                            <button
-                                                type="button"
-                                                onClick={() => handleDeleteComment(c.id)}
-                                                disabled={deletingId === c.id}
-                                                className="mt-1 shrink-0 p-1 rounded-lg text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
-                                                title="Delete comment"
-                                            >
-                                                <Trash2 size={13} />
-                                            </button>
-                                        )}
                                     </li>
                                 ))}
                             </ul>
                         )}
                     </div>
-
-                    <form onSubmit={handleSubmitComment} className="relative flex items-center">
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            value={commentInput}
-                            onChange={(e) => setCommentInput(e.target.value)}
-                            placeholder="Write a commentâ€¦"
-                            className="w-full pl-4 pr-12 py-2.5 bg-gray-50 hover:bg-gray-100/70 focus:bg-white border border-gray-200 focus:border-blue-500 rounded-xl outline-none text-sm text-gray-800 placeholder-gray-400 transition-all"
-                        />
-                        <button
-                            type="submit"
-                            disabled={!commentInput.trim() || submitting}
-                            className="absolute right-2 p-1.5 rounded-lg text-gray-400 hover:text-blue-600 disabled:hover:text-gray-400 disabled:opacity-40 transition-colors"
-                        >
-                            <Send size={15} className="m-1.5" />
-                        </button>
-                    </form>
-                </>
+                </div>
             )}
         </div>
     );

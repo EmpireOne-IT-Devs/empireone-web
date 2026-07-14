@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Engagement\EngagementPostEvent;
 use App\Models\Engagement\EngagementPostEventFile;
 use App\Models\Engagement\EngagementPollOption;
@@ -14,23 +13,22 @@ use Illuminate\Support\Facades\Storage;
 
 class EngagementPostEventController extends Controller
 {
-
     public function index(): JsonResponse
     {
         $userId = Auth::id();
 
         $posts = EngagementPostEvent::with([
-                'user:id,name,avatar',
-                'files',
-                'pollOptions',
-                'pollVotes',
-            ])
+            'user:id,name,avatar',
+            'files',
+            'pollOptions',
+            'pollVotes',
+        ])
             ->withCount(['reactions', 'comments'])
-            ->withExists(['reactions as user_has_reacted' => fn ($q) => $q->where('user_id', $userId)])
+            ->withExists(['reactions as user_has_reacted' => fn($q) => $q->where('user_id', $userId)])
             ->where(function ($q) {
                 // Published (immediate or scheduled-and-due) or legacy rows with no publish flag.
                 $q->whereNull('published_at')
-                  ->orWhere('published_at', '<=', now());
+                    ->orWhere('published_at', '<=', now());
             })
             ->latest()
             ->get()
@@ -61,7 +59,7 @@ class EngagementPostEventController extends Controller
                     'year'              => $post->year,
                     'publish_to'        => $post->publish_to,
                     'published_at'      => $post->published_at,
-                    'files'             => $post->files->map(fn ($f) => [
+                    'files'             => $post->files->map(fn($f) => [
                         'id'   => $f->id,
                         'name' => $f->name,
                         'url'  => $f->url,
@@ -102,7 +100,6 @@ class EngagementPostEventController extends Controller
         ]);
     }
 
-
     public function upcoming_events(): JsonResponse
     {
         $events = EngagementPostEvent::whereNull('published_at')
@@ -132,12 +129,10 @@ class EngagementPostEventController extends Controller
         ]);
     }
 
-
     public function create()
     {
         //
     }
-
 
     public function store(Request $request): JsonResponse
     {
@@ -239,21 +234,28 @@ class EngagementPostEventController extends Controller
         ], 201);
     }
 
-
-    public function show(EngagementPostEvent $engagementPostEvent)
+    public function show($id)
     {
         //
     }
 
-
-    public function edit(EngagementPostEvent $engagementPostEvent)
+    public function edit($id)
     {
         //
     }
 
-
-    public function update(Request $request, EngagementPostEvent $engagementPostEvent): JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
+        // Fetch post explicitly by ID to bypass parameter binding mismatch
+        $post = EngagementPostEvent::find($id);
+
+        if (!$post) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Post not found.',
+            ], 404);
+        }
+
         $validated = $request->validate([
             'title'      => ['sometimes', 'string', 'max:255'],
             'content'    => ['sometimes', 'string'],
@@ -263,23 +265,35 @@ class EngagementPostEventController extends Controller
             'publish_to' => ['sometimes', 'string', 'in:All Employees,Department Only,Management'],
         ]);
 
-        $engagementPostEvent->update($validated);
+        $post->update($validated);
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Post updated successfully.',
-            'data'    => $engagementPostEvent->fresh(['user:id,name,avatar']),
+            'data'    => $post->fresh(['user:id,name,avatar']),
         ]);
     }
 
-
-    public function destroy(EngagementPostEvent $engagementPostEvent): JsonResponse
+    public function destroy($id): JsonResponse
     {
-        if ($engagementPostEvent->media_path) {
-            Storage::disk('s3')->delete($engagementPostEvent->media_path);
+
+        $post = EngagementPostEvent::find($id);
+
+
+        if (!$post) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Post not found.',
+            ], 404);
         }
 
-        $engagementPostEvent->delete();
+
+        if ($post->media_path) {
+            Storage::disk('s3')->delete($post->media_path);
+        }
+
+
+        $post->delete();
 
         return response()->json([
             'status'  => 'success',
