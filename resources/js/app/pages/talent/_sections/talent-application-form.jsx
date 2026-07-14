@@ -267,8 +267,6 @@ const TalentApplicationForm = () => {
                             </a>
                         ))}
                     </nav>
-
-                    {/* Step dots + label */}
                     <div className="flex items-center mb-4">
                         <div className="flex items-center gap-2  justify-between w-full">
                             {stepLabels.map((label, i) => {

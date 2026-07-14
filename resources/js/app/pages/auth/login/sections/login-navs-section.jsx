@@ -17,7 +17,7 @@ export default function LoginNavsSection() {
                         <a
                             key={label}
                             href={href}
-                            className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-300  transition-all duration-200  hover:text-orange-400 hover:shadow-md"
+                            className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-300  transition-all duration-200  hover:text-orange-400 hover:shadow-md underline"
                         >
                             {label}
                         </a>
