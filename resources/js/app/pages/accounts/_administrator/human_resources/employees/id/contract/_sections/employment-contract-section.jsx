@@ -222,8 +222,7 @@ const EmploymentContract = ({ data }) => (
                 corporation organized and existing under the laws of the
                 Republic of the Philippines, with principal office address at
                 EmpireOne Bldg., S. Carmona St., Brgy. VI, San Carlos City,
-                Negros Occidental, represented herein by its Human Resource
-                Lead, Apple Loraine Mag-usara, (hereinafter referred to as the
+                Negros Occidental, represented herein by its {data.employer_position}, {data.employer_name}, (hereinafter referred to as the
                 "Employer")
             </Text>
 
@@ -670,6 +669,20 @@ const EmploymentContract = ({ data }) => (
                 </View>
                 <View style={styles.signatureBlock}>
                     <Text style={[styles.text, styles.bold]}>EMPLOYER</Text>
+                     {data?.employer_signature && (
+                        <Image
+                            style={{
+                                position: "absolute",
+                                bottom: 30, // Positions it 5 units above the line
+                                left: 10, // Indents it slightly
+                                height: 60,
+                                width: 150,
+                                zIndex: 1, // Ensures it stays on top
+                            }}
+                            src={data?.employer_signature} // local or remote URL
+                        />
+                    )}
+
                     <View style={styles.signatureLine} />
                     <Text style={[styles.text, styles.bold]}>
                         {data?.employer_name}

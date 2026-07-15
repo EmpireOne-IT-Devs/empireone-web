@@ -9,20 +9,24 @@ import AgreeSection from "./_sections/agree-section";
 import moment from "moment";
 
 export default function Page() {
-    const { user } = useSelector((store) => store.app);
+    const { user, hr } = useSelector((store) => store.app);
     const user_id = window.location.pathname.split("/")[3];
     useEffect(() => {
         store.dispatch(get_user_by_id_thunk(user_id));
     }, []);
 
+    const employer_name = `${hr?.personal_information?.first_name ?? ''} ${hr?.personal_information?.last_name ?? ''}`
+    const employer_position = `${hr?.position}`
+    const employer_signature = `${hr?.signature}`
+
     const data = {
         user_id: user.id,
         signature: user?.account_employee?.signature ?? null,
         employee_name:
-            user?.account_contract?.employee_name ??
             `${user?.personal_information?.first_name} ${user?.personal_information?.middle_name == null ? '' : user?.personal_information?.middle_name} ${user?.personal_information?.last_name}`,
-        employer_name:
-            user?.account_contract?.employer_name ?? "Apple Loraine Mag-Usara",
+        employer_name: employer_name,
+        employer_position: employer_position,
+        employer_signature:employer_signature,
         reported_to:
             user?.account_contract?.reported_to ??
             `${user?.is_passed?.job_posting?.job_requisition?.user
@@ -33,29 +37,31 @@ export default function Page() {
                 ?.personal_information?.last_name
             }`,
         contract_signed_at:
-            user?.account_contract?.contract_signed_at ??
+            // user?.account_contract?.contract_signed_at ??
             moment().format("LLL"),
         residence:
-            user?.account_contract?.residence ??
+            // user?.account_contract?.residence ??
             `${user?.personal_information?.barangay}  ${user?.personal_information?.city}`,
         province:
-            user?.account_contract?.province ??
+            // user?.account_contract?.province ??
             `${user?.personal_information?.province}`,
         full_address:
-            user?.account_contract?.full_address ??
+            // user?.account_contract?.full_address ??
             `${user?.personal_information?.street} ${user?.personal_information?.barangay}  ${user?.personal_information?.city}  ${user?.personal_information?.province}  ${user?.personal_information?.zip_code}`,
         position:
-            user?.account_contract?.position ??
+            // user?.account_contract?.position ??
             `${user?.account_employee?.position}`,
         started_at:
-            user?.account_contract?.started_at ??
+            // user?.account_contract?.started_at ??
             `${moment(user?.account_employee?.started_at).format("LL")}`,
         ended_at:
-            user?.account_contract?.ended_at ??
+            // user?.account_contract?.ended_at ??
             `${moment(user?.account_employee?.started_at)
                 .add(6, "months")
                 .format("LL")}`,
-        salary: user?.account_contract?.salary ?? `${user?.salary?.salary}`,
+        salary:
+            // user?.account_contract?.salary ??
+            `${user?.salary?.salary}`,
     };
     console.log('dadwada', user);
     function verified_section() {

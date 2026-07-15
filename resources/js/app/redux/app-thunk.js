@@ -46,5 +46,6 @@ export function get_user_by_id_thunk(user_id) {
     return async function (dispatch, getState) {
         const result = await get_user_by_id_service(user_id);
         dispatch(appSlice.actions.setUser(result.data));
+        dispatch(appSlice.actions.setHr(result.hr));
     };
 }

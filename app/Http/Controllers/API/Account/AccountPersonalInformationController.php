@@ -71,8 +71,10 @@ class AccountPersonalInformationController extends Controller
     {
 
         $users = User::where('id', $id)->with(['evaluations', 'subordinate', 'department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee', 'is_passed', 'salary', 'account_contract'])->first();
+        $hr = AccountEmployee::where('position', 'PH Lead, Talent Acquisition')->whereIn('status', ['Probationary', 'Regular'])->with(['personal_information'])->first();
         return response()->json([
             'data' => $users,
+            'hr' => $hr,
             'status'  => 'success',
         ], 200);
     }
@@ -123,13 +125,13 @@ class AccountPersonalInformationController extends Controller
         $request->validate([
             'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
-          if ($request->avatar) {
-              $path = $request->file("avatar")->store('unified/account/avatar', 's3');
-                $url  = Storage::disk('s3')->url($path);
-             User::where('id', Auth::id())->update([
+        if ($request->avatar) {
+            $path = $request->file("avatar")->store('unified/account/avatar', 's3');
+            $url  = Storage::disk('s3')->url($path);
+            User::where('id', Auth::id())->update([
                 'avatar' => $url,
             ]);
-          }
+        }
         return response()->json([
             'status'          => 'success',
         ], 200);

@@ -24,11 +24,15 @@ export const appSlice = createSlice({
         interviewer: {},
         interviewer_id: {},
         job_interview: {},
-        tas:[]
+        tas: [],
+        hr: null,
     },
     reducers: {
         setUser: (state, action) => {
             state.user = action.payload;
+        },
+        setHr: (state, action) => {
+            state.hr = action.payload;
         },
         setJobInterview: (state, action) => {
             state.job_interview = action.payload;
@@ -63,13 +67,14 @@ export const appSlice = createSlice({
         setInterviewerId: (state, action) => {
             state.interviewer_id = action.payload;
         },
-         setTAs: (state, action) => {
+        setTAs: (state, action) => {
             state.tas = action.payload;
         },
     },
 });
 export const {
     setTAs,
+    setHr,
     setUser,
     setSidebarOpen,
     setDesktopCollapsed,
