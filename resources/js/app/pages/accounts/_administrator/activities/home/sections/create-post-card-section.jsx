@@ -8,6 +8,9 @@ import {
     ImagePlus,
     X,
     Tag,
+    BarChart2,
+    Plus,
+    Trash2,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -18,8 +21,14 @@ import Wysiwyg from "@/app/_components/wysiwyg";
 import {
     create_engagement_post_thunk,
     get_engagement_posts_thunk,
+    publish_engagement_post_thunk,
 } from "@/app/redux/engagement-slice";
 import { FaPaperPlane } from "react-icons/fa";
+
+const POST_TYPES = [
+    { id: "post", label: "Post", icon: Tag },
+    { id: "poll", label: "Poll", icon: BarChart2 },
+];
 
 const CATEGORIES = [
     { id: "Event", icon: CalendarDays },
@@ -30,12 +39,14 @@ const CATEGORIES = [
 
 export default function CreatePostCardSection() {
     const dispatch = useDispatch();
-    const { creating } = useSelector((state) => state.engagement);
+    const { creating, publishing } = useSelector((state) => state.engagement);
 
     const [isOpen, setIsOpen] = useState(false);
+    const [postType, setPostType] = useState("post");
     const [selectedCategory, setSelectedCategory] = useState("Event");
     const [images, setImages] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
+    const [pollOptions, setPollOptions] = useState(["", ""]);
     const fileInputRef = useRef(null);
 
     const {
@@ -73,12 +84,16 @@ export default function CreatePostCardSection() {
     }, [images]);
 
     const canPublish =
-        title?.trim() && (content ?? "").replace(/<[^>]+>/g, "").trim();
+        postType === "poll"
+            ? title?.trim() && pollOptions.filter((o) => o.trim()).length >= 2
+            : title?.trim() && (content ?? "").replace(/<[^>]+>/g, "").trim();
 
     const resetForm = () => {
         reset();
+        setPostType("post");
         setSelectedCategory("Event");
         setImages([]);
+        setPollOptions(["", ""]);
         setIsOpen(false);
     };
 
@@ -117,35 +132,37 @@ export default function CreatePostCardSection() {
     };
 
     const onSubmit = async (data) => {
-        const result = await dispatch(
-            create_engagement_post_thunk({
-                ...data,
-                category: selectedCategory,
-                images,
-            }),
-        );
+        let result;
 
-        if (create_engagement_post_thunk.fulfilled.match(result)) {
-            await dispatch(get_engagement_posts_thunk());
-            dispatch(
-                setAlert({
-                    type: "success",
-                    title: "Post Published Successfully!",
-                    open: true,
+        if (postType === "poll") {
+            const validOptions = pollOptions.filter((o) => o.trim());
+            result = await dispatch(
+                publish_engagement_post_thunk({
+                    type: "poll",
+                    headline: data.title,
+                    message: data.content ?? "",
+                    publish_to: "All Employees",
+                    options: validOptions,
                 }),
             );
-            resetForm();
+            if (publish_engagement_post_thunk.fulfilled.match(result)) {
+                await dispatch(get_engagement_posts_thunk());
+                dispatch(setAlert({ type: "success", title: "Poll Published Successfully!", open: true }));
+                resetForm();
+            } else {
+                dispatch(setAlert({ type: "error", title: "Failed to publish poll", message: result.payload?.message ?? "Something went wrong.", open: true }));
+            }
         } else {
-            dispatch(
-                setAlert({
-                    type: "error",
-                    title: "Failed to publish post",
-                    message:
-                        result.payload?.message ??
-                        "Something went wrong. Please try again.",
-                    open: true,
-                }),
+            result = await dispatch(
+                create_engagement_post_thunk({ ...data, category: selectedCategory, images }),
             );
+            if (create_engagement_post_thunk.fulfilled.match(result)) {
+                await dispatch(get_engagement_posts_thunk());
+                dispatch(setAlert({ type: "success", title: "Post Published Successfully!", open: true }));
+                resetForm();
+            } else {
+                dispatch(setAlert({ type: "error", title: "Failed to publish post", message: result.payload?.message ?? "Something went wrong.", open: true }));
+            }
         }
     };
 
@@ -192,165 +209,199 @@ export default function CreatePostCardSection() {
                     onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col gap-6 p-6"
                 >
-                    {/* Category pills */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-slate-700">
-                            Category
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                            {CATEGORIES.map(({ id, icon: Icon }) => (
-                                <button
-                                    key={id}
-                                    type="button"
-                                    onClick={() => setSelectedCategory(id)}
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                                        selectedCategory === id
-                                            ? "border-slate-500 bg-white text-slate-800 shadow-[inset_0_0_0_1px_rgba(15,23,42,0.25)]"
-                                            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700"
-                                    }`}
-                                >
-                                    <Icon className="h-3.5 w-3.5" />
-                                    <span>{id}</span>
-                                </button>
-                            ))}
-                        </div>
+                    {/* Type switcher — Post vs Poll */}
+                    <div className="flex gap-2 rounded-2xl bg-slate-100 p-1">
+                        {POST_TYPES.map(({ id, label, icon: Icon }) => (
+                            <button
+                                key={id}
+                                type="button"
+                                onClick={() => setPostType(id)}
+                                className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-sm font-semibold transition-all ${
+                                    postType === id
+                                        ? "bg-white text-slate-800 shadow-sm"
+                                        : "text-slate-500 hover:text-slate-700"
+                                }`}
+                            >
+                                <Icon className="h-4 w-4" />
+                                {label}
+                            </button>
+                        ))}
                     </div>
 
-                    {/* Title */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-slate-700">
-                            Title <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="Enter a title..."
-                            className={`w-full rounded-3xl border px-5 py-3.5 text-sm text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 ${
-                                errors.title
-                                    ? "border-red-400"
-                                    : "border-slate-200"
-                            }`}
-                            {...register("title", {
-                                required: "Title is required",
-                            })}
-                        />
-                        {errors.title && (
-                            <p className="text-xs text-red-500">
-                                {errors.title.message}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-slate-700">
-                            Content <span className="text-red-500">*</span>
-                        </label>
-                        <Wysiwyg
-                            value={content ?? ""}
-                            onChange={handleWysiwygChange}
-                        />
-                        {errors.content && (
-                            <p className="text-xs text-red-500">
-                                {errors.content.message}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Image Upload */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-slate-700">
-                            Images{" "}
-                            <span className="text-xs font-normal text-slate-400">
-                                (optional)
-                            </span>
-                        </label>
-
-                        {/* Drop zone */}
-                        <div
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
-                            onClick={() => fileInputRef.current?.click()}
-                            className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-5 transition-colors ${
-                                isDragging
-                                    ? "border-indigo-400 bg-indigo-50"
-                                    : "border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100"
-                            }`}
-                        >
-                            <ImagePlus className="h-6 w-6 text-slate-400" />
-                            <p className="text-xs text-slate-500">
-                                <span className="font-semibold text-indigo-600">
-                                    Click to upload
-                                </span>{" "}
-                                or drag &amp; drop
-                            </p>
-                            <p className="text-[11px] text-slate-400">
-                                JPG, PNG, GIF, WEBP — max 5 MB each
-                            </p>
-                        </div>
-
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/jpg,image/jpeg,image/png,image/gif,image/webp"
-                            multiple
-                            className="hidden"
-                            onChange={(e) => addImages(e.target.files)}
-                        />
-
-                        {/* Previews */}
-                        {images.length > 0 && (
-                            <div className="mt-1 grid grid-cols-4 gap-2 sm:grid-cols-6">
-                                {images.map((img, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
-                                    >
-                                        <img
-                                            src={previewUrls[idx]}
-                                            alt={img.name}
-                                            className="h-full w-full object-cover"
-                                        />
+                    {/* ── POST fields ─────────────────────────────────── */}
+                    {postType === "post" && (
+                        <>
+                            {/* Category pills */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-semibold text-slate-700">Category</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {CATEGORIES.map(({ id, icon: Icon }) => (
                                         <button
+                                            key={id}
                                             type="button"
-                                            onClick={(e) => removeImage(idx, e)}
-                                            className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                                            onClick={() => setSelectedCategory(id)}
+                                            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                                                selectedCategory === id
+                                                    ? "border-slate-500 bg-white text-slate-800 shadow-[inset_0_0_0_1px_rgba(15,23,42,0.25)]"
+                                                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700"
+                                            }`}
                                         >
-                                            <X className="h-3 w-3" />
+                                            <Icon className="h-3.5 w-3.5" />
+                                            <span>{id}</span>
                                         </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Title */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Title <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter a title..."
+                                    className={`w-full rounded-3xl border px-5 py-3.5 text-sm text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 ${errors.title ? "border-red-400" : "border-slate-200"}`}
+                                    {...register("title", { required: "Title is required" })}
+                                />
+                                {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Content <span className="text-red-500">*</span>
+                                </label>
+                                <Wysiwyg value={content ?? ""} onChange={handleWysiwygChange} />
+                                {errors.content && <p className="text-xs text-red-500">{errors.content.message}</p>}
+                            </div>
+
+                            {/* Image Upload */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Images <span className="text-xs font-normal text-slate-400">(optional)</span>
+                                </label>
+                                <div
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={handleDrop}
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-5 transition-colors ${isDragging ? "border-indigo-400 bg-indigo-50" : "border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100"}`}
+                                >
+                                    <ImagePlus className="h-6 w-6 text-slate-400" />
+                                    <p className="text-xs text-slate-500">
+                                        <span className="font-semibold text-indigo-600">Click to upload</span> or drag &amp; drop
+                                    </p>
+                                    <p className="text-[11px] text-slate-400">JPG, PNG, GIF, WEBP — max 5 MB each</p>
+                                </div>
+                                <input ref={fileInputRef} type="file" accept="image/jpg,image/jpeg,image/png,image/gif,image/webp" multiple className="hidden" onChange={(e) => addImages(e.target.files)} />
+                                {images.length > 0 && (
+                                    <div className="mt-1 grid grid-cols-4 gap-2 sm:grid-cols-6">
+                                        {images.map((img, idx) => (
+                                            <div key={idx} className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+                                                <img src={previewUrls[idx]} alt={img.name} className="h-full w-full object-cover" />
+                                                <button type="button" onClick={(e) => removeImage(idx, e)} className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
+
+                    {/* ── POLL fields ─────────────────────────────────── */}
+                    {postType === "poll" && (
+                        <>
+                            {/* Poll question/headline */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Poll Question <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="What would you like to ask?"
+                                    className={`w-full rounded-3xl border px-5 py-3.5 text-sm text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 ${errors.title ? "border-red-400" : "border-slate-200"}`}
+                                    {...register("title", { required: "Poll question is required" })}
+                                />
+                                {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
+                            </div>
+
+                            {/* Optional description */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Description <span className="text-xs font-normal text-slate-400">(optional)</span>
+                                </label>
+                                <Wysiwyg value={content ?? ""} onChange={handleWysiwygChange} />
+                            </div>
+
+                            {/* Poll options */}
+                            <div className="flex flex-col gap-3">
+                                <label className="text-sm font-semibold text-slate-700">
+                                    Options <span className="text-red-500">*</span>
+                                    <span className="ml-1 text-xs font-normal text-slate-400">(min 2)</span>
+                                </label>
+                                {pollOptions.map((opt, idx) => (
+                                    <div key={idx} className="flex items-center gap-2">
+                                        <span className="w-5 shrink-0 text-center text-xs font-bold text-slate-400">{idx + 1}</span>
+                                        <input
+                                            type="text"
+                                            value={opt}
+                                            placeholder={`Option ${idx + 1}`}
+                                            onChange={(e) => {
+                                                const updated = [...pollOptions];
+                                                updated[idx] = e.target.value;
+                                                setPollOptions(updated);
+                                            }}
+                                            className="flex-1 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+                                        />
+                                        {pollOptions.length > 2 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setPollOptions((prev) => prev.filter((_, i) => i !== idx))}
+                                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </button>
+                                        )}
                                     </div>
                                 ))}
+                                {pollOptions.length < 6 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setPollOptions((prev) => [...prev, ""])}
+                                        className="flex items-center gap-2 self-start rounded-full border border-dashed border-slate-300 px-4 py-2 text-xs font-medium text-slate-500 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+                                    >
+                                        <Plus className="h-3.5 w-3.5" />
+                                        Add option
+                                    </button>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        </>
+                    )}
 
                     {/* Footer */}
                     <div className="flex items-center justify-between border-t border-slate-100 pt-4">
                         <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">
-                            <Tag className="h-3.5 w-3.5" />
-                            <span>{selectedCategory}</span>
+                            {postType === "poll" ? (
+                                <><BarChart2 className="h-3.5 w-3.5" /><span>Poll</span></>
+                            ) : (
+                                <><Tag className="h-3.5 w-3.5" /><span>{selectedCategory}</span></>
+                            )}
                         </div>
-
                         <div className="flex items-center gap-3">
-                            <Button
-                                type="button"
-                                variant="light"
-                                outlined
-                                onClick={resetForm}
-                                className="rounded-full border-slate-300 px-5 text-slate-600"
-                            >
+                            <Button type="button" variant="light" outlined onClick={resetForm} className="rounded-full border-slate-300 px-5 text-slate-600">
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={!canPublish}
-                                loading={isSubmitting || creating}
+                                loading={isSubmitting || creating || publishing}
                                 className="gap-2 rounded-full bg-indigo-700 px-6 text-white hover:bg-indigo-800"
                             >
-                                {!(isSubmitting || creating) && (
-                                    <Send className="h-4 w-4" />
-                                )}
-                                <span>Publish Post</span>
+                                {!(isSubmitting || creating || publishing) && <Send className="h-4 w-4" />}
+                                <span>{postType === "poll" ? "Publish Poll" : "Publish Post"}</span>
                             </Button>
                         </div>
                     </div>

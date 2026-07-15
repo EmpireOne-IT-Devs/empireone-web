@@ -10,11 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import PostActionMenu from "./post-action-menu";
 import PostInteractionPanel from "@/app/pages/accounts/_administrator/activities/_components/post-interaction-panel";
+import ActivityPollCard from "@/app/pages/accounts/_administrator/activities/_components/activity-poll-card";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     get_engagement_posts_thunk,
     delete_engagement_post_thunk,
     syncInteraction,
+    cast_poll_vote_thunk,
 } from "@/app/redux/engagement-slice";
 import {
     get_engagement_post_comments_service,
@@ -144,6 +146,8 @@ function EngagementPostCard({
     onDelete,
     onView,
     deleting,
+    pollVotingPostId,
+    onVote,
 }) {
     const dispatch = useDispatch();
     const categoryKey = post.category ?? "General";
@@ -151,6 +155,29 @@ function EngagementPostCard({
         CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
     const CategoryIcon = catConfig.icon;
 
+    // ── Poll post ─────────────────────────────────────────────────────
+    if (post.type === "poll") {
+        return (
+            <div className="relative">
+                <ActivityPollCard
+                    post={post}
+                    pollVoting={pollVotingPostId === post.id}
+                    onVote={(optionId) => onVote(post.id, optionId)}
+                    headerActions={
+                        <PostActionMenu
+                            open={menuOpen}
+                            onToggle={onMenuToggle}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                            deleting={deleting}
+                        />
+                    }
+                />
+            </div>
+        );
+    }
+
+    // ── Regular post ─────────────────────────────────────────────────
     return (
         <Card
             variant="default"
@@ -238,7 +265,7 @@ function EngagementPostCard({
 // ── Post Card Section Component ───────────────────────────────────────
 export default function PostCardSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading, postsError, deleting } = useSelector(
+    const { posts, postsLoading, postsError, deleting, pollVotingPostId } = useSelector(
         (state) => state.engagement,
     );
 
@@ -332,6 +359,10 @@ export default function PostCardSection() {
                         }}
                         onView={() => setViewingPost(post)}
                         deleting={deleting}
+                        pollVotingPostId={pollVotingPostId}
+                        onVote={(postId, optionId) =>
+                            dispatch(cast_poll_vote_thunk({ postId, optionId }))
+                        }
                     />
                 ))}
             </div>

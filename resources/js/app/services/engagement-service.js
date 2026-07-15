@@ -39,3 +39,15 @@ export async function toggle_engagement_reaction_service(postId) {
 export async function get_upcoming_birthdays_service() {
     return await axios.get("/api/engagement/upcoming_birthdays");
 }
+
+export async function cast_poll_vote_service(postId, optionId) {
+    return await axios.post(`/api/engagement/polls/${postId}/vote`, { option_id: optionId });
+}
+
+export async function close_poll_service(postId) {
+    return await axios.post(`/api/engagement/polls/${postId}/close`);
+}
+
+export async function reopen_poll_service(postId) {
+    return await axios.post(`/api/engagement/polls/${postId}/reopen`);
+}

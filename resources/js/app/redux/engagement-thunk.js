@@ -5,6 +5,7 @@ import {
     update_post_event_by_id_service,
     delete_post_event_service,
     get_upcoming_birthdays_service,
+    cast_poll_vote_service,
 } from "../services/engagement-service";
 
 export const get_engagement_posts_thunk = createAsyncThunk(
@@ -95,9 +96,24 @@ export const publish_engagement_post_thunk = createAsyncThunk(
             if (data.category)     formData.append("category", data.category);
             if (data.scheduled_at) formData.append("scheduled_at", data.scheduled_at);
             if (data.media)        formData.append("media", data.media);
+            if (data.options?.length) {
+                data.options.forEach((opt) => formData.append("options[]", opt));
+            }
 
             const response = await create_post_event_service(formData);
             return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const cast_poll_vote_thunk = createAsyncThunk(
+    "engagement/castPollVote",
+    async ({ postId, optionId }, { rejectWithValue }) => {
+        try {
+            const response = await cast_poll_vote_service(postId, optionId);
+            return { postId, ...response.data.data };
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
         }

@@ -6,6 +6,7 @@ import {
     delete_engagement_post_thunk,
     get_upcoming_birthdays_thunk,
     publish_engagement_post_thunk,
+    cast_poll_vote_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -15,6 +16,7 @@ export {
     delete_engagement_post_thunk,
     get_upcoming_birthdays_thunk,
     publish_engagement_post_thunk,
+    cast_poll_vote_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -32,6 +34,7 @@ const engagementSlice = createSlice({
         deleteError: null,
         publishing: false,
         publishError: null,
+        pollVotingPostId: null,
         birthdays: [],
         birthdayMonth: "",
         birthdayCount: 0,
@@ -144,6 +147,26 @@ const engagementSlice = createSlice({
             .addCase(publish_engagement_post_thunk.rejected, (state, action) => {
                 state.publishing = false;
                 state.publishError = action.payload;
+            });
+
+        // ── cast poll vote ────────────────────────────────────────────────────
+        builder
+            .addCase(cast_poll_vote_thunk.pending, (state, action) => {
+                state.pollVotingPostId = action.meta.arg.postId;
+            })
+            .addCase(cast_poll_vote_thunk.fulfilled, (state, action) => {
+                state.pollVotingPostId = null;
+                const { postId, total_votes, user_has_voted, user_voted_option, options } = action.payload;
+                const idx = state.posts.findIndex((p) => p.id === postId);
+                if (idx !== -1) {
+                    state.posts[idx].total_votes       = total_votes;
+                    state.posts[idx].user_has_voted    = user_has_voted;
+                    state.posts[idx].user_voted_option = user_voted_option;
+                    if (options) state.posts[idx].options = options;
+                }
+            })
+            .addCase(cast_poll_vote_thunk.rejected, (state) => {
+                state.pollVotingPostId = null;
             });
     },
 });

@@ -5,6 +5,11 @@ import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
+// Draft.js uses setImmediate which is not available in browsers
+if (typeof window !== "undefined" && !window.setImmediate) {
+    window.setImmediate = (fn, ...args) => setTimeout(fn, 0, ...args);
+}
+
 export default function Wysiwyg({ label, name, value = "", onChange, error }) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
 

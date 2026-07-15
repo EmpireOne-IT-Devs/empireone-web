@@ -6,19 +6,19 @@ import Card from "@/app/_components/card";
 import Skeleton from "@/app/_components/skeleton";
 import ActivityPollCard from "../../_components/activity-poll-card";
 import {
-    get_activity_posts_thunk,
+    get_engagement_posts_thunk,
     cast_poll_vote_thunk,
-} from "@/app/redux/activities-thunk";
+} from "@/app/redux/engagement-slice";
 
 export default function PoolCardSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading, pollVotingPostId } = useSelector(
-        (s) => s.activities,
+        (s) => s.engagement,
     );
     const [pollIndex, setPollIndex] = useState(0);
 
     useEffect(() => {
-        dispatch(get_activity_posts_thunk());
+        dispatch(get_engagement_posts_thunk());
     }, [dispatch]);
 
     const polls = posts.filter((p) => p.type === "poll" && !p.is_closed);

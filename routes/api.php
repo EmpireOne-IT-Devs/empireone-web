@@ -160,6 +160,15 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
         Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
         Route::get('upcoming_events',    [EngagementPostEventController::class, 'upcoming_events']);
+
+        Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
+        Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);
+        Route::get('polls/{id}/vote-records/export',  [EngagementPollController::class, 'export_vote_records']);
+        Route::get('polls/{id}/vote-records',         [EngagementPollController::class, 'vote_records']);
+        Route::get('polls/{id}',                      [EngagementPollController::class, 'show']);
+        Route::post('polls/{id}/close',               [EngagementPollController::class, 'close_poll']);
+        Route::post('polls/{id}/reopen',              [EngagementPollController::class, 'reopen_poll']);
+        Route::post('polls/{id}/vote',                [EngagementPollController::class, 'vote']);
     });
 
     Route::prefix('er')->group(function () {
