@@ -21,7 +21,7 @@ export default function Page() {
                     <HeroSection />
                 </div>
 
-                {/* <CareerSection /> */}
+                <CareerSection />
                 {/* <DeveloperSection /> */}
                 {/* <ServicesSection /> */}
                 <AboutSection />
