@@ -1,4 +1,5 @@
 import Button from "@/app/_components/button";
+import MultiSelect from "@/app/_components/multi-select";
 import Select from "@/app/_components/select";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
@@ -33,7 +34,7 @@ export default function ApproveJobRequisitionSection({ data }) {
             setLoading(true);
             await approve_job_requisition_service({
                 ...data,
-                recruiter_id: recruiter,
+                interviewers: recruiter,
                 status: "Declined" == data.status ? "Pending" : data.status,
             });
             await store.dispatch(get_job_requisitions_thunk());
@@ -60,7 +61,7 @@ export default function ApproveJobRequisitionSection({ data }) {
 
             {data.status == "Director Approved" && (
                 <>
-                    <Select
+                    <MultiSelect
                         className="w-full"
                         label="Recruiter *" // Added visual indicator
                         name="recruiter_id"

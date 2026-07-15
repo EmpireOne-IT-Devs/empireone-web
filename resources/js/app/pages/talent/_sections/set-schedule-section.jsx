@@ -12,15 +12,20 @@ export default function SetScheduleSection({
     register,
     errors
 }) {
-    const { interviewer } = useSelector((store) => store.app);
-    console.log("interviewer", interviewer);
+    const { job_postings } = useSelector((store) => store.job_postings);
+
+    // Extract interviewers array based on the selected job posting
+    const interviewers = useMemo(() => {
+        return job_postings.find(
+            (res) => res.id == watchedValues.job_posting_id
+        )?.job_requisition?.interviewer_users || [];
+    }, [job_postings, watchedValues.job_posting_id]);
 
     // ---------------------------------------------------------
     // Initialize State with Default Values
     // ---------------------------------------------------------
     const [currentDate, setCurrentDate] = useState(() => {
         if (watchedValues?.scheduled_date) {
-            // Safely parse YYYY-MM-DD into local time to avoid UTC timezone shifts
             const [y, m, d] = watchedValues.scheduled_date.split("-");
             return new Date(y, m - 1, d);
         }
@@ -35,9 +40,8 @@ export default function SetScheduleSection({
         return null;
     });
 
-    const [selectedTime, setSelectedTime] = useState(
-        watchedValues?.start_time || null,
-    );
+    // Store the full selected slot object to track WHICH interviewer was selected
+    const [selectedSlot, setSelectedSlot] = useState(null);
 
     // ---------------------------------------------------------
     // Sync React State with Form State (react-hook-form)
@@ -77,17 +81,20 @@ export default function SetScheduleSection({
     }, [selectedDate, setValue]);
 
     useEffect(() => {
-        if (selectedTime) {
-            setValue("start_time", selectedTime);
-            setValue("end_time", calculateEndTime(selectedTime));
+        if (selectedSlot) {
+            setValue("start_time", selectedSlot.start);
+            setValue("end_time", calculateEndTime(selectedSlot.start));
+            
+            // Set the specific interviewer_id for this time slot
+            setValue("interviewer_id", selectedSlot.interviewer_id);
         }
-    }, [selectedTime, setValue]);
+    }, [selectedSlot, setValue]);
 
     // ---------------------------------------------------------
     // Dynamic Time Slot Generator (20-minute gaps as Ranges)
     // ---------------------------------------------------------
     const timeSlots = useMemo(() => {
-        if (!interviewer?.start_time || !interviewer?.end_time) return [];
+        if (!interviewers || interviewers.length === 0 || !selectedDate) return [];
 
         const parseTime = (timeStr) => {
             if (!timeStr) return null;
@@ -104,69 +111,86 @@ export default function SetScheduleSection({
             return `${formattedH.toString().padStart(2, "0")}:${formattedM} ${ampm}`;
         };
 
-        const startMin = parseTime(interviewer?.start_time);
-        const endMin = parseTime(interviewer?.end_time);
-        const breakStartMin = parseTime(interviewer?.break_time_start);
-        const breakEndMin = parseTime(interviewer?.break_time_end);
+        const formattedSelectedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+        const dayOfWeek = selectedDate.getDay();
 
-        // Get the formatted date string for matching with the schedule
-        const formattedSelectedDate = selectedDate
-            ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
-            : null;
-
-        // Find booked slots for the selected date
-        const bookedStartMinutes = (interviewer?.upcoming_schedules || [])
-            .filter(
-                (schedule) => schedule.scheduled_date === formattedSelectedDate,
-            )
-            .map((schedule) => parseTime(schedule.start_time))
-            .filter((val) => val !== null);
-
-        // Check if selectedDate is today to disable past times
         const now = new Date();
         const isToday =
-            selectedDate &&
             selectedDate.getDate() === now.getDate() &&
             selectedDate.getMonth() === now.getMonth() &&
             selectedDate.getFullYear() === now.getFullYear();
 
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
         const slots = [];
 
-        for (let current = startMin; current + 20 <= endMin; current += 20) {
-            if (breakStartMin && breakEndMin) {
-                if (current >= breakStartMin && current < breakEndMin) {
-                    continue;
+        // Generate slots independently for each interviewer
+        interviewers.forEach((inv, index) => {
+            // 1. Check if this specific interviewer is scheduled to work today
+            let worksToday = false;
+            const fromDay = inv.day_of_week_from;
+            const toDay = inv.day_of_week_to;
+
+            if (fromDay != null && toDay != null) {
+                if (fromDay <= toDay) {
+                    worksToday = dayOfWeek >= fromDay && dayOfWeek <= toDay;
+                } else {
+                    worksToday = dayOfWeek >= fromDay || dayOfWeek <= toDay;
                 }
             }
 
-            // Flag slot if it's today and the time has already passed
-            const isPast = isToday && current < currentMinutes;
-            // Flag slot if it exists in upcoming_schedules
-            const isBooked = bookedStartMinutes.includes(current);
+            if (!worksToday) return; // Skip this interviewer if they don't work today
 
-            // Format start and end times for the UI
-            const startLabel = formatTime(current);
-            const endLabel = formatTime(current + 20);
+            const sMin = parseTime(inv.start_time);
+            const eMin = parseTime(inv.end_time);
+            const bStart = parseTime(inv.break_time_start);
+            const bEnd = parseTime(inv.break_time_end);
 
-            slots.push({
-                start: startLabel,
-                display: `${startLabel} - ${endLabel}`,
-                isDisabled: isPast || isBooked,
-            });
-        }
+            if (sMin === null || eMin === null) return;
 
-        return slots;
-    }, [interviewer, selectedDate]);
+            // 2. Fetch bookings specifically for this interviewer
+            const bookedMins = (inv.upcoming_schedules || [])
+                .filter((sch) => sch.scheduled_date === formattedSelectedDate)
+                .map((sch) => parseTime(sch.start_time))
+                .filter((val) => val !== null);
+
+            // 3. Generate their individual slots
+            for (let current = sMin; current + 20 <= eMin; current += 20) {
+                // Ignore break times
+                if (bStart !== null && bEnd !== null && current >= bStart && current < bEnd) {
+                    continue;
+                }
+
+                const isPast = isToday && current < currentMinutes;
+                const isBooked = bookedMins.includes(current);
+
+                const startLabel = formatTime(current);
+                const endLabel = formatTime(current + 20);
+
+                slots.push({
+                    id: `${inv.interviewer_id}-${current}`, // Unique identifier for selection state
+                    start: startLabel,
+                    display: `${startLabel} - ${endLabel}`,
+                    interviewer_id: inv.interviewer_id,
+                    interviewer_label: `Int. ${index + 1}`, // Optional label for the UI
+                    isDisabled: isPast || isBooked,
+                });
+            }
+        });
+
+        // Sort all generated slots chronologically across all interviewers
+        return slots.sort((a, b) => {
+            const timeA = parseTime(a.start);
+            const timeB = parseTime(b.start);
+            if (timeA === timeB) return a.interviewer_id - b.interviewer_id;
+            return timeA - timeB;
+        });
+    }, [interviewers, selectedDate]);
 
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     // Calendar Helpers
-    const getDaysInMonth = (year, month) =>
-        new Date(year, month + 1, 0).getDate();
-    const getFirstDayOfMonth = (year, month) =>
-        new Date(year, month, 1).getDay();
+    const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
+    const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
 
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
@@ -174,28 +198,36 @@ export default function SetScheduleSection({
     const daysInMonth = getDaysInMonth(currentYear, currentMonth);
     const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
 
+    // Set Up Boundaries: Today and 1 Week Ahead (Max Date)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 7); // Exactly 1 week from today
+
     const isPrevMonthDisabled =
         currentYear < today.getFullYear() ||
-        (currentYear === today.getFullYear() &&
-            currentMonth <= today.getMonth());
+        (currentYear === today.getFullYear() && currentMonth <= today.getMonth());
+
+    const isNextMonthDisabled =
+        currentYear > maxDate.getFullYear() ||
+        (currentYear === maxDate.getFullYear() && currentMonth >= maxDate.getMonth());
 
     const handlePrevMonth = () => {
         if (isPrevMonthDisabled) return;
         setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
-        setSelectedTime(null);
+        setSelectedSlot(null);
     };
 
     const handleNextMonth = () => {
+        if (isNextMonthDisabled) return;
         setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
-        setSelectedTime(null);
+        setSelectedSlot(null);
     };
 
     const handleDateClick = (day) => {
         setSelectedDate(new Date(currentYear, currentMonth, day));
-        setSelectedTime(null);
+        setSelectedSlot(null);
     };
 
     const blanks = Array.from({ length: firstDay }, (_, i) => (
@@ -205,27 +237,32 @@ export default function SetScheduleSection({
     const days = Array.from({ length: daysInMonth }, (_, i) => {
         const day = i + 1;
         const loopDate = new Date(currentYear, currentMonth, day);
-        const dayOfWeek = loopDate.getDay(); // 0 (Sun) to 6 (Sat)
+        const dayOfWeek = loopDate.getDay();
 
-        const isPast = loopDate <= today;
+        // Check if the date is earlier than today or beyond the 1-week limit
+        const isPast = loopDate < today; 
+        const isBeyondMax = loopDate > maxDate;
 
-        // Check if the current loop date falls within the working days
-        let isWorkingDay = true;
-        const fromDay = interviewer?.day_of_week_from;
-        const toDay = interviewer?.day_of_week_to;
+        // Verify if AT LEAST ONE interviewer is scheduled to work on this dayOfWeek
+        let isWorkingDay = false;
+        if (interviewers && interviewers.length > 0) {
+            isWorkingDay = interviewers.some((inv) => {
+                const fromDay = inv.day_of_week_from;
+                const toDay = inv.day_of_week_to;
 
-        if (fromDay != null && toDay != null) {
-            if (fromDay <= toDay) {
-                // Standard schedule (e.g., Mon-Fri / 1 to 5)
-                isWorkingDay = dayOfWeek >= fromDay && dayOfWeek <= toDay;
-            } else {
-                // Wrap-around schedule (e.g., Thu-Mon / 4 to 1)
-                isWorkingDay = dayOfWeek >= fromDay || dayOfWeek <= toDay;
-            }
+                if (fromDay != null && toDay != null) {
+                    if (fromDay <= toDay) {
+                        return dayOfWeek >= fromDay && dayOfWeek <= toDay;
+                    } else {
+                        return dayOfWeek >= fromDay || dayOfWeek <= toDay;
+                    }
+                }
+                return false;
+            });
         }
 
-        // The button should be disabled if it's in the past OR it's not a working day
-        const isDisabled = isPast || !isWorkingDay;
+        // Disable if it's out of bounds or no one is working
+        const isDisabled = isPast || isBeyondMax || !isWorkingDay;
 
         const isSelected =
             selectedDate?.getDate() === day &&
@@ -325,18 +362,8 @@ export default function SetScheduleSection({
                                 }
                         `}
                         >
-                            <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M15 19l-7-7 7-7"
-                                ></path>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <h3 className="text-lg font-semibold text-gray-800">
@@ -348,20 +375,16 @@ export default function SetScheduleSection({
                         <button
                             type="button"
                             onClick={handleNextMonth}
-                            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                            disabled={isNextMonthDisabled}
+                            className={`p-2 rounded-lg transition-colors
+                            ${isNextMonthDisabled
+                                    ? "text-gray-300 cursor-not-allowed"
+                                    : "hover:bg-gray-100 text-gray-600"
+                                }
+                        `}
                         >
-                            <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M9 5l7 7-7 7"
-                                ></path>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                             </svg>
                         </button>
                     </div>
@@ -413,23 +436,24 @@ export default function SetScheduleSection({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
                                     {timeSlots.map((slot) => (
                                         <button
-                                            key={slot.start}
+                                            key={slot.id} // Updated key to support duplicates of the same time mapped to different interviewers
                                             type="button"
-                                            onClick={() =>
-                                                setSelectedTime(slot.start)
-                                            }
+                                            onClick={() => setSelectedSlot(slot)} // Store the whole slot object
                                             disabled={slot.isDisabled}
-                                            className={`py-3 px-4 rounded-xl font-medium text-sm border transition-all duration-200 
+                                            className={`py-3 px-4 rounded-xl flex flex-col items-center justify-center border transition-all duration-200 
                                             ${slot.isDisabled
                                                     ? "bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
-                                                    : selectedTime ===
-                                                        slot.start
+                                                    : selectedSlot?.id === slot.id
                                                         ? "bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]"
                                                         : "border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600"
                                                 }
                                         `}
                                         >
-                                            {slot.display}
+                                            <span className="font-medium text-sm">{slot.display}</span>
+                                            {/* Optional: Add a subtle indicator so users know they are distinct slots */}
+                                            <span className={`text-[10px] mt-0.5 ${selectedSlot?.id === slot.id ? 'text-blue-200' : 'text-gray-400'}`}>
+                                                ({slot.interviewer_label})
+                                            </span>
                                         </button>
                                     ))}
                                 </div>
@@ -480,7 +504,7 @@ export default function SetScheduleSection({
                     outlined
                     type="button"
                     onClick={nextStep}
-                    disabled={!selectedDate || !selectedTime}
+                    disabled={!selectedDate || !selectedSlot}
                     className="w-1/2"
                 >
                     Continue To Review

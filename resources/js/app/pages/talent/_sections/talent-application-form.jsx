@@ -167,7 +167,6 @@ const TalentApplicationForm = () => {
         try {
             setLoading(true);
             await apply_job_application_service(finalData);
-
             await dispatch(
                 setAlert({
                     type: "success",
@@ -177,23 +176,23 @@ const TalentApplicationForm = () => {
                 }),
             );
             setLoading(false);
-            localStorage.clear();
-            reset({
-                position: "",
-                gender: "",
-                experiences: [],
-                skills: [{ name: "", percentage: 0 }],
-                region: "",
-                province: "",
-                city: "",
-                barangay: "",
-                zip_code: "",
-                cv: [],
-                file: null,
-                marital_status: "",
-                job_posting_id: "",
-            });
-            setStep(0);
+            // localStorage.clear();
+            // reset({
+            //     position: "",
+            //     gender: "",
+            //     experiences: [],
+            //     skills: [{ name: "", percentage: 0 }],
+            //     region: "",
+            //     province: "",
+            //     city: "",
+            //     barangay: "",
+            //     zip_code: "",
+            //     cv: [],
+            //     file: null,
+            //     marital_status: "",
+            //     job_posting_id: "",
+            // });
+            // setStep(0);
         } catch (error) {
             setLoading(true);
         }

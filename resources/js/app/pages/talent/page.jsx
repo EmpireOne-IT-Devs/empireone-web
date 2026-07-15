@@ -17,15 +17,15 @@ export default function Page() {
         store.dispatch(get_departments_thunk());
     }, []);
 
-    useEffect(() => {
-        if (interview_id) {
-            store.dispatch(
-                get_job_interviewer_schedule_by_interviewer_id_thunk(
-                    interview_id,
-                ),
-            );
-        }
-    }, [job_posting_id, interview_id]);
+    // useEffect(() => {
+    //     if (interview_id) {
+    //         store.dispatch(
+    //             get_job_interviewer_schedule_by_interviewer_id_thunk(
+    //                 interview_id,
+    //             ),
+    //         );
+    //     }
+    // }, [job_posting_id, interview_id]);
 
     // localStorage.clear();
     return (

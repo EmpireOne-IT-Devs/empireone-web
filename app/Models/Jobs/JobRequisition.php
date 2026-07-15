@@ -6,7 +6,7 @@ use App\Models\Account;
 use App\Models\Department;
 use App\Models\Location;
 use App\Models\User;
-use App\Models\Site; // Added based on your site_id field
+use App\Models\Site;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +23,7 @@ class JobRequisition extends Model
         'site_id',
         'recruiter_id',
         'existing_position_id',
+        'interviewers', // JSON Array of User IDs
 
         //approver
         'approver1_id',
@@ -41,8 +42,6 @@ class JobRequisition extends Model
         // Classifications & Audiences
         'erf_classification',
         'target_audience',
-
-
 
         // Interviewer Details
         'interviewer1',
@@ -65,12 +64,33 @@ class JobRequisition extends Model
     protected $casts = [
         'target_start_date' => 'date',
         'number_of_positions' => 'integer',
+        'interviewers' => 'array', // 1. Automatically cast the JSON string to a PHP array
     ];
+    protected $appends = ['interviewer_users'];
+    /*
+     * ---------------------------------------------------------
+     * Custom Accessor for JSON Relationships
+     * ---------------------------------------------------------
+     */
+
+    /**
+     * Get the User models for the assigned interviewers.
+     * Accessible via $jobRequisition->interviewer_users
+     */
+    public function getInterviewerUsersAttribute()
+    {
+        // If the JSON column is empty or null, return an empty collection
+        if (empty($this->interviewers)) {
+            return collect();
+        }
+
+        // Fetch all Users whose IDs are inside the interviewers array
+        return JobInterviewerSchedule::whereIn('interviewer_id', $this->interviewers)->get();
+    }
 
     /*
      * ---------------------------------------------------------
      * BelongsTo Relationships
-     * (Use when the foreign key is ON this job_requisitions table)
      * ---------------------------------------------------------
      */
 
@@ -107,7 +127,6 @@ class JobRequisition extends Model
     /*
      * ---------------------------------------------------------
      * HasOne / HasMany Relationships
-     * (Use when the foreign key is ON the related table)
      * ---------------------------------------------------------
      */
 

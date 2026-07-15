@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Response;
 
 class JobApplicationController extends Controller
@@ -348,17 +349,52 @@ class JobApplicationController extends Controller
         // 3. Save Job Application
         $referral_id = $request->referral_id ? base64_decode($request->referral_id) : null;
 
+        $job_posting = JobPosting::where('id', $request->job_posting_id)
+            ->with(['job_requisition'])
+            ->first();
+
+        $interviewers = $job_posting->job_requisition->interviewers ?? [];
+        $assigned_interviewer_id = null;
+
+        if (!empty($interviewers)) {
+            // 1. Check the database to see how many applications each interviewer received TODAY
+            $assignmentCounts = JobApplication::whereIn('interviewer_id', $interviewers)
+                ->whereDate('created_at', now()->toDateString())
+                ->selectRaw('interviewer_id, count(*) as total')
+                ->groupBy('interviewer_id')
+                ->pluck('total', 'interviewer_id')
+                ->toArray();
+
+            // 2. Build an array of everyone's current load (defaulting to 0 if they haven't received any today)
+            $interviewerLoads = [];
+            foreach ($interviewers as $id) {
+                $interviewerLoads[$id] = $assignmentCounts[$id] ?? 0;
+            }
+
+            // 3. Find what the lowest amount of work is right now (e.g., 0, 1, or 2 applications)
+            $lowestCount = min($interviewerLoads);
+
+            // 4. Get all interviewers tied for that lowest count
+            $eligibleInterviewers = array_keys($interviewerLoads, $lowestCount);
+
+            // 5. Pick randomly ONLY from the interviewers who have the least amount of work
+            $assigned_interviewer_id = Arr::random($eligibleInterviewers);
+        }
+
+        // Finally, create the application
         $application = JobApplication::firstOrCreate(
             [
                 'user_id'        => $user->id,
                 'job_posting_id' => $request->job_posting_id,
             ],
             [
+                'interviewer_id' => $assigned_interviewer_id,
                 'referral_id'    => $referral_id,
                 'source'         => $request->source ?? null,
                 'interview_type' => $request->interview_type
             ]
         );
+
 
         // 4. Format Times (DB vs Google Calendar)
         // DB needs H:i:s
@@ -376,7 +412,7 @@ class JobApplicationController extends Controller
             ],
             // 2. Values to update or create
             [
-                'interviewer_id' => $request->interviewer_id,
+                'interviewer_id' => $assigned_interviewer_id,
                 'scheduled_date' => $request->scheduled_date,
                 'start_time'     => $formattedStartTime,
                 'end_time'       => $formattedEndTime,
@@ -386,17 +422,15 @@ class JobApplicationController extends Controller
 
         // 6. Generate Google Meet Link
         // Fetch the interviewer to get their email address
-        $interviewer = User::find($request->interviewer_id);
+        $interviewer = User::find($assigned_interviewer_id);
 
         if ($interviewer) {
-
             // $ji = JobAIInterview::create([
             //     'user_id'        => $user->id,
             //     'job_title' => $request->position,
             //     'questions_limit' => 5,
             //     'current_step' => 0,
             // ]);
-
             $result =  $this->send_interview_schedule([
                 // 'job_interview_id' => url("/accounts/talent/{$ji->id}/ai_interview"),
                 'applicant_email' => $user->email,
@@ -425,8 +459,6 @@ class JobApplicationController extends Controller
             //         'meet_link'         => $googleEvent['meet_link']
             //     ])
             // );
-
-
             if ($request->file) {
                 // 1. Decode the base64 string and extract data
                 $commaPosition = strpos($request->file, ',');

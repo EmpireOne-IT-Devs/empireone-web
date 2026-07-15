@@ -115,19 +115,21 @@ class JobRequisitionController extends Controller
                     $account->notify(new JobRequisitionNotification($jobRequisition));
                 }
             } else {
-                if ($request->recruiter_id) {
-                    $account_employee = AccountEmployee::where('user_id', $request->recruiter_id)->first();
-                    if ($account_employee) {
-                        JobPosting::create([
-                            'job_requisition_id' => $jobRequisition->id,
-                            'user_id' => $auth->id,
-                            'target_audience' => $jobRequisition->target_audience,
-                            'status' => 'Active',
-                        ]);
-                        $jobRequisition->update(['recruiter_id' => $request->recruiter_id]);
-                        $account_employee->notify(new JobRequisitionNotification($jobRequisition));
+                foreach ($request->interviewers as $key => $interviewer) {
+                    if ($interviewer) {
+                        $account_employee = AccountEmployee::where('user_id', $interviewer)->first();
+                        if ($account_employee) {
+                            $account_employee->notify(new JobRequisitionNotification($jobRequisition));
+                        }
                     }
                 }
+                $jobRequisition->update(['interviewers' => $request->interviewers]);
+                JobPosting::create([
+                    'job_requisition_id' => $jobRequisition->id,
+                    'user_id' => $auth->id,
+                    'target_audience' => $jobRequisition->target_audience,
+                    'status' => 'Active',
+                ]);
             }
 
             $jobRequisition->update(['status' => $nextStatus]);

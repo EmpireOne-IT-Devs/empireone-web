@@ -13,6 +13,7 @@ class JobApplication extends Model
 {
     protected $fillable = [
         'user_id',
+        'interviewer_id',
         'job_posting_id',
         'transferred_to',
         'threadId',
