@@ -158,7 +158,6 @@ class AccountContractController extends Controller
             if (!$isExist || $employee->employee_id == null) {
                 $account =  AccountEmployee::where('user_id', '=', $request->user_id)->first();
                 if ($account) {
-
                     User::where('id', '=', $request->user_id)->update([
                         'role' => 2
                     ]);
