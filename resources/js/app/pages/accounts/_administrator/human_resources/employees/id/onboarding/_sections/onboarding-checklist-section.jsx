@@ -165,7 +165,7 @@ const OnboardingDocument = () => (
             <CheckItem label="EOGS Email" hasLine lineWidth={120} />
             <CheckItem label="Employee ID" hasLine lineWidth={120} />
             <CheckItem label="WhatsApp Account" hasLine lineWidth={100} />
-            <CheckItem label="KOMO Account" hasLine lineWidth={110} />
+            <CheckItem label="BDO Account" hasLine lineWidth={110} />
             <CheckItem label="Employment Contract" />
             <CheckItem label="Job Offer" />
             <CheckItem label="Job Description" />

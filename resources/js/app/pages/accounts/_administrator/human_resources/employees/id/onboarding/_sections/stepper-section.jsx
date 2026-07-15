@@ -62,9 +62,7 @@ const StepperSection = ({ steps }) => {
                     }),
                 );
                 setIsLoading(false);
-                router.visit(
-                    `/accounts/${user?.role == 1 ? "administrator" : user?.role == 2 ? "employee" : "applicant"}/my_documents`,
-                );
+                router.visit(`/accounts/${user?.role == 1 ? "administrator" : user?.role == 3 ? "applicant" : "employee"}/my_documents`)
             } catch (error) {
                 setIsLoading(false);
             }

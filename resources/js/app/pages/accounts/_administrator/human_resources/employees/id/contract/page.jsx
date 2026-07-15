@@ -20,20 +20,17 @@ export default function Page() {
         signature: user?.account_employee?.signature ?? null,
         employee_name:
             user?.account_contract?.employee_name ??
-            `${user?.personal_information?.first_name} ${user?.personal_information?.middle_name} ${user?.personal_information?.last_name}`,
+            `${user?.personal_information?.first_name} ${user?.personal_information?.middle_name == null ? '' : user?.personal_information?.middle_name} ${user?.personal_information?.last_name}`,
         employer_name:
             user?.account_contract?.employer_name ?? "Apple Loraine Mag-Usara",
         reported_to:
             user?.account_contract?.reported_to ??
-            `${
-                user?.is_passed?.job_posting?.job_requisition?.user
-                    ?.personal_information?.first_name
-            } ${
-                user?.is_passed?.job_posting?.job_requisition?.user
-                    ?.personal_information?.middle_name
-            } ${
-                user?.is_passed?.job_posting?.job_requisition?.user
-                    ?.personal_information?.last_name
+            `${user?.is_passed?.job_posting?.job_requisition?.user
+                ?.personal_information?.first_name
+            } ${user?.is_passed?.job_posting?.job_requisition?.user
+                ?.personal_information?.middle_name
+            } ${user?.is_passed?.job_posting?.job_requisition?.user
+                ?.personal_information?.last_name
             }`,
         contract_signed_at:
             user?.account_contract?.contract_signed_at ??
@@ -60,7 +57,7 @@ export default function Page() {
                 .format("LL")}`,
         salary: user?.account_contract?.salary ?? `${user?.salary?.salary}`,
     };
-    console.log('dadwada',user);
+    console.log('dadwada', user);
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
         } else if (user?.account_employee?.signature === null) {
@@ -71,7 +68,7 @@ export default function Page() {
             return (
                 <>
                     <EmploymentContractSection data={data} />
-                    {!user?.account_employee?.is_has_contract && <AgreeSection data={data} />}
+                    {!user?.account_employee?.is_has_contract && <AgreeSection data={data} user={user} />}
                 </>
             );
         }

@@ -103,7 +103,7 @@ class AccountDocumentController extends Controller
             }
             AccountDocument::updateOrCreate(
                 [
-                    'user_id' => $request->user_id ?? Auth::id(),
+                    'user_id' => Auth::id(),
                     'type'    => '201 File',
                     'name'   => $doc['name'],
                 ],
