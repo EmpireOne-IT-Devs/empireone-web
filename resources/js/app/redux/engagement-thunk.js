@@ -4,6 +4,7 @@ import {
     get_post_event_service,
     update_post_event_by_id_service,
     delete_post_event_service,
+    get_upcoming_birthdays_service,
 } from "../services/engagement-service";
 
 export const get_engagement_posts_thunk = createAsyncThunk(
@@ -62,6 +63,41 @@ export const delete_engagement_post_thunk = createAsyncThunk(
         try {
             await delete_post_event_service(id);
             return id;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const get_upcoming_birthdays_thunk = createAsyncThunk(
+    "engagement/getUpcomingBirthdays",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_upcoming_birthdays_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const publish_engagement_post_thunk = createAsyncThunk(
+    "engagement/publishPost",
+    async (data, { rejectWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.append("type", data.type);
+            formData.append("headline", data.headline);
+            formData.append("message", data.message);
+            formData.append("publish_to", data.publish_to);
+            if (data.month)        formData.append("month", data.month);
+            if (data.year)         formData.append("year", data.year);
+            if (data.category)     formData.append("category", data.category);
+            if (data.scheduled_at) formData.append("scheduled_at", data.scheduled_at);
+            if (data.media)        formData.append("media", data.media);
+
+            const response = await create_post_event_service(formData);
+            return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
         }

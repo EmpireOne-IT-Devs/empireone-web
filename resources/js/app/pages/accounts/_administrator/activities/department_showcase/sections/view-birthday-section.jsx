@@ -18,11 +18,16 @@ const COLOR_PALETTE = [
 
 export default function ViewBirthdaySection() {
     const [isOpen, setIsOpen] = useState(false);
+
+    // Selected state from the engagement slice
     const { birthdays, birthdayMonth, birthdayCount } = useSelector(
-        (state) => state.activities
+        (state) => state.engagement
     );
 
+    const birthdayList = birthdays ?? [];
+    const displayCount = birthdayCount ?? birthdayList.length;
     const currentYear = new Date().getFullYear();
+    const displayMonth = birthdayMonth || new Date().toLocaleString("default", { month: "long" });
 
     return (
         <>
@@ -45,7 +50,7 @@ export default function ViewBirthdaySection() {
                                 Activities / Department Showcase
                             </p>
                             <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
-                                {birthdayMonth} Birthdays
+                                {displayMonth} Birthdays
                             </h2>
                         </div>
                     </div>
@@ -54,15 +59,15 @@ export default function ViewBirthdaySection() {
                 <div className="w-full flex flex-col font-sans antialiased">
                     <div className="pb-3">
                         <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <span>🗓️</span> {birthdayMonth} {currentYear} - Birthday List
+                            <span>🗓️</span> {displayMonth} {currentYear} - Birthday List
                         </div>
                     </div>
                     <p className="text-[12px] text-neutral-500 font-medium mt-1">
-                        {birthdayCount} celebrant{birthdayCount !== 1 ? "s" : ""} this month
+                        {displayCount} celebrant{displayCount !== 1 ? "s" : ""} this month
                     </p>
 
                     {/* Empty state */}
-                    {birthdays.length === 0 && (
+                    {birthdayList.length === 0 && (
                         <div className="flex items-center justify-center py-12 text-sm text-gray-400">
                             No birthdays this month.
                         </div>
@@ -70,7 +75,7 @@ export default function ViewBirthdaySection() {
 
                     {/* List */}
                     <div className="flex flex-col gap-2.5 max-h-[600px] overflow-y-auto pr-1 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full">
-                        {birthdays.map((user, idx) => {
+                        {birthdayList.map((user, idx) => {
                             const palette = COLOR_PALETTE[idx % COLOR_PALETTE.length];
                             return (
                                 <div
@@ -105,13 +110,13 @@ export default function ViewBirthdaySection() {
                                                 {user.name}
                                             </span>
                                             <span className="text-[11px] text-gray-400 font-medium mt-0.5">
-                                                {user.department}
+                                                {user.department ?? "General"}
                                             </span>
                                         </div>
                                     </div>
                                     <div className="shrink-0 pl-2">
                                         <span className={`inline-flex items-center gap-1 text-[10px] font-bold text-white px-3 py-1 rounded-full shadow-sm tracking-wide uppercase ${user.is_today ? "bg-gradient-to-r from-pink-500 to-rose-500" : palette.pillBg}`}>
-                                            🎂 {user.birthday_label}
+                                            🎂 {user.birthday_label || "This Month"}
                                         </span>
                                     </div>
                                 </div>

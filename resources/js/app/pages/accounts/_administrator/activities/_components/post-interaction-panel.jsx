@@ -161,7 +161,7 @@ export default function PostInteractionPanel({
                     onClick={handleReact}
                     disabled={reacting}
                     className={`flex-1 flex items-center justify-center gap-2 py-2 font-semibold rounded-md hover:bg-purple-100 transition-colors ${
-                        localUserHasReacted ? "text-red-600" : "text-purple-600"
+                        localUserHasReacted ? "text-red-600" : "text-orange-600"
                     }`}
                 >
                     <Heart size={18} className={localUserHasReacted ? "fill-red-500 text-red-600" : ""} />

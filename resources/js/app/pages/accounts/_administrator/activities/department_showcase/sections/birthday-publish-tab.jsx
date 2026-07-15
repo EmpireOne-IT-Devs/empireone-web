@@ -2,15 +2,22 @@ import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "@inertiajs/react";
-import { publish_activity_post_thunk } from "@/app/redux/activities-thunk";
+import { publish_engagement_post_thunk } from "@/app/redux/engagement-slice";
 import { setAlert } from "@/app/redux/app-slice";
-
 import Button from "@/app/_components/button";
+
 export default function BirthdayPublishTab({ headline, message, onClose }) {
     const dispatch = useDispatch();
+
     const { birthdayMonth, publishing, birthdays } = useSelector(
-        (state) => state.activities,
+        (state) => state.engagement,
     );
+
+    // Safety fallbacks to prevent errors if the state is loading or empty
+    const birthdayList = birthdays ?? [];
+    const isPublishing = publishing ?? false;
+    const currentYear = new Date().getFullYear();
+    const displayMonth = birthdayMonth || new Date().toLocaleString("default", { month: "long" });
 
     const [publishTo, setPublishTo] = useState("All Employees");
     const [scheduledAt, setScheduledAt] = useState("");
@@ -22,17 +29,17 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
 
     const handlePublishNow = async () => {
         const result = await dispatch(
-            publish_activity_post_thunk({
+            publish_engagement_post_thunk({
                 type: "birthday",
                 headline,
                 message,
-                month: birthdayMonth,
-                year: new Date().getFullYear(),
+                month: displayMonth,
+                year: currentYear,
                 publish_to: publishTo,
                 scheduled_at: null,
             }),
         );
-        if (publish_activity_post_thunk.fulfilled.match(result)) {
+        if (publish_engagement_post_thunk.fulfilled.match(result)) {
             dispatch(setAlert({ type: "success", title: "Post Published Successfully!" }));
             navigate();
         }
@@ -40,17 +47,17 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
 
     const handleSchedule = async () => {
         const result = await dispatch(
-            publish_activity_post_thunk({
+            publish_engagement_post_thunk({
                 type: "birthday",
                 headline,
                 message,
-                month: birthdayMonth,
-                year: new Date().getFullYear(),
+                month: displayMonth,
+                year: currentYear,
                 publish_to: publishTo,
                 scheduled_at: scheduledAt,
             }),
         );
-        if (publish_activity_post_thunk.fulfilled.match(result)) {
+        if (publish_engagement_post_thunk.fulfilled.match(result)) {
             dispatch(setAlert({ type: "success", title: "Post Scheduled Successfully!" }));
             navigate();
         }
@@ -68,7 +75,7 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                             {headline}
                         </p>
                         <p className="text-white/70 text-[11px] font-mono tracking-widest mt-0.5">
-                            {birthdayMonth} {new Date().getFullYear()}
+                            {displayMonth} {currentYear}
                         </p>
                     </div>
                 </div>
@@ -80,14 +87,13 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                         dangerouslySetInnerHTML={{ __html: message }}
                     />
 
-                    {birthdays.length > 0 && (
+                    {birthdayList.length > 0 && (
                         <div className="border border-purple-100 bg-purple-50/50 rounded-xl p-3.5 flex flex-col gap-2">
                             <p className="text-xs font-bold text-purple-500 uppercase tracking-wider">
-                                🎂 Birthday Celebrant
-                                {birthdays.length !== 1 ? "s" : ""} of the Month
+                                🎂 Birthday Celebrant{birthdayList.length !== 1 ? "s" : ""} of the Month
                             </p>
                             <ul className="flex flex-col gap-1">
-                                {birthdays.map((c) => (
+                                {birthdayList.map((c) => (
                                     <li
                                         key={c.user_id}
                                         className="flex items-center justify-between"
@@ -125,7 +131,7 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                     />
                 </div>
                 <div className="flex justify-end items-center pt-1 gap-2">
-                    <Button onClick={onClose} disabled={publishing}>
+                    <Button onClick={onClose} disabled={isPublishing}>
                         Cancel
                     </Button>
                     <div className="flex items-center gap-2">
@@ -133,28 +139,28 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                             <Button
                                 variant="outlined"
                                 onClick={handleSchedule}
-                                disabled={publishing}
+                                disabled={isPublishing}
                                 className="gap-2"
                             >
-                                {publishing ? (
+                                {isPublishing ? (
                                     <span className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full" />
                                 ) : (
                                     <FaPaperPlane size={11} />
                                 )}
-                                {publishing ? "Scheduling…" : "Schedule"}
+                                {isPublishing ? "Scheduling…" : "Schedule"}
                             </Button>
                         )}
                         <Button
                             onClick={handlePublishNow}
-                            disabled={publishing}
+                            disabled={isPublishing}
                             className="bg-purple-500 hover:bg-purple-600 text-white gap-2"
                         >
-                            {publishing ? (
+                            {isPublishing ? (
                                 <span className="animate-spin w-3 h-3 border-2 border-white border-t-transparent rounded-full" />
                             ) : (
                                 <FaPaperPlane size={11} />
                             )}
-                            {publishing ? "Publishing…" : "Publish Now"}
+                            {isPublishing ? "Publishing…" : "Publish Now"}
                         </Button>
                     </div>
                 </div>

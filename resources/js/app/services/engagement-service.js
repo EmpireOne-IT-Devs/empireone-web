@@ -35,3 +35,7 @@ export async function delete_engagement_post_comment_service(postId, commentId) 
 export async function toggle_engagement_reaction_service(postId) {
     return await axios.post(`/api/engagement/post_events/${postId}/react`);
 }
+
+export async function get_upcoming_birthdays_service() {
+    return await axios.get("/api/engagement/upcoming_birthdays");
+}

@@ -4,6 +4,8 @@ import {
     create_engagement_post_thunk,
     update_engagement_post_thunk,
     delete_engagement_post_thunk,
+    get_upcoming_birthdays_thunk,
+    publish_engagement_post_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -11,6 +13,8 @@ export {
     create_engagement_post_thunk,
     update_engagement_post_thunk,
     delete_engagement_post_thunk,
+    get_upcoming_birthdays_thunk,
+    publish_engagement_post_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -26,6 +30,12 @@ const engagementSlice = createSlice({
         updateError: null,
         deleting: false,
         deleteError: null,
+        publishing: false,
+        publishError: null,
+        birthdays: [],
+        birthdayMonth: "",
+        birthdayCount: 0,
+        birthdaysLoading: false,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -102,6 +112,38 @@ const engagementSlice = createSlice({
             .addCase(delete_engagement_post_thunk.rejected, (state, action) => {
                 state.deleting = false;
                 state.deleteError = action.payload;
+            });
+
+        // ── upcoming birthdays ────────────────────────────────────────────────
+        builder
+            .addCase(get_upcoming_birthdays_thunk.pending, (state) => {
+                state.birthdaysLoading = true;
+            })
+            .addCase(get_upcoming_birthdays_thunk.fulfilled, (state, action) => {
+                state.birthdaysLoading = false;
+                state.birthdays = action.payload.data ?? [];
+                state.birthdayMonth = action.payload.month ?? "";
+                state.birthdayCount = action.payload.count ?? 0;
+            })
+            .addCase(get_upcoming_birthdays_thunk.rejected, (state) => {
+                state.birthdaysLoading = false;
+            });
+
+        // ── publish rich post (birthday / poll) ───────────────────────────────
+        builder
+            .addCase(publish_engagement_post_thunk.pending, (state) => {
+                state.publishing = true;
+                state.publishError = null;
+            })
+            .addCase(publish_engagement_post_thunk.fulfilled, (state, action) => {
+                state.publishing = false;
+                if (action.payload.data) {
+                    state.posts = [action.payload.data, ...state.posts];
+                }
+            })
+            .addCase(publish_engagement_post_thunk.rejected, (state, action) => {
+                state.publishing = false;
+                state.publishError = action.payload;
             });
     },
 });

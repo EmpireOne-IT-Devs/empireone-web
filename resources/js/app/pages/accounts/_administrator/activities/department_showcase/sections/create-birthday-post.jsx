@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
-import { Cake, Eye, Edit2, Send } from "lucide-react";
+import { Cake, Edit2, Send } from "lucide-react";
 import { useSelector } from "react-redux";
 import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
@@ -17,7 +17,12 @@ export default function CreateBirthdayPost() {
     const [headline, setHeadline] = useState(DEFAULT_HEADLINE);
     const [message, setMessage] = useState(DEFAULT_MESSAGE);
 
-    const { birthdayMonth, birthdayCount } = useSelector((state) => state.activities);
+    // 1. Switched store slice selector from state.activities to state.engagement
+    const { birthdayMonth, birthdayCount } = useSelector((state) => state.engagement);
+
+    // Safety fallbacks to prevent errors if the state is empty or loading
+    const displayCount = birthdayCount ?? 0;
+    const displayMonth = birthdayMonth || new Date().toLocaleString("default", { month: "long" });
 
     const handleClose = () => {
         setIsOpen(false);
@@ -25,7 +30,6 @@ export default function CreateBirthdayPost() {
     };
 
     const TABS = [
-        
         { key: "edit", label: "Edit Message", icon: <Edit2 size={14} /> },
         { key: "publish", label: "Publish", icon: <Send size={14} /> },
     ];
@@ -54,7 +58,7 @@ export default function CreateBirthdayPost() {
                                 Monthly Birthday Post
                             </h2>
                             <p className="text-[11px] text-neutral-500 font-medium mt-1">
-                                {birthdayMonth} Celebrants • {birthdayCount} employee{birthdayCount !== 1 ? "s" : ""}
+                                {displayMonth} Celebrants • {displayCount} employee{displayCount !== 1 ? "s" : ""}
                             </p>
                         </div>
                     </div>
@@ -79,7 +83,6 @@ export default function CreateBirthdayPost() {
                         ))}
                     </div>
 
-                 
                     {activeTab === "edit" && (
                         <BirthdayEditMessageTab 
                             headline={headline}
@@ -101,4 +104,3 @@ export default function CreateBirthdayPost() {
         </>
     );
 }
-

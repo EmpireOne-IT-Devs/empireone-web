@@ -163,7 +163,7 @@ class EngagementPostEventController extends Controller
             $post = EngagementPostEvent::create([
                 'user_id'      => Auth::id(),
                 'type'         => $validated['type'],
-                'category'     => $validated['category'] ?? 'General',
+                'category'     => $validated['category'] ?? null,
                 'headline'     => $validated['headline'],
                 'message'      => $validated['message'],
                 'media_path'   => $mediaPath,

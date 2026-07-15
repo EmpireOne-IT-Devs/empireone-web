@@ -12,7 +12,13 @@ export default function BirthdayEditMessageTab({
     onGoPublish,
     submitLabel = "Save & Continue to Publish",
 }) {
-    const { birthdays, birthdayMonth } = useSelector((state) => state.activities);
+    // 1. Switched store slice selector from state.activities to state.engagement
+    const { birthdays, birthdayMonth } = useSelector((state) => state.engagement);
+
+    // Safety fallbacks to prevent errors if the state is loading or empty
+    const birthdayList = birthdays ?? [];
+    const currentYear = new Date().getFullYear();
+    const displayMonth = birthdayMonth || new Date().toLocaleString("default", { month: "long" });
 
     return (
         <div className="flex flex-col gap-4 overflow-x-hidden">
@@ -53,7 +59,7 @@ export default function BirthdayEditMessageTab({
                                 {headline || "Post headline…"}
                             </p>
                             <p className="text-white/70 text-[11px] font-mono tracking-widest mt-0.5">
-                                {birthdayMonth} {new Date().getFullYear()}
+                                {displayMonth} {currentYear}
                             </p>
                         </div>
                     </div>
@@ -66,13 +72,13 @@ export default function BirthdayEditMessageTab({
                             }}
                         />
 
-                        {birthdays.length > 0 && (
+                        {birthdayList.length > 0 && (
                             <div className="border border-purple-100 bg-purple-50/50 rounded-xl p-3.5 flex flex-col gap-2">
                                 <p className="text-xs font-bold text-purple-500 uppercase tracking-wider">
-                                    🎂 Birthday Celebrant{birthdays.length !== 1 ? "s" : ""} of the Month
+                                    🎂 Birthday Celebrant{birthdayList.length !== 1 ? "s" : ""} of the Month
                                 </p>
                                 <ul className="flex flex-col gap-1">
-                                    {birthdays.map((c, index) => (
+                                    {birthdayList.map((c, index) => (
                                         <li key={c.user_id} className="flex items-center justify-between">
                                             <span className="text-xs text-gray-700 font-medium">{index + 1}. {c.name}</span>
                                             {c.is_today && (
@@ -98,4 +104,3 @@ export default function BirthdayEditMessageTab({
         </div>
     );
 }
-
