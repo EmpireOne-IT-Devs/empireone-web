@@ -261,7 +261,7 @@ const TalentApplicationForm = () => {
                                 key={id}
                                 id={id}
                                 href={href}
-                               className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-500  transition-all duration-200  hover:text-orange-400 hover:shadow-md"
+                                className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-500  transition-all duration-200  hover:text-orange-400 hover:shadow-md"
                             >
                                 {label}
                             </a>
@@ -411,6 +411,7 @@ const TalentApplicationForm = () => {
                                 nextStep={nextStep}
                                 register={register}
                                 errors={errors}
+                                control={control}
                                 watchedValues={watchedValues}
                             />
                             <AddressInformationSection

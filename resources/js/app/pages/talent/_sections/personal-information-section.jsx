@@ -5,11 +5,15 @@ import Select from "@/app/_components/select";
 import Dropdown from "@/Components/Dropdown";
 import React from "react";
 import { useSelector } from "react-redux";
+import { Controller } from "react-hook-form";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 export default function PersonalInformationSection({
     register,
     errors,
     watchedValues,
+    control,
 }) {
     const { departments } = useSelector((store) => store.departments);
     console.log("departments", departments);
@@ -141,18 +145,39 @@ export default function PersonalInformationSection({
                     />
                 </div>
                 <div className="flex flex-col">
-                    <Input
-                        label="Contact Number"
+                    <Controller
                         name="contact"
-                        {...register("contact", {
-                            required: true,
-                            pattern: {
-                                value: /^(09|\+639)\d{9}$/,
-                                message: "Invalid PH Number",
-                            },
-                        })}
-                        error={errors.contact}
-                        placeholder="09*********"
+                        control={control}
+                        rules={{
+                            required: "Contact number is required",
+                            validate: (value) =>
+                                (value && isValidPhoneNumber(value)) ||
+                                "Invalid phone number",
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                            <div className="w-full">
+                                <div
+                                    className={`relative flex items-center rounded-md border bg-white px-3 text-sm text-black transition-colors focus-within:ring-2 focus-within:ring-purple-500 ${
+                                        errors.contact
+                                            ? "border-red-500 focus-within:ring-red-500"
+                                            : "border-gray-300"
+                                    }`}
+                                >
+                                    <PhoneInput
+                                        international
+                                        defaultCountry="PH"
+                                        value={value}
+                                        onChange={onChange}
+                                        className="w-full py-2.5"
+                                    />
+                                </div>
+                                {errors.contact && (
+                                    <p className="mt-1 text-sm text-red-500">
+                                        {errors.contact.message}
+                                    </p>
+                                )}
+                            </div>
+                        )}
                     />
                 </div>
             </div>

@@ -5,6 +5,40 @@
 @tailwind components;
 @tailwind utilities;
 .underlined-value { text-decoration: underline; }
+
+/* ─── react-phone-number-input overrides ─── */
+.PhoneInput {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+.PhoneInputCountry {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+.PhoneInputCountrySelect {
+    border: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: #374151;
+    outline: none;
+    cursor: pointer;
+}
+.PhoneInputInput {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: #111827;
+    padding: 0;
+}
+.PhoneInputInput::placeholder {
+    color: #9ca3af;
+}
 /* ─── Subtle Gray Scrollbar ─── */
 
 /* Firefox */
