@@ -201,13 +201,12 @@ const TalentApplicationForm = () => {
     const stepLabels = ["Position", "Schedule", "Review"];
 
     return (
-
         <>
             <div
                 className="px-5 pb-5 lg:px-10 border-b"
                 style={{ borderColor: "rgba(168,85,247,0.15)" }}
             >
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-4 mt-8">
                     <div className="flex items-center gap-2  justify-between w-full">
                         {stepLabels.map((label, i) => {
                             const idx = i; // step 0 = Position, 1 = Details, etc.
@@ -224,18 +223,18 @@ const TalentApplicationForm = () => {
                                             background: isDone
                                                 ? "linear-gradient(135deg,#a855f7,#fb923c)"
                                                 : isActive
-                                                    ? "rgba(168,85,247,0.15)"
-                                                    : "rgba(168,85,247,0.07)",
+                                                  ? "rgba(168,85,247,0.15)"
+                                                  : "rgba(168,85,247,0.07)",
                                             border: isActive
                                                 ? "1.5px solid rgba(168,85,247,0.8)"
                                                 : isDone
-                                                    ? "1.5px solid transparent"
-                                                    : "1.5px solid rgba(168,85,247,0.25)",
+                                                  ? "1.5px solid transparent"
+                                                  : "1.5px solid rgba(168,85,247,0.25)",
                                             color: isDone
                                                 ? "#fff"
                                                 : isActive
-                                                    ? "#9333ea"
-                                                    : "rgba(120,90,160,0.6)",
+                                                  ? "#9333ea"
+                                                  : "rgba(120,90,160,0.6)",
                                         }}
                                     >
                                         {isDone ? "✓" : idx + 1}
@@ -246,8 +245,8 @@ const TalentApplicationForm = () => {
                                             color: isActive
                                                 ? "#9333ea"
                                                 : isDone
-                                                    ? "rgba(234,88,12,0.9)"
-                                                    : "rgba(120,90,160,0.45)",
+                                                  ? "rgba(234,88,12,0.9)"
+                                                  : "rgba(120,90,160,0.45)",
                                         }}
                                     >
                                         {label}
@@ -396,6 +395,7 @@ const TalentApplicationForm = () => {
                     />
                 )}
             </form>
+            
         </>
     );
 };

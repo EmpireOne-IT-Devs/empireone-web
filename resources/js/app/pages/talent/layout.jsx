@@ -36,7 +36,7 @@ export default function Layout({ children }) {
                     }}
                 >
 
-                    <nav className="m-5 flex items-center gap-2">
+                    <nav className="m-5 flex items-center gap-2 border-b border-gray-200 pb-4">
                         {[
                             { label: "Home", id: "nav-home", href: "/" },
                             {
@@ -59,7 +59,7 @@ export default function Layout({ children }) {
                                 key={id}
                                 id={id}
                                 href={href}
-                                className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-500  transition-all duration-200  hover:text-orange-400 hover:shadow-md"
+                                className="px-3 py-1 text-[11px] font-semibold text-slate-500  transition-all duration-200  hover:text-orange-400 hover:underline hover:underline-offset-2"
                             >
                                 {label}
                             </Link>
