@@ -119,3 +119,19 @@ export const cast_poll_vote_thunk = createAsyncThunk(
         }
     }
 );
+export const upload_gallery_thunk = createAsyncThunk(
+    "engagement/upload_gallery",
+    async (formData, { rejectWithValue }) => {
+        try {
+            const response = await upload_gallery_service(formData);
+            // Axios response data contains { status, message, data } from Laravel
+            return response.data; 
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to upload gallery photos."
+            );
+        }
+    }
+);
+
+    

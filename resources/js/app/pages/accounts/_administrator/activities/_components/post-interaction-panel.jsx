@@ -160,7 +160,7 @@ export default function PostInteractionPanel({
                     type="button"
                     onClick={handleReact}
                     disabled={reacting}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 font-semibold rounded-md hover:bg-purple-100 transition-colors ${
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 font-semibold rounded-md hover:bg-gray-100 transition-colors ${
                         localUserHasReacted ? "text-red-600" : "text-orange-600"
                     }`}
                 >
@@ -171,7 +171,7 @@ export default function PostInteractionPanel({
                 <button
                     type="button"
                     onClick={onCommentClick ?? (() => inputRef.current?.focus())}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 font-semibold text-orange-600 rounded-md hover:bg-purple-100 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 font-semibold text-orange-600 rounded-md hover:bg-gray-100 transition-colors"
                 >
                     <MessageSquare size={18} />
                     <span>Comment</span>
@@ -180,7 +180,7 @@ export default function PostInteractionPanel({
                 {/* Static Share Button */}
                 <button
                     type="button"
-                    className="flex-1 flex items-center justify-center gap-2 py-2 font-semibold text-orange-600 rounded-md hover:bg-purple-100 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 font-semibold text-orange-600 rounded-md hover:bg-gray-100 transition-colors"
                 >
                     <Share2 size={18} />
                     <span>Share</span>

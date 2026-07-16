@@ -3,6 +3,7 @@
 namespace App\Models\Engagement;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EngagementPostEventFile extends Model
 {
@@ -11,4 +12,9 @@ class EngagementPostEventFile extends Model
         'name',
         'url',
     ];
+
+    public function postEvent(): BelongsTo
+    {
+        return $this->belongsTo(EngagementPostEvent::class, 'engagement_post_event_id');
+    }
 }

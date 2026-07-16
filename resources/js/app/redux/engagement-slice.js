@@ -7,6 +7,7 @@ import {
     get_upcoming_birthdays_thunk,
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
+    upload_gallery_thunk, // <-- Added
 } from "./engagement-thunk";
 
 export {
@@ -17,6 +18,7 @@ export {
     get_upcoming_birthdays_thunk,
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
+    upload_gallery_thunk, // <-- Added
 };
 
 const engagementSlice = createSlice({
@@ -39,6 +41,10 @@ const engagementSlice = createSlice({
         birthdayMonth: "",
         birthdayCount: 0,
         birthdaysLoading: false,
+        
+        // Gallery upload states <-- Added
+        uploadingGallery: false,
+        uploadGalleryError: null,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -49,6 +55,10 @@ const engagementSlice = createSlice({
             if (user_has_reacted !== undefined) state.posts[idx].user_has_reacted = user_has_reacted;
             if (comment_count    !== undefined) state.posts[idx].comment_count    = comment_count;
         },
+        // Action to clear gallery errors when modal closes <-- Added
+        clearGalleryErrors(state) {
+            state.uploadGalleryError = null;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -168,8 +178,39 @@ const engagementSlice = createSlice({
             .addCase(cast_poll_vote_thunk.rejected, (state) => {
                 state.pollVotingPostId = null;
             });
+
+        // ── upload gallery images ─────────────────────────────────────────────
+        builder
+            .addCase(upload_gallery_thunk.pending, (state) => {
+                state.uploadingGallery = true;
+                state.uploadGalleryError = null;
+            })
+            .addCase(upload_gallery_thunk.fulfilled, (state, action) => {
+                state.uploadingGallery = false;
+                
+                const { event_id, files, drive_link } = action.payload.data;
+                const idx = state.posts.findIndex((p) => p.id === event_id);
+                
+                if (idx !== -1) {
+                    // Initialize the files array if it does not exist
+                    if (!state.posts[idx].files) {
+                        state.posts[idx].files = [];
+                    }
+                    // Append the newly uploaded S3 image references to our post state
+                    state.posts[idx].files = [...state.posts[idx].files, ...files];
+                    
+                    // Update Google Drive folder destination link if provided
+                    if (drive_link) {
+                        state.posts[idx].drive_link = drive_link;
+                    }
+                }
+            })
+            .addCase(upload_gallery_thunk.rejected, (state, action) => {
+                state.uploadingGallery = false;
+                state.uploadGalleryError = action.payload;
+            });
     },
 });
 
-export const { syncInteraction } = engagementSlice.actions;
+export const { syncInteraction, clearGalleryErrors } = engagementSlice.actions;
 export default engagementSlice.reducer;

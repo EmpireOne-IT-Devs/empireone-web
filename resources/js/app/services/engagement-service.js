@@ -51,3 +51,9 @@ export async function close_poll_service(postId) {
 export async function reopen_poll_service(postId) {
     return await axios.post(`/api/engagement/polls/${postId}/reopen`);
 }
+
+export async function upload_gallery_service(formData) {
+    return await axios.post("/api/engagement/post_events/upload-gallery", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}

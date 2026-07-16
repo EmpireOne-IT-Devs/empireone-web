@@ -22,6 +22,7 @@ class EngagementPostEvent extends Model
         'publish_to',
         'scheduled_at',
         'published_at',
+        'drive_link', 
         'closed_at',
     ];
 

@@ -2,31 +2,63 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
+import { useDispatch, useSelector } from "react-redux";
+import { get_engagement_posts_thunk } from "@/app/redux/engagement-slice";
+import { upload_gallery_service } from "@/app/services/engagement-service";
+import { setAlert } from "@/app/redux/app-slice";
 import { Download, Images, UploadCloud } from "lucide-react";
-import React, { useRef, useState } from "react";
-
-const EVENT_OPTIONS = [
-    { value: "", label: "Select an event" },
-    { value: "1", label: "Q3 Townhall Meeting" },
-    { value: "2", label: "New Health Benefits Rollout" },
-    { value: "3", label: "Annual Company Picnic" },
-    { value: "4", label: "Return to Office Preferences" },
-    { value: "5", label: "Engineering Team Hackathon" },
-];
+import React, { useRef, useState, useEffect } from "react";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]);
-const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE_MB = 100;
 
 export default function UploadImageSection() {
+    const dispatch = useDispatch();
+    const { posts } = useSelector((s) => s.engagement);
+
     const [isOpen, setIsOpen] = useState(false);
     const [form, setForm] = useState({ title: "", event: "", driveLink: "" });
     const [files, setFiles] = useState([]);
+    const [previewUrls, setPreviewUrls] = useState([]); // Separate state for clean preview urls
     const [isDragging, setIsDragging] = useState(false);
     const [fileError, setFileError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const inputRef = useRef(null);
 
-    const updateForm = (field) => (e) =>
-        setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    // Load posts so we can populate the event dropdown when the modal opens
+    useEffect(() => {
+        if (isOpen) dispatch(get_engagement_posts_thunk());
+    }, [isOpen, dispatch]);
+
+    // Build event options from engagement posts with category "Event"
+    const eventOptions = [
+        { value: "", label: "Select an event" },
+        ...posts
+            .filter((p) => p.category === "Event")
+            .map((p) => ({ value: String(p.id), label: p.title ?? p.headline })),
+    ];
+
+    // Clean up preview Object URLs to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            previewUrls.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [previewUrls]);
+
+    // Robust handler that supports both standard inputs (e.target.value) 
+    // and custom Select dropdown values passed directly as a string or object.
+    const updateForm = (field) => (e) => {
+        let value;
+        if (e && typeof e === "object" && "target" in e) {
+            value = e.target.value;
+        } else if (e && typeof e === "object" && "value" in e) {
+            value = e.value; // Falls back here if select component returns { value, label }
+        } else {
+            value = e; // Falls back here if select component returns a plain string
+        }
+
+        setForm((prev) => ({ ...prev, [field]: value }));
+    };
 
     const handleFiles = (incoming) => {
         setFileError("");
@@ -43,8 +75,16 @@ export default function UploadImageSection() {
             }
         });
 
-        if (rejected.length > 0) setFileError(rejected[0]);
-        if (valid.length > 0) setFiles((prev) => [...prev, ...valid]);
+        if (rejected.length > 0) {
+            setFileError(rejected[0]);
+        }
+
+        if (valid.length > 0) {
+            setFiles((prev) => [...prev, ...valid]);
+            // Generate object URLs for immediate local rendering
+            const newUrls = valid.map((f) => URL.createObjectURL(f));
+            setPreviewUrls((prev) => [...prev, ...newUrls]);
+        }
     };
 
     const handleDrop = (e) => {
@@ -53,11 +93,57 @@ export default function UploadImageSection() {
         handleFiles(e.dataTransfer.files);
     };
 
+    const handleUpload = async () => {
+        // Basic frontend validation
+        if (!form.title.trim()) {
+            setFileError("An event title is required.");
+            return;
+        }
+        if (!form.event) {
+            setFileError("Please select a linked event.");
+            return;
+        }
+        if (files.length === 0) {
+            setFileError("Please select or drop at least one image file to upload.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        setFileError("");
+
+        // Build FormData payload
+        const formData = new FormData();
+        formData.append("title", form.title);
+        formData.append("event", form.event);
+        formData.append("driveLink", form.driveLink);
+
+        // Append multiple file buffers utilizing Laravel's array-validation syntax
+        files.forEach((file, index) => {
+            formData.append(`images[${index}]`, file);
+        });
+
+        try {
+            await upload_gallery_service(formData);
+            dispatch(setAlert({ type: "success", title: "Gallery uploaded successfully!", open: true }));
+            handleClose();
+        } catch (err) {
+            const message = err.response?.data?.message ?? "Upload failed. Please try again.";
+            setFileError(message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleClose = () => {
+        // Revoke previews to free memory
+        previewUrls.forEach((url) => URL.revokeObjectURL(url));
+        
         setIsOpen(false);
         setForm({ title: "", event: "", driveLink: "" });
         setFiles([]);
+        setPreviewUrls([]);
         setFileError("");
+        setIsSubmitting(false);
     };
 
     return (
@@ -94,6 +180,7 @@ export default function UploadImageSection() {
                         value={form.title}
                         placeholder="e.g. Townhall Photos"
                         onChange={updateForm("title")}
+                        disabled={isSubmitting}
                     />
 
                     <Select
@@ -101,23 +188,25 @@ export default function UploadImageSection() {
                         name="event"
                         value={form.event}
                         onChange={updateForm("event")}
-                        options={EVENT_OPTIONS}
+                        options={eventOptions}
+                        disabled={isSubmitting}
                     />
 
                     <div>
                         <p className="text-sm font-medium text-gray-700 mb-1.5">Upload Photo</p>
                         <div
-                            onClick={() => inputRef.current?.click()}
-                            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                            onClick={() => !isSubmitting && inputRef.current?.click()}
+                            onDragOver={(e) => { e.preventDefault(); !isSubmitting && setIsDragging(true); }}
                             onDragLeave={() => setIsDragging(false)}
-                            onDrop={handleDrop}
+                            onDrop={(e) => !isSubmitting && handleDrop(e)}
                             className={`cursor-pointer rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 min-h-[160px] transition-all
-                                ${isDragging ? "border-blue-400 bg-blue-50" : "border-gray-200 bg-gray-50 hover:bg-gray-100"}`}
+                                ${isDragging ? "border-blue-400 bg-blue-50" : "border-gray-200 bg-gray-50 hover:bg-gray-100"}
+                                ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                         >
-                            {files.length > 0 ? (
+                            {previewUrls.length > 0 ? (
                                 <div className="flex flex-wrap gap-2 p-3 justify-center">
-                                    {files.map((f, i) => (
-                                        <img key={i} src={URL.createObjectURL(f)} className="h-16 w-16 object-cover rounded-lg" alt="" />
+                                    {previewUrls.map((url, i) => (
+                                        <img key={i} src={url} className="h-16 w-16 object-cover rounded-lg" alt="Preview File" />
                                     ))}
                                 </div>
                             ) : (
@@ -140,20 +229,35 @@ export default function UploadImageSection() {
                             multiple
                             className="hidden"
                             onChange={(e) => handleFiles(e.target.files)}
+                            disabled={isSubmitting}
                         />
                     </div>
 
                     <Input
-                        label="Google Drive Folder Link"
+                        label="Google Drive Folder Link (optional)"
                         name="driveLink"
                         value={form.driveLink}
                         placeholder="https://drive.google.com/..."
                         onChange={updateForm("driveLink")}
+                        disabled={isSubmitting}
                     />
 
                     <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
-                        <Button variant="secondary" outlined onClick={handleClose}>Cancel</Button>
-                        <Button variant="secondary" >Upload Photo</Button>
+                        <Button 
+                            variant="secondary" 
+                            outlined 
+                            onClick={handleClose} 
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            variant="secondary" 
+                            onClick={handleUpload} 
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Uploading..." : "Upload Photo"}
+                        </Button>
                     </div>
                 </div>
             </Modal>

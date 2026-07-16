@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, Clock, MapPin, Users, BarChart2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
-import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
+import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
+import PostCardModalSection from "../../home/sections/post-card-modal-section";
 
 const FALLBACK_IMAGE = "/images/building.jpg";
 
@@ -13,23 +14,27 @@ function formatDate(d) {
     return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-/** Extract poll question text from message HTML (options no longer embedded). */
 function parsePollMessage(message) {
     if (!message) return { question: "" };
     return { question: message.replace(/<[^>]+>/g, "").trim() };
 }
 
-function EventCard({ post }) {
+function EventCard({ post, onClick }) {
+    const title = post.title ?? post.headline;
+    const body  = post.content ?? post.message;
+    const image = post.files?.[0]?.url ?? post.media_url ?? FALLBACK_IMAGE;
+
     return (
         <Card
             variant="default"
             padding="p-0"
-            className="overflow-hidden border border-gray-100 bg-white flex flex-col h-full shadow-sm hover:shadow-md transition-shadow duration-200"
+            className="overflow-hidden border border-gray-100 bg-white flex flex-col h-full shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+            onClick={onClick}
         >
             <div className="relative w-full h-44 bg-slate-900 overflow-hidden shrink-0">
                 <img
-                    src={post.media_url ?? FALLBACK_IMAGE}
-                    alt={post.headline}
+                    src={image}
+                    alt={title}
                     className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -42,7 +47,7 @@ function EventCard({ post }) {
                 </div>
                 <div className="absolute bottom-3 left-4 right-4 text-white">
                     <h3 className="text-sm font-semibold tracking-tight leading-snug mb-1.5">
-                        {post.headline}
+                        {title}
                     </h3>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] text-white/85 font-medium">
                         <div className="flex items-center gap-1">
@@ -60,9 +65,9 @@ function EventCard({ post }) {
             </div>
             <div className="p-4 flex-1 flex flex-col justify-between bg-white">
                 <p className="text-xs text-gray-500 font-normal leading-relaxed mb-4">
-                    {stripHtml(post.message).substring(0, 150)}
+                    {stripHtml(body).substring(0, 150)}
                 </p>
-                <div className="flex items-center justify-between text-[11px] font-medium text-gray-400 border-t border-gray-50 pt-3 mt-auto">
+                {/* <div className="flex items-center justify-between text-[11px] font-medium text-gray-400 border-t border-gray-50 pt-3 mt-auto">
                     <div className="flex items-center gap-1">
                         <MapPin size={13} className="text-gray-400" />
                         <span className="truncate max-w-[140px] md:max-w-[180px]">
@@ -73,13 +78,13 @@ function EventCard({ post }) {
                         <Users size={13} />
                         <span>{post.publish_to}</span>
                     </div>
-                </div>
+                </div> */}
             </div>
         </Card>
     );
 }
 
-function PollCard({ post }) {
+function PollCard({ post, onClick }) {
     const { question } = parsePollMessage(post.message);
     const options = post.options ?? [];
     const totalVotes = post.total_votes ?? 0;
@@ -87,7 +92,8 @@ function PollCard({ post }) {
         <Card
             variant="default"
             padding="p-0"
-            className="overflow-hidden border border-gray-100 bg-white flex flex-col h-full shadow-sm hover:shadow-md transition-shadow duration-200"
+            className="overflow-hidden border border-gray-100 bg-white flex flex-col h-full shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+            onClick={onClick}
         >
             <div className="relative w-full h-14 bg-gradient-to-r from-violet-600 to-indigo-600 flex items-center px-4 shrink-0">
                 <BarChart2 size={18} className="text-white/80 rotate-90 mr-2 shrink-0" />
@@ -124,14 +130,17 @@ function PollCard({ post }) {
     );
 }
 
-export default function EventCardSection() {
+export default function EngagementCardSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading } = useSelector((s) => s.activities);
+    const { posts, postsLoading } = useSelector((s) => s.engagement);
+    const [selectedPost, setSelectedPost] = useState(null);
 
-    useEffect(() => { dispatch(get_activity_posts_thunk()); }, [dispatch]);
+    useEffect(() => { 
+        dispatch(get_engagement_posts_thunk()); 
+    }, [dispatch]);
 
     const items = posts.filter(
-        (p) => p.category === "Events" || p.type === "poll",
+        (p) => p.category === "Event" || p.type === "poll",
     );
 
     return (
@@ -150,13 +159,18 @@ export default function EventCardSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {items.map((item) =>
                         item.type === "poll" ? (
-                            <PollCard key={item.id} post={item} />
+                            <PollCard key={item.id} post={item} onClick={() => setSelectedPost(item)} />
                         ) : (
-                            <EventCard key={item.id} post={item} />
+                            <EventCard key={item.id} post={item} onClick={() => setSelectedPost(item)} />
                         ),
                     )}
                 </div>
             )}
+
+            <PostCardModalSection
+                post={selectedPost}
+                onClose={() => setSelectedPost(null)}
+            />
         </div>
     );
 }
