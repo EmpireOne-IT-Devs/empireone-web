@@ -37,6 +37,7 @@ use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -62,12 +63,14 @@ Route::get('auth/google/app', [GoogleController::class, 'appRedirectToGoogle']);
 Route::middleware('web')->group(function () {
     Route::get('auth/google/web', [GoogleController::class, 'webRedirectToGoogle']);
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-});
+});;
+Route::resource('location', LocationController::class);
 
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
 Route::get('job/employee_applicants',  [JobApplicationController::class, 'employee_applicants']);
 Route::post('job/get_job_application_from_email',  [JobApplicationController::class, 'get_job_application_from_email']);
 Route::get('job/postings',  [JobPostingController::class, 'index']);
+Route::get('get_job_posting_by_location/{location_id}',  [JobPostingController::class, 'get_job_posting_by_location']);
 Route::resource('job/job_interviewer_schedules', JobInterviewerScheduleController::class);
 Route::get('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
 
@@ -105,7 +108,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('job_applicant_schedules', JobApplicantScheduleController::class);
         Route::post('change_job_applicant_schedule',  [JobApplicantScheduleController::class, 'change_job_applicant_schedule']);
 
-        
+
         Route::resource('account_access', AccountAccessController::class);
         Route::get('get_job_offer_by_user',  [JobOfferController::class, 'get_job_offer_by_user']);
         Route::post('submit_job_offer',  [JobOfferController::class, 'submit_job_offer']);

@@ -26,6 +26,7 @@ export const appSlice = createSlice({
         job_interview: {},
         tas: [],
         hr: null,
+        locations: [],
     },
     reducers: {
         setUser: (state, action) => {
@@ -70,12 +71,16 @@ export const appSlice = createSlice({
         setTAs: (state, action) => {
             state.tas = action.payload;
         },
+        setLocations: (state, action) => {
+            state.locations = action.payload;
+        },
     },
 });
 export const {
     setTAs,
     setHr,
     setUser,
+    setLocations,
     setSidebarOpen,
     setDesktopCollapsed,
     setAlert,

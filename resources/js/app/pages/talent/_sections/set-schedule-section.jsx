@@ -20,7 +20,7 @@ export default function SetScheduleSection({
             (res) => res.id == watchedValues.job_posting_id
         )?.job_requisition?.interviewer_users || [];
     }, [job_postings, watchedValues.job_posting_id]);
-
+console.log('interviewers',interviewers)
     // ---------------------------------------------------------
     // Initialize State with Default Values
     // ---------------------------------------------------------

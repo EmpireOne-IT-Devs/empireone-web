@@ -7,6 +7,10 @@ export async function get_job_postings_service() {
     return await axios.get("/api/job/postings");
 }
 
+export async function get_job_posting_by_location_service(id) {
+    return await axios.get(`/api/get_job_posting_by_location/${id}`);
+}
+
 export async function get_ta_dashboard_stats_service() {
     return (await axios.get("/api/job/dashboard_stats")).data;
 }
@@ -20,12 +24,12 @@ export async function get_ta_top_performing_jobs_service() {
 }
 
 export async function get_job_offers_service() {
-    return (await axios.get(`/api/job/offers${window.location.search}`));
+    return await axios.get(`/api/job/offers${window.location.search}`);
 }
 
-
 export async function get_job_offers_by_job_posting_service(id) {
-    return (await axios.get(`/api/job/get_job_offers_by_job_posting/${id}`)).data;
+    return (await axios.get(`/api/job/get_job_offers_by_job_posting/${id}`))
+        .data;
 }
 
 export async function delete_job_postings_service(id) {

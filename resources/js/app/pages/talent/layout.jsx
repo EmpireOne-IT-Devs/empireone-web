@@ -1,0 +1,74 @@
+import React from 'react'
+
+import { Link } from "@inertiajs/react";
+export default function Layout({ children }) {
+    return (
+        <>
+            <div
+                className="min-h-screen flex items-start justify-center md:p-6 font-sans"
+                style={{
+                    backgroundImage: "url('/images/empireone-background.jpg')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundAttachment: "fixed",
+                }}
+            >
+                <div
+                    className="fixed inset-0 pointer-events-none"
+                    style={{
+                        background: `
+                        linear-gradient(135deg, rgba(13,5,32,0.55) 0%, rgba(19,8,48,0.50) 50%, rgba(10,15,31,0.55) 100%),
+                        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(168,85,247,0.12) 0%, transparent 70%),
+                        radial-gradient(ellipse 40% 50% at 90% 20%, rgba(59,130,246,0.09) 0%, transparent 70%),
+                        radial-gradient(ellipse 30% 35% at 60% 90%, rgba(251,146,60,0.08) 0%, transparent 70%)
+                    `,
+                    }}
+                />
+
+                <div
+                    className="relative z-10 max-w-4xl w-full min-h-screen md:min-h-0 md:rounded-2xl shadow-2xl transition-all duration-500"
+                    style={{
+                        background: "rgba(255,255,255,0.92)",
+                        border: "1px solid rgba(168,85,247,0.2)",
+                        backdropFilter: "blur(20px)",
+                        boxShadow:
+                            "0 0 40px rgba(168,85,247,0.12), 0 25px 60px rgba(0,0,0,0.3)",
+                    }}
+                >
+
+                    <nav className="m-5 flex items-center gap-2">
+                        {[
+                            { label: "Home", id: "nav-home", href: "/" },
+                            {
+                                label: "About",
+                                id: "nav-about",
+                                href: "/#about-us",
+                            },
+                            {
+                                label: "Contact",
+                                id: "nav-contact",
+                                href: "/#contact",
+                            },
+                            {
+                                label: "Login",
+                                id: "nav-login",
+                                href: "/auth/login",
+                            },
+                        ].map(({ label, id, href }) => (
+                            <Link
+                                key={id}
+                                id={id}
+                                href={href}
+                                className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-500  transition-all duration-200  hover:text-orange-400 hover:shadow-md"
+                            >
+                                {label}
+                            </Link>
+                        ))}
+                    </nav>
+                    {children}
+                </div>
+            </div>
+
+        </>
+    )
+}

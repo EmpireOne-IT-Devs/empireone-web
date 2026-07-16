@@ -163,10 +163,7 @@ class AccountContractController extends Controller
                     ]);
                     $account->update([
                         'employee_id' => $employee_id,
-                        'status' => 'Probationary',
-                        'position_level' => 'Rank and File'
                     ]);
-
                     $ja = JobApplication::where([
                         ['user_id', '=', $request->user_id],
                         ['final_status', '=', 'Accepted Job Offer'],
@@ -214,13 +211,8 @@ class AccountContractController extends Controller
                         ]);
                     }
                     $account->update([
-                        'employee_id' => $employee_id,
-                        'status' => 'Probationary',
-                        'position_level' => 'Rank and File',
-                        'basic_pay' => '',
-                        'allowance' => ''
+                        'employee_id' => $employee_id
                     ]);
-
                     $ja = JobApplication::where([
                         ['user_id', '=', $request->user_id],
                         ['final_status', '=', 'Accepted Job Offer'],
