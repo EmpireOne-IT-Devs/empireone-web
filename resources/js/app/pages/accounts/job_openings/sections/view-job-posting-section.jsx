@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import store from "@/app/store/store";
+import { TbUsers } from "react-icons/tb";
 
 export default function ViewJobPostingDetailsSection({ data, children }) {
     const [open, setOpen] = useState(false);
@@ -124,9 +125,13 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                             variant="success"
                             label="active"
                         />
-                        <span className="text-gray-700">
-                            {data?.applications?.length ?? 0} applicants
-                        </span>
+                        {user_role !== "applicant" &&
+                            user_role !== "employee" && (
+                                <div className="flex items-center gap-2 text-gray-600 font-medium">
+                                    <TbUsers />
+                                    {data?.job_requisition?.applications?.length ?? 0} applicants
+                                </div>
+                            )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-6 mb-8 bg-gray-100 p-4 rounded-lg">
@@ -209,20 +214,19 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                         <div className="mt-2 space-y-6 text-gray-800">
                             {data?.job_requisition
                                 ?.justification_for_position && (
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-2">
-                                            Job Description
-                                        </h3>
-                                        <div
-                                            className="prose max-w-none"
-                                            dangerouslySetInnerHTML={{
-                                                __html: data?.job_requisition
-                                                    ?.justification_for_position,
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
+                                <div>
+                                    <h3 className="font-semibold text-lg mb-2">
+                                        Job Description
+                                    </h3>
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{
+                                            __html: data?.job_requisition
+                                                ?.justification_for_position,
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -261,7 +265,8 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 <div
                                     className="prose max-w-none"
                                     dangerouslySetInnerHTML={{
-                                        __html: data?.job_requisition.justification_for_position,
+                                        __html: data?.job_requisition
+                                            .justification_for_position,
                                     }}
                                 />
                             </div>
@@ -274,7 +279,8 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 <div
                                     className="prose max-w-none"
                                     dangerouslySetInnerHTML={{
-                                        __html: data?.job_requisition.qualifications,
+                                        __html: data?.job_requisition
+                                            .qualifications,
                                     }}
                                 />
                             </div>
@@ -287,7 +293,8 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 <div
                                     className="prose max-w-none"
                                     dangerouslySetInnerHTML={{
-                                        __html: data?.job_requisition.responsibilities,
+                                        __html: data?.job_requisition
+                                            .responsibilities,
                                     }}
                                 />
                             </div>
