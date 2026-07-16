@@ -17,6 +17,18 @@ use Illuminate\Support\Facades\Auth;
 class JobPostingController extends Controller
 {
 
+    public function get_job_posting_by_location($id)
+    {
+        $jobPostings = JobPosting::where('status', 'Active')->with(['job_requisition', 'applications', 'applicant'])
+            ->whereHas('job_requisition', function ($query) use ($id) {
+                $query->where('location_id', $id);
+            })
+            // Just chain the method directly! 
+            ->whereIn('target_audience', ['External', 'Both'])
+            ->get(); // get() executes the query
+
+        return response()->json($jobPostings, 200);
+    }
     public function dashboard_stats()
     {
         $startOfWeek = Carbon::now()->startOfWeek();

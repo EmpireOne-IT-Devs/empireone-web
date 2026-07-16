@@ -19,7 +19,7 @@ function route_page()
 }
 
 Route::get('/', function () {
-    
+
     // if (Auth::user()) {
     //     return route_page();
     // }
@@ -42,10 +42,15 @@ Route::get('/talent/application', function () {
     return Inertia::render('talent/page');
 })->name('talent');
 
-Route::get('/talent/application', function () {
-    return Inertia::render('talent/page');
-})->name('talent');
 
+Route::prefix('/talent/application')->group(function () {
+    Route::get('', function () {
+        return Inertia::render('talent/location');
+    })->name('talent');
+    Route::get('/{job_posting_id}', function () {
+        return Inertia::render('talent/page');
+    })->name('talent');
+});
 
 
 Route::get('/dashboard', function () {

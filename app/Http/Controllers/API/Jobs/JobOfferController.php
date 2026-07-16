@@ -76,7 +76,7 @@ class JobOfferController extends Controller
                 'location_id' => $request->job_application['job_posting']['job_requisition']['location_id'],
                 'position' => $request->job_application['job_posting']['job_requisition']['title'],
                 'started_at' => $jo->start_date,
-                'position_level' => 'Rank and File',
+                'position_level' => $request->job_application['job_posting']['job_requisition']['position_level'],
                 'basic_pay' => $jo->salary ?? 0,
                 'allowance' => $total_allowance ?? 0,
                 'work_type' => "Full Time",

@@ -13,7 +13,7 @@ import { apply_job_application_service } from "@/app/services/job-application-se
 import { setAlert, setJobPostingId } from "@/app/redux/app-slice";
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/store/store";
-import { router } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import { BriefcaseIcon } from "lucide-react";
 import SetScheduleSection from "./set-schedule-section";
 
@@ -201,253 +201,202 @@ const TalentApplicationForm = () => {
     const stepLabels = ["Position", "Schedule", "Review"];
 
     return (
-        <div
-            className="min-h-screen flex items-start justify-center md:p-6 font-sans"
-            style={{
-                backgroundImage: "url('/images/empireone-background.jpg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundAttachment: "fixed",
-            }}
-        >
-            <div
-                className="fixed inset-0 pointer-events-none"
-                style={{
-                    background: `
-                        linear-gradient(135deg, rgba(13,5,32,0.55) 0%, rgba(19,8,48,0.50) 50%, rgba(10,15,31,0.55) 100%),
-                        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(168,85,247,0.12) 0%, transparent 70%),
-                        radial-gradient(ellipse 40% 50% at 90% 20%, rgba(59,130,246,0.09) 0%, transparent 70%),
-                        radial-gradient(ellipse 30% 35% at 60% 90%, rgba(251,146,60,0.08) 0%, transparent 70%)
-                    `,
-                }}
-            />
 
+        <>
             <div
-                className="relative z-10 max-w-4xl w-full min-h-screen md:min-h-0 md:rounded-2xl shadow-2xl transition-all duration-500"
-                style={{
-                    background: "rgba(255,255,255,0.92)",
-                    border: "1px solid rgba(168,85,247,0.2)",
-                    backdropFilter: "blur(20px)",
-                    boxShadow:
-                        "0 0 40px rgba(168,85,247,0.12), 0 25px 60px rgba(0,0,0,0.3)",
-                }}
+                className="px-5 pb-5 lg:px-10 border-b"
+                style={{ borderColor: "rgba(168,85,247,0.15)" }}
             >
-                {/* Header */}
-                <div
-                    className="px-5 pt-6 pb-5 lg:px-10 border-b"
-                    style={{ borderColor: "rgba(168,85,247,0.15)" }}
-                >
-                    <nav className="mb-5 flex items-center gap-2">
-                        {[
-                            { label: "Home", id: "nav-home", href: "/" },
-                            {
-                                label: "About",
-                                id: "nav-about",
-                                href: "/#about-us",
-                            },
-                            {
-                                label: "Contact",
-                                id: "nav-contact",
-                                href: "/#contact",
-                            },
-                            {
-                                label: "Login",
-                                id: "nav-login",
-                                href: "/auth/login",
-                            },
-                        ].map(({ label, id, href }) => (
-                            <a
-                                key={id}
-                                id={id}
-                                href={href}
-                                className="rounded-full px-3 py-1 text-[11px] font-semibold text-slate-500  transition-all duration-200  hover:text-orange-400 hover:shadow-md"
-                            >
-                                {label}
-                            </a>
-                        ))}
-                    </nav>
-                    <div className="flex items-center mb-4">
-                        <div className="flex items-center gap-2  justify-between w-full">
-                            {stepLabels.map((label, i) => {
-                                const idx = i; // step 0 = Position, 1 = Details, etc.
-                                const isActive = step === idx;
-                                const isDone = step > idx;
-                                return (
+                <div className="flex items-center mb-4">
+                    <div className="flex items-center gap-2  justify-between w-full">
+                        {stepLabels.map((label, i) => {
+                            const idx = i; // step 0 = Position, 1 = Details, etc.
+                            const isActive = step === idx;
+                            const isDone = step > idx;
+                            return (
+                                <div
+                                    key={label}
+                                    className="flex items-center gap-3 h-10 w-full"
+                                >
                                     <div
-                                        key={label}
-                                        className="flex items-center gap-3 h-10 w-full"
-                                    >
-                                        <div
-                                            className="flex w-10 h-7 items-center justify-center rounded-full text-xs font-bold transition-all duration-300"
-                                            style={{
-                                                background: isDone
-                                                    ? "linear-gradient(135deg,#a855f7,#fb923c)"
-                                                    : isActive
-                                                      ? "rgba(168,85,247,0.15)"
-                                                      : "rgba(168,85,247,0.07)",
-                                                border: isActive
-                                                    ? "1.5px solid rgba(168,85,247,0.8)"
-                                                    : isDone
-                                                      ? "1.5px solid transparent"
-                                                      : "1.5px solid rgba(168,85,247,0.25)",
-                                                color: isDone
-                                                    ? "#fff"
-                                                    : isActive
-                                                      ? "#9333ea"
-                                                      : "rgba(120,90,160,0.6)",
-                                            }}
-                                        >
-                                            {isDone ? "✓" : idx + 1}
-                                        </div>
-                                        <span
-                                            className="text-xs font-semibold hidden sm:block"
-                                            style={{
-                                                color: isActive
+                                        className="flex w-10 h-7 items-center justify-center rounded-full text-xs font-bold transition-all duration-300"
+                                        style={{
+                                            background: isDone
+                                                ? "linear-gradient(135deg,#a855f7,#fb923c)"
+                                                : isActive
+                                                    ? "rgba(168,85,247,0.15)"
+                                                    : "rgba(168,85,247,0.07)",
+                                            border: isActive
+                                                ? "1.5px solid rgba(168,85,247,0.8)"
+                                                : isDone
+                                                    ? "1.5px solid transparent"
+                                                    : "1.5px solid rgba(168,85,247,0.25)",
+                                            color: isDone
+                                                ? "#fff"
+                                                : isActive
                                                     ? "#9333ea"
-                                                    : isDone
-                                                      ? "rgba(234,88,12,0.9)"
-                                                      : "rgba(120,90,160,0.45)",
-                                            }}
-                                        >
-                                            {label}
-                                        </span>
-                                        <div
-                                            className="w-[80%] h-px mx-1 hidden sm:block"
-                                            style={{
-                                                background:
-                                                    step > idx
-                                                        ? "linear-gradient(90deg,#a855f7,#fb923c)"
-                                                        : "rgba(168,85,247,0.15)",
-                                            }}
-                                        />
+                                                    : "rgba(120,90,160,0.6)",
+                                        }}
+                                    >
+                                        {isDone ? "✓" : idx + 1}
                                     </div>
-                                );
-                            })}
-                        </div>
-                        <span
-                            className="text-xs font-bold tabular-nums"
-                            style={{
-                                background:
-                                    "linear-gradient(90deg,#c084fc,#fb923c)",
-                                WebkitBackgroundClip: "text",
-                                WebkitTextFillColor: "transparent",
-                            }}
-                        >
-                            {Math.round((step / 3) * 100)}%
-                        </span>
+                                    <span
+                                        className="text-xs font-semibold hidden sm:block"
+                                        style={{
+                                            color: isActive
+                                                ? "#9333ea"
+                                                : isDone
+                                                    ? "rgba(234,88,12,0.9)"
+                                                    : "rgba(120,90,160,0.45)",
+                                        }}
+                                    >
+                                        {label}
+                                    </span>
+                                    <div
+                                        className="w-[80%] h-px mx-1 hidden sm:block"
+                                        style={{
+                                            background:
+                                                step > idx
+                                                    ? "linear-gradient(90deg,#a855f7,#fb923c)"
+                                                    : "rgba(168,85,247,0.15)",
+                                        }}
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
-
-                    {/* Progress bar */}
-                    <div
-                        className="w-full rounded-full h-1.5"
-                        style={{ background: "rgba(168,85,247,0.1)" }}
+                    <span
+                        className="text-xs font-bold tabular-nums"
+                        style={{
+                            background:
+                                "linear-gradient(90deg,#c084fc,#fb923c)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                        }}
                     >
-                        <div
-                            className="h-1.5 rounded-full transition-all duration-500 ease-out"
-                            style={{
-                                width: `${(step / 3) * 100}%`,
-                                background:
-                                    "linear-gradient(90deg,#a855f7 0%,#3b82f6 50%,#fb923c 100%)",
-                                boxShadow: "0 0 10px rgba(168,85,247,0.5)",
-                            }}
-                        />
-                    </div>
+                        {Math.round((step / 3) * 100)}%
+                    </span>
                 </div>
 
-                <form
-                    className="p-5 lg:px-10 lg:py-8"
-                    onSubmit={handleSubmit(onSubmit)}
+                {/* Progress bar */}
+                <div
+                    className="w-full rounded-full h-1.5"
+                    style={{ background: "rgba(168,85,247,0.1)" }}
                 >
-                    {step === 0 && <JobPostingSection setStep={setStep} />}
+                    <div
+                        className="h-1.5 rounded-full transition-all duration-500 ease-out"
+                        style={{
+                            width: `${(step / 3) * 100}%`,
+                            background:
+                                "linear-gradient(90deg,#a855f7 0%,#3b82f6 50%,#fb923c 100%)",
+                            boxShadow: "0 0 10px rgba(168,85,247,0.5)",
+                        }}
+                    />
+                </div>
+            </div>
 
-                    {step !== 0 && (
+            <form
+                className="p-5 lg:px-10 lg:py-8"
+                onSubmit={handleSubmit(onSubmit)}
+            >
+                <div className="w-full px-2 mb-6 text-right">
+                    <Link
+                        href="/talent/application"
+                        className="inline-flex items-center gap-2 text-lg font-bold text-blue-500 hover:text-blue-700 transition-colors"
+                    >
+                        {/* Left arrow character */}
+                        <span>&larr;</span> Back to Locations
+                    </Link>
+                </div>
+                {step === 0 && <JobPostingSection setStep={setStep} />}
+
+                {step !== 0 && (
+                    <div
+                        className="flex items-center gap-3 pb-5 mb-6 rounded-xl px-4 py-3"
+                        style={{
+                            background: "rgba(168,85,247,0.08)",
+                            border: "1px solid rgba(168,85,247,0.2)",
+                        }}
+                    >
                         <div
-                            className="flex items-center gap-3 pb-5 mb-6 rounded-xl px-4 py-3"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                             style={{
-                                background: "rgba(168,85,247,0.08)",
-                                border: "1px solid rgba(168,85,247,0.2)",
+                                background:
+                                    "linear-gradient(135deg,rgba(168,85,247,0.3),rgba(59,130,246,0.2))",
+                                border: "1px solid rgba(168,85,247,0.3)",
                             }}
                         >
-                            <div
-                                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                            <BriefcaseIcon
+                                className="w-5 h-5"
+                                style={{ color: "#c084fc" }}
+                            />
+                        </div>
+                        <div className="leading-tight">
+                            <p
+                                className="text-xs font-semibold uppercase tracking-widest"
+                                style={{ color: "#9333ea" }}
+                            >
+                                Applying for
+                            </p>
+                            <p
+                                className="text-lg font-bold uppercase tracking-wide"
                                 style={{
                                     background:
-                                        "linear-gradient(135deg,rgba(168,85,247,0.3),rgba(59,130,246,0.2))",
-                                    border: "1px solid rgba(168,85,247,0.3)",
+                                        "linear-gradient(90deg,#c084fc 0%,#93c5fd 55%,#fb923c 100%)",
+                                    WebkitBackgroundClip: "text",
+                                    WebkitTextFillColor: "transparent",
                                 }}
                             >
-                                <BriefcaseIcon
-                                    className="w-5 h-5"
-                                    style={{ color: "#c084fc" }}
-                                />
-                            </div>
-                            <div className="leading-tight">
-                                <p
-                                    className="text-xs font-semibold uppercase tracking-widest"
-                                    style={{ color: "#9333ea" }}
-                                >
-                                    Applying for
-                                </p>
-                                <p
-                                    className="text-lg font-bold uppercase tracking-wide"
-                                    style={{
-                                        background:
-                                            "linear-gradient(90deg,#c084fc 0%,#93c5fd 55%,#fb923c 100%)",
-                                        WebkitBackgroundClip: "text",
-                                        WebkitTextFillColor: "transparent",
-                                    }}
-                                >
-                                    {position}
-                                </p>
-                            </div>
+                                {position}
+                            </p>
                         </div>
-                    )}
+                    </div>
+                )}
 
-                    {step === 1 && (
-                        <>
-                            <PersonalInformationSection
-                                prevStep={prevStep}
-                                nextStep={nextStep}
-                                register={register}
-                                errors={errors}
-                                control={control}
-                                watchedValues={watchedValues}
-                            />
-                            <AddressInformationSection
-                                watchedValues={watchedValues}
-                                register={register}
-                                errors={errors}
-                            />
-                            <UploadCvSection
-                                prevStep={prevStep}
-                                nextStep={nextStep}
-                                register={register}
-                                errors={errors}
-                                watchedValues={watchedValues}
-                            />
-                        </>
-                    )}
-
-                    {step === 2 && (
-                        <SetScheduleSection
+                {step === 1 && (
+                    <>
+                        <PersonalInformationSection
                             prevStep={prevStep}
-                            register={register}
                             nextStep={nextStep}
-                            setValue={setValue}
+                            register={register}
+                            errors={errors}
+                            control={control}
+                            watchedValues={watchedValues}
+                        />
+                        <AddressInformationSection
+                            watchedValues={watchedValues}
+                            register={register}
+                            errors={errors}
+                        />
+                        <UploadCvSection
+                            prevStep={prevStep}
+                            nextStep={nextStep}
+                            register={register}
                             errors={errors}
                             watchedValues={watchedValues}
                         />
-                    )}
-                    {step === 3 && (
-                        <FinalReviewSection
-                            prevStep={prevStep}
-                            watchedValues={watchedValues}
-                            loading={loading}
-                        />
-                    )}
-                </form>
-            </div>
-        </div>
+                    </>
+                )}
+
+                {step === 2 && (
+                    <SetScheduleSection
+                        prevStep={prevStep}
+                        register={register}
+                        nextStep={nextStep}
+                        setValue={setValue}
+                        errors={errors}
+                        watchedValues={watchedValues}
+                    />
+                )}
+                {step === 3 && (
+                    <FinalReviewSection
+                        prevStep={prevStep}
+                        watchedValues={watchedValues}
+                        loading={loading}
+                    />
+                )}
+            </form>
+        </>
     );
 };
 
