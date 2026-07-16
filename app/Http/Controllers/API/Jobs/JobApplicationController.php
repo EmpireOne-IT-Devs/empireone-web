@@ -595,7 +595,7 @@ class JobApplicationController extends Controller
     {
         $locationId = $request->location_id ?? Auth::user()->account_employee->location_id;
 
-        // 1. Fetch the data (matching your dashboard's location filter)
+        // 1. Fetch the data
         $applications = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
         })
@@ -604,7 +604,7 @@ class JobApplicationController extends Controller
 
         $filename = "applicants_export_" . now()->format('Y-m-d_H-i') . ".csv";
 
-        // 2. Set headers to force a file download
+        // 2. Set headers
         $headers = [
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$filename",
@@ -613,13 +613,19 @@ class JobApplicationController extends Controller
             "Expires"             => "0"
         ];
 
-        // 3. Define the exact columns from your image
+        // 3. Define the exact columns (20 Total)
         $columns = [
             'DATE',
             'FIRST NAME',
             'FAMILY NAME',
             'ADDRESS',
-            'eMAIL ADDRESS',
+            'PROVINCE',
+            'SCHOOL',
+            'COURSE',
+            'LEVEL',
+            'DOB',
+            'POB',
+            'EMAIL ADDRESS',
             'MOBILE NUMBER',
             'PASSED INI',
             'POOL',
@@ -636,7 +642,7 @@ class JobApplicationController extends Controller
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns); // Write the Header Row
 
-            // --- NEW: Initialize tracking counters for totals ---
+            // Initialize tracking counters for totals
             $totals = [
                 'passedIni'    => 0,
                 'pool'         => 0,
@@ -652,7 +658,7 @@ class JobApplicationController extends Controller
                 $pi = $app->personal_information;
                 $user = $app->user;
 
-                // Map the statuses to "Yes" or "No" for the CSV columns
+                // Map the statuses
                 $passedIni = $app->interview_status === 'Passed' ? 'Yes' : 'No';
                 $pool = $app->final_status === 'Pooled' ? 'Yes' : 'No';
                 $forFi = ($app->interview_status === 'Passed' && is_null($app->final_status)) ? 'Yes' : 'No';
@@ -662,7 +668,7 @@ class JobApplicationController extends Controller
                 $passedFiCond = $app->final_status === 'Passed with Condition' ? 'Yes' : 'No';
                 $noShow = $app->final_status === 'No Show' ? 'Yes' : 'No';
 
-                // --- NEW: Increment summary totals if condition is 'Yes' ---
+                // Increment summary totals
                 if ($passedIni === 'Yes')    $totals['passedIni']++;
                 if ($pool === 'Yes')         $totals['pool']++;
                 if ($forFi === 'Yes')        $totals['forFi']++;
@@ -672,12 +678,21 @@ class JobApplicationController extends Controller
                 if ($passedFiCond === 'Yes') $totals['passedFiCond']++;
                 if ($noShow === 'Yes')       $totals['noShow']++;
 
-                // Write the row
+                // Safely format the address
+                $address = $pi ? trim("{$pi->street} {$pi->barangay} {$pi->city} {$pi->province} {$pi->zip_code}") : '';
+
+                // Write the row (Ensuring exactly 20 elements)
                 $row = [
                     $app->created_at ? $app->created_at->format('M d, Y') : '',
                     $pi->first_name ?? '',
                     $pi->last_name ?? '',
-                    $pi->street . ' ' . $pi->barangay . ' ' . $pi->city . ' ' . $pi->province . ' ' . $pi->zip_code ?? '',
+                    $address,
+                    $pi->province ?? '', // Mapped or blank if doesn't exist
+                    $pi->school_name ?? '',   // Mapped or blank
+                    $pi->course ?? '',   // Mapped or blank
+                    $pi->degree ?? '',    // Mapped or blank
+                    $pi->date_of_birth ?? '',      // Mapped or blank
+                    $pi->birth_place ?? '',      // Mapped or blank
                     $user->email ?? '',
                     $pi->contact ?? '',
                     $passedIni,
@@ -693,13 +708,19 @@ class JobApplicationController extends Controller
                 fputcsv($file, $row);
             }
 
-            // --- NEW: Append the Total Row at the bottom ---
+            // Append the Total Row at the bottom (Ensuring exactly 20 elements)
             $totalRow = [
-                'TOTAL', // DATE Column cell
+                'TOTAL', // DATE Column
                 '',      // FIRST NAME
                 '',      // FAMILY NAME
                 '',      // ADDRESS
-                '',      // eMAIL ADDRESS
+                '',      // PROVINCE
+                '',      // SCHOOL
+                '',      // COURSE
+                '',      // LEVEL
+                '',      // DOB
+                '',      // POB
+                '',      // EMAIL ADDRESS
                 '',      // MOBILE NUMBER
                 $totals['passedIni'],
                 $totals['pool'],
@@ -712,7 +733,6 @@ class JobApplicationController extends Controller
             ];
 
             fputcsv($file, $totalRow);
-
             fclose($file);
         };
 
