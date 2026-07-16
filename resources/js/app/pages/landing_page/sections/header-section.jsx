@@ -84,18 +84,18 @@ export default function HeaderSection({ variant = "default" }) {
         <header className="fixed top-0 inset-x-0 z-50 transition-all duration-500 mt-1 sm:mt-2">
             <nav
                 className={`mx-auto transition-all duration-500 px-3 sm:px-5 py-2.5 sm:py-3
-                ${
-                    isRounded
-                        ? "mt-2 sm:mt-4 max-w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-5xl rounded-full border shadow-2xl backdrop-blur-md"
-                        : "max-w-[95vw] sm:max-w-7xl border-b border-transparent"
-                }
-                ${
-                    isDark
-                        ? "bg-black/20 border-white/10 text-white"
-                        : "bg-white border-black/5 text-slate-900"
-                }`}
+    ${
+        isRounded
+            ? "mt-2 sm:mt-4 max-w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-5xl rounded-full border shadow-2xl backdrop-blur-md"
+            : "max-w-[95vw] sm:max-w-7xl rounded-xl border-b border-transparent"
+    }
+    ${
+        isDark
+            ? "bg-black/20 border-white/10 text-white"
+            : "bg-white border-black/5 text-slate-900"
+    }`}
             >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center rounded-lg justify-between">
                     {/* Logo */}
                     <div className="flex-shrink-0">
                         <a href="/" className="group flex items-center gap-2">
