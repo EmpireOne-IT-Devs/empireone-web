@@ -596,10 +596,15 @@ class JobApplicationController extends Controller
         $locationId = $request->location_id ?? Auth::user()->account_employee->location_id;
 
         // 1. Fetch the data
-        $applications = JobApplication::whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
-            $query->where('location_id', $locationId);
-        })
-            ->with(['user', 'personal_information'])
+        $applications = JobApplication::with(['user', 'personal_information'])
+            ->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+                // 1. Filter by location
+                $query->where('location_id', $locationId);
+            })
+            // 2. Filter by APPLICATION date (only if search_date is present in the request)
+            ->when($request->search_date, function ($query, $date) {
+                $query->whereDate('created_at', $date);
+            })
             ->get();
 
         $filename = "applicants_export_" . now()->format('Y-m-d_H-i') . ".csv";
