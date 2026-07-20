@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "../../../layout";
 import TimeKeepingLayout from "../layout";
+import EmployeeDetailsSection from "./sections/employee-details-section";
 
 export default function Page() {
     return (
         <Layout>
-            <TimeKeepingLayout>Dashboard</TimeKeepingLayout>
+            <TimeKeepingLayout>
+                <EmployeeDetailsSection />
+            </TimeKeepingLayout>
         </Layout>
     );
 }
