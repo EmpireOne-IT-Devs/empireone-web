@@ -24,7 +24,7 @@ export default function StatsSection() {
                     Re-Uploaded: {documents_stats?.re_uploaded ?? 0}
                 </div>
             </div>
-            {data?.user?.is_passed && (
+            {/* {data?.user?.is_passed && (
                 <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                     <a
                         target="_blank"
@@ -41,7 +41,7 @@ export default function StatsSection() {
                         ONBOARDING DOCUMENTS
                     </a>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }
