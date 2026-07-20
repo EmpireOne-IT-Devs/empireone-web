@@ -19,10 +19,10 @@ export default function ShareJobSection({ data }) {
     const [open, setOpen] = useState(false);
     const [copied, setCopied] = useState(false);
     const { data: account } = useSelector((store) => store.app);
-
+console.log('data',data)
     // Safety check for window object in SSR
     const host = typeof window !== "undefined" ? window.location.host : "";
-    const jobUrl = `${host}/talent/application?job_posting_id=${data.id}&referral_id=${btoa(account?.user?.id?.toString() || "")}`;
+    const jobUrl = `${host}/talent/application/${data?.job_requisition?.location_id}?job_posting_id=${data.id}&referral_id=${btoa(account?.user?.id?.toString() || "")}`;
     const jobTitle = data?.job_requisition?.title;
 
     const getTrackedUrl = (url, sourceName) => {
