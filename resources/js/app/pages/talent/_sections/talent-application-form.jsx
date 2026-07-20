@@ -27,6 +27,7 @@ const TalentApplicationForm = () => {
     const [step, setStep] = useState(savedStep);
     const [loading, setLoading] = useState(false);
     const { interviewer } = useSelector((store) => store.app);
+    const [position, setPosition] = useState('')
     const referral_id = new URLSearchParams(window.location.search).get(
         "referral_id",
     );
@@ -72,9 +73,18 @@ const TalentApplicationForm = () => {
     const watchedValues = watch();
     let cvFile = watchedValues.cv?.[0];
     let base64File = file_convert_blob(cvFile);
-    const position = job_postings.find(
-        (res) => res.id == watchedValues.job_posting_id,
-    )?.job_requisition?.title;
+
+
+
+    useEffect(() => {
+        if (job_postings && watchedValues.job_posting_id) {
+            const position_title = job_postings.find(
+                (res) => res.id == watchedValues.job_posting_id
+            )?.job_requisition?.title;
+            setPosition(position_title || "");
+        }
+    }, [watchedValues.job_posting_id, job_postings]);
+
 
     useEffect(() => {
         async function load_data() {
@@ -223,18 +233,18 @@ const TalentApplicationForm = () => {
                                             background: isDone
                                                 ? "linear-gradient(135deg,#a855f7,#fb923c)"
                                                 : isActive
-                                                  ? "rgba(168,85,247,0.15)"
-                                                  : "rgba(168,85,247,0.07)",
+                                                    ? "rgba(168,85,247,0.15)"
+                                                    : "rgba(168,85,247,0.07)",
                                             border: isActive
                                                 ? "1.5px solid rgba(168,85,247,0.8)"
                                                 : isDone
-                                                  ? "1.5px solid transparent"
-                                                  : "1.5px solid rgba(168,85,247,0.25)",
+                                                    ? "1.5px solid transparent"
+                                                    : "1.5px solid rgba(168,85,247,0.25)",
                                             color: isDone
                                                 ? "#fff"
                                                 : isActive
-                                                  ? "#9333ea"
-                                                  : "rgba(120,90,160,0.6)",
+                                                    ? "#9333ea"
+                                                    : "rgba(120,90,160,0.6)",
                                         }}
                                     >
                                         {isDone ? "✓" : idx + 1}
@@ -245,8 +255,8 @@ const TalentApplicationForm = () => {
                                             color: isActive
                                                 ? "#9333ea"
                                                 : isDone
-                                                  ? "rgba(234,88,12,0.9)"
-                                                  : "rgba(120,90,160,0.45)",
+                                                    ? "rgba(234,88,12,0.9)"
+                                                    : "rgba(120,90,160,0.45)",
                                         }}
                                     >
                                         {label}
@@ -395,7 +405,7 @@ const TalentApplicationForm = () => {
                     />
                 )}
             </form>
-            
+
         </>
     );
 };

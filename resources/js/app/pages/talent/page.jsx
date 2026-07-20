@@ -32,7 +32,6 @@ export default function Page() {
     return (
         <Layout>
             <TalentApplicationForm />
-            
         </Layout>
     );
 }
