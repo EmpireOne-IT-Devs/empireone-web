@@ -87,7 +87,7 @@ export default function HeaderSection({ variant = "default" }) {
     ${
         isRounded
             ? "mt-2 sm:mt-4 max-w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-5xl rounded-full border shadow-2xl backdrop-blur-md"
-            : "max-w-[95vw] sm:max-w-7xl rounded-xl border-b border-transparent"
+            : "max-w-[95vw] sm:max-w-7xl rounded-full  border-b border-transparent"
     }
     ${
         isDark

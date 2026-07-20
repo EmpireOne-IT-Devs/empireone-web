@@ -34,7 +34,7 @@ export default function PersonalInformationSection({
                 <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="First Name"
-                        name="first_name"
+                        name="first_name"   
                         {...register("first_name", {
                             required: true,
                         })}

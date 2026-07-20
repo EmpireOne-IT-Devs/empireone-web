@@ -15,7 +15,7 @@ export default function LocationPage() {
 
     return (
         <Layout>
-            <div className="min-h-[85vh] bg-gray-100 flex  rounded-xl flex-col">
+            <div className="min-h-[78vh] bg-gray-100 flex  rounded-xl flex-col">
                 <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-1 flex flex-col">
                   
 
@@ -119,16 +119,6 @@ export default function LocationPage() {
                             ))}
                         </div>
                     )}
-
-                    <div className="mt-auto pt-6 border-t border-gray-200 flex items-center gap-2 text-sm text-gray-500">
-                        <LifeBuoy className="w-4 h-4" />
-                        <span>
-                            Powered by:{" "}
-                            <span className="font-medium text-gray-700">
-                                EmpireOneCx Careers
-                            </span>
-                        </span>
-                    </div>
                 </div>
             </div>
         </Layout>
