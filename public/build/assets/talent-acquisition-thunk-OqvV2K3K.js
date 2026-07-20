@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/talent-acquisition-thunk-BSjsNeAz.js
-import{c as i}from"./job-requisition-service-B0n4By7E.js";import{a6 as e}from"./app-D0YMJG5P.js";async function c(){return(await axios.get("/api/job/job_applicant_schedules")).data}async function _(t){return(await axios.post("/api/job/change_job_applicant_schedule",t)).data}function r(){return async function(t,n){const a=await c();t(e.actions.setSchedules(a.data))}}function u(){return async function(t,n){const a=await i();t(e.actions.setInterviews(a.data))}}export{r as a,_ as c,u as g};
-========
-import{c as i}from"./job-requisition-service-Cz5BdOM8.js";import{a6 as e}from"./app-B1qVlFsR.js";async function c(){return(await axios.get("/api/job/job_applicant_schedules")).data}async function _(t){return(await axios.post("/api/job/change_job_applicant_schedule",t)).data}function r(){return async function(t,n){const a=await c();t(e.actions.setSchedules(a.data))}}function u(){return async function(t,n){const a=await i();t(e.actions.setInterviews(a.data))}}export{r as a,_ as c,u as g};
->>>>>>>> a67c27fb9ee04e0dbbcdd090307fe8d423b6d82b:public/build/assets/talent-acquisition-thunk-OqvV2K3K.js

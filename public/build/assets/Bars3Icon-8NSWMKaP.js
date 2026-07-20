@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/Bars3Icon-7AQlR1j7.js
-import{r as e}from"./app-D0YMJG5P.js";function a({title:r,titleId:t,...o},n){return e.createElement("svg",Object.assign({xmlns:"http://www.w3.org/2000/svg",fill:"none",viewBox:"0 0 24 24",strokeWidth:1.5,stroke:"currentColor","aria-hidden":"true","data-slot":"icon",ref:n,"aria-labelledby":t},o),r?e.createElement("title",{id:t},r):null,e.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",d:"M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"}))}const i=e.forwardRef(a);export{i as F};
-========
-import{r as e}from"./app-B1qVlFsR.js";function a({title:r,titleId:t,...o},n){return e.createElement("svg",Object.assign({xmlns:"http://www.w3.org/2000/svg",fill:"none",viewBox:"0 0 24 24",strokeWidth:1.5,stroke:"currentColor","aria-hidden":"true","data-slot":"icon",ref:n,"aria-labelledby":t},o),r?e.createElement("title",{id:t},r):null,e.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",d:"M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"}))}const i=e.forwardRef(a);export{i as F};
->>>>>>>> a67c27fb9ee04e0dbbcdd090307fe8d423b6d82b:public/build/assets/Bars3Icon-8NSWMKaP.js

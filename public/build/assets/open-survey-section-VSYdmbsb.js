@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/open-survey-section-VSYdmbsb.js
-import{j as t,b as s}from"./app-D0YMJG5P.js";import{k as o}from"./index-WCpfIiN7.js";import"./iconBase-CTwaHDsF.js";function p({survey:e}){const n=()=>{s.visit(`/accounts/administrator/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:n,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(o,{className:"text-base"}),"Open Survey"]})}export{p as default};
-========
-import{j as t,b as s}from"./app-B1qVlFsR.js";import{k as o}from"./index-BPhUcfUT.js";import"./iconBase-DORfg3IO.js";function p({survey:e}){const n=()=>{s.visit(`/accounts/administrator/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:n,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(o,{className:"text-base"}),"Open Survey"]})}export{p as default};
->>>>>>>> a67c27fb9ee04e0dbbcdd090307fe8d423b6d82b:public/build/assets/open-survey-section-DabNA-P1.js
