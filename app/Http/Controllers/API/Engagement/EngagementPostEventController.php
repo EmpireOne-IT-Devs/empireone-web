@@ -16,7 +16,6 @@ class EngagementPostEventController extends Controller
     public function index(): JsonResponse
     {
         $userId = Auth::id();
-
         $posts = EngagementPostEvent::with([
             'user:id,name,avatar',
             'files',

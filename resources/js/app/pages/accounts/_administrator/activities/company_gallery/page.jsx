@@ -11,8 +11,10 @@ export default function Page() {
         <Layout>
             <ActivitiesLayout>
                 <HeaderSection />
-                <SearchSection   />
-                <CardUploadedImageSection />
+                <SearchSection />
+                <div>
+                    <CardUploadedImageSection />
+                </div>
             </ActivitiesLayout>
         </Layout>
     );
