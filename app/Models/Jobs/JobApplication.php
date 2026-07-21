@@ -2,6 +2,8 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account;
+use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\ER\EREmployeeChangeForm;
 use App\Models\User;
@@ -24,6 +26,16 @@ class JobApplication extends Model
         'source',
         'interview_type'
     ];
+
+    public function referral(): HasOne
+    {
+        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'referral_id');
+    }
+
+    public function employee(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'referral_id')->with(['department','account']);
+    }
 
     public function applicants(): HasMany
     {

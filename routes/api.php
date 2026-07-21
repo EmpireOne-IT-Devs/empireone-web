@@ -101,6 +101,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('dashboard_stats', [JobPostingController::class, 'dashboard_stats']);
         Route::get('recent_activity', [JobPostingController::class, 'recent_activity']);
         Route::get('top_performing_jobs', [JobPostingController::class, 'top_performing_jobs']);
+        Route::get('get_erps', [JobPostingController::class, 'get_erps']);
         Route::resource('application', JobApplicationController::class);
         Route::resource('offers', JobOfferController::class);
         Route::resource('job_interview', JobAIInterviewController::class);
@@ -116,7 +117,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('transfer_job_offer',  [JobOfferController::class, 'transfer_job_offer']);
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);
         Route::get('export_applicant_csv',  [JobApplicationController::class, 'export_applicant_csv']);
-
+        Route::get('export_erp',  [JobApplicationController::class, 'export_erp']);
         Route::get('get_applicant_pooling',  [JobApplicationController::class, 'get_applicant_pooling']);
         Route::get('get_job_application_by_user',  [JobApplicationController::class, 'get_job_application_by_user']);
         Route::post('application_failed_notification',  [JobApplicationController::class, 'application_failed_notification']);

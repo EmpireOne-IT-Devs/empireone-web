@@ -19,11 +19,18 @@ export default function JobPostingLayout({ children }) {
             active: path === "applicants",
         },
 
-        {
-            label: "Job Postings",
-            path: "/accounts/administrator/talent_acquisition/job_posting",
-            active: path === "job_posting",
+         {
+            label: "ERP",
+            path: "/accounts/administrator/talent_acquisition/erp",
+            active: path === "erp",
         },
+
+
+        // {
+        //     label: "Job Postings",
+        //     path: "/accounts/administrator/talent_acquisition/job_posting",
+        //     active: path === "job_posting",
+        // },
         // {
         //     label: "Job Offers",
         //     path: "/accounts/administrator/talent_acquisition/job_offers",

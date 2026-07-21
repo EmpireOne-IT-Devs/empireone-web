@@ -17,6 +17,11 @@ use Illuminate\Support\Facades\Auth;
 class JobPostingController extends Controller
 {
 
+    public function get_erps()
+    {
+        $erps = JobApplication::whereNotNull('referral_id')->with(['referral','applicant','employee'])->paginate(10);
+        return response()->json($erps, 200);
+    }
     public function get_job_posting_by_location($id)
     {
         $jobPostings = JobPosting::where('status', 'Active')->with(['job_requisition', 'applications', 'applicant'])

@@ -13,7 +13,8 @@ export const jobPostingsSlice = createSlice({
             final_status: "",
         },
         job_offers: [],
-        statuses:{}
+        statuses: {},
+        erps: [],
     },
     reducers: {
         setJobPostings: (state, action) => {
@@ -37,9 +38,13 @@ export const jobPostingsSlice = createSlice({
         setStatuses: (state, action) => {
             state.statuses = action.payload;
         },
+        setErps: (state, action) => {
+            state.erps = action.payload;
+        },
     },
 });
 export const {
+    setErps,
     setJobPostings,
     setJobApplications,
     setJobApplication,

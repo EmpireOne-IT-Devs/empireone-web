@@ -39,6 +39,106 @@ class JobApplicationController extends Controller
         return base64_decode($data);
     }
 
+
+    public function export_erp(Request $request)
+    {
+        // 1. Fetch the data
+        $erps = JobApplication::whereNotNull('referral_id')
+            ->with([
+                'referral',
+                'applicant.personal_information',
+                'employee.account',
+                'employee.department'
+            ])
+            ->get();
+
+        $filename = "erp_export_" . now()->format('Y-m-d_H-i') . ".csv";
+
+        // 2. Set headers
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        // 3. Define the exact columns
+        $columns = [
+            'Referral Name',
+            'Contact',
+            'Referrer Name',
+            'Employee Id',
+            'Department/Account',
+            'Date Submitted',
+            'Assessment Status',
+            'Interview Status',
+            'Final Status',
+        ];
+
+        // 4. Stream the data directly into the CSV
+        $callback = function () use ($erps, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns); // Write the Header Row
+
+            $totalCount = 0; // Optional: Keep track of total rows if you want to add a total at the bottom
+
+            foreach ($erps as $erp) {
+                // Format Referral Name
+                $applicantInfo = $erp->applicant->personal_information ?? null;
+                $referralName = $applicantInfo
+                    ? trim(($applicantInfo->first_name ?? '') . ' ' . ($applicantInfo->last_name ?? ''))
+                    : 'N/A';
+
+                // Format Referrer Name
+                $referrerName = $erp->referral
+                    ? trim(($erp->referral->first_name ?? '') . ' ' . ($erp->referral->last_name ?? ''))
+                    : 'N/A';
+
+                // Format Account/Department
+                $account = 'N/A';
+                if ($erp->employee) {
+                    $account = $erp->employee->account->name ?? $erp->employee->department->name ?? 'N/A';
+                }
+
+                // Write the row
+                $row = [
+                    $referralName,
+                    $erp->referral->contact ?? 'N/A',
+                    $referrerName,
+                    $erp->employee->employee_id ?? 'N/A',
+                    $account,
+                    $erp->created_at ? $erp->created_at->format('F j, Y') : 'N/A',
+                    $erp->screening_status ?? 'N/A',
+                    $erp->interview_status ?? 'N/A',
+                    $erp->final_status ?? 'N/A',
+                ];
+
+                fputcsv($file, $row);
+                $totalCount++;
+            }
+
+            // Optional: Append a Total Row at the bottom (matching your other export style)
+            $totalRow = [
+                'TOTAL',      // Referral Name Column
+                '',          // Contact
+                '',          // Referrer Name
+                '',          // Employee Id
+                '',          // Department/Account
+                $totalCount, // Date Submitted (Putting count here as an example)
+                '',          // Assessment Status
+                '',          // Interview Status
+                '',          // Final Status
+            ];
+
+            fputcsv($file, $totalRow);
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+
     public function application_failed_notification(Request $request)
     {
         return 'hello';
