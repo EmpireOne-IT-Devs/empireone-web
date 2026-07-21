@@ -120,6 +120,7 @@ export default function StatusesCardSection() {
     const handleCardClick = (table, status) => {
         const currentParams = new URLSearchParams(window.location.search);
 
+        currentParams.delete('page');
         if (table && status) {
             currentParams.delete('statuses');
             currentParams.delete('final_status');
@@ -155,6 +156,7 @@ export default function StatusesCardSection() {
         currentParams.delete('search_date');
         currentParams.delete('final_status');
         currentParams.delete('interview_status');
+        currentParams.delete('page');
         if (search) {
             currentParams.set('search', search);
             currentParams.delete('statuses');
