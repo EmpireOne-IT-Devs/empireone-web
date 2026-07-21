@@ -8,9 +8,11 @@ import moment from "moment";
 
 const categoryColors = {
     "Events Calendar": "bg-indigo-100 text-indigo-600",
-    "Company Newsfeed": "bg-blue-100 text-blue-600",
-    Polls: "bg-purple-200 text-purple-700",
-    "Department Showcases": "bg-cyan-100 text-cyan-600",
+};
+
+const isEventSurvey = (survey) => {
+    const category = String(survey?.event?.category ?? "").trim().toLowerCase();
+    return category === "events calendar" || category === "event";
 };
 
 const columns = [
@@ -23,7 +25,7 @@ const columns = [
 ];
 
 const buildRows = (surveys = []) =>
-    surveys.map((survey) => ({
+    surveys.filter(isEventSurvey).map((survey) => ({
         event_id: (
             <span className="text-sm text-gray-600">
                 {`SID-${String(survey.id).padStart(2, "0")}`}
@@ -63,16 +65,22 @@ const buildRows = (surveys = []) =>
         status: (
             <span
                 className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                    survey.status === "Completed"
+                    survey.status === "published"
                         ? "bg-green-100 text-green-600"
-                        : survey.status === "Draft"
+                        : survey.status === "draft"
                           ? "bg-yellow-100 text-yellow-600"
-                          : survey.status === "Closed"
+                          : survey.status === "closed"
                             ? "bg-red-100 text-red-600"
                             : "bg-gray-100 text-gray-600"
                 }`}
             >
-                {survey.status ?? "Unknown"}
+                {survey.status === "published"
+                    ? "Published"
+                    : survey.status === "closed"
+                      ? "Closed"
+                      : survey.status === "draft"
+                        ? "Draft"
+                        : survey.status ?? "Unknown"}
             </span>
         ),
 

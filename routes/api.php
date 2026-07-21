@@ -167,6 +167,16 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('post_events/{id}/comments/{commentId}',      [EngagementPostEventCommentController::class, 'destroy']);
         Route::post('post_events/{id}/react',                       [EngagementPostEventReactController::class,   'toggle']);
 
+        Route::get('surveys', [EngagementPostEventSurveyController::class, 'index']);
+        Route::post('surveys', [EngagementPostEventSurveyController::class, 'store']);
+        Route::get('surveys/{id}', [EngagementPostEventSurveyController::class, 'show']);
+        Route::post('surveys/{id}/submit', [EngagementPostEventSurveyController::class, 'submit']);
+        Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
+        Route::get('surveys/{id}/analytics', [EngagementPostEventSurveyController::class, 'analytics']);
+        Route::post('surveys/{id}/close', [EngagementPostEventSurveyController::class, 'close']);
+        Route::post('surveys/{id}/reopen', [EngagementPostEventSurveyController::class, 'reopen']);
+        Route::delete('surveys/{id}', [EngagementPostEventSurveyController::class, 'destroy']);
+
         Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
         Route::get('upcoming_events',    [EngagementPostEventController::class, 'upcoming_events']);
 
