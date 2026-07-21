@@ -90,12 +90,12 @@ export default function ERPTableSection() {
                 solid
             />,
             interview_status:  <Badge
-                label={res.screening_status ?? ""}
+                label={res.interview_status ?? ""}
                 variant={getStatusVariant(res.interview_status)}
                 solid
             />,
             final_status: <Badge
-                label={res.screening_status ?? ""}
+                label={res.final_status ?? ""}
                 variant={getStatusVariant(res.final_status)}
                 solid
             />,
