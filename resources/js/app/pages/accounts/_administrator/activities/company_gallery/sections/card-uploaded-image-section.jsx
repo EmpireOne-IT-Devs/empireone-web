@@ -310,7 +310,7 @@ export default function CardUploadedImageSection() {
             </div>
             
         );
-    }
+    }   
 
     if (galleryEvents.length === 0) {
         return (
