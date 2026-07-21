@@ -83,7 +83,7 @@ export default function ERPTableSection() {
             referrer_name: `${res?.referral?.first_name} ${res?.referral?.last_name}`,
             employee_id: `${res?.employee?.employee_id}`,
             account: `${res?.employee?.account.name ?? res?.employee?.department.name}`,
-            date_submitted: moment(res.created_at).format('LL'),
+            date_submitted: moment(res.created_at).format('LLL'),
             screening_status: <Badge
                 label={res.screening_status ?? ""}
                 variant={getStatusVariant(res.screening_status)}
