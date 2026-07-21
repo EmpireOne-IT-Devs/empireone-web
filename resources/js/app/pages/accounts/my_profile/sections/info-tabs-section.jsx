@@ -16,14 +16,6 @@ import store from "@/app/store/store";
 import { get_app_data_thunk } from "@/app/redux/app-thunk";
 import moment from "moment";
 
-const TAB_IDS = [
-    "personal",
-    "employee",
-    "professional",
-    "documents",
-    "emergency",
-    "customization",
-];
 
 const TAB_LABELS = {
     personal: "Personal Information",
@@ -38,6 +30,16 @@ export default function InfoTabsSection() {
     const { data } = useSelector((store) => store.app);
     const activeIndex = window.location.pathname.split('/')[4];
     const account_role = window.location.pathname.split("/")[2];
+
+
+    const TAB_IDS = [
+        "personal",
+        account_role !== 'applicant' && "employee",
+        "professional",
+        "documents",
+        "emergency",
+        "customization",
+    ].filter(Boolean);
 
     const {
         register,

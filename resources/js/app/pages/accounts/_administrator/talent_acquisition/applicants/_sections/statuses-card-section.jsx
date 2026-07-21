@@ -85,17 +85,17 @@ export default function StatusesCardSection() {
 
     const { statuses } = useSelector((store) => store.job_postings);
     const { data: app_data } = useSelector((store) => store.app);
-    
+
     // Parse URL Search Parameters safely
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     const currentLocationId = searchParams.get('location_id') || app_data?.user?.account_employee?.location_id;
-    
+
     // NEW: Extract current date param to bind it to the controlled date input
     const currentSearchDate = searchParams.get('search_date') || '';
 
     useEffect(() => {
         setSearch(searchParams.get('search') || '');
-    }, []);
+    }, [window.location.search]);
 
     // Fallback numbers for UI counters
     const data = statuses || {
@@ -124,10 +124,12 @@ export default function StatusesCardSection() {
             currentParams.delete('statuses');
             currentParams.delete('final_status');
             currentParams.delete('interview_status');
+            currentParams.delete('search');
             currentParams.set(table, status);
         } else {
             currentParams.delete('statuses');
             currentParams.delete('final_status');
+            currentParams.delete('search');
             currentParams.delete('interview_status');
         }
 
@@ -150,8 +152,13 @@ export default function StatusesCardSection() {
         e.preventDefault();
         const currentParams = new URLSearchParams(window.location.search);
 
+        currentParams.delete('search_date');
+        currentParams.delete('final_status');
+        currentParams.delete('interview_status');
         if (search) {
             currentParams.set('search', search);
+            currentParams.delete('statuses');
+
         } else {
             currentParams.delete('search');
         }
@@ -343,7 +350,7 @@ export default function StatusesCardSection() {
                                 options={app_data?.locations?.map(res => ({
                                     label: res.name,
                                     value: res.id
-                }))}
+                                }))}
                                 onChange={(val) => {
                                     const currentParams = new URLSearchParams(window.location.search);
                                     currentParams.set('location_id', val);
