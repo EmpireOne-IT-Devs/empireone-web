@@ -1,1 +1,0 @@
-import{j as e}from"./app-tim04OQH.js";function n(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Employee Relations"}),e.jsx("div",{className:"text-gray-600",children:"Manage employee concerns, communication, and workplace engagement"})]})}export{n as default};
