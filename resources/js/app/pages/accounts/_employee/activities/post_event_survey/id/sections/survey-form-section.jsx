@@ -15,7 +15,13 @@ import {
 const META = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');`;
 const sans = { fontFamily: "'Inter', sans-serif" };
 const label = { fontFamily: "'IBM Plex Mono', monospace" };
-
+const ratingLabels = {
+    1: "Very Poor",
+    2: "Poor",
+    3: "Average",
+    4: "Good",
+    5: "Excellent",
+};
 const TYPES = {
   short_answer: { icon: Type, name: "Short answer" },
   paragraph: { icon: AlignLeft, name: "Paragraph" },
@@ -39,35 +45,58 @@ function TypeCaption({ type }) {
 }
 
 // ── Input components ──────────────────────────────────────────────────────
-
 function ShortAnswerInput({ value, onChange, hasError }) {
-  return (
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder="Your answer"
-      className={`w-full max-w-sm border-b bg-transparent py-1.5 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 ${
-        hasError ? "border-red-400" : "border-zinc-300 focus:border-indigo-500"
-      }`}
-    />
-  );
+    return (
+        <div className="max-w-lg">
+            <div
+                className={`rounded-xl border bg-white transition-all ${
+                    hasError
+                        ? "border-red-400 ring-2 ring-red-100"
+                        : "border-zinc-200 hover:border-zinc-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-100"
+                }`}
+            >
+                <input
+                    type="text"
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="Type your answer..."
+                    className="w-full rounded-xl bg-transparent px-4 py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
+                />
+            </div>
+        </div>
+    );
 }
-
 function ParagraphInput({ value, onChange, hasError }) {
-  return (
-    <textarea
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder="Your answer"
-      rows={4}
-      className={`w-full max-w-md resize-none rounded-md border px-3 py-2.5 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 ${
-        hasError ? "border-red-400" : "border-zinc-300 focus:border-indigo-500"
-      }`}
-    />
-  );
-}
+    return (
+        <div className="max-w-2xl">
+            <div
+                className={`rounded-xl border bg-white transition-all ${
+                    hasError
+                        ? "border-red-400 ring-2 ring-red-100"
+                        : "border-zinc-200 hover:border-zinc-300 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-100"
+                }`}
+            >
+                <textarea
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="Share your thoughts..."
+                    rows={5}
+                    className="w-full resize-none rounded-xl bg-transparent px-4 py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
+                />
 
+                <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-2">
+                    <p className="text-xs text-zinc-400">
+                        Write a detailed response
+                    </p>
+
+                    <span className="text-xs text-zinc-400">
+                        {value.length} characters
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+}
 function MultipleChoiceInput({ options, value, onChange, hasError, name }) {
   return (
     <div className={`flex flex-col gap-2.5 ${hasError ? "rounded-md border border-red-300 bg-red-50 p-3" : ""}`}>
@@ -128,27 +157,68 @@ function DropdownInput({ options, value, onChange, hasError }) {
     </div>
   );
 }
-
 function RatingInput({ value, onChange, hasError }) {
-  return (
-    <div className={`flex items-center gap-1 ${hasError ? "rounded-md border border-red-300 bg-red-50 p-2" : ""}`}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button
-          key={n}
-          type="button"
-          aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
-          onClick={() => onChange(String(n))}
-          className={`rounded p-1 transition focus:outline-none ${
-            value !== "" && parseInt(value, 10) >= n ? "text-yellow-500" : "text-zinc-300 hover:text-yellow-300"
-          }`}
-        >
-          <Star size={19} fill={value !== "" && parseInt(value, 10) >= n ? "currentColor" : "none"} strokeWidth={1.5} />
-        </button>
-      ))}
-    </div>
-  );
-}
+    const rating = Number(value) || 0;
 
+    return (
+        <div
+            className={`rounded-xl border p-4 transition ${
+                hasError
+                    ? "border-red-300 bg-red-50"
+                    : "border-zinc-200 bg-white"
+            }`}
+        >
+            <div className="mb-3 flex items-center justify-between text-xs font-medium text-zinc-500">
+                <span>Poor</span>
+                <span>Excellent</span>
+            </div>
+
+            <div className="flex items-center justify-center gap-56">
+                {[1, 2, 3, 4, 5].map((n) => {
+                    const active = rating >= n;
+
+                    return (
+                        <button
+                            key={n}
+                            type="button"
+                            onClick={() => onChange(String(n))}
+                            aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
+                            className="rounded-full p-1 transition-all duration-150 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
+                        >
+                            <Star
+                                size={32}
+                                strokeWidth={1.75}
+                                className={`transition-colors ${
+                                    active
+                                        ? "fill-yellow-400 text-yellow-400"
+                                        : "text-zinc-300 hover:text-yellow-300"
+                                }`}
+                            />
+                        </button>
+                    );
+                })}
+            </div>
+
+            <div className="mt-4 text-center">
+                {rating > 0 ? (
+                    <>
+                        <p className="text-sm font-semibold text-zinc-800">
+                            {ratingLabels[rating]}
+                        </p>
+
+                        <p className="mt-1 text-xs text-zinc-500">
+                            {rating} of 5 stars
+                        </p>
+                    </>
+                ) : (
+                    <p className="text-xs text-zinc-400">
+                        Select a rating
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+}
 // ── Question row ─────────────────────────────────────────────────────────
 
 function QuestionRow({ question, index, isLast, answer, onChange, error }) {

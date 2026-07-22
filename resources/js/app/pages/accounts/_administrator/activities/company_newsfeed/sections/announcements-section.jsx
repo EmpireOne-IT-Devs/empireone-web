@@ -166,7 +166,7 @@ export default function AnnouncementsSection() {
             : ACCENT_COLORS[0];
 
     return (
-        <div className="w-full bg-[#f0f2f7] p-6 rounded-2xl font-sans antialiased">
+        <div className="w-full bg-white p-6 rounded-2xl font-sans antialiased">
             <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
                     <div className="flex h-8 w-8 items-center justify-center">
