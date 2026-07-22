@@ -71,7 +71,19 @@ const engagementSlice = createSlice({
             .addCase(get_engagement_posts_thunk.fulfilled, (state, action) => {
                 state.fetching = false;
                 state.postsLoading = false;
-                state.posts = action.payload.data ?? action.payload ?? [];
+                // Normalize incoming posts
+                const incoming = action.payload?.data ?? action.payload ?? [];
+                if (Array.isArray(incoming)) {
+                    // If we have upcoming birthdays in state, attach them to birthday posts
+                    state.posts = incoming.map((p) => {
+                        if ((p.type === 'birthday' || p.category === 'Birthday') && Array.isArray(state.birthdays) && state.birthdays.length > 0) {
+                            return { ...p, celebrants: state.birthdays.map((b) => ({ ...b })) };
+                        }
+                        return p;
+                    });
+                } else {
+                    state.posts = incoming;
+                }
             })
             .addCase(get_engagement_posts_thunk.rejected, (state, action) => {
                 state.fetching = false;
@@ -160,6 +172,14 @@ const engagementSlice = createSlice({
                 // Safely extract post object regardless of whether response is payload.data or direct payload
                 const newPost = action.payload?.data ?? action.payload;
                 if (newPost && newPost.id) {
+                    // If this is a birthday post, attach the current upcoming birthdays
+                    // so the frontend can render celebrants immediately even if the API
+                    // does not include them in the post payload.
+                    if (newPost.type === 'birthday' && Array.isArray(state.birthdays) && state.birthdays.length > 0) {
+                        // Avoid mutating state.birthdays directly
+                        newPost.celebrants = state.birthdays.map((b) => ({ ...b }));
+                    }
+
                     const exists = state.posts.some((p) => p.id === newPost.id);
                     if (!exists) {
                         state.posts = [newPost, ...state.posts];

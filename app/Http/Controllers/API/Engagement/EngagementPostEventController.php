@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Engagement\EngagementPostEvent;
 use App\Models\Engagement\EngagementPostEventFile;
 use App\Models\Engagement\EngagementPollOption;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
 
 class EngagementPostEventController extends Controller
 {
@@ -90,6 +92,76 @@ class EngagementPostEventController extends Controller
                         'avatar'   => $user?->avatar,
                         'initials' => $initials,
                     ],
+                    // Attach celebrants for birthday posts so clients can render them without extra requests
+                    'celebrants'        => ($post->type === 'birthday') ? (
+                        User::query()
+                            ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_EMPLOYEE])
+                            ->whereHas('personal_information', function ($query) use ($post) {
+                                $monthNum = null;
+                                if (!empty($post->month)) {
+                                    try {
+                                        $monthNum = Carbon::parse($post->month . ' 1')->month;
+                                    } catch (\Exception $e) {
+                                        $monthNum = now()->month;
+                                    }
+                                } else {
+                                    $monthNum = now()->month;
+                                }
+                                $query->whereNotNull('date_of_birth')
+                                      ->whereRaw('MONTH(date_of_birth) = ?', [$monthNum]);
+                            })
+                            ->with([
+                                'personal_information:id,user_id,first_name,middle_name,last_name,suffix,date_of_birth',
+                                'account_employee',
+                            ])
+                            ->get()
+                            ->map(function ($user) {
+                                $info = $user->personal_information;
+
+                                if (! $info || ! $info->date_of_birth) {
+                                    return null;
+                                }
+
+                                try {
+                                    $date = Carbon::parse($info->date_of_birth);
+                                } catch (\Exception $e) {
+                                    return null;
+                                }
+
+                                $firstName = $info->first_name ?? '';
+                                $lastName  = $info->last_name  ?? '';
+
+                                $fullName = trim(
+                                    collect([$firstName, $info->middle_name, $lastName, $info->suffix])
+                                        ->filter()
+                                        ->join(' ')
+                                );
+
+                                $employee = $user->account_employee;
+
+                                return [
+                                    'user_id'         => $user->id,
+                                    'employee_id'     => $employee?->employee_id,
+                                    'name'            => $fullName ?: ($user->name ?? ''),
+                                    'initials'        => strtoupper(
+                                                            mb_substr($firstName, 0, 1) .
+                                                            mb_substr($lastName,  0, 1)
+                                                        ),
+                                    'department'      => $employee?->department?->name,
+                                    'position'        => $employee?->position,
+                                    'avatar'          => $user->avatar,
+                                    'profile_picture' => $user->avatar,
+                                    'date_of_birth'   => $info->date_of_birth,
+                                    'birthday_label'  => $date->format('M d'),
+                                    'birthday_month'  => $date->month,
+                                    'birthday_day'    => $date->day,
+                                    'is_today'        => $date->day === now()->day,
+                                ];
+                            })
+                            ->filter()
+                            ->sortBy(fn ($item) => $item['birthday_day'])
+                            ->values()
+                    ) : [],
                 ];
             });
 
@@ -182,6 +254,79 @@ class EngagementPostEventController extends Controller
                         'sort_order'               => $index,
                     ]);
                 }
+            }
+
+            // If this is a birthday post, include the current celebrants
+            if ($validated['type'] === 'birthday') {
+                $currentMonth = now()->month;
+
+                $celebrants = User::query()
+                    ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_EMPLOYEE])
+                    ->whereHas('personal_information', function ($query) use ($currentMonth) {
+                        $query->whereNotNull('date_of_birth')
+                              ->whereRaw('MONTH(date_of_birth) = ?', [$currentMonth]);
+                    })
+                    ->with([
+                        'personal_information:id,user_id,first_name,middle_name,last_name,suffix,date_of_birth',
+                        'account_employee',
+                    ])
+                    ->get()
+                    ->map(function ($user) {
+                        $info = $user->personal_information;
+
+                        if (! $info || ! $info->date_of_birth) {
+                            return null;
+                        }
+
+                        try {
+                            $date = Carbon::parse($info->date_of_birth);
+                        } catch (\Exception $e) {
+                            return null;
+                        }
+
+                        $firstName = $info->first_name ?? '';
+                        $lastName  = $info->last_name  ?? '';
+
+                        $fullName = trim(
+                            collect([$firstName, $info->middle_name, $lastName, $info->suffix])
+                                ->filter()
+                                ->join(' ')
+                        );
+
+                        $employee = $user->account_employee;
+
+                        return [
+                            'user_id'         => $user->id,
+                            'employee_id'     => $employee?->employee_id,
+                            'name'            => $fullName ?: ($user->name ?? ''),
+                            'initials'        => strtoupper(
+                                                    mb_substr($firstName, 0, 1) .
+                                                    mb_substr($lastName,  0, 1)
+                                                ),
+                            'department'      => $employee?->department?->name,
+                            'position'        => $employee?->position,
+                            'avatar'          => $user->avatar,
+                            'profile_picture' => $user->avatar,
+                            'date_of_birth'   => $info->date_of_birth,
+                            'birthday_label'  => $date->format('M d'),
+                            'birthday_month'  => $date->month,
+                            'birthday_day'    => $date->day,
+                            'is_today'        => $date->day === now()->day,
+                        ];
+                    })
+                    ->filter()
+                    ->sortBy(fn ($item) => $item['birthday_day'])
+                    ->values();
+
+                // Convert post to array and attach celebrants so frontend receives them
+                $postData = $post->toArray();
+                $postData['celebrants'] = $celebrants;
+
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Post published successfully.',
+                    'data'    => $postData,
+                ], 201);
             }
 
             return response()->json([

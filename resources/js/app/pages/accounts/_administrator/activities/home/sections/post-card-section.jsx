@@ -63,6 +63,7 @@ function extractCelebrants(post) {
         return val;
     };
 
+    // Normalize common containers we might receive from the API
     const dataObj = parseIfString(post.data ?? post.metadata ?? post.post_data ?? {});
 
     const candidates = [
@@ -77,10 +78,21 @@ function extractCelebrants(post) {
         dataObj?.birthday_celebrants,
     ];
 
+    const toArray = (val) => {
+        const parsed = parseIfString(val);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        // Sometimes the API returns an object keyed by id: { "12": { user_id: 12, name: "..." }, ... }
+        if (parsed && typeof parsed === "object") {
+            const vals = Object.values(parsed).filter(Boolean);
+            if (vals.length > 0) return vals;
+        }
+        return null;
+    };
+
     for (let candidate of candidates) {
-        const parsed = parseIfString(candidate);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
+        const arr = toArray(candidate);
+        if (Array.isArray(arr) && arr.length > 0) {
+            return arr;
         }
     }
 
