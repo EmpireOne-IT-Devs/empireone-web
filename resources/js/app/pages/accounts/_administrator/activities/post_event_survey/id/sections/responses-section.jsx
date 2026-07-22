@@ -31,6 +31,7 @@ export default function ResponsesSection({ surveyId }) {
         { header: "Email", accessor: "email" },
         { header: "Status", accessor: "status" },
         { header: "Submitted At", accessor: "submitted_at" },
+        { header: "Action", accessor: "view_survey" },
     ];
 
     const tableData = response_tracker.map((row) => ({

@@ -1,91 +1,167 @@
 ﻿import React from "react";
-import { CheckSquare, AlignLeft, ChevronDown, Star, Type } from "lucide-react";
+import {
+  Type,
+  AlignLeft,
+  Circle,
+  CheckSquare,
+  ChevronDown,
+  Star,
+  ClipboardList,
+} from "lucide-react";
 
-const QUESTION_TYPE_LABELS = {
-    short_answer: "Short Answer",
-    paragraph: "Paragraph",
-    multiple_choice: "Multiple Choice",
-    checkboxes: "Checkboxes",
-    dropdown: "Dropdown",
-    rating: "Rating (1\u20135)",
+const META = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');`;
+const sans = { fontFamily: "'Inter', sans-serif" };
+const label = { fontFamily: "'IBM Plex Mono', monospace" };
+
+const TYPES = {
+  short_answer: { icon: Type, name: "Short answer" },
+  paragraph: { icon: AlignLeft, name: "Paragraph" },
+  multiple_choice: { icon: Circle, name: "Multiple choice" },
+  checkboxes: { icon: CheckSquare, name: "Checkboxes" },
+  dropdown: { icon: ChevronDown, name: "Dropdown" },
+  rating: { icon: Star, name: "Rating" },
 };
 
-const QUESTION_TYPE_ICONS = {
-    short_answer: <Type size={14} />,
-    paragraph: <AlignLeft size={14} />,
-    multiple_choice: <CheckSquare size={14} />,
-    checkboxes: <CheckSquare size={14} />,
-    dropdown: <ChevronDown size={14} />,
-    rating: <Star size={14} />,
-};
+function TypeCaption({ type }) {
+  const meta = TYPES[type] ?? TYPES.short_answer;
+  const Icon = meta.icon;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-zinc-400">
+      <Icon size={13} strokeWidth={2} />
+      <span className="text-[11px] uppercase tracking-wider" style={label}>
+        {meta.name}
+      </span>
+    </span>
+  );
+}
 
-function QuestionCard({ question, index }) {
+function AnswerPreview({ question }) {
+  const { question_type, options } = question;
+
+  if (question_type === "short_answer") {
     return (
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm flex flex-col gap-3">
-            <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div className="flex items-start gap-2">
-                    <span className="text-xs font-bold text-gray-400 w-5 shrink-0 pt-0.5">
-                        {index + 1}.
-                    </span>
-                    <p className="text-sm font-semibold text-gray-800">
-                        {question.question_text}
-                        {question.is_required && (
-                            <span className="ml-1 text-red-500">*</span>
-                        )}
-                    </p>
-                </div>
-                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 text-xs text-gray-500 shrink-0">
-                    {QUESTION_TYPE_ICONS[question.question_type]}
-                    {QUESTION_TYPE_LABELS[question.question_type] ?? question.question_type}
-                </span>
-            </div>
-
-            {question.options?.length > 0 && (
-                <div className="flex flex-col gap-1.5 pl-7">
-                    {question.options.map((opt) => (
-                        <div key={opt.id} className="flex items-center gap-2 text-sm text-gray-500">
-                            <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 shrink-0" />
-                            {opt.option_text}
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {question.question_type === "rating" && (
-                <div className="flex gap-2 pl-7">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                        <div key={n} className="w-8 h-8 rounded-md flex items-center justify-center text-gray-300">
-                            <Star size={16} />
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {(question.question_type === "short_answer" || question.question_type === "paragraph") && (
-                <div className="pl-7">
-                    <div className={`rounded-md border border-dashed border-gray-200 bg-gray-50 text-xs text-gray-400 px-3 py-2 ${question.question_type === "paragraph" ? "h-16" : ""}`}>
-                        {question.question_type === "paragraph" ? "Long text response\u2026" : "Short text response\u2026"}
-                    </div>
-                </div>
-            )}
-        </div>
+      <div className="max-w-sm border-b border-zinc-300 pb-1.5 pt-3">
+        <span className="text-sm text-zinc-400">Short answer text</span>
+      </div>
     );
+  }
+
+  if (question_type === "paragraph") {
+    return (
+      <div className="mt-3 max-w-md rounded-md border border-zinc-200 px-3 pb-8 pt-2.5">
+        <span className="text-sm text-zinc-400">Long answer text</span>
+      </div>
+    );
+  }
+
+  if (question_type === "multiple_choice" || question_type === "checkboxes") {
+    const rounded = question_type === "checkboxes" ? "rounded-[4px]" : "rounded-full";
+    return (
+      <div className="mt-3 flex flex-col gap-2.5">
+        {(options ?? []).map((opt) => (
+          <div key={opt.id} className="flex items-center gap-2.5">
+            <span className={`h-4 w-4 shrink-0 border border-zinc-300 ${rounded}`} />
+            <span className="text-sm text-zinc-600">{opt.option_text}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (question_type === "dropdown") {
+    return (
+      <div className="mt-3 flex max-w-xs items-center justify-between rounded-md border border-zinc-300 px-3 py-2">
+        <span className="text-sm text-zinc-400">
+          {options?.[0]?.option_text ?? "Choose"}
+        </span>
+        <ChevronDown size={16} className="text-zinc-400" />
+      </div>
+    );
+  }
+
+  if (question_type === "rating") {
+    return (
+      <div className="mt-3 flex items-center gap-3">
+        <span className="text-[11px] text-zinc-400">1</span>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <Star key={n} size={19} strokeWidth={1.5} className="text-zinc-300" />
+        ))}
+        <span className="text-[11px] text-zinc-400">5</span>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+function QuestionRow({ question, index, isLast }) {
+  return (
+    <div className={`relative flex gap-4 py-5 ${isLast ? "" : "border-b border-zinc-100"}`}>
+      <div
+        className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${
+          question.is_required
+            ? "border-indigo-300 bg-indigo-50 text-indigo-700"
+            : "border-zinc-300 bg-white text-zinc-500"
+        }`}
+        style={sans}
+      >
+        {index + 1}
+      </div>
+
+      <div className="min-w-0 flex-1 pt-0.5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5">
+          <p className="text-[15px] font-medium leading-snug text-zinc-900" style={sans}>
+            {question.question_text}
+            {question.is_required && <span className="ml-1 text-indigo-500">*</span>}
+          </p>
+          <TypeCaption type={question.question_type} />
+        </div>
+
+        <AnswerPreview question={question} />
+      </div>
+    </div>
+  );
 }
 
 export default function QuestionsSection({ questions = [] }) {
-    return (
-        <div className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                Questions ({questions.length})
-            </h2>
+  const requiredCount = questions.filter((q) => q.is_required).length;
 
-            {questions.length === 0 && (
-                <p className="text-sm text-gray-400">No questions found for this survey.</p>
-            )}
+  return (
+    <div className="w-full bg-white p-4 rounded-md" style={sans}>
+      <style>{META}</style>
 
-            {questions.map((question, index) => (
-                <QuestionCard key={question.id} question={question} index={index} />
-            ))}
+      <div className="flex items-baseline justify-between border-b border-zinc-200 pb-4">
+        <h2 className="text-lg font-semibold text-zinc-900">Questions</h2>
+        <p className="text-sm text-zinc-500">
+          {questions.length} question{questions.length === 1 ? "" : "s"}
+          {requiredCount > 0 && (
+            <>
+              {" "}
+              <span className="text-zinc-300">·</span>{" "}
+              <span className="text-indigo-500">{requiredCount} required</span>
+            </>
+          )}
+        </p>
+      </div>
+
+      {questions.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-zinc-200 py-14 text-center">
+          <ClipboardList size={20} className="text-zinc-300" />
+          <p className="text-sm text-zinc-400">No questions found for this survey.</p>
         </div>
-    );
+      ) : (
+        <div className="relative">
+          <div className="absolute bottom-5 left-4 top-5 w-px bg-zinc-200" aria-hidden="true" />
+          {questions.map((question, index) => (
+            <QuestionRow
+              key={question.id}
+              question={question}
+              index={index}
+              isLast={index === questions.length - 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
