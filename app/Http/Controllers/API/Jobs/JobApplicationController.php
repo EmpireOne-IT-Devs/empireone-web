@@ -888,7 +888,8 @@ class JobApplicationController extends Controller
 
             ->when($request->statuses == 'For Initial Interview', function ($query) {
                 $query->whereNull('interview_status')
-                    ->whereNull('final_status');
+                    ->whereNull('final_status')
+                    ->where('screening_status', '<>', 'Screened Failed');
             })
             ->when($request->statuses == 'For Final Interview', function ($query) {
                 $query->where('interview_status', 'Passed')
