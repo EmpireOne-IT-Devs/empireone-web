@@ -4,7 +4,7 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import Textarea from "@/app/_components/textarea";
 import { create_post_event_survey_thunk } from "@/app/redux/post-event-survey-slice";
-import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
+import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
 import { Folder, PlusCircleIcon, Trash2, GripVertical, Plus, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,14 @@ const QUESTION_TYPES = [
 ];
 
 const HAS_OPTIONS = new Set(["multiple_choice", "checkboxes", "dropdown"]);
+const EVENT_CATEGORY_VALUES = new Set(["event", "events calendar"]);
+
+const isSurveyEligiblePost = (post) => {
+    const category = String(post?.category ?? "").trim().toLowerCase();
+    const type = String(post?.type ?? "").trim().toLowerCase();
+
+    return EVENT_CATEGORY_VALUES.has(category) || type === "event";
+};
 
 const makeQuestion = () => ({
     id: Date.now(),
@@ -30,24 +38,24 @@ const makeQuestion = () => ({
 
 export default function CreateSurveySection() {
     const dispatch = useDispatch();
-    const { posts } = useSelector((state) => state.activities);
+    const { posts } = useSelector((state) => state.engagement);
     const { creating, createError } = useSelector((state) => state.post_event_surveys);
 
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [activityPostId, setActivityPostId] = useState("");
+    const [engagementPostId, setEngagementPostId] = useState("");
     const [questions, setQuestions] = useState([makeQuestion()]);
     const [formError, setFormError] = useState("");
 
     useEffect(() => {
-        if (isOpen) dispatch(get_activity_posts_thunk());
+        if (isOpen) dispatch(get_engagement_posts_thunk());
     }, [isOpen, dispatch]);
 
     const resetForm = () => {
         setTitle("");
         setDescription("");
-        setActivityPostId("");
+        setEngagementPostId("");
         setQuestions([makeQuestion()]);
         setFormError("");
     };
@@ -96,11 +104,11 @@ export default function CreateSurveySection() {
 
     const handleSubmit = async () => {
         setFormError("");
-        if (!activityPostId) return setFormError("Please select an event.");
+        if (!engagementPostId) return setFormError("Please select an engagement event.");
         if (!title.trim())   return setFormError("Survey title is required.");
 
         const payload = {
-            activity_post_id: parseInt(activityPostId, 10),
+            engagement_post_event_id: parseInt(engagementPostId, 10),
             title,
             description,
             questions: questions.map((q, i) => ({
@@ -120,8 +128,12 @@ export default function CreateSurveySection() {
     const eventOptions = [
         { value: "", label: "Select an event" },
         ...posts
-            .filter((p) => p.type === "general")
-            .map((p) => ({ value: String(p.id), label: p.headline })),
+            .filter(isSurveyEligiblePost)
+            .filter((p) => p.headline || p.title)
+            .map((p) => ({
+                value: String(p.id),
+                label: p.headline || p.title || "Untitled event",
+            })),
     ];
 
     return (
@@ -168,12 +180,17 @@ export default function CreateSurveySection() {
                             rows={2}
                         />  
                         <Select
-                            label="Link to Event"
-                            name="activity_post_id"
-                            value={activityPostId}
-                            onChange={(value) => setActivityPostId(value)}
+                            label="Link to Engagement Event"
+                            name="engagement_post_event_id"
+                            value={engagementPostId}
+                            onChange={(value) => setEngagementPostId(value)}
                             options={eventOptions}
                         />
+                        {eventOptions.length <= 1 && (
+                            <p className="text-xs text-gray-500">
+                                No eligible Engagement event posts are available yet. Create an Event post in Engagement first.
+                            </p>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-3">

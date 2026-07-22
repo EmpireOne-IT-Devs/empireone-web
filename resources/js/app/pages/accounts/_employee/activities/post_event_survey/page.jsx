@@ -18,9 +18,11 @@ const STATUS_STYLES = {
 
 const categoryColors = {
     "Events Calendar": "bg-indigo-100 text-indigo-600",
-    "Company Newsfeed": "bg-blue-100 text-blue-600",
-    Polls: "bg-purple-200 text-purple-700",
-    "Department Showcases": "bg-cyan-100 text-cyan-600",
+};
+
+const isEventSurvey = (survey) => {
+    const category = String(survey?.event?.category ?? "").trim().toLowerCase();
+    return category === "events calendar" || category === "event";
 };
 
 const columns = [
@@ -46,7 +48,7 @@ function OpenButton({ survey }) {
 }
 
 const buildRows = (surveys = []) =>
-    surveys.map((survey) => ({
+    surveys.filter(isEventSurvey).map((survey) => ({
         survey: (
             <div>
                 <p className="font-semibold text-gray-900">{survey.title ?? "—"}</p>
