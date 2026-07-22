@@ -54,6 +54,11 @@ export default function ERPTableSection() {
             accessor: "employee_id",
         },
         {
+            header: "EOGS Email",
+            accessor: "eogs_email",
+        },
+
+        {
             header: "Department/Account",
             accessor: "account",
         },
@@ -82,6 +87,7 @@ export default function ERPTableSection() {
             contact: res?.referral?.contact,
             referrer_name: `${res?.referral?.first_name} ${res?.referral?.last_name}`,
             employee_id: `${res?.employee?.employee_id}`,
+            eogs_email: `${res?.employee?.eogs_email}`,
             account: `${res?.employee?.account?.name ?? res?.employee?.department?.name}`,
             date_submitted: moment(res.created_at).format('LLL'),
             screening_status: <Badge
@@ -89,7 +95,7 @@ export default function ERPTableSection() {
                 variant={getStatusVariant(res.screening_status)}
                 solid
             />,
-            interview_status:  <Badge
+            interview_status: <Badge
                 label={res.interview_status ?? ""}
                 variant={getStatusVariant(res.interview_status)}
                 solid
