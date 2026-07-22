@@ -919,7 +919,7 @@ class JobApplicationController extends Controller
             
             -- Pipeline Computations
             SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as remaining_applicants,
-            SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as for_initial,
+            SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL AND screening_status != 'Screened Failed' THEN 1 ELSE 0 END) AS for_initial,
             SUM(CASE WHEN interview_status = 'Passed' AND final_status IS NULL THEN 1 ELSE 0 END) as for_final,
             
             COUNT(id) as total_applicant
