@@ -38,7 +38,17 @@ class JobApplicationController extends Controller
         // Decode Base64
         return base64_decode($data);
     }
-
+    public function delete_applicant($id)
+    {
+        $application = JobApplication::findOrFail($id);
+        $application->update([
+            'removed_by' => Auth::id()
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Applicant deleted successfully.'
+        ], 200);
+    }
 
     public function export_erp(Request $request)
     {
@@ -857,7 +867,7 @@ class JobApplicationController extends Controller
         $baseQuery->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
         });
-
+        $baseQuery->whereNull('removed_by');
         // 3. CORRECTED: Filter by application date directly on the base table
         if (!empty($searchDate)) {
             // This now correctly targets job_applications.created_at
@@ -865,7 +875,6 @@ class JobApplicationController extends Controller
         }
         // 2. Fetch the paginated applications
         $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule'])
-            // A. Apply TEXT search only if a search term exists
             ->when($request->search, function ($query) use ($request) {
                 $searchTerm = '%' . $request->search . '%';
                 $query->where(function ($subQuery) use ($searchTerm) {

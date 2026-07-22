@@ -21,6 +21,10 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+            $table->foreignId('removed_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->foreignId('job_posting_id')
                 ->nullable()
                 ->constrained('job_postings')

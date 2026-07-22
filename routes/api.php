@@ -116,6 +116,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('submit_job_offer',  [JobOfferController::class, 'submit_job_offer']);
         Route::post('transfer_job_offer',  [JobOfferController::class, 'transfer_job_offer']);
         Route::get('applicants',  [JobApplicationController::class, 'applicants']);
+        Route::post('delete_applicant/{id}',  [JobApplicationController::class, 'delete_applicant']);
         Route::get('export_applicant_csv',  [JobApplicationController::class, 'export_applicant_csv']);
         Route::get('export_erp',  [JobApplicationController::class, 'export_erp']);
         Route::get('get_applicant_pooling',  [JobApplicationController::class, 'get_applicant_pooling']);

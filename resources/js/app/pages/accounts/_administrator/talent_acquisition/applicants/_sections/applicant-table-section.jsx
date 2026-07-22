@@ -20,6 +20,7 @@ import { FcApproval, FcButtingIn, FcVideoCall } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import Button from "@/app/_components/button";
 import { router } from "@inertiajs/react";
+import DeleteApplicantSection from "./delete-applicant-section";
 
 export default function ApplicantTableSection() {
     const { applicants, search_applicant_status } = useSelector(
@@ -175,6 +176,7 @@ export default function ApplicantTableSection() {
                     )}
 
                     <ShowApplicantDetailsSection data={res} />
+                    <DeleteApplicantSection data={res} />
                 </div>
             ),
         };

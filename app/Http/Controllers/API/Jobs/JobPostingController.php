@@ -19,7 +19,10 @@ class JobPostingController extends Controller
 
     public function get_erps()
     {
-        $erps = JobApplication::whereNotNull('referral_id')->with(['referral','applicant','employee'])->paginate(10);
+        $erps = JobApplication::whereNotNull('referral_id')
+            ->whereNull('removed_by')
+            ->with(['referral', 'applicant', 'employee'])
+            ->paginate(10);
         return response()->json($erps, 200);
     }
     public function get_job_posting_by_location($id)
