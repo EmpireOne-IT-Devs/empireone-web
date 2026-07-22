@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/account-service-CuIZrfDM.js
-import{m as t}from"./app-DOYs-aU7.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
-========
-import{v as t}from"./app-C0FkYjC_.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
->>>>>>>> 366c05b24b4c38836fdac1bcbe8813d583cb3d16:public/build/assets/account-service-CqtykSwb.js

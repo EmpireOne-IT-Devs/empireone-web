@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/header-section-mZJHMm8I.js
-import{a as t,j as e}from"./app-DOYs-aU7.js";function n(){const{user:s}=t(a=>a.app);return e.jsxs(e.Fragment,{children:[e.jsx("div",{className:"text-2xl font-bold text-black ",children:"Employee Details"}),e.jsxs("div",{className:"text-gray-600",children:[e.jsxs("span",{className:"font-bold text-gray-700",children:[s?.personal_information?.first_name," ",s?.personal_information?.last_name]})," ","• Profile and records overview"]})]})}export{n as default};
-========
-import{a as t,j as e}from"./app-C0FkYjC_.js";function n(){const{user:s}=t(a=>a.app);return e.jsxs(e.Fragment,{children:[e.jsx("div",{className:"text-2xl font-bold text-black ",children:"Employee Details"}),e.jsxs("div",{className:"text-gray-600",children:[e.jsxs("span",{className:"font-bold text-gray-700",children:[s?.personal_information?.first_name," ",s?.personal_information?.last_name]})," ","• Profile and records overview"]})]})}export{n as default};
->>>>>>>> 366c05b24b4c38836fdac1bcbe8813d583cb3d16:public/build/assets/header-section-CJwZe6-8.js

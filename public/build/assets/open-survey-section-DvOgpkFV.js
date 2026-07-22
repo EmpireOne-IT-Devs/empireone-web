@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/open-survey-section-YntUvP0W.js
-import{j as t,b as s}from"./app-DOYs-aU7.js";import{k as o}from"./index-CaOywzPX.js";import"./iconBase-iUYBBvuu.js";function p({survey:e}){const n=()=>{s.visit(`/accounts/administrator/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:n,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(o,{className:"text-base"}),"Open Survey"]})}export{p as default};
-========
-import{j as t,f as s}from"./app-C0FkYjC_.js";import{k as o}from"./index-ad70C4fl.js";import"./iconBase-Bu_wcM5J.js";function p({survey:e}){const n=()=>{s.visit(`/accounts/administrator/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:n,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(o,{className:"text-base"}),"Open Survey"]})}export{p as default};
->>>>>>>> 366c05b24b4c38836fdac1bcbe8813d583cb3d16:public/build/assets/open-survey-section-DvOgpkFV.js
