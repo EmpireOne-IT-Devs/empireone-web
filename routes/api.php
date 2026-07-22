@@ -173,6 +173,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('surveys/{id}', [EngagementPostEventSurveyController::class, 'show']);
         Route::post('surveys/{id}/submit', [EngagementPostEventSurveyController::class, 'submit']);
         Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
+        Route::get('surveys/{id}/responses/{userId}', [EngagementPostEventSurveyController::class, 'employeeResponse']);
         Route::get('surveys/{id}/analytics', [EngagementPostEventSurveyController::class, 'analytics']);
         Route::post('surveys/{id}/close', [EngagementPostEventSurveyController::class, 'close']);
         Route::post('surveys/{id}/reopen', [EngagementPostEventSurveyController::class, 'reopen']);

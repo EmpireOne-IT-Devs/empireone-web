@@ -61,6 +61,7 @@ export default function Page() {
 
                 {/* Scrollable content */}
                 <div className="flex-1 overflow-y-auto min-h-0 px-6 pb-8 flex flex-col gap-5">
+                    
                     <SurveyInfoSection survey={selectedSurvey} />
                     <SurveyFormSection
                         surveyId={id}

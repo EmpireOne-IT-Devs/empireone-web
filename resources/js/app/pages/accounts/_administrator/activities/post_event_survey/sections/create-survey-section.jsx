@@ -28,6 +28,51 @@ const isSurveyEligiblePost = (post) => {
     return EVENT_CATEGORY_VALUES.has(category) || type === "event";
 };
 
+const DEFAULT_SURVEY_QUESTIONS = [
+    {
+        question_type: "rating",
+        question_text: "How satisfied were you with the event?",
+        is_required: true,
+        options: [],
+    },
+    {
+        question_type: "rating",
+        question_text: "How satisfied were you with the activities? (Schedule)",
+        is_required: true,
+        options: [],
+    },
+    {
+        question_type: "rating",
+        question_text: "How satisfied were you with the activities? (Food)",
+        is_required: true,
+        options: [],
+    },
+    {
+        question_type: "rating",
+        question_text: "How satisfied were you with the activities? (Program)",
+        is_required: true,
+        options: [],
+    },
+    {
+        question_type: "paragraph",
+        question_text: "What was the highlight of the event for you?",
+        is_required: false,
+        options: [],
+    },
+    {
+        question_type: "paragraph",
+        question_text: "What is one thing we could change to make this event even better next time?",
+        is_required: false,
+        options: [],
+    },
+    {
+        question_type: "paragraph",
+        question_text: "Are there any specific topics or activities you’d like to see in the future?",
+        is_required: false,
+        options: [],
+    },
+];
+
 const makeQuestion = () => ({
     id: Date.now(),
     question_type: "multiple_choice",
@@ -51,6 +96,15 @@ export default function CreateSurveySection() {
     useEffect(() => {
         if (isOpen) dispatch(get_engagement_posts_thunk());
     }, [isOpen, dispatch]);
+
+    const loadDefaultQuestions = () => {
+        setQuestions(
+            DEFAULT_SURVEY_QUESTIONS.map((q, index) => ({
+                ...q,
+                id: Date.now() + index,
+            }))
+        );
+    };
 
     const resetForm = () => {
         setTitle("");
@@ -165,6 +219,7 @@ export default function CreateSurveySection() {
             >
                 <div className="flex flex-col gap-5 overflow-y-auto pb-4">
                     <div className="rounded-xl border border-gray-200 p-5 flex flex-col gap-4 bg-gray-50">
+                       
                         <Input
                             label="Survey Title"
                             name="title"
@@ -191,6 +246,13 @@ export default function CreateSurveySection() {
                                 No eligible Engagement event posts are available yet. Create an Event post in Engagement first.
                             </p>
                         )}
+                         <button
+                            type="button"
+                            onClick={loadDefaultQuestions}
+                            className="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100 transition"
+                        >
+                            Load Default Questions
+                        </button>
                     </div>
 
                     <div className="flex flex-col gap-3">
