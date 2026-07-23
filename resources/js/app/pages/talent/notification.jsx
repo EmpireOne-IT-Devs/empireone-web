@@ -51,9 +51,19 @@ export default function Notification() {
                     {currentConfig.title}
                 </h2>
 
-                <p className="text-slate-600 mb-8 leading-relaxed min-h-[3rem]">
+                <p className="text-slate-600 mb-6 leading-relaxed min-h-[3rem]">
                     {message}
                 </p>
+
+                {/* Helpful Note Box */}
+                {(status === 'found' || status === 'cooldown') && (
+                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-8 text-sm text-slate-600 text-left shadow-sm">
+                        <span className="font-semibold text-slate-800 flex items-center gap-2 mb-1">
+                            💡 Quick Tip
+                        </span>
+                        Log in with your email to check your current application status. If you haven't changed it, your default password is <strong className="text-slate-800 font-mono bg-slate-200 px-1 py-0.5 rounded">Business12</strong>.
+                    </div>
+                )}
 
                 {/* Buttons */}
                 <div className="flex flex-col gap-3">
@@ -66,10 +76,10 @@ export default function Notification() {
                     </Button>
 
                     <button
-                        onClick={() => router.visit('/')}
+                        onClick={() => router.visit('/auth/login')}
                         className="text-sm text-slate-500 hover:text-slate-700 transition-colors mt-2 font-medium"
                     >
-                        Return to Homepage
+                        Return to Login
                     </button>
                 </div>
             </div>
