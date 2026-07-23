@@ -396,7 +396,7 @@ const EmploymentContract = ({ data }) => (
                     }}
                 >
                     {data?.salary}
-                </Text>{" "}
+                </Text>,
                 payable in equal semi-monthly installments, subject to
                 applicable statutory deductions. Upon regularization, the
                 Employee will receive the same monthly salary or any adjustment

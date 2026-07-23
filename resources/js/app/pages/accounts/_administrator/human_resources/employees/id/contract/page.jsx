@@ -38,7 +38,7 @@ export default function Page() {
             }`,
         contract_signed_at:
             // user?.account_contract?.contract_signed_at ??
-            moment().format("LLL"),
+           moment().add(1, 'days').format('LLL'),
         residence:
             // user?.account_contract?.residence ??
             `${user?.personal_information?.barangay}  ${user?.personal_information?.city}`,
@@ -53,7 +53,7 @@ export default function Page() {
             `${user?.account_employee?.position}`,
         started_at:
             // user?.account_contract?.started_at ??
-            `${moment(user?.account_employee?.started_at).format("LL")}`,
+            `${moment(user?.account_employee?.started_at).subtract(1, 'days').format("LL")}`,
         ended_at:
             // user?.account_contract?.ended_at ??
             `${moment(user?.account_employee?.started_at)
