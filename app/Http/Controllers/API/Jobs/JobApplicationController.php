@@ -50,6 +50,25 @@ class JobApplicationController extends Controller
         ], 200);
     }
 
+    public function checking_applicant(Request $request)
+    {
+     
+        $exists = JobApplication::whereHas('user', function ($query) use ($request) {
+            $query->where('email', $request->email);
+        })->exists();
+        if ($exists) {
+            return response()->json([
+                'status' => 'found',
+                'message' => 'An application with this email already exists.'
+            ]);
+        }
+
+        return response()->json([
+            'data' => $request->email, // This will always be false here
+            'status' => 'available',
+            'message' => 'Email is available.'
+        ]);
+    }
     public function export_erp(Request $request)
     {
         // 1. Fetch the data

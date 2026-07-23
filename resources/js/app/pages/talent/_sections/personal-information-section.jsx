@@ -3,20 +3,51 @@ import Input from "@/app/_components/input";
 import Radio from "@/app/_components/radio";
 import Select from "@/app/_components/select";
 import Dropdown from "@/Components/Dropdown";
-import React from "react";
+import React, { useRef } from "react";
 import { useSelector } from "react-redux";
 import { Controller } from "react-hook-form";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { checking_applicant_service } from "@/app/services/applicants-service";
 
 export default function PersonalInformationSection({
     register,
     errors,
     watchedValues,
     control,
+    setValue
 }) {
     const { departments } = useSelector((store) => store.departments);
     console.log("departments", departments);
+
+
+    const typingTimer = useRef(null);
+
+    function checking_applicant(e) {
+        const email = e.target.value;
+
+        // 1. Clear the timer stored in the ref
+        clearTimeout(typingTimer.current);
+
+        // 2. Assign the new timer to the ref
+        typingTimer.current = setTimeout(async () => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (email !== '' && emailRegex.test(email)) {
+                setValue('email', email);
+                try {
+                    // Call your API service
+                    await checking_applicant_service({
+                        ...watchedValues,
+                        email: email
+                    });
+                } catch (error) {
+                    console.error("Error checking applicant:", error);
+                }
+            }
+        }, 1500);
+    }
+
     return (
         <div className="space-y-6">
             <h2
@@ -34,7 +65,7 @@ export default function PersonalInformationSection({
                 <div className="flex flex-col w-full md:flex-1">
                     <Input
                         label="First Name"
-                        name="first_name"   
+                        name="first_name"
                         {...register("first_name", {
                             required: true,
                         })}
@@ -141,6 +172,7 @@ export default function PersonalInformationSection({
                                 message: "Invalid email",
                             },
                         })}
+                        onChange={checking_applicant}
                         error={errors.email}
                     />
                 </div>
@@ -157,11 +189,10 @@ export default function PersonalInformationSection({
                         render={({ field: { onChange, value } }) => (
                             <div className="w-full">
                                 <div
-                                    className={`relative flex items-center rounded-md border bg-white px-3 text-sm text-black transition-colors focus-within:ring-2 focus-within:ring-purple-500 ${
-                                        errors.contact
-                                            ? "border-red-500 focus-within:ring-red-500"
-                                            : "border-gray-300"
-                                    }`}
+                                    className={`relative flex items-center rounded-md border bg-white px-3 text-sm text-black transition-colors focus-within:ring-2 focus-within:ring-purple-500 ${errors.contact
+                                        ? "border-red-500 focus-within:ring-red-500"
+                                        : "border-gray-300"
+                                        }`}
                                 >
                                     <PhoneInput
                                         international

@@ -68,6 +68,7 @@ Route::middleware('web')->group(function () {
 Route::resource('location', LocationController::class);
 
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
+Route::post('job/checking_applicant',  [JobApplicationController::class, 'checking_applicant']);
 Route::get('job/employee_applicants',  [JobApplicationController::class, 'employee_applicants']);
 Route::post('job/get_job_application_from_email',  [JobApplicationController::class, 'get_job_application_from_email']);
 Route::get('job/postings',  [JobPostingController::class, 'index']);

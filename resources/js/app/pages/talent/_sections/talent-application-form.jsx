@@ -370,6 +370,7 @@ const TalentApplicationForm = () => {
                             register={register}
                             errors={errors}
                             control={control}
+                            setValue={setValue}
                             watchedValues={watchedValues}
                         />
                         <AddressInformationSection
