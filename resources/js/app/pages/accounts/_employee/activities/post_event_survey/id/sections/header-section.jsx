@@ -1,4 +1,4 @@
-import { Calendar } from "lucide-react"; // Using standard Calendar matching the exact icon shape
+import { Calendar } from "lucide-react";
 import React from "react";
 
 export default function HeaderSection() {
@@ -7,11 +7,11 @@ export default function HeaderSection() {
             <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2.5 text-[21px] font-bold tracking-tight">
                     <Calendar className="shrink-0 stroke-[2.2]" size={24} />
-                    <h2>Post Event Survey</h2>
+                    <h2>Event Feedback</h2>
                 </div>
 
                 <p className="text-xs md:text-sm text-white/90 font-normal leading-relaxed tracking-normal max-w-2xl">
-                   Track survey responses and attendee satisfaction.
+                    Share your experience and help us improve future events.
                 </p>
             </div>
         </div>

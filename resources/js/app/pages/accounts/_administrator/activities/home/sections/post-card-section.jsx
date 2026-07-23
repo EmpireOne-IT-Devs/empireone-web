@@ -5,6 +5,8 @@ import {
     Newspaper,
     Send,
     Tag,
+    Cake,
+    PartyPopper,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
@@ -42,22 +44,75 @@ const CATEGORY_CONFIG = {
     News: { icon: Newspaper, variant: "info" },
     Milestone: { icon: Send, variant: "success" },
     Announcement: { icon: Megaphone, variant: "danger" },
+    Birthday: { icon: Cake, variant: "warning" },
     General: { icon: Tag, variant: "secondary" },
 };
 
+// ── Helper to robustly extract celebrants list from any JSON structure ──
+function extractCelebrants(post) {
+    if (!post) return [];
+
+    const parseIfString = (val) => {
+        if (typeof val === "string") {
+            try {
+                return JSON.parse(val);
+            } catch {
+                return val;
+            }
+        }
+        return val;
+    };
+
+    // Normalize common containers we might receive from the API
+    const dataObj = parseIfString(post.data ?? post.metadata ?? post.post_data ?? {});
+
+    const candidates = [
+        post.celebrants,
+        post.celebrants_list,
+        post.users,
+        post.members,
+        dataObj?.celebrants,
+        dataObj?.celebrants_list,
+        dataObj?.users,
+        dataObj?.members,
+        dataObj?.birthday_celebrants,
+    ];
+
+    const toArray = (val) => {
+        const parsed = parseIfString(val);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        // Sometimes the API returns an object keyed by id: { "12": { user_id: 12, name: "..." }, ... }
+        if (parsed && typeof parsed === "object") {
+            const vals = Object.values(parsed).filter(Boolean);
+            if (vals.length > 0) return vals;
+        }
+        return null;
+    };
+
+    for (let candidate of candidates) {
+        const arr = toArray(candidate);
+        if (Array.isArray(arr) && arr.length > 0) {
+            return arr;
+        }
+    }
+
+    return [];
+}
+
 function PostContent({ content, className = "" }) {
+    if (!content) return null;
     return (
         <div
             className={`overflow-x-hidden break-words text-[15px] text-gray-700 leading-relaxed ${className}`}
-            dangerouslySetInnerHTML={{ __html: content ?? "" }}
+            dangerouslySetInnerHTML={{ __html: content }}
         />
     );
 }
 
-// ── FIXED: Image Grid (Reliable Grid & Multi-Image Collage) ──────────────────
+// ── Image Grid Component ─────────────────────────────────────────────
 function ImageGrid({ files, clickable = false }) {
+    if (!files || files.length === 0) return null;
     const count = files.length;
-    if (count === 0) return null;
 
     const wrap = (file, idx, className = "") => (
         <div
@@ -73,7 +128,6 @@ function ImageGrid({ files, clickable = false }) {
         </div>
     );
 
-    // Case 1: Single Image
     if (count === 1) {
         return (
             <div
@@ -89,7 +143,6 @@ function ImageGrid({ files, clickable = false }) {
         );
     }
 
-    // Case 2: Two Images (Split horizontally)
     if (count === 2) {
         return (
             <div className="grid grid-cols-2 gap-1 h-[280px]">
@@ -98,7 +151,6 @@ function ImageGrid({ files, clickable = false }) {
         );
     }
 
-    // Case 3: Three Images (Large main on left, stacked on right)
     if (count === 3) {
         return (
             <div className="grid grid-cols-2 grid-rows-2 gap-1 h-[340px]">
@@ -109,7 +161,6 @@ function ImageGrid({ files, clickable = false }) {
         );
     }
 
-    // Case 4+: Four or more images with overflow overlay
     const visible = files.slice(0, 4);
     const overflow = count - 4;
 
@@ -137,7 +188,6 @@ function ImageGrid({ files, clickable = false }) {
     );
 }
 
-// ── Post Card Component ───────────────────────────────────────────────
 function EngagementPostCard({
     post,
     menuOpen,
@@ -150,12 +200,13 @@ function EngagementPostCard({
     onVote,
 }) {
     const dispatch = useDispatch();
-    const categoryKey = post.category ?? "General";
+    const isBirthday = post.type === "birthday" || post.category === "Birthday";
+    const categoryKey = isBirthday ? "Birthday" : post.category ?? "General";
     const catConfig =
         CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
     const CategoryIcon = catConfig.icon;
 
-    // ── Poll post ─────────────────────────────────────────────────────
+    // Handle Poll Posts
     if (post.type === "poll") {
         return (
             <div className="relative">
@@ -177,14 +228,33 @@ function EngagementPostCard({
         );
     }
 
-    // ── Regular post ─────────────────────────────────────────────────
+    // Extract title, content, and celebrants list safely
+    const titleText = post.title ?? post.headline;
+    const bodyContent = post.content ?? post.message;
+    const celebrantsList = extractCelebrants(post);
+
     return (
         <Card
             variant="default"
             padding="p-0"
-            className="w-full overflow-hidden font-sans rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-100"
+            className={`w-full overflow-hidden font-sans rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border ${
+                isBirthday
+                    ? "border-pink-200 bg-gradient-to-b from-pink-50/50 via-white to-white"
+                    : "border-gray-100"
+            }`}
             onClick={onView}
         >
+            {/* Celebratory Top Banner for Birthdays */}
+            {isBirthday && (
+                <div className="bg-gradient-to-r from-orange-500 via-purple-500 to-indigo-500 px-4 py-1.5 flex items-center justify-between text-white text-xs font-semibold tracking-wide">
+                    <div className="flex items-center gap-1.5">
+                        <PartyPopper className="w-4 h-4 animate-pulse" />
+                        <span>Birthday Celebration</span>
+                    </div>
+                    <Cake className="w-4 h-4 text-pink-200" />
+                </div>
+            )}
+
             {/* Header */}
             <div
                 className="flex items-start justify-between px-4 pt-4 pb-2"
@@ -195,24 +265,45 @@ function EngagementPostCard({
                         <img
                             src={post.author.avatar}
                             alt={post.author.name}
-                            className="w-10 h-10 rounded-full object-cover ring-2 ring-white"
+                            className={`w-10 h-10 rounded-full object-cover ring-2 ${
+                                isBirthday ? "ring-pink-400" : "ring-white"
+                            }`}
                         />
                     ) : (
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                        <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 ${
+                                isBirthday
+                                    ? "bg-gradient-to-br from-pink-500 to-rose-600"
+                                    : "bg-gradient-to-br from-violet-500 to-purple-600"
+                            }`}
+                        >
                             {post.author?.initials}
                         </div>
                     )}
                     <div>
-                        <p className="font-semibold text-gray-900 text-[14px] leading-tight">
+                        <p className="font-semibold text-gray-900 text-[14px] leading-tight flex items-center gap-1.5">
                             {post.author?.name}
+                            {isBirthday && (
+                                <span className="inline-flex items-center rounded-full bg-pink-100 px-2 py-0.5 text-[10px] font-medium text-pink-700">
+                                    🎂 Birthday
+                                </span>
+                            )}
                         </p>
                         <div className="flex items-center gap-1.5 mt-0.5">
                             <span className="text-xs text-orange-400">
                                 {post.time_ago}
                             </span>
                             <span className="text-gray-300 text-[10px]">·</span>
-                            <CategoryIcon className="h-3 w-3 text-purple-600" />
-                            <span className="text-xs text-purple-400">
+                            <CategoryIcon
+                                className={`h-3 w-3 ${
+                                    isBirthday ? "text-pink-500" : "text-purple-600"
+                                }`}
+                            />
+                            <span
+                                className={`text-xs ${
+                                    isBirthday ? "text-pink-500 font-medium" : "text-purple-400"
+                                }`}
+                            >
                                 {categoryKey}
                             </span>
                         </div>
@@ -229,10 +320,37 @@ function EngagementPostCard({
 
             {/* Body */}
             <div className="px-4 pb-3">
-                <p className="font-semibold text-gray-900 text-[15px] mb-1">
-                    {post.title}
-                </p>
-                <PostContent content={post.content} />
+                {titleText && (
+                    <p className="font-semibold text-gray-900 text-[15px] mb-1">
+                        {titleText}
+                    </p>
+                )}
+                {bodyContent && <PostContent content={bodyContent} />}
+
+                {/* Birthday Celebrants Badge Area */}
+                {celebrantsList.length > 0 && (
+                    <div className="mt-3 border border-pink-100 bg-pink-50/60 rounded-xl p-3 flex flex-col gap-2">
+                        <p className="text-xs font-bold text-pink-600 uppercase tracking-wider flex items-center gap-1">
+                            🎂 Birthday Celebrants
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                            {celebrantsList.map((c, i) => {
+                                const name =
+                                    typeof c === "object"
+                                        ? (c.name ?? c.full_name ?? c.user_name)
+                                        : c;
+                                return (
+                                    <span
+                                        key={c.id ?? c.user_id ?? i}
+                                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-pink-200 rounded-full text-xs font-medium text-gray-800 shadow-sm"
+                                    >
+                                        🎉 {name}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Images */}
@@ -242,7 +360,7 @@ function EngagementPostCard({
                 </div>
             )}
 
-            {/* Interaction */}
+            {/* Interaction Panel */}
             <div onClick={(e) => e.stopPropagation()}>
                 <PostInteractionPanel
                     postId={post.id}
@@ -262,7 +380,7 @@ function EngagementPostCard({
     );
 }
 
-// ── Post Card Section Component ───────────────────────────────────────
+// ── Main PostCardSection Component ───────────────────────────────────
 export default function PostCardSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading, postsError, deleting, pollVotingPostId } = useSelector(
@@ -306,7 +424,6 @@ export default function PostCardSection() {
         }
     }
 
-    // ── FIXED: Only show loading skeleton on first load (when we have no posts yet) ──
     if (postsLoading && posts.length === 0) {
         return (
             <div className="flex flex-col gap-4">

@@ -1,32 +1,38 @@
 import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { Cake, Edit2, Send } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; // Added useDispatch
 import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
 import BirthdayEditMessageTab from "./birthday-edit-message-tab";
 import BirthdayPublishTab from "./birthday-publish-tab";
+import { get_engagement_posts_thunk } from "@/app/redux/engagement-slice"; // Import thunk
 
 const DEFAULT_HEADLINE = "🎉 Happy Birthday to Our June Celebrants! 🎂";
 const DEFAULT_MESSAGE =
     "Wishing all our team members celebrating birthdays this month a wonderful year filled with happiness, success, good health, and memorable moments. Thank you for your dedication and contributions to the organization.\n\nPlease join us in celebrating our June birthday celebrants and making their special month even more meaningful! 🎈🎁";
 
 export default function CreateBirthdayPost() {
+    const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("edit");
     const [headline, setHeadline] = useState(DEFAULT_HEADLINE);
     const [message, setMessage] = useState(DEFAULT_MESSAGE);
 
-    // 1. Switched store slice selector from state.activities to state.engagement
     const { birthdayMonth, birthdayCount } = useSelector((state) => state.engagement);
 
-    // Safety fallbacks to prevent errors if the state is empty or loading
     const displayCount = birthdayCount ?? 0;
     const displayMonth = birthdayMonth || new Date().toLocaleString("default", { month: "long" });
 
     const handleClose = () => {
         setIsOpen(false);
         setActiveTab("edit");
+    };
+
+    // Callback after successful post creation
+    const handleSuccess = () => {
+        dispatch(get_engagement_posts_thunk()); // Re-fetch feed to render the new post card
+        handleClose();
     };
 
     const TABS = [
@@ -65,7 +71,6 @@ export default function CreateBirthdayPost() {
                 }
             >
                 <div className="w-full flex flex-col font-sans antialiased pb-2 overflow-x-hidden">
-                    {/* Tab bar */}
                     <div className="-mx-6 -mt-3 mb-4 flex border-b border-gray-100 px-6">
                         {TABS.map((tab) => (
                             <button
@@ -97,6 +102,7 @@ export default function CreateBirthdayPost() {
                             headline={headline}
                             message={message}
                             onClose={handleClose}
+                            onSuccess={handleSuccess} // Pass success handler
                         />
                     )}
                 </div>

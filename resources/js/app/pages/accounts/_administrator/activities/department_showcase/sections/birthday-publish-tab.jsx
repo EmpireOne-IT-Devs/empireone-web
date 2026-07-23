@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { router } from "@inertiajs/react";
-import { publish_engagement_post_thunk } from "@/app/redux/engagement-slice";
+import {
+    publish_engagement_post_thunk,
+    get_engagement_posts_thunk, // 1. Added thunk import
+} from "@/app/redux/engagement-slice";
 import { setAlert } from "@/app/redux/app-slice";
 import Button from "@/app/_components/button";
 
@@ -13,18 +15,21 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
         (state) => state.engagement,
     );
 
-    // Safety fallbacks to prevent errors if the state is loading or empty
     const birthdayList = birthdays ?? [];
     const isPublishing = publishing ?? false;
     const currentYear = new Date().getFullYear();
-    const displayMonth = birthdayMonth || new Date().toLocaleString("default", { month: "long" });
+    const displayMonth =
+        birthdayMonth || new Date().toLocaleString("default", { month: "long" });
 
     const [publishTo, setPublishTo] = useState("All Employees");
     const [scheduledAt, setScheduledAt] = useState("");
 
-    const navigate = () => {
+    // Helper to refresh feed & close modal gracefully without forcing a hard page route jump
+    const handleSuccessAndClose = async (alertTitle) => {
+        dispatch(setAlert({ type: "success", title: alertTitle }));
+        // 2. Re-fetch the engagement feed so PostCardSection renders the new post immediately
+        await dispatch(get_engagement_posts_thunk());
         onClose();
-        router.visit("/accounts/administrator/activities/home");
     };
 
     const handlePublishNow = async () => {
@@ -39,9 +44,9 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                 scheduled_at: null,
             }),
         );
+
         if (publish_engagement_post_thunk.fulfilled.match(result)) {
-            dispatch(setAlert({ type: "success", title: "Post Published Successfully!" }));
-            navigate();
+            await handleSuccessAndClose("Post Published Successfully!");
         }
     };
 
@@ -57,9 +62,9 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                 scheduled_at: scheduledAt,
             }),
         );
+
         if (publish_engagement_post_thunk.fulfilled.match(result)) {
-            dispatch(setAlert({ type: "success", title: "Post Scheduled Successfully!" }));
-            navigate();
+            await handleSuccessAndClose("Post Scheduled Successfully!");
         }
     };
 

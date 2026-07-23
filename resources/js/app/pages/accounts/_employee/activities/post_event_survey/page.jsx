@@ -9,6 +9,7 @@ import { ClipboardList } from "lucide-react";
 import Skeleton from "@/app/_components/skeleton";
 import Table from "@/app/_components/table";
 import moment from "moment";
+import HeaderSection from "./id/sections/header-section";
 
 const STATUS_STYLES = {
     published: "bg-green-100 text-green-600",
@@ -87,6 +88,7 @@ export default function Page() {
     return (
         <Layout>
             <ActivitiesLayout>
+                <HeaderSection/>
                 <div className="h-full overflow-y-auto pr-1">
                     {surveysLoading ? (
                         <div className="px-2 py-4"><Skeleton lines={5} /></div>

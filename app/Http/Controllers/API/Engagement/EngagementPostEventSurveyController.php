@@ -161,6 +161,11 @@ class EngagementPostEventSurveyController extends Controller
                     'answer' => is_array($answer) ? json_encode($answer) : (string) $answer,
                 ]);
             }
+
+            $survey = EngagementPostEventSurvey::find($id);
+            if ($survey) {
+                $survey->refreshSentimentOverview();
+            }
         });
 
         return response()->json([
@@ -172,22 +177,29 @@ class EngagementPostEventSurveyController extends Controller
     // ── Admin: response tracker ──────────────────────────────────────────────
     public function responses(int $id): JsonResponse
     {
-        EngagementPostEventSurvey::findOrFail($id);
+        $survey = EngagementPostEventSurvey::findOrFail($id);
 
         $employees = User::where('role', User::ROLE_EMPLOYEE)
+            ->with(['account_employee.account', 'account_employee.department'])
             ->select('id', 'name', 'email')
             ->get();
 
-        $responseMap = EngagementPostEventSurveyResponse::where('engagement_post_event_survey_id', $id)
-            ->get()
-            ->keyBy('user_id');
+        $responseModels = EngagementPostEventSurveyResponse::with(['answers.question'])
+            ->where('engagement_post_event_survey_id', $id)
+            ->get();
+
+        $responseMap = $responseModels->keyBy('user_id');
 
         $tracker = $employees->map(function ($employee) use ($responseMap) {
             $response = $responseMap->get($employee->id);
 
             return [
                 'user_id'       => $employee->id,
+                'employee_id'   => $employee->account_employee?->employee_id ?? 'N/A',
                 'employee_name' => $employee->name,
+                'program_department' => $employee->account_employee?->account?->name
+                    ?? $employee->account_employee?->department?->name
+                    ?? 'N/A',
                 'email'         => $employee->email,
                 'status'        => $response ? 'Completed' : 'Pending',
                 'submitted_at'  => $response ? optional($response->submitted_at)->toDateTimeString() : null,
@@ -197,12 +209,50 @@ class EngagementPostEventSurveyController extends Controller
         $totalEmployees = $employees->count();
         $totalResponses = $responseMap->count();
 
+        if ($survey->sentiment_overview === null) {
+            $survey->refreshSentimentOverview();
+        }
+
+        $sentimentOverview = $survey->sentiment_overview ?? [];
+
         return response()->json([
             'data' => [
                 'total_employees'    => $totalEmployees,
                 'total_responses'    => $totalResponses,
                 'participation_rate' => $totalEmployees > 0 ? round(($totalResponses / $totalEmployees) * 100, 2) : 0,
                 'response_tracker'   => $tracker,
+                'sentiment_overview' => $sentimentOverview,
+            ],
+            'status' => 'success',
+        ]);
+    }
+
+    public function employeeResponse(int $surveyId, int $userId): JsonResponse
+    {
+        $survey = EngagementPostEventSurvey::with(['questions.options'])->findOrFail($surveyId);
+        $response = EngagementPostEventSurveyResponse::with(['answers.question'])->where('engagement_post_event_survey_id', $surveyId)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+
+        $answers = $response->answers->map(function ($answer) use ($survey) {
+            $question = $survey->questions->firstWhere('id', $answer->engagement_post_event_question_id);
+
+            return [
+                'id' => $answer->id,
+                'question_id' => $answer->engagement_post_event_question_id,
+                'question_text' => $question?->question ?? 'Question removed',
+                'question_type' => $question?->type ?? 'short_answer',
+                'answer' => $answer->answer,
+            ];
+        })->values();
+
+        return response()->json([
+            'data' => [
+                'survey_id' => $survey->id,
+                'employee_id' => $userId,
+                'employee_name' => User::find($userId)?->name ?? 'Employee',
+                'submitted_at' => $response->submitted_at?->toDateTimeString(),
+                'answers' => $answers,
             ],
             'status' => 'success',
         ]);
@@ -337,6 +387,97 @@ class EngagementPostEventSurveyController extends Controller
     }
 
     // ── Shared: format survey for API response ───────────────────────────────
+    private function normalizeRating(mixed $answer): ?int
+    {
+        if (is_numeric($answer)) {
+            $value = (int) $answer;
+            return $value >= 1 && $value <= 5 ? $value : null;
+        }
+
+        if (is_string($answer)) {
+            if (preg_match('/(\d+)/', $answer, $matches)) {
+                $value = (int) $matches[1];
+                return $value >= 1 && $value <= 5 ? $value : null;
+            }
+        }
+
+        return null;
+    }
+
+    private function buildSentimentOverview(int $surveyId): array
+    {
+        $responses = EngagementPostEventSurveyResponse::with(['answers.question'])
+            ->where('engagement_post_event_survey_id', $surveyId)
+            ->get();
+
+        if ($responses->isEmpty()) {
+            return [
+                'average_rating' => 0.0,
+                'positive' => ['count' => 0, 'percentage' => 0],
+                'neutral' => ['count' => 0, 'percentage' => 0],
+                'negative' => ['count' => 0, 'percentage' => 0],
+            ];
+        }
+
+        $sentimentCounts = [
+            'positive' => 0,
+            'neutral'  => 0,
+            'negative' => 0,
+        ];
+        $ratingSum = 0;
+        $ratingResponses = 0;
+
+        foreach ($responses as $response) {
+            $ratings = [];
+
+            foreach ($response->answers as $answer) {
+                if ($answer->question?->type !== 'rating') {
+                    continue;
+                }
+
+                $rating = $this->normalizeRating($answer->answer);
+                if ($rating === null) {
+                    continue;
+                }
+
+                $ratings[] = $rating;
+            }
+
+            if ($ratings === []) {
+                $sentimentCounts['neutral']++;
+                continue;
+            }
+
+            $responseAverage = round(array_sum($ratings) / count($ratings), 1);
+            $ratingSum += $responseAverage;
+            $ratingResponses++;
+
+            if ($responseAverage >= 4) {
+                $sentimentCounts['positive']++;
+            } elseif ($responseAverage <= 2) {
+                $sentimentCounts['negative']++;
+            } else {
+                $sentimentCounts['neutral']++;
+            }
+        }
+
+        return [
+            'average_rating' => $ratingResponses > 0 ? round($ratingSum / $ratingResponses, 1) : 0.0,
+            'positive' => [
+                'count' => $sentimentCounts['positive'],
+                'percentage' => $responses->count() > 0 ? round(($sentimentCounts['positive'] / $responses->count()) * 100, 1) : 0,
+            ],
+            'neutral' => [
+                'count' => $sentimentCounts['neutral'],
+                'percentage' => $responses->count() > 0 ? round(($sentimentCounts['neutral'] / $responses->count()) * 100, 1) : 0,
+            ],
+            'negative' => [
+                'count' => $sentimentCounts['negative'],
+                'percentage' => $responses->count() > 0 ? round(($sentimentCounts['negative'] / $responses->count()) * 100, 1) : 0,
+            ],
+        ];
+    }
+
     private function formatSurvey(EngagementPostEventSurvey $survey): array
     {
         return [
