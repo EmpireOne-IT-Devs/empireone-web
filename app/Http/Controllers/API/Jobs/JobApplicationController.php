@@ -49,39 +49,46 @@ class JobApplicationController extends Controller
             'message' => 'Applicant deleted successfully.'
         ], 200);
     }
-
     public function checking_applicant(Request $request)
     {
-
-        $latestApplication = JobApplication::whereHas('user', function ($query) use ($request) {
-            $query->where('email', $request->email);
-        })
-            ->orWhereHas('personal_information', function ($query) use ($request) {
-                $query->where('first_name', $request->first_name);
-                $query->where('last_name', $request->last_name);
+        $latestApplication = JobApplication::where('job_posting_id', $request->job_posting_id)
+            ->where(function ($query) use ($request) {
+                // Group the OR conditions together
+                $query->whereHas('user', function ($q) use ($request) {
+                    $q->where('email', $request->email);
+                })->orWhereHas('personal_information', function ($q) use ($request) {
+                    $q->where('first_name', $request->first_name);
+                    $q->where('last_name', $request->last_name);
+                });
             })
-            ->where('job_posting_id', $request->job_posting_id)
+            // Eager load nested relationship to prevent lazy-loading errors
+            ->with(['job_posting.job_requisition'])
             ->latest()
             ->first();
 
         if ($latestApplication) {
             $now = Carbon::now();
-            $monthsPassed = $latestApplication->created_at->diffInMonths($now);
+
+            // Use Eloquent object syntax instead of array syntax
+            $position = $latestApplication->job_posting->job_requisition->title ?? 'specified';
+
             // 1. Check if they Failed the final status (3 months cooldown)
             if ($latestApplication->final_status === 'Failed') {
-                if ($monthsPassed < 3) {
+                $reapplyDate = $latestApplication->created_at->copy()->addMonths(3);
+                if ($now->lessThan($reapplyDate)) {
                     return response()->json([
                         'status' => 'cooldown',
-                        'message' => 'Your last application was on ' . $latestApplication->created_at->format('F j, Y') . ' Please wait three months after an unsuccessful final stage before reapplying.'
+                        'message' => "You recently applied at EmpireOne for the {$position} position. You can reapply on " . $reapplyDate->format('F j, Y') . ".",
                     ]);
                 }
             }
             // 2. Check if they Failed the interview status (1 month cooldown)
             elseif ($latestApplication->interview_status === 'Failed') {
-                if ($monthsPassed < 1) {
+                $reapplyDate = $latestApplication->created_at->copy()->addMonth();
+                if ($now->lessThan($reapplyDate)) {
                     return response()->json([
                         'status' => 'cooldown',
-                        'message' => 'Your last application was on ' . $latestApplication->created_at->format('F j, Y') . '. Please wait one month after an unsuccessful interview before reapplying.'
+                        'message' => "You recently applied at EmpireOne for the {$position} position. You can reapply on " . $reapplyDate->format('F j, Y') . ".",
                     ]);
                 }
             }
