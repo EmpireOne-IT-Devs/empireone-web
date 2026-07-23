@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 import {
     Megaphone,
     CalendarDays,
@@ -48,7 +48,6 @@ const CATEGORY_CONFIG = {
     General: { icon: Tag, variant: "secondary" },
 };
 
-// ── Helper to robustly extract celebrants list from any JSON structure ──
 function extractCelebrants(post) {
     if (!post) return [];
 
@@ -63,7 +62,6 @@ function extractCelebrants(post) {
         return val;
     };
 
-    // Normalize common containers we might receive from the API
     const dataObj = parseIfString(post.data ?? post.metadata ?? post.post_data ?? {});
 
     const candidates = [
@@ -81,7 +79,6 @@ function extractCelebrants(post) {
     const toArray = (val) => {
         const parsed = parseIfString(val);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        // Sometimes the API returns an object keyed by id: { "12": { user_id: 12, name: "..." }, ... }
         if (parsed && typeof parsed === "object") {
             const vals = Object.values(parsed).filter(Boolean);
             if (vals.length > 0) return vals;
@@ -99,17 +96,85 @@ function extractCelebrants(post) {
     return [];
 }
 
+/**
+ * Facebook-style expandable post content.
+ * - Clamps to 3 lines by default.
+ * - Shows a plain inline "... See more" directly under the text (no gradient fade).
+ * - Re-measures on resize so the toggle doesn't get stuck in a stale state.
+ */
 function PostContent({ content, className = "" }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isClamped, setIsClamped] = useState(false);
+    const contentRef = useRef(null);
+
+    useEffect(() => {
+        if (!content) return;
+
+        const checkClamp = () => {
+            const el = contentRef.current;
+            if (!el) return;
+            setIsClamped(el.scrollHeight > el.clientHeight + 2);
+        };
+
+        // Measure on mount / whenever content changes
+        checkClamp();
+
+        window.addEventListener("resize", checkClamp);
+        return () => window.removeEventListener("resize", checkClamp);
+    }, [content]);
+
     if (!content) return null;
+
     return (
-        <div
-            className={`overflow-x-hidden break-words text-[15px] text-gray-700 leading-relaxed ${className}`}
-            dangerouslySetInnerHTML={{ __html: content }}
-        />
+        <div className="relative text-[14px] sm:text-[15px] text-gray-800 leading-normal">
+            <div
+                ref={contentRef}
+                className={`overflow-hidden break-words
+                    [&_p]:mb-1.5 [&_p:last-child]:mb-0
+                    [&_strong]:font-semibold [&_em]:italic [&_u]:underline [&_s]:line-through
+                    [&_a]:text-purple-600 [&_a]:underline [&_a]:break-all hover:[&_a]:text-purple-700
+                    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-1.5
+                    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-1.5
+                    [&_li]:mb-0.5
+                    [&_h1]:text-lg sm:[&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-1.5 [&_h1]:text-gray-900
+                    [&_h2]:text-base sm:[&_h2]:text-lg [&_h2]:font-bold [&_h2]:mb-1.5 [&_h2]:text-gray-900
+                    [&_h3]:text-sm sm:[&_h3]:text-base [&_h3]:font-bold [&_h3]:mb-1.5 [&_h3]:text-gray-900
+                    [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-3 [&_blockquote]:italic [&_blockquote]:text-gray-500 [&_blockquote]:mb-1.5
+                    ${!isExpanded ? "line-clamp-3 [&_p]:mb-0" : ""}
+                    ${className}`}
+                dangerouslySetInnerHTML={{ __html: content }}
+            />
+
+            {/* Facebook-style inline "... See more" — plain text, no fade overlay */}
+            {isClamped && !isExpanded && (
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsExpanded(true);
+                    }}
+                    className="mt-0.5 block font-semibold text-[13px] sm:text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                    ... See more
+                </button>
+            )}
+
+            {isExpanded && isClamped && (
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsExpanded(false);
+                    }}
+                    className="mt-1 block font-semibold text-[13px] sm:text-sm text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                    See less
+                </button>
+            )}
+        </div>
     );
 }
 
-// ── Image Grid Component ─────────────────────────────────────────────
 function ImageGrid({ files, clickable = false }) {
     if (!files || files.length === 0) return null;
     const count = files.length;
@@ -131,13 +196,13 @@ function ImageGrid({ files, clickable = false }) {
     if (count === 1) {
         return (
             <div
-                className="w-full overflow-hidden bg-black max-h-[450px] flex items-center justify-center"
+                className="w-full overflow-hidden bg-black max-h-[380px] sm:max-h-[450px] flex items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
             >
                 <img
                     src={files[0].url}
                     alt={files[0].name ?? ""}
-                    className="w-full max-h-[450px] object-cover"
+                    className="w-full max-h-[380px] sm:max-h-[450px] object-cover"
                 />
             </div>
         );
@@ -145,7 +210,7 @@ function ImageGrid({ files, clickable = false }) {
 
     if (count === 2) {
         return (
-            <div className="grid grid-cols-2 gap-1 h-[280px]">
+            <div className="grid grid-cols-2 gap-0.5 sm:gap-1 h-[220px] sm:h-[280px]">
                 {files.map((f, i) => wrap(f, i, "h-full"))}
             </div>
         );
@@ -153,7 +218,7 @@ function ImageGrid({ files, clickable = false }) {
 
     if (count === 3) {
         return (
-            <div className="grid grid-cols-2 grid-rows-2 gap-1 h-[340px]">
+            <div className="grid grid-cols-2 grid-rows-2 gap-0.5 sm:gap-1 h-[260px] sm:h-[340px]">
                 {wrap(files[0], 0, "row-span-2 col-span-1 h-full")}
                 {wrap(files[1], 1, "h-full")}
                 {wrap(files[2], 2, "h-full")}
@@ -165,7 +230,7 @@ function ImageGrid({ files, clickable = false }) {
     const overflow = count - 4;
 
     return (
-        <div className="grid grid-cols-2 grid-rows-2 gap-1 h-[360px]">
+        <div className="grid grid-cols-2 grid-rows-2 gap-0.5 sm:gap-1 h-[280px] sm:h-[360px]">
             {visible.map((file, idx) => (
                 <div
                     key={file.id || idx}
@@ -178,7 +243,7 @@ function ImageGrid({ files, clickable = false }) {
                         className="h-full w-full object-cover hover:scale-[1.02] transition-transform duration-300 ease-out"
                     />
                     {idx === 3 && overflow > 0 && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white font-bold text-2xl transition-all select-none hover:bg-black/50">
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white font-bold text-xl sm:text-2xl transition-all select-none hover:bg-black/50">
                             +{overflow}
                         </div>
                     )}
@@ -202,11 +267,9 @@ function EngagementPostCard({
     const dispatch = useDispatch();
     const isBirthday = post.type === "birthday" || post.category === "Birthday";
     const categoryKey = isBirthday ? "Birthday" : post.category ?? "General";
-    const catConfig =
-        CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
+    const catConfig = CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
     const CategoryIcon = catConfig.icon;
 
-    // Handle Poll Posts
     if (post.type === "poll") {
         return (
             <div className="relative">
@@ -228,7 +291,6 @@ function EngagementPostCard({
         );
     }
 
-    // Extract title, content, and celebrants list safely
     const titleText = post.title ?? post.headline;
     const bodyContent = post.content ?? post.message;
     const celebrantsList = extractCelebrants(post);
@@ -237,41 +299,40 @@ function EngagementPostCard({
         <Card
             variant="default"
             padding="p-0"
-            className={`w-full overflow-hidden font-sans rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border ${
+            className={`w-full overflow-hidden font-sans border-x-0 border-y sm:border sm:rounded-xl shadow-none sm:shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer ${
                 isBirthday
                     ? "border-pink-200 bg-gradient-to-b from-pink-50/50 via-white to-white"
-                    : "border-gray-100"
+                    : "border-gray-200 sm:border-gray-100 bg-white"
             }`}
             onClick={onView}
         >
-            {/* Celebratory Top Banner for Birthdays */}
             {isBirthday && (
-                <div className="bg-gradient-to-r from-orange-500 via-purple-500 to-indigo-500 px-4 py-1.5 flex items-center justify-between text-white text-xs font-semibold tracking-wide">
+                <div className="bg-gradient-to-r from-orange-500 via-purple-500 to-indigo-500 px-3 sm:px-4 py-1.5 flex items-center justify-between text-white text-xs font-semibold tracking-wide">
                     <div className="flex items-center gap-1.5">
-                        <PartyPopper className="w-4 h-4 animate-pulse" />
+                        <PartyPopper className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse" />
                         <span>Birthday Celebration</span>
                     </div>
-                    <Cake className="w-4 h-4 text-pink-200" />
+                    <Cake className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-200" />
                 </div>
             )}
 
             {/* Header */}
             <div
-                className="flex items-start justify-between px-4 pt-4 pb-2"
+                className="flex items-start justify-between px-3 sm:px-4 pt-3 sm:pt-4 pb-2"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 sm:gap-3">
                     {post.author?.avatar ? (
                         <img
                             src={post.author.avatar}
                             alt={post.author.name}
-                            className={`w-10 h-10 rounded-full object-cover ring-2 ${
+                            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover ring-2 ${
                                 isBirthday ? "ring-pink-400" : "ring-white"
                             }`}
                         />
                     ) : (
                         <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 ${
+                            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm shrink-0 ${
                                 isBirthday
                                     ? "bg-gradient-to-br from-pink-500 to-rose-600"
                                     : "bg-gradient-to-br from-violet-500 to-purple-600"
@@ -281,16 +342,16 @@ function EngagementPostCard({
                         </div>
                     )}
                     <div>
-                        <p className="font-semibold text-gray-900 text-[14px] leading-tight flex items-center gap-1.5">
+                        <p className="font-semibold text-gray-900 text-sm leading-tight flex items-center gap-1.5">
                             {post.author?.name}
                             {isBirthday && (
-                                <span className="inline-flex items-center rounded-full bg-pink-100 px-2 py-0.5 text-[10px] font-medium text-pink-700">
+                                <span className="inline-flex items-center rounded-full bg-pink-100 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-medium text-pink-700">
                                     🎂 Birthday
                                 </span>
                             )}
                         </p>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-xs text-orange-400">
+                            <span className="text-[11px] sm:text-xs text-orange-400">
                                 {post.time_ago}
                             </span>
                             <span className="text-gray-300 text-[10px]">·</span>
@@ -300,8 +361,8 @@ function EngagementPostCard({
                                 }`}
                             />
                             <span
-                                className={`text-xs ${
-                                    isBirthday ? "text-pink-500 font-medium" : "text-purple-400"
+                                className={`text-[11px] sm:text-xs ${
+                                    isBirthday ? "text-pink-500 font-medium" : "text-purple-500"
                                 }`}
                             >
                                 {categoryKey}
@@ -319,18 +380,17 @@ function EngagementPostCard({
             </div>
 
             {/* Body */}
-            <div className="px-4 pb-3">
+            <div className="px-3 sm:px-4 pb-2.5 sm:pb-3">
                 {titleText && (
-                    <p className="font-semibold text-gray-900 text-[15px] mb-1">
+                    <p className="font-semibold text-gray-900 text-sm sm:text-[15px] mb-1">
                         {titleText}
                     </p>
                 )}
                 {bodyContent && <PostContent content={bodyContent} />}
 
-                {/* Birthday Celebrants Badge Area */}
                 {celebrantsList.length > 0 && (
-                    <div className="mt-3 border border-pink-100 bg-pink-50/60 rounded-xl p-3 flex flex-col gap-2">
-                        <p className="text-xs font-bold text-pink-600 uppercase tracking-wider flex items-center gap-1">
+                    <div className="mt-2.5 sm:mt-3 border border-pink-100 bg-pink-50/60 rounded-xl p-2.5 sm:p-3 flex flex-col gap-2">
+                        <p className="text-[11px] sm:text-xs font-bold text-pink-600 uppercase tracking-wider flex items-center gap-1">
                             🎂 Birthday Celebrants
                         </p>
                         <div className="flex flex-wrap gap-1.5">
@@ -342,7 +402,7 @@ function EngagementPostCard({
                                 return (
                                     <span
                                         key={c.id ?? c.user_id ?? i}
-                                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-pink-200 rounded-full text-xs font-medium text-gray-800 shadow-sm"
+                                        className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 bg-white border border-pink-200 rounded-full text-[11px] sm:text-xs font-medium text-gray-800 shadow-sm"
                                     >
                                         🎉 {name}
                                     </span>
@@ -353,7 +413,6 @@ function EngagementPostCard({
                 )}
             </div>
 
-            {/* Images */}
             {post.files?.length > 0 && (
                 <div className="w-full border-y border-gray-100">
                     <ImageGrid files={post.files} />
@@ -380,17 +439,14 @@ function EngagementPostCard({
     );
 }
 
-// ── Main PostCardSection Component ───────────────────────────────────
 export default function PostCardSection() {
     const dispatch = useDispatch();
     const { posts, postsLoading, postsError, deleting, pollVotingPostId } = useSelector(
         (state) => state.engagement,
     );
-
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingPost, setEditingPost] = useState(null);
     const [viewingPost, setViewingPost] = useState(null);
-
     const liveEditPost = editingPost
         ? (posts.find((p) => p.id === editingPost.id) ?? null)
         : null;
@@ -426,11 +482,11 @@ export default function PostCardSection() {
 
     if (postsLoading && posts.length === 0) {
         return (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 sm:gap-4 px-2 sm:px-0">
                 {Array.from({ length: 3 }).map((_, i) => (
                     <div
                         key={i}
-                        className="w-full h-40 bg-gray-100 rounded-xl animate-pulse"
+                        className="w-full h-36 sm:h-40 bg-gray-200/70 sm:rounded-xl animate-pulse"
                     />
                 ))}
             </div>
@@ -439,7 +495,7 @@ export default function PostCardSection() {
 
     if (postsError && posts.length === 0) {
         return (
-            <div className="flex items-center justify-center py-16 text-sm text-red-400">
+            <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-red-400">
                 Failed to load posts. Please refresh and try again.
             </div>
         );
@@ -447,7 +503,7 @@ export default function PostCardSection() {
 
     if (posts.length === 0 && !postsLoading) {
         return (
-            <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+            <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-gray-400">
                 No posts yet.
             </div>
         );
@@ -455,7 +511,7 @@ export default function PostCardSection() {
 
     return (
         <>
-            <div className="w-full flex flex-col gap-3">
+            <div className="w-full flex flex-col gap-2.5 sm:gap-4">
                 {posts.map((post) => (
                     <EngagementPostCard
                         key={post.id}
@@ -485,7 +541,7 @@ export default function PostCardSection() {
             </div>
 
             {liveEditPost && (
-                <EditPostModal
+                <EditPostModal  
                     post={liveEditPost}
                     onClose={() => setEditingPost(null)}
                 />
