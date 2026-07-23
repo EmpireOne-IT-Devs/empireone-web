@@ -37,6 +37,7 @@ class AccountEmployee extends Model
         'position_level', //
         'basic_pay', //
         'allowance', //
+        'attrition_status'
     ];
 
 

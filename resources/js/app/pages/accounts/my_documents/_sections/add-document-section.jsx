@@ -113,8 +113,8 @@ export default function AddDocumentSection() {
                     </div>
                 }
             >
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col min-h-[60vh]">
+                    <div className="flex flex-col gap-4 flex-1 h-full">
                         {/* HEADER */}
                         <div className="flex items-center justify-between px-5 py-4 border border-border rounded-xl bg-background">
                             <div>
@@ -228,7 +228,9 @@ export default function AddDocumentSection() {
                         })}
 
                         {/* SUBMIT */}
-                        <div className=" overflow-hidden">
+                      
+                    </div>
+                      <div className=" overflow-hidden flex-0">
                             <Button
                                 
                                 name="submit"
@@ -240,7 +242,6 @@ export default function AddDocumentSection() {
                                 Submit documents
                             </Button>
                         </div>
-                    </div>
                 </form>
             </Modal>
         </>

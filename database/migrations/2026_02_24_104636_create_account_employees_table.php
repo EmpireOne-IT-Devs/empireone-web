@@ -69,6 +69,30 @@ return new class extends Migration
                 'Terminated',
                 'Trainee Fallout',
             ])->nullable();
+            $table->enum('attrition_status', [
+                'Resignation - Personal',
+                'Resignation - Better Opportunity',
+                'Resignation - Career Change',
+                'Resignation - Medical',
+                'Resignation - Education',
+                'Resignation - Relocation',
+                'Resignation - Compensation',
+                'Resignation - Management',
+                'Resignation - Culture',
+                'Resignation - Schedule',
+                'Resignation - Job Misfit',
+                'Termination - Attendance',
+                'Termination - Behavior',
+                'Termination - Performance',
+                'Termination - Company Policy Violation',
+                'Termination - Training Fall-Out (Language Training)',
+                'Termination - Training Fall-Out (Process Training)',
+                'Termination - Training Fall-Out (On-The-Job Training)',
+                'Termination - Non-Regularization',
+                'Termination - Absconding/ AWOL',
+                'Redundancy',
+                'End of Contract (Fixed Term)'
+            ])->nullable();
             $table->timestamps();
         });
     }

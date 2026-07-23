@@ -552,18 +552,14 @@ class JobApplicationController extends Controller
         }
 
         // Finally, create the application
-        $application = JobApplication::firstOrCreate(
-            [
-                'user_id'        => $user->id,
-                'job_posting_id' => $request->job_posting_id,
-            ],
-            [
-                'interviewer_id' => $assigned_interviewer_id,
-                'referral_id'    => $referral_id,
-                'source'         => $request->source ?? null,
-                'interview_type' => $request->interview_type
-            ]
-        );
+        $application = JobApplication::create([
+            'user_id'        => $user->id,
+            'job_posting_id' => $request->job_posting_id,
+            'interviewer_id' => $assigned_interviewer_id,
+            'referral_id'    => $referral_id,
+            'source'         => $request->source ?? null,
+            'interview_type' => $request->interview_type
+        ]);
 
 
         // 4. Format Times (DB vs Google Calendar)

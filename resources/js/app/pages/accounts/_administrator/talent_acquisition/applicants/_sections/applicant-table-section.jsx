@@ -160,9 +160,16 @@ export default function ApplicantTableSection() {
                     )}
 
                     {/* Document Request Condition */}
-                    {res?.final_status == "Accepted Job Offer" && (
+                    {res?.final_status == "Accepted Job Offer" && <>
                         <SendDocumentsSection data={res} />
-                    )}
+                        <a
+                            target="_blank"
+                            href={`/accounts/my_documents/${res?.user_id}/contract`}
+                            className="bg-blue-500 hover:bg-blue-600 rounded-md text-white p-1.5 text-center text-sm font-semibold"
+                        >
+                            EMPLOYMENT CONTRACT
+                        </a>
+                    </>}
 
                     {/* Promotions / Internal Movement ECF Condition */}
                     {res?.final_status == "Passed" && isCurrentEmployee && (
@@ -177,6 +184,7 @@ export default function ApplicantTableSection() {
 
                     <ShowApplicantDetailsSection data={res} />
                     <DeleteApplicantSection data={res} />
+
                 </div>
             ),
         };
