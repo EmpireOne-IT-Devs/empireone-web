@@ -37,18 +37,21 @@ Route::get('/auth/login', function () {
     return Inertia::render('auth/login/page');
 })->name('login');
 
-Route::get('/talent/application', function () {
-    return Inertia::render('talent/page');
-})->name('talent');
+// Route::get('/talent/application', function () {
+//     return Inertia::render('talent/page');
+// })->name('talent');
 
 
 Route::prefix('/talent/application')->group(function () {
     Route::get('', function () {
         return Inertia::render('talent/location');
     })->name('talent');
+    Route::get('/notification', function () {
+        return Inertia::render('talent/notification');
+    })->name('notification');
     Route::get('/{job_posting_id}', function () {
         return Inertia::render('talent/page');
-    })->name('talent');
+    });
 });
 
 

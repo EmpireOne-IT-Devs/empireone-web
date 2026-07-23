@@ -16,6 +16,7 @@ import store from "@/app/store/store";
 import { Link, router } from "@inertiajs/react";
 import { BriefcaseIcon } from "lucide-react";
 import SetScheduleSection from "./set-schedule-section";
+import { checking_applicant_service } from "@/app/services/applicants-service";
 
 const TalentApplicationForm = () => {
     // ✅ Load saved step + data
@@ -26,6 +27,10 @@ const TalentApplicationForm = () => {
     const dispatch = useDispatch();
     const [step, setStep] = useState(savedStep);
     const [loading, setLoading] = useState(false);
+    const [checkingStatus, setCheckingStatus] = useState({
+        message: null,
+        status: null
+    })
     const { interviewer } = useSelector((store) => store.app);
     const [position, setPosition] = useState('')
     const referral_id = new URLSearchParams(window.location.search).get(
@@ -127,7 +132,23 @@ const TalentApplicationForm = () => {
         }
     }, [step]);
 
+    useEffect(() => {
+        async function get_data(params) {
+            const result = await checking_applicant_service({
+                ...watchedValues,
+                email: watchedValues.email
+            });
+            setCheckingStatus(result)
+        }
+        get_data()
+    }, [])
+
     const nextStep = async () => {
+
+        if (step == 1 && checkingStatus.status != 'available') {
+            return router.visit(`/talent/application/notification?message=${checkingStatus.message}&status=${checkingStatus.status}`)
+        }
+
         const fieldsToValidate = [
             "first_name",
             "last_name",
@@ -216,6 +237,7 @@ const TalentApplicationForm = () => {
                 className="px-5 pb-5 lg:px-10 border-b"
                 style={{ borderColor: "rgba(168,85,247,0.15)" }}
             >
+
                 <div className="flex items-center mb-4 mt-8">
                     <div className="flex items-center gap-2  justify-between w-full">
                         {stepLabels.map((label, i) => {
@@ -372,6 +394,7 @@ const TalentApplicationForm = () => {
                             control={control}
                             setValue={setValue}
                             watchedValues={watchedValues}
+                            setCheckingStatus={setCheckingStatus}
                         />
                         <AddressInformationSection
                             watchedValues={watchedValues}

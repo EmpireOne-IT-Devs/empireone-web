@@ -52,19 +52,51 @@ class JobApplicationController extends Controller
 
     public function checking_applicant(Request $request)
     {
-     
-        $exists = JobApplication::whereHas('user', function ($query) use ($request) {
+
+        $latestApplication = JobApplication::whereHas('user', function ($query) use ($request) {
             $query->where('email', $request->email);
-        })->exists();
-        if ($exists) {
-            return response()->json([
-                'status' => 'found',
-                'message' => 'An application with this email already exists.'
-            ]);
+        })
+            ->orWhereHas('personal_information', function ($query) use ($request) {
+                $query->where('first_name', $request->first_name);
+                $query->where('last_name', $request->last_name);
+            })
+            ->where('job_posting_id', $request->job_posting_id)
+            ->latest()
+            ->first();
+
+        if ($latestApplication) {
+            $now = Carbon::now();
+            $monthsPassed = $latestApplication->created_at->diffInMonths($now);
+            // 1. Check if they Failed the final status (3 months cooldown)
+            if ($latestApplication->final_status === 'Failed') {
+                if ($monthsPassed < 3) {
+                    return response()->json([
+                        'status' => 'cooldown',
+                        'message' => 'Your last application was on ' . $latestApplication->created_at->format('F j, Y') . ' Please wait three months after an unsuccessful final stage before reapplying.'
+                    ]);
+                }
+            }
+            // 2. Check if they Failed the interview status (1 month cooldown)
+            elseif ($latestApplication->interview_status === 'Failed') {
+                if ($monthsPassed < 1) {
+                    return response()->json([
+                        'status' => 'cooldown',
+                        'message' => 'Your last application was on ' . $latestApplication->created_at->format('F j, Y') . '. Please wait one month after an unsuccessful interview before reapplying.'
+                    ]);
+                }
+            }
+            // 3. If they have an existing application that isn't failed, block them
+            else {
+                return response()->json([
+                    'status' => 'found',
+                    'message' => 'You already have an active application. Please wait for the Talent Acquisition team to contact you for your initial interview.'
+                ]);
+            }
         }
 
+        // If no previous application exists, or if they passed their cooldown periods:
         return response()->json([
-            'data' => $request->email, // This will always be false here
+            'data' => $request->email,
             'status' => 'available',
             'message' => 'Email is available.'
         ]);

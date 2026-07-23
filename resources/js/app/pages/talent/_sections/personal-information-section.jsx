@@ -15,7 +15,8 @@ export default function PersonalInformationSection({
     errors,
     watchedValues,
     control,
-    setValue
+    setValue,
+    setCheckingStatus
 }) {
     const { departments } = useSelector((store) => store.departments);
     console.log("departments", departments);
@@ -37,10 +38,12 @@ export default function PersonalInformationSection({
                 setValue('email', email);
                 try {
                     // Call your API service
-                    await checking_applicant_service({
+                    const result = await checking_applicant_service({
                         ...watchedValues,
                         email: email
                     });
+                    setCheckingStatus(result)
+                    console.log('result', result)
                 } catch (error) {
                     console.error("Error checking applicant:", error);
                 }
