@@ -258,13 +258,21 @@ class EngagementPostEventController extends Controller
 
             // If this is a birthday post, include the current celebrants
             if ($validated['type'] === 'birthday') {
-                $currentMonth = now()->month;
+                // Use the provided month if present (e.g., "June"), otherwise use current month
+                $targetMonth = now()->month;
+                if (!empty($validated['month'])) {
+                    try {
+                        $targetMonth = Carbon::parse($validated['month'] . ' 1')->month;
+                    } catch (\Exception $e) {
+                        $targetMonth = now()->month;
+                    }
+                }
 
                 $celebrants = User::query()
                     ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_EMPLOYEE])
-                    ->whereHas('personal_information', function ($query) use ($currentMonth) {
+                    ->whereHas('personal_information', function ($query) use ($targetMonth) {
                         $query->whereNotNull('date_of_birth')
-                              ->whereRaw('MONTH(date_of_birth) = ?', [$currentMonth]);
+                              ->whereRaw('MONTH(date_of_birth) = ?', [$targetMonth]);
                     })
                     ->with([
                         'personal_information:id,user_id,first_name,middle_name,last_name,suffix,date_of_birth',
