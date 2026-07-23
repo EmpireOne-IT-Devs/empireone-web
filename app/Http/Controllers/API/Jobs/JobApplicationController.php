@@ -992,6 +992,17 @@ class JobApplicationController extends Controller
         ")
             ->first();
 
+        // started_at
+        // start_date
+        // foreach ($applications as $key => $value) {
+        //     $ae = AccountEmployee::where('user_id', $value['user_id'])
+        //         ->where('started_at', 'August 4, 2026')->first();
+        //     if ($ae) {
+        //         $ae->update([
+        //             'started_at' => 'August 3, 2026'
+        //         ]);
+        //     }
+        // }
         return response()->json([
             'data' => $applications,
             'statuses' => [

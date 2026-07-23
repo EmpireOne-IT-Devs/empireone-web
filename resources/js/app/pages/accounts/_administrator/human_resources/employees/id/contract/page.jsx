@@ -53,11 +53,11 @@ export default function Page() {
             `${user?.account_employee?.position}`,
         started_at:
             // user?.account_contract?.started_at ??
-            `${moment(user?.account_employee?.started_at).subtract(1, 'days').format("LL")}`,
+            `${moment(user?.account_employee?.started_at).format("LL")}`,
         ended_at:
             // user?.account_contract?.ended_at ??
             `${moment(user?.account_employee?.started_at)
-                .add(6, "months")
+                .add(179, "days")
                 .format("LL")}`,
         salary:
             // user?.account_contract?.salary ??

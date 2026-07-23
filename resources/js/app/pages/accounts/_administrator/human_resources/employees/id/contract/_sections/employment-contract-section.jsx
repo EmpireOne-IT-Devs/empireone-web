@@ -356,7 +356,7 @@ const EmploymentContract = ({ data }) => (
                     }}
                 >
                     {moment(data?.started_at)
-                        .add(6, "months")
+                        .add(179, "days")
                         .format("LL")}{" "}
                 </Text>
                 (the "probationary period"). During this period, the Employee
