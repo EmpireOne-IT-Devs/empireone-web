@@ -7,6 +7,7 @@ import {
     Tag,
     Cake,
     PartyPopper,
+    FileText,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
@@ -265,10 +266,16 @@ function EngagementPostCard({
     onVote,
 }) {
     const dispatch = useDispatch();
+    const user = useSelector((state) => state.auth?.user || state.app?.user);
     const isBirthday = post.type === "birthday" || post.category === "Birthday";
     const categoryKey = isBirthday ? "Birthday" : post.category ?? "General";
     const catConfig = CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG["General"];
     const CategoryIcon = catConfig.icon;
+    const isEventCategory = categoryKey === "Event";
+    const hasSurvey = post.survey && post.survey.id;
+    // Detect role from URL path instead of user object
+    const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+    const isAdmin = currentPath.includes("/administrator/") || user?.role === 1 || user?.role === "1" || String(user?.role).toLowerCase() === "administrator";
 
     if (post.type === "poll") {
         return (
@@ -370,13 +377,31 @@ function EngagementPostCard({
                         </div>
                     </div>
                 </div>
-                <PostActionMenu
-                    open={menuOpen}
-                    onToggle={onMenuToggle}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                    deleting={deleting}
-                />
+                <div className="flex items-center gap-1.5">
+                    {isEventCategory && hasSurvey && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const surveyPath = isAdmin
+                                    ? `/accounts/administrator/activities/post_event_survey/${post.survey.id}`
+                                    : `/accounts/employee/activities/post_event_survey/${post.survey.id}`;
+                                window.location.href = surveyPath;
+                            }}
+                            className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-lg text-[11px] sm:text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors duration-150 shrink-0"
+                            title="Open Event Survey"
+                        >
+                            <FileText className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Survey</span>
+                        </button>
+                    )}
+                    <PostActionMenu
+                        open={menuOpen}
+                        onToggle={onMenuToggle}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                        deleting={deleting}
+                    />
+                </div>
             </div>
 
             {/* Body */}

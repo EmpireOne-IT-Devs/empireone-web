@@ -66,4 +66,9 @@ class EngagementPostEvent extends Model
     {
         return $this->hasMany(EngagementPollVote::class, 'engagement_post_event_id');
     }
+
+    public function survey()
+    {
+        return $this->hasOne(EngagementPostEventSurvey::class, 'engagement_post_event_id');
+    }
 }

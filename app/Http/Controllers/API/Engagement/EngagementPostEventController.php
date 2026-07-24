@@ -23,6 +23,7 @@ class EngagementPostEventController extends Controller
             'files',
             'pollOptions',
             'pollVotes',
+            'survey:id,engagement_post_event_id,title,status,published_at',
         ])
             ->withCount(['reactions', 'comments'])
             ->withExists(['reactions as user_has_reacted' => fn($q) => $q->where('user_id', $userId)])
@@ -92,6 +93,12 @@ class EngagementPostEventController extends Controller
                         'avatar'   => $user?->avatar,
                         'initials' => $initials,
                     ],
+                    'survey'            => $post->survey ? [
+                        'id'     => $post->survey->id,
+                        'title'  => $post->survey->title,
+                        'status' => $post->survey->status,
+                        'published_at' => $post->survey->published_at,
+                    ] : null,
                     // Attach celebrants for birthday posts so clients can render them without extra requests
                     'celebrants'        => ($post->type === 'birthday') ? (
                         User::query()
