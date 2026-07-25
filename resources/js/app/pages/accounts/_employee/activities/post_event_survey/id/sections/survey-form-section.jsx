@@ -47,7 +47,7 @@ function TypeCaption({ type }) {
 // ── Input components ──────────────────────────────────────────────────────
 function ShortAnswerInput({ value, onChange, hasError }) {
     return (
-        <div className="max-w-lg">
+        <div className="w-full sm:max-w-lg">
             <div
                 className={`rounded-xl border bg-white transition-all ${
                     hasError
@@ -60,7 +60,7 @@ function ShortAnswerInput({ value, onChange, hasError }) {
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder="Type your answer..."
-                    className="w-full rounded-xl bg-transparent px-4 py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
+                    className="w-full rounded-xl bg-transparent px-3 py-2.5 sm:px-4 sm:py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
                 />
             </div>
         </div>
@@ -68,7 +68,7 @@ function ShortAnswerInput({ value, onChange, hasError }) {
 }
 function ParagraphInput({ value, onChange, hasError }) {
     return (
-        <div className="max-w-2xl">
+        <div className="w-full sm:max-w-2xl">
             <div
                 className={`rounded-xl border bg-white transition-all ${
                     hasError
@@ -80,16 +80,16 @@ function ParagraphInput({ value, onChange, hasError }) {
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder="Share your thoughts..."
-                    rows={5}
-                    className="w-full resize-none rounded-xl bg-transparent px-4 py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
+                    rows={4}
+                    className="w-full resize-none rounded-xl bg-transparent px-3 py-2.5 sm:px-4 sm:py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
                 />
 
-                <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-t border-zinc-100 px-3 py-2 sm:px-4 gap-1 sm:gap-2">
                     <p className="text-xs text-zinc-400">
                         Write a detailed response
                     </p>
 
-                    <span className="text-xs text-zinc-400">
+                    <span className="text-xs text-zinc-400 whitespace-nowrap">
                         {value.length} characters
                     </span>
                 </div>
@@ -99,17 +99,20 @@ function ParagraphInput({ value, onChange, hasError }) {
 }
 function MultipleChoiceInput({ options, value, onChange, hasError, name }) {
   return (
-    <div className={`flex flex-col gap-2.5 ${hasError ? "rounded-md border border-red-300 bg-red-50 p-3" : ""}`}>
+    <div className={`flex flex-col gap-3 sm:gap-2.5 ${hasError ? "rounded-lg border border-red-300 bg-red-50 p-3" : ""}`}>
       {options.map((opt) => (
-        <label key={opt.id} className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-700">
+        <label
+          key={opt.id}
+          className="flex cursor-pointer items-center gap-3 sm:gap-2.5 rounded-lg px-1 py-1.5 text-sm text-zinc-700 active:bg-zinc-50 sm:px-0 sm:py-0 sm:active:bg-transparent"
+        >
           <input
             type="radio"
             name={name}
             checked={value === opt.option_text}
             onChange={() => onChange(opt.option_text)}
-            className="h-4 w-4 accent-indigo-600"
+            className="h-5 w-5 sm:h-4 sm:w-4 shrink-0 accent-indigo-600"
           />
-          {opt.option_text}
+          <span>{opt.option_text}</span>
         </label>
       ))}
     </div>
@@ -120,16 +123,19 @@ function CheckboxesInput({ options, value = [], onChange, hasError }) {
   const toggle = (text) =>
     onChange(value.includes(text) ? value.filter((v) => v !== text) : [...value, text]);
   return (
-    <div className={`flex flex-col gap-2.5 ${hasError ? "rounded-md border border-red-300 bg-red-50 p-3" : ""}`}>
+    <div className={`flex flex-col gap-3 sm:gap-2.5 ${hasError ? "rounded-lg border border-red-300 bg-red-50 p-3" : ""}`}>
       {options.map((opt) => (
-        <label key={opt.id} className="flex cursor-pointer items-center gap-2.5 text-sm text-zinc-700">
+        <label
+          key={opt.id}
+          className="flex cursor-pointer items-center gap-3 sm:gap-2.5 rounded-lg px-1 py-1.5 text-sm text-zinc-700 active:bg-zinc-50 sm:px-0 sm:py-0 sm:active:bg-transparent"
+        >
           <input
             type="checkbox"
             checked={value.includes(opt.option_text)}
             onChange={() => toggle(opt.option_text)}
-            className="h-4 w-4 rounded accent-indigo-600"
+            className="h-5 w-5 sm:h-4 sm:w-4 shrink-0 rounded accent-indigo-600"
           />
-          {opt.option_text}
+          <span>{opt.option_text}</span>
         </label>
       ))}
     </div>
@@ -138,11 +144,11 @@ function CheckboxesInput({ options, value = [], onChange, hasError }) {
 
 function DropdownInput({ options, value, onChange, hasError }) {
   return (
-    <div className="relative max-w-xs">
+    <div className="relative w-full sm:max-w-xs">
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full appearance-none rounded-md border bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition ${
+        className={`w-full appearance-none rounded-lg border bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none transition ${
           hasError ? "border-red-400" : "border-zinc-300 focus:border-indigo-500"
         }`}
       >
@@ -162,7 +168,7 @@ function RatingInput({ value, onChange, hasError }) {
 
     return (
         <div
-            className={`rounded-xl border p-4 transition ${
+            className={`rounded-xl border p-3 sm:p-4 transition ${
                 hasError
                     ? "border-red-300 bg-red-50"
                     : "border-zinc-200 bg-white"
@@ -173,7 +179,7 @@ function RatingInput({ value, onChange, hasError }) {
                 <span>Excellent</span>
             </div>
 
-            <div className="flex items-center justify-center gap-56">
+            <div className="flex items-center justify-between px-1">
                 {[1, 2, 3, 4, 5].map((n) => {
                     const active = rating >= n;
 
@@ -186,9 +192,9 @@ function RatingInput({ value, onChange, hasError }) {
                             className="rounded-full p-1 transition-all duration-150 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
                         >
                             <Star
-                                size={32}
+                                size={24}
                                 strokeWidth={1.75}
-                                className={`transition-colors ${
+                                className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
                                     active
                                         ? "fill-yellow-400 text-yellow-400"
                                         : "text-zinc-300 hover:text-yellow-300"
@@ -199,10 +205,10 @@ function RatingInput({ value, onChange, hasError }) {
                 })}
             </div>
 
-            <div className="mt-4 text-center">
+            <div className="mt-3 sm:mt-4 text-center">
                 {rating > 0 ? (
                     <>
-                        <p className="text-sm font-semibold text-zinc-800">
+                        <p className="text-xs sm:text-sm font-semibold text-zinc-800">
                             {ratingLabels[rating]}
                         </p>
 
@@ -220,6 +226,8 @@ function RatingInput({ value, onChange, hasError }) {
     );
 }
 // ── Question row ─────────────────────────────────────────────────────────
+// Renders as a Google Forms-style standalone card on mobile (no number badge,
+// no connecting timeline), and as a numbered timeline row on sm+ screens.
 
 function QuestionRow({ question, index, isLast, answer, onChange, error }) {
   const renderInput = () => {
@@ -256,16 +264,20 @@ function QuestionRow({ question, index, isLast, answer, onChange, error }) {
     : "border-zinc-300 bg-white text-zinc-500";
 
   return (
-    <div className={`relative flex gap-4 py-5 ${isLast ? "" : "border-b border-zinc-100"}`}>
+    <div
+      className={`relative flex gap-4 rounded-xl border bg-white p-4 shadow-sm sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:py-5 sm:shadow-none ${
+        error ? "border-red-300" : "border-zinc-200"
+      } ${isLast ? "" : "mb-3 sm:mb-0 sm:border-b sm:border-zinc-100"}`}
+    >
       <div
-        className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${badgeClass}`}
+        className={`relative z-10 hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold sm:flex ${badgeClass}`}
         style={sans}
       >
         {index + 1}
       </div>
 
-      <div className="min-w-0 flex-1 pt-0.5">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5">
+      <div className="min-w-0 flex-1 sm:pt-0.5">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-x-4 sm:gap-y-1.5">
           <p className="text-[15px] font-medium leading-snug text-zinc-900" style={sans}>
             {question.question_text}
             {question.is_required && <span className="ml-1 text-indigo-500">*</span>}
@@ -275,7 +287,7 @@ function QuestionRow({ question, index, isLast, answer, onChange, error }) {
 
         <div className="mt-3">{renderInput()}</div>
 
-        {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
       </div>
     </div>
   );
@@ -289,7 +301,7 @@ function StatusPanel({ icon: Icon, tone, title, message }) {
     zinc: "bg-zinc-100 text-zinc-500",
   };
   return (
-    <div className="flex flex-col items-center gap-3 rounded-lg border border-zinc-200 bg-white py-14 text-center" style={sans}>
+    <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 bg-white py-10 sm:py-14 px-4 text-center shadow-sm sm:shadow-none" style={sans}>
       <div className={`flex h-11 w-11 items-center justify-center rounded-full ${toneClasses[tone]}`}>
         <Icon size={20} strokeWidth={2} />
       </div>
@@ -355,12 +367,12 @@ export default function SurveyFormSection({ surveyId, questions = [], hasRespond
   const requiredCount = questions.filter((q) => q.is_required).length;
 
   return (
-    <div className="w-full bg-white p-4 rounded-md" style={sans}>
+    <div className="w-full bg-zinc-50 p-3 sm:bg-white sm:p-4 rounded-md" style={sans}>
       <style>{META}</style>
 
-      <div className="flex items-baseline justify-between border-b border-zinc-200 pb-4">
-        <h2 className="text-lg font-semibold text-zinc-900">Questions</h2>
-        <p className="text-sm text-zinc-500">
+      <div className="mb-3 flex flex-col gap-1 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:mb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 sm:rounded-none sm:border-0 sm:border-b sm:border-zinc-200 sm:bg-transparent sm:p-0 sm:pb-4 sm:shadow-none">
+        <h2 className="text-base sm:text-lg font-semibold text-zinc-900">Questions</h2>
+        <p className="text-xs sm:text-sm text-zinc-500 whitespace-nowrap">
           {questions.length} question{questions.length === 1 ? "" : "s"}
           {requiredCount > 0 && (
             <>
@@ -371,8 +383,8 @@ export default function SurveyFormSection({ surveyId, questions = [], hasRespond
         </p>
       </div>
 
-      <div className="relative">
-        <div className="absolute bottom-5 left-4 top-5 w-px bg-zinc-200" aria-hidden="true" />
+      <div className="relative mt-3 sm:mt-0">
+        <div className="absolute bottom-5 left-4 top-5 hidden w-px bg-zinc-200 sm:block" aria-hidden="true" />
         {questions.map((question, index) => (
           <QuestionRow
             key={question.id}
@@ -387,9 +399,9 @@ export default function SurveyFormSection({ surveyId, questions = [], hasRespond
       </div>
 
       {questions.length > 0 && (
-        <div className="mt-4 flex flex-col gap-2 border-t border-zinc-100 pt-5">
+        <div className="mt-3 flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:mt-4 sm:rounded-none sm:border-0 sm:border-t sm:border-zinc-100 sm:bg-transparent sm:p-0 sm:pt-5 sm:shadow-none">
           {submitError && (
-            <p className="text-sm text-red-500">
+            <p className="text-sm text-red-500 px-1 sm:px-2">
               {submitError?.errors ? "Please fill in all required fields." : submitError?.message ?? "Failed to submit. Please try again."}
             </p>
           )}
@@ -398,7 +410,7 @@ export default function SurveyFormSection({ surveyId, questions = [], hasRespond
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="rounded-md bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full sm:w-auto rounded-lg sm:rounded-md bg-indigo-600 px-6 py-3 sm:py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 whitespace-nowrap"
             >
               {submitting ? "Submitting…" : "Submit survey"}
             </button>
