@@ -1,19 +1,17 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import Card from "@/app/_components/card";
-import { useSelector, useDispatch } from "react-redux";
 import {
     Calendar,
     Folder,
     Image as ImageIcon,
     ChevronLeft,
     ChevronRight,
-    ExternalLink,
     X,
     Maximize2,
     Download,
 } from "lucide-react";
-import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
 import Skeleton from "@/app/_components/skeleton";
+import { get_company_galleries } from "@/app/services/engagement-gallery-service";
 
 // Helper to safely extract image URL regardless of backend payload key structure
 const getImageUrl = (item) => {
@@ -248,9 +246,9 @@ function GalleryCarousel({ displayTitle, photos, onOpenLightbox }) {
     );
 }
 
-export default function CardUploadedImageSection() {
-    const dispatch = useDispatch();
-    const { posts, postsLoading } = useSelector((state) => state.engagement);
+export default function CardUploadedImageSection({ refreshKey }) {
+    const [galleries, setGalleries] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [lightboxState, setLightboxState] = useState({
         isOpen: false,
         photos: [],
@@ -258,26 +256,27 @@ export default function CardUploadedImageSection() {
         driveLink: null,
     });
 
-    // Ensure data is fetched on initial mount
+    const fetchGalleries = async () => {
+        setLoading(true);
+        try {
+            const response = await get_company_galleries();
+            setGalleries(response.data || response);
+        } catch (error) {
+            setGalleries([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        dispatch(get_engagement_posts_thunk());
-    }, [dispatch]);
+        fetchGalleries();
+    }, [refreshKey]);
 
     // Safely extract gallery events
     const galleryEvents =
-        posts?.filter((post) => {
-            const postPhotos = post.files || post.images || post.media || [];
-            const category = post.category?.toLowerCase() || "";
-            const isGalleryOrEvent =
-                category === "event" ||
-                category === "gallery" ||
-                post.type === "event";
-
-            return (
-                isGalleryOrEvent &&
-                Array.isArray(postPhotos) &&
-                postPhotos.length > 0
-            );
+        galleries?.filter((gallery) => {
+            const files = gallery.files || [];
+            return Array.isArray(files) && files.length > 0;
         }) || [];
 
     const handleOpenLightbox = (photos, index, driveLink) => {
@@ -297,20 +296,14 @@ export default function CardUploadedImageSection() {
         });
     };
 
-    if (postsLoading && (!posts || posts.length === 0)) {
+    if (loading) {
         return (
             <div className="flex flex-col gap-6 w-full my-4">
-                 <Skeleton
-                variant="card"
-            />
-                <Skeleton
-                variant="card"
-            />
-
+                <Skeleton variant="card" />
+                <Skeleton variant="card" />
             </div>
-            
         );
-    }   
+    }
 
     if (galleryEvents.length === 0) {
         return (
@@ -331,18 +324,14 @@ export default function CardUploadedImageSection() {
 
     return (
         <div className="flex flex-col gap-6 w-full my-4">
-            {galleryEvents.map((post) => {
-                const displayTitle =
-                    post.title || post.headline || "Untitled Event";
-                const photos = post.files || post.images || post.media || [];
+            {galleryEvents.map((gallery) => {
+                const displayTitle = gallery.title || "Untitled Gallery";
+                const photos = gallery.files || [];
                 const photoCount = photos.length;
-                const driveLink =
-                    post.drive_link ||
-                    post.gdrive_link ||
-                    post.google_drive_link;
+                const driveLink = gallery.drive_link;
 
-                const displayDate = post.created_at
-                    ? new Date(post.created_at).toLocaleDateString("en-US", {
+                const displayDate = gallery.created_at
+                    ? new Date(gallery.created_at).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -351,7 +340,7 @@ export default function CardUploadedImageSection() {
 
                 return (
                     <Card
-                        key={post.id}
+                        key={gallery.id}
                         pclassName="w-full p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200"
                     >
                         {/* Header */}

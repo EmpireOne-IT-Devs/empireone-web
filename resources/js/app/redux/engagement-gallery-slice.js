@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import * as companyGalleryService from "@/app/services/company-gallery-service";
+import * as companyGalleryService from "@/app/services/engagement-gallery-service";
 
 const initialState = {
     galleries: [],

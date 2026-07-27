@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = "/api/engagement/company-galleries";
+const API_BASE = "/api/engagement/engagement_company_galleries";
 
 /**
  * Get all company galleries

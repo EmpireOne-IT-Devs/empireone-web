@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Layout from "../../../layout";
 import ActivitiesLayout from "../layout";
@@ -7,11 +7,13 @@ import SearchSection from "./sections/search-section";
 import CardUploadedImageSection from "./sections/card-uploaded-image-section";
 
 export default function Page() {
+    const [refreshKey, setRefreshKey] = useState(0);
+
     return (
         <Layout>
             <ActivitiesLayout>
                 <HeaderSection />
-                <SearchSection />
+                <SearchSection onUploadSuccess={() => setRefreshKey((prev) => prev + 1)} />
                 <div
                     className="
         flex
@@ -24,7 +26,7 @@ export default function Page() {
         [&::-webkit-scrollbar-thumb]:rounded-full
     "
                 >
-                    <CardUploadedImageSection />
+                    <CardUploadedImageSection refreshKey={refreshKey} />
                 </div>
             </ActivitiesLayout>
         </Layout>

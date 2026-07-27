@@ -1,11 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
-import Select from "@/app/_components/select";
-import { useDispatch, useSelector } from "react-redux";
-import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
-import { upload_gallery_service } from "@/app/services/engagement-service";
+import { create_company_gallery } from "@/app/services/engagement-gallery-service";
 import { setAlert } from "@/app/redux/app-slice";
 import { Download, Images, UploadCloud, X } from "lucide-react";
 
@@ -18,29 +16,16 @@ const ALLOWED_TYPES = new Set([
 ]);
 const MAX_FILE_SIZE_MB = 999;
 
-export default function UploadImageSection() {
+export default function UploadImageSection({ onUploadSuccess }) {
   const dispatch = useDispatch();
-  const { posts } = useSelector((s) => s.engagement);
-
   const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState({ title: "", event: "", driveLink: "" });
+  const [form, setForm] = useState({ title: "", description: "", driveLink: "" });
   const [files, setFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [fileError, setFileError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef(null);
-
-  useEffect(() => {
-    if (isOpen) dispatch(get_engagement_posts_thunk());
-  }, [isOpen, dispatch]);
-
-  const eventOptions = [
-    { value: "", label: "Select an event" },
-    ...(posts || [])
-      .filter((p) => p.category === "Event")
-      .map((p) => ({ value: String(p.id), label: p.title ?? p.headline })),
-  ];
 
   useEffect(() => {
     return () => {
@@ -101,11 +86,7 @@ export default function UploadImageSection() {
 
   const handleUpload = async () => {
     if (!form.title.trim()) {
-      setFileError("An event title is required.");
-      return;
-    }
-    if (!form.event) {
-      setFileError("Please select a linked event.");
+      setFileError("A gallery title is required.");
       return;
     }
     if (files.length === 0) {
@@ -118,15 +99,15 @@ export default function UploadImageSection() {
 
     const formData = new FormData();
     formData.append("title", form.title);
-    formData.append("event", form.event);
+    formData.append("description", form.description);
     formData.append("driveLink", form.driveLink);
 
-    files.forEach((file, index) => {
-      formData.append(`images[${index}]`, file);
+    files.forEach((file) => {
+      formData.append("images[]", file);
     });
 
     try {
-      await upload_gallery_service(formData);
+      await create_company_gallery(formData);
       dispatch(
         setAlert({
           type: "success",
@@ -134,7 +115,9 @@ export default function UploadImageSection() {
           open: true,
         })
       );
-      dispatch(get_engagement_posts_thunk());
+      if (typeof onUploadSuccess === "function") {
+        onUploadSuccess();
+      }
       handleClose();
     } catch (err) {
       const message =
@@ -149,7 +132,7 @@ export default function UploadImageSection() {
     previewUrls.forEach((url) => URL.revokeObjectURL(url));
 
     setIsOpen(false);
-    setForm({ title: "", event: "", driveLink: "" });
+    setForm({ title: "", description: "", driveLink: "" });
     setFiles([]);
     setPreviewUrls([]);
     setFileError("");
@@ -185,7 +168,7 @@ export default function UploadImageSection() {
       >
         <div className="flex flex-col gap-4 pb-2 p-2">
           <Input
-            label="Event title"
+            label="Gallery title"
             name="title"
             value={form.title}
             placeholder="e.g. Townhall Photos"
@@ -193,12 +176,12 @@ export default function UploadImageSection() {
             disabled={isSubmitting}
           />
 
-          <Select
-            label="Linked event"
-            name="event"
-            value={form.event}
-            onChange={updateForm("event")}
-            options={eventOptions}
+          <Input
+            label="Gallery description"
+            name="description"
+            value={form.description}
+            placeholder="Add a short description for this gallery"
+            onChange={updateForm("description")}
             disabled={isSubmitting}
           />
 
@@ -255,7 +238,7 @@ export default function UploadImageSection() {
             <input
               ref={inputRef}
               type="file"
-              accept=".jpg,.jpeg,.png,.gif,.webp,.svg"
+              accept="image/*"
               multiple
               className="hidden"
               onChange={(e) => {

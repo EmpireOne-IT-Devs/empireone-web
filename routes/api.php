@@ -32,6 +32,7 @@ use App\Http\Controllers\API\Activities\ActivityPollController;
 use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
+use App\Http\Controllers\API\Engagement\EngagementCompanyGalleryController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventFileController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
@@ -159,9 +160,13 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
 
     Route::prefix('engagement')->group(function () {
-        // Gallery routes must be declared before resource to avoid {post_event} wildcard conflict
+        // Legacy event gallery attachments
         Route::post('post_events/upload-gallery',  [EngagementPostEventFileController::class, 'store']);
         Route::delete('post_events/files/{id}',    [EngagementPostEventFileController::class, 'destroy']);
+
+        // Company gallery resource (standalone gallery module)
+        Route::apiResource('engagement_company_galleries', EngagementCompanyGalleryController::class);
+        Route::delete('engagement_company_galleries/files/{id}', [EngagementCompanyGalleryController::class, 'destroyFile']);
 
         Route::resource('post_events', EngagementPostEventController::class);
         Route::get('post_events/{id}/comments',                     [EngagementPostEventCommentController::class, 'index']);

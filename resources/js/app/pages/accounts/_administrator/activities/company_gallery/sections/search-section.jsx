@@ -3,7 +3,7 @@ import Input from "@/app/_components/input";
 import { TbSearch } from "react-icons/tb";
 import UploadImageSection from "./upload-image-section";
 
-export default function SearchSection() {
+export default function SearchSection({ onUploadSuccess }) {
     const [search, setSearch] = useState("");
 
     return (
@@ -11,14 +11,14 @@ export default function SearchSection() {
             <div className="flex-1 w-full">
                     <Input
                         iconLeft={<TbSearch className="text-xl" />}
-                        label="Search event album..."
+                        label="Search gallery..."
                         name="search"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
             </div>
 
-           <UploadImageSection />
+           <UploadImageSection onUploadSuccess={onUploadSuccess} />
         </div>
     );
 }
