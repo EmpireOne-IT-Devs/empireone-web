@@ -66,7 +66,7 @@ export default function SetAttendanceSection() {
                             <DayAttendanceComponents day="Friday" />
                             <DayAttendanceComponents day="Saturday" />
                             <DayAttendanceComponents day="Sunday" />
-                            <div className="space-y-3">
+                            {/* <div className="space-y-3">
                                 <label className="flex items-center gap-3">
                                     <input type="checkbox" defaultChecked />
                                     Auto Compute Late
@@ -81,9 +81,9 @@ export default function SetAttendanceSection() {
                                     <input type="checkbox" defaultChecked />
                                     Apply to Future Attendance
                                 </label>
-                            </div>
+                            </div> */}
 
-                            <div>
+                            {/* <div>
                                 <label className="font-medium block mb-2">
                                     Remarks
                                 </label>
@@ -93,7 +93,7 @@ export default function SetAttendanceSection() {
                                     className="w-full border rounded-lg p-3"
                                     placeholder="Reason for schedule adjustment..."
                                 />
-                            </div>
+                            </div> */}
 
                             <div className="flex justify-end gap-3">
                                 <button className="px-5 py-2 border rounded-lg">
