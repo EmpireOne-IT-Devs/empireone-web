@@ -13,7 +13,7 @@ export default function SurveyInfoSection({ survey }) {
     if (!survey) return null;
 
     return (
-        <div className="w-full rounded-2xl border border-orange-100 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div className="w-full rounded-2xl border border-orange-100 bg-gray-50 p-6 shadow-sm hover:shadow-md transition-shadow">
             {/* Top Row: Survey ID, Title, Description, and Status */}
             <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="flex flex-col gap-1.5 max-w-2xl">

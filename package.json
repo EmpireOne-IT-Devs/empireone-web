@@ -32,6 +32,7 @@
         "@react-three/drei": "^9.122.0",
         "@react-three/fiber": "^8.18.0",
         "@reduxjs/toolkit": "^2.11.2",
+        "@tanstack/react-virtual": "^3.14.8",
         "@thesvg/react": "^2.0.0",
         "antd": "^6.3.5",
         "chart.js": "^4.5.1",

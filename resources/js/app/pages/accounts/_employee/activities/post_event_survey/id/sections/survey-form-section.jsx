@@ -367,7 +367,7 @@ export default function SurveyFormSection({ surveyId, questions = [], hasRespond
   const requiredCount = questions.filter((q) => q.is_required).length;
 
   return (
-    <div className="w-full bg-zinc-50 p-3 sm:bg-white sm:p-4 rounded-md" style={sans}>
+    <div className="w-full bg-zinc-50 p-3 sm:bg-gray-50 sm:p-4 rounded-md" style={sans}>
       <style>{META}</style>
 
       <div className="mb-3 flex flex-col gap-1 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:mb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 sm:rounded-none sm:border-0 sm:border-b sm:border-zinc-200 sm:bg-transparent sm:p-0 sm:pb-4 sm:shadow-none">

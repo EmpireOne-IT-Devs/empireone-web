@@ -42,7 +42,7 @@ export default function Page() {
             <ActivitiesLayout>
                 <div className="flex flex-col h-full min-h-0">
                     <HeaderSection surveyId={id} />
-                    <div className="flex-1 overflow-y-auto min-h-0 px-6 pb-8 flex flex-col gap-5">
+                    <div className="flex-1 overflow-y-auto min-h-0 flex flex-col gap-5">
                         <SurveyInfoSection survey={selectedSurvey} />
 
                         <div className="flex gap-2">

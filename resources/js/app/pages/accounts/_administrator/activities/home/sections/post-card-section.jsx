@@ -440,7 +440,7 @@ function EngagementPostCard({
 
             {post.files?.length > 0 && (
                 <div className="w-full border-y border-gray-100">
-                    <ImageGrid files={post.files} />
+                    <ImageGrid files={post.files} clickable={true} />
                 </div>
             )}
 
