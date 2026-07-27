@@ -22,12 +22,16 @@ export default function TimeKeepingLayout({ children }) {
             path: "/accounts/administrator/time_keeping/time_sheets",
             active: path === "time_sheets",
         },
-         {
+        {
+            label: "Attendance Settings",
+            path: "/accounts/administrator/time_keeping/attendance_settings",
+            active: path === "attendance_settings",
+        },
+        {
             label: "Reports",
             path: "/accounts/administrator/time_keeping/reports",
             active: path === "reports",
         },
-     
     ];
     return (
         <div>
