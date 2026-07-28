@@ -18,22 +18,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 2. Add Google Drive link support to the main Events table if missing
-        if (!Schema::hasColumn('engagement_post_events', 'drive_link')) {
-            Schema::table('engagement_post_events', function (Blueprint $table) {
-                $table->string('drive_link', 1000)->nullable()->after('publish_to');
-            });
-        }
+       
     }
 
     public function down(): void
     {
         Schema::dropIfExists('engagement_post_event_files');
         
-        if (Schema::hasColumn('engagement_post_events', 'drive_link')) {
-            Schema::table('engagement_post_events', function (Blueprint $table) {
-                $table->dropColumn('drive_link');
-            });
-        }
     }
 };
