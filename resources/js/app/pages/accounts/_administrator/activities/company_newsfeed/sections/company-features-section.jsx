@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Award,
     Heart,
@@ -11,6 +11,7 @@ import {
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
+import PostCardModalSection from "@/app/pages/accounts/_administrator/activities/home/sections/post-card-modal-section";
 // 1. Updated Redux Thunk import to use engagement
 import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
 
@@ -28,6 +29,9 @@ const categoryVariant = {
     Achievement: "success",
     Strategy: "primary",
 };
+
+const AUTOPLAY_MS = 5000;
+const FADE_MS = 300;
 
 function formatDate(d) {
     if (!d) return "";
@@ -49,11 +53,17 @@ function WysiwygContent({ html }) {
 
 export default function CompanyFeaturesSection() {
     const dispatch = useDispatch();
-    
+
     // 2. Switched target from state.activities to state.engagement
     const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [previewImage, setPreviewImage] = useState(null);
+    const [selectedFeature, setSelectedFeature] = useState(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Crossfade transition state — purely visual, does not touch data logic
+    const [isFading, setIsFading] = useState(false);
+    const isFadingRef = useRef(false);
+    const fadeTimeoutRef = useRef(null);
 
     // 3. Updated dispatch to fetch the correct engagement posts thunk
     useEffect(() => {
@@ -68,6 +78,13 @@ export default function CompanyFeaturesSection() {
             // 4. Fallback schemas for headline/title and message/content
             const rawMessage = p.message || p.content || "";
             const rawTitle = p.headline || p.title || "Untitled Milestone";
+            const images = Array.isArray(p.files) && p.files.length > 0
+                ? p.files
+                      .map((file) => file?.url || file?.path)
+                      .filter(Boolean)
+                : p.media_url
+                ? [p.media_url]
+                : [FALLBACK_IMAGE];
 
             return {
                 id: p.id,
@@ -82,29 +99,59 @@ export default function CompanyFeaturesSection() {
                 likes: p.reaction_count ?? 0,
                 comments: p.comment_count ?? 0,
                 user_has_reacted: p.user_has_reacted ?? false,
-                image: p.files?.[0]?.url || p.media_url || FALLBACK_IMAGE,
+                images,
+                image: images[0],
+                originalPost: p,
                 isFeatured: true,
             };
         });
 
+    // Crossfade-aware index change: fades out, swaps the slide, fades back in.
+    // Uses functional setState updaters so the autoplay interval never sees a
+    // stale `currentIndex` closure.
+    const changeIndex = (indexOrUpdater) => {
+        if (isFadingRef.current) return;
+        isFadingRef.current = true;
+        setIsFading(true);
+
+        fadeTimeoutRef.current = setTimeout(() => {
+            setCurrentIndex(indexOrUpdater);
+            requestAnimationFrame(() => {
+                setIsFading(false);
+                isFadingRef.current = false;
+            });
+        }, FADE_MS);
+    };
+
     const handlePrev = () =>
-        setCurrentIndex((prev) =>
-            prev === 0 ? features.length - 1 : prev - 1,
-        );
+        changeIndex((prev) => (prev === 0 ? features.length - 1 : prev - 1));
     const handleNext = () =>
-        setCurrentIndex((prev) =>
+        changeIndex((prev) =>
             prev === features.length - 1 ? 0 : prev + 1,
         );
+    const goToIndex = (index) => {
+        if (index === currentIndex) return;
+        changeIndex(index);
+    };
 
     useEffect(() => {
         if (features.length <= 1) return;
-        const interval = setInterval(handleNext, 5000);
+        const interval = setInterval(handleNext, AUTOPLAY_MS);
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [features.length]);
 
     useEffect(() => {
         setCurrentIndex(0);
     }, [features.length]);
+
+    useEffect(() => {
+        setCurrentImageIndex(0);
+    }, [currentIndex]);
+
+    useEffect(() => {
+        return () => clearTimeout(fadeTimeoutRef.current);
+    }, []);
 
     if (postsLoading && features.length === 0) {
         return (
@@ -130,7 +177,8 @@ export default function CompanyFeaturesSection() {
                     </h2>
                 </div>
                 <Card className="overflow-hidden rounded-2xl border">
-                    <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+                    <div className="flex flex-col items-center justify-center gap-2 py-16 text-sm text-gray-400">
+                        <Award size={22} className="text-gray-300" />
                         No milestone highlights published yet.
                     </div>
                 </Card>
@@ -145,18 +193,26 @@ export default function CompanyFeaturesSection() {
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                    <Award size={18} className="text-indigo-900" />
-                    <h2 className="text-sm font-bold text-indigo-950">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50">
+                        <Award size={16} className="text-indigo-700" />
+                    </span>
+                    <h2 className="text-sm font-bold tracking-tight text-indigo-950">
                         Featured Highlights
                     </h2>
+                    {features.length > 1 && (
+                        <span className="text-xs font-medium text-gray-400">
+                            {currentIndex + 1} / {features.length}
+                        </span>
+                    )}
                 </div>
 
                 {features.length > 1 && (
-                    <div className="flex gap-1">
+                    <div className="flex gap-1.5">
                         <button
                             type="button"
                             onClick={handlePrev}
-                            className="p-1.5 rounded-lg border hover:bg-gray-50 transition-colors"
+                            aria-label="Previous highlight"
+                            className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-indigo-200 hover:text-indigo-700 hover:shadow active:scale-95"
                         >
                             <ChevronLeft size={16} />
                         </button>
@@ -164,7 +220,8 @@ export default function CompanyFeaturesSection() {
                         <button
                             type="button"
                             onClick={handleNext}
-                            className="p-1.5 rounded-lg border hover:bg-gray-50 transition-colors"
+                            aria-label="Next highlight"
+                            className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-indigo-200 hover:text-indigo-700 hover:shadow active:scale-95"
                         >
                             <ChevronRight size={16} />
                         </button>
@@ -173,32 +230,96 @@ export default function CompanyFeaturesSection() {
             </div>
 
             {/* Card */}
-            <Card className="overflow-hidden rounded-2xl border">
-                <div
-                    key={currentFeature.id}
-                    className="flex h-[520px] flex-col animate-in fade-in duration-500 md:h-[480px] md:flex-row"
-                >
+            <Card className="overflow-hidden rounded-3xl border shadow-sm">
+                <div className="flex h-[520px] flex-col md:h-[480px] md:flex-row">
                     {/* Image */}
-                    <button
-                        type="button"
-                        onClick={() => setPreviewImage(currentFeature)}
-                        className="relative h-64 w-full overflow-hidden text-left md:h-full md:w-1/2"
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setSelectedFeature(currentFeature)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setSelectedFeature(currentFeature);
+                            }
+                        }}
+                        className="relative h-64 w-full overflow-hidden text-left md:h-full md:w-1/2 cursor-pointer bg-gray-100"
                     >
                         <img
-                            src={currentFeature.image}
+                            src={currentFeature.images[currentImageIndex]}
                             alt={currentFeature.title}
-                            className="h-full w-full object-cover transition duration-300 hover:scale-[1.02]"
+                            className={`h-full w-full object-cover transition-[opacity,transform] duration-300 ease-in-out motion-reduce:transition-none hover:scale-[1.03] ${
+                                isFading ? "opacity-0" : "opacity-100"
+                            }`}
                         />
+
+                        {/* Subtle gradient so overlaid controls stay legible on any image */}
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/25 to-transparent" />
 
                         {currentFeature.isFeatured && (
                             <div className="absolute top-4 left-4">
                                 <Badge label="Featured" variant="warning" />
                             </div>
                         )}
-                    </button>
 
-                    {/* Content */}
-                    <div className="flex min-h-0 flex-1 flex-col justify-between p-6 md:w-1/2">
+                        {currentFeature.images.length > 1 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setCurrentImageIndex((prev) =>
+                                            prev === 0
+                                                ? currentFeature.images.length - 1
+                                                : prev - 1,
+                                        );
+                                    }}
+                                    className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 text-gray-700 shadow-sm backdrop-blur transition-transform hover:bg-white hover:scale-105 active:scale-95"
+                                    aria-label="Previous image"
+                                >
+                                    <ChevronLeft size={18} />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setCurrentImageIndex((prev) =>
+                                            prev === currentFeature.images.length - 1
+                                                ? 0
+                                                : prev + 1,
+                                        );
+                                    }}
+                                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 text-gray-700 shadow-sm backdrop-blur transition-transform hover:bg-white hover:scale-105 active:scale-95"
+                                    aria-label="Next image"
+                                >
+                                    <ChevronRight size={18} />
+                                </button>
+
+                                {/* Image sub-dots */}
+                                <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+                                    {currentFeature.images.map((_, i) => (
+                                        <span
+                                            key={i}
+                                            className={`h-1.5 rounded-full transition-all duration-300 ${
+                                                i === currentImageIndex
+                                                    ? "w-4 bg-white"
+                                                    : "w-1.5 bg-white/50"
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+
+                    {/* Content — fades in sync with the image */}
+                    <div
+                        className={`flex min-h-0 flex-1 flex-col justify-between p-6 md:w-1/2 transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${
+                            isFading ? "opacity-0" : "opacity-100"
+                        }`}
+                    >
                         <div className="min-h-0">
                             <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
                                 <Badge
@@ -209,11 +330,11 @@ export default function CompanyFeaturesSection() {
                                         ] || "secondary"
                                     }
                                 />
-                                <span>•</span>
+                                <span className="text-gray-300">•</span>
                                 <span>{currentFeature.date}</span>
                             </div>
 
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">
+                            <h3 className="text-lg font-bold leading-snug text-gray-900 mb-2">
                                 {currentFeature.title}
                             </h3>
 
@@ -222,29 +343,37 @@ export default function CompanyFeaturesSection() {
                             />
                         </div>
 
-                        <div className="flex items-center justify-between pt-4 mt-6 border-t">
+                        <div className="flex items-center justify-between pt-4 mt-6 border-t border-gray-100">
                             <div className="flex items-center gap-2">
                                 <div
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${currentFeature.authorBg}`}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ring-2 ring-white shadow-sm ${currentFeature.authorBg}`}
                                 >
                                     {currentFeature.authorInitial}
                                 </div>
 
-                                <span className="text-sm font-medium">
+                                <span className="text-sm font-medium text-gray-800">
                                     {currentFeature.author}
                                 </span>
                             </div>
 
                             <div className="flex items-center gap-4 text-sm text-gray-500">
-                                <div className={`flex items-center gap-1 transition-colors ${currentFeature.user_has_reacted ? "text-red-500" : ""}`}>
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedFeature(currentFeature)}
+                                    className={`flex items-center gap-1 transition-colors ${currentFeature.user_has_reacted ? "text-red-500" : "hover:text-gray-700"}`}
+                                >
                                     <Heart size={14} className={currentFeature.user_has_reacted ? "fill-red-500" : ""} />
                                     <span>{currentFeature.likes > 0 ? currentFeature.likes : ""}</span>
-                                </div>
+                                </button>
 
-                                <div className="flex items-center gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setSelectedFeature(currentFeature)}
+                                    className="flex items-center gap-1 hover:text-gray-700 transition-colors"
+                                >
                                     <MessageCircle size={14} />
                                     <span>{currentFeature.comments > 0 ? currentFeature.comments : ""}</span>
-                                </div>
+                                </button>
 
                                 <Share2 size={14} className="hover:text-gray-700 cursor-pointer transition-colors" />
                             </div>
@@ -253,51 +382,46 @@ export default function CompanyFeaturesSection() {
                 </div>
             </Card>
 
-            {previewImage && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-8 backdrop-blur-sm">
-                    <div className="relative w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl">
-                        <button
-                            type="button"
-                            onClick={() => setPreviewImage(null)}
-                            className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 text-gray-600 shadow-sm transition hover:bg-white hover:text-gray-900"
-                            aria-label="Close image preview"
-                        >
-                            <X size={18} />
-                        </button>
-                        <img
-                            src={previewImage.image}
-                            alt={previewImage.title}
-                            className="max-h-[82vh] w-full object-contain bg-black"
-                        />
-                        <div className="border-t border-gray-100 px-5 py-4">
-                            <p className="text-sm font-semibold text-gray-900">
-                                {previewImage.title}
-                            </p>
-                            <p className="mt-1 text-xs text-gray-500">
-                                {previewImage.category} • {previewImage.date}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <PostCardModalSection
+                post={selectedFeature?.originalPost ?? selectedFeature}
+                onClose={() => setSelectedFeature(null)}
+            />
 
-            {/* Dots */}
+            {/* Dots with an autoplay progress fill on the active one */}
             {features.length > 1 && (
-                <div className="flex justify-center gap-2 mt-3">
+                <div className="flex justify-center gap-2 mt-4">
                     {features.map((_, index) => (
                         <button
                             type="button"
                             key={index}
-                            onClick={() => setCurrentIndex(index)}
-                            className={`h-2 rounded-full transition-all ${
-                                currentIndex === index
-                                    ? "w-6 bg-indigo-600"
-                                    : "w-2 bg-gray-300"
+                            onClick={() => goToIndex(index)}
+                            aria-label={`Go to highlight ${index + 1}`}
+                            className={`relative h-1.5 overflow-hidden rounded-full bg-gray-200 transition-all duration-300 ${
+                                currentIndex === index ? "w-8" : "w-1.5 hover:bg-gray-300"
                             }`}
-                        />
+                        >
+                            {currentIndex === index && (
+                                <span
+                                    key={`progress-${currentIndex}-${isFading}`}
+                                    className="absolute inset-y-0 left-0 rounded-full bg-indigo-600 motion-reduce:hidden"
+                                    style={{
+                                        animation: isFading
+                                            ? "none"
+                                            : `feature-autoplay ${AUTOPLAY_MS}ms linear forwards`,
+                                    }}
+                                />
+                            )}
+                        </button>
                     ))}
                 </div>
             )}
+
+            <style>{`
+                @keyframes feature-autoplay {
+                    from { width: 0%; }
+                    to { width: 100%; }
+                }
+            `}</style>
         </div>
     );
 }

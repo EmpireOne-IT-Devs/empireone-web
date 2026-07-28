@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
-import { get_activity_posts_thunk } from "@/app/redux/activities-thunk";
+import { get_engagement_posts_thunk } from "@/app/redux/engagement-slice";
 
 const FALLBACK_IMAGE = "/images/building.jpg";
 
@@ -27,10 +27,10 @@ function formatDate(d) {
 
 export default function RecentActivitySection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading } = useSelector((s) => s.activities);
+    const { posts, postsLoading } = useSelector((s) => s.engagement);
 
     useEffect(() => {
-        dispatch(get_activity_posts_thunk());
+        dispatch(get_engagement_posts_thunk());
     }, [dispatch]);
 
     // Show the most recently published non-news, non-milestone, non-poll post.
