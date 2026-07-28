@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navigation = [
     { name: "Home", id: "home", href: "https://empireonecx.com" },
-    { name: "Job Openings", id: "careers" },
+    // { name: "Job Openings", id: "careers" },
     { name: "About", id: "about-us" },
     { name: "Contact", id: "contact" },
 ];
