@@ -11,6 +11,7 @@ import {
     ChevronRight,
     Images,
     ArrowLeft,
+    FileText,
 } from "lucide-react";
 import Modal from "@/app/_components/modal";
 import Badge from "@/app/_components/badge";
@@ -339,6 +340,9 @@ export default function PostCardModalSection({ post, onClose }) {
     const dispatch = useDispatch();
     const [lightboxIndex, setLightboxIndex] = useState(null);
 
+    const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+    const isAdmin = currentPath.includes("/administrator/");
+
     // Prevent body scrolling when post view is open on mobile
     useEffect(() => {
         if (post) {
@@ -354,23 +358,46 @@ export default function PostCardModalSection({ post, onClose }) {
     if (!post) return null;
 
     const categoryKey = post.category ?? "General";
+    const isEventCategory = categoryKey === "Event";
+    const hasSurvey = post.survey?.id;
     const catConfig = CATEGORY_CONFIG[categoryKey] ?? CATEGORY_CONFIG.General;
     const CategoryIcon = catConfig.icon;
     const files = post.files ?? [];
 
     const TitleContent = (
-        <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 sm:h-10 sm:w-10">
-                <CategoryIcon size={17} className="sm:hidden" />
-                <CategoryIcon size={18} className="hidden sm:block" />
+        <div className="flex items-center justify-between gap-2.5 sm:gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 sm:h-10 sm:w-10">
+                    <CategoryIcon size={17} className="sm:hidden" />
+                    <CategoryIcon size={18} className="hidden sm:block" />
+                </div>
+                <div className="min-w-0">
+                    <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-neutral-400 sm:text-[10px]">
+                        Engagement / {categoryKey}
+                    </p>
+                    <h2 className="truncate text-[14px] font-semibold leading-snug text-neutral-800 sm:text-[15px]">
+                        {post.title}
+                    </h2>
+                </div>
             </div>
-            <div className="min-w-0 flex-1">
-                <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-neutral-400 sm:text-[10px]">
-                    Engagement / {categoryKey}
-                </p>
-                <h2 className="truncate text-[14px] font-semibold leading-snug text-neutral-800 sm:text-[15px]">
-                    {post.title}
-                </h2>
+
+            <div className="flex items-center gap-1.5">
+                {isEventCategory && hasSurvey && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            const surveyPath = isAdmin
+                                ? `/accounts/administrator/activities/post_event_survey/${post.survey.id}`
+                                : `/accounts/employee/activities/post_event_survey/${post.survey.id}`;
+                            window.location.href = surveyPath;
+                        }}
+                        className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-lg text-[11px] sm:text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors duration-150 shrink-0"
+                        title="Open Event Survey"
+                    >
+                        <FileText className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Survey</span>
+                    </button>
+                )}
             </div>
         </div>
     );
@@ -393,6 +420,25 @@ export default function PostCardModalSection({ post, onClose }) {
                         <span className="font-semibold text-sm text-gray-800 truncate">
                             Post
                         </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        {isEventCategory && hasSurvey && (
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const surveyPath = isAdmin
+                                        ? `/accounts/administrator/activities/post_event_survey/${post.survey.id}`
+                                        : `/accounts/employee/activities/post_event_survey/${post.survey.id}`;
+                                    window.location.href = surveyPath;
+                                }}
+                                className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-lg text-[11px] sm:text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors duration-150"
+                                title="Open Event Survey"
+                            >
+                                <FileText className="w-3.5 h-3.5" />
+                                <span className="hidden sm:inline">Survey</span>
+                            </button>
+                        )}
                     </div>
                 </div>
 

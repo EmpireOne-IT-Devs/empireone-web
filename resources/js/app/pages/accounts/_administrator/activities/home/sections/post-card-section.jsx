@@ -273,7 +273,6 @@ function EngagementPostCard({
     const CategoryIcon = catConfig.icon;
     const isEventCategory = categoryKey === "Event";
     const hasSurvey = post.survey && post.survey.id;
-    // Detect role from URL path instead of user object
     const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
     const isAdmin = currentPath.includes("/administrator/") || user?.role === 1 || user?.role === "1" || String(user?.role).toLowerCase() === "administrator";
 

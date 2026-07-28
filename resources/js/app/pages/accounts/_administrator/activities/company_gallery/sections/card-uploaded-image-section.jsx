@@ -349,6 +349,10 @@ export default function CardUploadedImageSection({ refreshKey }) {
                                 <h2 className="text-lg font-bold text-gray-900 tracking-tight">
                                     {displayTitle}
                                 </h2>
+                                <p className="text-sm text-gray-500 mt-1 max-w-lg">
+                                    {gallery.description ||
+                                        "No description provided."}
+                                </p>
                                 <div className="flex items-center gap-2 text-xs font-medium text-gray-500 mt-1">
                                     {displayDate && (
                                         <>

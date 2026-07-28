@@ -159,7 +159,7 @@ export default function SidebarSection() {
                     href: `/accounts/${account_role}/rnr/grand_rewards`,
                     icon: FcDiploma1,
                     current: path == "rnr",
-                    is_incoming: true,
+                    is_incoming: false,
                 },
                 {
                     name: "E-Store",
