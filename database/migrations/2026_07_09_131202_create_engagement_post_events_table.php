@@ -19,12 +19,24 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+            $table->string('type')->nullable();
+            $table->string('headline')->nullable();
+            $table->text('message')->nullable();
+            $table->string('media_path')->nullable();
+            $table->string('media_type')->nullable();
+            $table->string('month')->nullable();
+            $table->integer('year')->nullable();
+            $table->string('publish_to')->nullable();
+            $table->dateTime('scheduled_at')->nullable();
+            $table->dateTime('published_at')->nullable();
+            $table->dateTime('closed_at')->nullable();
+            $table->string('drive_link', 1000)->nullable();
             $table->enum('category', [
                 'Event',
                 'News',
                 'Milestone',
                 'Announcement',
-            ])->default(null);
+            ])->nullable()->default(null);
             $table->timestamps();
         });
     }
