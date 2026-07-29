@@ -166,7 +166,7 @@ class JobRequisitionController extends Controller
         ];
 
         // 2. Build the query for the table (Filtered Data)
-        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter', 'user'])
+        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter', 'user','approver1','approver2','approver3'])
             ->when($search, function ($q) use ($search) {
                 // Use a nested where to group the 'OR' logic
                 $q->where(function ($subQuery) use ($search) {
