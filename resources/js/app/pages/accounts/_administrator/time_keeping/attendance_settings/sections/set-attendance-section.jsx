@@ -8,7 +8,11 @@ export default function SetAttendanceSection() {
     );
     const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
 
-    const selectedEmployee = employees.find(
+    const employeeList = Array.isArray(employees)
+        ? employees
+        : (employees?.data ?? []);
+
+    const selectedEmployee = employeeList.find(
         (employee) => employee.id.toString() === selectedEmployeeId.toString(),
     );
     console.log("employssdadees", employees);
@@ -40,7 +44,7 @@ export default function SetAttendanceSection() {
                         >
                             <option value="">Select Employee</option>
 
-                            {[...employees]
+                            {[...employeeList]
                                 .sort((a, b) => {
                                     const lastNameA =
                                         a.personal_information?.last_name || "";
