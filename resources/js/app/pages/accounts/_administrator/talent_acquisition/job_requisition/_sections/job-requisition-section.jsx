@@ -90,7 +90,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
         Declined: "bg-red-200 text-red-800",
         Posted: "bg-purple-200 text-purple-800",
     };
-
+    console.log('job_requisition', job_requisition)
     return (
         <>
             {/* Added w-full and text-left so the button behaves like a block container */}
@@ -215,6 +215,20 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         <LuUser className="shrink-0" />
                         <span>{job_requisition?.user?.name || "N/A"}</span>
                     </div>
+
+                    <div className="flex items-center gap-2">
+                        1.  <LuUser className="shrink-0" />
+                        <span>{job_requisition?.approver1?.name || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        2.  <LuUser className="shrink-0" />
+                        <span>{job_requisition?.approver2?.name || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        3.  <LuUser className="shrink-0" />
+                        <span>{job_requisition?.approver3?.name || "N/A"}</span>
+                    </div>
+
 
                     <div className="flex items-center gap-2">
                         <TbCalendar className="shrink-0" />

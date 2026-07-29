@@ -60,7 +60,7 @@ class JobRequisitionController extends Controller
 
         // 4. Fetch Requisitions using the scope and search filters
         $jobRequisitions = JobRequisition::where($userAccessScope)
-            ->with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter'])
+            ->with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter','approver1','approver2','approver3'])
             ->when($search, function ($q) use ($search) {
                 // Keep this search block grouped so it uses 'AND (search conditions)'
                 $q->where(function ($query) use ($search) {

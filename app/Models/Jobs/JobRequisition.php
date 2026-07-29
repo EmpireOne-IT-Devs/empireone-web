@@ -94,6 +94,18 @@ class JobRequisition extends Model
      * ---------------------------------------------------------
      */
 
+    public function approver1(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'approver1_id');
+    }
+    public function approver2(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'approver2_id');
+    }
+    public function approver3(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'approver3_id');
+    }
     public function recruiter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'recruiter_id');
