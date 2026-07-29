@@ -31,7 +31,7 @@ return new class extends Migration
             $table->dateTime('published_at')->nullable();
             $table->dateTime('closed_at')->nullable();
             $table->string('drive_link', 1000)->nullable();
-            $table->enum('category', [
+            $table->enum('category', [ 
                 'Event',
                 'News',
                 'Milestone',

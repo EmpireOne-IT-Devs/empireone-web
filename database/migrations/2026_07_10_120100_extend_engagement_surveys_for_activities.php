@@ -25,7 +25,6 @@ return new class extends Migration
             }
         });
 
-        // Extend questions with survey link, ordering + required flag.
         Schema::table('engagement_post_event_questions', function (Blueprint $table) {
             if (! Schema::hasColumn('engagement_post_event_questions', 'engagement_post_event_survey_id')) {
                 $table->foreignId('engagement_post_event_survey_id')->nullable()->after('engagement_post_event_id')

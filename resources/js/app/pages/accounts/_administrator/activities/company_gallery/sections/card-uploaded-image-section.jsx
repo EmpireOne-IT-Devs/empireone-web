@@ -59,10 +59,9 @@ function LightboxModal({
                         href={driveLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg px-3.5 py-2 text-sm font-medium shadow-md transition-all active:scale-95"
+                        className="inline-flex items-center justify-center gap-2  hover:bg-orange-600 text-white rounded-lg px-3.5 py-2 text-sm font-medium shadow-md transition-all active:scale-95"
                     >
-                        <Download className="w-4 h-4" />
-                        <span>Grab photos</span>
+                        <Download className="w-6 h-6" />
                     </a>
                 )}
                 <button
@@ -379,20 +378,10 @@ export default function CardUploadedImageSection({ refreshKey }) {
                                         href={driveLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-150 active:scale-95 shadow-sm"
+                                        className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 border border-gray-200 text-white rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-150 active:scale-95 shadow-sm"
                                     >
-                                        <Folder className="w-4 h-4 text-gray-600" />
+                                        <Folder className="w-4 h-4 text-white" />
                                         <span>Open in Drive</span>
-                                    </a>
-
-                                    <a
-                                        href={driveLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-150 active:scale-95 shadow-sm"
-                                    >
-                                        <Download className="w-4 h-4 text-white" />
-                                        <span>Grab photos</span>
                                     </a>
                                 </div>
                             )}
