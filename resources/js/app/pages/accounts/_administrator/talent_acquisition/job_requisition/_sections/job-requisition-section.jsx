@@ -216,15 +216,15 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         <span>{job_requisition?.user?.name || "N/A"}</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className={`${job_requisition.status == 'Pending' ? 'text-red-500' : (job_requisition.status == 'In Progress' || job_requisition.status == 'Final Approved') ? 'text-green-500' : ''} flex items-center gap-2`}>
                         1.  <LuUser className="shrink-0" />
                         <span>{job_requisition?.approver1?.name || "N/A"}</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className={`${job_requisition.status == 'In Progress' ? 'text-red-500' : (job_requisition.status == 'Final Approved') ? 'text-green-500' : ''} flex items-center gap-2`}>
                         2.  <LuUser className="shrink-0" />
                         <span>{job_requisition?.approver2?.name || "N/A"}</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className={`${job_requisition.status == 'Final Approved' ? 'text-green-500' : ''} flex items-center gap-2`}>
                         3.  <LuUser className="shrink-0" />
                         <span>{job_requisition?.approver3?.name || "N/A"}</span>
                     </div>
