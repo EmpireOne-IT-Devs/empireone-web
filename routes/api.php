@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
+use App\Http\Controllers\API\Timekeeping\AttendanceController;
 use App\Http\Controllers\API\Account\AccountDocumentController;
 use App\Http\Controllers\API\Account\AccountEmployeeController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
@@ -211,6 +212,15 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
 
+
+    Route::prefix('timekeeping')->group(function () {
+        Route::get('attendance/today', [AttendanceController::class, 'today']);
+        Route::get('attendance/logs', [AttendanceController::class, 'logs']);
+        Route::post('attendance/clock_in', [AttendanceController::class, 'clock_in']);
+        Route::post('attendance/break_start', [AttendanceController::class, 'break_start']);
+        Route::post('attendance/break_end', [AttendanceController::class, 'break_end']);
+        Route::post('attendance/clock_out', [AttendanceController::class, 'clock_out']);
+    });
 
     Route::prefix('activities')->group(function () {
         Route::get('upcoming_birthdays', [ActivityBirthdayController::class, 'upcoming_birthdays']);

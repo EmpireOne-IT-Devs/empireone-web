@@ -1,47 +1,37 @@
 import moment from "moment";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { get_attendance_logs_service } from "@/app/services/attendance-service";
 
 export default function AttendanceLogs() {
-    const logs = [
-        {
-            date: "2026-06-23",
-            clockIn: "08:15 AM",
-            clockOut: "05:00 PM",
-            status: "Late",
-            lateMinutes: 15,
-            undertimeMinutes: 0,
-            remarks: "Arrived 15 minutes late",
-        },
-        {
-            date: "2026-06-22",
-            clockIn: "08:00 AM",
-            clockOut: "04:30 PM",
-            status: "Undertime",
-            lateMinutes: 0,
-            undertimeMinutes: 30,
-            remarks: "Left 30 minutes early",
-        },
-        {
-            date: "2026-06-21",
-            clockIn: "-",
-            clockOut: "-",
-            status: "Absent",
-            lateMinutes: 0,
-            undertimeMinutes: 0,
-            remarks: "No attendance record",
-        },
-        {
-            date: "2026-06-20",
-            clockIn: "07:58 AM",
-            clockOut: "05:05 PM",
-            status: "Present",
-            lateMinutes: 0,
-            undertimeMinutes: 0,
-            remarks: "On time",
-        },
-    ];
+    const [logs, setLogs] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const getStatusBadge = (status) => {
+    useEffect(() => {
+        const fetchLogs = async () => {
+            try {
+                const res = await get_attendance_logs_service();
+                setLogs(res.data.data ?? []);
+            } catch {
+                setLogs([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLogs();
+    }, []);
+
+    const resolveDisplayStatus = (log) => {
+        if (log.display_status) return log.display_status;
+        if (log.status === "clocked_out") {
+            if (log.late_minutes > 0) return "Late";
+            if (log.undertime_minutes > 0) return "Undertime";
+            return "Present";
+        }
+        return log.status;
+    };
+
+    const getStatusBadge = (log) => {
+        const status = resolveDisplayStatus(log);
         switch (status) {
             case "Present":
                 return (
@@ -61,16 +51,29 @@ export default function AttendanceLogs() {
                         Undertime
                     </span>
                 );
-            case "Absent":
+            case "Clocked In":
                 return (
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
-                        Absent
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                        Clocked In
+                    </span>
+                );
+            case "On Break":
+                return (
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">
+                        On Break
                     </span>
                 );
             default:
-                return null;
+                return (
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+                        {status}
+                    </span>
+                );
         }
     };
+
+    const formatTime = (t) =>
+        t ? moment(t, "HH:mm:ss").format("hh:mm A") : "-";
 
     return (
         <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
@@ -109,26 +112,40 @@ export default function AttendanceLogs() {
                     </thead>
 
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {logs.map((log, index) => (
-                            <tr key={index}>
-                                <td className="px-4 py-3 whitespace-nowrap">
-                                    {moment(log.date).format("LL")}
-                                </td>
-                                <td className="px-4 py-3 whitespace-nowrap">
-                                    {log.clockIn}
-                                </td>
-                                <td className="px-4 py-3 whitespace-nowrap">
-                                    {log.clockOut}
-                                </td>
-                                <td className="px-4 py-3">
-                                    {getStatusBadge(log.status)}
-                                </td>
-                                <td className="px-4 py-3">{log.lateMinutes}</td>
-                                <td className="px-4 py-3">
-                                    {log.undertimeMinutes}
+                        {loading ? (
+                            <tr>
+                                <td colSpan={6} className="px-4 py-6 text-center text-sm text-gray-400">
+                                    Loading...
                                 </td>
                             </tr>
-                        ))}
+                        ) : logs.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className="px-4 py-6 text-center text-sm text-gray-400">
+                                    No attendance records found.
+                                </td>
+                            </tr>
+                        ) : (
+                            logs.map((log, index) => (
+                                <tr key={index}>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {moment(log.date).format("LL")}
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {formatTime(log.clock_in)}
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {formatTime(log.clock_out)}
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        {getStatusBadge(log)}
+                                    </td>
+                                    <td className="px-4 py-3">{log.late_minutes}</td>
+                                    <td className="px-4 py-3">
+                                        {log.undertime_minutes}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>

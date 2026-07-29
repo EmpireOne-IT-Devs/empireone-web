@@ -17,9 +17,9 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('e_r_acknowledgements')
                 ->nullOnDelete();
-            $table->foreignId('e_r_acknowledgement_item_id')
-                ->nullable()
-                ->constrained('e_r_acknowledgement_items')
+            $table->unsignedBigInteger('e_r_acknowledgement_item_id')->nullable();
+            $table->foreign('e_r_acknowledgement_item_id', 'er_ack_emp_item_fk')
+                ->references('id')->on('e_r_acknowledgement_items')
                 ->nullOnDelete();
             $table->foreignId('user_id')
                 ->nullable()
