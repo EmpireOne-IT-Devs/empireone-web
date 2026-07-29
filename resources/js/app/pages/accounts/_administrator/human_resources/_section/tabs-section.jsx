@@ -10,12 +10,18 @@ export default function TabsSection() {
             path: "/accounts/administrator/human_resources/employees",
             active: currentPath === "employees",
         },
-        
+
         {
             label: "Executives/Managers/Leaders",
             path: "/accounts/administrator/human_resources/leads",
             active: currentPath === "leads",
         },
+        {
+            label: "Acknowledgements",
+            path: "/accounts/administrator/human_resources/acknowledgements",
+            active: currentPath === "acknowledgements",
+        },
+
         {
             label: "Pooling",
             path: "/accounts/administrator/human_resources/pooling",

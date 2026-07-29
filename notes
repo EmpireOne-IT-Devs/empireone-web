@@ -7,6 +7,12 @@ php artisan make:model Engagement/EngagementPostEventComment -mcr
 php artisan make:model Engagement/EngagementPostEventReact -mcr
 
 
+
+
+php artisan make:model ER/ERAcknowledgement -mcr
+php artisan make:model ER/ERAcknowledgementItem -mcr
+php artisan make:model ER/ERAcknowledgementEmployee -mcr
+
 task
 -fix the calendar when the applicant select schedule of interviewer applying
 

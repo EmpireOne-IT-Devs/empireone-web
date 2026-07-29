@@ -78,8 +78,11 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/dashboard', 'accounts/dashboard/page');
             Route::inertia('/job_openings', 'accounts/job_openings/page');
             Route::inertia('/my_applications', 'accounts/my_applications/page');
-            Route::inertia('/job_offers', 'accounts/job_offers/page');
-            Route::inertia('/my_documents', 'accounts/my_documents/page');
+            Route::inertia('/job_offers', 'accounts/job_offers/page');;
+            Route::prefix('/my_documents')->group(function () {
+                Route::inertia('/', 'accounts/my_documents/page');
+                Route::inertia('/acknowledgements', 'accounts/my_documents/acknowledgements/page');
+            });
             if ($role == 'administrator') {
                 Route::inertia('/my_requisition', 'accounts/my_requisition/page');
             }
@@ -213,6 +216,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('pooling', 'accounts/_administrator/human_resources/pooling/page');
             Route::inertia('disciplinary_records', 'accounts/_administrator/human_resources/disciplinary_records/page');
             Route::inertia('separation', 'accounts/_administrator/human_resources/separation/page');
+            Route::inertia('acknowledgements', 'accounts/_administrator/human_resources/acknowledgements/page');
 
             Route::prefix('leads')->group(function () {
                 Route::inertia('', 'accounts/_administrator/human_resources/leads/page');

@@ -16,6 +16,7 @@ export const employeeRelationSlice = createSlice({
         ecf: [],
         applicants: [],
         users: [],
+        acknowledgements: [],
     },
     reducers: {
         setEmployees: (state, action) => {
@@ -57,6 +58,9 @@ export const employeeRelationSlice = createSlice({
         setUsers: (state, action) => {
             state.users = action.payload;
         },
+        setAcknowledgements: (state, action) => {
+            state.acknowledgements = action.payload;
+        },
     },
 });
 export const {
@@ -73,6 +77,7 @@ export const {
     setECFs,
     setECF,
     setApplicants,
+    setAcknowledgements,
 } = employeeRelationSlice.actions;
 
 export default employeeRelationSlice.reducer;

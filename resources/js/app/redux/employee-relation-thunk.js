@@ -7,6 +7,7 @@ import {
     get_employee_change_form_service,
 } from "../services/employee-change-form-service";
 import {
+    get_acknowledgement_service,
     get_employees_service,
     get_probationary_service,
     get_regular_service,
@@ -97,6 +98,13 @@ export function get_employee_change_form_by_id_thunk(id) {
     return async function (dispatch, getState) {
         const result = await get_employee_change_form_by_id_service(id);
         dispatch(employeeRelationSlice.actions.setECF(result.data));
+    };
+}
+
+export function get_acknowledgement_thunk() {
+    return async function (dispatch, getState) {
+        const result = await get_acknowledgement_service();
+        dispatch(employeeRelationSlice.actions.setAcknowledgements(result.data));
     };
 }
 

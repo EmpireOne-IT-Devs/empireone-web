@@ -606,7 +606,9 @@ class JobApplicationController extends Controller
                 'job_title'       => $request->position,
             ]);
 
+
             $googleData = json_decode($result, true);
+            // dd( $googleData);
             $meetLink = $googleData['eventId']['meetLink'];
             $eventId = $googleData['eventId']['eventId'];
             $schedule->update([
@@ -982,6 +984,8 @@ class JobApplicationController extends Controller
             SUM(CASE WHEN final_status = 'Hired' THEN 1 ELSE 0 END) as final_hired,
             SUM(CASE WHEN final_status = 'Rejected' THEN 1 ELSE 0 END) as final_rejected,
             SUM(CASE WHEN final_status = 'No Show' THEN 1 ELSE 0 END) as no_shows,
+            SUM(CASE WHEN final_status = 'Sent Documents' THEN 1 ELSE 0 END) as sent_documents,
+            
             
             -- Pipeline Computations
             SUM(CASE WHEN interview_status IS NULL AND final_status IS NULL THEN 1 ELSE 0 END) as remaining_applicants,
@@ -1021,6 +1025,7 @@ class JobApplicationController extends Controller
                 'final_hired' => (int) $statuses->final_hired,
                 'final_rejected' => (int) $statuses->final_rejected,
                 'no_shows' => (int) $statuses->no_shows,
+                'sent_documents' => (int) $statuses->sent_documents,
 
                 // Pipeline
                 'for_initial' => (int) $statuses->for_initial,

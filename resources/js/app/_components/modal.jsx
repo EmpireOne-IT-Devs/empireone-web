@@ -11,11 +11,11 @@ export default function Modal({
     width = "",
     closeOnClickOutside = true,
 }) {
-    const handleOverlayClick = (e) => {
-        if (closeOnClickOutside && e.target === e.currentTarget) {
-            onClose();
-        }
-    };
+    // const handleOverlayClick = (e) => {
+    //     if (closeOnClickOutside && e.target === e.currentTarget) {
+    //         onClose();
+    //     }
+    // };
 
     return (
         <Transition show={isOpen} as={Fragment}>
@@ -36,7 +36,7 @@ export default function Modal({
                 {/* Modal Panel */}
                 <div
                     className="fixed inset-0 overflow-y-auto p-4"
-                    onClick={handleOverlayClick}
+                    // onClick={handleOverlayClick}
                 >
                     <Transition.Child
                         as={Fragment}

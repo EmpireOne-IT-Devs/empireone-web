@@ -4,6 +4,7 @@ import {
     UserX,
     Award,
     XOctagon,
+    Files,
     X,
     Search,
     Users,
@@ -287,6 +288,13 @@ export default function StatusesCardSection() {
                     icon={Mail}
                     onClick={() => handleCardClick('final_status', 'Sent Job Offer')}
                 />
+                  <StatCard
+                    title="Sent Documents"
+                    count={data.sent_documents}
+                    type="success"
+                    icon={Files}
+                    onClick={() => handleCardClick('final_status', 'Sent Documents')}
+                />
                 <StatCard
                     title="No Shows"
                     count={data.no_shows}
@@ -315,13 +323,7 @@ export default function StatusesCardSection() {
                     icon={ThumbsDown}
                     onClick={() => handleCardClick('final_status', 'Declined Job Offer')}
                 />
-                <StatCard
-                    title="Rejected"
-                    count={data.final_rejected}
-                    type="danger"
-                    icon={XOctagon}
-                    onClick={() => handleCardClick('final_status', 'Rejected')}
-                />
+              
                 <StatCard
                     title="Withdrawn"
                     count={data.final_withdrawn}
@@ -329,6 +331,13 @@ export default function StatusesCardSection() {
                     icon={Ban}
                     onClick={() => handleCardClick('final_status', 'Withdrawn')}
                 />
+                {/* <StatCard
+                    title="Rejected"
+                    count={data.final_rejected}
+                    type="danger"
+                    icon={XOctagon}
+                    onClick={() => handleCardClick('final_status', 'Rejected')}
+                /> */}
             </div>
 
             {/* Title & Filtering Row */}

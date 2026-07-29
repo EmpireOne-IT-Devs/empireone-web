@@ -7,6 +7,7 @@ use App\Mail\ContractSigningMail;
 use App\Mail\OnboardingDocumentsMail;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
+use App\Models\Jobs\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -67,6 +68,12 @@ class AccountDocumentController extends Controller
         Mail::to($request->user['email'])->send(new OnboardingDocumentsMail($request->all()));
         Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
         // started_at
+        $application = JobApplication::where('id', $request->id)->first();
+        if ($application) {
+            $application->update([
+                'final_status' => 'Sent Documents'
+            ]);
+        }
         return response()->json([
             'status'  => 'success',
             'message' => 'The documents to be sign are sent.',

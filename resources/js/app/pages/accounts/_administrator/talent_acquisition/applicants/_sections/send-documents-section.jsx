@@ -6,7 +6,7 @@ import { InfoIcon, MailIcon, SendIcon } from "lucide-react";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import Radio from "@/app/_components/radio";
-import { get_job_offers_thunk } from "@/app/redux/job-posting-thunk";
+import { get_applicants_thunk, get_job_offers_thunk } from "@/app/redux/job-posting-thunk";
 import { send_documents_service } from "@/app/services/account-service";
 import store from "@/app/store/store";
 
@@ -33,7 +33,7 @@ export default function SendDocumentsSection({ data }) {
                 ...data,
                 ...formData,
             });
-            await store.dispatch(get_job_offers_thunk(window.location.search));
+            await store.dispatch(get_applicants_thunk());
             setLoading(false);
             setOpen(false);
             reset();
@@ -85,8 +85,8 @@ export default function SendDocumentsSection({ data }) {
                         contract signing to this candidate?
                     </p>
 
-                    <div className="flex flex-col gap-2 bg-gray-100 border border-gray-100 rounded-lg px-3.5 py-2.5">
-                        {/* Face to Face Radio */}
+                    {/* <div className="flex flex-col gap-2 bg-gray-100 border border-gray-100 rounded-lg px-3.5 py-2.5">
+                    
                         <Controller
                             control={control}
                             name="signType"
@@ -147,7 +147,6 @@ export default function SendDocumentsSection({ data }) {
                             </div>
                         )}
 
-                        {/* Online Radio */}
                         <Controller
                             control={control}
                             name="signType"
@@ -171,7 +170,7 @@ export default function SendDocumentsSection({ data }) {
                             )}
                         />
 
-                    </div>
+                    </div> */}
 
                     <div className="flex items-start gap-2 px-3.5 py-2.5 rounded-lg bg-blue-50 border border-blue-100">
                         <span className="text-blue-500 shrink-0 mt-px">
@@ -187,7 +186,7 @@ export default function SendDocumentsSection({ data }) {
                         <Button
                             type="submit"
                             loading={loading}
-                            disabled={loading || !signType}
+                            disabled={loading}
                             className="w-full"
                         >
                             <div className="mr-2">

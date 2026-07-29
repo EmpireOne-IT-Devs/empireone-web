@@ -57,7 +57,8 @@ return new class extends Migration
                 'Hired',
                 'Rejected',
                 'No Show',
-                'Transferred'
+                'Transferred',
+                'Sent Documents'
             ])->nullable()->default(null);
             $table->string('interview_type')->nullable();
             $table->timestamps();

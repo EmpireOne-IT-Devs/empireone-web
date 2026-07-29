@@ -39,6 +39,8 @@ use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ERAcknowledgementController;
+use App\Http\Controllers\ERAcknowledgementEmployeeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
@@ -204,6 +206,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);
         Route::post('accept_employee_change_form',  [EREmployeeChangeFormController::class, 'accept_employee_change_form']);
+        Route::resource('acknowledgement', ERAcknowledgementController::class);
+        Route::resource('acknowledgement_employee', ERAcknowledgementEmployeeController::class);
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
 
