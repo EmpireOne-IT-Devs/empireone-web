@@ -1,0 +1,1 @@
+import{j as r}from"./app-D8mtkODR.js";import{B as t}from"./button-DiGISm-q.js";import"./index-D2chVpVB.js";function a(){return r.jsx("div",{children:r.jsx(t,{variant:"primary",children:"Add Category"})})}export{a as default};
