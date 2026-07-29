@@ -156,7 +156,7 @@ export default function SidebarSection() {
 
                 {
                     name: "R & R",
-                    href: `/accounts/${account_role}/rnr/grand_rewards`,
+                    href: `/accounts/${account_role}/rnr/peer_recognition`,
                     icon: FcDiploma1,
                     current: path == "rnr",
                     is_incoming: false,

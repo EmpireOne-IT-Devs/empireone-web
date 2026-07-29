@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <Layout>
       
-      <RnrLayout>MANAGE REWARDS</RnrLayout>
+      <RnrLayout>Challenge Event</RnrLayout>
     </Layout>
   )
 }

@@ -3,6 +3,7 @@ export default function Badge({
     variant = "primary",
     outlined = false,
     showDot = false,
+    icon: Icon,
     className = "",
     underline = false,
 }) {
@@ -78,6 +79,7 @@ export default function Badge({
                     <circle r={3} cx={3} cy={3} />
                 </svg>
             )}
+            {Icon && <Icon size={12} className="shrink-0" />}
             {label}
         </span>
     );

@@ -184,10 +184,10 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/analytics', 'accounts/_administrator/e_store/analytics/page');
         });
         Route::prefix('rnr')->group(function () {
-            Route::redirect('/', '/accounts/administrator/rnr/grand_rewards');
-            Route::inertia('/grand_rewards', 'accounts/_administrator/rnr/grand_rewards/page');
-            Route::inertia('/manage_rewards', 'accounts/_administrator/rnr/manage_rewards/page');
-            Route::inertia('/leaderboard', 'accounts/_administrator/rnr/leaderboard/page');
+            Route::redirect('/', '/accounts/administrator/rnr/peer_recognition');
+            Route::inertia('/peer_recognition', 'accounts/_administrator/rnr/peer_recognition/page');
+            Route::inertia('/challenges_events', 'accounts/_administrator/rnr/challenges_events/page');
+            Route::inertia('/employee_profiles', 'accounts/_administrator/rnr/employee_profiles/page');
         });
         Route::prefix('ticketing')->group(function () {
             Route::inertia('/', 'accounts/_administrator/ticketing/dashboard/page');

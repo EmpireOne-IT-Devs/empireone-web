@@ -1,6 +1,7 @@
 import Tabs from "@/app/_components/tabs";
 import { router } from "@inertiajs/react";
 import React, { useState } from "react";
+import HeaderSection from "./sections/header-section";
 
 export default function RnrLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
@@ -8,25 +9,27 @@ export default function RnrLayout({ children }) {
 
     const tabs = [
         {
-            label: "Grand Rewards",
-            path: "/accounts/administrator/rnr/grand_rewards",
-            active: path === "grand_rewards",
+            label: "Peer Recognition",
+            path: "/accounts/administrator/rnr/peer_recognition",
+            active: path === "peer_recognition",
         },
         {
-            label: "Leaderboard",
-            path: "/accounts/administrator/rnr/leaderboard",
-            active: path === "leaderboard",
+            label: "Challenges & Events",
+            path: "/accounts/administrator/rnr/challenges_events",
+            active: path === "challenges_events",
         },
         {
-            label: "Manage Rewards",
-            path: "/accounts/administrator/rnr/manage_rewards",
-            active: path === "manage_rewards",
+            label: "Employee Profiles",
+            path: "/accounts/administrator/rnr/employee_profiles",
+            active: path === "employee_profiles",
         },
-     
     ];
     return (
         <div>
+            <HeaderSection />
+
             <Tabs tabs={tabs} activeIndex={activeTab} />
+         
             <div className="p-3">{children}</div>
         </div>
     );

@@ -5,7 +5,7 @@ import RnrLayout from '../layout'
 export default function Page() {
   return (
     <Layout>
-      <RnrLayout>GRAND REWARDS</RnrLayout>
+      <RnrLayout>Employee Profile</RnrLayout>
     </Layout>
   )
 }

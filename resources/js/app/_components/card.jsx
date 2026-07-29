@@ -19,7 +19,7 @@ export default function Card({
         success: "bg-green-500 text-white",
     };
 
-    const baseClasses = `flex flex-col rounded-lg transition-all hover:shadow-lg  lg:col-span-3 cursor-pointer ${padding}`;
+    const baseClasses = `flex flex-col rounded-lg transition-all hover:shadow-lg cursor-pointer ${padding}`;
 
     // Apply outlined styles if outlined is true
     const variantClasses = outlined
