@@ -61,12 +61,20 @@ class AttendanceController extends Controller
 
         $clockIn = Carbon::now();
 
-        $schedule = Carbon::parse($date . ' ' . self::SCHEDULE_IN);
+        $clockInTime = Carbon::createFromFormat(
+            'H:i:s',
+            $clockIn->format('H:i:s')
+        );
 
-        $lateMinutes = $clockIn->greaterThan($schedule)
-            ? $clockIn->diffInMinutes($schedule)
-            : 0;
+        $scheduleTime = Carbon::createFromFormat(
+            'H:i:s',
+            self::SCHEDULE_IN
+        );
 
+        $lateMinutes = max(
+            0,
+            $scheduleTime->diffInMinutes($clockInTime, false)
+        );
         $attendance->update([
             'clock_in' => $clockIn->format('H:i:s'),
             'status' => 'clocked_in',
@@ -156,16 +164,25 @@ class AttendanceController extends Controller
 
         $clockOut = Carbon::now();
 
-        $scheduleOut = Carbon::parse($attendance->date . ' ' . self::SCHEDULE_OUT);
+        $clockOutTime = Carbon::createFromFormat(
+            'H:i:s',
+            $clockOut->format('H:i:s')
+        );
 
-        $undertime = $clockOut->lessThan($scheduleOut)
-            ? $clockOut->diffInMinutes($scheduleOut)
-            : 0;
+        $scheduleOutTime = Carbon::createFromFormat(
+            'H:i:s',
+            self::SCHEDULE_OUT
+        );
+
+        $undertimeMinutes = max(
+            0,
+            $clockOutTime->diffInMinutes($scheduleOutTime, false)
+        );
 
         $attendance->update([
-            'clock_out' => $clockOut->format('H:i:s'),
+            'clock_out' => $clockOutTime->format('H:i:s'),
             'status' => 'clocked_out',
-            'undertime_minutes' => $undertime,
+            'undertime_minutes' => $undertimeMinutes,
         ]);
 
         return response()->json($attendance->fresh());

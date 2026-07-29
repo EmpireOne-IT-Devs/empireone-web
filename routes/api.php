@@ -37,6 +37,7 @@ use App\Http\Controllers\API\Engagement\EngagementCompanyGalleryController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventFileController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
+use App\Http\Controllers\API\Timekeeping\AttendanceEmployeeSettingsController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
@@ -220,7 +221,10 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('attendance/break_start', [AttendanceController::class, 'break_start']);
         Route::post('attendance/break_end', [AttendanceController::class, 'break_end']);
         Route::post('attendance/clock_out', [AttendanceController::class, 'clock_out']);
+        Route::get('attendance_employee_settings', [AttendanceEmployeeSettingsController::class, 'index']);
+        Route::post('attendance_employee_settings', [AttendanceEmployeeSettingsController::class, 'store']);
     });
+
 
     Route::prefix('activities')->group(function () {
         Route::get('upcoming_birthdays', [ActivityBirthdayController::class, 'upcoming_birthdays']);

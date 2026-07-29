@@ -1,9 +1,18 @@
 import { useState } from "react";
 import DayAttendanceComponents from "../components/day-attendance-components";
+import { useSelector } from "react-redux";
 
 export default function SetAttendanceSection() {
-    const [selectedEmployee, setSelectedEmployee] = useState("");
+    const { employees, employeesLoading } = useSelector(
+        (store) => store.human_resources,
+    );
+    const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
 
+    const selectedEmployee = employees.find(
+        (employee) => employee.id.toString() === selectedEmployeeId.toString(),
+    );
+    console.log("employssdadees", employees);
+    console.log("selectedEmployee", selectedEmployee);
     return (
         <div className="">
             <div className="bg-white rounded-xl shadow-md">
@@ -24,15 +33,52 @@ export default function SetAttendanceSection() {
 
                         <select
                             className="w-full border rounded-lg p-3"
-                            value={selectedEmployee}
+                            value={selectedEmployeeId}
                             onChange={(e) =>
-                                setSelectedEmployee(e.target.value)
+                                setSelectedEmployeeId(e.target.value)
                             }
                         >
-                            <option>Select Employee</option>
-                            <option>EMP-001 - John Doe</option>
-                            <option>EMP-002 - Jane Smith</option>
-                            <option>EMP-003 - Michael Santos</option>
+                            <option value="">Select Employee</option>
+
+                            {[...employees]
+                                .sort((a, b) => {
+                                    const lastNameA =
+                                        a.personal_information?.last_name || "";
+                                    const lastNameB =
+                                        b.personal_information?.last_name || "";
+
+                                    const lastNameComparison =
+                                        lastNameA.localeCompare(lastNameB);
+
+                                    if (lastNameComparison !== 0)
+                                        return lastNameComparison;
+
+                                    const firstNameA =
+                                        a.personal_information?.first_name ||
+                                        "";
+                                    const firstNameB =
+                                        b.personal_information?.first_name ||
+                                        "";
+
+                                    return firstNameA.localeCompare(firstNameB);
+                                })
+                                .map((employee) => (
+                                    <option
+                                        key={employee.id}
+                                        value={employee.id}
+                                    >
+                                        {
+                                            employee.personal_information
+                                                ?.last_name
+                                        }
+                                        ,{" "}
+                                        {
+                                            employee.personal_information
+                                                ?.first_name
+                                        }{" "}
+                                        - {employee.employee_id}
+                                    </option>
+                                ))}
                         </select>
                     </div>
 
@@ -41,24 +87,45 @@ export default function SetAttendanceSection() {
                             <div className="border rounded-lg p-5 bg-gray-50">
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-xl font-bold">
-                                        JD
+                                        {
+                                            selectedEmployee
+                                                .personal_information
+                                                ?.first_name?.[0]
+                                        }
+                                        {
+                                            selectedEmployee
+                                                .personal_information
+                                                ?.last_name?.[0]
+                                        }
                                     </div>
 
                                     <div>
                                         <h3 className="text-lg font-semibold">
-                                            John Doe
+                                            {
+                                                selectedEmployee
+                                                    .personal_information
+                                                    ?.first_name
+                                            }{" "}
+                                            {
+                                                selectedEmployee
+                                                    .personal_information
+                                                    ?.last_name
+                                            }
                                         </h3>
 
                                         <p className="text-gray-500">
-                                            IT Department
+                                            {selectedEmployee?.account ??
+                                                selectedEmployee?.department
+                                                    ?.name}
                                         </p>
 
                                         <p className="text-gray-500">
-                                            Software Developer
+                                            {selectedEmployee?.position}
                                         </p>
                                     </div>
                                 </div>
                             </div>
+
                             <DayAttendanceComponents day="Monday" />
                             <DayAttendanceComponents day="Tuesday" />
                             <DayAttendanceComponents day="Wednesday" />
@@ -66,34 +133,6 @@ export default function SetAttendanceSection() {
                             <DayAttendanceComponents day="Friday" />
                             <DayAttendanceComponents day="Saturday" />
                             <DayAttendanceComponents day="Sunday" />
-                            {/* <div className="space-y-3">
-                                <label className="flex items-center gap-3">
-                                    <input type="checkbox" defaultChecked />
-                                    Auto Compute Late
-                                </label>
-
-                                <label className="flex items-center gap-3">
-                                    <input type="checkbox" defaultChecked />
-                                    Auto Compute Undertime
-                                </label>
-
-                                <label className="flex items-center gap-3">
-                                    <input type="checkbox" defaultChecked />
-                                    Apply to Future Attendance
-                                </label>
-                            </div> */}
-
-                            {/* <div>
-                                <label className="font-medium block mb-2">
-                                    Remarks
-                                </label>
-
-                                <textarea
-                                    rows={4}
-                                    className="w-full border rounded-lg p-3"
-                                    placeholder="Reason for schedule adjustment..."
-                                />
-                            </div> */}
 
                             <div className="flex justify-end gap-3">
                                 <button className="px-5 py-2 border rounded-lg">
