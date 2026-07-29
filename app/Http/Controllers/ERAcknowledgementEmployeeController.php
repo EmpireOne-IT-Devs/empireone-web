@@ -30,19 +30,13 @@ class ERAcknowledgementEmployeeController extends Controller
         $userId = Auth::id();
 
         // 2. Handle Item Acknowledgement
-        if ($request->acknowledgement_item_id) {
-            ERAcknowledgementEmployee::firstOrCreate([
-                'user_id' => $userId,
-                'e_r_acknowledgement_item_id' => $request->acknowledgement_item_id
-            ]);
-        }
+        ERAcknowledgementEmployee::firstOrCreate([
+            'user_id' => $userId,
+            'e_r_acknowledgement_id' => $request->acknowledgement_id,
+            'e_r_acknowledgement_item_id' => $request->acknowledgement_item_id ?? 0
+        ]);
 
-        if ($request->acknowledgement_id) {
-            ERAcknowledgementEmployee::firstOrCreate([
-                'user_id' => $userId,
-                'e_r_acknowledgement_id' => $request->acknowledgement_id
-            ]);
-        }
+
 
         return response()->json([
             'success' => true,

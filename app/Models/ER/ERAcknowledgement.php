@@ -16,4 +16,8 @@ class ERAcknowledgement extends Model
     {
         return $this->hasMany(ERAcknowledgementItem::class, 'e_r_acknowledgement_id', 'id');
     }
+    public function employee(): HasMany
+    {
+        return $this->hasMany(ERAcknowledgementEmployee::class, 'e_r_acknowledgement_id', 'id')->with(['item']);
+    }
 }

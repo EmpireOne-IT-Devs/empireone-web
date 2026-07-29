@@ -143,11 +143,11 @@ export default function Sidetabs({ navItems, user_acknowledgements }) {
 
     // 1. Check if the active tab has already been acknowledged
     const isAlreadyAcknowledged = user_acknowledgements?.some(
-        (ack) => ack.e_r_acknowledgement_id === activeTabContent?.acknowledgement_id
+        (ack) => ack.e_r_acknowledgement_id == activeTabContent?.acknowledgement_id && ack.e_r_acknowledgement_item_id == 0
     );
 
     const isAlreadyAcknowledgedItem = user_acknowledgements?.some(
-        (ack) => ack.e_r_acknowledgement_item_id === activeTabContent?.acknowledgement_item_id
+        (ack) => ack.e_r_acknowledgement_item_id == activeTabContent?.acknowledgement_item_id && ack.e_r_acknowledgement_item_id != 0
     );
 
     const handleTabSelect = (id) => {
@@ -155,7 +155,7 @@ export default function Sidetabs({ navItems, user_acknowledgements }) {
         setIsMobileMenuOpen(false);
     };
 
-    // console.log('activeTabContent',activeTabContent)
+    console.log('activeTabContentssss', user_acknowledgements)
     return (
         <div className="flex relative h-[74vh] bg-gray-50 font-sans overflow-hidden w-full">
 
@@ -205,17 +205,20 @@ export default function Sidetabs({ navItems, user_acknowledgements }) {
                     )}
 
                     {/* 2. Conditionally render the button based on acknowledgement status */}
-                    {activeTabContent && (!isAlreadyAcknowledged && !isAlreadyAcknowledgedItem) && (
-                        <AcceptAcknowledgementSection data={activeTabContent} />
-                    )}
-
+                    {activeTabContent &&
+                        (
+                            (!isAlreadyAcknowledged && !isAlreadyAcknowledgedItem) ? (
+                                <AcceptAcknowledgementSection data={activeTabContent} />
+                            ) : isAlreadyAcknowledged || isAlreadyAcknowledgedItem ? (
+                                <div className="fixed bottom-8 right-8 z-50 flex items-center gap-2 bg-green-100 text-green-700 px-6 py-3 rounded-full shadow-md font-medium border border-green-200">
+                                    <CheckCircle2 size={20} />
+                                    <span>Acknowledged</span>
+                                </div>
+                            ) : null
+                        )
+                    }
                     {/* Optional: Show a nice "Completed" badge if they have acknowledged it */}
-                    {activeTabContent && (isAlreadyAcknowledged || isAlreadyAcknowledgedItem) && (
-                        <div className="fixed bottom-8 right-8 z-50 flex items-center gap-2 bg-green-100 text-green-700 px-6 py-3 rounded-full shadow-md font-medium border border-green-200">
-                            <CheckCircle2 size={20} />
-                            <span>Acknowledged</span>
-                        </div>
-                    )}
+
                 </div>
             </div>
         </div>

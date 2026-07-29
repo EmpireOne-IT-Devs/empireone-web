@@ -18,7 +18,6 @@ export default function AcceptAcknowledgementSection({ data }) {
     const [isAccept, setIsAccept] = useState(false);
 
     const dispatch = useDispatch();
-
     async function accept_acknowledgement() {
         try {
             setIsLoading(true);
@@ -34,7 +33,7 @@ export default function AcceptAcknowledgementSection({ data }) {
                     open: true,
                 }),
             );
-
+            setIsAccept(false)
             setOpen(false);
 
         } catch (error) {

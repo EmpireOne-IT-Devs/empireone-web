@@ -4,6 +4,8 @@ namespace App\Models\Account;
 
 use App\Models\Account;
 use App\Models\Department;
+use App\Models\ER\ERAcknowledgement;
+use App\Models\ER\ERAcknowledgementEmployee;
 use App\Models\ER\ERLeader;
 use App\Models\ER\ERSubordinate;
 use App\Models\Site;
@@ -12,11 +14,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class AccountEmployee extends Model
 {
     use HasFactory, Notifiable;
-    
+
     protected $fillable = [
         'user_id',
         'department_id', //
@@ -53,6 +56,10 @@ class AccountEmployee extends Model
     public function er_leader()
     {
         return $this->hasOne(ERLeader::class, 'id', 'e_r_leader_id')->with(['employee']);
+    }
+    public function acknowledgements()
+    {
+        return ERAcknowledgement::with(['employee'])->get();
     }
     public function reporting_to()
     {

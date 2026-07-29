@@ -81,7 +81,7 @@ export default function TopbarSection() {
                                 <Menu.Items className="absolute right-0 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ">
                                     <Menu.Item>
                                         <Link
-                                            href={`/accounts/${user_role}/my_profile`}
+                                            href={`/accounts/${user_role}/my_profile/personal`}
                                             className="block px-3 py-1 text-sm text-gray-900 hover:text-blue-700"
                                         >
                                             Profile

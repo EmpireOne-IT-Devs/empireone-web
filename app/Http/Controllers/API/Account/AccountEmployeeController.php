@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
+use App\Models\ER\ERAcknowledgement;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,17 +82,30 @@ class AccountEmployeeController extends Controller
     }
     public function index(Request $request)
     {
-        // 1. Capture the search term
+        // 1. Capture search input
         $search = $request->input('search');
 
-        $employees = AccountEmployee::with(['user', 'personal_information', 'department', 'account', 'site', 'reporting_to'])
+        // 2. Fetch all master acknowledgements with items and employee sign-off records
+        $allAcknowledgements = ERAcknowledgement::with([
+            'employee',          // Parent-level sign-offs
+            'items.employee'     // Item-level sign-offs
+        ])->get();
+
+        // 3. Query employees with search & role filters
+        $employees = AccountEmployee::with([
+            'user',
+            'personal_information',
+            'department',
+            'account',
+            'site',
+            'reporting_to'
+        ])
             ->whereNotNull('employee_id')
-            // ->where('location_id',$request->location_id)
-            // 2. Filter by Role (as you had before)
+            // Filter by Role
             ->whereHas('user', function ($query) {
                 $query->whereIn('role', [1, 2]);
             })
-            // 3. Add Search Logic
+            // Search Filter
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('employee_id', 'like', "%{$search}%")
@@ -105,13 +119,53 @@ class AccountEmployeeController extends Controller
                         });
                 });
             })
-            ->orderBy('id', 'desc')
-            ->get();
+            ->orderBy('id', 'asc')
+            ->paginate(12);
 
-        return response()->json([
-            'status' => 'success',
-            'data'   => $employees,
-        ], 200);
+        // 4. Transform the paginated items safely without losing pagination metadata
+        $employees->getCollection()->transform(function ($employee) use ($allAcknowledgements) {
+
+            // Map all master acknowledgements to every single employee
+            $employee->acknowledgements = $allAcknowledgements->map(function ($ack) use ($employee) {
+
+                // Clone instance to prevent mutating global records across the loop
+                $ackClone = clone $ack;
+
+                // --- A. VERIFY SUB-ITEM ACKNOWLEDGEMENTS ---
+                $verifiedItems = $ack->items->map(function ($item) use ($employee) {
+                    $itemClone = clone $item;
+
+                    // Match item_id in e_r_acknowledgement_employees table
+                    $itemRecord = $item->employee->filter(function ($emp) use ($employee, $item) {
+                        return $emp->user_id == $employee->user_id
+                            && $emp->e_r_acknowledgement_item_id == $item->id;
+                    })->values();
+
+                    $itemClone->setRelation('employee', $itemRecord);
+                    $itemClone->is_already_acknowledged = $itemRecord->isNotEmpty();
+
+                    return $itemClone;
+                });
+
+                $ackClone->setRelation('items', $verifiedItems);
+
+                // --- B. VERIFY PARENT ACKNOWLEDGEMENT ---
+                // Matches records where e_r_acknowledgement_item_id is 0 or NULL
+                $parentRecord = $ack->employee->filter(function ($emp) use ($employee) {
+                    return $emp->user_id == $employee->user_id
+                        && ($emp->e_r_acknowledgement_item_id == 0 || is_null($emp->e_r_acknowledgement_item_id));
+                })->values();
+
+                $ackClone->setRelation('employee', $parentRecord);
+                $ackClone->is_already_acknowledged = $parentRecord->isNotEmpty();
+
+                return $ackClone;
+            });
+
+            return $employee;
+        });
+
+        return response()->json($employees, 200);
     }
 
     /**

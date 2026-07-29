@@ -3,7 +3,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 export default function PaginationSection() {
-    const { employees } = useSelector((store) => store.human_resources);
+  const { employees } = useSelector((store) => store.human_resources);
+  console.log('employees',employees)
     return (
         <>
             <Pagination data={employees} />

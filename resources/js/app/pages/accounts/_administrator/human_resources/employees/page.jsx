@@ -7,6 +7,7 @@ import EmployeeRelationLayout from "../layout";
 import SearchSection from "./_sections/search-section";
 import PaginationSection from "./_sections/pagination-section";
 import AddEmployeeSection from "./_sections/add-employee-section";
+import CardAcknowledgementSection from "./_sections/card-acknowledgement-section";
 
 export default function Page() {
     useEffect(() => {
@@ -25,8 +26,9 @@ export default function Page() {
                 </div>
                 <div className="flex flex-col gap-3">
                     {/* <PaginationSection /> */}
-                    <TableSection />
-                    {/* <PaginationSection /> */}
+                    {/* <TableSection /> */}
+                    <CardAcknowledgementSection />
+                    <PaginationSection />
                 </div>
             </EmployeeRelationLayout>
         </Layout>
