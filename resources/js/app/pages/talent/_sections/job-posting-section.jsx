@@ -10,6 +10,7 @@ import {
     MapPin,
     Send,
 } from "lucide-react";
+import { TbUsers } from "react-icons/tb";
 
 const SectionCard = ({ label, icon, children }) => (
     <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
@@ -68,11 +69,10 @@ export default function JobPostingSection({ onApply, setStep }) {
                     return (
                         <div
                             key={i}
-                            className={`rounded-2xl border bg-white shadow-sm transition-all duration-200 overflow-hidden ${
-                                isExpanded
+                            className={`rounded-2xl border bg-white shadow-sm transition-all duration-200 overflow-hidden ${isExpanded
                                     ? "border-blue-300 shadow-blue-100/60 shadow-md"
                                     : "border-gray-200 hover:border-blue-200 hover:shadow-md"
-                            }`}
+                                }`}
                         >
                             {/* Card Top Bar */}
                             <div className="h-1 w-full bg-gradient-to-r from-purple-500 to-orange-500" />
@@ -85,7 +85,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                         <h1 className="text-xl font-bold text-gray-800  uppercase">
                                             {res.job_requisition.title}
                                         </h1>
-                            
+
                                         <div className="flex flex-wrap gap-3 text-md text-gray-500 mt-1">
                                             <span className="flex items-center gap-1.5">
                                                 <Briefcase className="w-3 h-3" />
@@ -101,7 +101,7 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                         .name
                                                 }
                                             </span>
-                                            
+
 
                                             {res.job_requisition.created_at && (
                                                 <span className="flex items-center gap-1.5">
@@ -112,6 +112,14 @@ export default function JobPostingSection({ onApply, setStep }) {
                                                     ).fromNow()}
                                                 </span>
                                             )}
+
+
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <TbUsers className="text-gray-600 w-4 h-4" />
+                                                <span className="capitalize">
+                                                    {res.job_requisition?.account?.description}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -133,21 +141,19 @@ export default function JobPostingSection({ onApply, setStep }) {
                                         <button
                                             onClick={() => toggleExpand(i)}
                                             type="button"
-                                            className={`inline-flex items-center justify-center gap-1.5 px-4 h-9 rounded-xl text-sm font-semibold border transition-all duration-150 whitespace-nowrap ${
-                                                isExpanded
+                                            className={`inline-flex items-center justify-center gap-1.5 px-4 h-9 rounded-xl text-sm font-semibold border transition-all duration-150 whitespace-nowrap ${isExpanded
                                                     ? "bg-blue-50 text-blue-600 border-blue-200"
                                                     : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
-                                            }`}
+                                                }`}
                                         >
                                             {isExpanded
                                                 ? "Show Less"
                                                 : "Show More"}
                                             <ArrowDown
-                                                className={`w-3.5 h-3.5 transition-transform duration-300 ${
-                                                    isExpanded
+                                                className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded
                                                         ? "rotate-180"
                                                         : ""
-                                                }`}
+                                                    }`}
                                             />
                                         </button>
                                     </div>
@@ -167,44 +173,44 @@ export default function JobPostingSection({ onApply, setStep }) {
                                         <div className="md:col-span-2 flex flex-col gap-5">
                                             {res.job_requisition
                                                 .qualifications && (
-                                                <SectionCard label="Qualifications">
-                                                    <div
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: res
-                                                                .job_requisition
-                                                                .qualifications,
-                                                        }}
-                                                    />
-                                                </SectionCard>
-                                            )}
+                                                    <SectionCard label="Qualifications">
+                                                        <div
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: res
+                                                                    .job_requisition
+                                                                    .qualifications,
+                                                            }}
+                                                        />
+                                                    </SectionCard>
+                                                )}
                                             {res.job_requisition
                                                 .responsibilities && (
-                                                <SectionCard label="Responsibilities">
-                                                    <div
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: res
-                                                                .job_requisition
-                                                                .responsibilities,
-                                                        }}
-                                                    />
-                                                </SectionCard>
-                                            )}
+                                                    <SectionCard label="Responsibilities">
+                                                        <div
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: res
+                                                                    .job_requisition
+                                                                    .responsibilities,
+                                                            }}
+                                                        />
+                                                    </SectionCard>
+                                                )}
                                         </div>
 
                                         {/* Sidebar — 1 col */}
                                         <div className="flex flex-col gap-5">
                                             {res.job_requisition
                                                 .justification_for_position && (
-                                                <SectionCard label="Position Overview">
-                                                    <div
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: res
-                                                                .job_requisition
-                                                                .justification_for_position,
-                                                        }}
-                                                    />
-                                                </SectionCard>
-                                            )}
+                                                    <SectionCard label="Position Overview">
+                                                        <div
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: res
+                                                                    .job_requisition
+                                                                    .justification_for_position,
+                                                            }}
+                                                        />
+                                                    </SectionCard>
+                                                )}
 
                                             {/* What to expect card */}
                                             <div className="rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-6 text-white shadow-lg shadow-blue-200/50">
