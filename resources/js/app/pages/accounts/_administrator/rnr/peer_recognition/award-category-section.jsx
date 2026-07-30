@@ -4,14 +4,21 @@ const tabs = [
     "All Awards",
     "Employee of the Month",
     "Innovation Award",
-    "Rising Star",
+    "Rising Star Award",
     "Team Excellence Award",
-    "Customer Champion",
+    "Customer Champion Award",
     "Mentor of the Quarter",
 ];
 
-export default function AwardCategorySection() {
+export default function AwardCategorySection({ onChange }) {
     const [activeTab, setActiveTab] = useState(tabs[0]);
+
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+        if (typeof onChange === "function") {
+            onChange(tab);
+        }
+    };
 
     return (
         <div>
@@ -20,7 +27,7 @@ export default function AwardCategorySection() {
                     <button
                         key={tab}
                         type="button"
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => handleTabClick(tab)}
                         className={`rounded-full px-4 py-2 text-xs font-medium transition-all ${
                             activeTab === tab
                                 ? "bg-orange-600 text-white shadow-sm"

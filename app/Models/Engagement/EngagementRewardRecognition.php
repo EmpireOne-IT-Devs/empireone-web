@@ -13,6 +13,8 @@ class EngagementRewardRecognition extends Model
     protected $fillable = [
         'user_id',
         'employee_id',
+        'department_id',
+        'account_id',
         'award_category',
         'company_value',
         'message',

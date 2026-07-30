@@ -18,9 +18,9 @@ import { clearSearchResults } from "@/app/redux/engagement-slice";
 const AWARD_CATEGORIES = [
     "Employee of the Month",
     "Innovation Award",
-    "Rising Star",
+    "Rising Star Award",
     "Team Excellence Award",
-    "Customer Champion",
+    "Customer Champion Award",
     "Mentor of the Quarter",
 ];
 
@@ -35,7 +35,7 @@ const COMPANY_VALUES = [
     "Creativity",
 ];
 
-export default function RecognizeSomeoneSections() {
+export default function RecognizeSomeoneSections({ onCategoryChange }) {
     const dispatch = useDispatch();
     const { rewardSearchResults, rewardSearching, rewardCreating } =
         useSelector((state) => state.engagement);
@@ -174,7 +174,7 @@ export default function RecognizeSomeoneSections() {
     return (
         <div>
             <div className="mt-4 flex items-start justify-between gap-4 p-2">
-                <AwardCategorySection />
+                <AwardCategorySection onChange={onCategoryChange} />
 
                 <Button
                     variant="engagement"
@@ -228,9 +228,12 @@ export default function RecognizeSomeoneSections() {
                                     {selectedEmployee.first_name}{" "}
                                     {selectedEmployee.last_name}
                                 </div>
-                                {selectedEmployee.department?.name && (
+                                {((typeof selectedEmployee.department === 'string' ? selectedEmployee.department : selectedEmployee.department?.name) || selectedEmployee.account?.name) && (
                                     <div className="text-xs text-green-700">
-                                        {selectedEmployee.department.name}
+                                        {(typeof selectedEmployee.department === 'string'
+                                            ? selectedEmployee.department
+                                            : selectedEmployee.department?.name) ||
+                                            selectedEmployee.account?.name}
                                     </div>
                                 )}
                                 <button
