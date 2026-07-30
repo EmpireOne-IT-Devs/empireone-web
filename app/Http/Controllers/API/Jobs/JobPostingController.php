@@ -27,15 +27,46 @@ class JobPostingController extends Controller
     }
     public function get_job_posting_by_location($id)
     {
-        $jobPostings = JobPosting::where('status', 'Active')->with(['job_requisition', 'applications', 'applicant'])
+        $user = Auth::user();
+
+        $jobPostings = JobPosting::where('status', 'Active')
+            ->with(['job_requisition', 'applications', 'applicant'])
             ->whereHas('job_requisition', function ($query) use ($id) {
                 $query->where('location_id', $id);
             })
-            // Just chain the method directly! 
             ->whereIn('target_audience', ['External', 'Both'])
-            ->get(); // get() executes the query
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return response()->json($jobPostings, 200);
+        // 1. Filter out expired job postings
+        $activeJobPostings = $jobPostings->reject(function ($job) {
+            if (!$job->created_at) {
+                return false;
+            }
+
+            $level = strtolower($job->job_requisition->position_level ?? $job->position_level ?? '');
+            $createdDate = Carbon::parse($job->created_at);
+
+            $expiryDate = match ($level) {
+                'agent', 'rank and file' => $createdDate->copy()->addWeeks(3),
+                'supervisor'            => $createdDate->copy()->addWeeks(5),
+                'manager'               => $createdDate->copy()->addMonths(2),
+                'director', 'executive' => $createdDate->copy()->addMonths(3),
+                default                 => null,
+            };
+
+            // Reject if current time is past the allowed duration
+            return $expiryDate ? Carbon::now()->greaterThan($expiryDate) : false;
+        });
+
+        // 2. Map through non-expired results to append 'is_applied'
+        $activeJobPostings->transform(function ($job) use ($user) {
+            $job->is_applied = $user ? $job->applications->contains('user_id', $user->id) : false;
+
+            return $job;
+        });
+
+        return response()->json($activeJobPostings->values(), 200);
     }
     public function dashboard_stats()
     {
@@ -170,28 +201,49 @@ class JobPostingController extends Controller
 
         // Check target audience based on user role
         if ($user && in_array($user->role, [1, 2])) {
-            // Employees and Admins (Roles 1 & 2) see Internal and Both. 
-            // Note: Add 'External' to this array if internal staff should also see external jobs.
+            // Employees and Admins (Roles 1 & 2) see Internal and Both
             $query->whereIn('target_audience', ['Internal', 'Both']);
         } else {
-            // Role 3 (External Applicants) and Guests (Not logged in) see External and Both
+            // Role 3 (External Applicants) and Guests see External and Both
             $query->whereIn('target_audience', ['External', 'Both']);
         }
 
         $jobPostings = $query->orderBy('created_at', 'desc')->get();
 
-        // Map through the results to append 'is_applied'
-        $jobPostings->map(function ($job) use ($user) {
+        // 1. Filter out expired job postings
+        $activeJobPostings = $jobPostings->reject(function ($job) {
+            if (!$job->created_at) {
+                return false;
+            }
+
+            $level = strtolower($job->job_requisition->position_level ?? $job->position_level ?? '');
+            $createdDate = Carbon::parse($job->created_at);
+
+            $expiryDate = match ($level) {
+                'agent', 'rank and file' => $createdDate->copy()->addWeeks(3),
+                'supervisor'            => $createdDate->copy()->addWeeks(5),
+                'manager'               => $createdDate->copy()->addMonths(2),
+                'director', 'executive' => $createdDate->copy()->addMonths(3),
+                default                 => null,
+            };
+
+            // Reject if current time is greater than the calculated expiry date
+            return $expiryDate ? Carbon::now()->greaterThan($expiryDate) : false;
+        });
+
+        // 2. Map through non-expired results to append 'is_applied'
+        $activeJobPostings->transform(function ($job) use ($user) {
             if ($user) {
-                $job->is_applied = $job->applications()->where('user_id', $user->id)->exists();
+                // Uses eager-loaded relation to avoid N+1 query issue
+                $job->is_applied = $job->applications->contains('user_id', $user->id);
             } else {
-                $job->is_applied = false; // Guests cannot have applied
+                $job->is_applied = false;
             }
 
             return $job;
         });
 
-        return response()->json($jobPostings);
+        return response()->json($activeJobPostings->values());
     }
     public function store(Request $request)
     {

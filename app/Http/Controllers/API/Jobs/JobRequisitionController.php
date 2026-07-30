@@ -11,6 +11,7 @@ use App\Models\Jobs\JobRequisition;
 use App\Models\Jobs\JobRequisitionLog;
 use App\Models\User;
 use App\Notifications\JobRequisitionNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -60,7 +61,7 @@ class JobRequisitionController extends Controller
 
         // 4. Fetch Requisitions using the scope and search filters
         $jobRequisitions = JobRequisition::where($userAccessScope)
-            ->with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter','approver1','approver2','approver3'])
+            ->with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter', 'approver1', 'approver2', 'approver3'])
             ->when($search, function ($q) use ($search) {
                 // Keep this search block grouped so it uses 'AND (search conditions)'
                 $q->where(function ($query) use ($search) {
@@ -165,27 +166,55 @@ class JobRequisitionController extends Controller
             'declined'    => JobRequisition::where('status', 'Declined')->count(),
         ];
 
-        // 2. Build the query for the table (Filtered Data)
-        $jobRequisitions = JobRequisition::with(['department', 'location', 'logs', 'user', 'job_posting', 'account', 'recruiter', 'user','approver1','approver2','approver3'])
+        // Build the query for the table (Filtered Data)
+        $jobRequisitions = JobRequisition::with([
+            'department',
+            'location',
+            'logs',
+            'user',
+            'job_posting',
+            'account',
+            'recruiter',
+            'approver1',
+            'approver2',
+            'approver3'
+        ])
             ->when($search, function ($q) use ($search) {
-                // Use a nested where to group the 'OR' logic
                 $q->where(function ($subQuery) use ($search) {
                     $subQuery->where('title', 'LIKE', "%{$search}%")
-                        ->orWhere('status', 'LIKE', "%{$search}%");
-                });
-                $q->orWhereHas('department', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'LIKE', "%{$search}%");
-                });
-                $q->orWhereHas('location', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'LIKE', "%{$search}%");
+                        ->orWhere('status', 'LIKE', "%{$search}%")
+                        ->orWhereHas('department', function ($userQuery) use ($search) {
+                            $userQuery->where('name', 'LIKE', "%{$search}%");
+                        })
+                        ->orWhereHas('location', function ($userQuery) use ($search) {
+                            $userQuery->where('name', 'LIKE', "%{$search}%");
+                        });
                 });
             })
             ->when($status, function ($q) use ($status) {
-                // Filter by status if provided
                 $q->where('status', $status);
             })
             ->orderBy('id', 'desc')
             ->get();
+
+        // Filter out requisitions where created_at is beyond the allowed time limit
+        $nonExpiredRequisitions = $jobRequisitions->reject(function ($requisition) {
+            if (!$requisition->created_at) {
+                return false;
+            }
+
+            $level = strtolower($requisition->position_level ?? '');
+            $createdDate = Carbon::parse($requisition->created_at);
+
+            $expiryDate = match ($level) {
+                'agent', 'rank and file' => $createdDate->copy()->addWeeks(3),
+                'supervisor'            => $createdDate->copy()->addWeeks(5),
+                'manager'               => $createdDate->copy()->addMonths(2),
+                'director', 'executive' => $createdDate->copy()->addMonths(3),
+                default                 => null,
+            };
+            return $expiryDate ? Carbon::now()->greaterThan($expiryDate) : false;
+        })->values(); // Reset array keys
 
         $users = User::where('role', 1)->get();
         $access = AccountAccess::where('type', 'Job Requisition Approval')->get();
@@ -193,9 +222,9 @@ class JobRequisitionController extends Controller
         return response()->json([
             'status' => 'success',
             'stats'  => $stats,
-            'data'   => $jobRequisitions,
-            'users' => [
-                'users' => $users,
+            'data'   => $nonExpiredRequisitions,
+            'users'  => [
+                'users'  => $users,
                 'access' => $access
             ]
         ]);

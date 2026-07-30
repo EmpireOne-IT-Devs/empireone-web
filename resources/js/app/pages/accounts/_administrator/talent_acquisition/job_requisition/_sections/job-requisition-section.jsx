@@ -202,7 +202,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         </span>
                     </div>
 
-                     <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                         <TbUsers className="text-gray-600 w-4 h-4" />
                         <span className="capitalize">
                             {job_requisition?.account?.name}
@@ -232,7 +232,7 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                         2.  <LuUser className="shrink-0" />
                         <span>{job_requisition?.approver2?.name || "N/A"}</span>
                     </div>
-                    <div className={`${job_requisition.status == 'Final Approved' ? 'text-green-500' : ''} flex items-center gap-2`}>
+                    <div className={`${job_requisition.status == 'Final Approved' ? 'text-green-500' : (job_requisition.status == 'Final Approved' || job_requisition.status == 'Director Approved') ? 'text-red-500' : ''} flex items-center gap-2`}>
                         3.  <LuUser className="shrink-0" />
                         <span>{job_requisition?.approver3?.name || "N/A"}</span>
                     </div>
