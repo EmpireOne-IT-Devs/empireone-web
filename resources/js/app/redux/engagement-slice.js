@@ -8,6 +8,12 @@ import {
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
     upload_gallery_thunk,
+    get_engagement_reward_recognitions_thunk,
+    search_reward_recognition_employees_thunk,
+    create_engagement_reward_recognition_thunk,
+    get_engagement_reward_recognition_thunk,
+    update_engagement_reward_recognition_thunk,
+    delete_engagement_reward_recognition_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -19,6 +25,12 @@ export {
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
     upload_gallery_thunk,
+    get_engagement_reward_recognitions_thunk,
+    search_reward_recognition_employees_thunk,
+    create_engagement_reward_recognition_thunk,
+    get_engagement_reward_recognition_thunk,
+    update_engagement_reward_recognition_thunk,
+    delete_engagement_reward_recognition_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -45,6 +57,21 @@ const engagementSlice = createSlice({
         // Gallery upload states
         uploadingGallery: false,
         uploadGalleryError: null,
+
+        // Reward recognition states
+        rewardRecognitions: [],
+        rewardRecognition: null,
+        rewardRecognitionsLoading: false,
+        rewardRecognitionsError: null,
+        rewardCreating: false,
+        rewardCreateError: null,
+        rewardUpdating: false,
+        rewardUpdateError: null,
+        rewardDeleting: false,
+        rewardDeleteError: null,
+        rewardSearching: false,
+        rewardSearchResults: [],
+        rewardSearchError: null,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -58,6 +85,19 @@ const engagementSlice = createSlice({
         // Action to clear gallery errors when modal closes
         clearGalleryErrors(state) {
             state.uploadGalleryError = null;
+        },
+        clearRecognition(state) {
+            state.rewardRecognition = null;
+        },
+        clearSearchResults(state) {
+            state.rewardSearchResults = [];
+        },
+        clearErrors(state) {
+            state.rewardRecognitionsError = null;
+            state.rewardCreateError = null;
+            state.rewardUpdateError = null;
+            state.rewardDeleteError = null;
+            state.rewardSearchError = null;
         },
     },
     extraReducers: (builder) => {
@@ -211,8 +251,105 @@ const engagementSlice = createSlice({
                 state.pollVotingPostId = null;
             });
 
-        // ── Upload Gallery Images ─────────────────────────────────────────────
+        // ── Search Reward Recognition Employees ─────────────────────────────────
         builder
+            .addCase(search_reward_recognition_employees_thunk.pending, (state) => {
+                state.rewardSearching = true;
+                state.rewardSearchError = null;
+            })
+            .addCase(search_reward_recognition_employees_thunk.fulfilled, (state, action) => {
+                state.rewardSearching = false;
+                state.rewardSearchResults = action.payload?.data ?? action.payload ?? [];
+            })
+            .addCase(search_reward_recognition_employees_thunk.rejected, (state, action) => {
+                state.rewardSearching = false;
+                state.rewardSearchError = action.payload;
+            })
+
+            // ── Get Reward Recognitions ────────────────────────────────────────────
+            .addCase(get_engagement_reward_recognitions_thunk.pending, (state) => {
+                state.rewardRecognitionsLoading = true;
+                state.rewardRecognitionsError = null;
+            })
+            .addCase(get_engagement_reward_recognitions_thunk.fulfilled, (state, action) => {
+                state.rewardRecognitionsLoading = false;
+                state.rewardRecognitions = action.payload?.data ?? action.payload ?? [];
+            })
+            .addCase(get_engagement_reward_recognitions_thunk.rejected, (state, action) => {
+                state.rewardRecognitionsLoading = false;
+                state.rewardRecognitionsError = action.payload;
+            })
+
+            // ── Create Reward Recognition ──────────────────────────────────────────
+            .addCase(create_engagement_reward_recognition_thunk.pending, (state) => {
+                state.rewardCreating = true;
+                state.rewardCreateError = null;
+            })
+            .addCase(create_engagement_reward_recognition_thunk.fulfilled, (state, action) => {
+                state.rewardCreating = false;
+                const newRecognition = action.payload?.data ?? action.payload;
+                if (newRecognition) {
+                    state.rewardRecognitions.unshift(newRecognition);
+                }
+            })
+            .addCase(create_engagement_reward_recognition_thunk.rejected, (state, action) => {
+                state.rewardCreating = false;
+                state.rewardCreateError = action.payload;
+            })
+
+            // ── Get One Reward Recognition ────────────────────────────────────────
+            .addCase(get_engagement_reward_recognition_thunk.pending, (state) => {
+                state.rewardRecognitionsLoading = true;
+                state.rewardRecognitionsError = null;
+            })
+            .addCase(get_engagement_reward_recognition_thunk.fulfilled, (state, action) => {
+                state.rewardRecognitionsLoading = false;
+                state.rewardRecognition = action.payload?.data ?? action.payload;
+            })
+            .addCase(get_engagement_reward_recognition_thunk.rejected, (state, action) => {
+                state.rewardRecognitionsLoading = false;
+                state.rewardRecognitionsError = action.payload;
+            })
+
+            // ── Update Reward Recognition ─────────────────────────────────────────
+            .addCase(update_engagement_reward_recognition_thunk.pending, (state) => {
+                state.rewardUpdating = true;
+                state.rewardUpdateError = null;
+            })
+            .addCase(update_engagement_reward_recognition_thunk.fulfilled, (state, action) => {
+                state.rewardUpdating = false;
+                const updated = action.payload?.data ?? action.payload;
+                if (updated && updated.id) {
+                    const idx = state.rewardRecognitions.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.rewardRecognitions[idx] = updated;
+                    if (state.rewardRecognition?.id === updated.id) {
+                        state.rewardRecognition = updated;
+                    }
+                }
+            })
+            .addCase(update_engagement_reward_recognition_thunk.rejected, (state, action) => {
+                state.rewardUpdating = false;
+                state.rewardUpdateError = action.payload;
+            })
+
+            // ── Delete Reward Recognition ─────────────────────────────────────────
+            .addCase(delete_engagement_reward_recognition_thunk.pending, (state) => {
+                state.rewardDeleting = true;
+                state.rewardDeleteError = null;
+            })
+            .addCase(delete_engagement_reward_recognition_thunk.fulfilled, (state, action) => {
+                state.rewardDeleting = false;
+                state.rewardRecognitions = state.rewardRecognitions.filter((item) => item.id !== action.payload);
+                if (state.rewardRecognition?.id === action.payload) {
+                    state.rewardRecognition = null;
+                }
+            })
+            .addCase(delete_engagement_reward_recognition_thunk.rejected, (state, action) => {
+                state.rewardDeleting = false;
+                state.rewardDeleteError = action.payload;
+            })
+
+            // ── Upload Gallery Images ─────────────────────────────────────────────
             .addCase(upload_gallery_thunk.pending, (state) => {
                 state.uploadingGallery = true;
                 state.uploadGalleryError = null;
@@ -225,16 +362,13 @@ const engagementSlice = createSlice({
                 const idx = state.posts.findIndex((p) => p.id === event_id);
 
                 if (idx !== -1) {
-                    // Initialize the files array if it does not exist
                     if (!state.posts[idx].files) {
                         state.posts[idx].files = [];
                     }
-                    // Append the newly uploaded S3 image references to our post state
                     if (files) {
                         state.posts[idx].files = [...state.posts[idx].files, ...files];
                     }
 
-                    // Update Google Drive folder destination link if provided
                     if (drive_link) {
                         state.posts[idx].drive_link = drive_link;
                     }
@@ -247,5 +381,11 @@ const engagementSlice = createSlice({
     },
 });
 
-export const { syncInteraction, clearGalleryErrors } = engagementSlice.actions;
+export const {
+    syncInteraction,
+    clearGalleryErrors,
+    clearRecognition,
+    clearSearchResults,
+    clearErrors,
+} = engagementSlice.actions;
 export default engagementSlice.reducer;

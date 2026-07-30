@@ -6,8 +6,11 @@ php artisan make:model Engagement/EngagementPostEventFile -mcr
 php artisan make:model Engagement/EngagementPostEventComment -mcr
 php artisan make:model Engagement/EngagementPostEventReact -mcr
 
-
-
+php artisan make:model Engagement/EngagementRewardRecognition -mcr
+user_id
+award_category
+company_value
+message
 
 php artisan make:model ER/ERAcknowledgement -mcr
 php artisan make:model ER/ERAcknowledgementItem -mcr

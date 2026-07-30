@@ -17,6 +17,7 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventReactController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventSurveyController;
 use App\Http\Controllers\API\Engagement\EngagementPollController;
 use App\Http\Controllers\API\Engagement\EngagementBirthdayController;
+use App\Http\Controllers\API\Engagement\EngagementRewardRecognitionController;
 use App\Http\Controllers\API\Jobs\JobAIInterviewController;
 use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
@@ -191,6 +192,13 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
         Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
         Route::get('upcoming_events',    [EngagementPostEventController::class, 'upcoming_events']);
+
+        Route::get('reward-recognitions', [EngagementRewardRecognitionController::class, 'index']);
+        Route::get('reward-recognitions/search-employees', [EngagementRewardRecognitionController::class, 'searchEmployees']);
+        Route::post('reward-recognitions', [EngagementRewardRecognitionController::class, 'store']);
+        Route::get('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'show']);
+        Route::put('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'update']);
+        Route::delete('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'destroy']);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);

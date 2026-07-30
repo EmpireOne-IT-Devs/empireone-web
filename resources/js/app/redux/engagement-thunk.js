@@ -2,10 +2,18 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
     create_post_event_service,
     get_post_event_service,
+    get_post_event_by_id_service,
     update_post_event_by_id_service,
     delete_post_event_service,
     get_upcoming_birthdays_service,
     cast_poll_vote_service,
+    upload_gallery_service,
+    get_reward_recognitions_service,
+    search_reward_recognition_employees_service,
+    create_reward_recognition_service,
+    get_reward_recognition_service,
+    update_reward_recognition_service,
+    delete_reward_recognition_service,
 } from "../services/engagement-service";
 
 export const get_engagement_posts_thunk = createAsyncThunk(
@@ -125,11 +133,83 @@ export const upload_gallery_thunk = createAsyncThunk(
         try {
             const response = await upload_gallery_service(formData);
             // Axios response data contains { status, message, data } from Laravel
-            return response.data; 
+            return response.data;
         } catch (error) {
             return rejectWithValue(
                 error.response?.data?.message || "Failed to upload gallery photos."
             );
+        }
+    }
+);
+
+export const get_engagement_reward_recognitions_thunk = createAsyncThunk(
+    "engagement/getRewardRecognitions",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_recognitions_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const search_reward_recognition_employees_thunk = createAsyncThunk(
+    "engagement/searchRewardRecognitionEmployees",
+    async (search, { rejectWithValue }) => {
+        try {
+            const response = await search_reward_recognition_employees_service(search);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const create_engagement_reward_recognition_thunk = createAsyncThunk(
+    "engagement/createRewardRecognition",
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await create_reward_recognition_service(data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const get_engagement_reward_recognition_thunk = createAsyncThunk(
+    "engagement/getRewardRecognition",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_recognition_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const update_engagement_reward_recognition_thunk = createAsyncThunk(
+    "engagement/updateRewardRecognition",
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await update_reward_recognition_service(id, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const delete_engagement_reward_recognition_thunk = createAsyncThunk(
+    "engagement/deleteRewardRecognition",
+    async (id, { rejectWithValue }) => {
+        try {
+            await delete_reward_recognition_service(id);
+            return id;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
         }
     }
 );
