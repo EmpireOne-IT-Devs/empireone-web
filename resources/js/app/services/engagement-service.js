@@ -57,3 +57,29 @@ export async function upload_gallery_service(formData) {
         headers: { "Content-Type": "multipart/form-data" },
     });
 }
+
+export async function get_reward_recognitions_service() {
+    return await axios.get("/api/engagement/reward-recognitions");
+}
+
+export async function search_reward_recognition_employees_service(search = "") {
+    return await axios.get("/api/engagement/reward-recognitions/search-employees", {
+        params: { search },
+    });
+}
+
+export async function create_reward_recognition_service(data) {
+    return await axios.post("/api/engagement/reward-recognitions", data);
+}
+
+export async function get_reward_recognition_service(id) {
+    return await axios.get(`/api/engagement/reward-recognitions/${id}`);
+}
+
+export async function update_reward_recognition_service(id, data) {
+    return await axios.put(`/api/engagement/reward-recognitions/${id}`, data);
+}
+
+export async function delete_reward_recognition_service(id) {
+    return await axios.delete(`/api/engagement/reward-recognitions/${id}`);
+}
