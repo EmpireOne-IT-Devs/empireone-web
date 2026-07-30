@@ -1,4 +1,5 @@
 import Button from '@/app/_components/button'
+import Input from '@/app/_components/input' // Assuming your Input component is here
 import Modal from '@/app/_components/modal'
 import { setAlert } from '@/app/redux/app-slice'
 import { get_acknowledgement_thunk } from '@/app/redux/employee-relation-thunk'
@@ -12,13 +13,15 @@ import { useDispatch } from 'react-redux'
 export default function AddAcknowledgementSection() {
     const [open, setOpen] = useState(false)
     const dispatch = useDispatch()
+
     // Initialize react-hook-form
     const {
         register,
         control,
         handleSubmit,
         reset,
-        formState: { isSubmitting }
+        watch,
+        formState: { isSubmitting, errors }
     } = useForm({
         defaultValues: {
             title: '',
@@ -26,6 +29,8 @@ export default function AddAcknowledgementSection() {
             items: []
         }
     })
+    
+    const watchedValues = watch()
 
     // Initialize useFieldArray for dynamic acknowledgement items
     const { fields, append, remove } = useFieldArray({
@@ -35,7 +40,7 @@ export default function AddAcknowledgementSection() {
 
     function onClose() {
         setOpen(false)
-        reset() // Resets the form to defaultValues when closed
+        reset() // Resets the form and errors when closed
     }
 
     const onSubmit = async (data) => {
@@ -59,20 +64,16 @@ export default function AddAcknowledgementSection() {
                 }
             })
 
-            // TODO: Replace with your actual API endpoint
-            // await axios.post('/api/acknowledgements', formData)
             await add_acknowledgement_service(formData)
             await store.dispatch(get_acknowledgement_thunk())
             dispatch(
                 setAlert({
                     type: "success",
                     title: "Acknowledgement Added Successfully!",
-                    message:
-                        "The acknowledgement has been created and is ready for review.",
+                    message: "The acknowledgement has been created and is ready for review.",
                     open: true,
                 }),
-            );
-            console.log("Form submitted successfully!")
+            )
             onClose()
         } catch (error) {
             console.error("Error submitting form:", error)
@@ -100,23 +101,28 @@ export default function AddAcknowledgementSection() {
                         <h3 className="font-semibold text-gray-700">Main Acknowledgement</h3>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                            <input
+                            <Input
+                                label="Title *"
                                 type="text"
-                                {...register('title')}
-                                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                {...register('title', { required: 'Title is required' })}
                                 placeholder="Enter main title"
+                                error={errors.title?.message}
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">File</label>
-                            <input
-                                type="file"
-                                {...register('file')}
-                                className="w-full p-2 border rounded-md"
-                            />
-                        </div>
+                        {watchedValues.items.length === 0 && (
+                            <div>
+                                <Input
+                                    label="File *"
+                                    type="file"
+                                    {...register('file', {
+                                        validate: (value) =>
+                                            (value && value.length > 0) || 'File is required when no items are added'
+                                    })}
+                                    error={errors.file?.message}
+                                />
+                            </div>
+                        )}
                     </div>
 
                     {/* Items Section */}
@@ -137,34 +143,35 @@ export default function AddAcknowledgementSection() {
                             <div key={field.id} className="flex gap-4 items-start p-4 border rounded-lg relative">
                                 <div className="flex-1 space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Item Title</label>
-                                        <input
+                                        <Input
+                                            label="Item Title *"
                                             type="text"
-                                            {...register(`items.${index}.title`)}
-                                            className="w-full p-2 border rounded-md"
+                                            {...register(`items.${index}.title`, { required: 'Item title is required' })}
                                             placeholder="Enter item title"
+                                            error={errors.items?.[index]?.title?.message}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Item File</label>
-                                        <input
+                                        <Input
+                                            label="Item File *"
                                             type="file"
-                                            {...register(`items.${index}.file`)}
-                                            className="w-full p-2 border rounded-md"
+                                            {...register(`items.${index}.file`, {
+                                                validate: (value) =>
+                                                    (value && value.length > 0) || 'Item file is required'
+                                            })}
+                                            error={errors.items?.[index]?.file?.message}
                                         />
                                     </div>
                                 </div>
 
-                                {fields.length > 1 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => remove(index)}
-                                        className="text-red-500 hover:text-red-700 mt-8 p-2"
-                                        title="Remove item"
-                                    >
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
-                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => remove(index)}
+                                    className="text-red-500 hover:text-red-700 mt-8 p-2"
+                                    title="Remove item"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
                             </div>
                         ))}
                     </div>
