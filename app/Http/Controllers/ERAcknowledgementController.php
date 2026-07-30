@@ -86,6 +86,49 @@ class ERAcknowledgementController extends Controller
         }
     }
 
+    public function add_sub_acknowledgement(Request $request)
+    {
+        // 1. Validate the incoming FormData
+        $request->validate([
+            'acknowledgement_id' => 'nullable',
+            'items' => 'nullable|array',
+            'items.*.title' => 'nullable|string|max:255',
+            'items.*.file' => 'nullable|file',
+        ]);
+
+        try {
+
+
+            // 5. Handle Dynamic Items
+            if ($request->has('items') && is_array($request->items)) {
+                foreach ($request->items as $index => $item) {
+                    $itemFilePath = null;
+                    if ($request->hasFile("items.{$index}.file")) {
+                        $path = $request->file("items.{$index}.file")->store('unified/account/acknowledgements', 's3');
+                        $itemFilePath  = Storage::disk('s3')->url($path);
+                    }
+                    ERAcknowledgementItem::create([
+                        'e_r_acknowledgement_id' => $request->acknowledgement_id,
+                        'title' => $item['title'] ?? null,
+                        'file' => $itemFilePath,
+                    ]);
+                }
+            }
+
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Acknowledgements saved successfully.',
+            ], 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to save acknowledgements: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Display the specified resource.
      */

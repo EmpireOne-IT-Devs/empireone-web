@@ -2,11 +2,6 @@ import Sidetabs from './sidetabs'
 import React from 'react'
 import {
     Book,
-    ShieldCheck,
-    Scale,
-    Video,
-    FileSignature,
-    Folder,
 } from 'lucide-react';
 import AddAcknowledgementSection from './add-acknowledgement-section';
 import { useSelector } from 'react-redux';

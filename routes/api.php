@@ -217,6 +217,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);
         Route::post('accept_employee_change_form',  [EREmployeeChangeFormController::class, 'accept_employee_change_form']);
         Route::resource('acknowledgement', ERAcknowledgementController::class);
+        Route::post('add_sub_acknowledgement',  [ERAcknowledgementController::class, 'add_sub_acknowledgement']);
         Route::resource('acknowledgement_employee', ERAcknowledgementEmployeeController::class);
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
