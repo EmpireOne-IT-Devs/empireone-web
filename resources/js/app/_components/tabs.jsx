@@ -35,7 +35,7 @@ export default function Tabs({ tabs, children }) {
     const activeDropdownTab = openDropdown !== null ? tabs[openDropdown] : null;
 
     return (
-        <div className="sticky top-0 z-10 shadow-sm relative" ref={stickyRef}>
+        <div className="sticky top-0  shadow-sm relative" ref={stickyRef}>
             {/* Mobile responsive tabs with horizontal scroll */}
             <div className="overflow-x-auto px-4 sm:px-6 lg:px-8 no-scrollbar">
                 <nav className="flex justify-start space-x-4 sm:space-x-8 whitespace-nowrap min-w-min">
