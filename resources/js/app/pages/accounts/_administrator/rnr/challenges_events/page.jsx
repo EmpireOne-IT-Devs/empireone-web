@@ -1,12 +1,15 @@
 import React from 'react'
 import Layout from '../../../layout'
 import RnrLayout from '../layout'
+import CreateNewChallenge from './sections/create-new-challenge'
 
 export default function Page() {
   return (
     <Layout>
       
-      <RnrLayout>Challenge Event</RnrLayout>
+      <RnrLayout>
+        <CreateNewChallenge />
+      </RnrLayout>
     </Layout>
   )
 }
