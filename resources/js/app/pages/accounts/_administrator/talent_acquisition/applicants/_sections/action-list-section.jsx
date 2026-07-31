@@ -286,7 +286,7 @@ export default function ActionListSection({ props_data }) {
                                 {canSendOffer && (
                                     <SendJobOfferSection data={props_data} />
                                 )}
-<SendJobOfferSection data={props_data} />
+
                                 {/* Resend Job Offer */}
                                 {props_data?.final_status ==
                                     'Declined Job Offer' && (
