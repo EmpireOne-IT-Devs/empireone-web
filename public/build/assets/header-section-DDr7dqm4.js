@@ -1,0 +1,1 @@
+import{j as e}from"./app-c_P02kKZ.js";function t(){return e.jsxs("div",{className:"bg-gray-100 px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"Assets Management"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Create and manage company assets and inventory"})]})}export{t as default};
