@@ -27,14 +27,10 @@ class JobOfferController extends Controller
         $job_application = JobApplication::where('id', $request->id)->first();
         if ($job_application) {
             $job_application->update([
-                'final_status' => 'Transferred',
+                'job_posting_id' => $request->new_job_posting_id,
                 'transferred_to' => Auth::id()
             ]);
         }
-        JobApplication::create([
-            ...$request->all(),
-            'job_posting_id' => $request->new_job_posting_id
-        ]);
         return response()->json([
             'status' => 'success',
         ], 200);

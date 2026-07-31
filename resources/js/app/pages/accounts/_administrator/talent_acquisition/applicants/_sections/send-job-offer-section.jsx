@@ -42,7 +42,6 @@ export default function SendJobOfferSection({ data }) {
     useEffect(() => {
         setValue("job_posting_id", data?.job_posting?.id);
     }, []);
-    console.log('watchedValueszzzz', data?.job_posting?.id)
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
@@ -66,8 +65,8 @@ export default function SendJobOfferSection({ data }) {
     };
 
     return (
-        <div>
-            <Button className="h-full text-sm" onClick={() => setOpen(true)}>
+        <>
+            <Button className="h-full" onClick={() => setOpen(true)}>
                 SEND&nbsp;JOB&nbsp;OFFER
             </Button>
 
@@ -106,6 +105,13 @@ export default function SendJobOfferSection({ data }) {
                                 }
                             </p>
                             <p>
+                                <strong>Account:</strong>{" "}
+                                {
+                                    data?.job_posting?.job_requisition
+                                        .account.name
+                                }
+                            </p>
+                            <p>
                                 <strong>Location:</strong>{" "}
                                 {
                                     data?.job_posting?.job_requisition.location
@@ -125,11 +131,12 @@ export default function SendJobOfferSection({ data }) {
                                 rules={{
                                     required: "Offer Position is required",
                                 }}
+                                disabled
                                 value={watchedValues.job_posting_id}
                                 render={({ field }) => (
                                     <Select
                                         {...field}
-                                        label="Select Existing Position"
+                                        label="Position"
                                         options={
                                             job_postings?.map((res) => ({
                                                 label: `${res?.job_requisition?.title}`,
@@ -140,21 +147,28 @@ export default function SendJobOfferSection({ data }) {
                                     />
                                 )}
                             />
-
-                            <Select
-                                label="Role"
+                            <Controller
                                 name="role"
-                                {...register("role", {
-                                    required: true,
-                                })}
-                                options={[
-                                    { value: "Agent", label: "Agent" },
-                                    { value: "Support", label: "Support" },
-                                    { value: "Manager", label: "Manager" },
-                                ]}
-                                error={errors.role}
+                                control={control}
+                                rules={{
+                                    required: "Role is required",
+                                }}
                                 value={watchedValues.role}
+                                render={({ field }) => (
+                                    <Select
+                                        {...field}
+                                        label="Role"
+                                        options={[
+                                            { value: "Agent", label: "Agent" },
+                                            { value: "Support", label: "Support" },
+                                            { value: "Manager", label: "Manager" },
+                                        ]}
+                                        error={errors.role}
+                                    />
+                                )}
                             />
+
+
                             <Input
                                 label="Monthly Salary"
                                 type="number"
@@ -185,7 +199,7 @@ export default function SendJobOfferSection({ data }) {
                                 </p>
                                 <Button
                                     type="button"
-                                    size="sm"
+
                                     onClick={() =>
                                         append({
                                             allowance_type: "Monthly",
@@ -296,6 +310,6 @@ export default function SendJobOfferSection({ data }) {
                     </Button>
                 </form>
             </Modal>
-        </div>
+        </>
     );
 }

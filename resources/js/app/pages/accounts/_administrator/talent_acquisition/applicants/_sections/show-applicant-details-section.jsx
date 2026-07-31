@@ -1,6 +1,6 @@
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
-import { MailIcon } from "lucide-react";
+import { Eye, MailIcon } from "lucide-react";
 import moment from "moment";
 import React, { useState } from "react";
 
@@ -9,7 +9,11 @@ export default function ShowApplicantDetailsSection({ data }) {
     console.log("datadatadata", data);
     return (
         <>
-            <Button outlined onClick={() => setOpen(true)}>
+            <Button
+                className="w-full"
+                outlined onClick={() => setOpen(true)}>
+
+                <Eye className="w-4 h-4 mr-2" />
                 SHOW
             </Button>
             <Modal

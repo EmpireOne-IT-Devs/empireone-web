@@ -73,7 +73,7 @@ export default function ResendJobOfferSection({ data }) {
     };
 
     return (
-        <div>
+        <>
             <Button className="h-full text-sm" onClick={() => setOpen(true)}>
                 RESEND&nbsp;JOB&nbsp;OFFER
             </Button>
@@ -306,6 +306,6 @@ export default function ResendJobOfferSection({ data }) {
                     </Button>
                 </form>
             </Modal>
-        </div>
+        </>
     );
 }

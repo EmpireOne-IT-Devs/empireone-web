@@ -31,12 +31,13 @@ const Select = forwardRef(
 
         const handleSelect = (option) => {
             setSearch(option.label);
-            onChange(option.value);
-            onSelect && onSelect(option);
+            if (onChange) onChange(option.value);
+            if (onSelect) onSelect(option);
             setIsOpen(false);
         };
 
-        const handleInputClick = () => {
+        const handleInputClick = (e) => {
+            e.stopPropagation(); // Prevent clicks from bleeding to parent modal
             if (!disabled) setIsOpen(true);
         };
 
@@ -72,7 +73,7 @@ const Select = forwardRef(
 
                     {/* Input */}
                     <input
-                    type="search"
+                        type="search"
                         {...props}
                         autoComplete="off"
                         ref={ref}
@@ -96,7 +97,7 @@ const Select = forwardRef(
                     {/* Floating Label */}
                     <label
                         htmlFor={name}
-                        className={`absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out
+                        className={`absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out pointer-events-none
               ${search || isOpen ? "-top-2 text-xs text-purple-600" : "top-2.5 text-gray-500"}`}
                     >
                         {label}
@@ -123,26 +124,34 @@ const Select = forwardRef(
 
                     {/* Right Icon */}
                     {iconRight && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
                             {iconRight}
                         </div>
                     )}
 
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
-                        <ul className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg">
+                        <ul
+                            className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg"
+                            // Block any clicks inside the UL from reaching the modal backdrop
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             {filteredOptions.length > 0 ? (
                                 filteredOptions.map((option, idx) => (
                                     <li
                                         key={idx}
-                                        className={`cursor-pointer px-4 py-2 hover:bg-purple-100 text-black text-sm ${
-                                            value === option.value
+                                        className={`cursor-pointer px-4 py-2 hover:bg-purple-100 text-black text-sm ${value === option.value
                                                 ? "bg-purple-50 text-purple-600"
                                                 : ""
-                                        }`}
+                                            }`}
                                         onMouseDown={(e) => {
-                                            e.preventDefault(); // prevent blur
-                                            handleSelect(option);
+                                            e.preventDefault(); // Prevent input from losing focus
+                                            e.stopPropagation(); // Stop bubbling
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Stop bubbling to modal
+                                            handleSelect(option); // Moved selection logic here
                                         }}
                                     >
                                         {option.label}

@@ -65,7 +65,7 @@ const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
                 ${theme.bg}
             `} />
 
-            <div className="flex items-start justify-between relative z-10">
+            <div className="flex items-start justify-between relative ">
                 <div>
                     <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
                     <h3 className="text-3xl font-bold text-gray-900 group-hover:scale-105 transition-transform origin-left duration-300">

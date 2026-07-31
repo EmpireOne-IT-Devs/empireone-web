@@ -6,11 +6,10 @@ import CardSection from "./_sections/card-section";
 // import SearchSection from "./_sections/search-section";
 import store from "../../../../../store/store";
 import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
-import ApplicantTableSection from "./_sections/applicant-table-section";
-import SearchStatusSection from "./_sections/search-status-section";
 import PaginationSection from "./_sections/pagination-section";
 import StatusesCardSection from "./_sections/statuses-card-section";
 import ExportApplicantSection from "./_sections/export-applicant-section";
+import CardApplicantSection from "./_sections/card-applicant-section"
 
 export default function Page() {
     useEffect(() => {
@@ -32,7 +31,7 @@ export default function Page() {
 
                     {/* Added the target ID wrapper here so the scroll knows where to land */}
                     <div id="results-table" className="scroll-mt-36">
-                        <ApplicantTableSection />
+                        <CardApplicantSection />
                     </div>
 
                     <PaginationSection />

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import Layout from "../../../layout";
-import TableSection from "./_sections/table-section";
 import store from "@/app/store/store";
 import { get_employees_thunk } from "@/app/redux/employee-relation-thunk";
 import EmployeeRelationLayout from "../layout";

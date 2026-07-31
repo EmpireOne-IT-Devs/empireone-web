@@ -37,13 +37,15 @@ export default function DeleteApplicantSection({ data }) {
     };
 
     return (
-        <div>
+        <>
             {/* Changed to a danger/red variant for deletion */}
-            <Button variant="danger" onClick={() => setOpen(true)} outlined>
-                <span className="text-red-500 flex items-center">
-                    <Trash className="w-4 h-4 mr-2" />
-                    Delete
-                </span>
+            <Button
+                variant="danger"
+                className="w-full"
+                onClick={() => setOpen(true)}
+                outlined>
+                <Trash className="w-4 h-4 mr-2" />
+                DELETE
             </Button>
 
             <Modal
@@ -92,6 +94,6 @@ export default function DeleteApplicantSection({ data }) {
                     </div>
                 </form>
             </Modal>
-        </div>
+        </>
     );
 }

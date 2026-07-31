@@ -43,8 +43,10 @@ export default function SendDocumentsSection({ data }) {
     };
 
     return (
-        <div>
-            <Button variant="success" onClick={() => setOpen(true)} outlined>
+        <>
+            <Button
+                className="w-full"
+                variant="success" onClick={() => setOpen(true)} outlined>
                 <span className="text-green-500">
                     <SendIcon className="w-4 h-4 mr-2" />
                 </span>
@@ -197,6 +199,6 @@ export default function SendDocumentsSection({ data }) {
                     </div>
                 </form>
             </Modal>
-        </div>
+        </>
     );
 }

@@ -387,13 +387,15 @@ class JobApplicationController extends Controller
             $data['allowances'] = [];
         }
         $send_to = $request->applicant['email'];
+        $jo = JobOffer::where('id', $request->id)->first();
         if ($request->status == 'Re-Offered') {
-            JobOffer::where('id', $request->id)
-                ->update([
-                    'status' => $request->status,
-                ]);
+            $jo->update([
+                'status' => $request->status,
+            ]);
         }
-
+        if ($jo && $request->status != 'Re-Offered') {
+            $jo->delete();
+        }
         $ja = JobApplication::where('id', $request->job_application_id)->with(['job_posting'])->first();
         $manager = AccountEmployee::where('position', 'PH Lead, Talent Acquisition')->orderBy('id', 'desc')->first();
         if ($ja) {
@@ -962,7 +964,7 @@ class JobApplicationController extends Controller
                 $query->where('interview_status', 'Passed')
                     ->whereNull('final_status');
             })
-            ->paginate(10)
+            ->paginate(12)
             ->withQueryString();
         // 3. Count today's statuses using the UNFILTERED base query
         $statuses = (clone $baseQuery)
