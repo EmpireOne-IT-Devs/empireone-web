@@ -9,6 +9,7 @@ import {
     MapPin
 } from 'lucide-react';
 import AcknowledgementsListSection from './acknowledgements-list-section';
+import { router } from '@inertiajs/react';
 
 export default function CardAcknowledgementSection() {
     const { employees } = useSelector((store) => store.human_resources);
@@ -17,7 +18,7 @@ export default function CardAcknowledgementSection() {
         <div className="flex bg-gray-100 p-6 gap-6 flex-wrap w-full justify-start items-start">
             {employees?.data?.map((res) => {
                 const empId = res.id || res.employee_id;
-
+console.log('waaaa',res)
                 return (
                     <div
                         key={empId}
@@ -80,7 +81,7 @@ export default function CardAcknowledgementSection() {
                                     <MapPin className="w-4 h-4 text-purple-600" /> Site
                                 </span>
                                 <span className="text-gray-900 font-medium text-right truncate">
-                                    {res?.site?.name || 'Site 1'}
+                                    {res?.site?.location?.name || 'N/A'}
                                 </span>
                             </div>
                         </div>
@@ -91,7 +92,7 @@ export default function CardAcknowledgementSection() {
                         {/* Bottom Actions */}
                         <div className="pt-2 flex items-center justify-end gap-2 border-t border-gray-100/80">
                             <button
-                                onClick={() => alert(`Viewing details for ${res?.user?.name || 'Employee'}`)}
+                                onClick={() => router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_team/${res.id}/personal_information`)}
                                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer"
                             >
                                 <Eye className="w-3.5 h-3.5" /> View Profile
