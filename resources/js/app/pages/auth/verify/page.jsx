@@ -39,7 +39,7 @@ export default function VerifyEmail({ status }) {
                 <div className="flex items-center justify-center">
                     {" "}
                     <img
-                        src="/images/eologo.png"
+                        src="/images/E1CXlogo.png"
                         alt="EmpireOne Logo"
                         className=" mb-4 w-52 mt-0.5 object-contain"
                     />

@@ -59,7 +59,7 @@ export default function TopbarSection() {
                                     className="w-8 h-8 rounded-full object-cover"
                                     src={
                                         data?.user?.avatar ||
-                                        "/images/empireone.png"
+                                        "/images/E1icon.png"
                                     }
                                     alt=""
                                 />

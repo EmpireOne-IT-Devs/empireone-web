@@ -294,7 +294,7 @@ const Page = () => {
                                     onMouseLeave={handleMouseLeave}
                                 >
                                     <img
-                                        src={user?.avatar ?? "/images/empireone.png.png"}
+                                        src={user?.avatar ?? "/images/E1icon.png"}
                                         className="w-28 h-28 rounded-2xl bg-white border-4 border-white shadow-md object-cover cursor-pointer"
                                         alt="Profile"
                                     />

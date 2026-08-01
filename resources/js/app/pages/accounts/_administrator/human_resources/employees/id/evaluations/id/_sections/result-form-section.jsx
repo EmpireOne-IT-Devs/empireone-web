@@ -304,7 +304,7 @@ export const EvaluationDocument = ({ data }) => {
                 {/* Header */}
                 <View style={styles.headerContainer}>
                     <View style={styles.logoContainer}>
-                        <Image src="/images/eo-full-logo.png" />
+                        <Image src="/images/E1CXlogo2.png" />
                     </View>
                     <View style={styles.formTitleContainer}>
                         <Text style={styles.formTitle}>

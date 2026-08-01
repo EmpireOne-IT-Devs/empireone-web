@@ -6,7 +6,7 @@ export default function HeaderSection({ title = '' }) {
             <div className="relative w-full bg-gradient-to-b from-purple-700 to-purple-500 text-white p-10 flex flex-col items-center justify-between text-center max-h-[300px] overflow-hidden">
                 <div className="z-10">
                     <div className="w-72 px-3 h-24 bg-white rounded-tr-3xl rounded-bl-3xl flex items-center justify-center mx-auto mb-4 shadow-lg animate-fade-in-down">
-                        <img src="/images/eo-full-logo.png" alt="Logo" />
+                        <img src="/images/E1CXlogo2.png" alt="Logo" />
                     </div>
                     <h1 className="text-2xl font-bold tracking-wide animate-fade-in [animation-delay:200ms]">
                         {title}

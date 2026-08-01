@@ -145,7 +145,7 @@ const EmployeeChangeFormSection = () => {
                         <div className="flex flex-col">
                             <div className="text-4xl font-extrabold text-blue-900 tracking-tight flex items-baseline">
                                 <img
-                                    src="/images/eo-full-logo.png"
+                                    src="/images/E1CXlogo2.png"
                                     className="w-52"
                                 />
                             </div>

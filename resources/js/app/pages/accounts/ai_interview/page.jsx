@@ -62,7 +62,7 @@ const InterviewRoom = () => {
 
                         {/* Header */}
                         <header className="flex justify-between items-center pb-4 border-b border-white/10">
-                              <img src="/images/eologo.png" alt="EmpireOne Logo" className="h-10 w-auto" />
+                              <img src="/images/E1CXlogo.png" alt="EmpireOne Logo" className="h-10 w-auto" />
                             <div className="text-white/50 text-sm font-medium tracking-wider">
                                 ID: {state.interviewId ? String(state.interviewId).substring(0, 8) : 'Loading...'}
                             </div>

@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
 
 const PageHeader = () => (
     <View style={styles.header}>
-        <Image style={styles.logo} src="/images/eo-full-logo.png" />
+        <Image style={styles.logo} src="/images/E1CXlogo2.png" />
         <Text style={styles.pageTitle}>Employee Change Form</Text>
     </View>
 );

@@ -244,7 +244,7 @@ const EvaluationFormSection = ({ isEdit = false }) => {
             <div className="flex justify-between items-center mb-8 border-b-4 border-blue-600 pb-4">
                 <div className="text-3xl font-black text-blue-900 tracking-tighter">
                     <img
-                        src="/images/eo-full-logo.png"
+                        src="/images/E1CXlogo2.png"
                         className="w-52"
                         alt="Logo"
                     />

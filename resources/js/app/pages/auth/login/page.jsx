@@ -105,9 +105,9 @@ const Page = ({ flash }) => {
                             Log in to your{" "}
                             <span className="inline-flex items-center">
                                 <img
-                                    src="/images/eologo.png"
+                                    src="/images/E1CXlogo.png"
                                     alt="EmpireOne Logo"
-                                    className="h-5 w-auto mt-0.5 object-contain"
+                                    className="h-4 w-auto mt-0.5 object-contain"
                                 />
                             </span>{" "}
                             account

@@ -100,9 +100,9 @@ export default function HeaderSection({ variant = "default" }) {
                     <div className="flex-shrink-0">
                         <a href="/" className="group flex items-center gap-2">
                             <img
-                                src="/images/eologo.png"
+                                src="/images/E1CXlogo.png"
                                 alt="Logo"
-                                className="h-7 sm:h-10 transition-transform group-hover:scale-105 ml-2"
+                                className="h-7 sm:h-8 transition-transform group-hover:scale-105 ml-2"
                             />
                         </a>
                     </div>
@@ -185,7 +185,7 @@ export default function HeaderSection({ variant = "default" }) {
                     >
                         <div className="flex justify-between items-center px-5 py-4 border-b border-white/10">
                             <img
-                                src="/images/eologo.png"
+                                src="/images/E1CXlogo.png"
                                 alt="Logo"
                                 className="h-7"
                             />

@@ -298,7 +298,7 @@ export default function SidebarSection() {
                                     <div className="flex h-16 items-center">
                                         <img
                                             alt="Logo"
-                                            src="/images/eologo.png"
+                                            src="/images/E1CXlogo.png"
                                             className="h-16 w-full "
                                         />
                                     </div>
@@ -423,12 +423,12 @@ export default function SidebarSection() {
                     <div className="flex items-center mt-3 justify-center h-16 p-4">
                         <img
                             alt="Logo"
-                            src="/images/eologo.png"
+                            src="/images/E1CXlogo.png"
                             className={`h-16 w-full ${sidebarText}`}
                         />
                         <img
                             alt="Logo"
-                            src="/images/eologo.png"
+                            src="/images/E1CXlogo.png"
                             className={`h-16 w-full hidden ${sidebarText}`}
                         />
                     </div>

@@ -155,7 +155,7 @@ const CreatePEFSection = () => {
             <div className="flex justify-between items-center mb-8 border-b-4 border-blue-600 pb-4">
                 <div className="text-3xl font-black text-blue-900 tracking-tighter">
                     {/* EMPIRE<span className="text-blue-500">ONE</span> */}
-                    <img src="/images/eo-full-logo.png" className="w-52" />
+                    <img src="/images/E1CXlogo2.png" className="w-52" />
                 </div>
                 <div className="text-right">
                     <h1 className="font-bold text-xl uppercase tracking-wider text-gray-800">
