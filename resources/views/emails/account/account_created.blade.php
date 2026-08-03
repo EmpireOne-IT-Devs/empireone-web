@@ -108,14 +108,29 @@
                 <p>Your journey starts here. We've set up everything for you. Click the interactive buttons below to jump into your dashboard or meeting.</p>
 
                 @php
-                $dateString = is_array($schedule)
-                ? ($schedule['start_time'] ?? $schedule['start']['dateTime'] ?? now())
-                : ($schedule->start_time ?? now());
+                // 1. Safely resolve the date string
+                $dateString = now();
 
+                if (is_array($schedule)) {
+                $dateString = $schedule['start_time']
+                ?? data_get($schedule, 'start.dateTime')
+                ?? $schedule['start'] // Falls back to this if 'start' is just a string
+                ?? now();
+                } elseif (is_object($schedule)) {
+                $dateString = $schedule->start_time ?? now();
+                }
+
+                // 2. Parse it with Carbon
+                // We wrap it in a try-catch just in case the string isn't a valid date format
+                try {
                 $scheduleDate = \Carbon\Carbon::parse($dateString);
+                } catch (\Exception $e) {
+                $scheduleDate = now();
+                }
+
                 $isPast = $scheduleDate->isPast();
 
-                // Safely get meeting link
+                // 3. Safely get meeting link
                 $meetingLink = is_array($schedule)
                 ? ($schedule['meet_link'] ?? '#')
                 : ($schedule->meeting_link ?? '#');
