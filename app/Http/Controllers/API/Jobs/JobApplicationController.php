@@ -622,10 +622,10 @@ class JobApplicationController extends Controller
 
             Mail::to($user->email)->send(
                 new SendEmailAccountCreation($user, url('/auth/login'), [
-                    ...$user,
-                    'start_time'        => $googleStartTime,
-                    'end_time'          => $googleEndTime,
-                    'meet_link'         => $meetLink
+                    // Removed ...$user here
+                    'start_time' => $googleStartTime,
+                    'end_time'   => $googleEndTime,
+                    'meet_link'  => $meetLink
                 ])
             );
             if ($request->file) {
