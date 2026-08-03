@@ -611,7 +611,7 @@ class JobApplicationController extends Controller
 
 
             $googleData = json_decode($result, true);
-            // dd( $googleData);
+            
             $meetLink = $googleData['eventId']['meetLink'];
             $eventId = $googleData['eventId']['eventId'];
             $schedule->update([
@@ -622,7 +622,6 @@ class JobApplicationController extends Controller
 
             Mail::to($user->email)->send(
                 new SendEmailAccountCreation($user, url('/auth/login'), [
-                    // Removed ...$user here
                     'start_time' => $googleStartTime,
                     'end_time'   => $googleEndTime,
                     'meet_link'  => $meetLink
