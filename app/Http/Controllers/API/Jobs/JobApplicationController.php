@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Jobs;
 use App\Http\Controllers\Controller;
 use App\Mail\ApplicantRejected;
 use App\Mail\JobOfferMail;
+use App\Mail\SendEmailAccountCreation;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountEmployeeAllowance;
@@ -619,16 +620,14 @@ class JobApplicationController extends Controller
                 'google_calendar_event_id' => $eventId,
             ]);
 
-            // Mail::to($user->email)->send(
-            //     new SendEmailAccountCreation($user, url('/auth/login'), [
-            //         ...$googleEvent,
-            //         // FIXED: Changed to double quotes and wrapped the variable in curly braces
-            //         'job_interview_id'  => url("/accounts/talent/{$ji->id}/ai_interview"),
-            //         'start_time'        => $googleStartTime,
-            //         'end_time'          => $googleEndTime,
-            //         'meet_link'         => $googleEvent['meet_link']
-            //     ])
-            // );
+            Mail::to($user->email)->send(
+                new SendEmailAccountCreation($user, url('/auth/login'), [
+                    ...$user,
+                    'start_time'        => $googleStartTime,
+                    'end_time'          => $googleEndTime,
+                    'meet_link'         => $meetLink
+                ])
+            );
             if ($request->file) {
                 // 1. Decode the base64 string and extract data
                 $commaPosition = strpos($request->file, ',');
