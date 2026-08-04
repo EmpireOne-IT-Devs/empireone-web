@@ -15,7 +15,7 @@ export default function CardAcknowledgementSection() {
     const { employees } = useSelector((store) => store.human_resources);
 
     return (
-        <div className="flex bg-gray-100 p-6 gap-6 flex-wrap w-full justify-start items-start">
+        <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
             {employees?.data?.map((res) => {
                 const empId = res.id || res.employee_id;
 console.log('waaaa',res)

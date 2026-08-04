@@ -60,7 +60,7 @@ export default function CardApplicantSection() {
     }, [applicants?.data, search_applicant_status]);
 
     return (
-        <div className="flex bg-gray-100 p-6 gap-6 flex-wrap w-full justify-start items-start">
+        <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
             {filteredApplications?.length > 0 ? (
                 filteredApplications.map((res) => {
                     const applicantId = res.id;

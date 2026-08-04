@@ -14,6 +14,7 @@ use App\Notifications\JobRequisitionNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 
@@ -158,27 +159,63 @@ class JobRequisitionController extends Controller
         $search = $request->query('search');
         $status = $request->query('status');
 
+        // 1. Create a base query that filters out expired requisitions at the database level
+        $unexpiredQuery = JobRequisition::where(function ($query) {
+            $query->whereNull('created_at') // Retain records with no creation date
+                ->orWhere(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->whereIn(DB::raw('LOWER(position_level)'), ['agent', 'rank and file'])
+                            ->where('created_at', '>=', Carbon::now()->subWeeks(3));
+                    })
+                        ->orWhere(function ($sub) {
+                            $sub->where(DB::raw('LOWER(position_level)'), 'supervisor')
+                                ->where('created_at', '>=', Carbon::now()->subWeeks(5));
+                        })
+                        ->orWhere(function ($sub) {
+                            $sub->where(DB::raw('LOWER(position_level)'), 'manager')
+                                ->where('created_at', '>=', Carbon::now()->subMonths(2));
+                        })
+                        ->orWhere(function ($sub) {
+                            $sub->whereIn(DB::raw('LOWER(position_level)'), ['director', 'executive'])
+                                ->where('created_at', '>=', Carbon::now()->subMonths(3));
+                        })
+                        ->orWhere(function ($sub) {
+                            // Default fallback: keep if level doesn't match above, or is null
+                            $sub->whereNotIn(DB::raw('LOWER(position_level)'), [
+                                'agent',
+                                'rank and file',
+                                'supervisor',
+                                'manager',
+                                'director',
+                                'executive'
+                            ])->orWhereNull('position_level');
+                        });
+                });
+        });
+
+        // 2. Calculate stats using cloned instances of the base query (so we don't mutate it)
         $stats = [
-            'total'       => JobRequisition::count(),
-            'pending'     => JobRequisition::where('status', 'Pending')->count(),
-            'approved'    => JobRequisition::where('status', 'Final Approved')->count(),
-            'in_progress' => JobRequisition::where('status', 'In Progress')->count(),
-            'declined'    => JobRequisition::where('status', 'Declined')->count(),
+            'total'       => (clone $unexpiredQuery)->count(),
+            'pending'     => (clone $unexpiredQuery)->where('status', 'Pending')->count(),
+            'approved'    => (clone $unexpiredQuery)->where('status', 'Final Approved')->count(),
+            'in_progress' => (clone $unexpiredQuery)->where('status', 'In Progress')->count(),
+            'declined'    => (clone $unexpiredQuery)->where('status', 'Declined')->count(),
         ];
 
-        // Build the query for the table (Filtered Data)
-        $jobRequisitions = JobRequisition::with([
-            'department',
-            'location',
-            'logs',
-            'user',
-            'job_posting',
-            'account',
-            'recruiter',
-            'approver1',
-            'approver2',
-            'approver3'
-        ])
+        // 3. Build the query for the table (Filtered Data)
+        $nonExpiredRequisitions = (clone $unexpiredQuery)
+            ->with([
+                'department',
+                'location',
+                'logs',
+                'user',
+                'job_posting',
+                'account',
+                'recruiter',
+                'approver1',
+                'approver2',
+                'approver3'
+            ])
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($subQuery) use ($search) {
                     $subQuery->where('title', 'LIKE', "%{$search}%")
@@ -196,25 +233,6 @@ class JobRequisitionController extends Controller
             })
             ->orderBy('id', 'desc')
             ->get();
-
-        // Filter out requisitions where created_at is beyond the allowed time limit
-        $nonExpiredRequisitions = $jobRequisitions->reject(function ($requisition) {
-            if (!$requisition->created_at) {
-                return false;
-            }
-
-            $level = strtolower($requisition->position_level ?? '');
-            $createdDate = Carbon::parse($requisition->created_at);
-
-            $expiryDate = match ($level) {
-                'agent', 'rank and file' => $createdDate->copy()->addWeeks(3),
-                'supervisor'            => $createdDate->copy()->addWeeks(5),
-                'manager'               => $createdDate->copy()->addMonths(2),
-                'director', 'executive' => $createdDate->copy()->addMonths(3),
-                default                 => null,
-            };
-            return $expiryDate ? Carbon::now()->greaterThan($expiryDate) : false;
-        })->values(); // Reset array keys
 
         $users = User::where('role', 1)->get();
         $access = AccountAccess::where('type', 'Job Requisition Approval')->get();
