@@ -40,7 +40,7 @@ export default function SidebarSection() {
     const dispatch = useDispatch();
     const path = window.location.pathname.split("/")[3];
     const account_role = window.location.pathname.split("/")[2];
-    console.log("datadata", data?.user?.leader != null);
+    console.log("datadata", data?.user?.account_employee?.department_id);
     // 1. We split the main navigation items and include labels...
     const mainNavigation = [
         { is_label: true, name: "Main Menu" },

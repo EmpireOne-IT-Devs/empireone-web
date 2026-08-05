@@ -61,7 +61,7 @@ export default function AskAiSection() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div className="fixed bottom-6 right-6 z-50 w-12 flex flex-col items-end">
             {/* Expanded AI Window */}
             <div
                 className={`
