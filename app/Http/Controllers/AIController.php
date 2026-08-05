@@ -24,13 +24,13 @@ class AIController extends Controller
         // Tell the AI exactly how your tables are structured so it knows how to join them.
         $schema = "
         Table `users`: id, name, email, role (1=Admin, 2=Employee)
-        Table `account_personal_informations`: user_id, first_name, last_name, date_of_birth, contact, region, province, city, barangay, street, zip_code, year_graduated, degree, school_name, course
+        Table `account_personal_information`: user_id, first_name, last_name, date_of_birth, contact, region, province, city, barangay, street, zip_code, year_graduated, degree, school_name, course
         Table `account_employees`: user_id, employee_id, department_id, position, position_level, started_at, e_r_leader_id, eogs_email, basic_pay, status, signature, location_id, site_id
         Table `locations`: id, name
         Table `sites`: id, name
 
         Relationships: 
-        1. users.id = account_personal_informations.user_id 
+        1. users.id = account_personal_information.user_id 
         2. users.id = account_employees.user_id
         3. account_employees.location_id = locations.id
         4. account_employees.site_id = sites.id
