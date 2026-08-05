@@ -66,7 +66,8 @@ class EnsureAccountEmployeeComplete
             'eogs_email',
             'basic_pay',
             'status',
-            'signature'
+            'signature',
+            'department_id'
         ];
 
 
