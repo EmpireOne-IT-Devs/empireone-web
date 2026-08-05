@@ -1,4 +1,5 @@
 import React, { forwardRef, useState, useEffect, useRef } from "react";
+import Button from "./button";
 
 const MultiSelect = forwardRef(
     (
@@ -22,7 +23,7 @@ const MultiSelect = forwardRef(
         const [isOpen, setIsOpen] = useState(false);
         const [internalValues, setInternalValues] = useState([]);
 
-        const containerRef = useRef();
+        const containerRef = useRef(null);
         const inputRef = useRef(null);
 
         // Check if controlled by parent
@@ -63,17 +64,15 @@ const MultiSelect = forwardRef(
 
         const handleInputClick = () => {
             if (!disabled) {
-                setIsOpen(true);
+                // Modified: Toggle the dropdown so the user can manually close it
+                setIsOpen((prev) => !prev);
                 inputRef.current?.focus();
             }
         };
 
-        // NEW: Handle backspace to remove the last selected tag
         const handleKeyDown = (e) => {
             if (e.key === "Backspace" && search === "" && selectedValues.length > 0) {
-                // Prevent default backspace behavior just in case
                 e.preventDefault();
-                // Remove the last item from the array
                 const newValues = selectedValues.slice(0, -1);
                 updateSelection(newValues);
             }
@@ -85,12 +84,16 @@ const MultiSelect = forwardRef(
                     containerRef.current &&
                     !containerRef.current.contains(e.target)
                 ) {
-                    setIsOpen(false);
+                    // Modified: Removed setIsOpen(false) so it stays open
+                    // We only clear the search text when clicking away
+                    setSearch("");
                 }
             };
+
             document.addEventListener("mousedown", handleClickOutside);
-            return () =>
+            return () => {
                 document.removeEventListener("mousedown", handleClickOutside);
+            };
         }, []);
 
         const filteredOptions = options.filter((opt) =>
@@ -103,15 +106,15 @@ const MultiSelect = forwardRef(
             <div className="w-full" ref={containerRef}>
                 <div className="relative">
                     {iconLeft && (
-                        <div className="absolute left-3 top-3 text-gray-500 z-10 pointer-events-none">
+                        <div className="absolute left-3 top-3 z-10 pointer-events-none text-gray-500">
                             {iconLeft}
                         </div>
                     )}
 
                     {/* Input Container */}
                     <div
-                        onClick={handleInputClick} // Triggers focus
-                        className={`w-full min-h-[44px] flex flex-wrap items-center gap-1 rounded-md border bg-white py-1.5 px-3 text-sm text-black cursor-text transition-colors
+                        onClick={handleInputClick}
+                        className={`w-full min-h-[50px] flex flex-wrap items-center gap-1 rounded-md border bg-white py-1.5 px-3 text-sm text-black cursor-text transition-colors
               focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500
               ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : "pr-8"}
               ${error ? "border-red-500 focus-within:ring-red-500" : "border-gray-400"}
@@ -125,7 +128,7 @@ const MultiSelect = forwardRef(
                             return (
                                 <span
                                     key={val}
-                                    className="flex items-center gap-1 rounded bg-blue-50 border border-blue-200 px-2 py-1 text-xs text-blue-700 font-medium"
+                                    className="flex items-center gap-1 rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"
                                 >
                                     {opt.label}
                                     <button
@@ -146,7 +149,7 @@ const MultiSelect = forwardRef(
                             autoComplete="off"
                             ref={(e) => {
                                 inputRef.current = e;
-                                if (typeof ref === 'function') ref(e);
+                                if (typeof ref === "function") ref(e);
                                 else if (ref) ref.current = e;
                             }}
                             id={name}
@@ -157,9 +160,10 @@ const MultiSelect = forwardRef(
                                 setSearch(e.target.value);
                                 setIsOpen(true);
                             }}
-                            onKeyDown={handleKeyDown} // NEW: Added keydown listener
+                            onKeyDown={handleKeyDown}
                             placeholder={selectedValues.length === 0 && !shouldFloatLabel ? "" : ""}
-                            className="flex-1 bg-transparent border-transparent min-w-[60px] py-1 outline-none text-sm text-gray-800 placeholder-gray-400 focus:ring-0 focus:border-transparent" />
+                            className="flex-1 bg-transparent border-transparent min-w-[60px] py-1 outline-none text-sm text-gray-800 placeholder-gray-400 focus:ring-0 focus:border-transparent"
+                        />
                     </div>
 
                     {/* Floating Label */}
@@ -175,8 +179,8 @@ const MultiSelect = forwardRef(
 
                     {/* Dropdown Arrow */}
                     {!iconRight && (
-                        <div className="absolute right-3 top-3 text-gray-500 pointer-events-none">
-                            <svg
+                        <div className="absolute right-3 top-3 text-gray-500">
+                            {/* <svg
                                 className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
                                 fill="none"
                                 stroke="currentColor"
@@ -188,26 +192,31 @@ const MultiSelect = forwardRef(
                                     strokeWidth={2}
                                     d="M19 9l-7 7-7-7"
                                 />
-                            </svg>
+                            </svg> */}
+                            <Button
+                                size="sm"
+                                variant="primary"
+                                onClick={() => setIsOpen(false)}
+                            >DONE</Button>
                         </div>
                     )}
 
                     {iconRight && (
-                        <div className="absolute right-3 top-3 text-gray-500 pointer-events-none">
+                        <div className="absolute right-3 top-3 pointer-events-none text-gray-500">
                             {iconRight}
                         </div>
                     )}
 
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
-                        <ul className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border border-gray-200 bg-white shadow-lg">
+                        <ul className="absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-lg">
                             {filteredOptions.length > 0 ? (
                                 filteredOptions.map((option, idx) => {
                                     const isSelected = selectedValues.includes(option.value);
                                     return (
                                         <li
                                             key={idx}
-                                            className={`flex items-center justify-between cursor-pointer px-4 py-2 hover:bg-gray-100 text-black text-sm transition-colors ${isSelected ? "bg-blue-50 text-blue-700 font-medium" : ""
+                                            className={`flex cursor-pointer items-center justify-between px-4 py-2 text-sm text-black transition-colors hover:bg-gray-100 ${isSelected ? "font-medium bg-blue-50 text-blue-700" : ""
                                                 }`}
                                             onMouseDown={(e) => {
                                                 e.preventDefault();
@@ -216,7 +225,7 @@ const MultiSelect = forwardRef(
                                         >
                                             <span>{option.label}</span>
                                             {isSelected && (
-                                                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                 </svg>
                                             )}
@@ -224,7 +233,7 @@ const MultiSelect = forwardRef(
                                     );
                                 })
                             ) : (
-                                <li className="px-4 py-3 text-sm text-gray-500 text-center italic">
+                                <li className="px-4 py-3 text-center text-sm italic text-gray-500">
                                     No results found
                                 </li>
                             )}
@@ -233,7 +242,7 @@ const MultiSelect = forwardRef(
                 </div>
 
                 {error && (
-                    <p className="mt-1 text-xs text-red-500 font-medium">
+                    <p className="mt-1 text-xs font-medium text-red-500">
                         {error.message ?? error}
                     </p>
                 )}

@@ -1,0 +1,1 @@
+import{b as s,j as o}from"./app-Mr-zHpL2.js";import{P as a}from"./pagination-CTGb4lc7.js";function i(){const{job_offers:t}=s(n=>n.job_postings);return o.jsx(o.Fragment,{children:o.jsx(a,{data:t})})}export{i as default};
