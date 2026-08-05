@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AIController;
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
 use App\Http\Controllers\API\Timekeeping\AttendanceController;
@@ -88,6 +89,8 @@ Route::get('employee_assessment_notifications', [AppController::class, 'employee
 Route::get('get_all_email', [GoogleController::class, 'get_all_email']); // do not remove this
 // Route::get('assigned_leads', [GoogleController::class, 'assigned_leads']); // do not remove this
 
+
+Route::post('ask_ai', [AIController::class, 'ask_ai'])->middleware(['auth:sanctum']);
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets', TicketingController::class);

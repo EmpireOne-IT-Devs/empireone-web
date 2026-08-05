@@ -4,6 +4,7 @@ import store from "@/app/store/store";
 import { get_app_data_thunk } from "@/app/redux/app-thunk";
 import { useEffect, useState } from "react";
 import SidebarSection from "./__sections/sidebar-section";
+import AskAiSection from "./__sections/ask-ai-section";
 
 export default function Layout({ children }) {
     const { desktopCollapsed } = useSelector((store) => store.app);
@@ -32,6 +33,7 @@ export default function Layout({ children }) {
                     </div>
                 </main>
             </div>
+            <AskAiSection />
         </div>
     );
 }
