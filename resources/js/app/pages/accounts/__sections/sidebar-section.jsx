@@ -79,7 +79,6 @@ export default function SidebarSection() {
             current: path == "my_documents",
             is_incoming: false,
         },
-
         {
             name: "Messages",
             href: `/accounts/${account_role}/messages`,
@@ -87,6 +86,10 @@ export default function SidebarSection() {
             current: path == "messages",
             is_incoming: true,
         },
+
+        // ------------------------------------
+        // LEADER HUB
+        // ------------------------------------
         ...(data?.user?.leader != null
             ? [
                 {
@@ -106,23 +109,25 @@ export default function SidebarSection() {
                 },
             ]
             : []),
+
+        // ------------------------------------
+        // ADMINISTRATOR HUB
+        // ------------------------------------
         ...(account_role == "administrator"
             ? [
                 { is_label: true, name: "Administration" },
-                //   {
-                //       name: "Users",
-                //       href: `/accounts/${account_role}/users`,
-                //       icon: FcConferenceCall,
-                //       current: path == "users",
-                //       is_incoming: true,
-                //   },
-                {
-                    name: "Talent Acquisition",
-                    href: `/accounts/${account_role}/talent_acquisition/dashboard`,
-                    icon: FcPortraitMode,
-                    current: path == "talent_acquisition",
-                    is_incoming: false,
-                },
+
+                // CORRECTED: Conditionally render Talent Acquisition
+                ...([1, 2].includes(data?.user?.account_employee?.department_id)
+                    ? [{
+                        name: "Talent Acquisition",
+                        href: `/accounts/${account_role}/talent_acquisition/dashboard`,
+                        icon: FcPortraitMode,
+                        current: path === "talent_acquisition",
+                        is_incoming: false,
+                    }]
+                    : []
+                ),
 
                 {
                     name: "Human Resources",
@@ -152,8 +157,6 @@ export default function SidebarSection() {
                     current: path == "activities",
                     is_incoming: false,
                 },
-
-
                 {
                     name: "R & R",
                     href: `/accounts/${account_role}/rnr/peer_recognition`,
@@ -175,7 +178,7 @@ export default function SidebarSection() {
                     current: path == "finance",
                     is_incoming: true,
                 },
-                  {
+                {
                     name: "Asset & Inventory",
                     href: `/accounts/${account_role}/asset_inventory`,
                     icon: PackageIcon,
@@ -185,6 +188,9 @@ export default function SidebarSection() {
             ]
             : []),
 
+        // ------------------------------------
+        // EMPLOYEE HUB
+        // ------------------------------------
         ...(account_role == "employee"
             ? [
                 { is_label: true, name: "Employee Hub" },
@@ -219,18 +225,14 @@ export default function SidebarSection() {
                 {
                     name: "Loan",
                     href: `/accounts/${account_role}/loan`,
-                    icon: () => (
-                        <FaMoneyBillWave className="text-purple-600" />
-                    ),
+                    icon: () => <FaMoneyBillWave className="text-purple-600" />,
                     current: path == "loan",
                     is_incoming: true,
                 },
                 {
                     name: "Payroll",
                     href: `/accounts/${account_role}/payroll`,
-                    icon: () => (
-                        <FaMoneyCheckAlt className="text-green-600" />
-                    ),
+                    icon: () => <FaMoneyCheckAlt className="text-green-600" />,
                     current: path == "payroll",
                     is_incoming: true,
                 },
