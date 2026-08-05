@@ -95,8 +95,7 @@ class AIController extends Controller
 
             return response()->json([
                 'reply' => $aiReply,
-                // 'debug_sql' => $sqlQuery // Uncomment this if you want to see what SQL the AI wrote in your Network tab
-            ]);
+            ],500);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
