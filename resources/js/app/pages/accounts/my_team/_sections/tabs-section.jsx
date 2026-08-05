@@ -21,11 +21,11 @@ export default function TabsSection() {
             path: "/accounts/administrator/my_team/assessment_process",
             active: currentPath === "assessment_process",
         },
-        {
-            label: "Employee Status Changes",
-            path: "/accounts/administrator/my_team/employee_status_changes",
-            active: currentPath === "employee_status_changes",
-        },
+        // {
+        //     label: "Employee Status Changes",
+        //     path: "/accounts/administrator/my_team/employee_status_changes",
+        //     active: currentPath === "employee_status_changes",
+        // },
         // {
         //     label: "None Regularization",
         //     path: "/accounts/administrator/my_team/none_regularization",

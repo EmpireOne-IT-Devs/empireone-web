@@ -1,0 +1,10 @@
+import{r as m,j as r}from"./app-BUOHpsD7.js";import p from"./layout-CcokW4yZ.js";import e from"./layout-Dy-Ggi09.js";import s from"./header-section-CyEDt5sL.js";import a from"./search-section-C_FDc4Hg.js";import n from"./card-uploaded-image-section-DUWUdlL_.js";import"./topbar-section-Cer-_xnl.js";import"./Bars3Icon-df8YVhwk.js";import"./MagnifyingGlassIcon-CS7gIWrE.js";import"./portal-LDPv0zzY.js";import"./app-thunk-DnG3MatU.js";import"./user-service-Baj-Kq0t.js";import"./sidebar-section-yp9fc04a.js";import"./index-Ds5PGKrf.js";import"./iconBase-BEf2IrkV.js";import"./tooltip-Cv9OmKW1.js";import"./index-BhxiTYdv.js";import"./index-D4iWfIoO.js";import"./package-DejGUMYj.js";import"./createLucideIcon-BMSp58bn.js";import"./dialog-UntxcLSw.js";import"./ask-ai-section-DSWc5D-q.js";import"./sparkles-YrK7JTRE.js";import"./x-CuyWQWHz.js";import"./send-C7YvX5Ug.js";import"./message-circle-DcV5bc0_.js";import"./header-section-BsmTYbKm.js";import"./tabs-section-q0i0ztxV.js";import"./tabs-DrApoa0J.js";import"./chevron-down-DgUD53CS.js";import"./image-sD-1jWFj.js";import"./input-BnmOQIVn.js";import"./index-CbnOALOL.js";import"./upload-image-section-D40t-H70.js";import"./button-BevnRI17.js";import"./index-CEMZEbJn.js";import"./modal-BrLG0r5K.js";import"./engagement-gallery-service-BeUNMkN1.js";import"./download-GibzobYg.js";import"./cloud-upload-Dn9BVoFB.js";import"./images-CCz6Fo0S.js";import"./card-lvhtVBFs.js";import"./skeleton-sohEQVPW.js";import"./calendar-0e0gG2ov.js";import"./folder-Dk44btFJ.js";import"./chevron-left-Cm0XdGaf.js";import"./chevron-right-CzQgLfii.js";function ir(){const[o,t]=m.useState(0);return r.jsx(p,{children:r.jsxs(e,{children:[r.jsx(s,{}),r.jsx(a,{onUploadSuccess:()=>t(i=>i+1)}),r.jsx("div",{className:`
+        flex
+        max-h-[500px]
+        overflow-y-auto
+        pr-2
+        [&::-webkit-scrollbar]:w-2
+        [&::-webkit-scrollbar-track]:bg-gray-100
+        [&::-webkit-scrollbar-thumb]:bg-gray-400
+        [&::-webkit-scrollbar-thumb]:rounded-full
+    `,children:r.jsx(n,{refreshKey:o})})]})})}export{ir as default};

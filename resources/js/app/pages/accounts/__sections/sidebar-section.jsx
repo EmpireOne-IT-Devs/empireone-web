@@ -125,24 +125,44 @@ export default function SidebarSection() {
                         icon: FcPortraitMode,
                         current: path === "talent_acquisition",
                         is_incoming: false,
-                    }]
+                    }, {
+                        name: "Human Resources",
+                        href: `/accounts/${account_role}/human_resources/employees`,
+                        icon: FcPodiumWithAudience,
+                        current: path == "human_resources",
+                        is_incoming: false,
+                    },
+                    {
+                        name: "Timekeeping",
+                        href: `/accounts/${account_role}/time_keeping/dashboard`,
+                        icon: FcOvertime,
+                        current: path == "time_keeping",
+                        is_incoming: false,
+                    }, {
+                        name: "Activities",
+                        href: `/accounts/${account_role}/activities`,
+                        icon: FcSportsMode,
+                        current: path == "activities",
+                        is_incoming: false,
+                    },
+                    {
+                        name: "R & R",
+                        href: `/accounts/${account_role}/rnr/peer_recognition`,
+                        icon: FcDiploma1,
+                        current: path == "rnr",
+                        is_incoming: false,
+                    }, {
+                        name: "Asset & Inventory",
+                        href: `/accounts/${account_role}/asset_inventory`,
+                        icon: PackageIcon,
+                        current: path == "asset_inventory",
+                        is_incoming: false,
+                    },
+                    ]
                     : []
                 ),
 
-                {
-                    name: "Human Resources",
-                    href: `/accounts/${account_role}/human_resources/employees`,
-                    icon: FcPodiumWithAudience,
-                    current: path == "human_resources",
-                    is_incoming: false,
-                },
-                {
-                    name: "Timekeeping",
-                    href: `/accounts/${account_role}/time_keeping/dashboard`,
-                    icon: FcOvertime,
-                    current: path == "time_keeping",
-                    is_incoming: false,
-                },
+
                 {
                     name: "Ticketing",
                     href: `/accounts/${account_role}/ticketing`,
@@ -150,20 +170,7 @@ export default function SidebarSection() {
                     current: path == "ticketing",
                     is_incoming: true,
                 },
-                {
-                    name: "Activities",
-                    href: `/accounts/${account_role}/activities`,
-                    icon: FcSportsMode,
-                    current: path == "activities",
-                    is_incoming: false,
-                },
-                {
-                    name: "R & R",
-                    href: `/accounts/${account_role}/rnr/peer_recognition`,
-                    icon: FcDiploma1,
-                    current: path == "rnr",
-                    is_incoming: false,
-                },
+
                 {
                     name: "E-Store",
                     href: `/accounts/${account_role}/e_store/rewards_items`,
@@ -178,13 +185,7 @@ export default function SidebarSection() {
                     current: path == "finance",
                     is_incoming: true,
                 },
-                {
-                    name: "Asset & Inventory",
-                    href: `/accounts/${account_role}/asset_inventory`,
-                    icon: PackageIcon,
-                    current: path == "asset_inventory",
-                    is_incoming: false,
-                },
+
             ]
             : []),
 
