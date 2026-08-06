@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { Trash, AlertTriangle } from "lucide-react";
-
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import store from "@/app/store/store";
@@ -8,6 +6,8 @@ import { delete_applicant_service } from "@/app/services/applicants-service";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
+import { FaTrashAlt } from "react-icons/fa";
+import { LuTriangleAlert } from "react-icons/lu";
 
 export default function DeleteApplicantSection({ data }) {
     const [open, setOpen] = useState(false);
@@ -44,7 +44,7 @@ export default function DeleteApplicantSection({ data }) {
                 className="w-full"
                 onClick={() => setOpen(true)}
                 outlined>
-                <Trash className="w-4 h-4 mr-2" />
+                <FaTrashAlt className="w-4 h-4 mr-2" />
                 DELETE
             </Button>
 
@@ -54,7 +54,7 @@ export default function DeleteApplicantSection({ data }) {
                 title={
                     <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 text-red-600 shrink-0">
-                            <AlertTriangle />
+                            <LuTriangleAlert />
                         </div>
                         <div>
                             <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
@@ -88,7 +88,7 @@ export default function DeleteApplicantSection({ data }) {
                             loading={loading}
                             disabled={loading}
                         >
-                            <Trash className="w-3.5 h-3.5 mr-2" />
+                            <FaTrashAlt className="w-3.5 h-3.5 mr-2" />
                             Yes, Delete
                         </Button>
                     </div>
