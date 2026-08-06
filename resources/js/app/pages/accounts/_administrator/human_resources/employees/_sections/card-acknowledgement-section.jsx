@@ -92,7 +92,7 @@ console.log('waaaa',res)
                         {/* Bottom Actions */}
                         <div className="pt-2 flex items-center justify-end gap-2 border-t border-gray-100/80">
                             <button
-                                onClick={() => router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_team/${res.id}/personal_information`)}
+                                onClick={() => router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_team/${res.user_id}/personal_information`)}
                                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer"
                             >
                                 <Eye className="w-3.5 h-3.5" /> View Profile
