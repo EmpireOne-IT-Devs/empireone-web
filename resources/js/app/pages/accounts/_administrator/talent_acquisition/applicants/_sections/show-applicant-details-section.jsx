@@ -6,7 +6,6 @@ import React, { useState } from "react";
 
 export default function ShowApplicantDetailsSection({ data }) {
     const [open, setOpen] = useState(false);
-    console.log("datadatadata", data);
     return (
         <>
             <Button

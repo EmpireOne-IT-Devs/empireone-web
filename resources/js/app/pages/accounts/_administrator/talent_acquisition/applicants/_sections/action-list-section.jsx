@@ -362,9 +362,9 @@ export default function ActionListSection({ props_data }) {
 
                             {/* Common Modals / View / Delete Row */}
                             <div className="flex items-center flex-col justify-between gap-2 pt-2 border-t border-slate-100 w-full">
-                                {/* <TransferApplicant data={props_data} />
+                                <TransferApplicant data={props_data} />
                                 <ShowApplicantDetailsSection data={props_data} />
-                                <DeleteApplicantSection data={props_data} /> */}
+                                {/* <DeleteApplicantSection data={props_data} /> */}
                             </div>
                         </div>
                     </motion.div>
