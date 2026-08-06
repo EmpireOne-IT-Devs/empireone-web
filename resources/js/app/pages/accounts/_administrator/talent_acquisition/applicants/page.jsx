@@ -23,7 +23,7 @@ export default function Page() {
 
                     {/* Added the target ID wrapper here so the scroll knows where to land */}
                     <div id="results-table" className="scroll-mt-36">
-                        {/* <CardApplicantSection /> */}
+                        <CardApplicantSection />
                     </div>
 
                     <PaginationSection />
