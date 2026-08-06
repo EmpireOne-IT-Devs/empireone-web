@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { router } from '@inertiajs/react';
 import moment from 'moment';
 import {
     FcApproval,
@@ -21,15 +20,8 @@ import {
 
 // Shared Section Imports from Table
 import EditStatusSection from './edit-status-section';
-import ShowApplicantDetailsSection from './show-applicant-details-section';
-import SendJobOfferSection from './send-job-offer-section';
-import ResendJobOfferSection from './resend-job-offer-section';
-import SendDocumentsSection from './send-documents-section';
-import DeleteApplicantSection from './delete-applicant-section';
-
 // Component Imports
 import Tooltip from '@/app/_components/tooltip';
-import Button from '@/app/_components/button';
 import ActionListSection from './action-list-section';
 
 export default function CardApplicantSection() {
@@ -271,7 +263,7 @@ export default function CardApplicantSection() {
                                     </div>
                                 </div>
                             </div>
-                            <ActionListSection props_data={res}/>
+                            {/* <ActionListSection props_data={res}/> */}
                            
                         </div>
                     );
