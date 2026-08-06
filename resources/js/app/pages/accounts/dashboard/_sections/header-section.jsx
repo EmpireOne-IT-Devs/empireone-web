@@ -66,7 +66,7 @@ export default function HeaderSection() {
                     </svg>
 
                     <img
-                        src={data?.user?.avatar || "/images/E1icon.png"}
+                        src={data?.user?.avatar || "/images/E1Icon.png"}
                         alt="Profile"
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92px] h-[92px] rounded-full object-cover border-2 border-blue-800"
                     />

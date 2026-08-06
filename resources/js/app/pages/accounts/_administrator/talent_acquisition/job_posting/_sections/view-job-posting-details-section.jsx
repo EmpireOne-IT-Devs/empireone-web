@@ -208,7 +208,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                             className="flex-1 w-full"
                             onClick={() =>
                                 router.visit(
-                                    `/accounts/administrator/talent_acquisition/job_posting/${data.id}/applicants`
+                                    `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${data.id}`
                                 )
                             }
                         >

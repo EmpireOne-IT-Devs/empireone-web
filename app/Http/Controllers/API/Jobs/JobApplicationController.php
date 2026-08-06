@@ -611,7 +611,7 @@ class JobApplicationController extends Controller
 
 
             $googleData = json_decode($result, true);
-            
+
             $meetLink = $googleData['eventId']['meetLink'];
             $eventId = $googleData['eventId']['eventId'];
             $schedule->update([
@@ -789,6 +789,7 @@ class JobApplicationController extends Controller
         // 3. Define the exact columns (20 Total)
         $columns = [
             'DATE',
+            'SOURCE',
             'FIRST NAME',
             'FAMILY NAME',
             'ADDRESS',
@@ -857,6 +858,7 @@ class JobApplicationController extends Controller
                 // Write the row (Ensuring exactly 20 elements)
                 $row = [
                     $app->created_at ? $app->created_at->format('M d, Y') : '',
+                    $app->source ?? '',
                     $pi->first_name ?? '',
                     $pi->last_name ?? '',
                     $address,
@@ -922,8 +924,8 @@ class JobApplicationController extends Controller
         // 2. Filter by location via the relationship
         $baseQuery->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
             $query->where('location_id', $locationId);
+            $query->whereNull('removed_by');
         });
-        $baseQuery->whereNull('removed_by');
         // 3. CORRECTED: Filter by application date directly on the base table
         if (!empty($searchDate)) {
             // This now correctly targets job_applications.created_at
@@ -944,6 +946,9 @@ class JobApplicationController extends Controller
                 });
             })
 
+            ->when($request->job_posting_id, function ($query) use ($request) {
+                $query->where('job_posting_id', $request->job_posting_id);
+            })
             // B. Apply STATUS filters independently of the text search
             ->when($request->final_status, function ($query) use ($request) {
                 $query->where('final_status', $request->final_status);

@@ -61,7 +61,7 @@ export default function QrcodeSection() {
               size={qrSize}
               iconSize={qrSize / 4}
               value={value}
-              icon="/images/E1icon.png"
+              icon="/images/E1Icon.png"
             />
           </div>
           <span className="font-semibold text-base text-gray-800">{label}</span>

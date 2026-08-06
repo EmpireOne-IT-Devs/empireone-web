@@ -122,6 +122,7 @@ export default function StatusesCardSection() {
         const currentParams = new URLSearchParams(window.location.search);
 
         currentParams.delete('page');
+        currentParams.delete('job_posting_id');
         if (table && status) {
             currentParams.delete('statuses');
             currentParams.delete('final_status');
@@ -158,6 +159,7 @@ export default function StatusesCardSection() {
         currentParams.delete('final_status');
         currentParams.delete('interview_status');
         currentParams.delete('page');
+        currentParams.delete('job_posting_id');
         if (search) {
             currentParams.set('search', search);
             currentParams.delete('statuses');
@@ -208,6 +210,7 @@ export default function StatusesCardSection() {
         } else {
             currentParams.delete('search_date');
         }
+        currentParams.delete('job_posting_id');
 
         router.visit(`?${currentParams.toString()}`, {
             preserveState: true,
@@ -288,7 +291,7 @@ export default function StatusesCardSection() {
                     icon={Mail}
                     onClick={() => handleCardClick('final_status', 'Sent Job Offer')}
                 />
-                  <StatCard
+                <StatCard
                     title="Sent Documents"
                     count={data.sent_documents}
                     type="success"
@@ -323,7 +326,7 @@ export default function StatusesCardSection() {
                     icon={ThumbsDown}
                     onClick={() => handleCardClick('final_status', 'Declined Job Offer')}
                 />
-              
+
                 <StatCard
                     title="Withdrawn"
                     count={data.final_withdrawn}

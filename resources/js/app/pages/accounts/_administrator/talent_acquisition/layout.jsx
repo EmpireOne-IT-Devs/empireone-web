@@ -26,11 +26,11 @@ export default function JobPostingLayout({ children }) {
         },
 
 
-        // {
-        //     label: "Job Postings",
-        //     path: "/accounts/administrator/talent_acquisition/job_posting",
-        //     active: path === "job_posting",
-        // },
+        {
+            label: "Job Postings",
+            path: "/accounts/administrator/talent_acquisition/job_posting",
+            active: path === "job_posting",
+        },
         // {
         //     label: "Job Offers",
         //     path: "/accounts/administrator/talent_acquisition/job_offers",

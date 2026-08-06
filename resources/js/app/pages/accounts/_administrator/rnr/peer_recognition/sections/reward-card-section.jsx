@@ -64,7 +64,7 @@ function RewardCard({ item }) {
                         <img
                             className="w-8 h-8 rounded-full object-cover"
                             src={
-                                item?.author?.avatar || "/images/E1icon.png"
+                                item?.author?.avatar || "/images/E1Icon.png"
                             }
                             alt={item?.author?.name || "Author avatar"}
                         />
@@ -99,7 +99,7 @@ function RewardCard({ item }) {
                             className="w-8 h-8 rounded-full object-cover"
                             src={
                                 item?.recipient?.avatar ||
-                                "/images/E1icon.png"
+                                "/images/E1Icon.png"
                             }
                             alt={item?.recipient?.name || "Recipient avatar"}
                         />
