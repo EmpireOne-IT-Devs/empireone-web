@@ -7,7 +7,7 @@ import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import { transfer_job_offer_service } from "@/app/services/job-offer-service";
 import store from "@/app/store/store";
-import { get_applicants_thunk, get_job_application_by_id_thunk, get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
+import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import { setAlert } from "@/app/redux/app-slice";
 import { TbTransfer } from "react-icons/tb";
 
@@ -26,7 +26,6 @@ export default function TransferApplicant({ data }) {
     const { job_postings } = useSelector(
         (state) => state.job_postings,
     );
-    console.log('waaaaaaaasssssssss', job_postings)
     // Automatically set the first available job posting as the default value when the modal opens
     useEffect(() => {
         if (open && job_postings.length > 0) {
