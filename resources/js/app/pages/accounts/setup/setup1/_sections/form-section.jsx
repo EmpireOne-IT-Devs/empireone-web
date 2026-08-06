@@ -1,22 +1,30 @@
-import Input from '@/app/_components/input';
-import Select from '@/app/_components/select';
-import Button from '@/app/_components/button';
-import { Briefcase, Hash, Building2, Mail, UserCircle, User, Calendar } from "lucide-react";
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { router } from '@inertiajs/react';
-import { edit_information_service } from '@/app/services/account-service';
-import store from '@/app/store/store';
-import { get_app_data_thunk } from '@/app/redux/app-thunk';
-import { setAlert } from '@/app/redux/app-slice';
+import Input from "@/app/_components/input";
+import Select from "@/app/_components/select";
+import Button from "@/app/_components/button";
+import {
+    Briefcase,
+    Hash,
+    Building2,
+    Mail,
+    UserCircle,
+    User,
+    Calendar,
+} from "lucide-react";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { router } from "@inertiajs/react";
+import { edit_information_service } from "@/app/services/account-service";
+import store from "@/app/store/store";
+import { get_app_data_thunk } from "@/app/redux/app-thunk";
+import { setAlert } from "@/app/redux/app-slice";
 
 import {
     regions as fetchRegions,
     provinces as fetchProvinces,
     cities as fetchCities,
-    barangays as fetchBarangays
+    barangays as fetchBarangays,
 } from "select-philippines-address";
 
 const getName = (list, code) =>
@@ -44,8 +52,10 @@ export default function FormSection() {
                 ...data?.user?.personal_information,
                 e_r_leader_id: data?.user?.account_employee?.e_r_leader_id,
                 started_at: data?.user?.account_employee?.started_at
-                    ? moment(data.user.account_employee.started_at).format('YYYY-MM-DD')
-                    : '',
+                    ? moment(data.user.account_employee.started_at).format(
+                          "YYYY-MM-DD",
+                      )
+                    : "",
                 position_level: data?.user?.account_employee?.position_level,
                 basic_pay: data?.user?.account_employee?.basic_pay,
                 allowance: data?.user?.account_employee?.allowance,
@@ -70,8 +80,8 @@ export default function FormSection() {
     const onSubmit = async (formData) => {
         const finalData = {
             ...formData,
-            started_at: moment(formData.started_at).format('LL'),
-            // Since your Select components set the value to 'region_name' etc., 
+            started_at: moment(formData.started_at).format("LL"),
+            // Since your Select components set the value to 'region_name' etc.,
             // formData.region is already the name. You can just pass it directly.
             region: formData.region,
             province: formData.province,
@@ -89,7 +99,7 @@ export default function FormSection() {
                     open: true,
                 }),
             );
-            router.visit('/dashboard');
+            router.visit("/dashboard");
         } catch (error) {
             console.error(error);
         }
@@ -113,7 +123,9 @@ export default function FormSection() {
 
     // 1. Initial Load: Get Regions
     useEffect(() => {
-        fetchRegions().then((res) => setAddressData((prev) => ({ ...prev, regions: res })));
+        fetchRegions().then((res) =>
+            setAddressData((prev) => ({ ...prev, regions: res })),
+        );
     }, []);
 
     // 2. Handle Default Values (Cascading Load)
@@ -141,8 +153,13 @@ export default function FormSection() {
                         );
 
                         if (provObj) {
-                            const cityRes = await fetchCities(provObj.province_code);
-                            setAddressData((prev) => ({ ...prev, cities: cityRes }));
+                            const cityRes = await fetchCities(
+                                provObj.province_code,
+                            );
+                            setAddressData((prev) => ({
+                                ...prev,
+                                cities: cityRes,
+                            }));
 
                             if (form?.city) {
                                 const cityObj = cityRes.find(
@@ -246,7 +263,9 @@ export default function FormSection() {
 
         setAddressData((prev) => ({ ...prev, barangays: [] }));
 
-        const cityObj = addressData.cities.find((c) => c.city_name === cityName);
+        const cityObj = addressData.cities.find(
+            (c) => c.city_name === cityName,
+        );
         if (cityObj) {
             fetchBarangays(cityObj.city_code).then((res) =>
                 setAddressData((prev) => ({ ...prev, barangays: res })),
@@ -367,21 +386,39 @@ export default function FormSection() {
                     })}
                     options={[
                         { value: "N/A", label: "N/A" },
-                        { value: "Elementary", label: "Elementary" },
                         {
-                            value: "High School Junior",
-                            label: "High School Junior",
+                            value: "Elementary Undergraduate",
+                            label: "Elementary Undergraduate",
                         },
                         {
-                            value: "High School Senior",
-                            label: "High School Senior",
+                            value: "Elementary Graduate",
+                            label: "Elementary Graduate",
                         },
-                        { value: "College", label: "College" },
-                        { value: "Undergraduate", label: "Undergraduate" },
-                        { value: "Degree Holder", label: "Degree Holder" },
-                        { value: "Masteral", label: "Masteral" },
-                        { value: "Doctoral", label: "Doctoral" },
-                        { value: "Vocational", label: "Vocational" },
+                        {
+                            value: "Highschool/K-12 Undergraduate",
+                            label: "Highschool/K-12 Undergraduate",
+                        },
+                        {
+                            value: "Highschool/K-12 Graduate",
+                            label: "Highschool/K-12 Graduate",
+                        },
+                        { value: "College Level", label: "College Level" },
+                        {
+                            value: "College Graduate",
+                            label: "College Graduate",
+                        },
+                        {
+                            value: "Vocational Graduate",
+                            label: "Vocational Graduate",
+                        },
+                        {
+                            value: "Masteral Degree",
+                            label: "Masteral Degree",
+                        },
+                        {
+                            value: "Doctoral Degree",
+                            label: "Doctoral Degree",
+                        },
                     ]}
                     error={errors.degree}
                     value={form?.degree}
@@ -416,7 +453,9 @@ export default function FormSection() {
                                     value: res.province_name,
                                     label: res.province_name,
                                 }))}
-                                onChange={(value) => handleProvinceChange(value)}
+                                onChange={(value) =>
+                                    handleProvinceChange(value)
+                                }
                                 error={errors.province}
                             />
                         </div>
@@ -444,7 +483,10 @@ export default function FormSection() {
                                 error={errors.barangay}
                                 value={selected.barangay}
                                 onChange={(value) => {
-                                    setSelected({ ...selected, barangay: value });
+                                    setSelected({
+                                        ...selected,
+                                        barangay: value,
+                                    });
                                     if (setValue)
                                         setValue("barangay", value, {
                                             shouldValidate: true,

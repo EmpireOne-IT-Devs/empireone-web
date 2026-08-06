@@ -16,11 +16,10 @@ export default function PersonalInformationSection({
     watchedValues,
     control,
     setValue,
-    setCheckingStatus
+    setCheckingStatus,
 }) {
     const { departments } = useSelector((store) => store.departments);
     console.log("departments", departments);
-
 
     const typingTimer = useRef(null);
 
@@ -34,16 +33,16 @@ export default function PersonalInformationSection({
         typingTimer.current = setTimeout(async () => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            if (email !== '' && emailRegex.test(email)) {
-                setValue('email', email);
+            if (email !== "" && emailRegex.test(email)) {
+                setValue("email", email);
                 try {
                     // Call your API service
                     const result = await checking_applicant_service({
                         ...watchedValues,
-                        email: email
+                        email: email,
                     });
-                    setCheckingStatus(result)
-                    console.log('result', result)
+                    setCheckingStatus(result);
+                    console.log("result", result);
                 } catch (error) {
                     console.error("Error checking applicant:", error);
                 }
@@ -137,7 +136,6 @@ export default function PersonalInformationSection({
                                     This field is required.
                                 </span>
                             )}
-
                         </>
                     </div>
                 </div>
@@ -147,8 +145,7 @@ export default function PersonalInformationSection({
                         <Select
                             label="What department did you work for?"
                             {...register("previous_employee_status", {
-                                required:
-                                    "Please specify the department.",
+                                required: "Please specify the department.",
                             })}
                             options={departments.map((res) => ({
                                 ...res,
@@ -192,10 +189,11 @@ export default function PersonalInformationSection({
                         render={({ field: { onChange, value } }) => (
                             <div className="w-full">
                                 <div
-                                    className={`relative flex items-center rounded-md border bg-white px-3 text-sm text-black transition-colors focus-within:ring-2 focus-within:ring-purple-500 ${errors.contact
-                                        ? "border-red-500 focus-within:ring-red-500"
-                                        : "border-gray-300"
-                                        }`}
+                                    className={`relative flex items-center rounded-md border bg-white px-3 text-sm text-black transition-colors focus-within:ring-2 focus-within:ring-purple-500 ${
+                                        errors.contact
+                                            ? "border-red-500 focus-within:ring-red-500"
+                                            : "border-gray-300"
+                                    }`}
                                 >
                                     <PhoneInput
                                         international
@@ -294,21 +292,42 @@ export default function PersonalInformationSection({
                             {...register("degree", { required: true })}
                             options={[
                                 { value: "N/A", label: "N/A" },
-                                { value: "Elementary", label: "Elementary" },
                                 {
-                                    value: "High School Junior",
-                                    label: "High School Junior",
+                                    value: "Elementary Undergraduate",
+                                    label: "Elementary Undergraduate",
                                 },
                                 {
-                                    value: "High School Senior",
-                                    label: "High School Senior",
+                                    value: "Elementary Graduate",
+                                    label: "Elementary Graduate",
                                 },
-                                { value: "College", label: "College" },
-                                { value: "Undergraduate", label: "Undergraduate" },
-                                { value: "Degree Holder", label: "Degree Holder" },
-                                { value: "Masteral", label: "Masteral" },
-                                { value: "Doctoral", label: "Doctoral" },
-                                { value: "Vocational", label: "Vocational" },
+                                {
+                                    value: "Highschool/K-12 Undergraduate",
+                                    label: "Highschool/K-12 Undergraduate",
+                                },
+                                {
+                                    value: "Highschool/K-12 Graduate",
+                                    label: "Highschool/K-12 Graduate",
+                                },
+                                {
+                                    value: "College Level",
+                                    label: "College Level",
+                                },
+                                {
+                                    value: "College Graduate",
+                                    label: "College Graduate",
+                                },
+                                {
+                                    value: "Vocational Graduate",
+                                    label: "Vocational Graduate",
+                                },
+                                {
+                                    value: "Masteral Degree",
+                                    label: "Masteral Degree",
+                                },
+                                {
+                                    value: "Doctoral Degree",
+                                    label: "Doctoral Degree",
+                                },
                             ]}
                             error={errors.degree}
                             value={watchedValues.degree}

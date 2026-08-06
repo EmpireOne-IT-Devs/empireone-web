@@ -186,21 +186,39 @@ export default function PersonalInfoSection({
                         })}
                         options={[
                             { value: "N/A", label: "N/A" },
-                            { value: "Elementary", label: "Elementary" },
                             {
-                                value: "High School Junior",
-                                label: "High School Junior",
+                                value: "Elementary Undergraduate",
+                                label: "Elementary Undergraduate",
                             },
                             {
-                                value: "High School Senior",
-                                label: "High School Senior",
+                                value: "Elementary Graduate",
+                                label: "Elementary Graduate",
                             },
-                            { value: "College", label: "College" },
-                            { value: "Undergraduate", label: "Undergraduate" },
-                            { value: "Degree Holder", label: "Degree Holder" },
-                            { value: "Masteral", label: "Masteral" },
-                            { value: "Doctoral", label: "Doctoral" },
-                            { value: "Vocational", label: "Vocational" },
+                            {
+                                value: "Highschool/K-12 Undergraduate",
+                                label: "Highschool/K-12 Undergraduate",
+                            },
+                            {
+                                value: "Highschool/K-12 Graduate",
+                                label: "Highschool/K-12 Graduate",
+                            },
+                            { value: "College Level", label: "College Level" },
+                            {
+                                value: "College Graduate",
+                                label: "College Graduate",
+                            },
+                            {
+                                value: "Vocational Graduate",
+                                label: "Vocational Graduate",
+                            },
+                            {
+                                value: "Masteral Degree",
+                                label: "Masteral Degree",
+                            },
+                            {
+                                value: "Doctoral Degree",
+                                label: "Doctoral Degree",
+                            },
                         ]}
                         error={errors.degree}
                         value={watchedValues.degree}
