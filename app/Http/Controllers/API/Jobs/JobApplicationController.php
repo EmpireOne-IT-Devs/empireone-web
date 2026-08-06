@@ -962,7 +962,7 @@ class JobApplicationController extends Controller
                 $query->where('interview_status', 'Passed')
                     ->whereNull('final_status');
             })
-            ->paginate(12)
+            ->paginate(9)
             ->withQueryString();
         // 3. Count today's statuses using the UNFILTERED base query
         $statuses = (clone $baseQuery)
