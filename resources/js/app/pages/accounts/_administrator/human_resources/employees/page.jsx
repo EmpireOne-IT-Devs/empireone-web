@@ -24,8 +24,6 @@ export default function Page() {
                     </div>
                 </div>
                 <div className="flex flex-col gap-3">
-                    {/* <PaginationSection /> */}
-                    {/* <TableSection /> */}
                     <CardAcknowledgementSection />
                     <PaginationSection />
                 </div>

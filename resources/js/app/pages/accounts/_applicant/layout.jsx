@@ -9,7 +9,6 @@ import SidebarSection from "./_sections/sidebar-section";
 
 export default function Layout({ children }) {
     const { desktopCollapsed } = useSelector((store) => store.app);
-    const [activeTab, setActiveTab] = useState(0);
     const path = window.location.pathname.split("/")[2];
 
  

@@ -263,7 +263,7 @@ export default function CardApplicantSection() {
                                     </div>
                                 </div>
                             </div>
-                            <ActionListSection props_data={res}/>
+                            {/* <ActionListSection props_data={res}/> */}
                         </div>
                     );
                 })

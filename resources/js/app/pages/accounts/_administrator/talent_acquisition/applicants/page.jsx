@@ -20,8 +20,6 @@ export default function Page() {
                 <div className="flex flex-col gap-3">
                     <ExportApplicantSection />
                     <StatusesCardSection />
-
-                    {/* Added the target ID wrapper here so the scroll knows where to land */}
                     <div id="results-table" className="scroll-mt-36">
                         <CardApplicantSection />
                     </div>
