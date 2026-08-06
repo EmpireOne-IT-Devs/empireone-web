@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 import Layout from "../../../layout";
 import JobPostingLayout from "../layout";
-// import HeaderSection from "./_sections/header-section";
-import CardSection from "./_sections/card-section";
-// import SearchSection from "./_sections/search-section";
 import store from "../../../../../store/store";
 import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import PaginationSection from "./_sections/pagination-section";
@@ -21,17 +18,12 @@ export default function Page() {
         <Layout>
             <JobPostingLayout>
                 <div className="flex flex-col gap-3">
-                    {/* <HeaderSection /> */}
-                    {/* <CardSection /> */}
-                    {/* <SearchStatusSection /> */}
-
-                    {/* Search and Stats trigger the scroll */}
                     <ExportApplicantSection />
                     <StatusesCardSection />
 
                     {/* Added the target ID wrapper here so the scroll knows where to land */}
                     <div id="results-table" className="scroll-mt-36">
-                        <CardApplicantSection />
+                        {/* <CardApplicantSection /> */}
                     </div>
 
                     <PaginationSection />
