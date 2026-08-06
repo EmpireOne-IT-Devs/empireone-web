@@ -192,12 +192,22 @@ class JobPostingController extends Controller
         return response()->json($postings);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user();
+        $user = Auth::user()?->load('personal_information');
 
         $query = JobPosting::where('status', 'Active')
             ->with(['job_requisition', 'applications', 'applicant']);
+
+        // Determine the location ID: either from the request, or fallback to the user's profile
+        $locationId = $request->location_id ?? $user?->personal_information?->location_id;
+
+        // Apply the filter if we have a location ID from EITHER source
+        if ($locationId) {
+            $query->whereHas('job_requisition', function ($q) use ($locationId) {
+                $q->where('location_id', $locationId);
+            });
+        }
 
         // Check target audience based on user role
         if ($user && in_array($user->role, [1, 2])) {
@@ -210,7 +220,7 @@ class JobPostingController extends Controller
 
         $jobPostings = $query->orderBy('created_at', 'desc')->get();
 
-        // 1. Filter out expired job postings
+        // 2. Filter out expired job postings
         $activeJobPostings = $jobPostings->reject(function ($job) {
             if (!$job->created_at) {
                 return false;
@@ -231,7 +241,7 @@ class JobPostingController extends Controller
             return $expiryDate ? Carbon::now()->greaterThan($expiryDate) : false;
         });
 
-        // 2. Map through non-expired results to append 'is_applied'
+        // 3. Map through non-expired results to append 'is_applied'
         $activeJobPostings->transform(function ($job) use ($user) {
             if ($user) {
                 // Uses eager-loaded relation to avoid N+1 query issue
