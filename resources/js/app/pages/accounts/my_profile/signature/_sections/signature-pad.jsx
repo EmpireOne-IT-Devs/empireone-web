@@ -11,6 +11,7 @@ import { router } from "@inertiajs/react";
 
 const SignaturePad = () => {
     const sigCanvas = useRef({});
+    const fileInputRef = useRef(null);
     const [imageURL, setImageURL] = useState(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
     const [loading, setLoading] = useState(false);
@@ -34,6 +35,55 @@ const SignaturePad = () => {
         window.addEventListener("resize", updateSize);
         return () => window.removeEventListener("resize", updateSize);
     }, []);
+
+    const handleUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            alert("Please upload an image file.");
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const img = new Image();
+
+            img.onload = () => {
+                const canvas = sigCanvas.current.getCanvas();
+                const ctx = canvas.getContext("2d");
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Keep aspect ratio
+                const imgAspect = img.width / img.height;
+                const canvasAspect = canvas.width / canvas.height;
+
+                let drawWidth;
+                let drawHeight;
+
+                if (imgAspect > canvasAspect) {
+                    drawWidth = canvas.width * 0.8;
+                    drawHeight = drawWidth / imgAspect;
+                } else {
+                    drawHeight = canvas.height * 0.8;
+                    drawWidth = drawHeight * imgAspect;
+                }
+
+                const offsetX = (canvas.width - drawWidth) / 2;
+                const offsetY = (canvas.height - drawHeight) / 2;
+
+                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+                setImageURL(event.target.result);
+            };
+
+            img.src = event.target.result;
+        };
+
+        reader.readAsDataURL(file);
+    };
 
     const defaultSignature = data?.user?.account_employee?.signature ?? null;
 
@@ -73,9 +123,13 @@ const SignaturePad = () => {
     const clear = () => {
         sigCanvas.current.clear();
         setImageURL(null);
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
     const handleSubmit = async () => {
-        if (sigCanvas.current.isEmpty()) {
+        if (sigCanvas.current.isEmpty() && !imageURL) {
             alert(
                 "Please provide a signature first. or please click the clear button.",
             );
@@ -98,10 +152,12 @@ const SignaturePad = () => {
                     open: true,
                 }),
             );
-            router.visit(`/accounts/${window.location.pathname.split('/')[2]}/my_profile/personal`);
+            router.visit(
+                `/accounts/${window.location.pathname.split("/")[2]}/my_profile/personal`,
+            );
             setLoading(false);
             console.log("Signature Value:", signatureData);
-        } catch (error) { }
+        } catch (error) {}
     };
 
     return (
@@ -114,7 +170,20 @@ const SignaturePad = () => {
                         E-Signature
                     </h1>
                 </div>
-
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg"
+                    className="hidden"
+                    onChange={handleUpload}
+                />
+                <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors bg-blue-50 rounded-full shadow-sm hover:shadow-md"
+                >
+                    <Upload size={18} />
+                    Upload E-Signature
+                </button>
                 <div className="flex gap-4">
                     <button
                         onClick={clear}
@@ -125,10 +194,11 @@ const SignaturePad = () => {
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className={`flex items-center gap-2 px-8 py-2 text-sm font-bold text-white rounded-full shadow-lg transition-all active:scale-95 ${loading
-                            ? "bg-slate-400"
-                            : "bg-slate-900 hover:bg-black shadow-slate-200"
-                            }`}
+                        className={`flex items-center gap-2 px-8 py-2 text-sm font-bold text-white rounded-full shadow-lg transition-all active:scale-95 ${
+                            loading
+                                ? "bg-slate-400"
+                                : "bg-slate-900 hover:bg-black shadow-slate-200"
+                        }`}
                     >
                         {loading ? (
                             "Submitting..."
@@ -161,8 +231,8 @@ const SignaturePad = () => {
                 {!imageURL && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                         <Pen size={60} className="opacity-5 mb-4" />
-                        <p className="text-slate-300 font-medium text-lg">
-                            Sign Here
+                        <p className="text-slate-400 font-medium text-lg">
+                            You May Sign Here
                         </p>
                     </div>
                 )}
