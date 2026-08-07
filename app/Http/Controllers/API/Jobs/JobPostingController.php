@@ -200,8 +200,7 @@ class JobPostingController extends Controller
             ->with(['job_requisition', 'applications', 'applicant']);
 
         // Determine the location ID: either from the request, or fallback to the user's profile
-        $locationId = $request->location_id ?? $user?->personal_information?->location_id;
-
+        $locationId = $request->location_id ?? $user?->account_employee?->location_id;
         // Apply the filter if we have a location ID from EITHER source
         if ($locationId) {
             $query->whereHas('job_requisition', function ($q) use ($locationId) {
@@ -211,9 +210,11 @@ class JobPostingController extends Controller
 
         // CORRECTED IF STATEMENT:
         // Checks if user exists, if their department is NOT 1 or 2, and if their role is 1 or 2
-        if ($user && in_array($user->account_employee?->department_id, [1, 2])) {
-            $query->whereIn('target_audience', ['Internal', 'Both', 'External']);
-        } else if ($user && in_array($user->role, [1, 2])) {
+        // if ($user && in_array($user->account_employee?->department_id, [1, 2])) {
+        //     $query->whereIn('target_audience', ['Internal', 'Both', 'External']);
+        // } else
+        
+         if ($user && in_array($user->role, [1, 2])) {
             // Standard Employees and Admins (Roles 1 & 2) see Internal and Both
             $query->whereIn('target_audience', ['Internal', 'Both']);
         } else {
