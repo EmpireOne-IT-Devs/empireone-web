@@ -59,7 +59,7 @@ export default function TableSection() {
             render: (row) => <button
                 onClick={() =>
                     router.visit(
-                        `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${row.id}`
+                        `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${row.id}&location_id=${currentLocationId}`
                     )
                 }
                 className="font-medium text-left">{row?.job_requisition?.title + ' - ' + row?.job_requisition?.account?.name}</button>
