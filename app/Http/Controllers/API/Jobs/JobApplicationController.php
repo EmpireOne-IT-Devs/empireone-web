@@ -768,22 +768,57 @@ class JobApplicationController extends Controller
     public function export_applicant_csv(Request $request)
     {
         $locationId = $request->location_id ?? Auth::user()->account_employee->location_id;
+        $searchDate = $request->search_date;
+        $baseQuery = JobApplication::query();
 
-        // 1. Fetch the data
-        $applications = JobApplication::with(['user', 'personal_information'])
-            ->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
-                // 1. Filter by location
-                $query->where('location_id', $locationId);
+        // 1. Filter by location via the relationship
+        $baseQuery->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
+            $query->where('location_id', $locationId);
+            $query->whereNull('removed_by');
+        });
+
+        // 2. Filter by application date directly on the base table
+        if (!empty($searchDate)) {
+            $baseQuery->whereDate('created_at', $searchDate);
+        }
+
+        // 3. Build query and FETCH data using ->cursor() for memory efficiency
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule'])
+            ->when($request->search, function ($query) use ($request) {
+                $searchTerm = '%' . $request->search . '%';
+                $query->where(function ($subQuery) use ($searchTerm) {
+                    $subQuery->whereHas('user', function ($q) use ($searchTerm) {
+                        $q->where('name', 'like', $searchTerm)
+                            ->orWhere('email', 'like', $searchTerm);
+                    })->orWhereHas('personal_information', function ($q) use ($searchTerm) {
+                        $q->where('first_name', 'like', $searchTerm)
+                            ->orWhere('last_name', 'like', $searchTerm);
+                    });
+                });
             })
-            // 2. Filter by APPLICATION date (only if search_date is present in the request)
-            ->when($request->search_date, function ($query, $date) {
-                $query->whereDate('created_at', $date);
+            ->when($request->job_posting_id, function ($query) use ($request) {
+                $query->where('job_posting_id', $request->job_posting_id);
             })
-            ->get();
+            ->when($request->final_status, function ($query) use ($request) {
+                $query->where('final_status', $request->final_status);
+            })
+            ->when($request->interview_status, function ($query) use ($request) {
+                $query->where('interview_status', $request->interview_status);
+            })
+            ->when($request->statuses == 'For Initial Interview', function ($query) {
+                $query->whereNull('interview_status')
+                    ->whereNull('final_status')
+                    ->where('screening_status', '<>', 'Screened Failed');
+            })
+            ->when($request->statuses == 'For Final Interview', function ($query) {
+                $query->where('interview_status', 'Passed')
+                    ->whereNull('final_status');
+            })
+            ->cursor(); // <--- REMOVED withQueryString() AND ADDED cursor()
 
         $filename = "applicants_export_" . now()->format('Y-m-d_H-i') . ".csv";
 
-        // 2. Set headers
+        // 4. Set headers
         $headers = [
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$filename",
@@ -792,7 +827,7 @@ class JobApplicationController extends Controller
             "Expires"             => "0"
         ];
 
-        // 3. Define the exact columns (20 Total)
+        // 5. Define the exact columns (21 Total Columns)
         $columns = [
             'DATE',
             'SOURCE',
@@ -813,16 +848,15 @@ class JobApplicationController extends Controller
             'FI',
             'FAILED FI',
             'PASSED FI',
-            'PASSSED FI w/ CONDITIONS',
+            'PASSED FI w/ CONDITIONS', // Fixed minor typo here (PASSSED)
             'NO SHOW',
         ];
 
-        // 4. Stream the data directly into the CSV
+        // 6. Stream the data directly into the CSV
         $callback = function () use ($applications, $columns) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, $columns); // Write the Header Row
+            fputcsv($file, $columns);
 
-            // Initialize tracking counters for totals
             $totals = [
                 'passedIni'    => 0,
                 'pool'         => 0,
@@ -838,7 +872,6 @@ class JobApplicationController extends Controller
                 $pi = $app->personal_information;
                 $user = $app->user;
 
-                // Map the statuses
                 $passedIni = $app->interview_status === 'Passed' ? 'Yes' : 'No';
                 $pool = $app->final_status === 'Pooled' ? 'Yes' : 'No';
                 $forFi = ($app->interview_status === 'Passed' && is_null($app->final_status)) ? 'Yes' : 'No';
@@ -848,7 +881,6 @@ class JobApplicationController extends Controller
                 $passedFiCond = $app->final_status === 'Passed with Condition' ? 'Yes' : 'No';
                 $noShow = $app->final_status === 'No Show' ? 'Yes' : 'No';
 
-                // Increment summary totals
                 if ($passedIni === 'Yes')    $totals['passedIni']++;
                 if ($pool === 'Yes')         $totals['pool']++;
                 if ($forFi === 'Yes')        $totals['forFi']++;
@@ -858,22 +890,20 @@ class JobApplicationController extends Controller
                 if ($passedFiCond === 'Yes') $totals['passedFiCond']++;
                 if ($noShow === 'Yes')       $totals['noShow']++;
 
-                // Safely format the address
                 $address = $pi ? trim("{$pi->street} {$pi->barangay} {$pi->city} {$pi->province} {$pi->zip_code}") : '';
 
-                // Write the row (Ensuring exactly 20 elements)
                 $row = [
                     $app->created_at ? $app->created_at->format('M d, Y') : '',
                     $app->source ?? '',
                     $pi->first_name ?? '',
                     $pi->last_name ?? '',
                     $address,
-                    $pi->province ?? '', // Mapped or blank if doesn't exist
-                    $pi->school_name ?? '',   // Mapped or blank
-                    $pi->course ?? '',   // Mapped or blank
-                    $pi->degree ?? '',    // Mapped or blank
-                    $pi->date_of_birth ?? '',      // Mapped or blank
-                    $pi->birth_place ?? '',      // Mapped or blank
+                    $pi->province ?? '',
+                    $pi->school_name ?? '',
+                    $pi->course ?? '',
+                    $pi->degree ?? '',
+                    $pi->date_of_birth ?? '',
+                    $pi->birth_place ?? '',
                     $user->email ?? '',
                     $pi->contact ?? '',
                     $passedIni,
@@ -889,9 +919,10 @@ class JobApplicationController extends Controller
                 fputcsv($file, $row);
             }
 
-            // Append the Total Row at the bottom (Ensuring exactly 20 elements)
+            // Append the Total Row at the bottom (21 elements to match header)
             $totalRow = [
-                'TOTAL', // DATE Column
+                'TOTAL', // DATE 
+                '',      // SOURCE
                 '',      // FIRST NAME
                 '',      // FAMILY NAME
                 '',      // ADDRESS
@@ -902,7 +933,7 @@ class JobApplicationController extends Controller
                 '',      // DOB
                 '',      // POB
                 '',      // EMAIL ADDRESS
-                '',      // MOBILE NUMBER
+                '',      // MOBILE NUMBER <--- ADDED MISSING BLANK SPACE
                 $totals['passedIni'],
                 $totals['pool'],
                 $totals['forFi'],
@@ -917,7 +948,7 @@ class JobApplicationController extends Controller
             fclose($file);
         };
 
-        return Response::stream($callback, 200, $headers);
+        return response()->stream($callback, 200, $headers);
     }
     public function applicants(Request $request)
     {
