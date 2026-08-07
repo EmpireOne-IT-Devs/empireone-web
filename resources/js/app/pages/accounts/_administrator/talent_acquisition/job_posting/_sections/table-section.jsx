@@ -41,7 +41,7 @@ export default function TableSection() {
 
     // Extract the current location_id from the URL query string
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    const currentLocationId = searchParams.get('location_id');
+    const currentLocationId = searchParams.get('location_id') ?? data?.user?.account_employee?.location_id;
 
     const tableColumns = [
         {
@@ -56,13 +56,20 @@ export default function TableSection() {
         {
             key: 'title',
             header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Job <LuArrowUpDown className="w-3 h-3 text-purple-500" /></div>,
-            render: (row) => <button
-                onClick={() =>
-                    router.visit(
-                        `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${row.id}&location_id=${currentLocationId}`
-                    )
-                }
-                className="font-medium text-left">{row?.job_requisition?.title + ' - ' + row?.job_requisition?.account?.name}</button>
+            render: (row) => (
+                <button
+                    onClick={() =>
+                        window.open(
+                            `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${row.id}&location_id=${currentLocationId}`,
+                            '_blank',
+                            'noopener,noreferrer'
+                        )
+                    }
+                    className="font-medium text-left"
+                >
+                    {row?.job_requisition?.title + ' - ' + row?.job_requisition?.account?.name}
+                </button>
+            )
         },
         {
             key: 'candidates',
@@ -172,7 +179,7 @@ export default function TableSection() {
                     {/* ADDED: max-h-48 and overflow-y-auto so a long list doesn't take up the whole screen on mobile */}
                     <div className="flex flex-col py-2 max-h-48 overflow-y-auto md:max-h-none">
                         {data?.locations?.map((loc) => {
-                            const isActive = (currentLocationId ?? data?.user?.account_employee?.location_id) == String(loc.id);
+                            const isActive = (currentLocationId) == String(loc.id);
 
                             return (
                                 <Link
