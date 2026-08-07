@@ -210,11 +210,9 @@ class JobPostingController extends Controller
 
         // CORRECTED IF STATEMENT:
         // Checks if user exists, if their department is NOT 1 or 2, and if their role is 1 or 2
-        // if ($user && in_array($user->account_employee?->department_id, [1, 2])) {
-        //     $query->whereIn('target_audience', ['Internal', 'Both', 'External']);
-        // } else
-        
-         if ($user && in_array($user->role, [1, 2])) {
+        if ($user && in_array($user->account_employee?->department_id, [1, 2])) {
+            $query->whereIn('target_audience', ['Internal', 'Both', 'External']);
+        } else if ($user && in_array($user->role, [1, 2])) {
             // Standard Employees and Admins (Roles 1 & 2) see Internal and Both
             $query->whereIn('target_audience', ['Internal', 'Both']);
         } else {
