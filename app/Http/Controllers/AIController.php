@@ -94,7 +94,7 @@ class AIController extends Controller
             $aiReply = $finalResponse->json('choices.0.message.content');
 
             return response()->json([
-                'reply' => ['$aiReply'],
+                'reply' => [$aiReply],
             ],500);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

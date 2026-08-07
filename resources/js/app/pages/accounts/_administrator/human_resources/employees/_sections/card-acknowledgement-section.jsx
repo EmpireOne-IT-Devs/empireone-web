@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import AcknowledgementsListSection from './acknowledgements-list-section';
 import { router } from '@inertiajs/react';
+import EmployeeActionSection from './employee-action-section';
 
 export default function CardAcknowledgementSection() {
     const { employees } = useSelector((store) => store.human_resources);
@@ -18,7 +19,6 @@ export default function CardAcknowledgementSection() {
         <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
             {employees?.data?.map((res) => {
                 const empId = res.id || res.employee_id;
-console.log('waaaa',res)
                 return (
                     <div
                         key={empId}
@@ -27,9 +27,12 @@ console.log('waaaa',res)
                         {/* Top Employee Info Section */}
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
-                                    Employee Details
-                                </span>
+                                <div className='flex items-center justify-center gap-2'>
+                                    <div><EmployeeActionSection props_data={res} /></div>
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
+                                        Employee Details
+                                    </span>
+                                </div>
                                 <span className="font-mono text-xs font-bold text-gray-500">
                                     #{res?.employee_id || 'N/A'}
                                 </span>

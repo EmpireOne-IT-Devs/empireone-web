@@ -2,7 +2,7 @@ import React from 'react';
 
 const Table = ({ columns, data }) => {
     return (
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className=" overflow-hidden">
             {/* Mobile View: Card Layout */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
                 {data?.map((row, rowIndex) => (

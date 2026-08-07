@@ -49,9 +49,7 @@ export default function TableSection() {
             header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Job Posting ID</div>,
             render: (row) => (
                 <>
-                    {row?.applications?.length > 0 && (
-                        <span className="ml-2 font-medium">{row?.id}</span>
-                    )}
+                    <span className="ml-2 font-medium">{row?.id}</span>
                 </>
             )
         },
