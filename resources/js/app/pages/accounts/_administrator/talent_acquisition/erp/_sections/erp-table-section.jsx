@@ -80,7 +80,7 @@ export default function ERPTableSection() {
         },
     ];
 
-    const tableData = erps?.map((res) => {
+    const tableData = erps?.data?.map((res) => {
 
         return {
             referral_name: `${res?.applicant?.personal_information?.first_name} ${res?.applicant?.personal_information?.last_name}`,

@@ -17,12 +17,17 @@ use Illuminate\Support\Facades\Auth;
 class JobPostingController extends Controller
 {
 
-    public function get_erps()
+    public function get_erps(Request $request)
     {
         $erps = JobApplication::whereNotNull('referral_id')
             ->whereNull('removed_by')
             ->with(['referral', 'applicant', 'employee'])
+            // Apply the filter BEFORE paginating, and only if job_posting_id is provided
+            ->when($request->filled('job_posting_id'), function ($query) use ($request) {
+                $query->where('job_posting_id', $request->job_posting_id);
+            })
             ->paginate(10);
+
         return response()->json($erps, 200);
     }
     public function get_job_posting_by_location($id)
@@ -197,7 +202,7 @@ class JobPostingController extends Controller
         $user = Auth::user()?->load('personal_information', 'account_employee');
 
         $query = JobPosting::where('status', 'Active')
-            ->with(['job_requisition', 'applications', 'applicant']);
+            ->with(['job_requisition', 'applications', 'applicant', 'erps']);
 
         // Determine the location ID: either from the request, or fallback to the user's profile
         $locationId = $request->location_id ?? $user?->account_employee?->location_id;

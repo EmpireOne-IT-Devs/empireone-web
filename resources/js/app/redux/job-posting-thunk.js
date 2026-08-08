@@ -13,7 +13,7 @@ export function get_job_posting_thunk() {
 export function get_erps_thunk() {
     return async function (dispatch, getState) {
         const result = await get_erps_service();
-        dispatch(jobPostingsSlice.actions.setErps(result.data));
+        dispatch(jobPostingsSlice.actions.setErps(result));
     };
 }
 

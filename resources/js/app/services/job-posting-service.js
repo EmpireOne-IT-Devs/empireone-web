@@ -4,7 +4,7 @@ export async function create_job_posting_service(data) {
 }
 
 export async function get_erps_service() {
-    return (await axios.get("/api/job/get_erps")).data;
+    return (await axios.get(`/api/job/get_erps${window.location.search}`)).data;
 }
 
 export async function get_job_postings_service() {

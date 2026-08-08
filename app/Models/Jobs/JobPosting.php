@@ -27,6 +27,10 @@ class JobPosting extends Model
     {
         return $this->hasMany(JobApplication::class, 'job_posting_id', 'id')->whereNull('removed_by');
     }
+     public function erps(): HasMany
+    {
+        return $this->hasMany(JobApplication::class, 'job_posting_id', 'id')->whereNotNull('referral_id');
+    }
     public function applicant(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'user_id');

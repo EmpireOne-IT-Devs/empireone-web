@@ -119,6 +119,9 @@ class JobApplicationController extends Controller
                 'employee.account',
                 'employee.department'
             ])
+            ->when($request->filled('job_posting_id'), function ($query) use ($request) {
+                $query->where('job_posting_id', $request->job_posting_id);
+            })
             ->get();
 
         $filename = "erp_export_" . now()->format('Y-m-d_H-i') . ".csv";

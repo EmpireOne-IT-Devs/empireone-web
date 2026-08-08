@@ -58,13 +58,7 @@ export default function TableSection() {
             header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Job <LuArrowUpDown className="w-3 h-3 text-purple-500" /></div>,
             render: (row) => (
                 <button
-                    onClick={() =>
-                        window.open(
-                            `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${row.id}&location_id=${currentLocationId}`,
-                            '_blank',
-                            'noopener,noreferrer'
-                        )
-                    }
+
                     className="font-medium text-left"
                 >
                     {row?.job_requisition?.title + ' - ' + row?.job_requisition?.account?.name}
@@ -75,11 +69,38 @@ export default function TableSection() {
             key: 'candidates',
             header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Candidates <LuArrowUpDown className="w-3 h-3" /></div>,
             render: (row) => (
-                <>
+                <button
+                    onClick={() =>
+                        window.open(
+                            `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${row.id}&location_id=${currentLocationId}`,
+                            '_blank',
+                            'noopener,noreferrer'
+                        )
+                    }
+                >
                     {row?.applications?.length > 0 && (
-                        <span className="text-black ml-2 font-medium">{row?.applications?.length}</span>
+                        <span className=" ml-2 font-medium underline text-blue-500">{row?.applications?.length}</span>
                     )}
-                </>
+                </button>
+            )
+        },
+        {
+            key: 'erp',
+            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">ERP <LuArrowUpDown className="w-3 h-3" /></div>,
+            render: (row) => (
+                <button
+                    onClick={() =>
+                        window.open(
+                            `/accounts/administrator/talent_acquisition/erp?job_posting_id=${row.id}&location_id=${currentLocationId}`,
+                            '_blank',
+                            'noopener,noreferrer'
+                        )
+                    }
+                >
+                    {row?.erps?.length > 0 && (
+                        <span className=" ml-2 font-medium underline text-blue-500">{row?.erps?.length}</span>
+                    )}
+                </button>
             )
         },
         {
