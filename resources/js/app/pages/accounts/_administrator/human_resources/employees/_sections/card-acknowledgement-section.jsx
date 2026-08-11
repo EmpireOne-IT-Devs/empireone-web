@@ -21,6 +21,7 @@ export default function CardAcknowledgementSection() {
                     <DetailsCard
                         key={empId}
                         data={res}
+                        badgeRight={`# ${res.employee_id}`}
                         onView={() => router.visit(`/accounts/${accountId}/my_team/${res?.user_id}/personal_information`)}
                         list={[
                             {
