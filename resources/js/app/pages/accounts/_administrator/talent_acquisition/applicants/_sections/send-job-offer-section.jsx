@@ -101,21 +101,21 @@ export default function SendJobOfferSection({ data }) {
                                 <strong>Department:</strong>{" "}
                                 {
                                     data?.job_posting?.job_requisition
-                                        .department.name
+                                        .department?.name
                                 }
                             </p>
                             <p>
                                 <strong>Account:</strong>{" "}
                                 {
                                     data?.job_posting?.job_requisition
-                                        .account.name
+                                        .account?.name
                                 }
                             </p>
                             <p>
                                 <strong>Location:</strong>{" "}
                                 {
                                     data?.job_posting?.job_requisition.location
-                                        .name
+                                        ?.name
                                 }
                             </p>
                             <p>

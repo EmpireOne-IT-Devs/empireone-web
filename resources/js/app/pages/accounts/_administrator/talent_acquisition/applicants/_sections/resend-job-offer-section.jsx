@@ -108,15 +108,13 @@ export default function ResendJobOfferSection({ data }) {
                             <p>
                                 <strong>Department:</strong>{" "}
                                 {
-                                    data?.job_posting?.job_requisition
-                                        .department.name
+                                    data?.job_posting?.job_requisition?.department?.name
                                 }
                             </p>
                             <p>
                                 <strong>Location:</strong>{" "}
                                 {
-                                    data?.job_posting?.job_requisition.location
-                                        .name
+                                    data?.job_posting?.job_requisition?.location?.name
                                 }
                             </p>
                             <p>
