@@ -5,6 +5,7 @@ import { TbMapPin, TbTag, TbUser, TbUsers } from "react-icons/tb";
 import Badge from "@/app/_components/badge";
 import ViewJobPostingDetailsSection from "./view-job-posting-section";
 import ShareJobSection from "./share-job-section";
+import { FiBriefcase } from "react-icons/fi";
 
 export default function JobPostingCardSection() {
     const { job_postings, loading } = useSelector(
@@ -80,25 +81,28 @@ export default function JobPostingCardSection() {
                                 <Badge
                                     showDot={false}
                                     className="rounded-md"
-                                    variant={
-                                        job.status === "Active"
-                                            ? "success"
-                                            : job.status === "Draft"
-                                              ? "warning"
-                                              : job.status === "Closed"
-                                                ? "primary"
-                                                : "default"
-                                    }
+                                    variant="warning"
                                     label={job.status}
                                 />
 
-                                {user_role !== "applicant" && user_role !== "employee" && (
+                                {/* {user_role !== "applicant" && user_role !== "employee" && (
                                     <Badge
                                         showDot={false}
                                         variant="purple"
                                         label={`Recruiter: ${job?.job_requisition?.recruiter?.name}`}
                                     />
+                                )} */}
+                                {user_role !== "applicant" && user_role !== "employee" && (
+                                    <Badge
+                                        showDot={false}
+                                        variant="primary"
+                                        label={`Target: ${job?.job_requisition?.target_audience?.toLowerCase() === 'both'
+                                            ? 'Internal and External'
+                                            : job?.job_requisition?.target_audience
+                                            }`}
+                                    />
                                 )}
+
                             </div>
                             <div>
                                 <ShareJobSection data={job} />
@@ -131,6 +135,8 @@ export default function JobPostingCardSection() {
                                             applicants
                                         </div>
                                     )}
+
+
                                 </div>
 
                                 <hr />

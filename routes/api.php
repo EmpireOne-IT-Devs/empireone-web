@@ -13,6 +13,7 @@ use App\Http\Controllers\API\ER\EREmployeeChangeFormController;
 use App\Http\Controllers\API\ER\ERLeaderController;
 use App\Http\Controllers\API\ER\ERPerformanceEvaluationFormController;
 use App\Http\Controllers\API\ER\ERSubordinateController;
+use App\Http\Controllers\API\ER\EREmployeeAttritionController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventCommentController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventReactController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventSurveyController;
@@ -222,6 +223,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('acknowledgement', ERAcknowledgementController::class);
         Route::post('add_sub_acknowledgement',  [ERAcknowledgementController::class, 'add_sub_acknowledgement']);
         Route::resource('acknowledgement_employee', ERAcknowledgementEmployeeController::class);
+        Route::resource('attrition', EREmployeeAttritionController::class);
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);
     });
 

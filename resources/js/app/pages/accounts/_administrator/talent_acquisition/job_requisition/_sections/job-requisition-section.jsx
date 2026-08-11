@@ -118,19 +118,17 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                 <Badge
                                     showDot={false}
                                     className="rounded-md px-3 py-1 text-xs font-medium"
-                                    variant={getPriorityVariant(
-                                        job_requisition.priority,
-                                    )}
+                                    variant={'warning'}
                                     label={job_requisition.priority}
                                 />
 
-                                <Badge
+                                {/* <Badge
                                     showDot={false}
                                     variant="purple"
                                     label={`Recruiter: ${job_requisition?.recruiter?.name}`}
-                                />
+                                /> */}
 
-                                {job_requisition.type === "New Position" && (
+                                {/* {job_requisition.type === "New Position" && (
                                     <Badge
                                         outlined
                                         showDot={false}
@@ -138,9 +136,9 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                         variant="primary"
                                         label="✨ New"
                                     />
-                                )}
+                                )} */}
 
-                                {job_requisition.type ===
+                                {/* {job_requisition.type ===
                                     "Existing Position" && (
                                         <Badge
                                             outlined
@@ -149,7 +147,17 @@ export default function JobRequisitionBodySection({ job_requisition }) {
                                             variant="purple"
                                             label="📋 Existing"
                                         />
-                                    )}
+                                    )} */}
+
+                                <Badge
+                                    showDot={false}
+                                    variant="primary"
+                                    label={`Target: ${job_requisition?.target_audience?.toLowerCase() === 'both'
+                                        ? 'Internal and External'
+                                        : job_requisition?.target_audience
+                                        }`}
+                                />
+
                             </div>
                         </div>
 

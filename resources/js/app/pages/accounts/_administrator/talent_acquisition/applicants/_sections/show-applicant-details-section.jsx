@@ -65,7 +65,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 </p>
                                 <p>
                                     <strong>Source:</strong>{" "}
-                                    {data?.applicant?.account_employee?.source}
+                                    {data?.source}
                                 </p>
                             </div>
                         </div>
