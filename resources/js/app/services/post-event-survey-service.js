@@ -20,6 +20,12 @@ export async function get_survey_responses_service(id) {
     return await axios.get(`/api/engagement/surveys/${id}/responses`);
 }
 
+export async function export_survey_responses_service(id) {
+    return await axios.get(`/api/engagement/surveys/${id}/responses/export`, {
+        responseType: "blob",
+    });
+}
+
 export async function get_survey_analytics_service(id) {
     return await axios.get(`/api/engagement/surveys/${id}/analytics`);
 }

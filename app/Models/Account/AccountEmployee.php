@@ -8,6 +8,7 @@ use App\Models\ER\ERAcknowledgement;
 use App\Models\ER\ERAcknowledgementEmployee;
 use App\Models\ER\ERLeader;
 use App\Models\ER\ERSubordinate;
+use App\Models\Location;
 use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -80,5 +81,9 @@ class AccountEmployee extends Model
     public function site(): HasOne
     {
         return $this->hasOne(Site::class, 'id', 'site_id')->with(['location']);
+    }
+    public function location(): HasOne
+    {
+        return $this->hasOne(Location::class, 'id', 'location_id');
     }
 }

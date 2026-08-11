@@ -167,7 +167,6 @@ class EngagementPostEventSurveyController extends Controller
                 $survey->refreshSentimentOverview();
             }
         });
-
         return response()->json([
             'status'  => 'success',
             'message' => 'Survey submitted successfully.',
@@ -177,10 +176,10 @@ class EngagementPostEventSurveyController extends Controller
     // ── Admin: response tracker ──────────────────────────────────────────────
     public function responses(int $id): JsonResponse
     {
-        $survey = EngagementPostEventSurvey::findOrFail($id);
+        $survey = EngagementPostEventSurvey::with(['questions'])->findOrFail($id);
 
         $employees = User::where('role', User::ROLE_EMPLOYEE)
-            ->with(['account_employee.account', 'account_employee.department'])
+            ->with(['account_employee.account', 'account_employee.department', 'account_employee.location'])
             ->select('id', 'name', 'email')
             ->get();
 
@@ -190,19 +189,35 @@ class EngagementPostEventSurveyController extends Controller
 
         $responseMap = $responseModels->keyBy('user_id');
 
+        // Each survey question becomes its own response-table column.
+        $questions = $survey->questions->map(fn ($question) => [
+            'id'            => $question->id,
+            'question_text' => $question->question,
+            'question_type' => $question->type,
+        ])->values();
+
         $tracker = $employees->map(function ($employee) use ($responseMap) {
             $response = $responseMap->get($employee->id);
+
+            $answersByQuestion = [];
+            if ($response) {
+                foreach ($response->answers as $answer) {
+                    $answersByQuestion[$answer->engagement_post_event_question_id] = $answer->answer;
+                }
+            }
 
             return [
                 'user_id'       => $employee->id,
                 'employee_id'   => $employee->account_employee?->employee_id ?? 'N/A',
                 'employee_name' => $employee->name,
+                'site'          => $employee->account_employee?->location?->name ?? 'N/A',
                 'program_department' => $employee->account_employee?->account?->name
                     ?? $employee->account_employee?->department?->name
                     ?? 'N/A',
                 'email'         => $employee->email,
                 'status'        => $response ? 'Completed' : 'Pending',
                 'submitted_at'  => $response ? optional($response->submitted_at)->toDateTimeString() : null,
+                'answers'       => $answersByQuestion,
             ];
         });
 
@@ -220,11 +235,84 @@ class EngagementPostEventSurveyController extends Controller
                 'total_employees'    => $totalEmployees,
                 'total_responses'    => $totalResponses,
                 'participation_rate' => $totalEmployees > 0 ? round(($totalResponses / $totalEmployees) * 100, 2) : 0,
+                'questions'          => $questions,
                 'response_tracker'   => $tracker,
                 'sentiment_overview' => $sentimentOverview,
             ],
             'status' => 'success',
         ]);
+    }
+
+    // ── Admin: export only submitted responses as a CSV (importable into Google Sheets) ──
+    public function exportResponses(int $id)
+    {
+        $survey = EngagementPostEventSurvey::with(['questions'])->findOrFail($id);
+
+        // Only responses actually submitted are included; employees who never answered are skipped.
+        $responses = EngagementPostEventSurveyResponse::with([
+                'user.account_employee.account',
+                'user.account_employee.department',
+                'user.account_employee.location',
+                'answers',
+            ])
+            ->where('engagement_post_event_survey_id', $id)
+            ->orderBy('submitted_at')
+            ->get();
+
+        $questions = $survey->questions;
+        $filename  = 'survey_' . $survey->id . '_responses_' . now()->format('Ymd_His') . '.csv';
+
+        return response()->streamDownload(function () use ($responses, $questions) {
+            $handle = fopen('php://output', 'w');
+
+            $header = ['Employee ID', 'Employee Name', 'Site', 'Program / Department', 'Email'];
+            foreach ($questions as $question) {
+                $header[] = $question->question;
+            }
+            $header[] = 'Submitted At';
+            fputcsv($handle, $header);
+
+            foreach ($responses as $response) {
+                $employee        = $response->user;
+                $accountEmployee = $employee?->account_employee;
+                $answersByQuestion = $response->answers->keyBy('engagement_post_event_question_id');
+
+                $row = [
+                    $accountEmployee?->employee_id ?? 'N/A',
+                    $employee?->name ?? 'N/A',
+                    $accountEmployee?->location?->name ?? 'N/A',
+                    $accountEmployee?->account?->name ?? $accountEmployee?->department?->name ?? 'N/A',
+                    $employee?->email ?? 'N/A',
+                ];
+
+                foreach ($questions as $question) {
+                    $answer = $answersByQuestion->get($question->id);
+                    $row[]  = $this->formatAnswerForExport($question, $answer?->answer);
+                }
+
+                $row[] = optional($response->submitted_at)->toDateTimeString() ?? '';
+
+                fputcsv($handle, $row);
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
+    private function formatAnswerForExport($question, ?string $rawAnswer): string
+    {
+        if ($rawAnswer === null || $rawAnswer === '') {
+            return '';
+        }
+
+        if ($question->type === 'checkboxes') {
+            $decoded = json_decode($rawAnswer, true);
+            return is_array($decoded) ? implode(', ', $decoded) : $rawAnswer;
+        }
+
+        return (string) $rawAnswer;
     }
 
     public function employeeResponse(int $surveyId, int $userId): JsonResponse
