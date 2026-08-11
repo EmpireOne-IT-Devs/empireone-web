@@ -134,7 +134,7 @@
                                 key={item.id}
                                 variant="default"
                                 padding="p-0"
-                                className="col-span-1 overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md transition-shadow"
+                                className="col-span-2 overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md transition-shadow"
                                 onClick={() => setSelectedItem(item)}
                             >
                                 <div className="relative w-full h-44 bg-gray-100 overflow-hidden">

@@ -16,11 +16,14 @@ export default function Page() {
                     <div className="grid grid-cols-1 gap-5 xl:grid-cols-5">
                         {/* News — 60% (3/5) */}
                         <div className="xl:col-span-3">
-                            <NewsSectionCard />
+                            
+                              
+                               <NewsSectionCard />
                         </div>
+                        
                         {/* Announcements — 40% (2/5) */}
                         <div className="flex flex-col gap-5 pb-5 xl:col-span-2">
-                        
+                     
                            
                             <PoolCardSection />
                         </div>

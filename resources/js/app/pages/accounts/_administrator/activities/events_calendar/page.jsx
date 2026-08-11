@@ -12,7 +12,7 @@ export default function Page() {
                     <HeaderSection />
                     <div className="grid grid-cols-5 gap-5 flex-1 min-h-0">
                         {/* EventCardSection — 60% (3/5) */}
-                        <div className="col-span-3 h-full overflow-y-auto no-scrollbar">
+                        <div className="col-span-10 h-full overflow-y-auto no-scrollbar">
                             <EventCardSection />
                         </div>
                         {/* YearTimelineSection — 40% (2/5) */}
