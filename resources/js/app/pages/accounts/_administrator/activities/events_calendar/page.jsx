@@ -16,9 +16,9 @@ export default function Page() {
                             <EventCardSection />
                         </div>
                         {/* YearTimelineSection — 40% (2/5) */}
-                        <div className="col-span-2 h-full overflow-y-auto no-scrollbar pb-5">
+                        {/* <div className="col-span-2 h-full overflow-y-auto no-scrollbar pb-5">
                             <YearTimelineSection />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </ActivitiesLayout>
