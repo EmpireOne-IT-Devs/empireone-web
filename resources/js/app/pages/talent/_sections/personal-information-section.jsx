@@ -92,7 +92,7 @@ export default function PersonalInformationSection({
                     />
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Input
                     label="Birthplace"
                     name="birth_place"
@@ -108,6 +108,21 @@ export default function PersonalInformationSection({
                         required: true,
                     })}
                     error={errors.nationality}
+                />
+                <Select
+                    label="Marital Status"
+                    name="marital_status"
+                    {...register("marital_status", {
+                        required: true,
+                    })}
+                    value={watchedValues.marital_status}
+                    error={errors.marital_status}
+                    options={[
+                        { label: "Single", value: "Single" },
+                        { label: "Married", value: "Married" },
+                        { label: "Divorced", value: "Divorced" },
+                        { label: "Widowed", value: "Widowed" },
+                    ]}
                 />
                 <div className="flex flex-col flex-1 w-full">
                     <div className="flex flex-col flex-1 w-full">

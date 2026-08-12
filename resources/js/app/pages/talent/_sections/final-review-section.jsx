@@ -53,6 +53,9 @@ export default function FinalReviewSection({
                             <strong style={{ color: "#6b7280" }}>DOB: </strong>
                             {moment(watchedValues.date_of_birth).format("LL")}
                         </p>
+                          <p>
+                            <strong style={{ color: "#6b7280" }}>Marital Status:</strong> {watchedValues.marital_status}
+                        </p>
                         
                         <p>
                             <strong style={{ color: "#6b7280" }}>Previously of EmpireOne: </strong>

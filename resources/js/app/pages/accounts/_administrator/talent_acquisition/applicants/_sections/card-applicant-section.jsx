@@ -15,6 +15,7 @@ import {
     Clock,
     Award,
     Building,
+    Heart,
 } from 'lucide-react';
 
 import DetailsCard from '@/app/_components/details-card';
@@ -124,6 +125,12 @@ export default function CardApplicantSection() {
                                     label: 'Account',
                                     icon: Building,
                                     value: jobRequisition?.account?.name || 'Unassigned',
+                                },
+                                {
+                                    id: 'marital_status',
+                                    label: 'Marital Status',
+                                    icon: Heart,
+                                    value: personalInfo?.marital_status || 'Unassigned',
                                 },
                                 {
                                     id: 'interview',
