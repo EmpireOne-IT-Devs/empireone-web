@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/open-survey-section-Bk-JsI9f.js
-import{j as t,e as s}from"./app-p2A5Ctps.js";import{k as o}from"./index-DYcVg4fB.js";import"./iconBase-CJixT0Pm.js";function p({survey:e}){const n=()=>{s.visit(`/accounts/administrator/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:n,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(o,{className:"text-base"}),"Open Survey"]})}export{p as default};
-========
-import{j as t,e as s}from"./app-BsXIHq5v.js";import{k as o}from"./index-bt3LZNQv.js";import"./iconBase-B98vcbSH.js";function p({survey:e}){const n=()=>{s.visit(`/accounts/administrator/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:n,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(o,{className:"text-base"}),"Open Survey"]})}export{p as default};
->>>>>>>> origin/main:public/build/assets/open-survey-section-Ci7HVe71.js

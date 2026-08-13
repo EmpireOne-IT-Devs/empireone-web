@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/menu-DKAK5qgs.js
-import{c as e}from"./createLucideIcon-Bt1cV1NI.js";const t=[["path",{d:"M4 5h16",key:"1tepv9"}],["path",{d:"M4 12h16",key:"1lakjw"}],["path",{d:"M4 19h16",key:"1djgab"}]],o=e("menu",t);export{o as M};
-========
-import{c as e}from"./createLucideIcon-uxiMhDf0.js";const t=[["path",{d:"M4 5h16",key:"1tepv9"}],["path",{d:"M4 12h16",key:"1lakjw"}],["path",{d:"M4 19h16",key:"1djgab"}]],o=e("menu",t);export{o as M};
->>>>>>>> origin/main:public/build/assets/menu-CwibjIQw.js

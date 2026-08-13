@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-D-8YVdlf.js
-import{j as e}from"./app-p2A5Ctps.js";import r from"./header-section-Bm1nE-ah.js";import"./index-U0_K250a.js";import"./select-C-Lp9eGP.js";import t from"./tabs-section-XOaabZMn.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
-========
-import{j as e}from"./app-BsXIHq5v.js";import r from"./header-section-C070V1_E.js";import"./index-CxnmfZhs.js";import"./select-BMI0cJ_t.js";import t from"./tabs-section-Dmj_K3e-.js";function n({children:s}){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex flex-col gap-3 w-full",children:[e.jsx("div",{className:"flex items-center justify-between",children:e.jsx("div",{className:"flex-1",children:e.jsx(r,{})})}),e.jsx(t,{}),s]})})}export{n as default};
->>>>>>>> origin/main:public/build/assets/layout-I3F_Bul7.js

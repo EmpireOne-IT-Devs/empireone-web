@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/talent-acquisition-thunk-Cf4sYwDb.js
-import{c as i}from"./job-requisition-service-CpRXjay-.js";import{aa as e}from"./app-p2A5Ctps.js";async function c(){return(await axios.get("/api/job/job_applicant_schedules")).data}async function _(t){return(await axios.post("/api/job/change_job_applicant_schedule",t)).data}function r(){return async function(t,n){const a=await c();t(e.actions.setSchedules(a.data))}}function u(){return async function(t,n){const a=await i();t(e.actions.setInterviews(a.data))}}export{r as a,_ as c,u as g};
-========
-import{c as i}from"./job-requisition-service-E0Gjo4xp.js";import{aa as e}from"./app-BsXIHq5v.js";async function c(){return(await axios.get("/api/job/job_applicant_schedules")).data}async function _(t){return(await axios.post("/api/job/change_job_applicant_schedule",t)).data}function r(){return async function(t,n){const a=await c();t(e.actions.setSchedules(a.data))}}function u(){return async function(t,n){const a=await i();t(e.actions.setInterviews(a.data))}}export{r as a,_ as c,u as g};
->>>>>>>> origin/main:public/build/assets/talent-acquisition-thunk-op92BeQF.js

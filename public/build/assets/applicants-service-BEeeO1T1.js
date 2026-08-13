@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/applicants-service-MMJ3JXrw.js
-import{a}from"./app-p2A5Ctps.js";async function e(){return await a.get(`/api/job/applicants${window.location.search}`)}async function n(t){return await a.post(`/api/job/delete_applicant/${t}`)}async function c(t){return(await a.post("/api/job/checking_applicant",t)).data}async function p(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function o(){return await a.get("/api/job/get_applicant_pooling")}export{p as a,e as b,c,n as d,o as g};
-========
-import{a}from"./app-BsXIHq5v.js";async function e(){return await a.get(`/api/job/applicants${window.location.search}`)}async function n(t){return await a.post(`/api/job/delete_applicant/${t}`)}async function c(t){return(await a.post("/api/job/checking_applicant",t)).data}async function p(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function o(){return await a.get("/api/job/get_applicant_pooling")}export{p as a,e as b,c,n as d,o as g};
->>>>>>>> origin/main:public/build/assets/applicants-service-BEeeO1T1.js

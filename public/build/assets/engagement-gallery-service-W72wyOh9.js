@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/engagement-gallery-service-W72wyOh9.js
-import{a}from"./app-p2A5Ctps.js";const o="/api/engagement/engagement_company_galleries",n=async()=>{try{return(await a.get(o)).data}catch(r){throw console.error("Error fetching company galleries:",r),r}},s=async r=>{try{return(await a.post(o,r,{headers:{"Content-Type":"multipart/form-data"}})).data}catch(e){throw console.error("Error creating gallery:",e),e}};export{s as c,n as g};
-========
-import{a}from"./app-BsXIHq5v.js";const o="/api/engagement/engagement_company_galleries",n=async()=>{try{return(await a.get(o)).data}catch(r){throw console.error("Error fetching company galleries:",r),r}},s=async r=>{try{return(await a.post(o,r,{headers:{"Content-Type":"multipart/form-data"}})).data}catch(e){throw console.error("Error creating gallery:",e),e}};export{s as c,n as g};
->>>>>>>> origin/main:public/build/assets/engagement-gallery-service-pKe_DmJW.js
