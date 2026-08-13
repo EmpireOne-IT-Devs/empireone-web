@@ -21,7 +21,7 @@ export default function JobPostingLayout({ children }) {
         },
         {
             label: "Applicants",
-            path: "/accounts/administrator/talent_acquisition/applicants",
+            path: "/accounts/administrator/talent_acquisition/applicants?location_type=all",
             active: path === "applicants",
         },
 

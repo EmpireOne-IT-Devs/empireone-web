@@ -972,7 +972,7 @@ class JobApplicationController extends Controller
             $baseQuery->whereDate('created_at', $searchDate);
         }
         // 2. Fetch the paginated applications
-        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule'])
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule','referral'])
             ->when($request->search, function ($query) use ($request) {
                 $searchTerm = '%' . $request->search . '%';
                 $query->where(function ($subQuery) use ($searchTerm) {

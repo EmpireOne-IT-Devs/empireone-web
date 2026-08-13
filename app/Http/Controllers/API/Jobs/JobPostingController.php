@@ -26,6 +26,25 @@ class JobPostingController extends Controller
             ->when($request->filled('job_posting_id'), function ($query) use ($request) {
                 $query->where('job_posting_id', $request->job_posting_id);
             })
+            // Search by Applicant or Employee Name inside their Personal Information
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $searchTerm = $request->search;
+
+                $query->where(function ($q) use ($searchTerm) {
+                    // Search deeply in the Applicant's personal information
+                    $q->whereHas('applicant.personal_information', function ($piQuery) use ($searchTerm) {
+                        $piQuery->where('first_name', 'LIKE', "%{$searchTerm}%")
+                            ->orWhere('last_name', 'LIKE', "%{$searchTerm}%")
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$searchTerm}%"]);
+                    })
+                        // Or Search deeply in the Employee's personal information
+                        ->orWhereHas('referral', function ($piQuery) use ($searchTerm) {
+                            $piQuery->where('first_name', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('last_name', 'LIKE', "%{$searchTerm}%")
+                                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$searchTerm}%"]);
+                        });
+                });
+            })
             ->paginate(10);
 
         return response()->json($erps, 200);
@@ -207,7 +226,7 @@ class JobPostingController extends Controller
         // Determine the location ID: either from the request, or fallback to the user's profile
         $locationId = $request->location_id ?? $user?->account_employee?->location_id;
         // Apply the filter if we have a location ID from EITHER source
-        if ($locationId) {
+        if ($locationId && $request->location_type != 'all') {
             $query->whereHas('job_requisition', function ($q) use ($locationId) {
                 $q->where('location_id', $locationId);
             });

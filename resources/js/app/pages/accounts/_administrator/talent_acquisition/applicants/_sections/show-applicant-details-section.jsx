@@ -6,6 +6,8 @@ import React, { useState } from "react";
 
 export default function ShowApplicantDetailsSection({ data }) {
     const [open, setOpen] = useState(false);
+
+    console.log('dadadaadwdwa', data)
     return (
         <>
             <Button
@@ -65,7 +67,7 @@ export default function ShowApplicantDetailsSection({ data }) {
                                 </p>
                                 <p>
                                     <strong>Source:</strong>{" "}
-                                    {data?.source}
+                                    {data?.source} {data?.referral && `- ${data?.referral?.first_name} ${data?.referral?.last_name}`}
                                 </p>
                             </div>
                         </div>

@@ -108,7 +108,7 @@ export default function ERPTableSection() {
         };
     });
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 bg-white rounded-md shadow-md">
             <Table columns={columns} data={tableData} />
         </div>
     );

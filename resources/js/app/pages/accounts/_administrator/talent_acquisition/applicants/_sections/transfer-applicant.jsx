@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { Briefcase, CheckCircle2 } from "lucide-react";
@@ -18,22 +18,36 @@ export default function TransferApplicant({ data }) {
     const {
         control,
         handleSubmit,
-        setValue, // Extracted setValue to manually update the form
-        reset,    // Extracted reset to clear form on close
+        setValue,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm();
 
     const { job_postings } = useSelector(
         (state) => state.job_postings,
     );
+
+    // Group job postings by location
+    const groupedJobPostings = useMemo(() => {
+        if (!job_postings) return {};
+        return job_postings.reduce((acc, job) => {
+            const locationName = job?.job_requisition?.location?.name || "Other Locations";
+            if (!acc[locationName]) {
+                acc[locationName] = [];
+            }
+            acc[locationName].push(job);
+            return acc;
+        }, {});
+    }, [job_postings]);
+
     // Automatically set the first available job posting as the default value when the modal opens
     useEffect(() => {
-        if (open && job_postings.length > 0) {
+        if (open && job_postings?.length > 0) {
             setValue("job_posting_id", data?.job_posting_id);
         } else if (!open) {
             reset(); // Clear the form when closed
         }
-    }, [open]); // Only run when 'open' state changes
+    }, [open, job_postings, data, setValue, reset]);
 
     const onSubmit = async (form_data) => {
         try {
@@ -92,42 +106,54 @@ export default function TransferApplicant({ data }) {
                             }}
                             render={({ field }) => (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto p-1">
-                                    {job_postings?.length === 0 ? (
+                                    {Object.keys(groupedJobPostings).length === 0 ? (
                                         <div className="col-span-full py-8 text-center text-sm text-slate-500 italic border-2 border-dashed rounded-xl border-slate-200">
                                             No active positions available for transfer.
                                         </div>
                                     ) : (
-                                        job_postings?.map((res) => {
-                                            const isSelected = field.value === res.id;
-                                            return (
-                                                <div
-                                                    key={res.id}
-                                                    onClick={() => field.onChange(res.id)}
-                                                    className={`relative flex cursor-pointer flex-col rounded-xl border p-4 transition-all ${isSelected
-                                                        ? "border-purple-600 bg-purple-50 ring-1 ring-purple-600 shadow-md"
-                                                        : "border-slate-200 bg-white hover:border-purple-300 hover:bg-slate-50 hover:shadow-sm"
-                                                        }`}
-                                                >
-                                                    <div className="flex items-start justify-between mb-3">
-                                                        <div className={`p-2.5 rounded-lg ${isSelected ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}`}>
-                                                            <Briefcase className="w-5 h-5" />
-                                                        </div>
-                                                        {isSelected && (
-                                                            <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0" />
-                                                        )}
-                                                    </div>
-                                                    <span className={`font-semibold text-sm ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                                        Location:   {res?.job_requisition?.location?.name}
-                                                    </span>
-                                                    <span className={`font-semibold text-sm ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                                        Account: {res?.job_requisition?.account?.name}
-                                                    </span>
-                                                    <span className={`font-semibold text-sm ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                                        {res.job_requisition?.title}
-                                                    </span>
+                                        Object.entries(groupedJobPostings).map(([location, jobs]) => (
+                                            <React.Fragment key={location}>
+                                                {/* Group Header */}
+                                                <div className="col-span-full mt-2 mb-1">
+                                                    <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-1">
+                                                        {location}
+                                                    </h3>
                                                 </div>
-                                            );
-                                        })
+
+                                                {/* Job Cards */}
+                                                {jobs.map((res) => {
+                                                    const isSelected = field.value === res.id;
+                                                    return (
+                                                        <div
+                                                            key={res.id}
+                                                            onClick={() => field.onChange(res.id)}
+                                                            className={`relative flex cursor-pointer flex-col rounded-xl border p-4 transition-all ${isSelected
+                                                                    ? "border-purple-600 bg-purple-50 ring-1 ring-purple-600 shadow-md"
+                                                                    : "border-slate-200 bg-white hover:border-purple-300 hover:bg-slate-50 hover:shadow-sm"
+                                                                }`}
+                                                        >
+                                                            <div className="flex items-start justify-between mb-3">
+                                                                <div className={`p-2.5 rounded-lg ${isSelected ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}`}>
+                                                                    <Briefcase className="w-5 h-5" />
+                                                                </div>
+                                                                {isSelected && (
+                                                                    <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0" />
+                                                                )}
+                                                            </div>
+                                                            <span className={`font-semibold text-sm ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                                                Location:   {res?.job_requisition?.location?.name}
+                                                            </span>
+                                                            <span className={`font-semibold text-sm ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                                                Account: {res?.job_requisition?.account?.name}
+                                                            </span>
+                                                            <span className={`font-semibold text-sm ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                                                {res.job_requisition?.title}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </React.Fragment>
+                                        ))
                                     )}
                                 </div>
                             )}
