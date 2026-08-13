@@ -36,6 +36,7 @@ use App\Http\Controllers\API\Activities\ActivityPollController;
 use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
+use App\Http\Controllers\API\EmpireoneHealth\BookingController;
 use App\Http\Controllers\API\Engagement\EngagementCompanyGalleryController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventFileController;
@@ -74,6 +75,8 @@ Route::middleware('web')->group(function () {
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 });;
 Route::resource('location', LocationController::class);
+
+Route::post('add_booking',  [BookingController::class, 'add_booking']);
 
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
 Route::post('job/checking_applicant',  [JobApplicationController::class, 'checking_applicant']);

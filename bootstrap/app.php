@@ -24,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'info.complete' => \App\Http\Middleware\EnsureAccountEmployeeComplete::class,
             'role.redirect' => \App\Http\Middleware\RedirectByRole::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'api/add_booking',
+        ]);
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
