@@ -24,7 +24,7 @@ class JobOfferAcceptedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . '! Job Offer Accepted! 🎊',
+            subject: config('app.name') . '! Job Offer Accepted! 🎊',
         );
     }
 

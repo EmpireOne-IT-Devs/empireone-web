@@ -26,7 +26,7 @@ class ChangeFormEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . '! You have an Employee Change Form! 🚀',
+            subject: config('app.name') . '! You have an Employee Change Form! 🚀',
         );
     }
 

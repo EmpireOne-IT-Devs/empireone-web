@@ -23,7 +23,7 @@ class JobOfferMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . '! You have a job offer! 🚀',
+            subject: config('app.name') . '! You have a job offer! 🚀',
         );
     }
 
