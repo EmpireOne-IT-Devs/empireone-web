@@ -111,7 +111,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://careers.empireonecx.com/images/logo.png" alt="EmpireOne BPO Solutions Inc.">
+            <img
+                src="{{ $message->embed(public_path('images/E1CXlogo.png')) }}"
+                alt="EmpireOne Logo"
+                style="width: 180px; height: auto; display: block; margin: 0 auto 20px;">
             <h1>ONE-TIME Password (OTP)</h1>
             <p><strong>EMPIREONE BPO SOLUTIONS INC.</strong></p>
             <p>IT Department</p>

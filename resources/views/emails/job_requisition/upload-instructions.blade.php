@@ -23,7 +23,7 @@
 
 
         .header {
-            background: #4f46e5;
+            background: #7222B5;
             padding: 30px;
             text-align: center;
             color: #ffffff;
@@ -91,7 +91,10 @@
 <body class="body">
     <div class="card">
         <div class="header">
-            <img src="https://careers.empireonecx.com/images/logo.png" alt="Empire One BPO" class="logo">
+            <img
+                src="{{ $message->embed(public_path('images/E1CXlogo.png')) }}"
+                alt="EmpireOne Logo"
+                style="width: 180px; height: auto; display: block; margin: 0 auto 20px;">
             <h2 style="margin:0; font-size: 20px; letter-spacing: 1px; color: #ffffff; font-weight: bold;">
                 201 FILE UPLOAD
             </h2>

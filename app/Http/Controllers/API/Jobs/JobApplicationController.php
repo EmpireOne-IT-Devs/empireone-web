@@ -678,7 +678,7 @@ class JobApplicationController extends Controller
         $ja = JobApplication::with(['job_posting.job_requisition', 'applicant'])
             ->find($request->id);
         if ($request->final_status == 'Failed' || $request->interview_status == 'Failed') {
-            Mail::to('webdev@empireonegroup.com')->send(new ApplicantRejected($ja));
+            Mail::to($request->user['email'])->send(new ApplicantRejected($ja));
         }
         if (!$ja) {
             return response()->json([
@@ -972,7 +972,7 @@ class JobApplicationController extends Controller
             $baseQuery->whereDate('created_at', $searchDate);
         }
         // 2. Fetch the paginated applications
-        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule','referral'])
+        $applications = (clone $baseQuery)->with(['job_posting', 'applicant', 'job_offer', 'user', 'personal_information', 'schedule', 'referral'])
             ->when($request->search, function ($query) use ($request) {
                 $searchTerm = '%' . $request->search . '%';
                 $query->where(function ($subQuery) use ($searchTerm) {
