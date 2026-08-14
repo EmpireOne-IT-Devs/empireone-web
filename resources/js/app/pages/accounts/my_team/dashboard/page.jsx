@@ -9,7 +9,7 @@ export default function Page() {
     return (
         <Layout>
             <MyTeamLayout>
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6 w-full">
                     <CardSection />
                     <CardEvaluationSection />
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
