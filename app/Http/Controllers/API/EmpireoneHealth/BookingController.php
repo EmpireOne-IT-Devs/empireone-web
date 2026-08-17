@@ -22,6 +22,9 @@ class BookingController extends Controller
         $body = $response->getBody()->getContents();
         return $body;
     }
+    public function add_appointment(){
+        
+    }
     public function add_booking(Request $request)
     {
         // 1. Validate incoming request
