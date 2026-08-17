@@ -6,6 +6,7 @@ use App\Models\EmpireOneHealth\EmpireOneHealthBooking;
 use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -39,6 +40,13 @@ class BookingController extends Controller
             'phone' => request('phone'),
             'notes' => request('notes')
         ]);
+
+        Mail::to("eogs.quickly@gmail.com")->send(new \App\Mail\EmpireOneHealthBookingMail(request(['name', 'email', 'phone', 'notes'])));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Appointment added successfully'
+        ], 200);
     }
     public function add_booking(Request $request)
     {
