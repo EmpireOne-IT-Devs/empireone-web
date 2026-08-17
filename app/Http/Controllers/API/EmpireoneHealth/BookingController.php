@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\EmpireoneHealth;
 
+use App\Models\EmpireOneHealth\EmpireOneHealthBooking;
 use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -22,8 +23,22 @@ class BookingController extends Controller
         $body = $response->getBody()->getContents();
         return $body;
     }
-    public function add_appointment(){
-        
+    public function add_appointment(Request $request)
+    {
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'notes' => 'nullable',
+            'phone' => 'required|string|max:20'
+        ]);
+
+        EmpireOneHealthBooking::create([
+            'name' => request('name'),
+            'email' => request('email'),
+            'phone' => request('phone'),
+            'notes' => request('notes')
+        ]);
     }
     public function add_booking(Request $request)
     {
