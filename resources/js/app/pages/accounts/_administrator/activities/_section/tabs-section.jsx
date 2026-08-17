@@ -35,7 +35,7 @@ export default function TabsSection() {
             path: "/accounts/administrator/activities/post_event_survey",
             active: currentPath === "post_event_survey",
         },
-           {
+             {
             label: "Company Gallery",
             path: "/accounts/administrator/activities/company_gallery",
             active: currentPath === "company_gallery",
