@@ -11,14 +11,16 @@ export default function Page() {
             <ActivitiesLayout>
                 <div className="h-full overflow-hidden flex flex-col gap-5">
                     <HeaderSection />
-                    <div className="grid grid-cols-5 gap-5 flex-1 min-h-0">
-                        <div className="col-span-3 h-full overflow-y-auto no-scrollbar">
-                            <EventCardSection />
-                        </div>
-                        <div className="col-span-2 h-full overflow-y-auto no-scrollbar pb-5">
-                            <YearTimelineSection />
-                        </div>
-                    </div>
+                     <div className="grid grid-cols-5 gap-5 flex-1 min-h-0">
+                                            {/* EventCardSection — 60% (3/5) */}
+                                            <div className="col-span-10 h-full overflow-y-auto no-scrollbar">
+                                                <EventCardSection />
+                                            </div>
+                                            {/* YearTimelineSection — 40% (2/5) */}
+                                            {/* <div className="col-span-2 h-full overflow-y-auto no-scrollbar pb-5">
+                                                <YearTimelineSection />
+                                            </div> */}
+                                        </div>
                 </div>
             </ActivitiesLayout>
         </Layout>

@@ -268,6 +268,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         Route::inertia('/activities/department_showcase', 'accounts/_employee/activities/department_showcase/page');
         Route::inertia('/activities/post_event_survey', 'accounts/_employee/activities/post_event_survey/page');
         Route::inertia('/activities/post_event_survey/{id}', 'accounts/_employee/activities/post_event_survey/id/page');
+        Route::inertia('/activities/company_gallery', 'accounts/_employee/activities/company_gallery/page');
         Route::inertia('/hr_services', 'accounts/_employee/hr_services/page');
         Route::inertia('/rnr', 'accounts/_employee/rnr/page');
         Route::inertia('/rewards_store', 'accounts/_employee/rewards_store/page');

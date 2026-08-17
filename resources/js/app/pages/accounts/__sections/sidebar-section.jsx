@@ -109,6 +109,7 @@ export default function SidebarSection() {
                 },
             ]
             : []),
+            
 
         // ------------------------------------
         // ADMINISTRATOR HUB
@@ -150,7 +151,7 @@ export default function SidebarSection() {
                         href: `/accounts/${account_role}/rnr/peer_recognition`,
                         icon: FcDiploma1,
                         current: path == "rnr",
-                        is_incoming: true,
+                        is_incoming: false,
                     }, {
                         name: "Asset & Inventory",
                         href: `/accounts/${account_role}/asset_inventory`,

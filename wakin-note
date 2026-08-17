@@ -1,0 +1,2 @@
+ALTER TABLE `engagement_reward_recognitions` ADD `department_id` BIGINT UNSIGNED NULL AFTER `employee_id`;
+ALTER TABLE `engagement_reward_recognitions` ADD `account_id` BIGINT UNSIGNED NULL AFTER `department_id`;
