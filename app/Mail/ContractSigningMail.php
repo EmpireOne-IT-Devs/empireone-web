@@ -25,7 +25,7 @@ class ContractSigningMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . '! You have a job contract to sign! 🚀',
+            subject: config('app.name') . '! You have a job contract to sign! 🚀',
         );
     }
 

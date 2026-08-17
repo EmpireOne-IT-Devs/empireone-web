@@ -26,7 +26,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const { data: account } = useSelector((store) => store.app);
-    const user_role = window.location.pathname.split("/")[2];
+    const user_role = window.location?.pathname.split("/")[2];
     const profileCompletion = account?.profile_percent
         ? Number(account.profile_percent)
         : 0;
@@ -170,7 +170,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 </p>
                             </div>
                         </div>
-
+{/* 
                         <div className="flex items-start gap-3">
                             <DollarSign className="w-5 h-5 text-gray-400 mt-0.5" />
                             <div>
@@ -183,7 +183,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                         : "Salary not specified"}
                                 </p>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex items-start gap-3">
                             <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
@@ -230,7 +230,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mb-6">
+                    {/* <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="bg-blue-50 rounded-lg p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <LuBriefcase className="w-5 h-5 text-blue-600" />
@@ -254,10 +254,10 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 {data?.education_required}
                             </p>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="mt-4 space-y-6 pt-4 text-gray-800 text-sm sm:text-base">
-                        {data?.job_requisition.justification_for_position && (
+                        {data?.job_requisition?.justification_for_position && (
                             <div>
                                 <h3 className="font-semibold text-lg mb-2">
                                     Justification for Position
@@ -271,7 +271,8 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 />
                             </div>
                         )}
-                        {data?.job_requisition.qualifications && (
+
+                        {data?.job_requisition?.qualifications && (
                             <div>
                                 <h3 className="font-semibold text-lg mb-2">
                                     Qualifications
@@ -285,7 +286,7 @@ export default function ViewJobPostingDetailsSection({ data, children }) {
                                 />
                             </div>
                         )}
-                        {data?.job_requisition.responsibilities && (
+                        {data?.job_requisition?.responsibilities && (
                             <div>
                                 <h3 className="font-semibold text-lg mb-2">
                                     Responsibilities

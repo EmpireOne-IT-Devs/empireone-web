@@ -19,7 +19,7 @@
         }
 
         .header {
-            background: #64748b;
+            background: #7222B5;
             /* Neutral slate color */
             padding: 30px;
             text-align: center;
@@ -60,6 +60,10 @@
     <div class="wrapper">
         <div class="card">
             <div class="header">
+                <img
+                    src="{{ $message->embed(public_path('images/E1CXlogo.png')) }}"
+                    alt="EmpireOne Logo"
+                    style="width: 180px; height: auto; display: block; margin: 0 auto 20px;">
                 <h1>Application Update</h1>
             </div>
             <div class="content">

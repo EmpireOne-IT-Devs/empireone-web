@@ -20,6 +20,8 @@ task
 -fix the calendar when the applicant select schedule of interviewer applying
 
 
+name=Jane%20Doe&email=marlou.developer@gmail.com&start_time=2026-08-20%2010%3A00%3A00&end_time=2026-08-20%2011%3A00%3A00&position=Registered%20Nurse
+
 - add emergency contract
 - add parents name.
 

@@ -19,7 +19,7 @@
         }
 
         .header {
-            background: #4f46e5;
+            background: #7222B5;
             padding: 30px;
             text-align: center;
             color: white;
@@ -91,6 +91,10 @@
     <div class="wrapper">
         <div class="card">
             <div class="header">
+                <img
+                    src="{{ $message->embed(public_path('images/E1CXlogo.png')) }}"
+                    alt="EmpireOne Logo"
+                    style="width: 180px; height: auto; display: block; margin: 0 auto 20px;">
                 <h1 style="margin: 0;">Pre-Employment Checklist! 🎊</h1>
             </div>
             <div class="content">

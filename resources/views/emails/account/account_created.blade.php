@@ -99,7 +99,10 @@
     <div class="wrapper">
         <div class="card">
             <div class="header">
-                <img src="https://careers.empireonecx.com/images/logo.png" alt="{{ config('app.name') }}" class="logo">
+                <img
+                    src="{{ $message->embed(public_path('images/E1CXlogo.png')) }}"
+                    alt="EmpireOne Logo"
+                    style="width: 180px; height: auto; display: block; margin: 0 auto 20px;">
                 <h2 style="margin:0;">Account Created!</h2>
             </div>
 

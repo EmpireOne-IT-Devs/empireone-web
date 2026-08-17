@@ -25,7 +25,7 @@ class JobOfferDeclinedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . '! Job Offer Declined! 🚫',
+            subject: config('app.name') . '! Job Offer Declined! 🚫',
         );
     }
 

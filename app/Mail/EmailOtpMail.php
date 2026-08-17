@@ -23,7 +23,7 @@ class EmailOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . '! 🚀',
+            subject: config('app.name') . '! OTP Verification Code',
         );
     }
 

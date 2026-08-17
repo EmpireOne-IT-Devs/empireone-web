@@ -25,7 +25,7 @@ class OnboardingDocumentsMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to ' . config('app.name') . '! You have an onboarding documents to sign! 🚀',
+            subject: config('app.name') . '! You have an onboarding documents to sign! 🚀',
         );
     }
 
