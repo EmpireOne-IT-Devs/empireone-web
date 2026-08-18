@@ -91,7 +91,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
 
 
     const selected_employee = useMemo(() => {
-        return employees?.find((res) => res.user_id == watchedValues.user_id);
+        return employees?.find((res) => res?.user_id == watchedValues?.user_id);
     }, [employees?.length, watchedValues.user_id]);
 
 

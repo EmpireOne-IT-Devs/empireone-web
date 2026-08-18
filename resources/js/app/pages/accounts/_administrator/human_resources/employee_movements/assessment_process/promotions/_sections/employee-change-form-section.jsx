@@ -160,7 +160,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         }
     }, [employee_information, setValue]);
 
-    console.log('new_position_information', props_data?.applicant?.account_employee)
+    console.log('new_position_information',employee_information?.status)
 
     const onSubmit = async (form_data) => {
         console.log("Form Submitted:", form_data);
@@ -185,6 +185,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
 
         }
     };
+    console.log('selected_employee',selected_employee)
 
     return (
         <>
@@ -371,7 +372,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                         Employment Status:
                                     </td>
                                     <td className="border border-black p-1 px-2 text-center">
-                                        {selected_employee?.status}
+                                        {employee_information?.status}
                                     </td>
                                 </tr>
                             </tbody>
