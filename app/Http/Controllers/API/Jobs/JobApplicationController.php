@@ -223,6 +223,7 @@ class JobApplicationController extends Controller
             ['interview_status', '=', 'Passed'],
             ['final_status', '=', 'Passed']
         ])
+            ->whereNull('removed_by')
             ->with(['job_posting', 'applicant', 'user', 'change_form'])
             ->whereHas('user', function ($query) use ($request) {
                 $query->whereIn('role', [1, 2]);
