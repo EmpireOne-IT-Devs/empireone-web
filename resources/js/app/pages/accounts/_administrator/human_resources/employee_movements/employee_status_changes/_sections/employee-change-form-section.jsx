@@ -75,7 +75,7 @@ const EmployeeChangeFormSection = () => {
     const watchedValues = watch();
     // Optimize derivations using useMemo
     const selected_employee = useMemo(() => {
-        return employees?.find((res) => res.user_id == watchedValues.user_id);
+        return employees?.find((res) => res?.user_id == watchedValues?.user_id);
     }, [employees?.length, watchedValues.user_id]);
 
     console.log('selected_employee', selected_employee?.reporting_to?.leader?.user?.personal_information?.first_name)

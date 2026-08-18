@@ -106,7 +106,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
 
 
     const selected_employee = useMemo(() => {
-        return employees?.find((res) => res.user_id == watchedValues.user_id);
+        return employees?.find((res) => res?.user_id == watchedValues?.user_id);
     }, [employees?.length, watchedValues.user_id]);
 
 
@@ -189,9 +189,10 @@ const EmployeeChangeFormSection = ({ props_data }) => {
 
     return (
         <>
-            <div className="w-full flex items-center justify-end">
-                <Button className="w-64"
-                    variant="secondary"
+            <div className="w-full flex items-center justify-center">
+                <Button 
+                className="w-full"
+                    variant="primary"
                     onClick={() => setOpen(true)}>
                     CREATE CHANGE FORM
                 </Button>
