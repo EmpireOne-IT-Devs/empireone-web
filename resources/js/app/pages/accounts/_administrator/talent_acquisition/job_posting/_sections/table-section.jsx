@@ -43,6 +43,7 @@ export default function TableSection() {
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     const currentLocationId = searchParams.get('location_id') ?? data?.user?.account_employee?.location_id;
 
+    console.log('job_postings', job_postings?.job_requisition?.target_start_date)
     const tableColumns = [
         {
             key: 'id',
@@ -51,6 +52,18 @@ export default function TableSection() {
                 <>
                     <span className="ml-2 font-medium">{row?.id}</span>
                 </>
+            )
+        },
+        {
+            key: 'Location',
+            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Location <LuArrowUpDown className="w-3 h-3 text-purple-500" /></div>,
+            render: (row) => (
+                <button
+
+                    className="font-medium text-left"
+                >
+                    {row?.job_requisition?.location?.name}
+                </button>
             )
         },
         {
@@ -173,10 +186,15 @@ export default function TableSection() {
             render: (row) => <span className="text-gray-500">{moment(row.created_at).format('LL')}</span>
         },
         {
-            key: 'status',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Status <LuArrowUpDown className="w-3 h-3" /></div>,
-            render: (row) => <StatusBadge status={row.status} />
+            key: 'start_date',
+            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Start Date <LuArrowUpDown className="w-3 h-3" /></div>,
+            render: (row) => <span className="text-gray-500">{moment(job_postings?.job_requisition?.target_start_date).format('LL')}</span>
         },
+        // {
+        //     key: 'status',
+        //     header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Status <LuArrowUpDown className="w-3 h-3" /></div>,
+        //     render: (row) => <StatusBadge status={row.status} />
+        // },
         {
             key: 'actions',
             width: 'w-12',
@@ -199,18 +217,25 @@ export default function TableSection() {
                     </div>
                     {/* ADDED: max-h-48 and overflow-y-auto so a long list doesn't take up the whole screen on mobile */}
                     <div className="flex flex-col py-2 max-h-48 overflow-y-auto md:max-h-none">
-                        {data?.locations?.map((loc) => {
-                            const isActive = (currentLocationId) == String(loc.id);
-
+                        {[
+                            { id: 0, name: "All" },
+                            ...(Array.isArray(data?.locations) ? data.locations : [])
+                        ].map((loc) => {
+                            const isActive = String(currentLocationId) === String(loc.id);
                             return (
                                 <Link
-                                    key={loc.name}
+                                    key={loc.id ?? loc.name}
+
                                     href={`?location_id=${loc.id}`}
-                                    className={`flex justify-between items-center px-4 py-2 cursor-pointer transition-colors ${isActive ? 'bg-purple-50 text-purple-700' : 'hover:bg-gray-50 text-gray-600'
+                                    className={`flex justify-between items-center px-4 py-2 cursor-pointer transition-colors ${isActive
+                                        ? "bg-purple-50 text-purple-700 font-semibold"
+                                        : "hover:bg-gray-50 text-gray-600"
                                         }`}
                                 >
                                     <span className="font-medium">{loc.name}</span>
-                                    <span className={isActive ? 'text-purple-600' : 'text-gray-400'}>Site</span>
+                                    <span className={isActive ? "text-purple-600" : "text-gray-400"}>
+                                        {loc.site ?? "All Sites"}
+                                    </span>
                                 </Link>
                             );
                         })}
