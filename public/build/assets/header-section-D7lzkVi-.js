@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/header-section-D7lzkVi-.js
-import{j as e}from"./app-J9crwc9C.js";function t(){return e.jsxs("div",{className:"bg-gray-100 px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"Assets Management"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Create and manage company assets and inventory"})]})}export{t as default};
-========
-import{j as e}from"./app-JGct_PW4.js";function t(){return e.jsxs("div",{className:"bg-gray-100 px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"Assets Management"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Create and manage company assets and inventory"})]})}export{t as default};
->>>>>>>> 47856471e (added new adustment):public/build/assets/header-section-CHUl6Pyh.js

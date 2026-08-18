@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/header-section-Bg3fKr9c.js
-import{j as e}from"./app-J9crwc9C.js";function a(){return e.jsxs("div",{className:"bg-gray-100 px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"The Engagement Floor"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Stay updated with company news, events, and activities"})]})}export{a as default};
-========
-import{j as e}from"./app-JGct_PW4.js";function a(){return e.jsxs("div",{className:"bg-gray-100 px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"The Engagement Floor"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Stay updated with company news, events, and activities"})]})}export{a as default};
->>>>>>>> 47856471e (added new adustment):public/build/assets/header-section-B-hH2cBJ.js

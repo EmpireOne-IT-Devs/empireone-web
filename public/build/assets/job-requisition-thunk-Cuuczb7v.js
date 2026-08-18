@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/job-requisition-thunk-Cuuczb7v.js
-import{g as o,a as n}from"./job-requisition-service-CT8GT0EM.js";import{a1 as e}from"./app-J9crwc9C.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
-========
-import{g as o,a as n}from"./job-requisition-service-BLZwB4Hu.js";import{a1 as e}from"./app-JGct_PW4.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
->>>>>>>> 47856471e (added new adustment):public/build/assets/job-requisition-thunk-CodgJuOR.js

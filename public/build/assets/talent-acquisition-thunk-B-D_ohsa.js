@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/talent-acquisition-thunk-D-Fi3OxX.js
-import{c as i}from"./job-requisition-service-CT8GT0EM.js";import{aa as e}from"./app-J9crwc9C.js";async function c(){return(await axios.get("/api/job/job_applicant_schedules")).data}async function _(t){return(await axios.post("/api/job/change_job_applicant_schedule",t)).data}function r(){return async function(t,n){const a=await c();t(e.actions.setSchedules(a.data))}}function u(){return async function(t,n){const a=await i();t(e.actions.setInterviews(a.data))}}export{r as a,_ as c,u as g};
-========
-import{c as i}from"./job-requisition-service-BLZwB4Hu.js";import{aa as e}from"./app-JGct_PW4.js";async function c(){return(await axios.get("/api/job/job_applicant_schedules")).data}async function _(t){return(await axios.post("/api/job/change_job_applicant_schedule",t)).data}function r(){return async function(t,n){const a=await c();t(e.actions.setSchedules(a.data))}}function u(){return async function(t,n){const a=await i();t(e.actions.setInterviews(a.data))}}export{r as a,_ as c,u as g};
->>>>>>>> 47856471e (added new adustment):public/build/assets/talent-acquisition-thunk-B-D_ohsa.js

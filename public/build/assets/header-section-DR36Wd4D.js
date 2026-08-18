@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/header-section-CGhsnHl6.js
-import{j as e}from"./app-J9crwc9C.js";function s(){return e.jsx("div",{className:"flex items-center justify-between p-6",children:e.jsx("div",{className:"flex items-center gap-4",children:e.jsxs("div",{children:[e.jsx("h1",{className:"text-xl font-semibold text-gray-800",children:"The Engagement Floor"}),e.jsx("p",{className:"text-sm text-gray-500",children:"Stay connected with company news, events, and celebrate achievements"})]})})})}export{s as default};
-========
-import{j as e}from"./app-JGct_PW4.js";function s(){return e.jsx("div",{className:"flex items-center justify-between p-6",children:e.jsx("div",{className:"flex items-center gap-4",children:e.jsxs("div",{children:[e.jsx("h1",{className:"text-xl font-semibold text-gray-800",children:"The Engagement Floor"}),e.jsx("p",{className:"text-sm text-gray-500",children:"Stay connected with company news, events, and celebrate achievements"})]})})})}export{s as default};
->>>>>>>> 47856471e (added new adustment):public/build/assets/header-section-DR36Wd4D.js

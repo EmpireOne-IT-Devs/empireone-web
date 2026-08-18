@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/applicants-service-DeMsom2J.js
-import{a}from"./app-J9crwc9C.js";async function e(){return await a.get(`/api/job/applicants${window.location.search}`)}async function n(t){return await a.post(`/api/job/delete_applicant/${t}`)}async function c(t){return(await a.post("/api/job/checking_applicant",t)).data}async function p(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function o(){return await a.get("/api/job/get_applicant_pooling")}export{p as a,e as b,c,n as d,o as g};
-========
-import{a}from"./app-JGct_PW4.js";async function e(){return await a.get(`/api/job/applicants${window.location.search}`)}async function n(t){return await a.post(`/api/job/delete_applicant/${t}`)}async function c(t){return(await a.post("/api/job/checking_applicant",t)).data}async function p(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function o(){return await a.get("/api/job/get_applicant_pooling")}export{p as a,e as b,c,n as d,o as g};
->>>>>>>> 47856471e (added new adustment):public/build/assets/applicants-service-CVMidsY0.js

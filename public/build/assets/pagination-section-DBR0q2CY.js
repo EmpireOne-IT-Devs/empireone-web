@@ -1,1 +1,0 @@
-import{b as o,j as t}from"./app-J9crwc9C.js";import{P as s}from"./pagination-v7MpM-Wq.js";function e(){const{applicants:a}=o(n=>n.job_postings);return t.jsx(t.Fragment,{children:t.jsx(s,{data:a})})}export{e as default};
