@@ -5,8 +5,9 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import Table from "@/app/_components/table";
 import { FcApproval } from "react-icons/fc";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import EmployeeChangeFormSection from "./employee-change-form-section";
+import Button from "@/app/_components/button";
 
 export default function ApplicantTableSection() {
     const { applicants } = useSelector(
@@ -65,10 +66,20 @@ export default function ApplicantTableSection() {
         final_status: res.final_status,
 
         action: (
-            <>
+            <div className="flex items-center justify-center">
                 {!res.change_form && <EmployeeChangeFormSection props_data={res} />}
-                {res.change_form && <>Change Form {res.change_form.status}</>}
-            </>
+
+                {res.change_form &&
+                    <Button
+                        className="w-full"
+                        onClick={() => window.open(`/accounts/my_documents/${res.change_form.id}/employee_change_form`, '_blank')}
+                        variant={res.change_form.status === 'Pending' ? 'warning' : 'success'}
+                    >
+                        <div className="uppercase">
+                            Change Form {res.change_form.status}
+                        </div>
+                    </Button>}
+            </div>
 
         ),
     }));
