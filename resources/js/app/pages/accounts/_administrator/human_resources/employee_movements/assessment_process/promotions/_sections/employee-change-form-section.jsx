@@ -78,7 +78,6 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         defaultValues: defaultFormValues,
     });
 
-    console.log('leaders',leaders)
 
     const employee_information = props_data?.applicant?.account_employee;
     const leader_information = props_data?.applicant?.account_employee?.er_leader?.employee;
@@ -87,6 +86,8 @@ const EmployeeChangeFormSection = ({ props_data }) => {
     const watchedValues = watch();
     console.log('agent_account', agent_account)
 
+    const new_report = leaders?.find(res => res.user_id == watchedValues.info_reporting_id_to)
+    console.log('new_report', new_report?.user?.personal_information?.first_name)
     useEffect(() => {
         if (watchedValues.info_account_id_from != new_position_information?.account_id) {
             setValue("is_account_transfer", true);
@@ -100,13 +101,22 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         if (leader_information?.id != new_position_information?.user?.id) {
             setValue("is_edit_reporting_to", true);
         }
+
         setValue('name', `${props_data?.applicant?.personal_information?.first_name} ${props_data?.applicant?.personal_information?.last_name}`)
 
     }, [])
 
 
+    useEffect(() => {
+        if (new_report) {
+            setValue("info_reporting_to", `${new_report?.user?.personal_information?.first_name} ${new_report?.user?.personal_information?.last_name}`);
+        }
+    }, [new_report, watchedValues.info_reporting_to])
+
     const selected_employee = useMemo(() => {
-        return employees?.find((res) => res?.user_id == watchedValues?.user_id);
+        if (employees) {
+            return employees?.find((res) => res?.user_id == watchedValues?.user_id);
+        }
     }, [employees?.length, watchedValues.user_id]);
 
 
@@ -147,10 +157,10 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                 info_basic_pay_to: employee_information?.basic_pay,
                 info_allowances_from: employee_information?.allowance,
                 info_allowances_to: employee_information?.allowance,
-                info_reporting_to: `${new_position_information?.user?.personal_information?.first_name} ${new_position_information?.user?.personal_information?.last_name}`,
+                info_reporting_to: watchedValues.info_reporting_to,
                 position: employee_information?.position,
                 department: employee_information?.department?.name,
-                account: employee_information?.account?.name??'',
+                account: employee_information?.account?.name ?? '',
                 reporting_to: reportingName,
             };
 
@@ -160,7 +170,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         }
     }, [employee_information, setValue]);
 
-    console.log('new_position_information',employee_information?.status)
+    console.log('new_position_information', employee_information?.status)
 
     const onSubmit = async (form_data) => {
         console.log("Form Submitted:", form_data);
@@ -185,13 +195,13 @@ const EmployeeChangeFormSection = ({ props_data }) => {
 
         }
     };
-    console.log('selected_employee',selected_employee)
+    console.log('selected_employee', selected_employee)
 
     return (
         <>
             <div className="w-full flex items-center justify-center">
-                <Button 
-                className="w-full"
+                <Button
+                    className="w-full"
                     variant="primary"
                     onClick={() => setOpen(true)}>
                     CREATE CHANGE FORM
@@ -787,7 +797,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                     </td>
                                     <td className="border border-black p-1">
                                         <Select
-                                            
+
                                             name="info_reporting_id_to"
                                             className="w-full text-center"
                                             options={leaders?.map((res) => ({
@@ -836,7 +846,6 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                                 "info_basic_pay_from",
                                                 { required: false },
                                             )}
-                                            disabled
                                             className="bg-transparent w-full outline-none text-center text-black"
                                         />
                                     </td>
@@ -883,7 +892,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                                 "info_allowances_from",
                                                 { required: false },
                                             )}
-                                            disabled
+                                            
                                             className="bg-transparent w-full outline-none text-center text-black"
                                         />
                                     </td>
