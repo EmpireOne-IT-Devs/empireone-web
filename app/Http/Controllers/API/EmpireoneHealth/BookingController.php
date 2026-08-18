@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\API\EmpireoneHealth;
 
+use App\Models\EmpireOneHealth\EmpireOneHealthConsultationAppointment;
 use App\Models\EmpireOneHealth\EmpireOneHealthBooking;
 use App\Http\Controllers\Controller;
+use App\Models\EmpireOneHealth\EmpireOneHealthAppointmentDetails;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -26,28 +28,55 @@ class BookingController extends Controller
     }
     public function add_appointment(Request $request)
     {
-
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
             'notes' => 'nullable',
-            'phone' => 'required|string|max:20'
+            'phone' => 'nullable|string|max:20',
+            'appointment_id' => 'nullable|exists:empire_one_health_bookings,id',
+            'company_name' => 'nullable|string|max:255',
+            'source' => 'nullable|string|max:255',
+            'looking_for' => 'nullable|string|max:255',
+            'privacy_policy_agreed' => 'nullable|boolean',
         ]);
 
-        EmpireOneHealthBooking::create([
-            'name' => request('name'),
-            'email' => request('email'),
-            'phone' => request('phone'),
-            'notes' => request('notes')
+        // Create the booking
+        $booking = EmpireOneHealthBooking::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'notes' => $request->notes,
         ]);
 
-        Mail::to("eogs.quickly@gmail.com")->send(new \App\Mail\EmpireOneHealthBookingMail(request(['name', 'email', 'phone', 'notes'])));
+        // Use the newly created booking ID
+        if (
+            $request->company_name ||
+            $request->source ||
+            $request->looking_for ||
+            $request->privacy_policy_agreed
+        ) {
+            EmpireOneHealthAppointmentDetails::create([
+                'appointment_id' => $booking->id,
+                'company_name' => $request->company_name,
+                'source' => $request->source,
+                'looking_for' => $request->looking_for,
+                'privacy_policy_agreed' => $request->boolean('privacy_policy_agreed'),
+            ]);
+        }
+
+        Mail::to("eogs.quickly@gmail.com")->send(
+            new \App\Mail\EmpireOneHealthBookingMail(
+                $request->only(['name', 'email', 'phone', 'notes'])
+            )
+        );
 
         return response()->json([
             'success' => true,
-            'message' => 'Appointment added successfully'
+            'message' => 'Appointment added successfully',
+            'appointment_id' => $booking->id,
         ], 200);
     }
+
     public function add_booking(Request $request)
     {
         // 1. Validate incoming request
@@ -105,5 +134,28 @@ class BookingController extends Controller
                 'message' => 'Failed to schedule booking: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+
+
+    public function add_consultation(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'source' => 'nullable|string|max:255',
+            'help_with' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+        ]);
+
+        $booking = EmpireOneHealthConsultationAppointment::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Consultation added successfully',
+            // 'data'    => $booking
+        ], 200);
     }
 }
