@@ -272,32 +272,32 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                 <Text>Name:</Text>
                             </View>
                             <View style={styles.colNameValue}>
-                                <Text>{safeData.name || "N/A"}</Text>
+                                <Text>{safeData?.name || "N/A"}</Text>
                             </View>
                         </View>
                         <View style={styles.tableRow}>
                             <View style={styles.colLabel}><Text>Employee ID:</Text></View>
-                            <View style={styles.colValue}><Text>{safeData.employee_id}</Text></View>
+                            <View style={styles.colValue}><Text>{safeData?.employee_id}</Text></View>
                             <View style={styles.colLabel}><Text>Hire Date:</Text></View>
-                            <View style={styles.colValueLast}><Text>{safeData.hire_date}</Text></View>
+                            <View style={styles.colValueLast}><Text>{safeData?.hire_date}</Text></View>
                         </View>
                         <View style={styles.tableRow}>
                             <View style={styles.colLabel}><Text>Position Level:</Text></View>
-                            <View style={styles.colValue}><Text>{safeData.position_level}</Text></View>
+                            <View style={styles.colValue}><Text>{safeData?.position_level}</Text></View>
                             <View style={styles.colLabel}><Text>Position Title:</Text></View>
-                            <View style={styles.colValueLast}><Text>{safeData.position}</Text></View>
+                            <View style={styles.colValueLast}><Text>{safeData?.position}</Text></View>
                         </View>
                         <View style={styles.tableRow}>
                             <View style={styles.colLabel}><Text>Department:</Text></View>
-                            <View style={styles.colValue}><Text>{safeData.department}</Text></View>
+                            <View style={styles.colValue}><Text>{safeData?.department}</Text></View>
                             <View style={styles.colLabel}><Text>Account:</Text></View>
-                            <View style={styles.colValueLast}><Text>{safeData.account}</Text></View>
+                            <View style={styles.colValueLast}><Text>{safeData?.account}</Text></View>
                         </View>
                         <View style={styles.tableRowLast}>
                             <View style={styles.colLabel}><Text>Reporting To:</Text></View>
-                            <View style={styles.colValue}><Text>{safeData.reporting_to}</Text></View>
+                            <View style={styles.colValue}><Text>{safeData?.reporting_to}</Text></View>
                             <View style={styles.colLabel}><Text>Employment Status:</Text></View>
-                            <View style={styles.colValueLast}><Text></Text></View>
+                            <View style={styles.colValueLast}><Text>{safeData?.info_status_from}</Text></View>
                         </View>
                     </View>
                 </View>
@@ -310,17 +310,17 @@ const EmployeeChangeFormDocument = ({ data }) => {
                     <Text style={[styles.bold, { marginTop: 6 }]}>Reason for Change:</Text>
 
                     <View style={styles.reasonBox}>
-                        <Text>{safeData.reason_for_change}</Text>
+                        <Text>{safeData?.reason_for_change}</Text>
                     </View>
 
                     <View style={styles.checkboxContainer}>
-                        {safeData.status === "Probationary" && (
-                            <FormCheckbox label="Regular" checked={safeData.regular} />
+                        {safeData?.status === "Probationary" && (
+                            <FormCheckbox label="Regular" checked={safeData?.regular} />
                         )}
-                        <FormCheckbox label="Account Transfer" checked={safeData.is_account_transfer} />
-                        <FormCheckbox label="Department Transfer" checked={safeData.is_department_transfer} />
-                        <FormCheckbox label="Position & Title" checked={safeData.is_position_and_title} />
-                        <FormCheckbox label="Tiering" checked={safeData.is_tiering} />
+                        <FormCheckbox label="Account Transfer" checked={safeData?.is_account_transfer} />
+                        <FormCheckbox label="Department Transfer" checked={safeData?.is_department_transfer} />
+                        <FormCheckbox label="Position & Title" checked={safeData?.is_position_and_title} />
+                        <FormCheckbox label="Tiering" checked={safeData?.is_tiering} />
                     </View>
                 </View>
                 <View>
@@ -361,7 +361,7 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                 <Text>Effective Date:</Text>
                             </View>
                             <View style={[styles.colValueLast, styles.bold, { width: "80%", textAlign: "left" }]}>
-                                <Text>{safeData.effective_date}</Text>
+                                <Text>{safeData?.effective_date}</Text>
                             </View>
                         </View>
                     </View>
@@ -380,43 +380,43 @@ const EmployeeChangeFormDocument = ({ data }) => {
 
                         <DetailRow
                             label="Position Level:"
-                            from={safeData.info_position_level_from}
-                            to={safeData.info_position_level_to || "No Change"}
+                            from={safeData?.info_position_level_from}
+                            to={safeData?.info_position_level_to || "No Change"}
                         />
                         <DetailRow
                             label="Department:"
-                            from={safeData.info_department_from}
-                            to={safeData.info_department_id_to || "No Change"}
+                            from={safeData?.info_department_from}
+                            to={safeData?.info_department_id_to || "No Change"}
                         />
                         <DetailRow
                             label="Account:"
-                            from={safeData.info_account_from}
-                            to={safeData.info_account_id_to || "No Change"}
+                            from={safeData?.info_account_from}
+                            to={safeData?.info_account_id_to || "No Change"}
                         />
                         <DetailRow
                             label="Status:"
-                            from={safeData.info_status_from}
-                            to={safeData.info_status_to || "No Change"}
+                            from={safeData?.info_status_from}
+                            to={safeData?.info_status_to || "No Change"}
                         />
                         <DetailRow
                             label="Position Title:"
-                            from={safeData.info_position_from}
-                            to={safeData.info_position_to || "No Change"}
+                            from={safeData?.info_position_from}
+                            to={safeData?.info_position_to || "No Change"}
                         />
                         <DetailRow
                             label="Reporting To:"
-                            from={safeData.info_reporting_from}
-                            to={safeData.info_reporting_to || "No Change"}
+                            from={safeData?.info_reporting_from}
+                            to={safeData?.info_reporting_to || "No Change"}
                         />
                         <DetailRow
                             label="Basic Pay:"
-                            from={safeData.info_basic_pay_from}
-                            to={safeData.info_basic_pay_to || "No Change"}
+                            from={safeData?.info_basic_pay_from}
+                            to={safeData?.info_basic_pay_to || "No Change"}
                         />
                         <DetailRow
                             label="Allowances:"
-                            from={safeData.info_allowances_from}
-                            to={safeData.info_allowances_to || "No Change"}
+                            from={safeData?.info_allowances_from}
+                            to={safeData?.info_allowances_to || "No Change"}
                             isLast={true}
                         />
                     </View>
@@ -435,7 +435,7 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                 />
                             )}
                             <Text style={{ marginTop: -20 }}>
-                                HR Director:{safeData.prepaired_by_id}
+                                HR Director:{safeData?.prepaired_by_id}
                             </Text>
                             <Text style={[styles.bold, { marginTop: 8 }]}>Prepared & Approved by:</Text>
                             {/* <Text>Signature over Printed Name / Date</Text> */}
@@ -448,7 +448,7 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                 />
                             )}
                             <Text style={{ marginTop: -20 }}>
-                               {safeData.name}
+                               {safeData?.name}
                             </Text>
                             <Text style={[styles.bold, { marginTop: 8 }]}>Employee:</Text>
                             {/* <Text>Signature over Printed Name / Date</Text> */}
