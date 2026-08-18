@@ -78,6 +78,7 @@ Route::resource('location', LocationController::class);
 
 Route::post('add_booking',  [BookingController::class, 'add_booking']);
 Route::post('add_appointment',  [BookingController::class, 'add_appointment']);
+Route::post('add_consultation',  [BookingController::class, 'add_consultation']);
 
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
 Route::post('job/checking_applicant',  [JobApplicationController::class, 'checking_applicant']);
