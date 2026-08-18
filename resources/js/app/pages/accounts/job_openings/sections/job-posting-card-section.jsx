@@ -137,6 +137,13 @@ export default function JobPostingCardSection() {
                                     )}
 
 
+                                    {
+                                        user_role !== "applicant" && <div className="flex items-center gap-2">
+                                            <TbUser />{" "}
+                                            {job?.job_requisition?.account?.name}
+                                        </div>
+                                    }
+
                                 </div>
 
                                 <hr />
