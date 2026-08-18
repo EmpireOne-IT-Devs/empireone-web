@@ -963,7 +963,9 @@ class JobApplicationController extends Controller
 
         // 2. Filter by location via the relationship
         $baseQuery->whereHas('job_posting.job_requisition', function ($query) use ($locationId) {
-            $query->where('location_id', $locationId);
+            if ($locationId != '0') {
+                $query->where('location_id', $locationId);
+            }
             $query->whereNull('removed_by');
         });
         // 3. CORRECTED: Filter by application date directly on the base table
