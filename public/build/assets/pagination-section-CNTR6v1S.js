@@ -1,0 +1,1 @@
+import{a as n,j as o}from"./app-ik8-odP3.js";import{P as s}from"./pagination-C-oZs94S.js";function i(){const{job_offers:t}=n(a=>a.job_postings);return o.jsx(o.Fragment,{children:o.jsx(s,{data:t})})}export{i as default};
