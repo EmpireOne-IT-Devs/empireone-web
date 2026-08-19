@@ -260,14 +260,21 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
 
     // 4. EMPLOYEE Specific Routes
     Route::prefix('employee')->middleware(['role.redirect:2'])->group(function () {
-        Route::redirect('/activities', '/accounts/employee/activities/home');
-        Route::inertia('/activities/home', 'accounts/_employee/activities/home/page');
-        Route::inertia('/activities/company_newsfeed', 'accounts/_employee/activities/company_newsfeed/page');
-        Route::inertia('/activities/events_calendar', 'accounts/_employee/activities/events_calendar/page');
-        Route::inertia('/activities/department_showcase', 'accounts/_employee/activities/department_showcase/page');
-        Route::inertia('/activities/post_event_survey', 'accounts/_employee/activities/post_event_survey/page');
-        Route::inertia('/activities/post_event_survey/{id}', 'accounts/_employee/activities/post_event_survey/id/page');
-        Route::inertia('/activities/company_gallery', 'accounts/_employee/activities/company_gallery/page');
+        Route::prefix('activities')->group(function () {
+            Route::redirect('/', '/accounts/employee/activities/home');
+            Route::inertia('/home', 'accounts/_administrator/activities/home/page');
+            Route::inertia('/company_newsfeed', 'accounts/_administrator/activities/company_newsfeed/page');
+            Route::inertia('/events_calendar', 'accounts/_administrator/activities/events_calendar/page');
+            Route::inertia('/department_showcase', 'accounts/_administrator/activities/department_showcase/page');
+            Route::inertia('/poll_analytics', 'accounts/_administrator/activities/poll_analytics/page');
+            Route::inertia('/poll_analytics/{id}', 'accounts/_administrator/activities/poll_analytics/id/page');
+
+
+
+            Route::inertia('/post_event_survey', 'accounts/_administrator/activities/post_event_survey/page');
+            Route::inertia('/post_event_survey/{id}', 'accounts/_administrator/activities/post_event_survey/id/page');
+            Route::inertia('/company_gallery', 'accounts/_administrator/activities/company_gallery/page');
+        });
         Route::inertia('/hr_services', 'accounts/_employee/hr_services/page');
         Route::inertia('/rnr', 'accounts/_employee/rnr/page');
         Route::inertia('/rewards_store', 'accounts/_employee/rewards_store/page');

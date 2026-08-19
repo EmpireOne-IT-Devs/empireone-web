@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     indentText: {
         marginLeft: 20,
         marginBottom: 5,
-        fontSize: 9,
+        fontSize: 10.5,
     },
     disclaimer: {
         position: "absolute",
@@ -611,14 +611,14 @@ const EmploymentContract = ({ data }) => (
                         fontWeight: "bold",
                     }}
                 >
-                    {data?.full_address}
+                    {" "} {data?.full_address}
                 </Text>{" "}
             </Text>
             <Text style={styles.indentText}>
-                b. to the Employer: S. Carmona St., Brgy. V, San Carlos City,
+                b. to the Employer: S. Carmona St., Brgy. VI, San Carlos City,
                 Negros Occidental
             </Text>
-            <Text style={[styles.text, { marginBottom: 20 }]}>
+            <Text style={[styles.text, { marginBottom: 20,marginTop:5 }]}>
                 and if sent by registered mail shall be deemed to have been
                 received on the 4th business day of uninterrupted postal service
                 following the date of mailing. Either party may change its
@@ -638,7 +638,7 @@ const EmploymentContract = ({ data }) => (
                 the respective successors and assigns of the parties hereto.
             </Text>
 
-            <Text style={[styles.text, { marginTop: 350 }]}>
+            <Text style={[styles.text, { marginTop: 340 }]}>
                 IN WITNESS WHEREOF the parties hereto have caused this agreement
                 to be executed as of the ___ day of __________ 2026.
             </Text>
@@ -669,7 +669,7 @@ const EmploymentContract = ({ data }) => (
                 </View>
                 <View style={styles.signatureBlock}>
                     <Text style={[styles.text, styles.bold]}>EMPLOYER</Text>
-                     {data?.employer_signature && (
+                    {data?.employer_signature && (
                         <Image
                             style={{
                                 position: "absolute",

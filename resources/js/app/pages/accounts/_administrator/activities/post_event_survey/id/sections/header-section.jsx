@@ -13,9 +13,13 @@ export default function HeaderSection({ surveyId }) {
     const { selectedSurvey, closing, reopening } = useSelector(
         (state) => state.post_event_surveys
     );
+    const { data } = useSelector((state) => state.app);
+
+    const canManage = [1, 11].includes(data?.user?.account_employee?.department_id);
 
     const handleBack = () => {
-        router.visit("/accounts/administrator/activities/post_event_survey");
+        const account_role = window.location.pathname.split("/")[2];
+        router.visit(`/accounts/${account_role}/activities/post_event_survey`);
     };
 
     const handleToggleStatus = async () => {
@@ -49,7 +53,7 @@ export default function HeaderSection({ surveyId }) {
                 </div>
             </div>
 
-            {selectedSurvey && (
+            {selectedSurvey && canManage && (
                 <button
                     type="button"
                     onClick={handleToggleStatus}
