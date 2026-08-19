@@ -77,7 +77,7 @@ class BookingController extends Controller
         }
 
         try {
-            Mail::to('eogs.quickly@gmail.com')->send(
+            Mail::to('info@empireonehealth.com')->send(
                 new \App\Mail\EmpireOneHealthNotificationBookingMail(
                     $request->only(['name', 'email', 'phone', 'notes', 'company_name', 'source', 'looking_for'])
                 )
@@ -116,7 +116,7 @@ class BookingController extends Controller
 
             // 3. Construct the description
             $descriptionText =
-                "Booking EmpireOne Health - 1 Hour Call\n" .
+                "Booking EmpireOne Health - 30 Minutes Call\n" .
                 "--------------------------------------------------\n" .
                 "Full Name: {$request->name}\n" .
                 "Company Name: {$companyName}\n" .
