@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EmpireOneHealth\EmpireOneHealthAppointmentDetails;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 
 class BookingController extends Controller
 {
@@ -26,6 +26,25 @@ class BookingController extends Controller
         $body = $response->getBody()->getContents();
         return $body;
     }
+
+
+
+    private function send_empireone_health_appointment_schedule(array $payload)
+    {
+        $webAppUrl = env('SEND_EMPIREONEHEALTH_APPOINTMENT');
+        Http::asJson()
+            ->withOptions([
+                'allow_redirects' => [
+                    'strict' => true, // Preserves POST method and JSON payload across Google 302 redirects
+                ],
+            ])
+            ->post($webAppUrl, [
+                'recipient'      => $payload['recipient'],
+                'subject' => $payload['subject'],
+                'body' => $payload['body'], // Contains your HTML string
+            ]);
+    }
+
     public function add_appointment(Request $request)
     {
         $request->validate([
@@ -64,28 +83,37 @@ class BookingController extends Controller
             ]);
         }
 
-        if ($request->filled('email')) {
-            try {
-                Mail::to($request->email)->send(
-                    new \App\Mail\EmpireOneHealthBookingMail(
-                        $request->only(['name', 'email', 'phone', 'notes'])
-                    )
-                );
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Failed to send EmpireOne Health booking email: ' . $e->getMessage());
-            }
-        }
 
-        try {
-            Mail::to('eogs.quickly@gmail.com')->send(
-                new \App\Mail\EmpireOneHealthNotificationBookingMail(
-                    $request->only(['name', 'email', 'phone', 'notes', 'company_name', 'source', 'looking_for'])
-                )
-            );
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send EmpireOne Health admin notification email: ' . $e->getMessage());
-        }
+        // Send appointment notification email via the Apps Script endpoint
+        $this->send_empireone_health_appointment_schedule([
+            'recipient' => $request->email,
+            'subject' => "Appointment Confirmation #{$booking->id}",
+            'body' => view('emails.empireonehealth.booking-confirmation', [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'notes' => $request->notes,
+                'company_name' => $request->company_name ?? 'NA',
+                'source' => $request->source ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'NA',
+                'appointment_id' => $booking->id ?? 'NA',
+            ])->render(),
+        ]);
 
+        $this->send_empireone_health_appointment_schedule([
+            'recipient' => 'info@empireonehealth.com',
+            'subject' => "Appointment Notification #{$booking->id}",
+            'body' => view('emails.empireonehealth.booking-notification', [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'notes' => $request->notes,
+                'company_name' => $request->company_name ?? 'NA',
+                'source' => $request->source ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'NA',
+                'appointment_id' => $booking->id ?? 'NA',
+            ])->render(),
+        ]);
         return response()->json([
             'success' => true,
             'message' => 'Appointment added successfully',
@@ -116,7 +144,7 @@ class BookingController extends Controller
 
             // 3. Construct the description
             $descriptionText =
-                "Booking EmpireOne Health - 1 Hour Call\n" .
+                "Booking EmpireOne Health - 30 Minutes Call\n" .
                 "--------------------------------------------------\n" .
                 "Full Name: {$request->name}\n" .
                 "Company Name: {$companyName}\n" .
@@ -135,7 +163,7 @@ class BookingController extends Controller
                 'start_time'  => $googleStartTime,
                 'end_time'    => $googleEndTime,
                 'description' => $descriptionText,
-                'title'       => "EmpireOne. 1 hour Call - " . $request->name
+                'title'       => "EmpireOne Health 30 Minutes Call - " . $request->name
             ]);
 
             return response()->json([

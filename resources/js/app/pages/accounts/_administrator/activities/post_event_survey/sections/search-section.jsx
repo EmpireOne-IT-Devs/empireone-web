@@ -1,25 +1,31 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { TbSearch } from "react-icons/tb";
+
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
-import { TbSearch } from "react-icons/tb";
 import CreateSurveySection from "./create-survey-section";
 
 export default function SearchSection() {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
 
-    const handleStatusChange = (e) => setStatus(e.target.value);
+    const { data } = useSelector((store) => store.app);
+
+    const canCreateSurvey = [1, 11].includes(
+        data?.user?.account_employee?.department_id,
+    );
 
     return (
-        <div className="bg-white p-5 border-2 rounded-2xl flex flex-col sm:flex-row gap-2 my-3">
-            <div className="flex-1 w-full">
-                    <Input
-                        iconLeft={<TbSearch className="text-xl" />}
-                        label="Search event title..."
-                        name="search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+        <div className="my-3 flex flex-col gap-3 rounded-2xl border-2 bg-white p-5 sm:flex-row sm:items-end">
+            <div className="w-full flex-1">
+                <Input
+                    iconLeft={<TbSearch className="text-xl" />}
+                    label="Search event title..."
+                    name="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
             </div>
 
             <div className="w-full sm:w-auto">
@@ -27,7 +33,7 @@ export default function SearchSection() {
                     label="All Status"
                     name="status"
                     value={status}
-                    onChange={handleStatusChange}
+                    onChange={(e) => setStatus(e.target.value)}
                     options={[
                         { value: "all", label: "All Status" },
                         { value: "active", label: "Active" },
@@ -35,7 +41,12 @@ export default function SearchSection() {
                     ]}
                 />
             </div>
-            <CreateSurveySection />
+
+            {canCreateSurvey && (
+                <div className="w-full shrink-0 sm:w-auto">
+                    <CreateSurveySection />
+                </div>
+            )}
         </div>
     );
 }

@@ -202,7 +202,9 @@ export default function SidebarSection() {
         // ------------------------------------
         // EMPLOYEE HUB
         // ------------------------------------
-        ...(account_role == "employee"
+        ...(account_role == "employee" || ![1, 11].includes(
+                      data?.user?.account_employee?.department_id,
+                  )
             ? [
                   { is_label: true, name: "Employee Hub" },
                   {
