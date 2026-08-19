@@ -225,12 +225,20 @@
                             <td class="value">{{ $name ?? 'N/A' }}</td>
                         </tr>
                         <tr>
+                            <td class="label">Company Name</td>
+                            <td class="value">{{ $company_name ?? 'N/A' }}</td>
+                        </tr>
+                        <tr>
                             <td class="label">Email</td>
                             <td class="value">{{ $email ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <td class="label">Phone</td>
                             <td class="value">{{ $phone ?? 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Looking For</td>
+                            <td class="value">{{ $looking_for ?? 'A callback' }}</td>
                         </tr>
                         <tr>
                             <td class="label">Notes</td>
