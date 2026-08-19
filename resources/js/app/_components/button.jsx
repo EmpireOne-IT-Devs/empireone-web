@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import React from "react";
+import { FiLoader } from "react-icons/fi";
 
 const variantStyles = {
     primary: {
@@ -73,18 +74,10 @@ export default function Button({
             onClick={onClick}
         >
             {loading ? (
-                <div className="flex gap-1 py-2">
-                    {[0, 150, 300, 450, 600].map((delay, i) => (
-                        <span
-                            key={delay}
-                            style={{ animationDelay: `${delay}ms` }}
-                            className={`relative flex size-2 duration-1000 animate-bounce [animation-delay:${delay}ms]`}
-                        >
-                            <span className="absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                            <span className="relative inline-flex size-2 rounded-full bg-white"></span>
-                        </span>
-                    ))}
-                </div>
+                <>
+                    <FiLoader className="animate-spin" />
+                    SUBMITTING...
+                </>
             ) : (
                 children
             )}

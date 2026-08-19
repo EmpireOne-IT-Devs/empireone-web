@@ -12,9 +12,8 @@ const Radio = forwardRef(
     ) => {
         return (
             <label
-                className={`flex items-center gap-2 cursor-pointer ${
-                    disabled ? "opacity-60 cursor-not-allowed" : ""
-                }`}
+                className={`flex items-center gap-2 cursor-pointer ${disabled ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
             >
                 <input
                     type="radio"
