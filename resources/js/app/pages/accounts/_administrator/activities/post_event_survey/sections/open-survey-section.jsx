@@ -3,8 +3,10 @@ import { TbFileText } from "react-icons/tb";
 import { router } from "@inertiajs/react";
 
 export default function OpenSurveySection({ survey }) {
+  const account_role = window.location.pathname.split("/")[2];
+
   const handleOpen = () => {
-    router.visit(`/accounts/administrator/activities/post_event_survey/${survey?.id}`);
+    router.visit(`/accounts/${account_role}/activities/post_event_survey/${survey?.id}`);
   };
 
   return (

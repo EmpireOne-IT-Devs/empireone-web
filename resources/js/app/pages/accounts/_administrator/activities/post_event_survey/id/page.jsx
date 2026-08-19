@@ -8,8 +8,7 @@ import HeaderSection from "./sections/header-section";
 import SurveyInfoSection from "./sections/survey-info-section";
 import QuestionsSection from "./sections/questions-section";
 import ResponsesSection from "./sections/responses-section";
-
-const TABS = ["Questions", "Responses"];
+import SurveyFormSection from "./sections/survey-form-section";
 
 export default function Page() {
     const id = window.location.pathname.split("/")[5];
@@ -19,10 +18,18 @@ export default function Page() {
     const { selectedSurvey, selectedSurveyLoading } = useSelector(
         (state) => state.post_event_surveys
     );
+    const { data } = useSelector((state) => state.app);
 
     useEffect(() => {
         dispatch(get_post_event_survey_thunk(id));
     }, [dispatch, id]);
+
+    // Only departments 1 & 11 get full management access (Questions preview + Responses analytics).
+    const canManage = [1, 11].includes(data?.user?.account_employee?.department_id);
+
+    const TABS = canManage
+        ? ["Questions", "Responses", "Answer Survey"]
+        : ["Answer Survey"];
 
     if (selectedSurveyLoading || !selectedSurvey) {
         return (
@@ -61,13 +68,16 @@ export default function Page() {
                                 </button>
                             ))}
                         </div>
-                        
 
-                        {activeTab === 0 && (
+                        {canManage && activeTab === 0 && (
                             <QuestionsSection questions={selectedSurvey.questions} />
                         )}
-                        {activeTab === 1 && (
+                        {canManage && activeTab === 1 && (
                             <ResponsesSection surveyId={id} />
+                        )}
+                        {/* "Answer Survey" tab: index 2 for managers, index 0 for everyone else */}
+                        {activeTab === (canManage ? 2 : 0) && (
+                            <SurveyFormSection surveyId={id} />
                         )}
                     </div>
                 </div>
@@ -75,3 +85,4 @@ export default function Page() {
         </Layout>
     );
 }
+
