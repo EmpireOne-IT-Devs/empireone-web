@@ -84,7 +84,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
     const new_position_information = props_data?.job_posting?.job_requisition
     const agent_account = props_data?.applicant?.account_employee?.account;
     const watchedValues = watch();
-    console.log('agent_account', agent_account)
+    console.log('props_data?.applicant', props_data?.applicant)
 
     const new_report = leaders?.find(res => res.user_id == watchedValues.info_reporting_id_to)
     console.log('new_report', new_report?.user?.personal_information?.first_name)
@@ -98,8 +98,12 @@ const EmployeeChangeFormSection = ({ props_data }) => {
         if (watchedValues.position != new_position_information?.title) {
             setValue("is_position_and_title", true);
         }
-        if (leader_information?.id != new_position_information?.user?.id) {
+        if (leader_information?.id != new_position_information?.user?.id && new_position_information?.user?.id != undefined) {
             setValue("is_edit_reporting_to", true);
+        }
+
+        if (props_data?.recommendation == 'Regular') {
+            setValue("regular", true)
         }
 
         setValue('name', `${props_data?.applicant?.personal_information?.first_name} ${props_data?.applicant?.personal_information?.last_name}`)
@@ -114,10 +118,10 @@ const EmployeeChangeFormSection = ({ props_data }) => {
     }, [new_report, watchedValues.info_reporting_to])
 
     const selected_employee = useMemo(() => {
-        if (employees) {
-            return employees?.find((res) => res?.user_id == watchedValues?.user_id);
-        }
-    }, [employees?.length, watchedValues.user_id]);
+        return Array.isArray(employees)
+            ? employees.find((res) => res?.user_id == watchedValues?.user_id)
+            : null;
+    }, [employees, watchedValues?.user_id]);
 
 
     const selected_ecf = agent_account?.ecfs?.find(res => res.id == watchedValues.ecf_id)
@@ -147,7 +151,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                 info_account_id_from: employee_information?.account?.id,
                 info_account_id_to: new_position_information?.account_id,
                 info_status_from: employee_information?.status,
-                info_status_to: employee_information?.status,
+                info_status_to: props_data?.recommendation,
                 info_position_from: employee_information?.position,
                 info_position_to: new_position_information?.title,
                 info_reporting_from: reportingName,
@@ -416,10 +420,11 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                             />
                         </div>
                         <div className="flex gap-3 items-start justify-center w-full">
-                            {selected_employee?.status == "Probationary" && (
+                            {employee_information?.status == "Probationary" && (
                                 <Checkbox
                                     label="Regular"
                                     {...register("regular")}
+                                    checked={watchedValues.regular}
                                     onChange={(val) =>
                                         setValue("regular", val.target.checked)
                                     }
@@ -647,7 +652,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                             <Select
                                                 name="info_department_id_to"
                                                 className="w-full text-center"
-                                                disabled
+
                                                 options={data?.departments?.map(
                                                     (res) => ({
                                                         label: res.name,
@@ -687,7 +692,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                     <td className="border border-black p-1">
                                         {watchedValues.is_account_transfer ? (
                                             <Select
-                                                disabled
+
                                                 name="info_account_id_to"
                                                 className="w-full text-center"
                                                 options={data?.accounts?.map(
@@ -729,12 +734,13 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                         />
                                     </td>
                                     <td className="border border-black p-1 ">
-                                        {watchedValues.regular ? (
+                                        {watchedValues?.regular ? (
                                             <Input
                                                 type="text"
                                                 {...register("info_status_to", {
                                                     required: true,
                                                 })}
+                                                disabled
                                                 className="bg-transparent w-full outline-none text-center text-black"
                                                 error={errors.info_status_to}
                                             />
@@ -768,7 +774,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                                     "info_position_to",
                                                     { required: true },
                                                 )}
-                                                disabled
+
                                                 className="bg-transparent w-full outline-none text-center text-black"
                                                 error={errors.info_position_to}
                                             />
@@ -796,27 +802,32 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                         {/* leader_information */}
                                     </td>
                                     <td className="border border-black p-1">
-                                        <Select
+                                        {watchedValues.is_edit_reporting_to ? (
+                                            <Select
 
-                                            name="info_reporting_id_to"
-                                            className="w-full text-center"
-                                            options={leaders?.map((res) => ({
-                                                label: res.user.name,
-                                                value: res.user_id,
-                                            }))}
-                                            value={
-                                                watchedValues.info_reporting_id_to
-                                            }
-                                            onChange={(val) =>
-                                                setValue(
-                                                    "info_reporting_id_to",
-                                                    val,
-                                                )
-                                            }
-                                            error={
-                                                errors.info_reporting_id_to
-                                            }
-                                        />
+                                                name="info_reporting_id_to"
+                                                className="w-full text-center"
+                                                options={leaders?.map((res) => ({
+                                                    label: res.user.name,
+                                                    value: res.user_id,
+                                                }))}
+                                                value={
+                                                    watchedValues.info_reporting_id_to
+                                                }
+                                                onChange={(val) =>
+                                                    setValue(
+                                                        "info_reporting_id_to",
+                                                        val,
+                                                    )
+                                                }
+                                                error={
+                                                    errors.info_reporting_id_to
+                                                }
+                                            />
+                                        ) : (
+                                            "No Change"
+                                        )}
+
                                     </td>
                                     <td className="border border-black p-1">
                                         <Button
@@ -892,7 +903,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                                 "info_allowances_from",
                                                 { required: false },
                                             )}
-                                            
+
                                             className="bg-transparent w-full outline-none text-center text-black"
                                         />
                                     </td>

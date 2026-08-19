@@ -5,7 +5,6 @@ import store from "@/app/store/store";
 import { get_leader_thunk, get_performance_evaluation_thunk } from "@/app/redux/employee-relation-thunk";
 import EmployeeRelationLayout from "../../layout";
 import TableSection from "./_sections/table-section";
-import EmployeeMovementsLayout from "../layout";
 
 export default function Page() {
     useEffect(() => {
@@ -17,10 +16,8 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 <div className="py-3">
-                    <EmployeeMovementsLayout>
-                        <TabsSection />
+                   <TabsSection />
                         <TableSection />
-                    </EmployeeMovementsLayout>
                 </div>
             </EmployeeRelationLayout>
         </Layout>

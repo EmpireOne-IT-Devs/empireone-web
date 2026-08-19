@@ -5,296 +5,318 @@ import {
     Text,
     View,
     StyleSheet,
-    PDFViewer,
     Image,
 } from "@react-pdf/renderer";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import PDFLoader from "@/app/_components/pdf-loader";
 
-// 1. Define Styles
+// Refactored Stylesheet with layout, spacing, and contrast fixes
 const styles = StyleSheet.create({
-    viewer: {
-        width: "100%",
-        height: "100vh",
-        border: "none",
-    },
     page: {
-        padding: 30,
-        fontSize: 9,
+        padding: 24,
+        fontSize: 8,
         fontFamily: "Helvetica",
-        color: "#333",
-    },
-    logoContainer: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "200"
+        color: "#1e293b",
+        lineHeight: 1.2,
     },
     // Header
     headerContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 15,
-        borderBottomWidth: 2,
-        borderBottomColor: "#004a99",
-        paddingBottom: 10,
+        marginBottom: 12,
+        borderBottomWidth: 1.5,
+        borderBottomColor: "#0f172a",
+        paddingBottom: 8,
     },
-    logoText: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: "#004a99",
+    logoImage: {
+        width: 130,
+        height: "auto",
     },
     formTitleContainer: {
         alignItems: "flex-end",
     },
     formTitle: {
-        fontSize: 12,
-        fontWeight: "bold",
-        color: "#1a2b3c",
+        fontSize: 11,
+        fontFamily: "Helvetica-Bold",
+        color: "#0f172a",
+        textTransform: "uppercase",
     },
-    subTitle: {
-        fontSize: 8,
-        color: "#666",
-        marginTop: 2,
-    },
-    // Info Section
+
+    // Info Table
     infoSection: {
         borderWidth: 1,
-        borderColor: "#e2e8f0",
+        borderColor: "#cbd5e1",
         marginBottom: 10,
+        borderRadius: 2,
     },
     infoRow: {
         flexDirection: "row",
         borderBottomWidth: 1,
         borderBottomColor: "#e2e8f0",
-        backgroundColor: "#fafafa",
     },
     infoLabel: {
-        width: 130,
-        padding: 8,
-        fontWeight: "bold",
+        width: 120,
+        padding: 5,
+        fontFamily: "Helvetica-Bold",
+        backgroundColor: "#f1f5f9",
         borderRightWidth: 1,
-        borderRightColor: "#e2e8f0",
+        borderRightColor: "#cbd5e1",
+        color: "#334155",
     },
     infoValue: {
         flex: 1,
-        padding: 8,
-        backgroundColor: "#fffbe6",
+        padding: 5,
+        backgroundColor: "#ffffff",
+        color: "#0f172a",
     },
+
     // Rating Banner
     ratingBanner: {
-        backgroundColor: "#eff6ff",
-        padding: 10,
-        borderRadius: 4,
-        marginBottom: 15,
+        backgroundColor: "#f8fafc",
+        borderWidth: 1,
+        borderColor: "#e2e8f0",
+        padding: 6,
+        borderRadius: 2,
+        marginBottom: 10,
     },
     ratingBannerTitle: {
-        color: "#3b82f6",
-        marginBottom: 4,
-        fontSize: 8,
-        fontWeight: "bold",
+        color: "#0f172a",
+        marginBottom: 3,
+        fontSize: 7.5,
+        fontFamily: "Helvetica-Bold",
     },
     ratingScale: {
         flexDirection: "row",
-        color: "#3b82f6",
-        fontSize: 8,
+        color: "#475569",
+        fontSize: 7,
         justifyContent: "space-between",
     },
-    // Sections
+
+    // Section Headers
     sectionHeader: {
-        backgroundColor: "#1e293b",
-        color: "white",
-        padding: 8,
-        fontSize: 10,
-        fontWeight: "bold",
-        marginTop: 10,
-        marginBottom: 5,
+        backgroundColor: "#0f172a",
+        color: "#ffffff",
+        padding: 5,
+        fontSize: 8.5,
+        fontFamily: "Helvetica-Bold",
+        marginTop: 8,
+        marginBottom: 4,
+        borderRadius: 1,
     },
-    // Tables
-    tableHeader: {
+
+    // Section 1
+    colHeaderRow: {
         flexDirection: "row",
-        marginBottom: 5,
-        paddingHorizontal: 5,
+        backgroundColor: "#f1f5f9",
+        borderWidth: 1,
+        borderColor: "#cbd5e1",
+        paddingVertical: 4,
+        paddingHorizontal: 4,
     },
-    col1: { flex: 1, paddingRight: 5 },
-    col2: { flex: 1, paddingRight: 5 },
-    col3: { flex: 1 },
-    // Section 1 Specifics
+    colHeader: {
+        fontSize: 7,
+        fontFamily: "Helvetica-Bold",
+        color: "#475569",
+    },
     objectiveBox: {
         borderWidth: 1,
-        borderColor: "#e2e8f0",
-        marginBottom: 10,
+        borderColor: "#cbd5e1",
+        borderTopWidth: 0,
+        marginBottom: 8,
     },
     objectiveInputs: {
         flexDirection: "row",
     },
     inputArea: {
         flex: 1,
-        minHeight: 40,
-        backgroundColor: "#fffbe6",
+        padding: 5,
+        minHeight: 32,
+        backgroundColor: "#ffffff",
         borderRightWidth: 1,
         borderRightColor: "#e2e8f0",
-        padding: 5,
     },
     managerRatingArea: {
-        padding: 10,
+        padding: 4,
         alignItems: "center",
         borderTopWidth: 1,
         borderTopColor: "#e2e8f0",
+        backgroundColor: "#f8fafc",
     },
+
+    // Custom Radio Alignment
     circlesContainer: {
         flexDirection: "row",
         justifyContent: "center",
-        gap: 30,
-        marginTop: 5,
+        gap: 20,
+        marginTop: 2,
     },
     circleOption: {
         alignItems: "center",
     },
-    // Radio Button Logic
     circle: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
+        width: 9,
+        height: 9,
+        borderRadius: 4.5,
         borderWidth: 1,
-        borderColor: "#cbd5e1",
-        marginTop: 4,
+        borderColor: "#64748b",
+        marginTop: 2,
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#fff",
     },
     circleFilled: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        backgroundColor: "#2563eb",
+        width: 5,
+        height: 5,
+        borderRadius: 2.5,
+        backgroundColor: "#0f172a",
     },
-    // Section 2 Table
+
+    // Section 2
     reqTable: {
         borderWidth: 1,
-        borderColor: "#e2e8f0",
+        borderColor: "#cbd5e1",
+        marginBottom: 8,
     },
     reqHeaderRow: {
         flexDirection: "row",
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#f1f5f9",
         borderBottomWidth: 1,
-        borderBottomColor: "#e2e8f0",
-        padding: 8,
+        borderBottomColor: "#cbd5e1",
+        padding: 5,
     },
     reqRow: {
         flexDirection: "row",
         borderBottomWidth: 1,
         borderBottomColor: "#e2e8f0",
-        padding: 8,
+        padding: 5,
         alignItems: "center",
     },
     reqColMain: {
         flex: 1,
         borderRightWidth: 1,
         borderRightColor: "#e2e8f0",
-        paddingRight: 10,
+        paddingRight: 6,
     },
-    reqTitle: { fontWeight: "bold", marginBottom: 2 },
-    reqDesc: { fontSize: 7, color: "#64748b", fontStyle: "italic" },
+    reqTitle: {
+        fontFamily: "Helvetica-Bold",
+        fontSize: 7.5,
+        color: "#0f172a",
+    },
+    reqDesc: {
+        fontSize: 6.5,
+        color: "#64748b",
+        marginTop: 1,
+    },
     reqColRating: {
-        width: 150,
+        width: 140,
         flexDirection: "row",
         justifyContent: "space-around",
-        paddingLeft: 10,
+        paddingLeft: 6,
     },
-    // Over-all Rating Box
+
+    // Overall Table
     overallBox: {
         alignSelf: "flex-end",
-        width: 250,
-        marginTop: 10,
+        width: 220,
+        marginTop: 4,
+        marginBottom: 8,
         borderWidth: 1,
-        borderColor: "#e2e8f0",
+        borderColor: "#cbd5e1",
     },
     overallRow: {
         flexDirection: "row",
-        padding: 8,
+        padding: 4,
         borderBottomWidth: 1,
         borderBottomColor: "#e2e8f0",
-        backgroundColor: "#f8fafc",
+        backgroundColor: "#ffffff",
     },
     overallTotalRow: {
         flexDirection: "row",
-        padding: 8,
-        backgroundColor: "#1e293b",
-        color: "white",
+        padding: 5,
+        backgroundColor: "#0f172a",
+        color: "#ffffff",
     },
-    overallLabel: { flex: 1, fontWeight: "bold" },
-    overallValue: { width: 50, textAlign: "center", fontWeight: "bold" },
+    overallLabel: {
+        flex: 1,
+        fontFamily: "Helvetica-Bold",
+        fontSize: 7.5,
+    },
+    overallValue: {
+        width: 45,
+        textAlign: "right",
+        fontFamily: "Helvetica-Bold",
+        fontSize: 7.5,
+    },
+
     // Remarks
     remarksSection: {
         borderWidth: 1,
-        borderColor: "#e2e8f0",
-        padding: 10,
-        marginTop: 15,
+        borderColor: "#cbd5e1",
+        padding: 6,
+        marginBottom: 8,
     },
     remarksBox: {
+        minHeight: 35,
+        marginTop: 4,
+        padding: 4,
+        backgroundColor: "#f8fafc",
         borderWidth: 1,
-        borderColor: "#cbd5e1",
-        minHeight: 60,
-        marginTop: 10,
-        padding: 5,
-        backgroundColor: "#fffbe6",
+        borderColor: "#e2e8f0",
     },
+
     // Recommendations
     recommendationSection: {
-        marginTop: 15,
         flexDirection: "row",
-        gap: 20,
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 12,
     },
     recOption: {
         flexDirection: "row",
         alignItems: "center",
     },
-    // Signature
+
+    // Signatures
     signatureSection: {
-        marginTop: 40,
+        marginTop: 10,
         alignItems: "center",
-        width: 200,
-        alignSelf: "flex-end", // Aligning to the right
+        width: 180,
+        alignSelf: "flex-end",
     },
     signatureImage: {
-        width: 120,
-        height: 60,
+        width: 100,
+        height: 35,
         objectFit: "contain",
-        marginBottom: -10, // Pull it down over the text slightly
+        marginBottom: -5,
     },
     signatureLine: {
         borderTopWidth: 1,
-        borderTopColor: "#000",
+        borderTopColor: "#0f172a",
         width: "100%",
         textAlign: "center",
-        paddingTop: 5,
-        marginTop: 5,
-        fontSize: 8,
+        paddingTop: 3,
+        fontSize: 7,
+        fontFamily: "Helvetica-Bold",
+        color: "#334155",
     },
 });
 
-// Helper component for Radio Buttons
 const RadioRating = ({ selectedValue }) => (
     <View style={styles.circlesContainer}>
         {[1, 2, 3, 4, 5].map((num) => (
             <View key={num} style={styles.circleOption}>
-                <Text style={{ fontSize: 7, color: "#64748b" }}>{num}</Text>
+                <Text style={{ fontSize: 6.5, color: "#475569" }}>{num}</Text>
                 <View style={styles.circle}>
-                    {Number(selectedValue) === num && (
-                        <View style={styles.circleFilled} />
-                    )}
+                    {Number(selectedValue) === num && <View style={styles.circleFilled} />}
                 </View>
             </View>
         ))}
     </View>
 );
 
-// 2. Define the PDF Document Component
 export const EvaluationDocument = ({ data }) => {
-    // Safety check to ensure arrays exist
     const objectives = data?.objectives || [];
     const performances = data?.performances || [];
 
@@ -303,37 +325,24 @@ export const EvaluationDocument = ({ data }) => {
             <Page size="A4" style={styles.page}>
                 {/* Header */}
                 <View style={styles.headerContainer}>
-                    <View style={styles.logoContainer}>
-                        <Image src="/images/E1CXlogo2.png" />
-                    </View>
+                    <Image src="/images/E1CXlogo2.png" style={styles.logoImage} />
                     <View style={styles.formTitleContainer}>
-                        <Text style={styles.formTitle}>
-                            PERFORMANCE EVALUATION FORM
-                        </Text>
-                        <Text style={styles.subTitle}>
-                            {/* (Probationary Employee) */}
-                        </Text>
+                        <Text style={styles.formTitle}>Performance Evaluation Form</Text>
                     </View>
                 </View>
 
                 {/* Employee Info */}
                 <View style={styles.infoSection}>
                     <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>Employee Name: *</Text>
-                        <Text style={styles.infoValue}>
-                            {data?.employee_name || "-"}
-                        </Text>
+                        <Text style={styles.infoLabel}>Employee Name:</Text>
+                        <Text style={styles.infoValue}>{data?.employee_name || "-"}</Text>
                     </View>
                     <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>Supervisor Name: *</Text>
-                        <Text style={styles.infoValue}>
-                            {data?.supervisor_name || "-"}
-                        </Text>
+                        <Text style={styles.infoLabel}>Supervisor Name:</Text>
+                        <Text style={styles.infoValue}>{data?.supervisor_name || "-"}</Text>
                     </View>
                     <View style={[styles.infoRow, { borderBottomWidth: 0 }]}>
-                        <Text style={styles.infoLabel}>
-                            Date of Assessment: *
-                        </Text>
+                        <Text style={styles.infoLabel}>Date of Assessment:</Text>
                         <Text style={styles.infoValue}>
                             {data?.date_of_assessment
                                 ? moment(data.date_of_assessment).format("MM/DD/YYYY")
@@ -344,7 +353,7 @@ export const EvaluationDocument = ({ data }) => {
 
                 {/* Rating Scale Legend */}
                 <View style={styles.ratingBanner}>
-                    <Text style={styles.ratingBannerTitle}>Rating Scale:</Text>
+                    <Text style={styles.ratingBannerTitle}>RATING SCALE</Text>
                     <View style={styles.ratingScale}>
                         <Text>5 - Excellent</Text>
                         <Text>4 - Outstanding</Text>
@@ -355,172 +364,147 @@ export const EvaluationDocument = ({ data }) => {
                 </View>
 
                 {/* SECTION 1 */}
-                <Text style={styles.sectionHeader}>
-                    SECTION 1: OBJECTIVES (50%)
-                </Text>
-
-                <View style={styles.tableHeader}>
-                    <Text style={[styles.col1, { fontSize: 7, color: "#64748b" }]}>
-                        OBJECTIVE *
-                    </Text>
-                    <Text style={[styles.col2, { fontSize: 7, color: "#64748b" }]}>
-                        ACTION ITEMS *
-                    </Text>
-                    <Text style={[styles.col3, { fontSize: 7, color: "#64748b" }]}>
-                        OUTCOMES *
-                    </Text>
-                </View>
-
-                {objectives.map((obj, index) => (
-                    <View key={`obj-${index}`} style={styles.objectiveBox}>
-                        <View style={styles.objectiveInputs}>
-                            <View style={styles.inputArea}>
-                                <Text>{obj.title || "-"}</Text>
-                            </View>
-                            <View style={styles.inputArea}>
-                                <Text>{obj.action_items || "-"}</Text>
-                            </View>
-                            <View style={[styles.inputArea, { borderRightWidth: 0 }]}>
-                                <Text>{obj.outcomes || "-"}</Text>
-                            </View>
-                        </View>
-                        <View style={styles.managerRatingArea}>
-                            <Text style={{ fontSize: 7, color: "#64748b" }}>
-                                Manager Rating *
-                            </Text>
-                            <RadioRating selectedValue={obj.mgr_rating} />
-                        </View>
-                    </View>
-                ))}
-
-                {/* SECTION 2 */}
-                <Text style={styles.sectionHeader}>
-                    SECTION 2: GENERAL PERFORMANCE REQUIREMENTS (50%)
-                </Text>
-
-                <View style={styles.reqTable}>
-                    <View style={styles.reqHeaderRow}>
-                        <Text style={[styles.reqColMain, { fontWeight: "bold", fontSize: 8 }]}>
-                            REQUIREMENT
-                        </Text>
-                        <Text style={[styles.reqColRating, { fontWeight: "bold", fontSize: 8, justifyContent: "center" }]}>
-                            MGR. RATING *
-                        </Text>
+                <View wrap={false}>
+                    <Text style={styles.sectionHeader}>SECTION 1: OBJECTIVES (50%)</Text>
+                    <View style={styles.colHeaderRow}>
+                        <Text style={[styles.colHeader, { flex: 1 }]}>OBJECTIVE</Text>
+                        <Text style={[styles.colHeader, { flex: 1 }]}>ACTION ITEMS</Text>
+                        <Text style={[styles.colHeader, { flex: 1 }]}>OUTCOMES</Text>
                     </View>
 
-                    {performances.map((item, index) => (
-                        <View style={styles.reqRow} key={index}>
-                            <View style={styles.reqColMain}>
-                                <Text style={styles.reqTitle}>{item.title}</Text>
-                                <Text style={styles.reqDesc}>
-                                    {item.action_items}
+                    {objectives.map((obj, index) => (
+                        <View key={`obj-${index}`} style={styles.objectiveBox}>
+                            <View style={styles.objectiveInputs}>
+                                <View style={styles.inputArea}>
+                                    <Text>{obj.title || "-"}</Text>
+                                </View>
+                                <View style={styles.inputArea}>
+                                    <Text>{obj.action_items || "-"}</Text>
+                                </View>
+                                <View style={[styles.inputArea, { borderRightWidth: 0 }]}>
+                                    <Text>{obj.outcomes || "-"}</Text>
+                                </View>
+                            </View>
+                            <View style={styles.managerRatingArea}>
+                                <Text style={{ fontSize: 6.5, color: "#475569", fontFamily: "Helvetica-Bold" }}>
+                                    Manager Rating
                                 </Text>
-                            </View>
-                            <View style={styles.reqColRating}>
-                                {[1, 2, 3, 4, 5].map((num) => (
-                                    <View key={`req-${index}-${num}`} style={styles.circleOption}>
-                                        <Text style={{ fontSize: 6, color: "#64748b" }}>{num}</Text>
-                                        <View style={styles.circle}>
-                                            {Number(item.mgr_rating) === num && (
-                                                <View style={styles.circleFilled} />
-                                            )}
-                                        </View>
-                                    </View>
-                                ))}
+                                <RadioRating selectedValue={obj.mgr_rating} />
                             </View>
                         </View>
                     ))}
                 </View>
 
-                {/* OVERALL RATING */}
-                <Text style={styles.sectionHeader}>OVER-ALL RATING</Text>
-                <View style={styles.overallBox}>
-                    <View style={styles.overallRow}>
-                        <Text style={styles.overallLabel}>
-                            Section 1 (50%) Average:
-                        </Text>
-                        <Text style={styles.overallValue}>
-                            {data?.section1Score || "-"}
-                        </Text>
-                    </View>
-                    <View style={styles.overallRow}>
-                        <Text style={styles.overallLabel}>
-                            Section 2 (50%) Average:
-                        </Text>
-                        <Text style={styles.overallValue}>
-                            {data?.section2Score || "-"}
-                        </Text>
-                    </View>
-                    <View style={styles.overallTotalRow}>
-                        <Text style={styles.overallLabel}>
-                            TOTAL AVERAGE SCORE:
-                        </Text>
-                        <Text style={styles.overallValue}>
-                            {data?.totalScore || "-"}
-                        </Text>
-                    </View>
-                </View>
-
-                {/* REMARKS */}
-                <View style={styles.remarksSection}>
-                    <Text style={{ fontSize: 8, fontWeight: "bold" }}>
-                        REMARKS / COMMENTS: *
+                {/* SECTION 2 */}
+                <View wrap={false}>
+                    <Text style={styles.sectionHeader}>
+                        SECTION 2: GENERAL PERFORMANCE REQUIREMENTS (50%)
                     </Text>
-                    <View style={styles.remarksBox}>
-                        <Text>{data?.remarks || ""}</Text>
-                    </View>
-                </View>
 
-                {/* RECOMMENDATION (Mapped from your form code) */}
-                <View style={styles.recommendationSection}>
-                    <Text style={{ fontSize: 8, fontWeight: "bold" }}>
-                        RECOMMENDATION:
-                    </Text>
-                    {["Mid-Probationary", "Regular", "Extended Probationary", "End of Contract"].map(
-                        (recOption) => (
-                            <View key={recOption} style={styles.recOption}>
-                                <View style={styles.circle}>
-                                    {data?.recommendation === recOption && (
-                                        <View style={styles.circleFilled} />
-                                    )}
+                    <View style={styles.reqTable}>
+                        <View style={styles.reqHeaderRow}>
+                            <Text style={[styles.reqColMain, { fontFamily: "Helvetica-Bold", fontSize: 7, color: "#475569" }]}>
+                                REQUIREMENT
+                            </Text>
+                            <Text style={{ width: 140, fontFamily: "Helvetica-Bold", fontSize: 7, color: "#475569", textAlign: "center" }}>
+                                MGR. RATING
+                            </Text>
+                        </View>
+
+                        {performances.map((item, index) => (
+                            <View style={styles.reqRow} key={index}>
+                                <View style={styles.reqColMain}>
+                                    <Text style={styles.reqTitle}>{item.title}</Text>
+                                    <Text style={styles.reqDesc}>{item.action_items}</Text>
                                 </View>
-                                <Text style={{ fontSize: 8, marginLeft: 4 }}>
-                                    {recOption}
-                                </Text>
+                                <View style={styles.reqColRating}>
+                                    {[1, 2, 3, 4, 5].map((num) => (
+                                        <View key={`req-${index}-${num}`} style={styles.circleOption}>
+                                            <Text style={{ fontSize: 6, color: "#64748b" }}>{num}</Text>
+                                            <View style={styles.circle}>
+                                                {Number(item.mgr_rating) === num && (
+                                                    <View style={styles.circleFilled} />
+                                                )}
+                                            </View>
+                                        </View>
+                                    ))}
+                                </View>
                             </View>
-                        )
-                    )}
+                        ))}
+                    </View>
                 </View>
 
-                {/* SIGNATURE */}
-                <View style={styles.signatureSection}>
-                    {data?.signature && (
-                        <Image
-                            src={data.signature}
-                            style={styles.signatureImage}
-                        />
-                    )}
-                    <Text style={{ fontWeight: "bold", fontSize: 10 }}>
-                        {data?.supervisor_name || ""}
-                    </Text>
-                    <Text style={styles.signatureLine}>
-                        IMMEDIATE SUPERIOR NAME & SIGNATURE
-                    </Text>
+                {/* OVERALL RATING & REMARKS */}
+                <View wrap={false}>
+                    <Text style={styles.sectionHeader}>OVERALL SUMMARY</Text>
+                    <View style={styles.overallBox}>
+                        <View style={styles.overallRow}>
+                            <Text style={styles.overallLabel}>Section 1 (50%) Avg:</Text>
+                            <Text style={styles.overallValue}>{data?.section1Score || "-"}</Text>
+                        </View>
+                        <View style={styles.overallRow}>
+                            <Text style={styles.overallLabel}>Section 2 (50%) Avg:</Text>
+                            <Text style={styles.overallValue}>{data?.section2Score || "-"}</Text>
+                        </View>
+                        <View style={styles.overallTotalRow}>
+                            <Text style={styles.overallLabel}>TOTAL AVERAGE:</Text>
+                            <Text style={styles.overallValue}>{data?.totalScore || "-"}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.remarksSection}>
+                        <Text style={{ fontSize: 7.5, fontFamily: "Helvetica-Bold", color: "#334155" }}>
+                            REMARKS / COMMENTS:
+                        </Text>
+                        <View style={styles.remarksBox}>
+                            <Text>{data?.remarks || "-"}</Text>
+                        </View>
+                    </View>
+
+                    {/* RECOMMENDATION */}
+                    <View style={styles.recommendationSection}>
+                        <Text style={{ fontSize: 7.5, fontFamily: "Helvetica-Bold", color: "#334155" }}>
+                            RECOMMENDATION:
+                        </Text>
+                        {["Mid-Probationary", "Regular", "Extended Probationary", "End of Contract"].map(
+                            (recOption) => (
+                                <View key={recOption} style={styles.recOption}>
+                                    <View style={styles.circle}>
+                                        {data?.recommendation === recOption && (
+                                            <View style={styles.circleFilled} />
+                                        )}
+                                    </View>
+                                    <Text style={{ fontSize: 7, marginLeft: 3, color: "#334155" }}>
+                                        {recOption}
+                                    </Text>
+                                </View>
+                            )
+                        )}
+                    </View>
+
+                    {/* SIGNATURE */}
+                    <View style={styles.signatureSection}>
+                        {data?.signature && (
+                            <Image src={data.signature} style={styles.signatureImage} />
+                        )}
+                        <Text style={{ fontFamily: "Helvetica-Bold", fontSize: 8.5, marginBottom: 2 }}>
+                            {data?.supervisor_name || ""}
+                        </Text>
+                        <Text style={styles.signatureLine}>
+                            IMMEDIATE SUPERIOR NAME & SIGNATURE
+                        </Text>
+                    </View>
                 </View>
             </Page>
         </Document>
     );
 };
 
-
 export default function ResultFormSection() {
-    // 1. Pull directly from Redux
     const { evaluation } = useSelector((store) => store.human_resources);
 
-    // Safety fallback while Redux is loading
     if (!evaluation) return null;
 
-    // 2. Recreate the calculation logic based on raw database arrays
     const getAverage = (arr) => {
         if (!arr || arr.length === 0) return 0;
         const ratings = arr
@@ -538,7 +522,6 @@ export default function ResultFormSection() {
             ? ((parseFloat(section1Score) + parseFloat(section2Score)) / 2).toFixed(2)
             : 0;
 
-    // 3. Map the database fields to the PDF's expected keys
     const pdfPayload = {
         employee_name: evaluation?.user?.personal_information
             ? `${evaluation.user.personal_information.first_name} ${evaluation.user.personal_information.last_name}`
@@ -548,20 +531,20 @@ export default function ResultFormSection() {
             : "",
         date_of_assessment: evaluation?.date_of_assessment,
 
-        // Map section1s to 'objectives' format
-        objectives: evaluation?.section1s?.map((res) => ({
-            title: res.objective,
-            action_items: res.action,
-            outcomes: res.outcome,
-            mgr_rating: String(res.rating || ""),
-        })) || [],
+        objectives:
+            evaluation?.section1s?.map((res) => ({
+                title: res.objective,
+                action_items: res.action,
+                outcomes: res.outcome,
+                mgr_rating: String(res.rating || ""),
+            })) || [],
 
-        // Map section2s to 'performances' format
-        performances: evaluation?.section2s?.map((res) => ({
-            title: res.requirements,
-            action_items: res.description,
-            mgr_rating: String(res.rating || ""),
-        })) || [],
+        performances:
+            evaluation?.section2s?.map((res) => ({
+                title: res.requirements,
+                action_items: res.description,
+                mgr_rating: String(res.rating || ""),
+            })) || [],
 
         remarks: evaluation?.remarks || "",
         recommendation: evaluation?.recommendation || "",
@@ -570,6 +553,6 @@ export default function ResultFormSection() {
         totalScore: totalScore,
         signature: evaluation?.supervisor?.account_employee?.signature,
     };
-console.log('evaluation',evaluation)
+
     return <PDFLoader pdf={<EvaluationDocument data={pdfPayload} />} width="w-full" />;
 }

@@ -50,6 +50,7 @@ export default function ApplicantTableSection() {
         },
     ];
 
+    console.log("evaluations", applicants?.data);
 
     const tableData = applicants?.data?.map((res) => ({
         name: <div className="flex gap-1">

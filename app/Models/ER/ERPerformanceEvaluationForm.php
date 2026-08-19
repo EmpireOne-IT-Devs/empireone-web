@@ -50,7 +50,7 @@ class ERPerformanceEvaluationForm extends Model
     }
     public function applicant(): HasOne
     {
-        return $this->hasOne(User::class, 'id', 'user_id')->with(['account_employee']);
+        return $this->hasOne(User::class, 'id', 'user_id')->with(['account_employee','personal_information']);
     }
 
     public function evaluation_form(): HasOne

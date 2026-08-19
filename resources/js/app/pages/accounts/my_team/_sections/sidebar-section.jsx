@@ -28,6 +28,8 @@ const SidebarSection = () => {
         {
             name: 'Assessment Process',
             icon: <FcFolder className="w-6 h-6" />,
+            path: "/accounts/administrator/my_team/assessment_process",
+            active: currentPath === "assessment_process",
         },
     ];
 

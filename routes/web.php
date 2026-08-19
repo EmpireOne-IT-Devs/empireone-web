@@ -236,7 +236,6 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
                 Route::inertia('/assessment_process', "accounts/_administrator/human_resources/employee_movements/assessment_process/page");
                 Route::inertia('/assessment_process/promotions', "accounts/_administrator/human_resources/employee_movements/assessment_process/promotions/page");
                 Route::inertia('/assessment_process/transfers', "accounts/_administrator/human_resources/employee_movements/assessment_process/transfers/page");
-                Route::inertia('/employee_status_changes', "accounts/_administrator/human_resources/employee_movements/employee_status_changes/page");
                 // Route::inertia('/position_and_title', "accounts/_administrator/human_resources/employee_movements/position_and_title/page");
                 // Route::inertia('/tiering', "accounts/_administrator/human_resources/employee_movements/tiering/page");
             });

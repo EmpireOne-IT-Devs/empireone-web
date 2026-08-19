@@ -247,7 +247,7 @@ const DetailRow = ({ label, from, to, isLast }) => (
             <Text>{from}</Text>
         </View>
         <View style={[styles.colValueLast, { width: "37.5%" }]}>
-            <Text>{to}</Text>
+            <Text>{from == to ? 'No Change' : to}</Text>
         </View>
     </View>
 );
@@ -448,7 +448,7 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                 />
                             )}
                             <Text style={{ marginTop: -20 }}>
-                               {safeData?.name}
+                                {safeData?.name}
                             </Text>
                             <Text style={[styles.bold, { marginTop: 8 }]}>Employee:</Text>
                             {/* <Text>Signature over Printed Name / Date</Text> */}
