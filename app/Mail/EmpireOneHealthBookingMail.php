@@ -32,6 +32,9 @@ class EmpireOneHealthBookingMail extends Mailable
     public function build()
     {
         return $this->subject('EmpireOne Health Booking Confirmation')
-            ->view('emails.empireonehealth.booking-confirmation');
+            ->view('emails.empireonehealth.booking-confirmation')
+            ->with([
+                'name' => $this->user['name'] ?? 'there',
+            ]);
     }
 }

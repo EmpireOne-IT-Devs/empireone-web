@@ -64,11 +64,27 @@ class BookingController extends Controller
             ]);
         }
 
-        Mail::to("eogs.quickly@gmail.com")->send(
-            new \App\Mail\EmpireOneHealthBookingMail(
-                $request->only(['name', 'email', 'phone', 'notes'])
-            )
-        );
+        if ($request->filled('email')) {
+            try {
+                Mail::to($request->email)->send(
+                    new \App\Mail\EmpireOneHealthBookingMail(
+                        $request->only(['name', 'email', 'phone', 'notes'])
+                    )
+                );
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send EmpireOne Health booking email: ' . $e->getMessage());
+            }
+        }
+
+        try {
+            Mail::to('eogs.quickly@gmail.com')->send(
+                new \App\Mail\EmpireOneHealthNotificationBookingMail(
+                    $request->only(['name', 'email', 'phone', 'notes', 'company_name', 'source', 'looking_for'])
+                )
+            );
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send EmpireOne Health admin notification email: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,

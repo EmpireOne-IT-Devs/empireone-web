@@ -1,1 +1,0 @@
-import{n as a}from"./app-ik8-odP3.js";async function c(e){return await a.post("/api/er/employee_change_form",e)}async function o(e){return(await a.get(`/api/er/employee_change_form/${e}`)).data}async function _(e){return await a.post("/api/er/accept_employee_change_form",e)}export{_ as a,c,o as g};
