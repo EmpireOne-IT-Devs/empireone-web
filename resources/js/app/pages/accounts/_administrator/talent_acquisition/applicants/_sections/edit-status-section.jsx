@@ -76,6 +76,7 @@ export default function EditStatusSection({ data, table_status }) {
         setIsEditing(false);
     };
 
+    console.log('datadatasss',data?.job_posting?.job_requisition?.target_start_date)
     async function submit_changes(e) {
         try {
             setLoading(true);
@@ -83,6 +84,7 @@ export default function EditStatusSection({ data, table_status }) {
 
             await update_job_application_status_service({
                 ...data,
+                start_date:data?.job_posting?.job_requisition?.target_start_date,
                 [table_status]: e,
             });
             await store.dispatch(get_applicants_thunk());

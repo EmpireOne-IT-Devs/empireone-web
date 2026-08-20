@@ -152,8 +152,7 @@ class AccountContractController extends Controller
         if (!$employee->is_has_contract || !$employee->onboarding_agree_on || !empty($employee->employee_id)) {
             return;
         }
-        $this->processEmployeeHiring($employee, $request->user_id);
-
+        // $this->processEmployeeHiring($employee, $request->user_id, $request->start_date);
         return response()->json([
             'message' => 'Onboarding documents record saved successfully',
         ], 200);
@@ -170,10 +169,10 @@ class AccountContractController extends Controller
             ['is_has_contract' => true]
         );
 
-        if (!$employee->is_has_contract || !$employee->onboarding_agree_on || !empty($employee->employee_id)) {
+        if (!$employee->is_has_contract || !empty($employee->employee_id)) {
             return;
         }
-        $this->processEmployeeHiring($employee, $request->user_id);
+        $this->processEmployeeHiring($employee, $request->user_id, $request->started_at);
 
         return response()->json([
             'message' => 'Contract record saved successfully',
@@ -183,11 +182,11 @@ class AccountContractController extends Controller
     /**
      * Handles employee ID assignment and onboarding status updates.
      */
-    function processEmployeeHiring(AccountEmployee $employee, $userId): void
+    function processEmployeeHiring(AccountEmployee $employee, $userId, $start_date): void
     {
 
         // Generate unique employee ID for today (YYMMDDXX)
-        $prefix = now()->format('ymd');
+        $prefix = Carbon::parse($start_date)->format('ymd');
 
         $lastSequence = AccountEmployee::where('employee_id', 'like', $prefix . '%')
             ->selectRaw('MAX(CAST(RIGHT(employee_id, 2) AS UNSIGNED)) as max_seq')

@@ -674,7 +674,7 @@ class JobApplicationController extends Controller
             'status' => 'success',
         ], 200);
     }
-    public function generate_employee_id($user_id)
+    public function generate_employee_id($user_id,$start_date)
     {
         $employee = AccountEmployee::firstOrCreate(
             ['user_id' => $user_id]
@@ -682,7 +682,7 @@ class JobApplicationController extends Controller
 
         // Instantiate controller if method is non-static, or call directly
         $contractController = app(AccountContractController::class);
-        $contractController->processEmployeeHiring($employee, $user_id);
+        $contractController->processEmployeeHiring($employee, $user_id,$start_date);
 
         return $employee->fresh();
     }
@@ -694,7 +694,7 @@ class JobApplicationController extends Controller
         if ($request->final_status == 'Failed' || $request->interview_status == 'Failed') {
             Mail::to($request->user['email'])->send(new ApplicantRejected($ja));
         } else if ($request->final_status == 'Hired') {
-            $this->generate_employee_id($ja->user_id);
+            $this->generate_employee_id($ja->user_id,$request->start_date);
         }
         if (!$ja) {
             return response()->json([
