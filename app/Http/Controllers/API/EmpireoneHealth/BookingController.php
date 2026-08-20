@@ -45,6 +45,22 @@ class BookingController extends Controller
             ]);
     }
 
+    private function send_empireone_health_consultation_schedule(array $payload)
+    {
+        $webAppUrl = env('SEND_EMPIREONEHEALTH_CONSULTATION');
+        Http::asJson()
+            ->withOptions([
+                'allow_redirects' => [
+                    'strict' => true, // Preserves POST method and JSON payload across Google 302 redirects
+                ],
+            ])
+            ->post($webAppUrl, [
+                'recipient'      => $payload['recipient'],
+                'subject' => $payload['subject'],
+                'body' => $payload['body'], // Contains your HTML string
+            ]);
+    }
+
     public function add_appointment(Request $request)
     {
         $request->validate([
@@ -195,6 +211,37 @@ class BookingController extends Controller
         ]);
 
         $booking = EmpireOneHealthConsultationAppointment::create($validated);
+
+        $this->send_empireone_health_consultation_schedule([
+            'recipient' => 'info@empireonehealth.com',
+            'subject' => "Consultation Appointment #{$booking->id}",
+            'body' => view('emails.empireonehealth.booking-notification', [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'notes' => $request->notes,
+                'company_name' => $request->company_name ?? 'NA',
+                'source' => $request->source ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'NA',
+                'appointment_id' => $booking->id ?? 'NA',
+            ])->render(),
+        ]);
+
+
+        $this->send_empireone_health_consultation_schedule([
+            'recipient' => 'info@empireonehealth.com',
+            'subject' => "Consultation Appointment #{$booking->id}",
+            'body' => view('emails.empireonehealth.booking-notification', [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'notes' => $request->notes,
+                'company_name' => $request->company_name ?? 'NA',
+                'source' => $request->source ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'NA',
+                'appointment_id' => $booking->id ?? 'NA',
+            ])->render(),
+        ]);
 
         return response()->json([
             'success' => true,
