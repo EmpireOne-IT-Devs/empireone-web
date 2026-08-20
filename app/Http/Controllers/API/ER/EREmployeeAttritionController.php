@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\ER;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountEmployee;
 use App\Models\ER\EREmployeeAttrition;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,8 @@ class EREmployeeAttritionController extends Controller
      */
     public function index()
     {
-        //
+        $attritions = EREmployeeAttrition::with(['employee'])->paginate(12);
+        return response()->json($attritions, 200);
     }
 
     /**
@@ -40,11 +42,21 @@ class EREmployeeAttritionController extends Controller
                 'separation_date' => $request->separation_date,
                 'employment_status' => $request->employment_status,
                 'status' => $request->status,
-                'reason' => $request->reason,
+                'reason_for_separation' => $request->reason_for_separation,
                 'is_rehire' => $request->is_rehire,
                 'attrition_status' => 'Pending',
             ]
         );
+
+        $account_employee = AccountEmployee::where('employee_id', $request->employee_id)->first();
+        if ($account_employee) {
+            $account_employee->update([
+                'employment_status' => $request->employment_status,
+                'reason_for_separation' => $request->reason_for_separation,
+                'is_rehire' => $request->is_rehire
+            ]);
+        }
+
 
         return response()->json([
             'status' => 'success',

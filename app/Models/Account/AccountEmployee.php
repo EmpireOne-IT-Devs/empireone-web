@@ -41,7 +41,9 @@ class AccountEmployee extends Model
         'position_level', //
         'basic_pay', //
         'allowance', //
-        'attrition_status'
+        'employment_status',
+        'reason_for_separation',
+        'is_rehire'
     ];
 
 

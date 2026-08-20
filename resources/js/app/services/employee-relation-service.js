@@ -13,6 +13,10 @@ export async function get_probationary_service() {
     return (await axios.get(`/api/accounts/get_probationary`)).data;
 }
 
+export async function get_attritions_service() {
+    return (await axios.get(`/api/er/attrition`)).data;
+}
+
 export async function add_attrition_service(data) {
     return (await axios.post(`/api/er/attrition`, data)).data;
 }

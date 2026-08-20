@@ -100,6 +100,7 @@ class AccountEmployeeController extends Controller
             'site',
             'reporting_to'
         ])
+            ->whereNull('employment_status')
             ->whereNotNull('employee_id')
             // Filter by Role
             ->whereHas('user', function ($query) {

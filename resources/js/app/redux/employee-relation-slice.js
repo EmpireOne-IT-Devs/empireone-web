@@ -17,6 +17,7 @@ export const employeeRelationSlice = createSlice({
         applicants: [],
         users: [],
         acknowledgements: [],
+        attritions: [],
     },
     reducers: {
         setEmployees: (state, action) => {
@@ -61,10 +62,15 @@ export const employeeRelationSlice = createSlice({
         setAcknowledgements: (state, action) => {
             state.acknowledgements = action.payload;
         },
+        setAttritions: (state, action) => {
+            state.attritions = action.payload;
+        },
     },
 });
+
 export const {
     setEmployees,
+    setAttritions,
     setEmployeesLoading,
     setPools,
     setProbationaries,

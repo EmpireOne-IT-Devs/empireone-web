@@ -33,7 +33,7 @@ return new class extends Migration
                 'Resigned',
                 'EOPE',
             ])->nullable();
-            $table->longText('reason')->nullable();
+            $table->longText('reason_for_separation')->nullable();
             $table->enum('is_rehire', [
                 'Yes',
                 'No',

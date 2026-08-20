@@ -20,7 +20,7 @@ const Select = forwardRef(
     ) => {
         const [search, setSearch] = useState("");
         const [isOpen, setIsOpen] = useState(false);
-        const containerRef = useRef();
+        const containerRef = useRef(null);
 
         // Sync search text with value
         useEffect(() => {
@@ -36,12 +36,12 @@ const Select = forwardRef(
             setIsOpen(false);
         };
 
-        const handleInputClick = (e) => {
-            e.stopPropagation(); // Prevent clicks from bleeding to parent modal
-            if (!disabled) setIsOpen(true);
+        const handleInputClick = () => {
+            if (!disabled) setIsOpen((prev) => !prev);
         };
 
         // Close dropdown on outside click
+        // Close dropdown on outside click (using capture phase)
         useEffect(() => {
             const handleClickOutside = (e) => {
                 if (
@@ -51,9 +51,11 @@ const Select = forwardRef(
                     setIsOpen(false);
                 }
             };
-            document.addEventListener("mousedown", handleClickOutside);
+
+            // 'true' uses the capture phase so parent stopPropagation won't block it
+            window.addEventListener("mousedown", handleClickOutside, true);
             return () =>
-                document.removeEventListener("mousedown", handleClickOutside);
+                window.removeEventListener("mousedown", handleClickOutside, true);
         }, []);
 
         // Filter options
@@ -83,7 +85,7 @@ const Select = forwardRef(
                         value={search}
                         onChange={(e) => {
                             setSearch(e.target.value);
-                            setIsOpen(true); // open dropdown while typing
+                            setIsOpen(true);
                         }}
                         onClick={handleInputClick}
                         placeholder=""
@@ -131,28 +133,19 @@ const Select = forwardRef(
 
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
-                        <ul
-                            className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg"
-                            // Block any clicks inside the UL from reaching the modal backdrop
-                            onMouseDown={(e) => e.stopPropagation()}
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <ul className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg">
                             {filteredOptions.length > 0 ? (
                                 filteredOptions.map((option, idx) => (
                                     <li
                                         key={idx}
                                         className={`cursor-pointer px-4 py-2 hover:bg-purple-100 text-black text-sm ${value === option.value
-                                                ? "bg-purple-50 text-purple-600"
-                                                : ""
+                                            ? "bg-purple-50 text-purple-600"
+                                            : ""
                                             }`}
                                         onMouseDown={(e) => {
-                                            e.preventDefault(); // Prevent input from losing focus
-                                            e.stopPropagation(); // Stop bubbling
+                                            e.preventDefault(); // Prevent input defocusing
                                         }}
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // Stop bubbling to modal
-                                            handleSelect(option); // Moved selection logic here
-                                        }}
+                                        onClick={() => handleSelect(option)}
                                     >
                                         {option.label}
                                     </li>

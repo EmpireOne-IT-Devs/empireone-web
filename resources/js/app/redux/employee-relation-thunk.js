@@ -8,6 +8,7 @@ import {
 } from "../services/employee-change-form-service";
 import {
     get_acknowledgement_service,
+    get_attritions_service,
     get_employees_service,
     get_probationary_service,
     get_regular_service,
@@ -31,6 +32,12 @@ export function get_employees_thunk() {
     };
 }
 
+export function get_attritions_thunk() {
+    return async function (dispatch, getState) {
+        const result = await get_attritions_service();
+        dispatch(employeeRelationSlice.actions.setAttritions(result.data));
+    };
+}
 export function get_employee_applicants_thunk() {
     return async function (dispatch, getState) {
         const result = await get_employee_applicants_service();

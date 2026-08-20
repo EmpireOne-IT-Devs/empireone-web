@@ -52,7 +52,7 @@ const REASON_OPTIONS = TERMINATION_REASONS.map((reason) => ({
     value: reason
 }));
 
-const EMPLOYMENT_STATUS_OPTIONS = ['Terminated', 'Resigned', 'EOPE'].map((status) => ({
+const EMPLOYMENT_STATUS_OPTIONS = ['Terminated', 'Resigned', 'EOPE', 'AWOL', 'End of Contrac', 'Trainee Fallout'].map((status) => ({
     label: status,
     value: status
 }));
@@ -64,7 +64,7 @@ export default function AddAttritionSection({ props_data }) {
     const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm({
         defaultValues: {
             separation_date: '',
-            reason: '',
+            reason_for_separation: '',
             is_rehire: '',
             employment_status: ''
         }
@@ -219,31 +219,7 @@ export default function AddAttritionSection({ props_data }) {
                     </div>
 
                     <div className="flex flex-col gap-3 px-2 w-full mt-6">
-                        {/* Separation Date */}
-                        <div className="flex flex-col">
-                            <Input
-                                type="date"
-                                label="Separation Date"
-                                disabled={isSubmitting}
-                                {...register("separation_date", { required: "Separation date is required" })}
-                            />
-                            {errors.separation_date && (
-                                <span className="text-xs text-red-500 mt-1">{errors.separation_date.message}</span>
-                            )}
-                        </div>
 
-                        {/* Reason for separation */}
-                        <div className="flex flex-col">
-                            <Select
-                                label="Reason for separation"
-                                disabled={isSubmitting}
-                                options={REASON_OPTIONS}
-                                {...register("reason", { required: "Please select a reason for separation" })}
-                            />
-                            {errors.reason && (
-                                <span className="text-xs text-red-500 mt-1">{errors.reason.message}</span>
-                            )}
-                        </div>
 
                         {/* Rehire eligibility - FIXED WITH CONTROLLER */}
                         <div className="flex flex-col">
@@ -275,6 +251,32 @@ export default function AddAttritionSection({ props_data }) {
                             />
                             {errors.is_rehire && (
                                 <span className="text-xs text-red-500 mt-1">{errors.is_rehire.message}</span>
+                            )}
+                        </div>
+
+                        {/* Separation Date */}
+                        <div className="flex flex-col">
+                            <Input
+                                type="date"
+                                label="Separation Date"
+                                disabled={isSubmitting}
+                                {...register("separation_date", { required: "Separation date is required" })}
+                            />
+                            {errors.separation_date && (
+                                <span className="text-xs text-red-500 mt-1">{errors.separation_date.message}</span>
+                            )}
+                        </div>
+
+                        {/* Reason for separation */}
+                        <div className="flex flex-col">
+                            <Select
+                                label="Reason for separation"
+                                disabled={isSubmitting}
+                                options={REASON_OPTIONS}
+                                {...register("reason_for_separation", { required: "Please select a reason for separation" })}
+                            />
+                            {errors.reason_for_separation && (
+                                <span className="text-xs text-red-500 mt-1">{errors.reason_for_separation.message}</span>
                             )}
                         </div>
 

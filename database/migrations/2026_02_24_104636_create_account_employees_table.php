@@ -57,6 +57,11 @@ return new class extends Migration
             ])->default('Rank and File');
             $table->string('basic_pay')->nullable();
             $table->string('allowance')->nullable();
+            $table->string('')->nullable();
+            $table->enum('is_rehire', [
+                'Yes',
+                'No',
+            ])->nullable();
             $table->enum('status', [
                 'Probationary',
                 'Regular',
@@ -69,7 +74,7 @@ return new class extends Migration
                 'Terminated',
                 'Trainee Fallout',
             ])->nullable();
-            $table->enum('attrition_status', [
+            $table->enum('reason_for_separation', [
                 'Resignation - Personal',
                 'Resignation - Better Opportunity',
                 'Resignation - Career Change',
@@ -92,6 +97,14 @@ return new class extends Migration
                 'Termination - Absconding/ AWOL',
                 'Redundancy',
                 'End of Contract (Fixed Term)'
+            ])->nullable();
+            $table->enum('employment_status', [
+                'Terminated',
+                'Resigned',
+                'EOPE',
+                'AWOL',
+                'End of Contrac',
+                'Trainee Fallout'
             ])->nullable();
             $table->timestamps();
         });
