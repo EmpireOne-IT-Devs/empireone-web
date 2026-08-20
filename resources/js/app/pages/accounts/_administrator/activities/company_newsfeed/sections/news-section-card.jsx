@@ -110,12 +110,7 @@
 
         return (
             <div className="w-full bg-[#f4f6f9] p-6 rounded-2xl min-h-full">
-                <div className="flex items-center gap-2 mb-5">
-                    <Newspaper className="text-[#0f172a]" size={22} />
-                    <h2 className="text-lg font-bold text-[#0f172a] tracking-tight">
-                        Latest News
-                    </h2>
-                </div>
+               
 
                 {postsLoading && newsItems.length === 0 ? (
                     <div className="grid grid-cols-2 gap-5">

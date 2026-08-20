@@ -223,7 +223,7 @@ class EngagementPostEventController extends Controller
                 'message'      => 'required|string',
                 'month'        => 'nullable|string|max:20',
                 'year'         => 'nullable|integer',
-                'publish_to'   => 'required|string|in:All Employees,Department Only,Management',
+                'publish_to'   => 'required|string|max:100',
                 'scheduled_at' => 'nullable|date',
                 'media'        => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,webm|max:51200',
                 'options'      => 'required_if:type,poll|array|min:2',

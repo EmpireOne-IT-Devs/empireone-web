@@ -130,7 +130,7 @@ function PollCard({ post, onClick }) {
     );
 }
 
-export default function EngagementCardSection() {
+export default function EngagementCardSection({ onCardClick }) {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [selectedPost, setSelectedPost] = useState(null);
@@ -159,9 +159,21 @@ export default function EngagementCardSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {items.map((item) =>
                         item.type === "poll" ? (
-                            <PollCard key={item.id} post={item} onClick={() => setSelectedPost(item)} />
+                            <PollCard
+                                key={item.id}
+                                post={item}
+                                onClick={() =>
+                                    onCardClick ? onCardClick(item) : setSelectedPost(item)
+                                }
+                            />
                         ) : (
-                            <EventCard key={item.id} post={item} onClick={() => setSelectedPost(item)} />
+                            <EventCard
+                                key={item.id}
+                                post={item}
+                                onClick={() =>
+                                    onCardClick ? onCardClick(item) : setSelectedPost(item)
+                                }
+                            />
                         ),
                     )}
                 </div>
