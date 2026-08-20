@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
     publish_engagement_post_thunk,
-    get_engagement_posts_thunk, // 1. Added thunk import
+    get_engagement_posts_thunk,
 } from "@/app/redux/engagement-slice";
+import { get_sites_service_thunk } from "@/app/redux/site-slice";
+import { get_location_thunk } from "@/app/redux/app-thunk";
 import { setAlert } from "@/app/redux/app-slice";
 import Button from "@/app/_components/button";
 
@@ -14,15 +16,30 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
     const { birthdayMonth, publishing, birthdays } = useSelector(
         (state) => state.engagement,
     );
+    const rawSites = useSelector((state) => state.sites.sites);
+    // API returns { data: [...] }; normalize to a plain array
+    const sites = Array.isArray(rawSites) ? rawSites : (rawSites?.data ?? []);
+    const locations = useSelector((state) => state.app.locations ?? []);
+
+    const [publishTo, setPublishTo] = useState("all");
+    const [scheduledAt, setScheduledAt] = useState("");
 
     const birthdayList = birthdays ?? [];
+    // Filter celebrants to only those belonging to the selected location
+    const filteredBirthdayList =
+        publishTo === "all"
+            ? birthdayList
+            : birthdayList.filter(
+                  (c) => c.location && c.location.toLowerCase() === publishTo.toLowerCase(),
+              );
     const isPublishing = publishing ?? false;
     const currentYear = new Date().getFullYear();
     const displayMonth =
         birthdayMonth || new Date().toLocaleString("default", { month: "long" });
 
-    const [publishTo, setPublishTo] = useState("All Employees");
-    const [scheduledAt, setScheduledAt] = useState("");
+    useEffect(() => {
+        dispatch(get_location_thunk());
+    }, [dispatch]);
 
     // Helper to refresh feed & close modal gracefully without forcing a hard page route jump
     const handleSuccessAndClose = async (alertTitle) => {
@@ -32,6 +49,9 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
         onClose();
     };
 
+    // Resolve the label to send; "all" means target all employees
+    const resolvedPublishTo = publishTo === "all" ? "All Employees" : publishTo;
+
     const handlePublishNow = async () => {
         const result = await dispatch(
             publish_engagement_post_thunk({
@@ -40,8 +60,9 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                 message,
                 month: displayMonth,
                 year: currentYear,
-                publish_to: publishTo,
+                publish_to: resolvedPublishTo,
                 scheduled_at: null,
+                celebrants: filteredBirthdayList,
             }),
         );
 
@@ -58,8 +79,9 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                 message,
                 month: displayMonth,
                 year: currentYear,
-                publish_to: publishTo,
+                publish_to: resolvedPublishTo,
                 scheduled_at: scheduledAt,
+                celebrants: filteredBirthdayList,
             }),
         );
 
@@ -92,13 +114,13 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
                         dangerouslySetInnerHTML={{ __html: message }}
                     />
 
-                    {birthdayList.length > 0 && (
+                    {filteredBirthdayList.length > 0 && (
                         <div className="border border-purple-100 bg-purple-50/50 rounded-xl p-3.5 flex flex-col gap-2">
                             <p className="text-xs font-bold text-purple-500 uppercase tracking-wider">
-                                🎂 Birthday Celebrant{birthdayList.length !== 1 ? "s" : ""} of the Month
+                                🎂 Birthday Celebrant{filteredBirthdayList.length !== 1 ? "s" : ""} of the Month
                             </p>
                             <ul className="flex flex-col gap-1">
-                                {birthdayList.map((c) => (
+                                {filteredBirthdayList.map((c) => (
                                     <li
                                         key={c.user_id}
                                         className="flex items-center justify-between"
@@ -121,6 +143,23 @@ export default function BirthdayPublishTab({ headline, message, onClose }) {
 
             {/* ── Publish controls ─────────────────────────────────── */}
             <div className="flex flex-col gap-3 border border-gray-100 rounded-2xl p-4 bg-gray-50/50">
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Publish To
+                    </label>
+                    <select
+                        value={publishTo}
+                        onChange={(e) => setPublishTo(e.target.value)}
+                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition bg-white"
+                    >
+                        <option value="all">All Employees</option>
+                        {locations.map((loc) => (
+                            <option key={loc.id} value={loc.name}>
+                                {loc.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 <div className="flex flex-col gap-1.5">
                     <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Schedule{" "}

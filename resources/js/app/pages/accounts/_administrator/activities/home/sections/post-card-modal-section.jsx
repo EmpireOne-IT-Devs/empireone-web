@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import {
     Megaphone,
@@ -79,9 +80,9 @@ function ImageLightbox({ files, startIndex, onClose }) {
 
     const current = files[index];
 
-    return (
+    return createPortal(
         <div
-            className="fixed inset-0 z-[100] flex flex-col bg-black/95 backdrop-blur-sm"
+            className="fixed inset-0 z-[10000] flex flex-col bg-black/95"
             onClick={onClose}
         >
             <div
@@ -165,7 +166,8 @@ function ImageLightbox({ files, startIndex, onClose }) {
                     ))}
                 </div>
             )}
-        </div>
+        </div>,
+        document.body,
     );
 }
 
@@ -339,9 +341,27 @@ function PostDetailsBody({ post, setLightboxIndex, dispatch }) {
 export default function PostCardModalSection({ post, onClose }) {
     const dispatch = useDispatch();
     const [lightboxIndex, setLightboxIndex] = useState(null);
+    const [isDesktop, setIsDesktop] = useState(() =>
+        typeof window !== "undefined"
+            ? window.matchMedia("(min-width: 640px)").matches
+            : false,
+    );
 
     const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
     const isAdmin = currentPath.includes("/administrator/");
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(min-width: 640px)");
+        const handleChange = (event) => setIsDesktop(event.matches);
+
+        setIsDesktop(mediaQuery.matches);
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
+    }, []);
+
+    useEffect(() => {
+        setLightboxIndex(null);
+    }, [post?.id]);
 
     // Prevent body scrolling when post view is open on mobile
     useEffect(() => {
@@ -405,7 +425,8 @@ export default function PostCardModalSection({ post, onClose }) {
     return (
         <>
             {/* MOBILE VIEW: Facebook style full-screen page */}
-            <div className="fixed inset-0 z-50 flex flex-col bg-white sm:hidden overflow-y-auto">
+            {!isDesktop && (
+            <div className="fixed inset-0 z-50 flex flex-col bg-white overflow-y-auto">
                 {/* Mobile Top Header Navigation */}
                 <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-3 py-2.5 shadow-sm">
                     <div className="flex items-center gap-2 min-w-0">
@@ -451,9 +472,10 @@ export default function PostCardModalSection({ post, onClose }) {
                     />
                 </div>
             </div>
+            )}
 
             {/* DESKTOP VIEW: Regular Dialog Modal */}
-            <div className="hidden sm:block">
+            {isDesktop && (
                 <Modal
                     isOpen={!!post}
                     onClose={onClose}
@@ -466,7 +488,7 @@ export default function PostCardModalSection({ post, onClose }) {
                         dispatch={dispatch}
                     />
                 </Modal>
-            </div>
+            )}
 
             {/* Lightbox for images */}
             {lightboxIndex !== null && (

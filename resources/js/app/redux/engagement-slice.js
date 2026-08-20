@@ -212,12 +212,10 @@ const engagementSlice = createSlice({
                 // Safely extract post object regardless of whether response is payload.data or direct payload
                 const newPost = action.payload?.data ?? action.payload;
                 if (newPost && newPost.id) {
-                    // If this is a birthday post, attach the current upcoming birthdays
-                    // so the frontend can render celebrants immediately even if the API
-                    // does not include them in the post payload.
-                    if (newPost.type === 'birthday' && Array.isArray(state.birthdays) && state.birthdays.length > 0) {
-                        // Avoid mutating state.birthdays directly
-                        newPost.celebrants = state.birthdays.map((b) => ({ ...b }));
+                    // Prefer the caller-supplied (already-filtered) celebrants list; fall back to all birthdays
+                    const celebrantsToAttach = action.meta?.arg?.celebrants ?? state.birthdays;
+                    if (newPost.type === 'birthday' && Array.isArray(celebrantsToAttach) && celebrantsToAttach.length > 0) {
+                        newPost.celebrants = celebrantsToAttach.map((b) => ({ ...b }));
                     }
 
                     const exists = state.posts.some((p) => p.id === newPost.id);

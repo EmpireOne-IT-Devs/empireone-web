@@ -23,7 +23,7 @@ class ActivityBirthdayController extends Controller
             ->with([
                 
                 'personal_information:id,user_id,first_name,middle_name,last_name,suffix,date_of_birth',
-                'account_employee',
+                'account_employee.location',
             ])
             ->get()
             ->map(function ($user) {
@@ -60,6 +60,7 @@ class ActivityBirthdayController extends Controller
                                         ),
                     'department'      => $employee?->department?->name,
                     'position'        => $employee?->position,
+                    'location'        => $employee?->location?->name,
                     'avatar'          => $user->avatar,
                     'profile_picture' => $user->avatar,
                     'date_of_birth'   => $info->date_of_birth,

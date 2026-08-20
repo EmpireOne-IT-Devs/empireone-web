@@ -123,7 +123,7 @@ function AnnouncementCard({ announcement, index, onClick }) {
     );
 }
 
-export default function AnnouncementsSection() {
+export default function AnnouncementsSection({ onCardClick }) {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
@@ -220,7 +220,9 @@ export default function AnnouncementsSection() {
                             key={a.id}
                             announcement={a}
                             index={i}
-                            onClick={() => handleOpen(a, i)}
+                            onClick={() =>
+                                onCardClick ? onCardClick(a) : handleOpen(a, i)
+                            }
                         />
                     ))}
                 </div>
