@@ -1,5 +1,1 @@
-<<<<<<<< HEAD:public/build/assets/search-section-BOhELMFE.js
 import{j as e}from"./app-DuY06sGG.js";function t({searchQuery:r,setSearchQuery:n}){return e.jsx(e.Fragment,{children:e.jsx("div",{className:"mb-4 flex justify-end w-full",children:e.jsx("input",{type:"text",placeholder:"Search employees...",value:r,onChange:l=>n(l.target.value),className:"w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"})})})}export{t as default};
-========
-import{j as e}from"./app-l8iHgq8A.js";function t({searchQuery:r,setSearchQuery:n}){return e.jsx(e.Fragment,{children:e.jsx("div",{className:"mb-4 flex justify-end w-full",children:e.jsx("input",{type:"text",placeholder:"Search employees...",value:r,onChange:l=>n(l.target.value),className:"w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"})})})}export{t as default};
->>>>>>>> 1323064fe6b08e8d861bcad2cdc2670f0b58e3f7:public/build/assets/search-section-BUAQ2fnX.js

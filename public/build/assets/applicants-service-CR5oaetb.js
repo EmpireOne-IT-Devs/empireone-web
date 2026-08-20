@@ -1,5 +1,1 @@
-<<<<<<<< HEAD:public/build/assets/applicants-service-CR5oaetb.js
 import{a}from"./app-DuY06sGG.js";async function e(){return await a.get(`/api/job/applicants${window.location.search}`)}async function n(t){return await a.post(`/api/job/delete_applicant/${t}`)}async function c(t){return(await a.post("/api/job/checking_applicant",t)).data}async function p(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function o(){return await a.get("/api/job/get_applicant_pooling")}export{p as a,e as b,c,n as d,o as g};
-========
-import{a}from"./app-l8iHgq8A.js";async function e(){return await a.get(`/api/job/applicants${window.location.search}`)}async function n(t){return await a.post(`/api/job/delete_applicant/${t}`)}async function c(t){return(await a.post("/api/job/checking_applicant",t)).data}async function p(){return await a.get(`/api/job/employee_applicants${window.location.search}`)}async function o(){return await a.get("/api/job/get_applicant_pooling")}export{p as a,e as b,c,n as d,o as g};
->>>>>>>> 1323064fe6b08e8d861bcad2cdc2670f0b58e3f7:public/build/assets/applicants-service-Xnloas7d.js

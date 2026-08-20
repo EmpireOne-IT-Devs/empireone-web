@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:public/build/assets/application-footer-section-CvHv3hRy.js
 import{j as e,R as s}from"./app-DuY06sGG.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
-========
-import{j as e,R as s}from"./app-l8iHgq8A.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
->>>>>>>> 1323064fe6b08e8d861bcad2cdc2670f0b58e3f7:public/build/assets/application-footer-section-oMqjLSSk.js
             radial-gradient(circle at 10% 40%, rgba(168, 85, 247, 0.3), transparent 30%),
             radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.25), transparent 30%),
             rgba(10, 5, 25, 0.45)
