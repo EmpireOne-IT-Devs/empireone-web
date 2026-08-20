@@ -17,7 +17,7 @@ export default function TableSection() {
     const columns = [
         { header: "Document Name", accessor: "name" },
         { header: "Date Uploaded", accessor: "created_at" },
-        { header: "Status", accessor: "status" },
+        // { header: "Status", accessor: "status" },
         { header: "Open Link", accessor: "url" },
         { header: "Action", accessor: "action" },
     ];
