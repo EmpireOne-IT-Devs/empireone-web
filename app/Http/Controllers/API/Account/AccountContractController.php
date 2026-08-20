@@ -149,6 +149,9 @@ class AccountContractController extends Controller
             'onboarding_agree_on' => $request->onboarding_agree_on
         ]);
 
+        if (!$employee->is_has_contract || !$employee->onboarding_agree_on || !empty($employee->employee_id)) {
+            return;
+        }
         $this->processEmployeeHiring($employee, $request->user_id);
 
         return response()->json([
@@ -167,6 +170,9 @@ class AccountContractController extends Controller
             ['is_has_contract' => true]
         );
 
+        if (!$employee->is_has_contract || !$employee->onboarding_agree_on || !empty($employee->employee_id)) {
+            return;
+        }
         $this->processEmployeeHiring($employee, $request->user_id);
 
         return response()->json([
@@ -177,12 +183,9 @@ class AccountContractController extends Controller
     /**
      * Handles employee ID assignment and onboarding status updates.
      */
-    protected function processEmployeeHiring(AccountEmployee $employee, $userId): void
+    function processEmployeeHiring(AccountEmployee $employee, $userId): void
     {
-        // Only run if contract is active, agreed on onboarding, and employee doesn't already have an ID
-        if (!$employee->is_has_contract || !$employee->onboarding_agree_on || !empty($employee->employee_id)) {
-            return;
-        }
+
         // Generate unique employee ID for today (YYMMDDXX)
         $prefix = now()->format('ymd');
 
