@@ -111,7 +111,7 @@ class BookingController extends Controller
                 'notes' => $request->notes,
                 'company_name' => $request->company_name ?? 'NA',
                 'source' => $request->source ?? 'NA',
-                'looking_for' => $request->looking_for ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'A callback',
                 'appointment_id' => $booking->id ?? 'NA',
             ])->render(),
         ]);
@@ -126,7 +126,7 @@ class BookingController extends Controller
                 'notes' => $request->notes,
                 'company_name' => $request->company_name ?? 'NA',
                 'source' => $request->source ?? 'NA',
-                'looking_for' => $request->looking_for ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'A callback',
                 'appointment_id' => $booking->id ?? 'NA',
             ])->render(),
         ]);
@@ -215,31 +215,31 @@ class BookingController extends Controller
         $this->send_empireone_health_consultation_schedule([
             'recipient' => 'info@empireonehealth.com',
             'subject' => "Consultation Appointment #{$booking->id}",
-            'body' => view('emails.empireonehealth.booking-notification', [
+            'body' => view('emails.empireonehealth.consultation-notification', [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'notes' => $request->notes,
                 'company_name' => $request->company_name ?? 'NA',
                 'source' => $request->source ?? 'NA',
-                'looking_for' => $request->looking_for ?? 'NA',
-                'appointment_id' => $booking->id ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'A consultation',
+                'consultation_id' => $booking->id ?? 'NA',
             ])->render(),
         ]);
 
 
         $this->send_empireone_health_consultation_schedule([
-            'recipient' => 'info@empireonehealth.com',
+            'recipient' => $request->email,
             'subject' => "Consultation Appointment #{$booking->id}",
-            'body' => view('emails.empireonehealth.booking-notification', [
+            'body' => view('emails.empireonehealth.consultation-confirmation', [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'notes' => $request->notes,
                 'company_name' => $request->company_name ?? 'NA',
                 'source' => $request->source ?? 'NA',
-                'looking_for' => $request->looking_for ?? 'NA',
-                'appointment_id' => $booking->id ?? 'NA',
+                'looking_for' => $request->looking_for ?? 'A consultation',
+                'consultation_id' => $booking->id ?? 'NA',
             ])->render(),
         ]);
 
