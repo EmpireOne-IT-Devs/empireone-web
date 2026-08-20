@@ -166,7 +166,7 @@ class AccountContractController extends Controller
                     ]);
                     $ja = JobApplication::where([
                         ['user_id', '=', $request->user_id],
-                        ['final_status', '=', 'Accepted Job Offer'],
+                        ['final_status', '=', 'Sent Documents'],
                     ])->first();
                     if ($ja) {
                         $ja->update([
@@ -215,7 +215,7 @@ class AccountContractController extends Controller
                     ]);
                     $ja = JobApplication::where([
                         ['user_id', '=', $request->user_id],
-                        ['final_status', '=', 'Accepted Job Offer'],
+                        ['final_status', '=', 'Sent Documents'],
                     ])->first();
                     if ($ja) {
                         $ja->update([
