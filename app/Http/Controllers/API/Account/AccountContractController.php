@@ -136,100 +136,71 @@ class AccountContractController extends Controller
      */
     public function agree_onboarding(Request $request)
     {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'onboarding_agree_on' => 'required',
+        ]);
 
-        $employee = AccountEmployee::where('user_id', '=', $request->user_id)->first();
+        $employee = AccountEmployee::firstOrCreate(
+            ['user_id' => $request->user_id]
+        );
+
         $employee->update([
             'onboarding_agree_on' => $request->onboarding_agree_on
         ]);
-        if ($employee->is_has_contract && $employee->onboarding_agree_on) {
-            $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
-                ->pluck('employee_id')
-                ->toArray();
-            $todaySequences = array_map(function ($id) {
-                return (int)substr($id, -2);
-            }, $todayEmployeeIds);
-            $sequence = 1;
-            while (in_array($sequence, $todaySequences)) {
-                $sequence++;
-            }
-            $employee_id = date('y') . date('m') . date('d') . str_pad($sequence, 2, '0', STR_PAD_LEFT);
-            $isExist = in_array($employee->employee_id, $todayEmployeeIds);
 
-            if (!$isExist || $employee->employee_id == null) {
-                $account =  AccountEmployee::where('user_id', '=', $request->user_id)->first();
-                if ($account) {
-                    User::where('id', '=', $request->user_id)->update([
-                        'role' => 2
-                    ]);
-                    $account->update([
-                        'employee_id' => $employee_id,
-                    ]);
-                    $ja = JobApplication::where([
-                        ['user_id', '=', $request->user_id],
-                        ['final_status', '=', 'Sent Documents'],
-                    ])->first();
-                    if ($ja) {
-                        $ja->update([
-                            'final_status' => 'Hired'
-                        ]);
-                    }
-                }
-            }
-        }
+        $this->processEmployeeHiring($employee, $request->user_id);
+
         return response()->json([
             'message' => 'Onboarding documents record saved successfully',
         ], 200);
     }
+
     public function store(Request $request)
     {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
         $employee = AccountEmployee::updateOrCreate(
             ['user_id' => $request->user_id],
-            ['is_has_contract' => 'True']
+            ['is_has_contract' => true]
         );
 
-        if ($employee->is_has_contract && $employee->onboarding_agree_on) {
-            $todayEmployeeIds = AccountEmployee::whereDate('created_at', Carbon::today())
-                ->pluck('employee_id')
-                ->toArray();
-            $todaySequences = array_map(function ($id) {
-                return (int)substr($id, -2);
-            }, $todayEmployeeIds);
-            $sequence = 1;
-            while (in_array($sequence, $todaySequences)) {
-                $sequence++;
-            }
-            $employee_id = date('y') . date('m') . date('d') . str_pad($sequence, 2, '0', STR_PAD_LEFT);
-            $isExist = in_array($employee->employee_id, $todayEmployeeIds);
+        $this->processEmployeeHiring($employee, $request->user_id);
 
-            if (!$isExist || $employee->employee_id == null) {
-                $account =  AccountEmployee::where('user_id', '=', $request->user_id)->first();
-                if ($account) {
-                    $user = User::where('id', '=', $request->user_id)->first();
-                    if ($user) {
-                        $user->update([
-                            'role' => 2
-                        ]);
-                    }
-                    $account->update([
-                        'employee_id' => $employee_id
-                    ]);
-                    $ja = JobApplication::where([
-                        ['user_id', '=', $request->user_id],
-                        ['final_status', '=', 'Sent Documents'],
-                    ])->first();
-                    if ($ja) {
-                        $ja->update([
-                            'final_status' => 'Hired'
-                        ]);
-                    }
-                }
-            }
-        }
-
-        // 3. Return a response
         return response()->json([
             'message' => 'Contract record saved successfully',
         ], 200);
+    }
+
+    /**
+     * Handles employee ID assignment and onboarding status updates.
+     */
+    protected function processEmployeeHiring(AccountEmployee $employee, $userId): void
+    {
+        // Only run if contract is active, agreed on onboarding, and employee doesn't already have an ID
+        if (!$employee->is_has_contract || !$employee->onboarding_agree_on || !empty($employee->employee_id)) {
+            return;
+        }
+        // Generate unique employee ID for today (YYMMDDXX)
+        $prefix = now()->format('ymd');
+
+        $lastSequence = AccountEmployee::where('employee_id', 'like', $prefix . '%')
+            ->selectRaw('MAX(CAST(RIGHT(employee_id, 2) AS UNSIGNED)) as max_seq')
+            ->value('max_seq') ?? 0;
+
+        $nextSequence = str_pad($lastSequence + 1, 2, '0', STR_PAD_LEFT);
+        $newEmployeeId = $prefix . $nextSequence;
+
+        // Assign ID and promote user
+        $employee->update(['employee_id' => $newEmployeeId]);
+
+        User::where('id', $userId)->update(['role' => 2]);
+
+        JobApplication::where('user_id', $userId)
+            ->where('final_status', 'Sent Documents')
+            ->update(['final_status' => 'Hired']);
     }
 
     /**
