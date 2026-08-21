@@ -76,7 +76,7 @@ export default function Button({
             {loading ? (
                 <>
                     <FiLoader className="animate-spin" />
-                    SUBMITTING...
+                    {children ? "LOADING..." : "SUBMITTING..."}
                 </>
             ) : (
                 children

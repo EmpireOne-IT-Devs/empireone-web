@@ -11,6 +11,9 @@ export async function get_job_postings_service() {
     return await axios.get(`/api/job/postings${window.location.search}`);
 }
 
+export async function get_job_posting_by_id_service(id) {
+    return await axios.get(`/api/job/postings/${id}`);
+}
 export async function get_job_posting_by_location_service(id) {
     return await axios.get(`/api/get_job_posting_by_location/${id}`);
 }

@@ -49,6 +49,11 @@ class JobPostingController extends Controller
 
         return response()->json($erps, 200);
     }
+    public function show($id)
+    {
+        $job_posting = JobPosting::where('id', $id)->with(['job_requisition'])->first();
+        return response()->json($job_posting, 200);
+    }
     public function get_job_posting_by_location($id)
     {
         $user = Auth::user();

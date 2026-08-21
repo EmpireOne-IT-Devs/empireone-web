@@ -4,7 +4,7 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import allowances from "@/app/lib/allowance";
 import { setAlert } from "@/app/redux/app-slice";
-import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
+import { get_applicants_thunk, get_job_posting_by_id_thunk } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import store from "@/app/store/store";
 import { AwsResAwsDatasyncDiscovery } from "@thesvg/react";
@@ -14,9 +14,10 @@ import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 export default function SendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false)
     const dispatch = useDispatch();
-    const { job_postings } = useSelector((store) => store.job_postings);
-    console.log('job_postings', job_postings)
+    const { job_postings, job_posting } = useSelector((store) => store.job_postings);
+    console.log('job_postingjob_posting', job_posting)
     const {
         register,
         handleSubmit,
@@ -27,7 +28,7 @@ export default function SendJobOfferSection({ data }) {
         formState: { errors, isSubmitting }, // Destructured isSubmitting
     } = useForm({
         defaultValues: {
-            job_posting_id: "", // Default to current title
+            job_posting_id: data?.job_posting?.id, // Default to current title
             salary: "",
             role: "",
         },
@@ -39,9 +40,18 @@ export default function SendJobOfferSection({ data }) {
     });
 
     const watchedValues = watch();
-    useEffect(() => {
-        setValue("job_posting_id", data?.job_posting?.id);
-    }, []);
+
+    async function open_modal(params) {
+        try {
+            setLoading(true)
+            await store.dispatch(get_job_posting_by_id_thunk(watchedValues.job_posting_id))
+            setLoading(false)
+            setOpen(true)
+        } catch (error) {
+
+        }
+    }
+
     const onSubmit = async (formData) => {
         try {
             await send_job_offer_service({
@@ -63,10 +73,11 @@ export default function SendJobOfferSection({ data }) {
             reset();
         } catch (error) { }
     };
-
     return (
         <>
-            <Button className="h-full" onClick={() => setOpen(true)}>
+            <Button
+                loading={loading}
+                className="h-full" onClick={() => open_modal(true)}>
                 SEND&nbsp;JOB&nbsp;OFFER
             </Button>
 
@@ -125,27 +136,11 @@ export default function SendJobOfferSection({ data }) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-y-5 gap-5 mt-6">
-                            <Controller
-                                name="job_posting_id"
-                                control={control}
-                                rules={{
-                                    required: "Offer Position is required",
-                                }}
+                            <Input
+                                label="Position"
+                                type="text"
                                 disabled
-                                value={watchedValues.job_posting_id}
-                                render={({ field }) => (
-                                    <Select
-                                        {...field}
-                                        label="Position"
-                                        options={
-                                            job_postings?.map((res) => ({
-                                                label: `${res?.job_requisition?.title}`,
-                                                value: res?.id,
-                                            })) || []
-                                        }
-                                        error={errors.job_posting_id?.message}
-                                    />
-                                )}
+                                value={job_posting?.job_requisition?.title}
                             />
                             <Controller
                                 name="role"
@@ -280,33 +275,9 @@ export default function SendJobOfferSection({ data }) {
                     <Button
                         type="submit"
                         className="w-full flex justify-center items-center"
-                        disabled={isSubmitting}
+                        loading={isSubmitting}
                     >
-                        {isSubmitting ? (
-                            <>
-                                <svg
-                                    className="animate-spin h-5 w-5 mr-3 text-white"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                    ></path>
-                                </svg>
-                                PROCESSING...
-                            </>
-                        ) : (
-                            "SEND JOB OFFER"
-                        )}
+                       SEND JOB OFFER
                     </Button>
                 </form>
             </Modal>

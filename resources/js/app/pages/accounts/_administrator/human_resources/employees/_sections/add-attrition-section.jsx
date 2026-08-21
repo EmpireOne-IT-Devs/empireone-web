@@ -22,6 +22,8 @@ import Radio from '@/app/_components/radio'
 import Select from '@/app/_components/select'
 import { setAlert } from '@/app/redux/app-slice'
 import { add_attrition_service } from '@/app/services/employee-relation-service'
+import store from '@/app/store/store'
+import { get_employees_thunk } from '@/app/redux/employee-relation-thunk'
 
 const TERMINATION_REASONS = [
     "Resignation - Personal",
@@ -81,6 +83,7 @@ export default function AddAttritionSection({ props_data }) {
                 ...props_data,
                 ...data
             })
+            await store.dispatch(get_employees_thunk());
             dispatch(
                 setAlert({
                     type: "success",
@@ -90,6 +93,7 @@ export default function AddAttritionSection({ props_data }) {
                 })
             );
             handleCloseModal()
+
         } catch (error) {
             console.error("Failed to add attrition:", error);
             dispatch(

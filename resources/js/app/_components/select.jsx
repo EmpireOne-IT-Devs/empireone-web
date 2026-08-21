@@ -12,36 +12,30 @@ const Select = forwardRef(
             iconRight,
             disabled = false,
             className = "",
-            value, // from React Hook Form
-            onChange, // from React Hook Form
+            value, // from React Hook Form (via ...field)
+            onChange, // from React Hook Form (via ...field)
+            onBlur, // from React Hook Form (via ...field)
             ...props
         },
-        ref,
+        ref
     ) => {
         const [search, setSearch] = useState("");
         const [isOpen, setIsOpen] = useState(false);
         const containerRef = useRef(null);
 
-        // Sync search text with value
+        // 1. Sync search text with value ONLY when dropdown is closed or value changes externally
         useEffect(() => {
-            const selectedOption = options.find((o) => o.value === value);
-            if (selectedOption) setSearch(selectedOption.label);
-            else setSearch("");
-        }, [value, options]);
-
-        const handleSelect = (option) => {
-            setSearch(option.label);
-            if (onChange) onChange(option.value);
-            if (onSelect) onSelect(option);
-            setIsOpen(false);
-        };
+            if (!isOpen) {
+                const selectedOption = options.find((o) => o.value === value);
+                setSearch(selectedOption ? selectedOption.label : "");
+            }
+        }, [value, options, isOpen]);
 
         const handleInputClick = () => {
             if (!disabled) setIsOpen((prev) => !prev);
         };
 
-        // Close dropdown on outside click
-        // Close dropdown on outside click (using capture phase)
+        // 2. Close dropdown on outside click
         useEffect(() => {
             const handleClickOutside = (e) => {
                 if (
@@ -52,15 +46,13 @@ const Select = forwardRef(
                 }
             };
 
-            // 'true' uses the capture phase so parent stopPropagation won't block it
             window.addEventListener("mousedown", handleClickOutside, true);
             return () =>
                 window.removeEventListener("mousedown", handleClickOutside, true);
         }, []);
 
-        // Filter options
         const filteredOptions = options.filter((opt) =>
-            opt.label.toLowerCase().includes(search.toLowerCase()),
+            opt.label.toLowerCase().includes(search.toLowerCase())
         );
 
         return (
@@ -68,14 +60,14 @@ const Select = forwardRef(
                 <div className="relative">
                     {/* Left Icon */}
                     {iconLeft && (
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 z-10">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 z-10 pointer-events-none">
                             {iconLeft}
                         </div>
                     )}
 
                     {/* Input */}
                     <input
-                        type="search"
+                        type="text" // 'text' instead of 'search' prevents the native browser 'x' clear button from breaking state
                         {...props}
                         autoComplete="off"
                         ref={ref}
@@ -87,20 +79,24 @@ const Select = forwardRef(
                             setSearch(e.target.value);
                             setIsOpen(true);
                         }}
+                        onBlur={(e) => {
+                            // Forward onBlur to React Hook Form for validation triggers
+                            if (onBlur) onBlur(e);
+                        }}
                         onClick={handleInputClick}
                         placeholder=""
-                        className={`w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black
-              focus:outline-none focus:ring-2 focus:ring-purple-500
-              ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : "pr-8"}
-              ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
-              ${className}`}
+                        className={`w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black focus:outline-none focus:ring-2 focus:ring-purple-500 ${iconLeft ? "pl-10" : ""
+                            } ${iconRight ? "pr-10" : "pr-8"} ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"
+                            } ${className}`}
                     />
 
                     {/* Floating Label */}
                     <label
                         htmlFor={name}
-                        className={`absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out pointer-events-none
-              ${search || isOpen ? "-top-2 text-xs text-purple-600" : "top-2.5 text-gray-500"}`}
+                        className={`absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out pointer-events-none ${search || isOpen
+                                ? "-top-2 text-xs text-purple-600"
+                                : "top-2.5 text-gray-500"
+                            }`}
                     >
                         {label}
                     </label>
@@ -109,7 +105,8 @@ const Select = forwardRef(
                     {!iconRight && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
                             <svg
-                                className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                                className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""
+                                    }`}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -133,19 +130,39 @@ const Select = forwardRef(
 
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
-                        <ul className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg">
+                        <ul
+                            className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg"
+                            // Block clicks from bubbling up to the Modal
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onMouseUp={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             {filteredOptions.length > 0 ? (
                                 filteredOptions.map((option, idx) => (
                                     <li
                                         key={idx}
                                         className={`cursor-pointer px-4 py-2 hover:bg-purple-100 text-black text-sm ${value === option.value
-                                            ? "bg-purple-50 text-purple-600"
-                                            : ""
+                                                ? "bg-purple-50 text-purple-600"
+                                                : ""
                                             }`}
                                         onMouseDown={(e) => {
                                             e.preventDefault(); // Prevent input defocusing
+                                            e.stopPropagation(); // Stop event bubbling
                                         }}
-                                        onClick={() => handleSelect(option)}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Stop event bubbling
+
+                                            // 1. Update the state immediately
+                                            setSearch(option.label);
+                                            if (onChange) onChange(option.value);
+                                            if (onSelect) onSelect(option);
+
+                                            // 2. Wait 100ms before deleting the node so the Modal 
+                                            // doesn't falsely detect an "outside click"
+                                            setTimeout(() => {
+                                                setIsOpen(false);
+                                            }, 100);
+                                        }}
                                     >
                                         {option.label}
                                     </li>
@@ -167,7 +184,7 @@ const Select = forwardRef(
                 )}
             </div>
         );
-    },
+    }
 );
 
 Select.displayName = "Select";
