@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('e_r_employee_attritions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')
+            $table->foreignId('user_id')
                 ->nullable()
                 ->constrained('users')
+                ->nullOnDelete();
+            $table->foreignId('employee_id')
+                ->nullable()
+                ->constrained('account_employees')
                 ->nullOnDelete();
             $table->string('position')->nullable();
             $table->string('department')->nullable();

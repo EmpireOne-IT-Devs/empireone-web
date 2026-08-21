@@ -42,8 +42,8 @@ const TERMINATION_REASONS = [
     "Termination - Training Fall-Out (Language Training)",
     "Termination - Training Fall-Out (Process Training)",
     "Termination - Training Fall-Out (On-The-Job Training)",
-    "Termination - Non-Regularization",
     "Termination - Absconding/ AWOL Redundancy",
+    "Termination - Non-Regularization",
     "End of Contract (Fixed Term)"
 ];
 
@@ -52,7 +52,7 @@ const REASON_OPTIONS = TERMINATION_REASONS.map((reason) => ({
     value: reason
 }));
 
-const EMPLOYMENT_STATUS_OPTIONS = ['Terminated', 'Resigned', 'EOPE', 'AWOL', 'End of Contrac', 'Trainee Fallout'].map((status) => ({
+const EMPLOYMENT_STATUS_OPTIONS = ['Terminated', 'Resigned', 'EOPE', 'AWOL', 'End of Contract', 'Trainee Fallout'].map((status) => ({
     label: status,
     value: status
 }));

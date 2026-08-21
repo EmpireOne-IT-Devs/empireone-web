@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class EREmployeeAttrition extends Model
 {
     protected $fillable = [
+        'user_id',
         'employee_id',
         'position',
         'department',

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API\ER;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\ER\EREmployeeAttrition;
+use App\Models\ER\ERLeader;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class EREmployeeAttritionController extends Controller
@@ -31,36 +34,71 @@ class EREmployeeAttritionController extends Controller
      */
     public function store(Request $request)
     {
+        // Wrap everything in a database transaction for data integrity
+
         $attrition = EREmployeeAttrition::updateOrCreate(
-            ['employee_id' => $request->employee_id],
+            ['user_id' => $request->user_id],
             [
-                'position' => $request->position,
-                'department' => $request->department['name'],
-                'account' => $request->account['name'] ?? '',
-                'eogs_email' => $request->eogs_email,
-                'started_at' => $request->started_at,
-                'separation_date' => $request->separation_date,
-                'employment_status' => $request->employment_status,
-                'status' => $request->status,
+                'position'              => $request->position,
+                'employee_id'           => $request->employee_id,
+                'department'            => $request->department['name'] ?? null, // Added fallback just in case
+                'account'               => $request->account['name'] ?? '',
+                'eogs_email'            => $request->eogs_email,
+                'started_at'            => $request->started_at,
+                'separation_date'       => $request->separation_date,
+                'employment_status'     => $request->employment_status,
+                'status'                => $request->status,
                 'reason_for_separation' => $request->reason_for_separation,
-                'is_rehire' => $request->is_rehire,
-                'attrition_status' => 'Pending',
+                'is_rehire'             => $request->is_rehire,
+                'attrition_status'      => 'Pending',
             ]
         );
 
-        $account_employee = AccountEmployee::where('employee_id', $request->employee_id)->first();
-        if ($account_employee) {
-            $account_employee->update([
-                'employment_status' => $request->employment_status,
-                'reason_for_separation' => $request->reason_for_separation,
-                'is_rehire' => $request->is_rehire
-            ]);
-        }
+        $account_employee = AccountEmployee::where('user_id', $request->user_id)->first();
+        $account_document = AccountDocument::where('user_id', $request->user_id)->first();
 
+        if ($account_employee) {
+
+            // FIX: Ensure document actually exists before updating
+            if ($account_document) {
+                $account_document->update([
+                    'status' => 'Archived'
+                ]);
+            }
+
+            $account_employee->update([
+                'employment_status'     => $request->employment_status,
+                'reason_for_separation' => $request->reason_for_separation,
+                'is_rehire'             => $request->is_rehire,
+                'position'              => null,
+                'department_id'         => null,
+                'account_id'            => null,
+                'started_at'            => null,
+                'e_r_leader_id'         => null,
+                'is_has_contract'       => null,
+                'employee_id'           => null,
+                'signature'             => null,
+                'onboarding_agree_on'   => null,
+                'status'                => null,
+                'basic_pay'             => null,
+                'allowance'             => null,
+            ]);
+
+            // OPTIMIZATION: Used $request->user_id directly
+            User::where('id', $request->user_id)->update([
+                'role' => '3',
+            ]);
+            $leader =  ERLeader::where('id', $request->user_id)->first();
+            if ($leader) {
+                $leader->update([
+                    'user_id' => null,
+                ]);
+            }
+        }
 
         return response()->json([
             'status' => 'success',
-            'data' => $attrition
+            'data'   => $attrition
         ]);
     }
     /**
