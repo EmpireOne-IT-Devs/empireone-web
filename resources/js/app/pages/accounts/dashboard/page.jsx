@@ -15,7 +15,6 @@ export default function Page() {
 
     return (
         <Layout>
-            {/* Header and Stats */}
             <HeaderSection />
 
             <div className="mx-auto w-full mt-6 space-y-8">

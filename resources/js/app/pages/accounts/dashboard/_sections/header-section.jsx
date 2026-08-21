@@ -15,7 +15,7 @@ export default function HeaderSection() {
 
     return (
         <div className="relative isolate flex items-center justify-between my-3 bg-gradient-to-r from-purple-700 to-purple-800 rounded-2xl px-8 py-6 overflow-hidden">
-            {/* Left Content */}
+          
             <div className="flex flex-col gap-2 z-10">
             <h1 className="text-2xl md:text-3xl font-semibold text-white">
                     Welcome Back,
