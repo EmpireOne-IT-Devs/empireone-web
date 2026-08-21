@@ -88,7 +88,7 @@ class EREmployeeAttritionController extends Controller
             User::where('id', $request->user_id)->update([
                 'role' => '3',
             ]);
-            $leader =  ERLeader::where('id', $request->user_id)->first();
+            $leader =  ERLeader::where('user_id', $request->user_id)->first();
             if ($leader) {
                 $leader->update([
                     'user_id' => null,
