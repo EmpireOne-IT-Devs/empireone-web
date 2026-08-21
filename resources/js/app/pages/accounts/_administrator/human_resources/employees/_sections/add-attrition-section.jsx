@@ -265,10 +265,8 @@ export default function AddAttritionSection({ props_data }) {
                                 label="Separation Date"
                                 disabled={isSubmitting}
                                 {...register("separation_date", { required: "Separation date is required" })}
+                                error={errors.separation_date}
                             />
-                            {errors.separation_date && (
-                                <span className="text-xs text-red-500 mt-1">{errors.separation_date.message}</span>
-                            )}
                         </div>
 
                         {/* Reason for separation */}
@@ -278,10 +276,8 @@ export default function AddAttritionSection({ props_data }) {
                                 disabled={isSubmitting}
                                 options={REASON_OPTIONS}
                                 {...register("reason_for_separation", { required: "Please select a reason for separation" })}
+                                error={errors.reason_for_separation}
                             />
-                            {errors.reason_for_separation && (
-                                <span className="text-xs text-red-500 mt-1">{errors.reason_for_separation.message}</span>
-                            )}
                         </div>
 
                         {/* Employment Status */}
@@ -291,10 +287,8 @@ export default function AddAttritionSection({ props_data }) {
                                 disabled={isSubmitting}
                                 options={EMPLOYMENT_STATUS_OPTIONS}
                                 {...register("employment_status", { required: "Please select an employment status" })}
+                                error={errors.employment_status}
                             />
-                            {errors.employment_status && (
-                                <span className="text-xs text-red-500 mt-1">{errors.employment_status.message}</span>
-                            )}
                         </div>
                     </div>
 
