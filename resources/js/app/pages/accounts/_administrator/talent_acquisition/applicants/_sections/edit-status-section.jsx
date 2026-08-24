@@ -1,5 +1,5 @@
 import { setAlert } from "@/app/redux/app-slice";
-import { get_applicants_thunk, get_job_application_by_id_thunk } from "@/app/redux/job-posting-thunk";
+import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
 import { update_job_application_status_service } from "@/app/services/job-application-service";
 import store from "@/app/store/store";
 import React, { useEffect, useState } from "react";

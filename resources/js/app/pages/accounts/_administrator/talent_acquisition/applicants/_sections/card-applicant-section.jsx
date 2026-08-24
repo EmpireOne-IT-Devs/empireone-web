@@ -2,19 +2,18 @@ import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import {
-    Calendar,
-    User,
-    Briefcase,
-    UserCheck,
-    CheckCircle2,
-    Clock,
-    Award,
-    Building,
-    Heart,
-    BadgeCheck,
-    UserX,
-    Video,
-} from 'lucide-react';
+    FcCalendar,
+    FcBusinessman,
+    FcBriefcase,
+    FcCheckmark,
+    FcClock,
+    FcApproval,
+    FcDepartment,
+    FcLike,
+    FcButtingIn,
+    FcVideoCall,
+    FcGenealogy,
+} from 'react-icons/fc';
 
 import DetailsCard from '@/app/_components/details-card';
 import EditStatusSection from './edit-status-section';
@@ -45,7 +44,6 @@ export default function CardApplicantSection() {
             return true;
         });
     }, [applicants?.data, search_applicant_status]);
-
 
     return (
         <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
@@ -83,22 +81,22 @@ export default function CardApplicantSection() {
                                         : 'N/A'}
                                 </span>
                             }
-                            hideViewButton={true} // Hides the bottom "View Profile" button since applicants use ActionListSection
+                            hideViewButton={true}
                             list={[
                                 {
                                     id: 'fullname',
                                     label: 'Fullname',
-                                    icon: User,
+                                    icon: FcBusinessman,
                                     value: (
                                         <div className="flex items-center gap-1.5 justify-end truncate">
                                             {currentEmployeeId && (
                                                 <Tooltip title="Current Employee">
-                                                    <BadgeCheck className="w-5 h-5 text-blue-600 shrink-0" />
+                                                    <FcApproval className="text-xl shrink-0" />
                                                 </Tooltip>
                                             )}
                                             {previousStatus && (
                                                 <Tooltip title={`Former employee in the ${previousStatus}`}>
-                                                    <UserX className="w-5 h-5 text-amber-600 shrink-0" />
+                                                    <FcButtingIn className="text-xl shrink-0" />
                                                 </Tooltip>
                                             )}
                                             <span className="font-semibold text-gray-900 text-right truncate">
@@ -110,38 +108,38 @@ export default function CardApplicantSection() {
                                 {
                                     id: 'position',
                                     label: 'Position',
-                                    icon: Briefcase,
+                                    icon: FcBriefcase,
                                     value: jobRequisition?.title || 'N/A',
                                 },
                                 {
                                     id: 'recruiter',
                                     label: 'Recruiter',
-                                    icon: UserCheck,
+                                    icon: FcGenealogy,
                                     value: jobRequisition?.recruiter?.name || 'Unassigned',
                                 },
                                 {
                                     id: 'account',
                                     label: 'Account',
-                                    icon: Building,
+                                    icon: FcDepartment,
                                     value: jobRequisition?.account?.name || 'Unassigned',
                                 },
                                 {
                                     id: 'marital_status',
                                     label: 'Marital Status',
-                                    icon: Heart,
+                                    icon: FcLike,
                                     value: personalInfo?.marital_status || 'Unassigned',
                                 },
                                 {
                                     id: 'interview',
                                     label: 'Interview',
-                                    icon: Calendar,
+                                    icon: FcCalendar,
                                     value: scheduledDate ? (
                                         <button
                                             type="button"
                                             onClick={() => window.open(res.schedule?.meeting_link, '_blank')}
                                             className="flex items-center w-full gap-1.5 px-2 py-1 rounded-md bg-purple-50 hover:bg-purple-100 transition-colors text-left"
                                         >
-                                            <Video className="w-4 h-4 text-purple-600 shrink-0" />
+                                            <FcVideoCall className="text-lg shrink-0" />
                                             <div className="flex gap-3 items-center leading-tight">
                                                 <span
                                                     className={`font-semibold text-xs ${isToday ? 'text-rose-600 font-bold' : 'text-gray-900'
@@ -173,21 +171,21 @@ export default function CardApplicantSection() {
                                         <div className="grid grid-cols-1 gap-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
                                             <div className="flex items-center justify-between gap-2">
                                                 <span className="text-xs font-medium text-gray-600 flex items-center gap-1">
-                                                    <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" /> Screening:
+                                                    <FcCheckmark className="text-sm shrink-0" /> Screening:
                                                 </span>
                                                 <EditStatusSection data={res} table_status="screening_status" />
                                             </div>
 
                                             <div className="flex items-center justify-between gap-2">
                                                 <span className="text-xs font-medium text-gray-600 flex items-center gap-1">
-                                                    <Clock className="w-3.5 h-3.5 text-purple-600" /> Interview:
+                                                    <FcClock className="text-sm shrink-0" /> Interview:
                                                 </span>
                                                 <EditStatusSection data={res} table_status="interview_status" />
                                             </div>
 
                                             <div className="flex items-center justify-between gap-2">
                                                 <span className="text-xs font-medium text-gray-600 flex items-center gap-1">
-                                                    <Award className="w-3.5 h-3.5 text-purple-600" /> Final Status:
+                                                    <FcApproval className="text-sm shrink-0" /> Final Status:
                                                 </span>
                                                 <EditStatusSection data={res} table_status="final_status" />
                                             </div>
