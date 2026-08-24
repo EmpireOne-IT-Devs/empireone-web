@@ -60,7 +60,7 @@ const Select = forwardRef(
 
         // Filter options
         const filteredOptions = options.filter((opt) =>
-            opt.label.toLowerCase().includes(search.toLowerCase()),
+            opt?.label?.toLowerCase()?.includes(search?.toLowerCase()),
         );
 
         return (

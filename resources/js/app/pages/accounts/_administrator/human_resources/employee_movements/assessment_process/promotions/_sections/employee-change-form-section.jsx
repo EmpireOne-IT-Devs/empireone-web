@@ -802,17 +802,17 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                         {/* leader_information */}
                                     </td>
                                     <td className="border border-black p-1">
-                                        {watchedValues.is_edit_reporting_to ? (
+                                        {watchedValues?.is_edit_reporting_to ? (
                                             <Select
 
                                                 name="info_reporting_id_to"
                                                 className="w-full text-center"
                                                 options={leaders?.map((res) => ({
-                                                    label: res.user.name,
-                                                    value: res.user_id,
+                                                    label: res?.user?.name,
+                                                    value: res?.user_id,
                                                 }))}
                                                 value={
-                                                    watchedValues.info_reporting_id_to
+                                                    watchedValues?.info_reporting_id_to
                                                 }
                                                 onChange={(val) =>
                                                     setValue(
@@ -821,7 +821,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                                     )
                                                 }
                                                 error={
-                                                    errors.info_reporting_id_to
+                                                    errors?.info_reporting_id_to
                                                 }
                                             />
                                         ) : (
