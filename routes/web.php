@@ -288,6 +288,10 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         Route::inertia('/onboarding', 'accounts/_administrator/human_resources/employees/id/onboarding/page');
         Route::inertia('/employee_change_form', 'accounts/my_documents/employee_change_form/page');
     });
+
+    Route::prefix('documents/{id}')->group(function () {
+        Route::inertia('/exit-clearance', 'accounts/documents/exit-clearance');
+    });
 });
 
 Route::middleware('auth')->group(function () {

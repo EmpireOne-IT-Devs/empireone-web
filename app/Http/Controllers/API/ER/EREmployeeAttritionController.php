@@ -8,7 +8,9 @@ use App\Models\Account\AccountEmployee;
 use App\Models\ER\EREmployeeAttrition;
 use App\Models\ER\ERLeader;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class EREmployeeAttritionController extends Controller
 {
@@ -29,9 +31,23 @@ class EREmployeeAttritionController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+
+    public function my_empireone_send_email(array $payload)
+    {
+        $webAppUrl = env('MY_EMPIRE_SEND_EMAIL');
+
+        return Http::asForm() // Sends as x-www-form-urlencoded
+            ->withOptions([
+                'allow_redirects' => true,
+            ])
+            ->post($webAppUrl, [
+                'recipient' => $payload['recipient'],
+                'cc'        => $payload['cc'] ?? '',
+                'subject'   => $payload['subject'],
+                'body'      => $payload['body'],
+            ]);
+    }
     public function store(Request $request)
     {
         // Wrap everything in a database transaction for data integrity
@@ -82,6 +98,23 @@ class EREmployeeAttritionController extends Controller
                 'status'                => null,
                 'basic_pay'             => null,
                 'allowance'             => null,
+            ]);
+
+            // Define CC recipients as an array for clean maintainability
+            $ccEmails = [
+                'eogs.quicky@gmail.com',
+                'eogs.marlou@gmail.com',
+            ];
+
+            $this->my_empireone_send_email([
+                'recipient' => $request->email,
+                'cc'        => implode(', ', $ccEmails) ?? '',
+                'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
+                'body'      => view('emails.human_resources.exit-clearance-interview', [
+                    'id'       => $attrition->id,
+                    'name'     => $request->name,
+                    'position' => $account_employee->position,
+                ])->render(),
             ]);
 
             // OPTIMIZATION: Used $request->user_id directly
