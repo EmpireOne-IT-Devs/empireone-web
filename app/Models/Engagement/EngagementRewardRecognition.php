@@ -16,6 +16,7 @@ class EngagementRewardRecognition extends Model
         'department_id',
         'account_id',
         'award_category',
+        'award_point',
         'company_value',
         'message',
         'engagement_post_event_reacts_id',

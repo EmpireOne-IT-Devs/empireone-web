@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('engagement_reward_recognitions', function (Blueprint $table) {
             $table->id();
-
+            $table->string('award_point')->nullable();
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();

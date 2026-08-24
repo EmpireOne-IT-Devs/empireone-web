@@ -98,6 +98,7 @@ class EngagementRewardRecognitionController extends Controller
             'employee_id' => ['required', 'exists:users,id'],
             'award_category' => ['nullable', 'string'],
             'company_value' => ['nullable', 'string'],
+            'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
         ]);
 
@@ -114,6 +115,7 @@ class EngagementRewardRecognitionController extends Controller
             'account_id' => $accountId,
             'award_category' => $validated['award_category'],
             'company_value' => $validated['company_value'],
+            'award_point' => $validated['award_point'] ?? null,
             'message' => $validated['message'],
             'status' => 'published',
             'published_at' => now(),
@@ -155,6 +157,7 @@ class EngagementRewardRecognitionController extends Controller
         $validated = $request->validate([
             'award_category' => ['nullable', 'string'],
             'company_value' => ['nullable', 'string'],
+            'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
         ]);
 

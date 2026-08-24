@@ -2,7 +2,7 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import TextArea from "@/app/_components/textarea";
-import { HeartIcon } from "lucide-react";
+import { HeartIcon, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { FaPaperPlane } from "react-icons/fa6";
@@ -35,6 +35,8 @@ const COMPANY_VALUES = [
     "Creativity",
 ];
 
+const AWARD_POINT_PRESETS = [50, 100, 250, 500];
+
 export default function RecognizeSomeoneSections({ onCategoryChange }) {
     const dispatch = useDispatch();
     const { rewardSearchResults, rewardSearching, rewardCreating } =
@@ -59,6 +61,7 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
             employee_id: "",
             award_category: "",
             company_value: "",
+            award_point: "",
             message: "",
         },
     });
@@ -66,6 +69,7 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
     const searchTerm = watch("search_term");
     const selectedAwardCategory = watch("award_category");
     const selectedCompanyValue = watch("company_value");
+    const awardPoint = watch("award_point");
 
     useEffect(() => {
         if (!isOpen) {
@@ -135,6 +139,7 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
             employee_id: selectedEmployee.id,
             award_category: data.award_category || null,
             company_value: data.company_value || null,
+            award_point: data.award_point ? Number(data.award_point) : null,
             message: data.message.trim(),
         };
 
@@ -344,6 +349,57 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                                         }`}
                                     >
                                         {value}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="mt-2 text-sm font-semibold text-gray-900">
+                            Award Points{" "}
+                            <span className="font-normal text-gray-400">
+                                (optional)
+                            </span>
+                        </div>
+                        <Input
+                            name="award_point"
+                            type="number"
+                            min="0"
+                            placeholder="e.g. 100"
+                            iconLeft={
+                                <Star className="h-4 w-4 text-amber-400" />
+                            }
+                            iconRight={
+                                <span className="text-xs text-gray-400">
+                                    pts
+                                </span>
+                            }
+                            value={awardPoint}
+                            onChange={(e) =>
+                                setValue("award_point", e.target.value)
+                            }
+                            error={errors.award_point}
+                        />
+                        <div className="flex flex-wrap gap-2">
+                            {AWARD_POINT_PRESETS.map((points) => {
+                                const selected =
+                                    String(awardPoint) === String(points);
+                                return (
+                                    <button
+                                        key={points}
+                                        type="button"
+                                        onClick={() =>
+                                            setValue(
+                                                "award_point",
+                                                selected ? "" : String(points),
+                                            )
+                                        }
+                                        className={`rounded-full border px-4 py-1.5 text-xs font-medium transition ${
+                                            selected
+                                                ? "border-amber-500 bg-amber-100 text-amber-800"
+                                                : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
+                                        }`}
+                                    >
+                                        +{points}
                                     </button>
                                 );
                             })}

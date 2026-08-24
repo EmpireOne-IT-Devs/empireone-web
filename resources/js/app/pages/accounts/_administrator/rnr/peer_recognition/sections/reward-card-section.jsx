@@ -12,6 +12,7 @@ import {
     Trophy,
     Sparkles,
     Quote,
+    Award,
 } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,12 +38,12 @@ const VARIANT_BADGE_COLORS = {
 };
 
 function RewardCard({ item }) {
-    const CategoryIcon = item.category.icon;
+    const CategoryIcon = item.category?.icon || Lightbulb;
     const borderColorClasses =
-        VARIANT_BORDER_COLORS[item.category.variant] ||
+        VARIANT_BORDER_COLORS[item.category?.variant] ||
         "border-gray-200 hover:border-gray-300";
     const badgeColorClasses =
-        VARIANT_BADGE_COLORS[item.category.variant] ||
+        VARIANT_BADGE_COLORS[item.category?.variant] ||
         "bg-gray-50 text-gray-700 border-gray-200";
 
     return (
@@ -50,68 +51,85 @@ function RewardCard({ item }) {
             className={`group relative w-full h-full rounded-2xl border-2 ${borderColorClasses} bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg`}
         >
             <Badge
-                label={item.category.name}
+                label={item.category?.name || "Recognition"}
                 icon={CategoryIcon}
-                variant={item.category.variant}
+                variant={item.category?.variant || "primary"}
                 className={`absolute -top-3 right-6 shadow-sm ring-1 ring-black/5 border ${badgeColorClasses}`}
             />
 
             <div className="flex items-start justify-between pt-1">
                 <div className="flex items-center gap-3">
                     <div
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white  shadow-sm ${item.author.avatarColor}`}
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-white shadow-sm ${item.author?.avatarColor}`}
                     >
-                        <img
-                            className="w-8 h-8 rounded-full object-cover"
-                            src={
-                                item?.author?.avatar || "/images/E1Icon.png"
-                            }
-                            alt={item?.author?.name || "Author avatar"}
-                        />
+                        {item.author?.avatar ? (
+                            <img
+                                className="h-full w-full object-cover"
+                                src={item.author.avatar}
+                                alt={item.author?.name || "Author avatar"}
+                            />
+                        ) : (
+                            <span>{item.author?.initials || "?"}</span>
+                        )}
                     </div>
+
                     <div>
-                        <h3 className="text-sm font-semibold text-gray-900">
-                            {item.author.name}
-                        </h3>
-                        <div className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
-                            <Briefcase size={12} />
-                            {item.author.department}
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-sm font-semibold text-gray-900">
+                                {item.author?.name || "Anonymous"}
+                            </h3>
                         </div>
+
+                        {item.author?.department && (
+                            <div className="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
+                                <Briefcase size={12} />
+                                {item.author.department}
+                            </div>
+                        )}
                     </div>
                 </div>
-
                 <span className="whitespace-nowrap text-xs text-gray-400">
                     {moment(item.createdAt).format("MMM D, YYYY")}
                 </span>
             </div>
 
             {/* Author -> Recipient flow */}
-            <div className="mt-4 flex items-center gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
-                <span className="text-xs font-medium text-gray-400">
-                    Recognized
-                </span>
-                <ArrowRight size={14} className="shrink-0 text-gray-300" />
-                <div className="flex min-w-0 items-center gap-2">
-                    <div
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white ${item.recipient.avatarColor}`}
-                    >
-                        <img
-                            className="w-8 h-8 rounded-full object-cover"
-                            src={
-                                item?.recipient?.avatar ||
-                                "/images/E1Icon.png"
-                            }
-                            alt={item?.recipient?.name || "Recipient avatar"}
-                        />
+            <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
+                <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs font-medium text-gray-400 shrink-0">
+                        Recognized
+                    </span>
+                    <ArrowRight size={14} className="shrink-0 text-gray-300" />
+                    <div className="flex min-w-0 items-center gap-2">
+                        <div
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-[11px] font-semibold text-white ${item.recipient?.avatarColor}`}
+                        >
+                            {item.recipient?.avatar ? (
+                                <img
+                                    className="h-full w-full object-cover"
+                                    src={item.recipient.avatar}
+                                    alt={item.recipient?.name || "Recipient avatar"}
+                                />
+                            ) : (
+                                <span>{item.recipient?.initials || "?"}</span>
+                            )}
+                        </div>
+                        <div className="min-w-0">
+                            <p className="truncate text-sm font-medium text-gray-900">
+                                {item.recipient?.name || "Team Member"}
+                            </p>
+                            {item.recipient?.department && (
+                                <p className="truncate text-xs text-gray-500">
+                                    {item.recipient.department}
+                                </p>
+                            )}
+                        </div>
                     </div>
-                    <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-gray-900">
-                            {item.recipient.name}
-                        </p>
-                        <p className="truncate text-xs text-gray-500">
-                            {item.recipient.department}
-                        </p>
-                    </div>
+                </div>
+
+                <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 border border-amber-200 shadow-xs shrink-0">
+                    <Award size={13} className="text-amber-500 shrink-0" />
+                    <span>+{item.award_point || 0} pts</span>
                 </div>
             </div>
 
@@ -132,13 +150,13 @@ function RewardCard({ item }) {
             {/* Footer */}
             <div className="flex items-center justify-between text-gray-500">
                 <div className="flex items-center gap-1">
-                    <button className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm transition-colors hover:bg-red-50 hover:text-red-500">
+                    <button className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm transition-colors hover:bg-red-50 hover:text-red-500 cursor-pointer">
                         <Heart size={16} />
                         {item.likes}
                     </button>
                 </div>
 
-                <button className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm transition-colors hover:bg-gray-100 hover:text-gray-900">
+                <button className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm transition-colors hover:bg-gray-100 hover:text-gray-900 cursor-pointer">
                     <Share2 size={16} />
                     Share
                 </button>
@@ -161,43 +179,32 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
         const name = (cat || "").toString();
         const key = name.toLowerCase();
 
-        // Match award_category values
-        if (key === "employee of the month") {
+        if (key === "employee of the month" || key === "excellence") {
             return { name, icon: Star, variant: "primary" };
         }
-        if (key === "innovation award" || key === "innovation") {
+        if (key === "innovation award" || key === "innovation" || key === "creativity") {
             return { name, icon: Lightbulb, variant: "warning" };
         }
         if (key === "rising star award") {
             return { name, icon: Star, variant: "primary" };
         }
-        if (key === "team excellence award" || key.includes("team")) {
+        if (key === "team excellence award" || key.includes("team") || key === "teamwork") {
             return { name, icon: HeartHandshake, variant: "purple" };
         }
-        if (key === "customer champion award" || key.includes("customer")) {
+        if (key === "customer champion award" || key.includes("customer") || key === "customer focus") {
             return { name, icon: Sparkles, variant: "success" };
         }
-        if (key === "mentor of the quarter" || key.includes("mentor")) {
+        if (key === "mentor of the quarter" || key.includes("mentor") || key === "leadership") {
             return { name, icon: Trophy, variant: "info" };
         }
-        if (key === "innovation")
-            return { name, icon: Lightbulb, variant: "warning" };
-        if (key === "teamwork")
-            return { name, icon: HeartHandshake, variant: "purple" };
-        if (key === "excellence")
-            return { name, icon: Star, variant: "primary" };
-        if (key === "leadership")
-            return { name, icon: Trophy, variant: "info" };
-        if (key === "customer focus")
-            return { name, icon: Sparkles, variant: "success" };
-        if (key === "integrity")
+        if (key === "integrity") {
             return { name, icon: Trophy, variant: "secondary" };
-        if (key === "resilience")
+        }
+        if (key === "resilience") {
             return { name, icon: Lightbulb, variant: "info" };
-        if (key === "creativity")
-            return { name, icon: Lightbulb, variant: "warning" };
+        }
 
-        return { name, icon: Lightbulb, variant: "primary" };
+        return { name: name || "Recognition", icon: Lightbulb, variant: "primary" };
     };
 
     const filteredRecognitions =
@@ -215,6 +222,7 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
         const initials = (name) => {
             if (!name) return "";
             return name
+                .trim()
                 .split(" ")
                 .map((n) => n[0])
                 .slice(0, 2)
@@ -267,6 +275,7 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
             message: r.message,
             createdAt: r.published_at || r.created_at,
             likes: r.reaction_count || 0,
+            award_point: r.award_point || 0,
         };
     });
 
@@ -277,7 +286,7 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
     ));
 
     return (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 ">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {rewardRecognitionsLoading
                 ? loadingCards
                 : mapped.map((item) => (
