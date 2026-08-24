@@ -2,11 +2,6 @@ import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import {
-    FcApproval,
-    FcButtingIn,
-    FcVideoCall,
-} from 'react-icons/fc';
-import {
     Calendar,
     User,
     Briefcase,
@@ -16,6 +11,9 @@ import {
     Award,
     Building,
     Heart,
+    BadgeCheck,
+    UserX,
+    Video,
 } from 'lucide-react';
 
 import DetailsCard from '@/app/_components/details-card';
@@ -47,6 +45,7 @@ export default function CardApplicantSection() {
             return true;
         });
     }, [applicants?.data, search_applicant_status]);
+
 
     return (
         <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
@@ -94,12 +93,12 @@ export default function CardApplicantSection() {
                                         <div className="flex items-center gap-1.5 justify-end truncate">
                                             {currentEmployeeId && (
                                                 <Tooltip title="Current Employee">
-                                                    <FcApproval className="text-xl shrink-0" />
+                                                    <BadgeCheck className="w-5 h-5 text-blue-600 shrink-0" />
                                                 </Tooltip>
                                             )}
                                             {previousStatus && (
                                                 <Tooltip title={`Former employee in the ${previousStatus}`}>
-                                                    <FcButtingIn className="text-xl shrink-0" />
+                                                    <UserX className="w-5 h-5 text-amber-600 shrink-0" />
                                                 </Tooltip>
                                             )}
                                             <span className="font-semibold text-gray-900 text-right truncate">
@@ -142,12 +141,11 @@ export default function CardApplicantSection() {
                                             onClick={() => window.open(res.schedule?.meeting_link, '_blank')}
                                             className="flex items-center w-full gap-1.5 px-2 py-1 rounded-md bg-purple-50 hover:bg-purple-100 transition-colors text-left"
                                         >
-                                            <FcVideoCall className="text-lg shrink-0" />
+                                            <Video className="w-4 h-4 text-purple-600 shrink-0" />
                                             <div className="flex gap-3 items-center leading-tight">
                                                 <span
-                                                    className={`font-semibold text-xs ${
-                                                        isToday ? 'text-rose-600 font-bold' : 'text-gray-900'
-                                                    }`}
+                                                    className={`font-semibold text-xs ${isToday ? 'text-rose-600 font-bold' : 'text-gray-900'
+                                                        }`}
                                                 >
                                                     {isToday ? 'Today' : moment(scheduledDate).format('MMM DD')}
                                                 </span>

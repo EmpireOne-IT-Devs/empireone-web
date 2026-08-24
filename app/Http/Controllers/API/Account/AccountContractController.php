@@ -166,7 +166,10 @@ class AccountContractController extends Controller
 
         $employee = AccountEmployee::updateOrCreate(
             ['user_id' => $request->user_id],
-            ['is_has_contract' => true]
+            [
+                'is_has_contract' => true,
+                'employment_status' => null
+            ]
         );
 
         if (!$employee->is_has_contract || !empty($employee->employee_id)) {
