@@ -169,7 +169,7 @@ export default function SidebarSection() {
                                 href: `/accounts/${account_role}/rnr/peer_recognition`,
                                 icon: FcDiploma1,
                                 current: path == "rnr",
-                                is_incoming: false,
+                                is_incoming: true,
                             },
                         ]
                       : []),
