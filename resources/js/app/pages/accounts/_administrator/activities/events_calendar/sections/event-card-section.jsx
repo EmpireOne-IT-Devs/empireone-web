@@ -64,9 +64,18 @@ function EventCard({ post, onClick }) {
                 </div>
             </div>
             <div className="p-4 flex-1 flex flex-col justify-between bg-white">
-                <p className="text-xs text-gray-500 font-normal leading-relaxed mb-4">
-                    {stripHtml(body).substring(0, 150)}
+                <p className="text-xs text-gray-500 font-normal leading-relaxed mb-4 line-clamp-3">
+                    {stripHtml(body)}
                 </p>
+                {stripHtml(body).length > 0 && (
+                    <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+                        className="self-start text-xs font-semibold text-[#0b2265] hover:underline -mt-3 mb-1"
+                    >
+                        View more
+                    </button>
+                )}
                 {/* <div className="flex items-center justify-between text-[11px] font-medium text-gray-400 border-t border-gray-50 pt-3 mt-auto">
                     <div className="flex items-center gap-1">
                         <MapPin size={13} className="text-gray-400" />

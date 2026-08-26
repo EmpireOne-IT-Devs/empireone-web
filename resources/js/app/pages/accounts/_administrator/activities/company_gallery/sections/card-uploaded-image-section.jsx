@@ -12,8 +12,6 @@ import {
 } from "lucide-react";
 import Skeleton from "@/app/_components/skeleton";
 import { get_company_galleries } from "@/app/services/engagement-gallery-service";
-
-// Helper to safely extract image URL regardless of backend payload key structure
 const getImageUrl = (item) => {
     if (!item) return "";
     if (typeof item === "string") return item;
