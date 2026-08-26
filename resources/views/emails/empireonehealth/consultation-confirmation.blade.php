@@ -121,7 +121,7 @@
 
         /* Footer */
         .footer {
-            padding: 28px 20px 18px;
+            margin-bottom: 20px;
             text-align: center;
             background-color: #ffffff;
         }
@@ -193,7 +193,13 @@
                         <b>
                             EmpireOne Health
                         </b>
-                        <img src="/images/empireone-health.webp" alt="EmpireOne Health Logo">
+                    </p>
+                    <p>
+                        <img
+                            src="https://careers.empireonecx.com/images/empireone-health.png"
+                            alt="EmpireOne Health Logo"
+                            style="width: 155px; height: auto;">
+
                     </p>
                 </div>
 

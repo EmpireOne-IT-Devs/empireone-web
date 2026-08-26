@@ -259,6 +259,13 @@
                             EmpireOne Health System
                         </b>
                     </p>
+                    <p>
+                        <img
+                            src="https://careers.empireonecx.com/images/empireone-health.png"
+                            alt="EmpireOne Health Logo"
+                            style="width: 155px; height: auto;">
+
+                    </p>
                 </div>
 
             </div>
