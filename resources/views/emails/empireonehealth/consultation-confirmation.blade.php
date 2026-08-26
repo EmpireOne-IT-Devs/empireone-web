@@ -193,6 +193,7 @@
                         <b>
                             EmpireOne Health
                         </b>
+                        <img src="/images/empireone-health.webp" alt="EmpireOne Health Logo">
                     </p>
                 </div>
 

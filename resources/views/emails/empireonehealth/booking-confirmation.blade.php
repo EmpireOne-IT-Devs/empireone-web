@@ -194,8 +194,12 @@
                             EmpireOne Health
                         </b>
                     </p>
+                    <p>
+                        <img
+                            src="/images/empireone-health.png"
+                            alt="EmpireOne Health Logo">
+                    </p>
                 </div>
-
             </div>
 
             <!-- Footer -->
