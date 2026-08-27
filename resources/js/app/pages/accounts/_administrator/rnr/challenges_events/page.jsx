@@ -1,14 +1,15 @@
 import React from 'react'
 import Layout from '../../../layout'
 import RnrLayout from '../layout'
-import CreateNewChallenge from './sections/create-new-challenge'
+import CreateNewChallenge from './dashboard/create-new-challenge'
+import TabsSection from './sections/tabs-section'
 
 export default function Page() {
   return (
     <Layout>
       
       <RnrLayout>
-        <CreateNewChallenge />
+          <TabsSection />
       </RnrLayout>
     </Layout>
   )

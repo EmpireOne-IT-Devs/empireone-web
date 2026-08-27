@@ -7,7 +7,7 @@ import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import TextArea from "@/app/_components/textarea";
-import TabsSection from "./tabs-section";
+import TabsSection from "../sections/tabs-section";
 
 const CHALLENGE_TYPES = ["Individual", "Team"];
 
@@ -131,7 +131,7 @@ export default function CreateNewChallenge() {
         <div>
             {/* Header Section */}
             <div className="mt-4 flex items-start justify-between gap-4 p-2">
-                <TabsSection />
+              
                 <Button
                     variant="engagement"
                     className="shrink-0 rounded-full"
