@@ -82,6 +82,10 @@ const TalentApplicationForm = () => {
 
 
     useEffect(() => {
+        setStep(0)
+    }, [])
+    
+    useEffect(() => {
         if (job_postings && watchedValues.job_posting_id) {
             const position_title = job_postings.find(
                 (res) => res.id == watchedValues.job_posting_id
@@ -330,16 +334,19 @@ const TalentApplicationForm = () => {
                 className="p-5 lg:px-10 lg:py-8"
                 onSubmit={handleSubmit(onSubmit)}
             >
-                <div className="w-full px-2 mb-2 text-left">
-                    <Link
-                        href="/talent/application"
-                        className="inline-flex items-center gap-2 text-sm font-bold text-blue-500 hover:text-blue-700 transition-colors"
-                    >
-                        {/* Left arrow character */}
-                        <span>&larr;</span> Back to Locations
-                    </Link>
-                </div>
-                {step === 0 && <JobPostingSection setStep={setStep} />}
+
+                {step === 0 && <>
+                    <div className="w-full px-2 mb-2 text-left">
+                        <Link
+                            href="/talent/application"
+                            className="inline-flex items-center gap-2 text-sm font-bold text-blue-500 hover:text-blue-700 transition-colors"
+                        >
+                            {/* Left arrow character */}
+                            <span>&larr;</span> Back to Locations
+                        </Link>
+                    </div>
+                    <JobPostingSection setStep={setStep} />
+                </>}
 
                 {step !== 0 && (
                     <div
