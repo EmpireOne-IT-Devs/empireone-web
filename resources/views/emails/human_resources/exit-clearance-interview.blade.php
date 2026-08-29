@@ -90,10 +90,10 @@
                 </p>
 
                 <div class="button-container">
-                    <a href="{{ config('app.url') }}/accounts/documents/{{ $id }}/exit-clearance"
+                    <a href="{{ config('app.url') }}/accounts/off_boarding_documents/{{ $id }}/exit-clearance"
                         class="btn-primary">Complete Exit Clearance</a>
 
-                    <a href="{{ config('app.url') }}/accounts/documents/{{ $id }}/exit-interview"
+                    <a href="{{ config('app.url') }}/accounts/off_boarding_documents/{{ $id }}/exit-interview"
                         class="btn-secondary">Take Exit Interview</a>
                 </div>
             </div>

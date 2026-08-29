@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { setLoading } from "@/app/redux/app-slice";
 import PDFLoader from "@/app/_components/pdf-loader";
+import numberToWords from 'number-to-words';
 
 // Define styles using Times New Roman fonts
 const styles = StyleSheet.create({
@@ -388,7 +389,7 @@ const EmploymentContract = ({ data }) => (
             </Text>
             <Text style={[styles.text, { marginBottom: 20 }]}>
                 The Employee, during the term of his employment, shall be paid a
-                gross monthly salary of TWELVE THOUSAND PESOS PHP{" "}
+                gross monthly salary of {" "}{numberToWords.toWords(data?.salary).toUpperCase()} PESOS PHP{" "}
                 <Text
                     style={{
                         textDecorationLine: "underline",

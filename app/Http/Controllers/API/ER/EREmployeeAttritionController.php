@@ -53,10 +53,10 @@ class EREmployeeAttritionController extends Controller
         // Wrap everything in a database transaction for data integrity
 
         $attrition = EREmployeeAttrition::updateOrCreate(
-            ['user_id' => $request->user_id],
+            ['employee_id' => $request->employee_id],
             [
+                'user_id'           => $request->user_id,
                 'position'              => $request->position,
-                'employee_id'           => $request->employee_id,
                 'department'            => $request->department['name'] ?? null, // Added fallback just in case
                 'account'               => $request->account['name'] ?? '',
                 'eogs_email'            => $request->eogs_email,
@@ -82,23 +82,23 @@ class EREmployeeAttritionController extends Controller
                 ]);
             }
 
-            $account_employee->update([
-                'employment_status'     => $request->employment_status,
-                'reason_for_separation' => $request->reason_for_separation,
-                'is_rehire'             => $request->is_rehire,
-                'position'              => null,
-                'department_id'         => null,
-                'account_id'            => null,
-                'started_at'            => null,
-                'e_r_leader_id'         => null,
-                'is_has_contract'       => null,
-                'employee_id'           => null,
-                'signature'             => null,
-                'onboarding_agree_on'   => null,
-                'status'                => null,
-                'basic_pay'             => null,
-                'allowance'             => null,
-            ]);
+            // $account_employee->update([
+            //     'employment_status'     => $request->employment_status,
+            //     'reason_for_separation' => $request->reason_for_separation,
+            //     'is_rehire'             => $request->is_rehire,
+            //     'position'              => null,
+            //     'department_id'         => null,
+            //     'account_id'            => null,
+            //     'started_at'            => null,
+            //     'e_r_leader_id'         => null,
+            //     'is_has_contract'       => null,
+            //     'employee_id'           => null,
+            //     'signature'             => null,
+            //     'onboarding_agree_on'   => null,
+            //     'status'                => null,
+            //     'basic_pay'             => null,
+            //     'allowance'             => null,
+            // ]);
 
             // Define CC recipients as an array for clean maintainability
             $ccEmails = [
@@ -113,14 +113,14 @@ class EREmployeeAttritionController extends Controller
                 'body'      => view('emails.human_resources.exit-clearance-interview', [
                     'id'       => $attrition->id,
                     'name'     => $request->name,
-                    'position' => $account_employee->position,
+                    'position' => $account_employee->position ?? 'N/A',
                 ])->render(),
             ]);
 
             // OPTIMIZATION: Used $request->user_id directly
-            User::where('id', $request->user_id)->update([
-                'role' => '3',
-            ]);
+            // User::where('id', $request->user_id)->update([
+            //     'role' => '3',
+            // ]);
             $leader =  ERLeader::where('user_id', $request->user_id)->first();
             if ($leader) {
                 $leader->update([
@@ -137,9 +137,10 @@ class EREmployeeAttritionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(EREmployeeAttrition $eREmployeeAttrition)
+    public function show($id)
     {
-        //
+        $attrition=EREmployeeAttrition::where('id', $id)->with(['employee'])->first();
+        return response()->json($attrition);
     }
 
     /**

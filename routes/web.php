@@ -289,8 +289,8 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         Route::inertia('/employee_change_form', 'accounts/my_documents/employee_change_form/page');
     });
 
-    Route::prefix('documents/{id}')->group(function () {
-        Route::inertia('/exit-clearance', 'accounts/documents/exit-clearance');
+    Route::prefix('off_boarding_documents/{id}')->group(function () {
+        Route::inertia('/exit-clearance', 'accounts/off_boarding_documents/exit-clearance-page');
     });
 });
 

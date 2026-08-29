@@ -18,7 +18,7 @@ export default function Page() {
     const employer_name = `${hr?.personal_information?.first_name ?? ''} ${hr?.personal_information?.last_name ?? ''}`
     const employer_position = `${hr?.position}`
     const employer_signature = `${hr?.signature}`
-
+console.log('useruseruser',user)
     const data = {
         user_id: user.id,
         signature: user?.account_employee?.signature ?? null,
@@ -27,18 +27,8 @@ export default function Page() {
         employer_name: employer_name,
         employer_position: employer_position,
         employer_signature:employer_signature,
-        reported_to:
-            user?.account_contract?.reported_to ??
-            `${user?.is_passed?.job_posting?.job_requisition?.user
-                ?.personal_information?.first_name
-            } ${user?.is_passed?.job_posting?.job_requisition?.user
-                ?.personal_information?.middle_name
-            } ${user?.is_passed?.job_posting?.job_requisition?.user
-                ?.personal_information?.last_name
-            }`,
-        contract_signed_at:
-            // user?.account_contract?.contract_signed_at ??
-           moment().add(1, 'days').format('LLL'),
+        reported_to:`${user?.account_employee?.er_leader?.employee?.personal_information?.first_name} ${user?.account_employee?.er_leader?.employee?.personal_information?.last_name}` ,
+        contract_signed_at:moment().add(1, 'days').format('LLL'),
         residence:
             // user?.account_contract?.residence ??
             `${user?.personal_information?.barangay}  ${user?.personal_information?.city}`,

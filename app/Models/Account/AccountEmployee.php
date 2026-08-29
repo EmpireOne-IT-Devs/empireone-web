@@ -74,7 +74,7 @@ class AccountEmployee extends Model
     }
     public function department(): HasOne
     {
-        return $this->hasOne(Department::class, 'id', 'department_id');
+        return $this->hasOne(Department::class, 'id', 'department_id')->with(['manager']);
     }
     public function account(): HasOne
     {
