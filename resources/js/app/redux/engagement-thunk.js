@@ -39,6 +39,8 @@ export const create_engagement_post_thunk = createAsyncThunk(
             formData.append("title", data.title);
             formData.append("content", data.content);
             formData.append("category", data.category);
+            formData.append("publish_mode", data.publish_mode ?? "now");
+            if (data.scheduled_at) formData.append("scheduled_at", data.scheduled_at);
 
             if (data.images && data.images.length > 0) {
                 data.images.forEach((image) => {

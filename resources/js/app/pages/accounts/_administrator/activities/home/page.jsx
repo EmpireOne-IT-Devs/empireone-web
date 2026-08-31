@@ -63,9 +63,13 @@ export default function Page() {
                         </div>
                     </div>
 
-                    {/* Right Column - Announcements Sidebar */}
-                    <div className="hidden lg:block lg:col-span-4 xl:col-span-3 h-full min-h-0 overflow-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-                        <AnnouncementsSection />
+                    {/* Right Column - Upcoming scheduled posts + Announcements */}
+                    <div className="hidden lg:flex lg:col-span-4 xl:col-span-3 h-full min-h-0 flex-col gap-4 overflow-auto">
+                        <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+                            <AnnouncementsSection />
+                        </div>
+                        <UpcomingEventSection />
+                        
                     </div>
                 </div>
             </ActivitiesLayout>

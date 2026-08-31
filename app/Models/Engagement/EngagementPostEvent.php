@@ -3,10 +3,13 @@
 namespace App\Models\Engagement;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class EngagementPostEvent extends Model
 {
+    protected $appends = ['status'];
+
     protected $fillable = [
         'user_id',
         'title',
@@ -70,5 +73,15 @@ class EngagementPostEvent extends Model
     public function survey()
     {
         return $this->hasOne(EngagementPostEventSurvey::class, 'engagement_post_event_id');
+    }
+
+    // Derived from existing scheduled_at/published_at columns — no dedicated status column needed.
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->published_at
+                ? 'published'
+                : ($this->scheduled_at ? 'scheduled' : 'draft'),
+        );
     }
 }

@@ -18,6 +18,14 @@ class EngagementPostEventController extends Controller
     public function index(): JsonResponse
     {
         $userId = Auth::id();
+        $isAdmin = Auth::user()?->role === User::ROLE_ADMIN;
+
+        // Auto-publish any due scheduled posts whenever the feed is loaded, instead of a separate cron/command.
+        EngagementPostEvent::whereNull('published_at')
+            ->whereNotNull('scheduled_at')
+            ->where('scheduled_at', '<=', now())
+            ->update(['published_at' => now()]);
+
         $posts = EngagementPostEvent::with([
             'user:id,name,avatar',
             'files',
@@ -27,10 +35,21 @@ class EngagementPostEventController extends Controller
         ])
             ->withCount(['reactions', 'comments'])
             ->withExists(['reactions as user_has_reacted' => fn($q) => $q->where('user_id', $userId)])
-            ->where(function ($q) {
-                // Published (immediate or scheduled-and-due) or legacy rows with no publish flag.
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+            ->where(function ($q) use ($isAdmin) {
+                // Published (immediate or scheduled-and-due), or legacy rows created before
+                // scheduling existed (no published_at and never scheduled).
+                $q->where(function ($q2) {
+                    $q2->whereNotNull('published_at')->where('published_at', '<=', now());
+                })->orWhere(function ($q2) {
+                    $q2->whereNull('published_at')->whereNull('scheduled_at');
+                });
+
+                // Admins can also see their still-pending scheduled posts so they have visibility before they go live.
+                if ($isAdmin) {
+                    $q->orWhere(function ($q2) {
+                        $q2->whereNull('published_at')->whereNotNull('scheduled_at');
+                    });
+                }
             })
             ->latest()
             ->get()
@@ -61,6 +80,8 @@ class EngagementPostEventController extends Controller
                     'year'              => $post->year,
                     'publish_to'        => $post->publish_to,
                     'published_at'      => $post->published_at,
+                    'scheduled_at'      => $post->scheduled_at,
+                    'status'            => $post->status,
                     'files'             => $post->files->map(fn($f) => [
                         'id'   => $f->id,
                         'name' => $f->name,
@@ -224,7 +245,7 @@ class EngagementPostEventController extends Controller
                 'month'        => 'nullable|string|max:20',
                 'year'         => 'nullable|integer',
                 'publish_to'   => 'required|string|max:100',
-                'scheduled_at' => 'nullable|date',
+                'scheduled_at' => 'nullable|date|after:now',
                 'media'        => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,webm|max:51200',
                 'options'      => 'required_if:type,poll|array|min:2',
                 'options.*'    => 'required|string|max:255',
@@ -353,12 +374,17 @@ class EngagementPostEventController extends Controller
 
         // Simple title/content post with optional image gallery.
         $request->validate([
-            'title'    => ['required', 'string', 'max:255'],
-            'content'  => ['required', 'string'],
-            'category' => ['required', 'in:Event,News,Milestone,Announcement'],
-            'images'   => ['nullable', 'array'],
-            'images.*' => ['image', 'mimes:jpg,jpeg,png,gif,webp', 'max:5120'],
+            'title'        => ['required', 'string', 'max:255'],
+            'content'      => ['required', 'string'],
+            'category'     => ['required', 'in:Event,News,Milestone,Announcement'],
+            'images'       => ['nullable', 'array'],
+            'images.*'     => ['image', 'mimes:jpg,jpeg,png,gif,webp', 'max:5120'],
+            'publish_mode' => ['nullable', 'in:now,schedule'],
+            'scheduled_at' => ['required_if:publish_mode,schedule', 'nullable', 'date', 'after:now'],
         ]);
+
+        $isScheduled = $request->input('publish_mode') === 'schedule';
+        $scheduledAt = $isScheduled ? $request->input('scheduled_at') : null;
 
         $post = EngagementPostEvent::create([
             'title'        => $request->input('title'),
@@ -366,7 +392,8 @@ class EngagementPostEventController extends Controller
             'category'     => $request->input('category'),
             'type'         => 'general',
             'user_id'      => Auth::id(),
-            'published_at' => now(),
+            'scheduled_at' => $scheduledAt,
+            'published_at' => $scheduledAt ? null : now(),
         ]);
 
         if ($request->hasFile('images')) {
@@ -388,7 +415,7 @@ class EngagementPostEventController extends Controller
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Post created successfully.',
+            'message' => $scheduledAt ? 'Post scheduled successfully.' : 'Post created successfully.',
             'data'    => $post,
         ], 201);
     }

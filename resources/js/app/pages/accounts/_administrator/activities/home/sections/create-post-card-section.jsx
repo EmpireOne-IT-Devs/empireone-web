@@ -11,6 +11,8 @@ import {
     BarChart2,
     Plus,
     Trash2,
+    ChevronDown,
+    Clock,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -49,6 +51,55 @@ export default function CreatePostCardSection() {
     const [pollOptions, setPollOptions] = useState(["", ""]);
     const fileInputRef = useRef(null);
 
+    // Schedule Publish state
+    const [publishMode, setPublishMode] = useState("now"); // "now" | "schedule"
+    const [showPublishMenu, setShowPublishMenu] = useState(false);
+    const [showScheduler, setShowScheduler] = useState(false);
+    const [scheduledAt, setScheduledAt] = useState(""); // datetime-local value
+    const [scheduleError, setScheduleError] = useState("");
+    const publishMenuRef = useRef(null);
+
+    // Close the publish options menu on outside click
+    useEffect(() => {
+        if (!showPublishMenu) return;
+        function handleOutside(e) {
+            if (
+                publishMenuRef.current &&
+                !publishMenuRef.current.contains(e.target)
+            ) {
+                setShowPublishMenu(false);
+            }
+        }
+        document.addEventListener("mousedown", handleOutside);
+        return () => document.removeEventListener("mousedown", handleOutside);
+    }, [showPublishMenu]);
+
+    const validateSchedule = () => {
+        if (!scheduledAt) {
+            setScheduleError("Please select a date and time.");
+            return false;
+        }
+        if (new Date(scheduledAt).getTime() <= Date.now()) {
+            setScheduleError("Scheduled time must be in the future.");
+            return false;
+        }
+        setScheduleError("");
+        return true;
+    };
+
+    const confirmSchedule = () => {
+        if (!validateSchedule()) return;
+        setPublishMode("schedule");
+        setShowScheduler(false);
+    };
+
+    const cancelSchedule = () => {
+        setPublishMode("now");
+        setScheduledAt("");
+        setScheduleError("");
+        setShowScheduler(false);
+    };
+
     const {
         register,
         handleSubmit,
@@ -84,9 +135,12 @@ export default function CreatePostCardSection() {
     }, [images]);
 
     const canPublish =
-        postType === "poll"
-            ? title?.trim() && pollOptions.filter((o) => o.trim()).length >= 2
-            : title?.trim() && (content ?? "").replace(/<[^>]+>/g, "").trim();
+        (postType === "poll"
+            ? title?.trim() &&
+              pollOptions.filter((o) => o.trim()).length >= 2
+            : title?.trim() &&
+              (content ?? "").replace(/<[^>]+>/g, "").trim()) &&
+        (publishMode !== "schedule" || Boolean(scheduledAt));
 
     const resetForm = () => {
         reset();
@@ -94,6 +148,11 @@ export default function CreatePostCardSection() {
         setSelectedCategory("Event");
         setImages([]);
         setPollOptions(["", ""]);
+        setPublishMode("now");
+        setScheduledAt("");
+        setScheduleError("");
+        setShowScheduler(false);
+        setShowPublishMenu(false);
         setIsOpen(false);
     };
 
@@ -133,6 +192,8 @@ export default function CreatePostCardSection() {
 const currentUser = useSelector((state) => state.auth?.user || state.app?.user);
     const onSubmit = async (data) => {
         let result;
+        const isScheduling = publishMode === "schedule";
+        if (isScheduling && !validateSchedule()) return;
 
         if (postType === "poll") {
             const validOptions = pollOptions.filter((o) => o.trim());
@@ -143,6 +204,7 @@ const currentUser = useSelector((state) => state.auth?.user || state.app?.user);
                     message: data.content ?? "",
                     publish_to: "All Employees",
                     options: validOptions,
+                    scheduled_at: isScheduling ? scheduledAt : null,
                 }),
             );
             if (publish_engagement_post_thunk.fulfilled.match(result)) {
@@ -150,7 +212,9 @@ const currentUser = useSelector((state) => state.auth?.user || state.app?.user);
                 dispatch(
                     setAlert({
                         type: "success",
-                        title: "Poll Published Successfully!",
+                        title: isScheduling
+                            ? "Poll Scheduled Successfully!"
+                            : "Poll Published Successfully!",
                         open: true,
                     }),
                 );
@@ -172,6 +236,8 @@ const currentUser = useSelector((state) => state.auth?.user || state.app?.user);
                     ...data,
                     category: selectedCategory,
                     images,
+                    publish_mode: publishMode,
+                    scheduled_at: isScheduling ? scheduledAt : null,
                 }),
             );
             if (create_engagement_post_thunk.fulfilled.match(result)) {
@@ -179,7 +245,9 @@ const currentUser = useSelector((state) => state.auth?.user || state.app?.user);
                 dispatch(
                     setAlert({
                         type: "success",
-                        title: "Post Published Successfully!",
+                        title: isScheduling
+                            ? "Post Scheduled Successfully!"
+                            : "Post Published Successfully!",
                         open: true,
                     }),
                 );
@@ -513,19 +581,104 @@ const currentUser = useSelector((state) => state.auth?.user || state.app?.user);
                         </>
                     )}
 
+                    {/* Schedule Publish panel */}
+                    {showScheduler && (
+                        <div className="flex flex-col gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
+                            <p className="text-sm font-semibold text-slate-700">
+                                Schedule Post
+                            </p>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    Date &amp; Time
+                                </label>
+                                <input
+                                    type="datetime-local"
+                                    value={scheduledAt}
+                                    min={new Date(
+                                        Date.now() - new Date().getTimezoneOffset() * 60000,
+                                    )
+                                        .toISOString()
+                                        .slice(0, 16)}
+                                    onChange={(e) => {
+                                        setScheduledAt(e.target.value);
+                                        setScheduleError("");
+                                    }}
+                                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100"
+                                />
+                                {scheduleError && (
+                                    <p className="text-xs text-red-500">
+                                        {scheduleError}
+                                    </p>
+                                )}
+                                {scheduledAt && !scheduleError && (
+                                    <p className="text-xs text-slate-500">
+                                        Scheduled for{" "}
+                                        <span className="font-semibold text-slate-700">
+                                            {new Date(
+                                                scheduledAt,
+                                            ).toLocaleString("en-US", {
+                                                month: "long",
+                                                day: "numeric",
+                                                year: "numeric",
+                                                hour: "numeric",
+                                                minute: "2-digit",
+                                            })}
+                                        </span>
+                                    </p>
+                                )}
+                            </div>
+                            <div className="flex justify-end gap-2">
+                                <Button
+                                    type="button"
+                                    variant="light"
+                                    outlined
+                                    onClick={cancelSchedule}
+                                    className="rounded-full border-slate-300 px-4 text-slate-600"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={confirmSchedule}
+                                    className="rounded-full bg-indigo-700 px-4 text-white hover:bg-indigo-800"
+                                >
+                                    Confirm Schedule
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Footer */}
                     <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-                        <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">
-                            {postType === "poll" ? (
-                                <>
-                                    <BarChart2 className="h-3.5 w-3.5" />
-                                    <span>Poll</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Tag className="h-3.5 w-3.5" />
-                                    <span>{selectedCategory}</span>
-                                </>
+                        <div className="flex items-center gap-2">
+                            <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">
+                                {postType === "poll" ? (
+                                    <>
+                                        <BarChart2 className="h-3.5 w-3.5" />
+                                        <span>Poll</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Tag className="h-3.5 w-3.5" />
+                                        <span>{selectedCategory}</span>
+                                    </>
+                                )}
+                            </div>
+                            {publishMode === "schedule" && scheduledAt && (
+                                <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700">
+                                    <Clock className="h-3.5 w-3.5" />
+                                    <span>
+                                        {new Date(scheduledAt).toLocaleString(
+                                            "en-US",
+                                            {
+                                                month: "short",
+                                                day: "numeric",
+                                                hour: "numeric",
+                                                minute: "2-digit",
+                                            },
+                                        )}
+                                    </span>
+                                </div>
                             )}
                         </div>
                         <div className="flex items-center gap-3">
@@ -538,21 +691,90 @@ const currentUser = useSelector((state) => state.auth?.user || state.app?.user);
                             >
                                 Cancel
                             </Button>
-                            <Button
-                                type="submit"
-                                disabled={!canPublish}
-                                loading={isSubmitting || creating || publishing}
-                                className="gap-2 rounded-full bg-indigo-700 px-6 text-white hover:bg-indigo-800"
-                            >
-                                {!(isSubmitting || creating || publishing) && (
-                                    <Send className="h-4 w-4" />
+                            <div className="relative flex" ref={publishMenuRef}>
+                                <div className="flex overflow-hidden rounded-full shadow-sm ring-1 ring-indigo-800/10">
+                                    <Button
+                                        type="submit"
+                                        disabled={!canPublish || showScheduler}
+                                        loading={isSubmitting || creating || publishing}
+                                        className="gap-2 rounded-none bg-indigo-700 px-6 text-white hover:bg-indigo-800"
+                                    >
+                                        {!(isSubmitting || creating || publishing) && (
+                                            publishMode === "schedule" ? (
+                                                <Clock className="h-4 w-4" />
+                                            ) : (
+                                                <Send className="h-4 w-4" />
+                                            )
+                                        )}
+                                        <span>
+                                            {publishMode === "schedule"
+                                                ? "Schedule Publish"
+                                                : postType === "poll"
+                                                  ? "Publish Poll"
+                                                  : "Publish Post"}
+                                        </span>
+                                    </Button>
+                                    <button
+                                        type="button"
+                                        disabled={isSubmitting || creating || publishing}
+                                        onClick={() =>
+                                            setShowPublishMenu((v) => !v)
+                                        }
+                                        aria-label="More publish options"
+                                        className="flex items-center justify-center border-l border-white/20 bg-indigo-700 px-2.5 text-white transition hover:bg-indigo-800 disabled:opacity-50"
+                                    >
+                                        <ChevronDown
+                                            className={`h-4 w-4 transition-transform duration-150 ${showPublishMenu ? "rotate-180" : ""}`}
+                                        />
+                                    </button>
+                                </div>
+                                {showPublishMenu && (
+                                    <div className="absolute bottom-full right-0 z-50 mb-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white py-1.5 text-sm shadow-lg">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setPublishMode("now");
+                                                setShowPublishMenu(false);
+                                            }}
+                                            className="flex w-full items-start gap-2.5 px-3.5 py-2.5 text-left hover:bg-slate-50"
+                                        >
+                                            <Send className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
+                                            <span className="flex-1">
+                                                <span className="block font-medium text-slate-700">
+                                                    Publish Now
+                                                </span>
+                                                <span className="block text-xs text-slate-400">
+                                                    Goes live immediately
+                                                </span>
+                                            </span>
+                                            {publishMode === "now" && (
+                                                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-600" />
+                                            )}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowScheduler(true);
+                                                setShowPublishMenu(false);
+                                            }}
+                                            className="flex w-full items-start gap-2.5 px-3.5 py-2.5 text-left hover:bg-slate-50"
+                                        >
+                                            <Clock className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
+                                            <span className="flex-1">
+                                                <span className="block font-medium text-slate-700">
+                                                    Schedule Publish
+                                                </span>
+                                                <span className="block text-xs text-slate-400">
+                                                    Pick a future date &amp; time
+                                                </span>
+                                            </span>
+                                            {publishMode === "schedule" && (
+                                                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-600" />
+                                            )}
+                                        </button>
+                                    </div>
                                 )}
-                                <span>
-                                    {postType === "poll"
-                                        ? "Publish Poll"
-                                        : "Publish Post"}
-                                </span>
-                            </Button>
+                            </div>
                         </div>
                     </div>
                 </form>
