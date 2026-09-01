@@ -151,7 +151,7 @@ class EREmployeeAttritionController extends Controller
      */
     public function show($id)
     {
-        $attrition = EREmployeeAttrition::with(['employee.personal_information', 'exit_clearance'])
+        $attrition = EREmployeeAttrition::with(['employee.personal_information', 'exit_clearance', 'exit_interview'])
             ->findOrFail($id);
 
         return response()->json([

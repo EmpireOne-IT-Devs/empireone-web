@@ -78,6 +78,7 @@ class AccountPersonalInformationController extends Controller
             'status'  => 'success',
         ], 200);
     }
+    
     public function accounts_user()
     {
 

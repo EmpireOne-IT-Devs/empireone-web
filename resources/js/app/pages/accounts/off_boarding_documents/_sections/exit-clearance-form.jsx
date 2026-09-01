@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { add_exit_clearance_service } from '@/app/services/human-resources-service';
 import Button from '@/app/_components/button';
+import { setAlert } from '@/app/redux/app-slice';
 
 export default function ExitClearanceForm() {
     const { attrition } = useSelector((store) => store.human_resources);
     const exit_clearance = attrition?.exit_clearance;
     const user = attrition?.user?.account_employee;
     const todayDate = moment().format('YYYY-MM-DD');
-
+    const dispatch = useDispatch()
     // Helper to format database dates to YYYY-MM-DD for <input type="date" />
     const formatDateForInput = (dateString) => {
         if (!dateString) return '';
@@ -28,62 +29,63 @@ export default function ExitClearanceForm() {
 
     console.log('is_allow_to_edit', is_allow_to_edit)
 
-    const { register, handleSubmit, watch, setValue, control } = useForm({
-        defaultValues: {
-            date: exit_clearance?.clearance_date
-                ? moment(exit_clearance.clearance_date).format('LL')
-                : (attrition?.created_at ? moment(attrition.created_at).format('LL') : ''),
-            name: `${attrition?.employee?.personal_information?.first_name || ''} ${attrition?.employee?.personal_information?.last_name || ''}`.trim(),
-            idNumber: attrition?.employee_id || '',
-            accountDepartment: attrition?.department || '',
-            positionTitle: attrition?.position || '',
-            dateHired: attrition?.started_at ? moment(attrition.started_at, "MMMM D, YYYY").format("YYYY-MM-DD") : '',
-            dateSeparated: attrition?.separation_date || '',
-            immediateSupervisor: attrition?.immediate_supervisor || '',
-            departmentManager: attrition?.department_manager || '',
-            employmentStatus: attrition?.status || '',
-            reasonForSeparation: attrition?.reason_for_separation || '',
-            signOffs: {
-                supervisor: {
-                    signature: exit_clearance?.supervisor_signature || '',
-                    dateSigned: formatDateForInput(exit_clearance?.supervisor_date_signed) || (exit_clearance?.supervisor_signature ? todayDate : ''),
-                    payables: exit_clearance?.supervisor_payables || '0.00'
+    const { register, handleSubmit, watch, setValue, control,
+        formState: { errors, isSubmitting } } = useForm({
+            defaultValues: {
+                date: exit_clearance?.clearance_date
+                    ? moment(exit_clearance.clearance_date).format('LL')
+                    : (attrition?.created_at ? moment(attrition.created_at).format('LL') : ''),
+                name: `${attrition?.employee?.personal_information?.first_name || ''} ${attrition?.employee?.personal_information?.last_name || ''}`.trim(),
+                idNumber: attrition?.employee_id || '',
+                accountDepartment: attrition?.department || '',
+                positionTitle: attrition?.position || '',
+                dateHired: attrition?.started_at ? moment(attrition.started_at, "MMMM D, YYYY").format("YYYY-MM-DD") : '',
+                dateSeparated: attrition?.separation_date || '',
+                immediateSupervisor: attrition?.immediate_supervisor || '',
+                departmentManager: attrition?.department_manager || '',
+                employmentStatus: attrition?.status || '',
+                reasonForSeparation: attrition?.reason_for_separation || '',
+                signOffs: {
+                    supervisor: {
+                        signature: exit_clearance?.supervisor_signature || '',
+                        dateSigned: formatDateForInput(exit_clearance?.supervisor_date_signed) || (exit_clearance?.supervisor_signature ? todayDate : ''),
+                        payables: exit_clearance?.supervisor_payables || '0.00'
+                    },
+                    deptHead: {
+                        signature: exit_clearance?.dept_head_signature || '',
+                        dateSigned: formatDateForInput(exit_clearance?.dept_head_date_signed) || (exit_clearance?.dept_head_signature ? todayDate : ''),
+                        payables: exit_clearance?.dept_head_payables || '0.00'
+                    },
+                    it: {
+                        signature: exit_clearance?.it_signature || '',
+                        dateSigned: formatDateForInput(exit_clearance?.it_date_signed) || (exit_clearance?.it_signature ? todayDate : ''),
+                        payables: exit_clearance?.it_payables || '0.00'
+                    },
+                    hrAdmin: {
+                        signature: exit_clearance?.hr_signature || '',
+                        dateSigned: formatDateForInput(exit_clearance?.hr_date_signed) || (exit_clearance?.hr_signature ? todayDate : ''),
+                        payables: exit_clearance?.hr_payables || '0.00'
+                    },
                 },
-                deptHead: {
-                    signature: exit_clearance?.dept_head_signature || '',
-                    dateSigned: formatDateForInput(exit_clearance?.dept_head_date_signed) || (exit_clearance?.dept_head_signature ? todayDate : ''),
-                    payables: exit_clearance?.dept_head_payables || '0.00'
-                },
-                it: {
-                    signature: exit_clearance?.it_signature || '',
-                    dateSigned: formatDateForInput(exit_clearance?.it_date_signed) || (exit_clearance?.it_signature ? todayDate : ''),
-                    payables: exit_clearance?.it_payables || '0.00'
-                },
-                hrAdmin: {
-                    signature: exit_clearance?.hr_signature || '',
-                    dateSigned: formatDateForInput(exit_clearance?.hr_date_signed) || (exit_clearance?.hr_signature ? todayDate : ''),
-                    payables: exit_clearance?.hr_payables || '0.00'
-                },
-            },
-            assets: mapArrayToBooleans(
-                exit_clearance?.company_assets_and_retrieval,
-                ['idBadge', 'lanyard', 'hmoCard']
-            ),
-            keys: mapArrayToBooleans(
-                exit_clearance?.keys,
-                ['office', 'building', 'cabinets']
-            ),
-            devices: mapArrayToBooleans(
-                exit_clearance?.computer_or_devices,
-                ['laptop', 'desktop', 'tablet', 'camera', 'companySoftware', 'homeSoftware']
-            ),
-            communications: mapArrayToBooleans(
-                exit_clearance?.communications_and_equipment,
-                ['mobilePhone', 'vonage', 'headset', 'yJack']
-            ),
-            employeeSignature: attrition?.employee?.signature || exit_clearance?.employee_signature || '',
-        }
-    });
+                assets: mapArrayToBooleans(
+                    exit_clearance?.company_assets_and_retrieval,
+                    ['idBadge', 'lanyard', 'hmoCard']
+                ),
+                keys: mapArrayToBooleans(
+                    exit_clearance?.keys,
+                    ['office', 'building', 'cabinets']
+                ),
+                devices: mapArrayToBooleans(
+                    exit_clearance?.computer_or_devices,
+                    ['laptop', 'desktop', 'tablet', 'camera', 'companySoftware', 'homeSoftware']
+                ),
+                communications: mapArrayToBooleans(
+                    exit_clearance?.communications_and_equipment,
+                    ['mobilePhone', 'vonage', 'headset', 'yJack']
+                ),
+                employeeSignature: attrition?.employee?.signature || exit_clearance?.employee_signature || '',
+            }
+        });
 
     const watchedSignatures = useWatch({
         control,
@@ -123,10 +125,22 @@ export default function ExitClearanceForm() {
 
     // Form submission handler
     const onSubmit = async (data) => {
-        await add_exit_clearance_service({
-            ...data,
-            e_r_employee_attrition_id: window.location.pathname.split('/')[3]
-        });
+        try {
+            await add_exit_clearance_service({
+                ...data,
+                e_r_employee_attrition_id: window.location.pathname.split('/')[3]
+            });
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Exit clearance has been saved!",
+                    message: "The attrition has been created and is ready for review.",
+                    open: true,
+                })
+            );
+        } catch (error) {
+
+        }
     };
 
     return (
@@ -465,15 +479,15 @@ export default function ExitClearanceForm() {
 
                     {
                         is_allow_to_edit && <div className="mt-4 flex justify-end no-print">
-                            <button
+                           
+                            <Button
                                 type="submit"
-                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium text-xs"
+                                loading={isSubmitting}
                             >
                                 SAVE
-                            </button>
+                            </Button>
                         </div>
                     }
-
 
                 </div>
             </form>
