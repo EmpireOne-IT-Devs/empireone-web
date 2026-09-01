@@ -43,7 +43,7 @@ export default function Page() {
                             ) : (
                                 <div className="shrink-0 bg-orange-500 px-4 sm:px-6 py-4 border-b border-gray-200">
                                     <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                                       EmpireOne Newsfeed
+                                        EmpireOne Newsfeed
                                     </h1>
                                     <p className="text-xs sm:text-sm text-white mt-0.5">
                                         Stay up to date with the latest posts,
@@ -58,18 +58,19 @@ export default function Page() {
                                     <PostCardSection />
                                 </div>
                             </div>
-
-                            {/* Fade to signal scrollable content */}
                         </div>
                     </div>
-
-                    {/* Right Column - Upcoming scheduled posts + Announcements */}
                     <div className="hidden lg:flex lg:col-span-4 xl:col-span-3 h-full min-h-0 flex-col gap-4 overflow-auto">
                         <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
                             <AnnouncementsSection />
                         </div>
-                        <UpcomingEventSection />
-                        
+                        {[1, 11].includes(
+                            data?.user?.account_employee?.department_id,
+                        ) && (
+                            <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+                                <UpcomingEventSection />
+                            </div>
+                        )}
                     </div>
                 </div>
             </ActivitiesLayout>
