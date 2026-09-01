@@ -1,27 +1,23 @@
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { ImagePlus, PlusCircleIcon, X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { Building2, ImagePlus, Landmark, PlusCircleIcon, Users, X } from "lucide-react";
 
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import TextArea from "@/app/_components/textarea";
-import TabsSection from "../sections/tabs-section";
+import { setAlert } from "@/app/redux/app-slice";
+import {
+    create_engagement_reward_challenge_thunk,
+    get_engagement_reward_challenge_options_thunk,
+} from "@/app/redux/engagement-thunk";
 
 const CHALLENGE_TYPES = ["Individual", "Team"];
 
 const CATEGORIES = ["Wellness", "Sales", "Learning", "Teamwork", "Innovation"];
 const CATEGORY_OPTIONS = CATEGORIES.map((cat) => ({ value: cat, label: cat }));
-
-const DEPARTMENTS = [
-    { name: "Operations", count: 24 },
-    { name: "Admins", count: 8 },
-    { name: "Facilities", count: 12 },
-    { name: "Compliance", count: 10 },
-    { name: "IT", count: 18 },
-    { name: "WebDev", count: 15 },
-];
 
 const CARD_COLORS = [
     "#F59E0B",
@@ -34,16 +30,15 @@ const CARD_COLORS = [
     "#4338CA",
 ];
 
-const TOTAL_EMPLOYEES = 87;
-
 const DEFAULT_VALUES = {
     title: "",
     description: "",
     type: "Individual",
     category: CATEGORIES[0],
     points: "",
-    account_id: [],
-    department_id: [],
+    all_employees: true,
+    department_ids: [],
+    account_ids: [],
     max_participants: "",
     start_date: "",
     deadline: "",
@@ -51,9 +46,18 @@ const DEFAULT_VALUES = {
 };
 
 export default function CreateNewChallenge() {
+    const dispatch = useDispatch();
+    const {
+        rewardChallengeDepartments,
+        rewardChallengeAccounts,
+        rewardChallengeTotalEmployees,
+        rewardChallengeCreating,
+    } = useSelector((state) => state.engagement);
+
     const [isOpen, setIsOpen] = useState(false);
     const [bannerFile, setBannerFile] = useState(null);
     const [bannerPreview, setBannerPreview] = useState(null);
+    const [participantsError, setParticipantsError] = useState("");
 
     const {
         register,
@@ -69,7 +73,9 @@ export default function CreateNewChallenge() {
     const formValues = watch();
     const {
         type: selectedType,
-        departments: selectedDepartments,
+        department_ids: selectedDepartmentIds,
+        account_ids: selectedAccountIds,
+        all_employees: allEmployees,
         card_color: selectedCardColor,
         title: previewTitle,
         category: previewCategory,
@@ -85,8 +91,16 @@ export default function CreateNewChallenge() {
         };
     }, [bannerPreview]);
 
+    // Load eligibility options (departments, accounts & employee count) when the modal opens
+    useEffect(() => {
+        if (isOpen && rewardChallengeDepartments.length === 0 && rewardChallengeAccounts.length === 0) {
+            dispatch(get_engagement_reward_challenge_options_thunk());
+        }
+    }, [isOpen, dispatch, rewardChallengeDepartments.length, rewardChallengeAccounts.length]);
+
     const handleClose = () => {
         setIsOpen(false);
+        setParticipantsError("");
         reset(DEFAULT_VALUES);
         removeBanner();
     };
@@ -107,31 +121,98 @@ export default function CreateNewChallenge() {
         setBannerPreview(null);
     };
 
-    const toggleDepartment = (deptName) => {
-        const current = selectedDepartments || [];
-        const updated = current.includes(deptName)
-            ? current.filter((d) => d !== deptName)
-            : [...current, deptName];
+    const toggleAllEmployees = () => {
+        setParticipantsError("");
+        setValue("all_employees", true, { shouldValidate: true });
+        setValue("department_ids", [], { shouldValidate: true });
+        setValue("account_ids", [], { shouldValidate: true });
+    };
 
-        setValue("departments", updated, { shouldValidate: true });
+    // Eligibility is scoped to either departments or accounts, never both at once.
+    const toggleDepartment = (deptId) => {
+        const current = selectedDepartmentIds || [];
+        const updated = current.includes(deptId)
+            ? current.filter((id) => id !== deptId)
+            : [...current, deptId];
+
+        setParticipantsError("");
+        setValue("all_employees", false, { shouldValidate: true });
+        setValue("account_ids", [], { shouldValidate: true });
+        setValue("department_ids", updated, { shouldValidate: true });
+    };
+
+    const toggleAccount = (accountId) => {
+        const current = selectedAccountIds || [];
+        const updated = current.includes(accountId)
+            ? current.filter((id) => id !== accountId)
+            : [...current, accountId];
+
+        setParticipantsError("");
+        setValue("all_employees", false, { shouldValidate: true });
+        setValue("department_ids", [], { shouldValidate: true });
+        setValue("account_ids", updated, { shouldValidate: true });
     };
 
     const onSubmit = async (data) => {
-        try {
-            const payload = { ...data, banner: bannerFile };
-            console.log("Creating challenge:", payload);
-            // Execute mutation/action here...
-            handleClose();
-        } catch (error) {
-            console.error("Failed to create challenge:", error);
+        if (
+            !data.all_employees &&
+            data.department_ids.length === 0 &&
+            data.account_ids.length === 0
+        ) {
+            setParticipantsError("Select at least one department or account, or choose All Employees.");
+            return;
         }
+        setParticipantsError("");
+
+        const payload = {
+            title: data.title,
+            description: data.description,
+            type: data.type,
+            category: data.category,
+            points: Number(data.points),
+            all_employees: data.all_employees,
+            account_ids: data.all_employees ? [] : data.account_ids,
+            department_ids: data.all_employees ? [] : data.department_ids,
+            max_participants: data.max_participants ? Number(data.max_participants) : null,
+            start_date: data.start_date,
+            deadline: data.deadline,
+            card_color: data.card_color,
+            banner: bannerFile,
+        };
+
+        const result = await dispatch(create_engagement_reward_challenge_thunk(payload));
+
+        if (result.error) {
+            const msg =
+                result.payload?.message ||
+                result.error?.message ||
+                "Failed to publish challenge. Please try again.";
+            dispatch(
+                setAlert({
+                    type: "danger",
+                    title: "Failed to publish challenge",
+                    message: msg,
+                    open: true,
+                }),
+            );
+            return;
+        }
+
+        dispatch(
+            setAlert({
+                type: "success",
+                title: "Challenge published",
+                message: "Your challenge was published successfully.",
+                open: true,
+            }),
+        );
+
+        handleClose();
     };
 
     return (
         <div>
-            {/* Header Section */}
-            <div className="mt-4 flex items-start justify-between gap-4 p-2">
-              
+            <div className="flex items-center">
                 <Button
                     variant="engagement"
                     className="shrink-0 rounded-full"
@@ -213,14 +294,19 @@ export default function CreateNewChallenge() {
                     />
 
                     {/* Description */}
-                    <TextArea
-                        label="Description"
-                        placeholder="Describe what participants need to do and how to complete the challenge..."
-                        rows={3}
-                        error={errors.description?.message}
-                        {...register("description", {
-                            required: "Description is required.",
-                        })}
+                    <Controller
+                        name="description"
+                        control={control}
+                        rules={{ required: "Description is required." }}
+                        render={({ field, fieldState }) => (
+                            <TextArea
+                                label="Description"
+                                placeholder="Describe what participants need to do and how to complete the challenge..."
+                                rows={3}
+                                {...field}
+                                error={fieldState.error?.message}
+                            />
+                        )}
                     />
 
                     {/* Type & Category Options */}
@@ -292,12 +378,32 @@ export default function CreateNewChallenge() {
                             Eligible Participants
                         </span>
 
-                        <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700">
-                            <span>All Employees</span>
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
-                                {TOTAL_EMPLOYEES} employees
+                        <button
+                            type="button"
+                            aria-pressed={allEmployees}
+                            onClick={toggleAllEmployees}
+                            className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 transition ${
+                                allEmployees
+                                    ? "border-orange-400 bg-orange-50"
+                                    : "border-gray-200 bg-white hover:border-gray-300"
+                            }`}
+                        >
+                            <span className="flex items-center gap-2.5 text-sm font-medium text-gray-800">
+                                <span
+                                    className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                                        allEmployees
+                                            ? "bg-orange-100 text-orange-600"
+                                            : "bg-gray-100 text-gray-500"
+                                    }`}
+                                >
+                                    <Users className="h-4 w-4" />
+                                </span>
+                                All Employees
                             </span>
-                        </div>
+                            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
+                                {rewardChallengeTotalEmployees} employees
+                            </span>
+                        </button>
 
                         <div className="my-2 flex items-center gap-2 text-xs text-gray-400">
                             <span className="h-px flex-1 bg-gray-200" />
@@ -306,31 +412,73 @@ export default function CreateNewChallenge() {
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                            {DEPARTMENTS.map((dept) => {
+                            {rewardChallengeDepartments.map((dept) => {
                                 const isSelected =
-                                    selectedDepartments?.includes(dept.name);
+                                    selectedDepartmentIds?.includes(dept.id);
                                 return (
                                     <button
-                                        key={dept.name}
+                                        key={dept.id}
                                         type="button"
                                         aria-pressed={isSelected}
                                         onClick={() =>
-                                            toggleDepartment(dept.name)
+                                            toggleDepartment(dept.id)
                                         }
-                                        className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                                        className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                                             isSelected
                                                 ? "border-orange-400 bg-orange-50 text-orange-700"
                                                 : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                                         }`}
                                     >
+                                        <Building2 className="h-3.5 w-3.5" />
                                         {dept.name}{" "}
                                         <span className="text-gray-400">
-                                            {dept.count}
+                                            {dept.employees_count}
                                         </span>
                                     </button>
                                 );
                             })}
                         </div>
+
+                        {rewardChallengeAccounts.length > 0 && (
+                            <>
+                                <div className="my-2 flex items-center gap-2 text-xs text-gray-400">
+                                    <span className="h-px flex-1 bg-gray-200" />
+                                    or select accounts
+                                    <span className="h-px flex-1 bg-gray-200" />
+                                </div>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {rewardChallengeAccounts.map((account) => {
+                                        const isSelected =
+                                            selectedAccountIds?.includes(account.id);
+                                        return (
+                                            <button
+                                                key={account.id}
+                                                type="button"
+                                                aria-pressed={isSelected}
+                                                onClick={() =>
+                                                    toggleAccount(account.id)
+                                                }
+                                                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                                                    isSelected
+                                                        ? "border-orange-400 bg-orange-50 text-orange-700"
+                                                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                                                }`}
+                                            >
+                                                <Landmark className="h-3.5 w-3.5" />
+                                                {account.name}{" "}
+                                                <span className="text-gray-400">
+                                                    {account.employees_count}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        )}
+                        {participantsError && (
+                            <p className="mt-2 text-sm text-red-500">{participantsError}</p>
+                        )}
                         <div className="mt-6 text-xs text-gray-400">
                             <Input
                                 label="Max Participants"
@@ -426,9 +574,9 @@ export default function CreateNewChallenge() {
                         <Button
                             type="submit"
                             className="w-full sm:w-auto"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || rewardChallengeCreating}
                         >
-                            {isSubmitting
+                            {isSubmitting || rewardChallengeCreating
                                 ? "Publishing..."
                                 : "Publish Challenge"}
                         </Button>

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Ticketing\Ticketing;
 use App\Models\Ticketing\TicketingCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Department extends Model
@@ -38,6 +40,10 @@ class Department extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+    public function account_employees(): HasMany
+    {
+        return $this->hasMany(AccountEmployee::class, 'department_id');
     }
     public function manager(): HasOne
     {

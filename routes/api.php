@@ -20,6 +20,7 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventReactController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventSurveyController;
 use App\Http\Controllers\API\Engagement\EngagementPollController;
 use App\Http\Controllers\API\Engagement\EngagementBirthdayController;
+use App\Http\Controllers\API\Engagement\EngagementRewardChallengesController;
 use App\Http\Controllers\API\Engagement\EngagementRewardRecognitionController;
 use App\Http\Controllers\API\Jobs\JobAIInterviewController;
 use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
@@ -210,6 +211,12 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'show']);
         Route::put('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'update']);
         Route::delete('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'destroy']);
+
+        Route::get('reward-challenges', [EngagementRewardChallengesController::class, 'index']);
+        Route::get('reward-challenges/options', [EngagementRewardChallengesController::class, 'options']);
+        Route::post('reward-challenges', [EngagementRewardChallengesController::class, 'store']);
+        Route::put('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'update']);
+        Route::delete('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'destroy']);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);
