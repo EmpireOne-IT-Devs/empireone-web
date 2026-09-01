@@ -8,6 +8,7 @@ import {
     Cake,
     PartyPopper,
     FileText,
+    Clock,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
@@ -275,6 +276,8 @@ function EngagementPostCard({
     const hasSurvey = post.survey && post.survey.id;
     const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
     const isAdmin = currentPath.includes("/administrator/") || user?.role === 1 || user?.role === "1" || String(user?.role).toLowerCase() === "administrator";
+    // Badge visibility relies on the real logged-in role, not the URL, so it can't leak to employees.
+    const isScheduled = Number(user?.role) === 1 && post.status === "scheduled" && post.scheduled_at;
 
     if (post.type === "poll") {
         return (
@@ -356,7 +359,7 @@ function EngagementPostCard({
                                 </span>
                             )}
                         </p>
-                        <div className="flex items-center gap-1.5 mt-0.5">
+                        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             <span className="text-[11px] sm:text-xs text-orange-400">
                                 {post.time_ago}
                             </span>
@@ -373,6 +376,18 @@ function EngagementPostCard({
                             >
                                 {categoryKey}
                             </span>
+                            {isScheduled && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] sm:text-[11px] font-medium text-amber-700">
+                                    <Clock className="h-3 w-3" />
+                                    Scheduled for{" "}
+                                    {new Date(post.scheduled_at).toLocaleString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "numeric",
+                                        minute: "2-digit",
+                                    })}
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -468,6 +483,14 @@ export default function PostCardSection() {
     const { posts, postsLoading, postsError, deleting, pollVotingPostId } = useSelector(
         (state) => state.engagement,
     );
+    const user = useSelector((state) => state.auth?.user || state.app?.user);
+    // Scheduled posts (not yet due) are only meant for the admin who manages them — never render
+    // them for employees even if they somehow end up in state (e.g. stale cache, backend change).
+    const isViewerAdmin = Number(user?.role) === 1;
+    const visiblePosts = isViewerAdmin
+        ? posts
+        : posts.filter((post) => post.status !== "scheduled");
+
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingPost, setEditingPost] = useState(null);
     const [viewingPost, setViewingPost] = useState(null);
@@ -504,7 +527,7 @@ export default function PostCardSection() {
         }
     }
 
-    if (postsLoading && posts.length === 0) {
+    if (postsLoading && visiblePosts.length === 0) {
         return (
             <div className="flex flex-col gap-3 sm:gap-4 px-2 sm:px-0">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -517,7 +540,7 @@ export default function PostCardSection() {
         );
     }
 
-    if (postsError && posts.length === 0) {
+    if (postsError && visiblePosts.length === 0) {
         return (
             <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-red-400">
                 Failed to load posts. Please refresh and try again.
@@ -525,7 +548,7 @@ export default function PostCardSection() {
         );
     }
 
-    if (posts.length === 0 && !postsLoading) {
+    if (visiblePosts.length === 0 && !postsLoading) {
         return (
             <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-gray-400">
                 No posts yet.
@@ -536,7 +559,7 @@ export default function PostCardSection() {
     return (
         <>
             <div className="w-full flex flex-col gap-2.5 sm:gap-4">
-                {posts.map((post) => (
+                {visiblePosts.map((post) => (
                     <EngagementPostCard
                         key={post.id}
                         post={post}
