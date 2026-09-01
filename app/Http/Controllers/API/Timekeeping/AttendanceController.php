@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Timekeeping;
 
 use App\Http\Controllers\Controller;
 use App\Models\Timekeeping\Attendance;
+use App\Models\Timekeeping\AttendanceEmployeeSettings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class AttendanceController extends Controller
     private const SCHEDULE_OUT = '17:00:00';
 
     /**
-     * Return the attendance record for the given date (defaults to today).
+     * Return the attendance record and the employee's schedule for the given date (defaults to today).
      */
     public function today(Request $request)
     {
@@ -24,7 +25,29 @@ class AttendanceController extends Controller
             ->where('date', $date)
             ->first();
 
-        return response()->json($attendance, 200);
+        return response()->json([
+            'attendance' => $attendance,
+            'schedule' => $this->getScheduleForDate($date),
+        ], 200);
+    }
+
+    /**
+     * Resolve the authenticated user's configured time in/time out for the
+     * day-of-week of the given date, falling back to the default schedule
+     * when no employee setting exists for that day.
+     */
+    private function getScheduleForDate(string $date): array
+    {
+        $day = Carbon::parse($date)->format('l');
+
+        $setting = AttendanceEmployeeSettings::forEmployeeAndDay(Auth::id(), $day);
+
+        return [
+            'day' => $day,
+            'time_in' => $setting?->time_in ?? self::SCHEDULE_IN,
+            'time_out' => $setting?->time_out ?? self::SCHEDULE_OUT,
+            'is_day_off' => (bool) ($setting?->is_day_off ?? false),
+        ];
     }
 
     /**
@@ -45,6 +68,7 @@ class AttendanceController extends Controller
     public function clock_in(Request $request)
     {
         $date = $this->getAttendanceDate($request);
+        $schedule = $this->getScheduleForDate($date);
 
         $attendance = Attendance::firstOrCreate(
             [
@@ -68,7 +92,7 @@ class AttendanceController extends Controller
 
         $scheduleTime = Carbon::createFromFormat(
             'H:i:s',
-            self::SCHEDULE_IN
+            $schedule['time_in']
         );
 
         $lateMinutes = max(
@@ -162,6 +186,8 @@ class AttendanceController extends Controller
             ], 422);
         }
 
+        $schedule = $this->getScheduleForDate($attendance->date);
+
         $clockOut = Carbon::now();
 
         $clockOutTime = Carbon::createFromFormat(
@@ -171,7 +197,7 @@ class AttendanceController extends Controller
 
         $scheduleOutTime = Carbon::createFromFormat(
             'H:i:s',
-            self::SCHEDULE_OUT
+            $schedule['time_out']
         );
 
         $undertimeMinutes = max(

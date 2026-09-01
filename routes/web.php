@@ -280,6 +280,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         Route::inertia('/rewards_store', 'accounts/_employee/rewards_store/page');
         Route::inertia('/loan', 'accounts/_employee/loan/page');
         Route::inertia('/payroll', 'accounts/_employee/payroll/page');
+        Route::inertia('/timekeeping', 'accounts/_employee/timekeeping/page');
     });
 
     // 5. GLOBAL "Accounts" level routes

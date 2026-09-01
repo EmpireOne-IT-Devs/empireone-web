@@ -24,10 +24,10 @@ import {
 } from "../services/performance-evaluation-service";
 import { employeeRelationSlice } from "./employee-relation-slice";
 
-export function get_employees_thunk() {
+export function get_employees_thunk(all = false) {
     return async function (dispatch, getState) {
         dispatch(employeeRelationSlice.actions.setEmployeesLoading(true));
-        const result = await get_employees_service();
+        const result = await get_employees_service(undefined, all);
         dispatch(employeeRelationSlice.actions.setEmployees(result));
         dispatch(employeeRelationSlice.actions.setEmployeesLoading(false));
     };
