@@ -24,7 +24,7 @@ class ERLeader extends Model
     }
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information','department']);
     }
     public function member_handled(): int
     {

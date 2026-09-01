@@ -41,6 +41,6 @@ class Department extends Model
     }
     public function manager(): HasOne
     {
-        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'manager_id');
+        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'manager_id')->with(['employee']);
     }
 }

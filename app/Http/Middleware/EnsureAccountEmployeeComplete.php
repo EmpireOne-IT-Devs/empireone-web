@@ -67,7 +67,8 @@ class EnsureAccountEmployeeComplete
             'basic_pay',
             'status',
             'signature',
-            'department_id'
+            'department_id',
+            'department_manager_id'
         ];
 
 

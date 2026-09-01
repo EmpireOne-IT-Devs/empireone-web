@@ -12,8 +12,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 export default function CreateLeadSection() {
     const dispatch = useDispatch();
-    const { leaders,users } = useSelector((store) => store.human_resources);
-console.log('users',users)
+    const { leaders, users } = useSelector((store) => store.human_resources);
+    console.log('users', users)
     const [open, setOpen] = useState(false);
 
     const {
@@ -27,6 +27,7 @@ console.log('users',users)
     } = useForm({
         defaultValues: {
             user_id: "",
+            department_manager_id: ""
         },
     });
 
@@ -64,13 +65,13 @@ console.log('users',users)
     // Extract an array of IDs for users who are already leaders
     // (Checks both user_id and id to ensure it catches the correct property from your API)
     const existingLeaderIds =
-        leaders?.data?.map((leader) => leader.user_id || leader.id) || [];
+        leaders?.map((leader) => leader.user_id || leader.id) || [];
 
     // Filter out users whose ID already exists in the existingLeaderIds array
     const availableUsers =
         users?.filter((user) => !existingLeaderIds.includes(user.id)) ||
         [];
-
+    console.log('availableUsers', leaders)
     return (
         <>
             <Button onClick={() => setOpen(true)}>ADD LEADER</Button>
@@ -98,7 +99,7 @@ console.log('users',users)
                 {/* Wrapped the content in a form tag to enable validation and submission */}
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="p-3 flex h-full flex-col items-start justify-between w-full"
+                    className="p-3 flex h-full flex-col items-start gap-3 justify-between w-full"
                 >
                     <Select
                         label="Leader"
@@ -107,7 +108,7 @@ console.log('users',users)
                         // Pass the filtered availableUsers instead of the full users array
                         options={availableUsers.map((res) => ({
                             ...res,
-                            label: res.name,
+                            label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
                             value: res.id,
                         }))}
                         value={watchedValues.user_id}
@@ -117,6 +118,25 @@ console.log('users',users)
                         error={errors.user_id?.message}
                         className="w-full"
                     />
+
+                    <Select
+                        label="Department Manager"
+                        required
+                        name="department_manager_id"
+                        // Pass the filtered availableUsers instead of the full users array
+                        options={availableUsers.map((res) => ({
+                            ...res,
+                            label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
+                            value: res.id,
+                        }))}
+                        value={watchedValues.department_manager_id}
+                        onChange={(val) =>
+                            setValue("department_manager_id", val, { shouldValidate: true })
+                        }
+                        error={errors.department_manager_id?.message}
+                        className="w-full"
+                    />
+
 
                     <div className="w-full mt-auto pt-4">
                         <Button

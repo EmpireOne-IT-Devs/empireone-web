@@ -111,6 +111,8 @@ class AccountContractController extends Controller
                 'position_level' => $request->position_level ?? null,
                 'basic_pay' => $request->basic_pay ?? null,
                 'allowance' => $request->allowance ?? null,
+                'department_manager_id' => $request->department_manager_id ?? null,
+                
             ]
         );
 
