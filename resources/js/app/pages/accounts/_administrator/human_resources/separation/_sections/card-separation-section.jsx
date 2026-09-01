@@ -1,21 +1,22 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { router } from '@inertiajs/react';
-import { 
-    LuBriefcase, 
-    LuBuilding, 
-    LuMail, 
-    LuMapPin, 
-    LuUser, 
-    LuCalendar, 
-    LuInfo, 
-    LuCircleX, 
-    LuRotateCcw, 
-    LuClock 
+import {
+    LuBriefcase,
+    LuBuilding,
+    LuMail,
+    LuMapPin,
+    LuUser,
+    LuCalendar,
+    LuInfo,
+    LuCircleX,
+    LuRotateCcw,
+    LuClock
 } from 'react-icons/lu';
 
 import DetailsCard from '@/app/_components/details-card';
 import moment from 'moment';
+import DocumentsListSection from './documents-list-section';
 
 export default function CardAcknowledgementSection() {
     const { attritions } = useSelector((store) => store.human_resources);
@@ -26,6 +27,17 @@ export default function CardAcknowledgementSection() {
         <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
             {attritions?.map((res) => {
                 const empId = res.id || res.employee_id;
+
+
+                const exit_documents = [{
+                    document_type: 'Exit Clearance',
+                    href: `/accounts/off_boarding_documents/${res.id}/exit-clearance`,
+                    ...res.exit_clearance
+                }, {
+                    document_type: 'Exit Interview',
+                    href: `/accounts/off_boarding_documents/${res.id}/exit-interview`,
+                    ...res.exit_interview
+                }]
                 return (
                     <DetailsCard
                         key={empId}
@@ -114,6 +126,7 @@ export default function CardAcknowledgementSection() {
                                 value: res?.attrition_status,
                             },
                         ]}
+                        dropdown={<DocumentsListSection props_data={{ documents: exit_documents }} />}
                     />
                 );
             })}

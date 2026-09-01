@@ -20,7 +20,7 @@ class EREmployeeAttritionController extends Controller
      */
     public function index()
     {
-        $attritions = EREmployeeAttrition::with(['employee'])->paginate(12);
+        $attritions = EREmployeeAttrition::with(['employee','exit_clearance','exit_interview'])->paginate(12);
         return response()->json($attritions, 200);
     }
 

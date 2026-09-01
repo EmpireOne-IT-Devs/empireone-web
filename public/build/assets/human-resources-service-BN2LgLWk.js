@@ -1,1 +1,0 @@
-import{a as e}from"./app-ChQAsnaW.js";async function t(a){return await e.get(`/api/er/attrition/${a}`)}async function r(a){return await e.post("/api/er/exit_clearance",a)}async function n(a){return await e.post("/api/er/exit_interview",a)}export{r as a,n as b,t as g};
