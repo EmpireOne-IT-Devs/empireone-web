@@ -35,6 +35,7 @@ class AttendanceEmployeeSettingsController extends Controller
             'settings.*.day' => 'required|string',
             'settings.*.time_in' => 'nullable|date_format:H:i:s',
             'settings.*.time_out' => 'nullable|date_format:H:i:s',
+            'settings.*.break_minutes' => 'nullable|string',
             'settings.*.is_day_off' => 'nullable|boolean',
         ]);
 
@@ -50,6 +51,7 @@ class AttendanceEmployeeSettingsController extends Controller
                     'user_id' => $request->user_id,
                     'time_in' => $isDayOff ? null : ($item['time_in'] ?? null),
                     'time_out' => $isDayOff ? null : ($item['time_out'] ?? null),
+                    'break_minutes' => $isDayOff ? null : ($item['break_minutes'] ?? null),
                     'is_day_off' => $isDayOff ? '1' : '0',
                 ]
             );

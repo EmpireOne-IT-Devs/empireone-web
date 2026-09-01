@@ -61,7 +61,6 @@ return new class extends Migration
             ])->default('Rank and File');
             $table->string('basic_pay')->nullable();
             $table->string('allowance')->nullable();
-            $table->string('')->nullable();
             $table->enum('is_rehire', [
                 'Yes',
                 'No',

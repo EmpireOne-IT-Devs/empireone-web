@@ -12,6 +12,7 @@ class AttendanceEmployeeSettings extends Model
         'day',
         'time_in',
         'time_out',
+        'break_minutes',
         'is_day_off',
     ];
 

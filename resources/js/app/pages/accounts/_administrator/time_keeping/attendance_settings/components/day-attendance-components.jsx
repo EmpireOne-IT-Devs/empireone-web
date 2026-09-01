@@ -4,6 +4,7 @@ export default function DayAttendanceComponents({
     day,
     timeIn,
     timeOut,
+    breakMinutes,
     isDayOff,
     onChange,
 }) {
@@ -20,6 +21,7 @@ export default function DayAttendanceComponents({
                         type="time"
                         value={timeIn}
                         onChange={(e) => onChange({ timeIn: e.target.value })}
+                        onClick={(e) => e.target.showPicker?.()}
                         disabled={isDayOff}
                         className="w-full border rounded-lg p-3 disabled:bg-gray-200 disabled:text-gray-500"
                     />
@@ -33,6 +35,20 @@ export default function DayAttendanceComponents({
                         type="time"
                         value={timeOut}
                         onChange={(e) => onChange({ timeOut: e.target.value })}
+                        onClick={(e) => e.target.showPicker?.()}
+                        disabled={isDayOff}
+                        className="w-full border rounded-lg p-3 disabled:bg-gray-200 disabled:text-gray-500"
+                    />
+                </div>
+
+                <div className="flex-1">
+                    <label className="block mb-2 font-medium text-gray-700">
+                        Break Minutes
+                    </label>
+                    <input
+                        type="number"
+                        value={breakMinutes}
+                        onChange={(e) => onChange({ breakMinutes: e.target.value })}
                         disabled={isDayOff}
                         className="w-full border rounded-lg p-3 disabled:bg-gray-200 disabled:text-gray-500"
                     />
