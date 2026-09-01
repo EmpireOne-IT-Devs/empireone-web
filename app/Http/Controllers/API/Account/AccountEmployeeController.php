@@ -95,6 +95,7 @@ class AccountEmployeeController extends Controller
         $employees = AccountEmployee::with([
             'user',
             'personal_information',
+            'department_manager',
             'department',
             'account',
             'site',
