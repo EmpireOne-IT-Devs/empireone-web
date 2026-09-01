@@ -85,6 +85,19 @@ export default function EmployeeInformationSection({
                     />
 
                     <Select
+                        // disabled={data?.user?.account_employee?.e_r_leader_id}
+                        label="Department Manager"
+                        name="department_manager_id"
+                        value={form.department_manager_id}
+                        options={data?.leaders?.map((res) => ({
+                            ...res,
+                            label: res?.user?.name,
+                            value: res.id,
+                        }))}
+                        error={errors.department_manager_id}
+                        onChange={(val) => setValue("department_manager_id", val)}
+                    />
+                    <Select
                         // disabled={data?.user?.account_employee?.account_id}
                         label="Account"
                         name="account_id"

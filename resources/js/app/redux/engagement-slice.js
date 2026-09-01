@@ -14,6 +14,11 @@ import {
     get_engagement_reward_recognition_thunk,
     update_engagement_reward_recognition_thunk,
     delete_engagement_reward_recognition_thunk,
+    get_engagement_reward_challenge_options_thunk,
+    create_engagement_reward_challenge_thunk,
+    update_engagement_reward_challenge_thunk,
+    delete_engagement_reward_challenge_thunk,
+    get_engagement_reward_challenges_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -31,6 +36,11 @@ export {
     get_engagement_reward_recognition_thunk,
     update_engagement_reward_recognition_thunk,
     delete_engagement_reward_recognition_thunk,
+    get_engagement_reward_challenge_options_thunk,
+    create_engagement_reward_challenge_thunk,
+    update_engagement_reward_challenge_thunk,
+    delete_engagement_reward_challenge_thunk,
+    get_engagement_reward_challenges_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -72,6 +82,21 @@ const engagementSlice = createSlice({
         rewardSearching: false,
         rewardSearchResults: [],
         rewardSearchError: null,
+
+        // Reward challenge states
+        rewardChallenges: [],
+        rewardChallengesLoading: false,
+        rewardChallengesError: null,
+        rewardChallengeDepartments: [],
+        rewardChallengeAccounts: [],
+        rewardChallengeTotalEmployees: 0,
+        rewardChallengeOptionsLoading: false,
+        rewardChallengeCreating: false,
+        rewardChallengeCreateError: null,
+        rewardChallengeUpdating: false,
+        rewardChallengeUpdateError: null,
+        rewardChallengeDeleting: false,
+        rewardChallengeDeleteError: null,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -98,6 +123,9 @@ const engagementSlice = createSlice({
             state.rewardUpdateError = null;
             state.rewardDeleteError = null;
             state.rewardSearchError = null;
+            state.rewardChallengeCreateError = null;
+            state.rewardChallengeUpdateError = null;
+            state.rewardChallengeDeleteError = null;
         },
     },
     extraReducers: (builder) => {
@@ -375,6 +403,82 @@ const engagementSlice = createSlice({
             .addCase(upload_gallery_thunk.rejected, (state, action) => {
                 state.uploadingGallery = false;
                 state.uploadGalleryError = action.payload;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenges_thunk.pending, (state) => {
+                state.rewardChallengesLoading = true;
+                state.rewardChallengesError = null;
+            })
+            .addCase(get_engagement_reward_challenges_thunk.fulfilled, (state, action) => {
+                state.rewardChallengesLoading = false;
+                state.rewardChallenges = action.payload?.data ?? action.payload ?? [];
+            })
+            .addCase(get_engagement_reward_challenges_thunk.rejected, (state, action) => {
+                state.rewardChallengesLoading = false;
+                state.rewardChallengesError = action.payload;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenge_options_thunk.pending, (state) => {
+                state.rewardChallengeOptionsLoading = true;
+            })
+            .addCase(get_engagement_reward_challenge_options_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeOptionsLoading = false;
+                const options = action.payload?.data ?? {};
+                state.rewardChallengeDepartments = options.departments ?? [];
+                state.rewardChallengeAccounts = options.accounts ?? [];
+                state.rewardChallengeTotalEmployees = options.total_employees ?? 0;
+            })
+            .addCase(get_engagement_reward_challenge_options_thunk.rejected, (state) => {
+                state.rewardChallengeOptionsLoading = false;
+            })
+            .addCase(create_engagement_reward_challenge_thunk.pending, (state) => {
+                state.rewardChallengeCreating = true;
+                state.rewardChallengeCreateError = null;
+            })
+            .addCase(create_engagement_reward_challenge_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeCreating = false;
+                const challenge = action.payload?.data ?? action.payload;
+                if (challenge?.id) {
+                    state.rewardChallenges.unshift(challenge);
+                }
+            })
+            .addCase(create_engagement_reward_challenge_thunk.rejected, (state, action) => {
+                state.rewardChallengeCreating = false;
+                state.rewardChallengeCreateError = action.payload;
+            })
+
+            // ── Update Reward Challenge ────────────────────────────────────────────
+            .addCase(update_engagement_reward_challenge_thunk.pending, (state) => {
+                state.rewardChallengeUpdating = true;
+                state.rewardChallengeUpdateError = null;
+            })
+            .addCase(update_engagement_reward_challenge_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeUpdating = false;
+                const updated = action.payload?.data ?? action.payload;
+                if (updated?.id) {
+                    const idx = state.rewardChallenges.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.rewardChallenges[idx] = updated;
+                }
+            })
+            .addCase(update_engagement_reward_challenge_thunk.rejected, (state, action) => {
+                state.rewardChallengeUpdating = false;
+                state.rewardChallengeUpdateError = action.payload;
+            })
+
+            // ── Delete Reward Challenge ────────────────────────────────────────────
+            .addCase(delete_engagement_reward_challenge_thunk.pending, (state) => {
+                state.rewardChallengeDeleting = true;
+                state.rewardChallengeDeleteError = null;
+            })
+            .addCase(delete_engagement_reward_challenge_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeDeleting = false;
+                state.rewardChallenges = state.rewardChallenges.filter((item) => item.id !== action.payload);
+            })
+            .addCase(delete_engagement_reward_challenge_thunk.rejected, (state, action) => {
+                state.rewardChallengeDeleting = false;
+                state.rewardChallengeDeleteError = action.payload;
             });
     },
 });

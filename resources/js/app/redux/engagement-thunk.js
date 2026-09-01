@@ -14,6 +14,11 @@ import {
     get_reward_recognition_service,
     update_reward_recognition_service,
     delete_reward_recognition_service,
+    get_reward_challenge_options_service,
+    create_reward_challenge_service,
+    update_reward_challenge_service,
+    delete_reward_challenge_service,
+    get_reward_challenges_service,
 } from "../services/engagement-service";
 
 export const get_engagement_posts_thunk = createAsyncThunk(
@@ -214,6 +219,90 @@ export const delete_engagement_reward_recognition_thunk = createAsyncThunk(
             return rejectWithValue(error.response?.data || error.message);
         }
     }
+);
+
+export const get_engagement_reward_challenges_thunk = createAsyncThunk(
+    "engagement/getRewardChallenges",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenges_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_engagement_reward_challenge_options_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeOptions",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenge_options_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+function build_reward_challenge_form_data(data) {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("type", data.type);
+    formData.append("category", data.category);
+    formData.append("points", data.points);
+    formData.append("all_employees", data.all_employees ? "1" : "0");
+    formData.append("start_date", data.start_date);
+    formData.append("deadline", data.deadline);
+    formData.append("card_color", data.card_color);
+
+    if (data.max_participants) {
+        formData.append("max_participants", data.max_participants);
+    }
+    if (data.banner) {
+        formData.append("banner", data.banner);
+    }
+    data.account_ids?.forEach((id) => formData.append("account_ids[]", id));
+    data.department_ids?.forEach((id) => formData.append("department_ids[]", id));
+
+    return formData;
+}
+
+export const create_engagement_reward_challenge_thunk = createAsyncThunk(
+    "engagement/createRewardChallenge",
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await create_reward_challenge_service(build_reward_challenge_form_data(data));
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const update_engagement_reward_challenge_thunk = createAsyncThunk(
+    "engagement/updateRewardChallenge",
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await update_reward_challenge_service(id, build_reward_challenge_form_data(data));
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const delete_engagement_reward_challenge_thunk = createAsyncThunk(
+    "engagement/deleteRewardChallenge",
+    async (id, { rejectWithValue }) => {
+        try {
+            await delete_reward_challenge_service(id);
+            return id;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
 );
 
     

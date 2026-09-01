@@ -91,6 +91,7 @@ export default function InfoTabsSection() {
                 allowance: data?.user?.account_employee?.allowance,
                 employee_id: data?.user?.account_employee?.employee_id,
                 department_id: data?.user?.account_employee?.department_id,
+                department_manager_id: data?.user?.account_employee?.department_manager_id,
                 account_id: data?.user?.account_employee?.account_id,
                 site_id: data?.user?.account_employee?.site_id,
                 position: data?.user?.account_employee?.position,
