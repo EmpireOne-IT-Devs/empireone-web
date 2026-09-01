@@ -83,3 +83,28 @@ export async function update_reward_recognition_service(id, data) {
 export async function delete_reward_recognition_service(id) {
     return await axios.delete(`/api/engagement/reward-recognitions/${id}`);
 }
+
+export async function get_reward_challenges_service() {
+    return await axios.get("/api/engagement/reward-challenges");
+}
+
+export async function get_reward_challenge_options_service() {
+    return await axios.get("/api/engagement/reward-challenges/options");
+}
+
+export async function create_reward_challenge_service(formData) {
+    return await axios.post("/api/engagement/reward-challenges", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}
+
+export async function update_reward_challenge_service(id, formData) {
+    formData.append("_method", "PUT");
+    return await axios.post(`/api/engagement/reward-challenges/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}
+
+export async function delete_reward_challenge_service(id) {
+    return await axios.delete(`/api/engagement/reward-challenges/${id}`);
+}
