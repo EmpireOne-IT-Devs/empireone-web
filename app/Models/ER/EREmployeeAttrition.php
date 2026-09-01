@@ -11,6 +11,8 @@ class EREmployeeAttrition extends Model
     protected $fillable = [
         'user_id',
         'employee_id',
+        'immediate_supervisor',
+        'department_manager',
         'position',
         'department',
         'account',
@@ -26,6 +28,11 @@ class EREmployeeAttrition extends Model
 
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information', 'user','site','department','er_leader']);
+        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information', 'user', 'site', 'department', 'er_leader']);
+    }
+
+    public function exit_clearance(): HasOne
+    {
+        return $this->hasOne(ERExitClearance::class, 'e_r_employee_attrition_id', 'id');
     }
 }

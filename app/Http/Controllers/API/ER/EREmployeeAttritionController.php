@@ -10,6 +10,7 @@ use App\Models\ER\ERLeader;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class EREmployeeAttritionController extends Controller
@@ -51,13 +52,22 @@ class EREmployeeAttritionController extends Controller
     public function store(Request $request)
     {
         // Wrap everything in a database transaction for data integrity
+        $e_r_leader = ERLeader::where('id', $request->e_r_leader_id)->with(['employee.personal_information'])->first();
+
+        // Extract leader full name safely
+        $leaderInfo = $e_r_leader?->employee?->personal_information;
+        $immediateSupervisor = trim(($leaderInfo['first_name'] ?? '') . ' ' . ($leaderInfo['last_name'] ?? ''));
+
+        // Extract manager full name safely
+        $managerInfo = $request->department['manager'] ?? null;
+        $departmentManager = trim(($managerInfo['first_name'] ?? '') . ' ' . ($managerInfo['last_name'] ?? ''));
 
         $attrition = EREmployeeAttrition::updateOrCreate(
             ['employee_id' => $request->employee_id],
             [
-                'user_id'           => $request->user_id,
+                'user_id'               => $request->user_id,
                 'position'              => $request->position,
-                'department'            => $request->department['name'] ?? null, // Added fallback just in case
+                'department'            => $request->department['name'] ?? null,
                 'account'               => $request->account['name'] ?? '',
                 'eogs_email'            => $request->eogs_email,
                 'started_at'            => $request->started_at,
@@ -67,6 +77,8 @@ class EREmployeeAttritionController extends Controller
                 'reason_for_separation' => $request->reason_for_separation,
                 'is_rehire'             => $request->is_rehire,
                 'attrition_status'      => 'Pending',
+                'immediate_supervisor' => $immediateSupervisor,
+                'department_manager'    => $departmentManager,
             ]
         );
 
@@ -106,16 +118,16 @@ class EREmployeeAttritionController extends Controller
                 'eogs.marlou@gmail.com',
             ];
 
-            $this->my_empireone_send_email([
-                'recipient' => $request->email,
-                'cc'        => implode(', ', $ccEmails) ?? '',
-                'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
-                'body'      => view('emails.human_resources.exit-clearance-interview', [
-                    'id'       => $attrition->id,
-                    'name'     => $request->name,
-                    'position' => $account_employee->position ?? 'N/A',
-                ])->render(),
-            ]);
+            // $this->my_empireone_send_email([
+            //     'recipient' => $request->email,
+            //     'cc'        => implode(', ', $ccEmails) ?? '',
+            //     'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
+            //     'body'      => view('emails.human_resources.exit-clearance-interview', [
+            //         'id'       => $attrition->id,
+            //         'name'     => $request->name,
+            //         'position' => $account_employee->position ?? 'N/A',
+            //     ])->render(),
+            // ]);
 
             // OPTIMIZATION: Used $request->user_id directly
             // User::where('id', $request->user_id)->update([
@@ -139,8 +151,13 @@ class EREmployeeAttritionController extends Controller
      */
     public function show($id)
     {
-        $attrition=EREmployeeAttrition::where('id', $id)->with(['employee'])->first();
-        return response()->json($attrition);
+        $attrition = EREmployeeAttrition::with(['employee.personal_information', 'exit_clearance'])
+            ->findOrFail($id);
+
+        return response()->json([
+            ...$attrition->toArray(),
+            'user' => Auth::user()?->load('account_employee'),
+        ]);
     }
 
     /**

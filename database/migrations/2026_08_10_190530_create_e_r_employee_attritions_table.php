@@ -21,6 +21,8 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('account_employees')
                 ->nullOnDelete();
+            $table->string('immediate_supervisor')->nullable();
+            $table->string('department_manager')->nullable();
             $table->string('position')->nullable();
             $table->string('department')->nullable();
             $table->string('account')->nullable();

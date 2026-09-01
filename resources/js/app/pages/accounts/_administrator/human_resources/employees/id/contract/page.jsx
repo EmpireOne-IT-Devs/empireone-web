@@ -18,9 +18,10 @@ export default function Page() {
     const employer_name = `${hr?.personal_information?.first_name ?? ''} ${hr?.personal_information?.last_name ?? ''}`
     const employer_position = `${hr?.position}`
     const employer_signature = `${hr?.signature}`
-console.log('useruseruser',user)
+    
     const data = {
         user_id: user.id,
+        allowances:user?.allowances,
         signature: user?.account_employee?.signature ?? null,
         employee_name:
             `${user?.personal_information?.first_name} ${user?.personal_information?.middle_name == null ? '' : user?.personal_information?.middle_name} ${user?.personal_information?.last_name}`,

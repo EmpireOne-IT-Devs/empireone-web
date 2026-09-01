@@ -281,7 +281,7 @@ export default function AddAttritionSection({ props_data }) {
                         </div>
 
                         {/* Employment Status */}
-                        <div className="flex flex-col">
+                        {/* <div className="flex flex-col">
                             <Select
                                 label="Employment Status"
                                 disabled={isSubmitting}
@@ -289,7 +289,7 @@ export default function AddAttritionSection({ props_data }) {
                                 {...register("employment_status", { required: "Please select an employment status" })}
                                 error={errors.employment_status}
                             />
-                        </div>
+                        </div> */}
                     </div>
 
                     <Button

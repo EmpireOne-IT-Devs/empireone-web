@@ -388,23 +388,42 @@ const EmploymentContract = ({ data }) => (
                 3. Compensation and Benefit
             </Text>
             <Text style={[styles.text, { marginBottom: 20 }]}>
-                The Employee, during the term of his employment, shall be paid a
-                gross monthly salary of {" "}{numberToWords.toWords(data?.salary).toUpperCase()} PESOS PHP{" "}
-                <Text
-                    style={{
-                        textDecorationLine: "underline",
-                        fontWeight: "bold",
-                    }}
-                >
-                    {data?.salary}
-                </Text>,
-                payable in equal semi-monthly installments, subject to
-                applicable statutory deductions. Upon regularization, the
-                Employee will receive the same monthly salary or any adjustment
-                as may be agreed upon. Additionally, the EMPLOYEE will be
-                entitled to full company benefits, including but not limited to
-                the 13th Month Pay, leave credits, and other benefits as may be
-                provided under company policy and applicable laws.
+                The Employee, during the term of his employment, shall be paid a gross
+                monthly salary of{" "}
+                {data?.salary ? numberToWords.toWords(Number(data.salary)).toUpperCase() : ""}{" "}
+                PESOS (PHP{" "}
+                <Text style={{ textDecorationLine: "underline", fontWeight: "bold" }}>
+                    {Number(data?.salary || 0).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })}
+                </Text>
+                )
+                {data?.allowances && data.allowances.length > 0 && ", "}
+                {data?.allowances?.map((res, index) => {
+                    const isLast = index === data.allowances.length - 1;
+                    const isSecondToLast = index === data.allowances.length - 2;
+                    const amountInWords = res?.allowance
+                        ? numberToWords.toWords(Number(res.allowance)).toUpperCase()
+                        : "";
+                    const formattedAmount = Number(res?.allowance || 0).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
+
+                    return (
+                        <Text key={res?.id || index}>
+                            {res?.allowance_type?.toLowerCase()} of {amountInWords} PESOS (PHP {formattedAmount})
+                            {isLast ? " " : isSecondToLast ? " and " : ", "}
+                        </Text>
+                    );
+                })}
+                payable in equal semi-monthly installments, subject to applicable statutory
+                deductions. Upon regularization, the Employee will receive the same monthly
+                salary or any adjustment as may be agreed upon. Additionally, the EMPLOYEE
+                will be entitled to full company benefits, including but not limited to the
+                13th Month Pay, leave credits, and other benefits as may be provided under
+                company policy and applicable laws.
             </Text>
 
             <Text style={[styles.sectionTitle, { marginBottom: 20 }]}>
@@ -619,7 +638,7 @@ const EmploymentContract = ({ data }) => (
                 b. to the Employer: S. Carmona St., Brgy. VI, San Carlos City,
                 Negros Occidental
             </Text>
-            <Text style={[styles.text, { marginBottom: 20,marginTop:5 }]}>
+            <Text style={[styles.text, { marginBottom: 20, marginTop: 5 }]}>
                 and if sent by registered mail shall be deemed to have been
                 received on the 4th business day of uninterrupted postal service
                 following the date of mailing. Either party may change its
@@ -855,6 +874,7 @@ const EmploymentContract = ({ data }) => (
 export default function EmploymentContractSection({ data }) {
     const dispatch = useDispatch();
 
+    console.log('wwwwwwwwwwwww', data)
     return (
         <PDFLoader pdf={<EmploymentContract data={data} />} width="w-full" />
     );

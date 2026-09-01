@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Models\Account\AccountContract;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
+use App\Models\Account\AccountEmployeeAllowance;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\Account\AccountSkills;
 use App\Models\Account\AccountWorkingExperience;
@@ -73,6 +74,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function subordinate(): HasOne
     {
         return $this->hasOne(ERSubordinate::class, 'subordinate_id', 'id')->with(['leader']);
+    }
+    public function allowances(): HasMany
+    {
+        return $this->hasMany(AccountEmployeeAllowance::class, 'user_id', 'id');
     }
     public function leader(): HasOne
     {

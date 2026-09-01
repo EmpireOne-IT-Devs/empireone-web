@@ -611,31 +611,32 @@ class JobApplicationController extends Controller
             //     'questions_limit' => 5,
             //     'current_step' => 0,
             // ]);
-            $result =  $this->send_interview_schedule([
-                // 'job_interview_id' => url("/accounts/talent/{$ji->id}/ai_interview"),
-                'applicant_email' => $user->email,
-                'applicant_name'  => $user->name, // Pass the real name so Apps Script doesn't have to guess
-                'start_time'      => $googleStartTime, // Must be a valid date string (e.g., '2026-05-22T10:40:00')
-                'end_time'        => $googleEndTime,
-                'job_title'       => $request->position,
-            ]);
 
+            if ($request->interview_type == 'Virtual') {
+                $result =  $this->send_interview_schedule([
+                    // 'job_interview_id' => url("/accounts/talent/{$ji->id}/ai_interview"),
+                    'applicant_email' => $user->email,
+                    'applicant_name'  => $user->name, // Pass the real name so Apps Script doesn't have to guess
+                    'start_time'      => $googleStartTime, // Must be a valid date string (e.g., '2026-05-22T10:40:00')
+                    'end_time'        => $googleEndTime,
+                    'job_title'       => $request->position,
+                ]);
 
-            $googleData = json_decode($result, true);
-
-            $meetLink = $googleData['eventId']['meetLink'];
-            $eventId = $googleData['eventId']['eventId'];
-            $schedule->update([
-                'meeting_link' => $meetLink,
-                'status'       => 'Scheduled',
-                'google_calendar_event_id' => $eventId,
-            ]);
+                $googleData = json_decode($result, true);
+                $meetLink = $googleData['eventId']['meetLink'];
+                $eventId = $googleData['eventId']['eventId'];
+                $schedule->update([
+                    'meeting_link' => $meetLink,
+                    'status'       => 'Scheduled',
+                    'google_calendar_event_id' => $eventId,
+                ]);
+            }
 
             Mail::to($user->email)->send(
                 new SendEmailAccountCreation($user, url('/auth/login'), [
                     'start_time' => $googleStartTime,
                     'end_time'   => $googleEndTime,
-                    'meet_link'  => $meetLink
+                    'meet_link'  => $meetLink ?? ''
                 ])
             );
             if ($request->file) {
@@ -674,7 +675,7 @@ class JobApplicationController extends Controller
             'status' => 'success',
         ], 200);
     }
-    public function generate_employee_id($user_id,$start_date)
+    public function generate_employee_id($user_id, $start_date)
     {
         $employee = AccountEmployee::firstOrCreate(
             ['user_id' => $user_id]
@@ -682,7 +683,7 @@ class JobApplicationController extends Controller
 
         // Instantiate controller if method is non-static, or call directly
         $contractController = app(AccountContractController::class);
-        $contractController->processEmployeeHiring($employee, $user_id,$start_date);
+        $contractController->processEmployeeHiring($employee, $user_id, $start_date);
 
         return $employee->fresh();
     }
@@ -694,7 +695,7 @@ class JobApplicationController extends Controller
         if ($request->final_status == 'Failed' || $request->interview_status == 'Failed') {
             Mail::to($request->user['email'])->send(new ApplicantRejected($ja));
         } else if ($request->final_status == 'Hired') {
-            $this->generate_employee_id($ja->user_id,$request->start_date);
+            $this->generate_employee_id($ja->user_id, $request->start_date);
         }
         if (!$ja) {
             return response()->json([

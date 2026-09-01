@@ -40,6 +40,7 @@ class ERSubordinateController extends Controller
         $leaderId = $request->er_leader_id;
         $leader = ERLeader::where('id', $leaderId)->with(['employee'])->first();
         $subordinates = $request->subordinates;
+        
         foreach ($subordinates as $subordinateId) {
             if ($subordinateId) {
                 // Correct syntax for searching by one column, but creating with both
