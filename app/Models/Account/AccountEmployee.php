@@ -28,6 +28,7 @@ class AccountEmployee extends Model
         'site_id', //
         'location_id', //
         'account_id', //
+        'department_manager_id',
         'employee_id',
         'is_has_contract',
         'work_type', //

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 
-export default function DayAttendanceComponents({ day }) {
-    const [timeIn, setTimeIn] = useState("08:00");
-    const [timeOut, setTimeOut] = useState("17:00");
-    const [isDayOff, setIsDayOff] = useState(
-        day === "Saturday" || day === "Sunday",
-    );
-
+export default function DayAttendanceComponents({
+    day,
+    timeIn,
+    timeOut,
+    isDayOff,
+    onChange,
+}) {
     return (
         <div className="border rounded-xl p-5 bg-gray-50 space-y-4 w-full">
             <h1 className="font-semibold text-xl">{day}</h1>
@@ -19,7 +19,7 @@ export default function DayAttendanceComponents({ day }) {
                     <input
                         type="time"
                         value={timeIn}
-                        onChange={(e) => setTimeIn(e.target.value)}
+                        onChange={(e) => onChange({ timeIn: e.target.value })}
                         disabled={isDayOff}
                         className="w-full border rounded-lg p-3 disabled:bg-gray-200 disabled:text-gray-500"
                     />
@@ -32,7 +32,7 @@ export default function DayAttendanceComponents({ day }) {
                     <input
                         type="time"
                         value={timeOut}
-                        onChange={(e) => setTimeOut(e.target.value)}
+                        onChange={(e) => onChange({ timeOut: e.target.value })}
                         disabled={isDayOff}
                         className="w-full border rounded-lg p-3 disabled:bg-gray-200 disabled:text-gray-500"
                     />
@@ -43,7 +43,9 @@ export default function DayAttendanceComponents({ day }) {
                         <input
                             type="checkbox"
                             checked={isDayOff}
-                            onChange={(e) => setIsDayOff(e.target.checked)}
+                            onChange={(e) =>
+                                onChange({ isDayOff: e.target.checked })
+                            }
                             className="w-5 h-5"
                         />
                         <span className="font-medium text-gray-700">

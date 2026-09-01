@@ -20,7 +20,7 @@ class EREmployeeAttritionController extends Controller
      */
     public function index()
     {
-        $attritions = EREmployeeAttrition::with(['employee'])->paginate(12);
+        $attritions = EREmployeeAttrition::with(['employee', 'exit_clearance', 'exit_interview'])->paginate(12);
         return response()->json($attritions, 200);
     }
 
@@ -57,7 +57,7 @@ class EREmployeeAttritionController extends Controller
         // Extract leader full name safely
         $leaderInfo = $e_r_leader?->employee?->personal_information;
         $immediateSupervisor = trim(($leaderInfo['first_name'] ?? '') . ' ' . ($leaderInfo['last_name'] ?? ''));
-
+        // dd($e_r_leader?->employee->department->manager->employee->eogs_email);
         // Extract manager full name safely
         $managerInfo = $request->department['manager'] ?? null;
         $departmentManager = trim(($managerInfo['first_name'] ?? '') . ' ' . ($managerInfo['last_name'] ?? ''));
@@ -69,7 +69,6 @@ class EREmployeeAttritionController extends Controller
                 'position'              => $request->position,
                 'department'            => $request->department['name'] ?? null,
                 'account'               => $request->account['name'] ?? '',
-                'eogs_email'            => $request->eogs_email,
                 'started_at'            => $request->started_at,
                 'separation_date'       => $request->separation_date,
                 'employment_status'     => $request->employment_status,
@@ -94,45 +93,47 @@ class EREmployeeAttritionController extends Controller
                 ]);
             }
 
-            // $account_employee->update([
-            //     'employment_status'     => $request->employment_status,
-            //     'reason_for_separation' => $request->reason_for_separation,
-            //     'is_rehire'             => $request->is_rehire,
-            //     'position'              => null,
-            //     'department_id'         => null,
-            //     'account_id'            => null,
-            //     'started_at'            => null,
-            //     'e_r_leader_id'         => null,
-            //     'is_has_contract'       => null,
-            //     'employee_id'           => null,
-            //     'signature'             => null,
-            //     'onboarding_agree_on'   => null,
-            //     'status'                => null,
-            //     'basic_pay'             => null,
-            //     'allowance'             => null,
-            // ]);
+            $account_employee->update([
+                'employment_status'     => $request->employment_status,
+                'reason_for_separation' => $request->reason_for_separation,
+                'is_rehire'             => $request->is_rehire,
+                'position'              => null,
+                'department_id'         => null,
+                'account_id'            => null,
+                'started_at'            => null,
+                'e_r_leader_id'         => null,
+                'is_has_contract'       => null,
+                'employee_id'           => null,
+                'signature'             => null,
+                'onboarding_agree_on'   => null,
+                'status'                => null,
+                'basic_pay'             => null,
+                'allowance'             => null,
+            ]);
 
             // Define CC recipients as an array for clean maintainability
-            $ccEmails = [
-                'eogs.quicky@gmail.com',
-                'eogs.marlou@gmail.com',
-            ];
+            $ccEmails = array_values(array_unique(array_filter([
+                $e_r_leader?->employee?->eogs_email,
+                $e_r_leader?->employee?->department?->manager?->employee?->eogs_email,
+                'scitdept@empireonegroup.com',
+                'scchr@empireonegroup.com',
+                'carcarhr@empireonegroup.com',
+            ])));
 
-            // $this->my_empireone_send_email([
-            //     'recipient' => $request->email,
-            //     'cc'        => implode(', ', $ccEmails) ?? '',
-            //     'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
-            //     'body'      => view('emails.human_resources.exit-clearance-interview', [
-            //         'id'       => $attrition->id,
-            //         'name'     => $request->name,
-            //         'position' => $account_employee->position ?? 'N/A',
-            //     ])->render(),
-            // ]);
+            $this->my_empireone_send_email([
+                'recipient' => $request->email,
+                'cc'        => implode(', ', $ccEmails) ?? '',
+                'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
+                'body'      => view('emails.human_resources.exit-clearance-interview', [
+                    'id'       => $attrition->id,
+                    'name'     => $request->name,
+                    'position' => $account_employee->position ?? 'N/A',
+                ])->render(),
+            ]);
 
-            // OPTIMIZATION: Used $request->user_id directly
-            // User::where('id', $request->user_id)->update([
-            //     'role' => '3',
-            // ]);
+            User::where('id', $request->user_id)->update([
+                'role' => '3',
+            ]);
             $leader =  ERLeader::where('user_id', $request->user_id)->first();
             if ($leader) {
                 $leader->update([
@@ -151,7 +152,7 @@ class EREmployeeAttritionController extends Controller
      */
     public function show($id)
     {
-        $attrition = EREmployeeAttrition::with(['employee.personal_information', 'exit_clearance'])
+        $attrition = EREmployeeAttrition::with(['employee.personal_information', 'exit_clearance', 'exit_interview'])
             ->findOrFail($id);
 
         return response()->json([

@@ -16,7 +16,7 @@ class ERLeaderController extends Controller
     public function index()
     {
         $leaders = ERLeader::with('user')->withCount('subordinates')->get();
-        $users = User::get();
+        $users = User::whereIn('role', [1, 2])->with(['personal_information'])->get();
         return response()->json([
             'data' => $leaders,
             'users' => $users,

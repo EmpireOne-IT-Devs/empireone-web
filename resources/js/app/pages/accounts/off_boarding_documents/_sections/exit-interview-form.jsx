@@ -1,12 +1,16 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import { add_exit_interview_service } from '@/app/services/human-resources-service';
+import { setAlert } from '@/app/redux/app-slice';
+import Button from '@/app/_components/button';
 
 export default function ExitInterviewForm() {
     const { attrition } = useSelector((store) => store.human_resources);
     const exit_interview = attrition?.exit_interview;
-
+    console.log('attrition', attrition)
+    const dispatch = useDispatch()
     const mapArrayToBooleans = (array, keys) => {
         const list = Array.isArray(array) ? array : [];
         return keys.reduce((acc, key) => {
@@ -19,7 +23,9 @@ export default function ExitInterviewForm() {
         register,
         handleSubmit,
         control,
-        watch
+        watch,
+        formState: { errors, isSubmitting }
+
     } = useForm({
         defaultValues: {
             name: `${attrition?.employee?.personal_information?.first_name || ''} ${attrition?.employee?.personal_information?.last_name || ''}`.trim(),
@@ -85,11 +91,26 @@ export default function ExitInterviewForm() {
 
     const onSubmit = async (data) => {
         console.log('Form Payload:', data);
-        // Call your submission service here
+        try {
+            await add_exit_interview_service({
+                ...data,
+                e_r_employee_attrition_id: window.location.pathname.split('/')[3]
+            })
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Exit clearance has been saved!",
+                    message: "The attrition has been created and is ready for review.",
+                    open: true,
+                })
+            );
+        } catch (error) {
+
+        }
     };
 
 
-    console.log('attrition?.employee?.personal_information?.first_name', watchedValues?.name)
+    console.log('attrition?.employee?.personal_information?.first_name', attrition)
 
     return (
         <>
@@ -411,12 +432,13 @@ export default function ExitInterviewForm() {
                     </div>
 
                     <div className="mt-4 flex justify-end no-print">
-                        <button
+                   
+                        <Button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium text-xs"
+                            loading={isSubmitting}
                         >
                             Submit Exit Interview
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </form>

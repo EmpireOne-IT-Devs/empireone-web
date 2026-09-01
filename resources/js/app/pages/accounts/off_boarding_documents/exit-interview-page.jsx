@@ -1,7 +1,7 @@
-import { get_attrition_by_id_thunk } from '@/app/redux/employee-relation-thunk'
-import store from '@/app/store/store'
 import React, { useEffect, useState } from 'react'
 import ExitInterviewForm from './_sections/exit-interview-form'
+import store from '@/app/store/store'
+import { get_attrition_by_id_thunk } from '@/app/redux/employee-relation-thunk'
 
 export default function ExitInterviewPage() {
     const [loading, setLoading] = useState(true)
@@ -14,7 +14,10 @@ export default function ExitInterviewPage() {
     }, [])
     return (
         <div>
-            <ExitInterviewForm />
+            {
+                !loading ? <ExitInterviewForm /> : "Loading..."
+            }
+
         </div>
     )
 }

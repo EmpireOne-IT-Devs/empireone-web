@@ -14,4 +14,9 @@ class AttendanceEmployeeSettings extends Model
         'time_out',
         'is_day_off',
     ];
+
+    public static function forEmployeeAndDay(int $userId, string $day): ?self
+    {
+        return static::where('user_id', $userId)->where('day', $day)->first();
+    }
 }

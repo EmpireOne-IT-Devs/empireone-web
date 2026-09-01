@@ -215,6 +215,13 @@ export default function SidebarSection() {
                       is_incoming: false,
                   },
                   {
+                      name: "Timekeeping",
+                      href: `/accounts/${account_role}/timekeeping`,
+                      icon: FcOvertime,
+                      current: path == "timekeeping",
+                      is_incoming: false,
+                  },
+                  {
                       name: "HR Services",
                       href: `/accounts/${account_role}/hr_services`,
                       icon: FcPortraitMode,

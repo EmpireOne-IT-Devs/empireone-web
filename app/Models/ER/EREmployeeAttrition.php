@@ -35,4 +35,8 @@ class EREmployeeAttrition extends Model
     {
         return $this->hasOne(ERExitClearance::class, 'e_r_employee_attrition_id', 'id');
     }
+      public function exit_interview(): HasOne
+    {
+        return $this->hasOne(ERExitInterview::class, 'e_r_employee_attrition_id', 'id');
+    }
 }

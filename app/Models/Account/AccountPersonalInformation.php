@@ -7,13 +7,14 @@ use App\Models\Location;
 use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 
 class AccountPersonalInformation extends Model
 {
-    
+
     protected $fillable = [
-       
+
         'user_id',
         'app_id',
         // personal information
@@ -26,7 +27,7 @@ class AccountPersonalInformation extends Model
         'date_of_birth', // required
         'birth_place', // required
         'nationality',
-         'department_id',
+        'department_id',
         'previous_employee_status',
         'marital_status',
         'contact', //required
@@ -77,6 +78,11 @@ class AccountPersonalInformation extends Model
         return $this->belongsTo(User::class);
     }
 
+
+    public function employee(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id');
+    }
     public function department()
     {
         return $this->belongsTo(Department::class);
@@ -91,5 +97,4 @@ class AccountPersonalInformation extends Model
     {
         return $this->belongsTo(Location::class);
     }
-    
 }

@@ -100,7 +100,6 @@ class AccountEmployeeController extends Controller
             'site',
             'reporting_to'
         ])
-            ->whereNull('employment_status')
             ->whereNotNull('employee_id')
             // Filter by Role
             ->whereHas('user', function ($query) {
@@ -120,11 +119,19 @@ class AccountEmployeeController extends Controller
                         });
                 });
             })
-            ->orderBy('id', 'asc')
-            ->paginate(12);
+            ->orderBy('id', 'asc');
 
-        // 4. Transform the paginated items safely without losing pagination metadata
-        $employees->getCollection()->transform(function ($employee) use ($allAcknowledgements) {
+        // Allow callers (e.g. dropdown selectors) to request the full list, unpaginated
+        $employees = $request->boolean('all')
+            ? $employees->get()
+            : $employees->paginate(12);
+
+        // 4. Transform the paginated/collection items safely without losing pagination metadata
+        $employeeCollection = $employees instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator
+            ? $employees->getCollection()
+            : $employees;
+
+        $employeeCollection->transform(function ($employee) use ($allAcknowledgements) {
 
             // Map all master acknowledgements to every single employee
             $employee->acknowledgements = $allAcknowledgements->map(function ($ack) use ($employee) {

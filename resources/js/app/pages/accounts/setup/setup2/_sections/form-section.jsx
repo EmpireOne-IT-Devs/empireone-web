@@ -40,6 +40,7 @@ export default function FormSection() {
             reset({
                 ...data?.user?.personal_information,
                 e_r_leader_id: data?.user?.account_employee?.e_r_leader_id,
+                department_manager_id: data?.user?.account_employee?.department_manager_id,
                 started_at: data?.user?.account_employee?.started_at
                     ? moment(data.user.account_employee.started_at).format('YYYY-MM-DD')
                     : '',
@@ -147,6 +148,24 @@ export default function FormSection() {
                     }))}
                     error={errors.e_r_leader_id}
                     onChange={(val) => setValue("e_r_leader_id", val)}
+                />
+
+
+                <Select
+                    label="Department Manager"
+                    required
+                    name="department_manager_id"
+                    options={data?.leaders?.map((res) => ({
+                        ...res,
+                        label: res?.user?.name,
+                        value: res.id,
+                    }))}
+                    value={form.department_manager_id}
+                    onChange={(val) =>
+                        setValue("department_manager_id", val, { shouldValidate: true })
+                    }
+                    error={errors.department_manager_id?.message}
+                    className="w-full"
                 />
 
                 <Select
