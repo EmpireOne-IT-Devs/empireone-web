@@ -58,12 +58,8 @@ export default function Page() {
                                     <PostCardSection />
                                 </div>
                             </div>
-
-                            {/* Fade to signal scrollable content */}
                         </div>
                     </div>
-
-                    {/* Right Column - Upcoming scheduled posts + Announcements */}
                     <div className="hidden lg:flex lg:col-span-4 xl:col-span-3 h-full min-h-0 flex-col gap-4 overflow-auto">
                         <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
                             <AnnouncementsSection />
