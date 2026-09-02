@@ -24,6 +24,7 @@ const buildDefaultSchedule = () =>
             timeIn: "08:00",
             timeOut: "17:00",
             isDayOff: day === "Saturday" || day === "Sunday",
+            breakMinutes: day === "Saturday" || day === "Sunday" ? null : 60,
         };
         return acc;
     }, {});
@@ -35,6 +36,12 @@ export default function SetAttendanceSection() {
     );
     const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
     const [schedule, setSchedule] = useState(buildDefaultSchedule());
+    const [breakMinutes, setBreakMinutes] = useState(
+        DAYS.reduce((acc, day) => {
+            acc[day] = day === "Saturday" || day === "Sunday" ? null : 60;
+            return acc;
+        }, {})
+    );
     const [loadingSchedule, setLoadingSchedule] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -90,6 +97,9 @@ export default function SetAttendanceSection() {
                                 ? row.time_out.slice(0, 5)
                                 : next[row.day].timeOut,
                             isDayOff: row.is_day_off == "1",
+                            breakMinutes: row.break_minutes
+                                ? parseInt(row.break_minutes, 10)
+                                : next[row.day].breakMinutes,
                         };
                     });
                     return next;
@@ -126,6 +136,9 @@ export default function SetAttendanceSection() {
                         ? null
                         : `${schedule[day].timeOut}:00`,
                     is_day_off: schedule[day].isDayOff,
+                    break_minutes: schedule[day].isDayOff
+                        ? null
+                        : String(schedule[day].breakMinutes),
                 })),
             });
 
@@ -206,7 +219,8 @@ export default function SetAttendanceSection() {
                                         </h3>
 
                                         <p className="text-gray-500">
-                                            {selectedEmployee?.account ??
+                                            {selectedEmployee?.account
+                                                ?.department_name ??
                                                 selectedEmployee?.department
                                                     ?.name}
                                         </p>
@@ -233,6 +247,7 @@ export default function SetAttendanceSection() {
                                         onChange={(changes) =>
                                             handleDayChange(day, changes)
                                         }
+                                        breakMinutes={schedule[day].breakMinutes}
                                     />
                                 ))
                             )}

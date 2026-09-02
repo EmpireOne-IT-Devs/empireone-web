@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('day')->nullable();
             $table->time('time_in')->nullable();
             $table->time('time_out')->nullable();
+            $table->string('break_minutes')->nullable();
             $table->string('is_day_off')->nullable();
             $table->timestamps();
         });
