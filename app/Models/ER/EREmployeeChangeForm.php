@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class EREmployeeChangeForm extends Model
 {
+
+    protected $casts = [
+        'allowances' => 'array', // OR 'json'
+    ];
     protected $fillable = [
         'employee_id',
         'job_application_id',
@@ -24,7 +28,7 @@ class EREmployeeChangeForm extends Model
         'account',
         'reporting_to',
         'reason_for_change',
-
+        'notes',
         // "From" Information
         'info_position_level_from',
         'info_department_from',
@@ -34,6 +38,7 @@ class EREmployeeChangeForm extends Model
         'info_reporting_from',
         'info_basic_pay_from',
         'info_allowances_from',
+        'allowances',
 
         // "To" Information
         'info_position_level_to',
@@ -55,7 +60,7 @@ class EREmployeeChangeForm extends Model
         'is_department_transfer',
         'is_position_and_title',
         'is_tiering',
-        
+
         'status',
     ];
 

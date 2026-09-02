@@ -28,7 +28,7 @@ export default function CardAcknowledgementSection() {
                                 id: 'fullname',
                                 label: 'Fullname',
                                 icon: LuUser,
-                                value: res?.user?.name || res?.personal_information?.first_name,
+                                value:  `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name??''} ${res?.personal_information?.last_name}`,
                             },
                             {
                                 id: 'email',

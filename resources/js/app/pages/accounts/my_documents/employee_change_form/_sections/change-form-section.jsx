@@ -13,44 +13,39 @@ import { useSelector } from "react-redux";
 
 const styles = StyleSheet.create({
     page: {
-        paddingTop: 40,
-        paddingBottom: 60,
-        paddingLeft: 40,
-        paddingRight: 40,
+        paddingTop: 20,
+        paddingBottom: 40,
+        paddingLeft: 30,
+        paddingRight: 30,
         fontFamily: "Times-Roman",
-        fontSize: 10,
+        fontSize: 8,
     },
     // ── Header ──────────────────────────────────────────────────────────────
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-end",
-        borderBottomWidth: 2,
+        borderBottomWidth: 1.5,
         borderBottomColor: "#000",
-        paddingBottom: 10,
-        marginBottom: 15,
+        paddingBottom: 4,
+        marginBottom: 8,
     },
     logo: {
-        width: 150,
+        width: 110,
         objectFit: "contain",
     },
     pageTitle: {
-        fontSize: 16,
+        fontSize: 13,
         fontFamily: "Times-Bold",
         textTransform: "uppercase",
     },
     // ── Typography ───────────────────────────────────────────────────────────
     sectionLabel: {
         fontFamily: "Times-Bold",
-        fontSize: 11,
-        marginBottom: 4,
+        fontSize: 9,
+        marginBottom: 2,
         marginTop: 2,
         textTransform: "uppercase",
-    },
-    paragraph: {
-        fontSize: 10,
-        lineHeight: 1.5,
-        marginBottom: 6,
     },
     bold: {
         fontFamily: "Times-Bold",
@@ -59,9 +54,9 @@ const styles = StyleSheet.create({
         fontFamily: "Times-Italic",
     },
     divider: {
-        borderTopWidth: 2,
+        borderTopWidth: 1,
         borderTopColor: "#000",
-        marginBottom: 5,
+        marginBottom: 3,
     },
     // ── Tables ───────────────────────────────────────────────────────────────
     table: {
@@ -69,7 +64,7 @@ const styles = StyleSheet.create({
         width: "100%",
         borderWidth: 1,
         borderColor: "#000",
-        marginBottom: 15,
+        marginBottom: 6,
     },
     tableRow: {
         flexDirection: "row",
@@ -81,129 +76,120 @@ const styles = StyleSheet.create({
     },
     tableHeader: {
         backgroundColor: "#f3f4f6",
-        padding: 4,
+        padding: 2,
         fontFamily: "Times-Bold",
         textAlign: "center",
         textTransform: "uppercase",
+        fontSize: 8,
     },
     colLabel: {
         width: "25%",
         borderRightWidth: 1,
         borderRightColor: "#000",
-        padding: 4,
+        padding: 2.5,
         fontFamily: "Times-Bold",
         textTransform: "uppercase",
+        fontSize: 7.5,
     },
     colValue: {
         width: "25%",
         borderRightWidth: 1,
         borderRightColor: "#000",
-        padding: 4,
+        padding: 2.5,
         textAlign: "center",
+        fontSize: 7.5,
     },
     colValueLast: {
         width: "25%",
-        padding: 4,
+        padding: 2.5,
         textAlign: "center",
+        fontSize: 7.5,
     },
     colNameValue: {
         width: "75%",
-        padding: 4,
+        padding: 2.5,
         fontFamily: "Times-Bold",
         textTransform: "uppercase",
+        fontSize: 7.5,
     },
     // ── Reason For Change Box ────────────────────────────────────────────────
     reasonBox: {
         borderWidth: 1,
         borderColor: "#000",
-        padding: 6,
-        minHeight: 50,
+        padding: 4,
+        minHeight: 24,
         width: "100%",
-        marginTop: 4,
-        marginBottom: 8,
+        marginTop: 2,
+        marginBottom: 4,
+        fontSize: 7.5,
     },
     italicLabel: {
         fontFamily: "Times-Italic",
-        fontSize: 9,
+        fontSize: 7.5,
         color: "#4b5563",
     },
     // ── Checkboxes ───────────────────────────────────────────────────────────
     checkboxContainer: {
         flexDirection: "row",
         flexWrap: "wrap",
-        gap: 15,
-        marginBottom: 10,
+        gap: 10,
+        marginBottom: 4,
     },
     checkboxItem: {
         flexDirection: "row",
         alignItems: "center",
     },
     checkbox: {
-        width: 10,
-        height: 10,
+        width: 8,
+        height: 8,
         borderWidth: 1,
         borderColor: "#000",
-        marginRight: 4,
+        marginRight: 3,
     },
     checkboxChecked: {
         backgroundColor: "#000",
     },
     // ── Signature block ──────────────────────────────────────────────────────
     signatureArea: {
-        marginTop: 15,
+        marginTop: 10,
     },
     signatureBlock: {
-        marginBottom: 20,
+        marginBottom: 5,
     },
-    sigLine: {
-        borderBottomWidth: 1,
-        borderBottomColor: "#000",
-        width: 200,
+    signature_over_printed_name: {
+        position: "absolute",
+        bottom: -10,
+        left: 40,
+        height: 50,
+        width: 100,
+        zIndex: 1,
+    },
+    signature_over_printed_name_line: {
         marginTop: 15,
-        marginBottom: 4,
+        borderTopWidth: 1,
+        borderTopColor: "#000",
+        width: 200,
+        paddingTop: 2,
+        textAlign: "center",
     },
     // ── Footer ───────────────────────────────────────────────────────────────
     footerBlock: {
         position: "absolute",
-        bottom: 20,
-        left: 40,
-        right: 40,
+        bottom: 12,
+        left: 30,
+        right: 30,
         alignItems: "center",
     },
     disclaimerTitle: {
-        fontSize: 10,
-        fontFamily: "Times-BoldItalic", // <-- Use the dedicated bold-italic font
-        marginBottom: 2,
+        fontSize: 8,
+        fontFamily: "Times-BoldItalic",
+        marginBottom: 1,
     },
     disclaimerText: {
-        fontSize: 8,
+        fontSize: 6.5,
         fontFamily: "Times-Italic",
-        lineHeight: 1.2,
+        lineHeight: 1.1,
         color: "#6b7280",
-        textAlign: "center",
-    },
-    signature: {
-        position: "absolute",
-        bottom: -50,
-        left: -10,
-        height: 120,
-        width: 150,
-        zIndex: 1,
-    },
-    signature_over_printed_name: {
-        position: "absolute",
-        bottom: -20,
-        left: 50,
-        height: 120,
-        width: 150,
-        zIndex: 1,
-    },
-    signature_over_printed_name_line: {
-        marginTop: 30,
-        borderTopWidth: 1,
-        borderTopColor: "#000",
-        width: 250,
-        paddingTop: 5,
         textAlign: "center",
     },
 });
@@ -220,13 +206,12 @@ const PageHeader = () => (
 const PageFooter = () => (
     <View style={styles.footerBlock}>
         <Text style={styles.disclaimerTitle}>Confidential and Proprietary</Text>
-        <Text style={styles.disclaimerText}>Disclaimer:</Text>
         <Text style={styles.disclaimerText}>
-            This document and its contents are the property of EmpireOne BPO
+            Disclaimer: This document and its contents are the property of EmpireOne BPO
             Solutions, Inc. and are intended for internal use only. Unauthorized
-            reproduction, disclosure, or distribution of this material, in whole
-            or in part, without prior written permission from the company is
-            strictly prohibited.
+            reproduction, disclosure, or distribution of this material, in whole or in
+            part, without prior written permission from the company is strictly
+            prohibited.
         </Text>
     </View>
 );
@@ -234,7 +219,7 @@ const PageFooter = () => (
 const FormCheckbox = ({ label, checked }) => (
     <View style={styles.checkboxItem}>
         <View style={[styles.checkbox, checked ? styles.checkboxChecked : {}]} />
-        <Text>{label}</Text>
+        <Text style={{ fontSize: 7.5 }}>{label}</Text>
     </View>
 );
 
@@ -244,10 +229,10 @@ const DetailRow = ({ label, from, to, isLast }) => (
             <Text>{label}</Text>
         </View>
         <View style={[styles.colValue, { width: "37.5%" }]}>
-            <Text>{from}</Text>
+            <Text>{from ?? "N/A"}</Text>
         </View>
         <View style={[styles.colValueLast, { width: "37.5%" }]}>
-            <Text>{from == to ? 'No Change' : to}</Text>
+            <Text>{from == to ? "No Change" : to ?? "No Change"}</Text>
         </View>
     </View>
 );
@@ -256,7 +241,8 @@ const DetailRow = ({ label, from, to, isLast }) => (
 
 const EmployeeChangeFormDocument = ({ data }) => {
     const safeData = data || {};
-    console.log('safeData', safeData)
+    const allowances = Array.isArray(safeData?.allowances) ? safeData.allowances : [];
+
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -303,11 +289,11 @@ const EmployeeChangeFormDocument = ({ data }) => {
                 </View>
 
                 {/* ══ REASON FOR CHANGE ═════════════════════════════════════════ */}
-                <View style={{ marginBottom: 15 }}>
+                <View style={{ marginBottom: 4 }}>
                     <Text style={styles.italicLabel}>
                         (Kindly make sure to attach the necessary documentation):
                     </Text>
-                    <Text style={[styles.bold, { marginTop: 6 }]}>Reason for Change:</Text>
+                    <Text style={[styles.bold, { marginTop: 2, fontSize: 8 }]}>Reason for Change:</Text>
 
                     <View style={styles.reasonBox}>
                         <Text>{safeData?.reason_for_change}</Text>
@@ -323,9 +309,11 @@ const EmployeeChangeFormDocument = ({ data }) => {
                         <FormCheckbox label="Tiering" checked={safeData?.is_tiering} />
                     </View>
                 </View>
-                <View>
-                    {
-                        safeData?.tiering && <View style={styles.table}>
+
+                {/* ══ TIERING INFORMATION ═══════════════════════════════════════ */}
+                {safeData?.tiering && (
+                    <View>
+                        <View style={styles.table}>
                             <View style={styles.tableRow}>
                                 <View style={[styles.tableHeader, { width: "100%" }]}>
                                     <Text>Tiering Information</Text>
@@ -336,22 +324,20 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                 <View style={[styles.colLabel, { width: "20%" }]}><Text>Original Tier</Text></View>
                                 <View style={[styles.colLabel, { width: "20%" }]}><Text>Role</Text></View>
                                 <View style={[styles.colLabel, { width: "20%" }]}><Text>Responsibilities</Text></View>
-                                <View style={[styles.colLabel, { width: "20%" }]}><Text>Payout Details</Text></View>
+                                <View style={[styles.colLabel, { width: "20%", borderRightWidth: 0 }]}><Text>Payout Details</Text></View>
                             </View>
 
-                            <View style={styles.tableRow}>
-                                <View style={[styles.colLabel, { width: "20%" }]}><Text>{safeData?.tiering?.name}</Text></View>
-                                <View style={[styles.colLabel, { width: "20%" }]}><Text>{safeData?.tiering?.original}</Text></View>
-                                <View style={[styles.colLabel, { width: "20%" }]}><Text>{safeData?.tiering?.role}</Text></View>
-                                <View style={[styles.colLabel, { width: "20%" }]}><Text>{safeData?.tiering?.responsibility}</Text></View>
-                                <View style={[styles.colLabel, { width: "20%" }]}><Text>{safeData?.tiering?.payout_details}</Text></View>
+                            <View style={styles.tableRowLast}>
+                                <View style={[styles.colValue, { width: "20%" }]}><Text>{safeData?.tiering?.name}</Text></View>
+                                <View style={[styles.colValue, { width: "20%" }]}><Text>{safeData?.tiering?.original}</Text></View>
+                                <View style={[styles.colValue, { width: "20%" }]}><Text>{safeData?.tiering?.role}</Text></View>
+                                <View style={[styles.colValue, { width: "20%" }]}><Text>{safeData?.tiering?.responsibility}</Text></View>
+                                <View style={[styles.colValueLast, { width: "20%" }]}><Text>{safeData?.tiering?.payout_details}</Text></View>
                             </View>
-
-
                         </View>
-                    }
+                    </View>
+                )}
 
-                </View>
                 {/* ══ NEW INFORMATION DETAILS ═══════════════════════════════════ */}
                 <View>
                     <Text style={styles.sectionLabel}>New Information Details:</Text>
@@ -412,21 +398,60 @@ const EmployeeChangeFormDocument = ({ data }) => {
                             label="Basic Pay:"
                             from={safeData?.info_basic_pay_from}
                             to={safeData?.info_basic_pay_to || "No Change"}
-                        />
-                        <DetailRow
-                            label="Allowances:"
-                            from={safeData?.info_allowances_from}
-                            to={safeData?.info_allowances_to || "No Change"}
                             isLast={true}
                         />
                     </View>
                 </View>
 
+                {/* ══ DYNAMIC ALLOWANCES ═════════════════════════════════════════ */}
+                <View>
+                    <Text style={styles.sectionLabel}>Allowances Details:</Text>
+                    <View style={styles.table}>
+                        <View style={styles.tableRow}>
+                            <View style={[styles.tableHeader, { width: "100%" }]}>
+                                <Text>Allowance Breakdowns</Text>
+                            </View>
+                        </View>
+                        <View style={styles.tableRow}>
+                            <View style={[styles.colLabel, { width: "35%" }]}><Text>Allowance Type</Text></View>
+                            <View style={[styles.colLabel, { width: "32.5%" }]}><Text>From</Text></View>
+                            <View style={[styles.colLabel, { width: "32.5%", borderRightWidth: 0 }]}><Text>To</Text></View>
+                        </View>
+
+                        {allowances.length > 0 ? (
+                            allowances.map((item, index) => {
+                                const isLast = index === allowances.length - 1;
+                                return (
+                                    <View key={index} style={isLast ? styles.tableRowLast : styles.tableRow}>
+                                        <View style={[styles.colLabel, { width: "35%", textAlign: "center" }]}>
+                                            <Text>{item?.name || "N/A"}</Text>
+                                        </View>
+                                        <View style={[styles.colValue, { width: "32.5%" }]}>
+                                            <Text>{item?.amount_from ?? 0}</Text>
+                                        </View>
+                                        <View style={[styles.colValueLast, { width: "32.5%" }]}>
+                                            <Text>{item?.amount_to ?? 0}</Text>
+                                        </View>
+                                    </View>
+                                );
+                            })
+                        ) : (
+                            <View style={styles.tableRowLast}>
+                                <View style={[styles.colValueLast, { width: "100%", padding: 3 }]}>
+                                    <Text style={styles.italic}>No allowances configured</Text>
+                                </View>
+                            </View>
+                        )}
+                    </View>
+                </View>
+
+                <Text style={styles.disclaimerTitle}>Notes:</Text>
+                <Text>
+                    {safeData?.notes}
+                </Text>
                 {/* ══ SIGNATURES ════════════════════════════════════════════════ */}
                 <View style={styles.signatureArea}>
-
-
-                    <View style={[styles.signatureBlock, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                    <View style={[styles.signatureBlock, { flexDirection: "row", justifyContent: "space-between" }]}>
                         <View style={styles.signature_over_printed_name_line}>
                             {safeData?.prepaired_by_signature && (
                                 <Image
@@ -434,11 +459,10 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                     src={safeData?.prepaired_by_signature}
                                 />
                             )}
-                            <Text style={{ marginTop: -20 }}>
-                                HR Director:{safeData?.prepaired_by_id}
+                            <Text style={{ marginTop: -10, fontSize: 7.5 }}>
+                                HR Director: {safeData?.prepaired_by_id}
                             </Text>
-                            <Text style={[styles.bold, { marginTop: 8 }]}>Prepared & Approved by:</Text>
-                            {/* <Text>Signature over Printed Name / Date</Text> */}
+                            <Text style={[styles.bold, { marginTop: 4, fontSize: 7.5 }]}>Prepared & Approved by:</Text>
                         </View>
                         <View style={styles.signature_over_printed_name_line}>
                             {safeData?.employee_signature && (
@@ -447,13 +471,11 @@ const EmployeeChangeFormDocument = ({ data }) => {
                                     src={safeData?.employee_signature}
                                 />
                             )}
-                            <Text style={{ marginTop: -20 }}>
+                            <Text style={{ marginTop: -10, fontSize: 7.5 }}>
                                 {safeData?.name}
                             </Text>
-                            <Text style={[styles.bold, { marginTop: 8 }]}>Employee:</Text>
-                            {/* <Text>Signature over Printed Name / Date</Text> */}
+                            <Text style={[styles.bold, { marginTop: 4, fontSize: 7.5 }]}>Employee:</Text>
                         </View>
-                        {/* <Text style={[styles.bold]}>Date: {moment().format("LL")}</Text> */}
                     </View>
                 </View>
 
@@ -466,19 +488,26 @@ const EmployeeChangeFormDocument = ({ data }) => {
 // ── Web wrapper ──────────────────────────────────────────────────────────────
 
 const EmployeeChangeFormSection = () => {
-
     const { ecf } = useSelector((store) => store.human_resources);
-    console.log('ecfecfss', ecf.prepaired_by)
+
     return (
-        <PDFLoader pdf={<EmployeeChangeFormDocument data={{
-            ...ecf,
-            name: `${ecf?.employee?.personal_information?.first_name} ${ecf?.employee?.personal_information?.last_name}`,
-            info_account_id_to: `${ecf?.account_to?.name}`,
-            info_department_id_to: `${ecf?.department_to?.name}`,
-            prepaired_by_id: `${ecf?.prepaired_by?.personal_information?.first_name} ${ecf?.prepaired_by?.personal_information?.last_name}`,
-            prepaired_by_signature: ecf?.prepaired_by?.signature,
-            employee_signature: ecf.employee?.signature
-        }} />} width="w-full" />
+        <PDFLoader
+            pdf={
+                <EmployeeChangeFormDocument
+                    data={{
+                        ...ecf,
+                        name: `${ecf?.employee?.personal_information?.first_name || ""} ${ecf?.employee?.personal_information?.last_name || ""}`.trim(),
+                        info_account_id_to: `${ecf?.account_to?.name || ""}`,
+                        info_department_id_to: `${ecf?.department_to?.name || ""}`,
+                        prepaired_by_id: `${ecf?.prepaired_by?.personal_information?.first_name || ""} ${ecf?.prepaired_by?.personal_information?.last_name || ""}`.trim(),
+                        prepaired_by_signature: ecf?.prepaired_by?.signature,
+                        employee_signature: ecf?.employee?.signature,
+                        allowances: ecf?.allowances || [],
+                    }}
+                />
+            }
+            width="w-full"
+        />
     );
 };
 
