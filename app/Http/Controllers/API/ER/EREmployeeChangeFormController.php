@@ -31,12 +31,18 @@ class EREmployeeChangeFormController extends Controller
 
     public function accept_employee_change_form(Request $request)
     {
-        // 1. Use findOrFail so the code automatically stops and returns a 404 if the form doesn't exist.
+        // 1. Fetch single model instance
         $ecf = EREmployeeChangeForm::findOrFail($request->employee_change_form_id);
-        // 2. Prepare an empty array to collect all the changes
+
+        // 2. Calculate dynamic allowances total from incoming request (or $ecf->allowances)
+        $allowancesList = $request->input('allowances', $ecf->allowances ?? []);
+        $totalAllowancesTo = collect($allowancesList)->sum(function ($item) {
+            return (float) ($item['amount_to'] ?? 0);
+        });
+
+        // 3. Prepare array to collect all target updates
         $updateData = [];
 
-        // 3. Compare the request to the form data and populate the array
         if ($request->info_position_level_to != $ecf->info_position_level_from) {
             $updateData['position_level'] = $request->info_position_level_to;
         }
@@ -45,7 +51,6 @@ class EREmployeeChangeFormController extends Controller
             $updateData['department_id'] = $request->info_department_id_to;
         }
 
-        // Fixed typo here: changed $ecf->info_account_id_to -> $ecf->info_account_id_from
         if ($request->info_account_id_to != $ecf->info_account_id_from) {
             $updateData['account_id'] = $request->info_account_id_to;
         }
@@ -63,10 +68,8 @@ class EREmployeeChangeFormController extends Controller
             if ($leader) {
                 $updateData['e_r_leader_id'] = $leader->id;
                 ERSubordinate::updateOrCreate(
-                    // 1. Search for this record
                     ['subordinate_id' => $request->employee['user_id']],
-                    // 2. Update or insert this data
-                    ['er_leader_id' => $leader->id]
+                    ['er_leader_id'   => $leader->id]
                 );
             }
         }
@@ -75,24 +78,24 @@ class EREmployeeChangeFormController extends Controller
             $updateData['basic_pay'] = $request->info_basic_pay_to;
         }
 
-        if ($request->info_allowances_to != $ecf->info_allowances_from) {
-            $updateData['allowance'] = $request->info_allowances_to;
+        // Compare calculated total allowances against previous baseline
+        if ($totalAllowancesTo != $ecf->info_allowances_from) {
+            $updateData['allowance'] = $totalAllowancesTo;
         }
 
-
-        // 4. If there are changes, execute ONE single update query
+        // 4. Update the employee record if changes were detected
         if (!empty($updateData)) {
             AccountEmployee::where('user_id', $request->employee['user_id'])->update($updateData);
         }
 
-        // 5. Update the form status
+        // 5. Mark the form status as Accepted
         $ecf->update([
             'status' => 'Accepted'
         ]);
 
         // 6. Return response
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Employee change form accepted and profile updated.',
         ], 200);
     }
