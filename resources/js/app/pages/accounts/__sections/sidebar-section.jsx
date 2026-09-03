@@ -472,7 +472,7 @@ export default function SidebarSection() {
                                         {desktopCollapsed ? (
                                             <hr className="border-gray-200 mx-2" />
                                         ) : (
-                                            <span className="px-3 text-xs font-black text-red-400 uppercase tracking-wider">
+                                            <span className="px-3 text-xs font-black text-amber-500 uppercase tracking-wider">
                                                 ----- {item.name} -----
                                             </span>
                                         )}
