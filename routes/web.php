@@ -191,7 +191,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
                 Route::inertia('/dashboard', 'accounts/_administrator/rnr/challenges_events/dashboard/page');
                 Route::inertia('/manage', 'accounts/_administrator/rnr/challenges_events/manage/page');
                 Route::inertia('/leaderboard', 'accounts/_administrator/rnr/challenges_events/leaderboard/page');
-                Route::inertia('/analytic', 'accounts/_administrator/rnr/challenges_events/analytic/page');
+                Route::inertia('/submissions', 'accounts/_administrator/rnr/challenges_events/submissions/page');
                 Route::inertia('/report', 'accounts/_administrator/rnr/challenges_events/report/page');
             });
             Route::inertia('/employee_profiles', 'accounts/_administrator/rnr/employee_profiles/page');

@@ -40,9 +40,6 @@ const CATEGORY_CONFIG = {
     General: { icon: Tag, variant: "secondary" },
 };
 
-/* ----------------------------------------------------------------------- */
-/* Lightbox — full image viewer with keyboard nav + thumbnail strip        */
-/* ----------------------------------------------------------------------- */
 
 function ImageLightbox({ files, startIndex, onClose }) {
     const [index, setIndex] = useState(startIndex);
@@ -171,9 +168,6 @@ function ImageLightbox({ files, startIndex, onClose }) {
     );
 }
 
-/* ----------------------------------------------------------------------- */
-/* Image grid — collage layout                                             */
-/* ----------------------------------------------------------------------- */
 
 const MAX_VISIBLE = 4;
 
@@ -257,9 +251,6 @@ function ImageGrid({ files, onOpen }) {
     );
 }
 
-/* ----------------------------------------------------------------------- */
-/* Shared Inner Body Content                                              */
-/* ----------------------------------------------------------------------- */
 
 function PostDetailsBody({ post, setLightboxIndex, dispatch }) {
     const categoryKey = post.category ?? "General";
