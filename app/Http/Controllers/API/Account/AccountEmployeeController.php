@@ -84,12 +84,17 @@ class AccountEmployeeController extends Controller
     {
         // 1. Capture search input
         $search = $request->input('search');
+        $isAll = $request->boolean('all');
 
-        // 2. Fetch all master acknowledgements with items and employee sign-off records
-        $allAcknowledgements = ERAcknowledgement::with([
-            'employee',          // Parent-level sign-offs
-            'items.employee'     // Item-level sign-offs
-        ])->get();
+        // 2. Fetch all master acknowledgements with items and employee sign-off records.
+        // Skip for the unpaginated "all" mode (dropdown selectors) since it doesn't
+        // need acknowledgements and this is an O(employees x acknowledgements x items) operation.
+        $allAcknowledgements = $isAll
+            ? null
+            : ERAcknowledgement::with([
+                'employee',          // Parent-level sign-offs
+                'items.employee'     // Item-level sign-offs
+            ])->get();
 
         // 3. Query employees with search & role filters
         $employees = AccountEmployee::with([
@@ -123,7 +128,7 @@ class AccountEmployeeController extends Controller
             ->orderBy('id', 'asc');
 
         // Allow callers (e.g. dropdown selectors) to request the full list, unpaginated
-        $employees = $request->boolean('all')
+        $employees = $isAll
             ? $employees->get()
             : $employees->paginate(12);
 
@@ -132,47 +137,49 @@ class AccountEmployeeController extends Controller
             ? $employees->getCollection()
             : $employees;
 
-        $employeeCollection->transform(function ($employee) use ($allAcknowledgements) {
+        if (!$isAll) {
+            $employeeCollection->transform(function ($employee) use ($allAcknowledgements) {
 
-            // Map all master acknowledgements to every single employee
-            $employee->acknowledgements = $allAcknowledgements->map(function ($ack) use ($employee) {
+                // Map all master acknowledgements to every single employee
+                $employee->acknowledgements = $allAcknowledgements->map(function ($ack) use ($employee) {
 
-                // Clone instance to prevent mutating global records across the loop
-                $ackClone = clone $ack;
+                    // Clone instance to prevent mutating global records across the loop
+                    $ackClone = clone $ack;
 
-                // --- A. VERIFY SUB-ITEM ACKNOWLEDGEMENTS ---
-                $verifiedItems = $ack->items->map(function ($item) use ($employee) {
-                    $itemClone = clone $item;
+                    // --- A. VERIFY SUB-ITEM ACKNOWLEDGEMENTS ---
+                    $verifiedItems = $ack->items->map(function ($item) use ($employee) {
+                        $itemClone = clone $item;
 
-                    // Match item_id in e_r_acknowledgement_employees table
-                    $itemRecord = $item->employee->filter(function ($emp) use ($employee, $item) {
+                        // Match item_id in e_r_acknowledgement_employees table
+                        $itemRecord = $item->employee->filter(function ($emp) use ($employee, $item) {
+                            return $emp->user_id == $employee->user_id
+                                && $emp->e_r_acknowledgement_item_id == $item->id;
+                        })->values();
+
+                        $itemClone->setRelation('employee', $itemRecord);
+                        $itemClone->is_already_acknowledged = $itemRecord->isNotEmpty();
+
+                        return $itemClone;
+                    });
+
+                    $ackClone->setRelation('items', $verifiedItems);
+
+                    // --- B. VERIFY PARENT ACKNOWLEDGEMENT ---
+                    // Matches records where e_r_acknowledgement_item_id is 0 or NULL
+                    $parentRecord = $ack->employee->filter(function ($emp) use ($employee) {
                         return $emp->user_id == $employee->user_id
-                            && $emp->e_r_acknowledgement_item_id == $item->id;
+                            && ($emp->e_r_acknowledgement_item_id == 0 || is_null($emp->e_r_acknowledgement_item_id));
                     })->values();
 
-                    $itemClone->setRelation('employee', $itemRecord);
-                    $itemClone->is_already_acknowledged = $itemRecord->isNotEmpty();
+                    $ackClone->setRelation('employee', $parentRecord);
+                    $ackClone->is_already_acknowledged = $parentRecord->isNotEmpty();
 
-                    return $itemClone;
+                    return $ackClone;
                 });
 
-                $ackClone->setRelation('items', $verifiedItems);
-
-                // --- B. VERIFY PARENT ACKNOWLEDGEMENT ---
-                // Matches records where e_r_acknowledgement_item_id is 0 or NULL
-                $parentRecord = $ack->employee->filter(function ($emp) use ($employee) {
-                    return $emp->user_id == $employee->user_id
-                        && ($emp->e_r_acknowledgement_item_id == 0 || is_null($emp->e_r_acknowledgement_item_id));
-                })->values();
-
-                $ackClone->setRelation('employee', $parentRecord);
-                $ackClone->is_already_acknowledged = $parentRecord->isNotEmpty();
-
-                return $ackClone;
+                return $employee;
             });
-
-            return $employee;
-        });
+        }
 
         return response()->json($employees, 200);
     }

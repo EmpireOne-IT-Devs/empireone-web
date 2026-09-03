@@ -51,15 +51,67 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Return paginated attendance records for the authenticated user.
+     * Return attendance records for the authenticated user for every date in the
+     * filtered range, defaulting to the trailing 20 days from today when no date
+     * range is given. Dates without an attendance record are filled with a
+     * placeholder row (Day Off / Absent based on the employee's schedule) so the
+     * cutoff range always renders a row per day. The upper bound only restricts
+     * results when an end_date is explicitly requested, so records logged for a
+     * future/advanced date still show up by default.
      */
     public function logs(Request $request)
     {
-        $logs = Attendance::where('user_id', Auth::id())
-            ->orderBy('date', 'desc')
-            ->paginate(20);
+        $startDate = $request->filled('start_date')
+            ? Carbon::parse($request->start_date)
+            : Carbon::today()->subDays(19);
 
-        return response()->json($logs, 200);
+        $requestEndDate = $request->filled('end_date')
+            ? Carbon::parse($request->end_date)
+            : null;
+
+        $query = Attendance::where('user_id', Auth::id())
+            ->where('date', '>=', $startDate->toDateString());
+
+        if ($requestEndDate) {
+            $query->where('date', '<=', $requestEndDate->toDateString());
+        }
+
+        $logs = $query->get()->keyBy(
+            fn ($log) => Carbon::parse($log->date)->toDateString()
+        );
+
+        $endDate = $requestEndDate ?? Carbon::parse(
+            max(Carbon::today()->toDateString(), $logs->keys()->max() ?? Carbon::today()->toDateString())
+        );
+
+        $records = [];
+
+        for ($date = $endDate->copy(); $date->gte($startDate); $date->subDay()) {
+            $dateString = $date->toDateString();
+
+            if ($logs->has($dateString)) {
+                $records[] = $logs->get($dateString);
+                continue;
+            }
+
+            $schedule = $this->getScheduleForDate($dateString);
+
+            $records[] = [
+                'user_id' => Auth::id(),
+                'date' => $dateString,
+                'clock_in' => null,
+                'break_start' => null,
+                'break_end' => null,
+                'clock_out' => null,
+                'status' => $schedule['is_day_off'] ? 'day_off' : 'absent',
+                'late_minutes' => 0,
+                'undertime_minutes' => 0,
+                'remarks' => null,
+                'display_status' => $schedule['is_day_off'] ? 'Day Off' : 'Absent',
+            ];
+        }
+
+        return response()->json(['data' => $records], 200);
     }
 
     /**

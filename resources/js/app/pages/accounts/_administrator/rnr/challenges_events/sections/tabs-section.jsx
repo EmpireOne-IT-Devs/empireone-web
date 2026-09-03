@@ -31,10 +31,10 @@ export default function TabsSection({ children }) {
             active: currentPath === "leaderboard",
         },
         {
-            label: "Analytics",
+            label: "Submissions",
             icon: BarChart3,
-            path: "/accounts/administrator/rnr/challenges_events/analytic",
-            active: currentPath === "analytic",
+            path: "/accounts/administrator/rnr/challenges_events/submissions",
+            active: currentPath === "submissions",
         },
         {
             label: "Reports",

@@ -4,8 +4,10 @@ namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account;
+use App\Models\Account\AccountEmployee;
 use App\Models\Department;
 use App\Models\Engagement\EngagementRewardChallenge;
+use App\Models\Engagement\EngagementRewardChallengeParticipant;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,7 +35,7 @@ class EngagementRewardChallengesController extends Controller
     /**
      * Shape a challenge for the frontend, including the display-only lifecycle status.
      */
-    private function formatChallenge(EngagementRewardChallenge $challenge): array
+    private function formatChallenge(EngagementRewardChallenge $challenge, ?int $currentUserId = null): array
     {
         $today = now()->startOfDay();
 
@@ -42,6 +44,10 @@ class EngagementRewardChallengesController extends Controller
             $challenge->start_date->gt($today) => 'Upcoming',
             default => 'Active',
         };
+
+        $participant = $currentUserId
+            ? $challenge->participants()->where('user_id', $currentUserId)->first()
+            : null;
 
         return [
             'id' => $challenge->id,
@@ -55,12 +61,213 @@ class EngagementRewardChallengesController extends Controller
             'departments' => $challenge->departments,
             'accounts' => $challenge->accounts,
             'max_participants' => $challenge->max_participants,
-            'participants_count' => 0,
+            'participants_count' => $challenge->participants_count ?? $challenge->participants()->count(),
+            'is_joined' => (bool) $participant,
+            'participation_status' => $participant?->pivot->status,
+            'submission_url' => $participant?->pivot->submission_path
+                ? Storage::disk('s3')->url($participant->pivot->submission_path)
+                : null,
+            'submitted_at' => $participant?->pivot->submitted_at?->toDateTimeString(),
+            'reviewed_at' => $participant?->pivot->reviewed_at?->toDateTimeString(),
+            'review_note' => $participant?->pivot->review_note,
             'start_date' => $challenge->start_date->toDateString(),
             'deadline' => $challenge->deadline->toDateString(),
             'card_color' => $challenge->card_color,
             'status' => $displayStatus,
         ];
+    }
+
+    /**
+     * Display challenges the authenticated employee is eligible for, with their participation status.
+     */
+    public function myChallenges(): JsonResponse
+    {
+        $userId = auth()->id();
+        $employee = AccountEmployee::where('user_id', $userId)->first();
+
+        $challenges = EngagementRewardChallenge::query()
+            ->with(['departments:id,name', 'accounts:id,name'])
+            ->withCount('participants')
+            ->latest()
+            ->get()
+            ->filter(fn (EngagementRewardChallenge $challenge) => $challenge->isEligibleForEmployee(
+                $employee?->department_id,
+                $employee?->account_id,
+            ))
+            ->map(fn (EngagementRewardChallenge $challenge) => $this->formatChallenge($challenge, $userId))
+            ->values();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $challenges,
+        ]);
+    }
+
+    /**
+     * Points total and challenge participation history for the authenticated employee's profile.
+     */
+    public function profileSummary(): JsonResponse
+    {
+        $userId = auth()->id();
+
+        $history = EngagementRewardChallengeParticipant::query()
+            ->where('user_id', $userId)
+            ->with('challenge:id,title,points,category,type')
+            ->latest('joined_at')
+            ->get()
+            ->map(fn (EngagementRewardChallengeParticipant $participant) => [
+                'id' => $participant->id,
+                'challenge_title' => $participant->challenge->title,
+                'category' => $participant->challenge->category,
+                'points' => $participant->points_awarded ?? $participant->challenge->points,
+                'status' => $participant->status,
+                'joined_at' => $participant->joined_at?->toDateString(),
+                'submitted_at' => $participant->submitted_at?->toDateString(),
+                'reviewed_at' => $participant->reviewed_at?->toDateString(),
+            ]);
+
+        // Points total is derived from this module's own participant records, not the HR employee table.
+        $totalPoints = EngagementRewardChallengeParticipant::query()
+            ->where('user_id', $userId)
+            ->where('status', 'approved')
+            ->sum('points_awarded');
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'total_points' => (int) $totalPoints,
+                'challenge_history' => $history,
+            ],
+        ]);
+    }
+
+    /**
+     * Join a challenge as the authenticated employee.
+     */
+    public function join(EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    {
+        $userId = auth()->id();
+        $employee = AccountEmployee::where('user_id', $userId)->first();
+
+        $engagementRewardChallenge->load(['departments:id,name', 'accounts:id,name']);
+
+        if (! $engagementRewardChallenge->isEligibleForEmployee($employee?->department_id, $employee?->account_id)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not eligible to join this challenge.',
+            ], 403);
+        }
+
+        if ($engagementRewardChallenge->deadline->lt(now()->startOfDay())) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This challenge has already ended.',
+            ], 422);
+        }
+
+        if ($engagementRewardChallenge->participants()->where('user_id', $userId)->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You already joined this challenge.',
+            ], 422);
+        }
+
+        if (
+            $engagementRewardChallenge->max_participants
+            && $engagementRewardChallenge->participants()->count() >= $engagementRewardChallenge->max_participants
+        ) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This challenge has reached its participant limit.',
+            ], 422);
+        }
+
+        $engagementRewardChallenge->participants()->attach($userId, [
+            'status' => 'joined',
+            'joined_at' => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'You joined the challenge successfully.',
+            'data' => $this->formatChallenge($engagementRewardChallenge, $userId),
+        ]);
+    }
+
+    /**
+     * Leave a previously joined challenge.
+     */
+    public function leave(EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    {
+        $userId = auth()->id();
+        $participant = $engagementRewardChallenge->participants()->where('user_id', $userId)->first();
+
+        if ($participant && in_array($participant->pivot->status, ['submitted', 'approved'], true)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "You can't leave after submitting proof for review.",
+            ], 422);
+        }
+
+        $engagementRewardChallenge->participants()->detach($userId);
+        $engagementRewardChallenge->load(['departments:id,name', 'accounts:id,name']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'You left the challenge.',
+            'data' => $this->formatChallenge($engagementRewardChallenge, $userId),
+        ]);
+    }
+
+    /**
+     * Submit a proof photo for review on a joined challenge.
+     */
+    public function submitProof(Request $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    {
+        $userId = auth()->id();
+
+        $request->validate([
+            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ]);
+
+        $participant = $engagementRewardChallenge->participants()->where('user_id', $userId)->first();
+
+        if (! $participant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Join this challenge before submitting proof.',
+            ], 422);
+        }
+
+        if (! in_array($participant->pivot->status, ['joined', 'declined'], true)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'A submission is already pending or approved for this challenge.',
+            ], 422);
+        }
+
+        if ($participant->pivot->submission_path) {
+            Storage::disk('s3')->delete($participant->pivot->submission_path);
+        }
+
+        $path = $request->file('photo')->store('unified/engagement/reward_challenges/submissions', 's3');
+
+        $engagementRewardChallenge->participants()->updateExistingPivot($userId, [
+            'status' => 'submitted',
+            'submission_path' => $path,
+            'submitted_at' => now(),
+            'reviewed_at' => null,
+            'reviewed_by' => null,
+            'review_note' => null,
+        ]);
+
+        $engagementRewardChallenge->load(['departments:id,name', 'accounts:id,name']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Proof submitted for review.',
+            'data' => $this->formatChallenge($engagementRewardChallenge, $userId),
+        ]);
     }
 
     /**

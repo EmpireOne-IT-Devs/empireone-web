@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Clock, LogIn, LogOut } from "lucide-react";
+import { Clock, LogIn, LogOut, TriangleAlert } from "lucide-react";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
+import Modal from "@/app/_components/modal";
+import Button from "@/app/_components/button";
 import {
     get_attendance_for_date_service,
     clock_in_service,
@@ -23,6 +25,7 @@ export default function TimekeepingSection() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [logsRefreshKey, setLogsRefreshKey] = useState(0);
+    const [pendingAction, setPendingAction] = useState(null);
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -94,6 +97,15 @@ export default function TimekeepingSection() {
         }
     };
 
+    const requestAction = (label, service) => setPendingAction({ label, service });
+
+    const confirmPendingAction = async () => {
+        if (!pendingAction) return;
+        const { label, service } = pendingAction;
+        setPendingAction(null);
+        await handleAction(label, service);
+    };
+
     const formatTime = (t) =>
         t ? moment(t, "HH:mm:ss").format("hh:mm A") : "--:--";
 
@@ -123,8 +135,8 @@ export default function TimekeepingSection() {
     })();
 
     return (
-        <div className="flex flex-1 gap-6">
-            <div className="bg-white w-full rounded-2xl shadow-md p-6 border border-gray-200">
+        <div className="flex flex-col gap-6">
+            <div className="bg-white w-full min-w-0 rounded-2xl shadow-md p-6 border border-gray-200">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="p-3 bg-blue-100 rounded-full">
                         <Clock className="w-6 h-6 text-blue-600" />
@@ -181,7 +193,7 @@ export default function TimekeepingSection() {
                     <button
                         disabled={!canClockIn || submitting || isDayOff}
                         onClick={() =>
-                            handleAction("Clock In", clock_in_service)
+                            requestAction("Clock In", clock_in_service)
                         }
                         className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all shadow-sm"
                     >
@@ -191,7 +203,7 @@ export default function TimekeepingSection() {
                     <button
                         disabled={!canBreak || submitting || isDayOff}
                         onClick={() =>
-                            handleAction("Break", break_start_service)
+                            requestAction("Break", break_start_service)
                         }
                         className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all shadow-sm"
                     >
@@ -201,7 +213,7 @@ export default function TimekeepingSection() {
                     <button
                         disabled={!canBackFromBreak || submitting || isDayOff}
                         onClick={() =>
-                            handleAction("Back from Break", break_end_service)
+                            requestAction("Back from Break", break_end_service)
                         }
                         className="flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all shadow-sm"
                     >
@@ -211,7 +223,7 @@ export default function TimekeepingSection() {
                     <button
                         disabled={!canClockOut || submitting || isDayOff}
                         onClick={() =>
-                            handleAction("Clock Out", clock_out_service)
+                            requestAction("Clock Out", clock_out_service)
                         }
                         className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all shadow-sm"
                     >
@@ -298,7 +310,55 @@ export default function TimekeepingSection() {
                     )}
                 </div>
             </div>
+
             <AttendanceLogs refreshKey={logsRefreshKey} />
+
+            <Modal
+                isOpen={!!pendingAction}
+                onClose={() => setPendingAction(null)}
+                title={
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-yellow-50 text-yellow-600 shrink-0">
+                            <TriangleAlert />
+                        </div>
+                        <div>
+                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
+                                {pendingAction?.label}
+                            </h2>
+                        </div>
+                    </div>
+                }
+                width="max-w-[400px]"
+            >
+                <div className="space-y-4 mt-4">
+                    <p className="text-sm text-neutral-600 leading-relaxed">
+                        Are you sure you want to{" "}
+                        <span className="font-medium text-neutral-800">
+                            {pendingAction?.label}
+                        </span>{" "}
+                    </p>
+
+                    <div className="flex items-center justify-end gap-2 pt-4">
+                        <Button
+                            type="button"
+                            variant="light"
+                            onClick={() => setPendingAction(null)}
+                            disabled={submitting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="primary"
+                            loading={submitting}
+                            disabled={submitting}
+                            onClick={confirmPendingAction}
+                        >
+                            Confirm
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 }

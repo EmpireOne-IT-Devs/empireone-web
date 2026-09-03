@@ -6,8 +6,8 @@ export async function get_attendance_for_date_service(date) {
     });
 }
 
-export async function get_attendance_logs_service() {
-    return axios.get(`/api/timekeeping/attendance/logs`);
+export async function get_attendance_logs_service(params = {}) {
+    return axios.get(`/api/timekeeping/attendance/logs`, { params });
 }
 
 export const clock_in_service = (date) =>
