@@ -283,7 +283,12 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/company_gallery', 'accounts/_administrator/activities/company_gallery/page');
         });
         Route::inertia('/hr_services', 'accounts/_employee/hr_services/page');
-        Route::inertia('/rnr', 'accounts/_employee/rnr/page');
+        Route::prefix('rnr')->group(function () {
+            Route::redirect('/', '/accounts/employee/rnr/peer_recognition');
+            Route::inertia('/peer_recognition', 'accounts/_employee/rnr/peer_recognition/page');
+            Route::inertia('/challenge_event', 'accounts/_employee/rnr/challenge_event/page');
+            Route::inertia('/my_profile', 'accounts/_employee/rnr/my_profile/page');
+        });
         Route::inertia('/rewards_store', 'accounts/_employee/rewards_store/page');
         Route::inertia('/loan', 'accounts/_employee/loan/page');
         Route::inertia('/payroll', 'accounts/_employee/payroll/page');

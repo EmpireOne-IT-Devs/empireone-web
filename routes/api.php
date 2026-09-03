@@ -21,6 +21,7 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventReactController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventSurveyController;
 use App\Http\Controllers\API\Engagement\EngagementPollController;
 use App\Http\Controllers\API\Engagement\EngagementBirthdayController;
+use App\Http\Controllers\API\Engagement\EngagementChallengeSubmissionsController;
 use App\Http\Controllers\API\Engagement\EngagementRewardChallengesController;
 use App\Http\Controllers\API\Engagement\EngagementRewardRecognitionController;
 use App\Http\Controllers\API\Jobs\JobAIInterviewController;
@@ -214,10 +215,20 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'destroy']);
 
         Route::get('reward-challenges', [EngagementRewardChallengesController::class, 'index']);
+        Route::get('reward-challenges/my', [EngagementRewardChallengesController::class, 'myChallenges']);
+        Route::get('reward-challenges/profile-summary', [EngagementRewardChallengesController::class, 'profileSummary']);
         Route::get('reward-challenges/options', [EngagementRewardChallengesController::class, 'options']);
         Route::post('reward-challenges', [EngagementRewardChallengesController::class, 'store']);
+        Route::post('reward-challenges/{engagementRewardChallenge}/join', [EngagementRewardChallengesController::class, 'join']);
+        Route::delete('reward-challenges/{engagementRewardChallenge}/leave', [EngagementRewardChallengesController::class, 'leave']);
+        Route::post('reward-challenges/{engagementRewardChallenge}/submit', [EngagementRewardChallengesController::class, 'submitProof']);
         Route::put('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'update']);
         Route::delete('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'destroy']);
+
+        Route::get('reward-challenge-submissions', [EngagementChallengeSubmissionsController::class, 'index']);
+        Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
+        Route::post('reward-challenge-submissions/{participant}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
+        Route::post('reward-challenge-submissions/{participant}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);

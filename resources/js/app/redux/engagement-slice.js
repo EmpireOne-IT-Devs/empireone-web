@@ -19,6 +19,15 @@ import {
     update_engagement_reward_challenge_thunk,
     delete_engagement_reward_challenge_thunk,
     get_engagement_reward_challenges_thunk,
+    get_my_engagement_reward_challenges_thunk,
+    join_engagement_reward_challenge_thunk,
+    leave_engagement_reward_challenge_thunk,
+    submit_engagement_reward_challenge_proof_thunk,
+    get_engagement_reward_challenge_submissions_thunk,
+    get_engagement_reward_challenge_submission_stats_thunk,
+    approve_engagement_reward_challenge_submission_thunk,
+    decline_engagement_reward_challenge_submission_thunk,
+    get_engagement_reward_challenge_profile_summary_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -41,6 +50,15 @@ export {
     update_engagement_reward_challenge_thunk,
     delete_engagement_reward_challenge_thunk,
     get_engagement_reward_challenges_thunk,
+    get_my_engagement_reward_challenges_thunk,
+    join_engagement_reward_challenge_thunk,
+    leave_engagement_reward_challenge_thunk,
+    submit_engagement_reward_challenge_proof_thunk,
+    get_engagement_reward_challenge_submissions_thunk,
+    get_engagement_reward_challenge_submission_stats_thunk,
+    approve_engagement_reward_challenge_submission_thunk,
+    decline_engagement_reward_challenge_submission_thunk,
+    get_engagement_reward_challenge_profile_summary_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -97,6 +115,26 @@ const engagementSlice = createSlice({
         rewardChallengeUpdateError: null,
         rewardChallengeDeleting: false,
         rewardChallengeDeleteError: null,
+
+        // Employee-facing challenge participation states
+        myRewardChallenges: [],
+        myRewardChallengesLoading: false,
+        myRewardChallengesError: null,
+        rewardChallengeJoiningId: null,
+        rewardChallengeLeavingId: null,
+        rewardChallengeSubmittingId: null,
+
+        // Admin-facing submission review states
+        challengeSubmissions: [],
+        challengeSubmissionsLoading: false,
+        challengeSubmissionsError: null,
+        challengeSubmissionStats: { pending: 0, approved: 0, rejected: 0 },
+        challengeSubmissionApprovingId: null,
+        challengeSubmissionDecliningId: null,
+
+        // Employee "My Profile" summary
+        challengeProfileSummary: { total_points: 0, challenge_history: [] },
+        challengeProfileSummaryLoading: false,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -479,6 +517,117 @@ const engagementSlice = createSlice({
             .addCase(delete_engagement_reward_challenge_thunk.rejected, (state, action) => {
                 state.rewardChallengeDeleting = false;
                 state.rewardChallengeDeleteError = action.payload;
+            });
+
+        builder
+            .addCase(get_my_engagement_reward_challenges_thunk.pending, (state) => {
+                state.myRewardChallengesLoading = true;
+                state.myRewardChallengesError = null;
+            })
+            .addCase(get_my_engagement_reward_challenges_thunk.fulfilled, (state, action) => {
+                state.myRewardChallengesLoading = false;
+                state.myRewardChallenges = action.payload?.data ?? [];
+            })
+            .addCase(get_my_engagement_reward_challenges_thunk.rejected, (state, action) => {
+                state.myRewardChallengesLoading = false;
+                state.myRewardChallengesError = action.payload;
+            })
+            .addCase(join_engagement_reward_challenge_thunk.pending, (state, action) => {
+                state.rewardChallengeJoiningId = action.meta.arg;
+            })
+            .addCase(join_engagement_reward_challenge_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeJoiningId = null;
+                const updated = action.payload?.data;
+                if (updated?.id) {
+                    const idx = state.myRewardChallenges.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.myRewardChallenges[idx] = updated;
+                }
+            })
+            .addCase(join_engagement_reward_challenge_thunk.rejected, (state) => {
+                state.rewardChallengeJoiningId = null;
+            })
+            .addCase(leave_engagement_reward_challenge_thunk.pending, (state, action) => {
+                state.rewardChallengeLeavingId = action.meta.arg;
+            })
+            .addCase(leave_engagement_reward_challenge_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeLeavingId = null;
+                const updated = action.payload?.data;
+                if (updated?.id) {
+                    const idx = state.myRewardChallenges.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.myRewardChallenges[idx] = updated;
+                }
+            })
+            .addCase(leave_engagement_reward_challenge_thunk.rejected, (state) => {
+                state.rewardChallengeLeavingId = null;
+            })
+            .addCase(submit_engagement_reward_challenge_proof_thunk.pending, (state, action) => {
+                state.rewardChallengeSubmittingId = action.meta.arg?.id ?? null;
+            })
+            .addCase(submit_engagement_reward_challenge_proof_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeSubmittingId = null;
+                const updated = action.payload?.data;
+                if (updated?.id) {
+                    const idx = state.myRewardChallenges.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.myRewardChallenges[idx] = updated;
+                }
+            })
+            .addCase(submit_engagement_reward_challenge_proof_thunk.rejected, (state) => {
+                state.rewardChallengeSubmittingId = null;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenge_submissions_thunk.pending, (state) => {
+                state.challengeSubmissionsLoading = true;
+                state.challengeSubmissionsError = null;
+            })
+            .addCase(get_engagement_reward_challenge_submissions_thunk.fulfilled, (state, action) => {
+                state.challengeSubmissionsLoading = false;
+                state.challengeSubmissions = action.payload?.data ?? [];
+            })
+            .addCase(get_engagement_reward_challenge_submissions_thunk.rejected, (state, action) => {
+                state.challengeSubmissionsLoading = false;
+                state.challengeSubmissionsError = action.payload;
+            })
+            .addCase(get_engagement_reward_challenge_submission_stats_thunk.fulfilled, (state, action) => {
+                state.challengeSubmissionStats = action.payload?.data ?? { pending: 0, approved: 0, rejected: 0 };
+            })
+            .addCase(approve_engagement_reward_challenge_submission_thunk.pending, (state, action) => {
+                state.challengeSubmissionApprovingId = action.meta.arg;
+            })
+            .addCase(approve_engagement_reward_challenge_submission_thunk.fulfilled, (state, action) => {
+                state.challengeSubmissionApprovingId = null;
+                const updated = action.payload?.data;
+                if (updated?.id) {
+                    const idx = state.challengeSubmissions.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.challengeSubmissions[idx] = updated;
+                }
+            })
+            .addCase(approve_engagement_reward_challenge_submission_thunk.rejected, (state) => {
+                state.challengeSubmissionApprovingId = null;
+            })
+            .addCase(decline_engagement_reward_challenge_submission_thunk.pending, (state, action) => {
+                state.challengeSubmissionDecliningId = action.meta.arg?.id ?? null;
+            })
+            .addCase(decline_engagement_reward_challenge_submission_thunk.fulfilled, (state, action) => {
+                state.challengeSubmissionDecliningId = null;
+                const updated = action.payload?.data;
+                if (updated?.id) {
+                    const idx = state.challengeSubmissions.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.challengeSubmissions[idx] = updated;
+                }
+            })
+            .addCase(decline_engagement_reward_challenge_submission_thunk.rejected, (state) => {
+                state.challengeSubmissionDecliningId = null;
+            })
+            .addCase(get_engagement_reward_challenge_profile_summary_thunk.pending, (state) => {
+                state.challengeProfileSummaryLoading = true;
+            })
+            .addCase(get_engagement_reward_challenge_profile_summary_thunk.fulfilled, (state, action) => {
+                state.challengeProfileSummaryLoading = false;
+                state.challengeProfileSummary = action.payload?.data ?? { total_points: 0, challenge_history: [] };
+            })
+            .addCase(get_engagement_reward_challenge_profile_summary_thunk.rejected, (state) => {
+                state.challengeProfileSummaryLoading = false;
             });
     },
 });

@@ -1,8 +1,1 @@
-import React from 'react'
-import Layout from '../../layout'
-
-export default function Page() {
-  return (
-    <Layout>Coming Soon!</Layout>
-  )
-}
+export { default } from "./peer_recognition/page";
