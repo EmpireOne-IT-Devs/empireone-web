@@ -124,7 +124,7 @@ export default function CreateLeadSection() {
                         required
                         name="department_manager_id"
                         // Pass the filtered availableUsers instead of the full users array
-                        options={availableUsers.map((res) => ({
+                        options={users.map((res) => ({
                             ...res,
                             label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
                             value: res.id,

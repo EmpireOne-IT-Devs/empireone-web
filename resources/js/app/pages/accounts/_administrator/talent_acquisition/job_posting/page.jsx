@@ -6,13 +6,14 @@ import JobPostingCardSection from "./_sections/job-posting-card-section";
 import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import store from "@/app/store/store";
 import TableSection from "./_sections/table-section";
+import ExportJobPosting from "./_sections/export-job-posting";
 
 export default function Page() {
 
     useEffect(() => {
         store.dispatch(get_job_posting_thunk())
     }, [window.location.search]);
-    
+
     return (
         <Layout>
             <JobPostingLayout>
@@ -21,6 +22,9 @@ export default function Page() {
                         <HeaderSection />
                     </div> */}
                     {/* <JobPostingCardSection /> */}
+                    <div className="w-full flex items-center justify-end py-3">
+                        <ExportJobPosting />
+                    </div>
                     <TableSection />
                 </div>
             </JobPostingLayout>

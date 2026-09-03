@@ -20,7 +20,6 @@ export default function Page() {
             <div className='flex flex-col gap-3'>
                 <HeaderSection />
                 <CreateJobRequisition />
-
                 <CardSection />
                 <JobRequisitionCardSection />
             </div>

@@ -133,7 +133,7 @@ const CertificationDocument = () => (
             {/* Header - Logo */}
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
-                    <Image style={styles.logo} src="/images/Blogo (1).png" />
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
                 </View>
             </View>
 

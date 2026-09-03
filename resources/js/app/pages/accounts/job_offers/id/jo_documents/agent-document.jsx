@@ -137,7 +137,7 @@ const OfferLetterPDF = (data) => (
         {/* MAIN LETTER PAGE */}
         <Page size="A4" style={styles.page}>
             <View style={styles.logoContainer}>
-                <Image style={styles.logo} src="/images/Blogo (1).png" />
+                <Image style={styles.logo} src="/images/E1CXlogo.png" />
             </View>
             <View style={styles.header}>
                 <Text style={styles.bold}>DATE: {data?.date}</Text>

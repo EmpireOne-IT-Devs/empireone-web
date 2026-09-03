@@ -37,6 +37,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     } = useForm({
         defaultValues: {
             department_id: "",
+            category: "",
+            wave: "",
             location_id: "",
             site_id: "",
             type: "",
@@ -75,7 +77,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     const selectedPosition = data?.position?.find(
         (res) => String(res.id) == String(existingPositionId),
     );
-    console.log('selectedPosition',selectedPosition)
+    console.log('selectedPosition', selectedPosition)
     useEffect(() => {
         if (String(watchedValues.department_id) !== "4") {
             setValue("account_id", "");
@@ -97,6 +99,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             setValue("department_id", req?.department_id || "");
             setValue("location_id", req?.location_id || "");
             setValue("site_id", req?.site_id || "");
+            setValue("category", req?.category || "");
+            setValue("wave", req?.wave || "");
             setValue("employment_type", req?.employment_type || "");
             setValue("erf_classification", req?.erf_classification || "");
             setValue("target_audience", req?.target_audience || "");
@@ -373,6 +377,34 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 />
                                             </div>
 
+
+                                            <div className="flex-1 w-full">
+                                                <Controller
+                                                    name="category"
+                                                    control={control}
+                                                    rules={{
+                                                        required:
+                                                            "category is required",
+                                                    }}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            {...field}
+                                                            label="Select category"
+                                                            options={['Agent','Support']?.map(
+                                                                (res) => ({
+                                                                    label: res,
+                                                                    value: res,
+                                                                }),
+                                                            )}
+                                                            error={
+                                                                errors.category
+                                                                    ?.message
+                                                            }
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+
                                             <div className="flex-1 w-full">
                                                 <Controller
                                                     name="department_id"
@@ -400,38 +432,55 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                     )}
                                                 />
                                             </div>
+
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {String(watchedValues.department_id) ===
                                                 "4" && (
-                                                    <div className="flex-1 w-full">
-                                                        <Controller
-                                                            name="account_id"
-                                                            control={control}
-                                                            rules={{
-                                                                required:
-                                                                    "Account is required",
-                                                            }}
-                                                            render={({ field }) => (
-                                                                <Select
-                                                                    {...field}
-                                                                    label="Select Account"
-                                                                    options={data?.accounts?.map(
-                                                                        (res) => ({
-                                                                            ...res,
-                                                                            label: res.name,
-                                                                            value: res.id,
-                                                                        }),
-                                                                    )}
-                                                                    error={
-                                                                        errors.account_id
-                                                                            ?.message
-                                                                    }
-                                                                />
-                                                            )}
-                                                        />
-                                                    </div>
+                                                    <>
+                                                        <div className="flex-1 w-full">
+                                                            <Controller
+                                                                name="account_id"
+                                                                control={control}
+                                                                rules={{
+                                                                    required:
+                                                                        "Account is required",
+                                                                }}
+                                                                render={({ field }) => (
+                                                                    <Select
+                                                                        {...field}
+                                                                        label="Select Account"
+                                                                        options={data?.accounts?.map(
+                                                                            (res) => ({
+                                                                                ...res,
+                                                                                label: res.name,
+                                                                                value: res.id,
+                                                                            }),
+                                                                        )}
+                                                                        error={
+                                                                            errors.account_id
+                                                                                ?.message
+                                                                        }
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1 w-full">
+                                                            <Input
+                                                                {...register("wave", {
+                                                                    required: "Wave is required",
+                                                                })}
+                                                                min="0"
+                                                                error={errors.wave?.message}
+                                                                type="number"
+                                                                label="Wave"
+                                                                placeholder="Wave of account"
+                                                            />
+                                                        </div>
+                                                    </>
+
                                                 )}
                                         </div>
-
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <Controller
                                                 name="employment_type"

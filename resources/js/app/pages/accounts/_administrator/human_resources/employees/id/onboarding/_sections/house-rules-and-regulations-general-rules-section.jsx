@@ -103,7 +103,7 @@ const HouseRulesDocument = () => (
         <Page size="A4" style={styles.page}>
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
-                    <Image style={styles.logo} src="/images/Blogo (1).png" />
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
                 </View>
                 <Text style={styles.mainTitle}>
                     EmpireOne BPO Solutions Inc. House Rules And Regulations
@@ -225,7 +225,7 @@ const HouseRulesDocument = () => (
         <Page size="A4" style={styles.page}>
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
-                    <Image style={styles.logo} src="/images/Blogo (1).png" />
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
                 </View>
             </View>
 

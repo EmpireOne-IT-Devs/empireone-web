@@ -6,309 +6,324 @@ import {
     Document,
     StyleSheet,
     Image,
-    PDFViewer,
 } from "@react-pdf/renderer";
 import PDFLoader from "@/app/_components/pdf-loader";
 
-// Define styles
+// Register custom standard fonts or use default sans-serif/Helvetica for clean rendering
 const styles = StyleSheet.create({
     page: {
-        paddingTop: 50,
-        paddingBottom: 50,
-        paddingLeft: 60,
-        paddingRight: 60,
-        fontFamily: "Times-Roman",
-        fontSize: 10,
-        height: "50vh",
+        paddingTop: 40,
+        paddingBottom: 40,
+        paddingLeft: 50,
+        paddingRight: 50,
+        fontFamily: "Helvetica",
+        fontSize: 9,
     },
-    header: {
+    headerContainer: {
         alignItems: "center",
         marginBottom: 20,
     },
-    logoPlaceholder: {
-        border: "1px solid #00529B",
-        padding: 10,
-        borderRadius: 5,
-        color: "#00529B",
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 10,
-    },
-    title: {
-        textAlign: "center",
-        fontSize: 11,
-        fontWeight: "bold",
-        marginBottom: 20,
-        fontFamily: "Times-Bold",
-    },
-    inputGroup: {
-        flexDirection: "row",
-        marginBottom: 10,
-        alignItems: "flex-end",
-    },
-    label: {
-        fontFamily: "Times-Roman",
-        marginRight: 5,
-    },
-    line: {
-        flexGrow: 1,
-        borderBottomWidth: 1,
-        borderBottomColor: "black",
-    },
-    instruction: {
-        marginTop: 15,
+    logo: {
+        width: 160,
+        height: 50,
+        objectFit: "contain",
         marginBottom: 25,
     },
-    section: {
+    title: {
+        fontSize: 11,
+        fontFamily: "Helvetica-Bold",
+        textAlign: "center",
+        letterSpacing: 0.5,
+        marginBottom: 25,
+    },
+    // Table Styles
+    table: {
+        width: "100%",
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderColor: "#000000",
+    },
+    tableRow: {
         flexDirection: "row",
-        justifyContent: "space-between",
+        borderBottomWidth: 1,
+        borderBottomColor: "#000000",
+        minHeight: 18,
+        alignItems: "center",
     },
-    listColumn: {
-        width: "65%",
-    },
-    remarksColumn: {
-        width: "30%",
-    },
-    sectionHeader: {
-        fontFamily: "Times-Bold",
-        textDecoration: "underline",
-        marginBottom: 10,
-    },
-    listItem: {
+    tableRowNoBorder: {
         flexDirection: "row",
-        alignItems: "flex-start",
-        marginBottom: 4,
+        borderBottomWidth: 0,
+        minHeight: 18,
+        alignItems: "center",
     },
-    bullet: {
-        width: 15,
+    colLeft: {
+        width: "78%",
+        borderRightWidth: 1,
+        borderRightColor: "#000000",
+        paddingLeft: 8,
+        paddingRight: 8,
+        paddingTop: 3,
+        paddingBottom: 3,
+        justifyContent: "center",
+    },
+    colRight: {
+        width: "22%",
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 3,
+        paddingBottom: 3,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    headerTextLeft: {
+        fontFamily: "Helvetica-Bold",
+        fontSize: 10,
         textAlign: "center",
     },
-    listItemText: {
-        flex: 1,
+    headerTextRightTop: {
+        fontFamily: "Helvetica-Bold",
+        fontSize: 9,
+        textAlign: "center",
     },
-    indentedText: {
-        marginLeft: 15,
-        marginBottom: 4,
+    headerTextRightSub: {
+        fontFamily: "Helvetica",
+        fontSize: 8,
+        textAlign: "center",
     },
-    remarksLine: {
-        borderBottomWidth: 1,
-        borderBottomColor: "black",
-        height: 14,
-        marginBottom: 4,
+    cellText: {
+        fontFamily: "Helvetica",
+        fontSize: 9,
+    },
+    cellTextIndent: {
+        fontFamily: "Helvetica",
+        fontSize: 9,
+        paddingLeft: 30,
+    },
+    noteContainer: {
+        paddingTop: 3,
+        paddingBottom: 3,
+        paddingLeft: 12,
+        paddingRight: 12,
+    },
+    noteText: {
+        fontFamily: "Helvetica-Oblique",
+        fontSize: 6.5,
+        textAlign: "center",
+        lineHeight: 1.2,
     },
     bold: {
-        fontFamily: "Times-Bold",
+        fontFamily: "Helvetica-Bold",
     },
-    originalHeader: {
-        fontFamily: "Times-Bold",
-        textDecoration: "underline",
-        marginTop: 15,
-        marginBottom: 10,
-    },
-    footerList: {
-        marginTop: 15,
-        marginBottom: 30,
-    },
+    // Footer Disclaimer
     disclaimerBlock: {
         marginTop: "auto",
-        paddingTop: 10,
+        paddingTop: 20,
     },
     disclaimerTitle: {
-        fontSize: 8,
+        fontSize: 7.5,
         fontFamily: "Times-Bold",
         marginBottom: 2,
     },
     disclaimerText: {
-        fontSize: 8,
+        fontSize: 7,
         fontFamily: "Times-Italic",
         lineHeight: 1.2,
     },
-    logoContainer: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    logo: {
-        width: 450,
-        height: 130,
-        objectFit: "contain",
-    },
 });
 
-// The actual PDF Document Layout
+// The updated PDF Document Layout
 const ChecklistDocument = () => (
     <Document>
         <Page size="A4" style={styles.page}>
-            {/* Header */}
-            <View style={styles.header}>
-                <View style={styles.logoContainer}>
-                    <Image style={styles.logo} src="/images/Blogo (1).png" />
-                </View>
-                <Text style={styles.title}>PRE-EMPLOYMENT CHECKLIST</Text>
+            {/* Logo Header */}
+            <View style={styles.headerContainer}>
+                <Image style={styles.logo} src="/images/E1CXlogo.png" />
+                <Text style={styles.title}>PRE-EMPLOYMENT REQUIREMENTS CHECKLIST</Text>
             </View>
 
-            {/* Applicant Info */}
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Applicant:</Text>
-                <View style={styles.line} />
-            </View>
-            <View style={styles.inputGroup}>
-                <Text style={styles.label}>Department:</Text>
-                <View style={styles.line} />
-                <Text style={{ ...styles.label, marginLeft: 15 }}>
-                    Position:
-                </Text>
-                <View style={{ ...styles.line, width: 100, flexGrow: 0 }} />
-            </View>
-
-            <Text style={styles.instruction}>
-                Please enclose the following in a{" "}
-                <Text style={styles.bold}>long, brown envelope</Text>
-            </Text>
-
-            {/* Main Two-Column Layout */}
-            <View style={styles.section}>
-                {/* Left Column - The Checklist */}
-                <View style={styles.listColumn}>
-                    <Text style={styles.sectionHeader}>PHOTOCOPY</Text>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            Birth certificate (2 copies)
-                        </Text>
+            {/* Table */}
+            <View style={styles.table}>
+                {/* Header Row */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.headerTextLeft}>LIST OF REQUIREMENTS</Text>
                     </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            SSS Form E1/SSS ID
-                        </Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            TIN ID/Number (1901 form)
-                        </Text>
-                    </View>
-                    <View style={{ height: 15 }} />
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            Certificate of Employment from the previous employer
-                            (optional)
-                        </Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            Phil Health MDR/ID
-                        </Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            PAG-IBIG Number/ID
-                        </Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            Photocopy of Driver's License (if applicable)
-                        </Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            SSS &amp; PAG-IBIG Loan Voucher (if applicable)
-                        </Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            Marriage Contract (if married)
-                        </Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>
-                            Birth Certificates of Dependents (1 copy each)
-                        </Text>
-                    </View>
-                    <Text style={styles.indentedText}>
-                        if Married- spouse &amp; children; if Single- parents
-                    </Text>
-                    <Text style={styles.originalHeader}>
-                        ORIGINAL COPY (must be prioritized)
-                    </Text>
-                    <Text style={{ marginBottom: 4 }}>Barangay Clearance</Text>
-                    <Text style={{ marginBottom: 4 }}>Police Clearance</Text>
-                    <Text style={{ marginBottom: 4 }}>NBI Clearance</Text>
-                    <Text
-                        style={{
-                            ...styles.bold,
-                            marginTop: 10,
-                            marginBottom: 4,
-                        }}
-                    >
-                        Health Certificate with the ff tests:
-                    </Text>
-                    <Text style={{ marginBottom: 4 }}>Chest X-ray</Text>
-                    <Text style={{ marginBottom: 4 }}>Drug Test</Text>
-                    <Text
-                        style={{
-                            ...styles.bold,
-                            marginTop: 10,
-                            marginBottom: 4,
-                        }}
-                    >
-                        Colored pictures
-                    </Text>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>2x2 – 2 pcs</Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <Text style={styles.listItemText}>1x1 – 1 pc</Text>
-                    </View>
-                    <View style={styles.footerList}>
-                        <Text style={{ marginBottom: 4 }}>WHATSAPP</Text>
-                        <Text>KOMO APP</Text>
+                    <View style={styles.colRight}>
+                        <Text style={styles.headerTextRightTop}>STATUS</Text>
+                        <Text style={styles.headerTextRightSub}>Done / Pending</Text>
                     </View>
                 </View>
 
-                {/* Right Column - Remarks Lines */}
-                <View style={styles.remarksColumn}>
-                    <Text
-                        style={{ ...styles.sectionHeader, textAlign: "center" }}
-                    >
-                        REMARKS
-                    </Text>
-                    {/* Group 1 */}
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={{ height: 15 }} />
-                    {/* Group 2 */}
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={{ ...styles.remarksLine, marginTop: 14 }} />
-                    <View style={{ height: 40 }} />
-                    {/* Group 3 */}
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={{ height: 25 }} />
-                    {/* Group 4 */}
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
-                    <View style={{ height: 15 }} />
-                    {/* Group 5 */}
-                    <View style={styles.remarksLine} />
-                    <View style={styles.remarksLine} />
+                {/* Row 1: Basic 5 */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>
+                            Basic 5 Pre-Employment Medical Examination - LOE will be provided by EmpireOne
+                        </Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Sub items */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellTextIndent}>Physical Examination</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellTextIndent}>Complete Blood Count (CBC)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellTextIndent}>Urinalysis</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellTextIndent}>Fecalysis</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellTextIndent}>Chest X-ray</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellTextIndent}>Drug Test</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Proof of Education */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>Proof of Education (TOR/Diploma)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* NBI/Police Clearance */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>NBI/Police Clearance (Original)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Note Row */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <View style={styles.noteContainer}>
+                            <Text style={styles.noteText}>
+                                If you already have a valid <Text style={styles.bold}>NBI Clearance</Text>, there is <Text style={styles.bold}>no need to secure a Police Clearance</Text>.
+                            </Text>
+                            <Text style={styles.noteText}>
+                                However, if you only have a <Text style={styles.bold}>Police Clearance</Text>, you are still required to obtain and submit an <Text style={styles.bold}>NBI Clearance</Text>, as this is a mandatory requirement.
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Barangay Clearance */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>Barangay Clearance (Original)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Valid ID */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>Copy of Valid ID</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* 2x2 ID Picture */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>2x2 ID Picture (white background)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* PSA Birth Certificate */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>PSA Birth Certificate (Photocopy)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* SSS Number */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>SSS Number (E-1/E-4/1902/1905/2316)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* PhilHealth ID */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>PhilHealthID/ MDR</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Pag-IBIG MDF */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>Pag-IBIG MDF/ ID (HDMF Number)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* TIN ID */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>TIN ID / BIR Form 1902</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* COE */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>Certificate of Employment (from latest employer)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Marriage Certificate */}
+                <View style={styles.tableRow}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>Photocopy of Marriage Certificate (if married)</Text>
+                    </View>
+                    <View style={styles.colRight} />
+                </View>
+
+                {/* Loan Voucher (Last row without bottom border) */}
+                <View style={styles.tableRowNoBorder}>
+                    <View style={styles.colLeft}>
+                        <Text style={styles.cellText}>SSS &amp; PAG-IBIG Loan Voucher (if applicable)</Text>
+                    </View>
+                    <View style={styles.colRight} />
                 </View>
             </View>
 
@@ -316,22 +331,16 @@ const ChecklistDocument = () => (
             <View style={styles.disclaimerBlock}>
                 <Text style={styles.disclaimerTitle}>Disclaimer:</Text>
                 <Text style={styles.disclaimerText}>
-                    This document and its contents are the property of EmpireOne
-                    BPO Solutions, Inc. and are intended for internal use only.
-                    Unauthorized reproduction, disclosure, or distribution of
-                    this material, in whole or in part, without prior written
-                    permission from the company is strictly prohibited.
+                    This document and its contents are the property of <Text style={{ fontFamily: "Times-BoldItalic" }}>EmpireOne BPO Solutions, Inc.</Text> and are intended for internal use only. Unauthorized reproduction, disclosure, or distribution of this material, in whole or in part, without prior written permission from the company is strictly prohibited.
                 </Text>
             </View>
         </Page>
     </Document>
 );
 
-// Web Wrapper Component
+// Wrapper Component
 const PreEmploymentChecklistSection = () => {
-    return (
-         <PDFLoader pdf={<ChecklistDocument />} />
-    );
+    return <PDFLoader pdf={<ChecklistDocument />} />;
 };
 
 export default PreEmploymentChecklistSection;

@@ -105,7 +105,7 @@ const AcknowledgmentDocument = () => (
             {/* Header - identical to PreEmploymentChecklist */}
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
-                    <Image style={styles.logo} src="/images/Blogo (1).png" />
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
                 </View>
                 <Text style={styles.title}>
                     ACKNOWLEDGMENT OF CODE OF CONDUCT AND DISCIPLINE (COCD)

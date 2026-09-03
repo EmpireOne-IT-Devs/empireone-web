@@ -200,7 +200,7 @@ const EmploymentContract = ({ data }) => (
             <View style={styles.logoContainer}>
                 <Image
                     style={styles.logo}
-                    src="/images/Blogo (1).png" // local or remote URL
+                    src="/images/E1CXlogo.png" // local or remote URL
                 />
             </View>
             <Text style={styles.title}>EMPLOYMENT CONTRACT</Text>

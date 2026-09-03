@@ -24,6 +24,8 @@ class JobRequisition extends Model
         'recruiter_id',
         'existing_position_id',
         'interviewers', // JSON Array of User IDs
+        'wave',
+        'category',
 
         //approver
         'approver1_id',

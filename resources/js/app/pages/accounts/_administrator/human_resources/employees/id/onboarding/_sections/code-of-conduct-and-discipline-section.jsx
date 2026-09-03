@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
 const PageHeader = ({ showTitle }) => (
     <View style={styles.header}>
         <View style={styles.logoContainer}>
-            <Image style={styles.logo} src="/images/Blogo (1).png" />
+            <Image style={styles.logo} src="/images/E1CXlogo.png" />
         </View>
         {showTitle && (
             <Text style={styles.pageTitle}>Code of Conduct and Discipline</Text>

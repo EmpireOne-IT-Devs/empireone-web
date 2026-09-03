@@ -43,7 +43,7 @@ export default function TableSection() {
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     const currentLocationId = searchParams.get('location_id') ?? data?.user?.account_employee?.location_id;
 
-    console.log('job_postings', job_postings?.job_requisition?.target_start_date)
+    console.log('job_postings', job_postings)
     const tableColumns = [
         {
             key: 'id',
