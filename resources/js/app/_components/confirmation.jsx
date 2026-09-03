@@ -27,7 +27,7 @@ export default function Confirmation({
             <div
                 className="fixed inset-0 z-[9999]"
                 // 🛑 CRITICAL FIX: Stop event propagation!
-                // This prevents parent dropdowns from thinking you clicked "outside" 
+                // This prevents parent dropdowns from thinking you clicked "outside"
                 // when you are interacting with the modal or its backdrop.
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
@@ -84,9 +84,9 @@ export default function Confirmation({
                                     <button
                                         type="button"
                                         onClick={() => onClose()}
-                                        className="text-red-600 transition-colors p-1"
+                                        className="text-slate-500 hover:text-slate-700 transition-colors p-1"
                                     >
-                                        <FaRegWindowClose size={26} />
+                                        <FaTimes size={25} />
                                     </button>
                                 </div>
                             </div>
