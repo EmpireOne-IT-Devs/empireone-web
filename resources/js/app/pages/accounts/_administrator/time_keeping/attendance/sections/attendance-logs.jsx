@@ -250,10 +250,9 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {log.breaktime_limit ?? 0}
+                                        {log.breaktime_minutes ?? 0}
                                     </td>
 
-                                    {/* Continue your other columns here */}
                                 </tr>
                             ))
                         )}

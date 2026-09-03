@@ -1,9 +1,9 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { createPortal } from "react-dom";
 import { Transition } from "@headlessui/react";
-import { FaRegWindowClose, FaTimes } from "react-icons/fa";
+import { FaRegWindowClose } from "react-icons/fa";
 
-export default function Modal({
+export default function Confirmation({
     isOpen,
     onClose,
     title,
@@ -84,9 +84,9 @@ export default function Modal({
                                     <button
                                         type="button"
                                         onClick={() => onClose()}
-                                        className="text-slate-500 hover:text-slate-700 transition-colors p-1"
+                                        className="text-red-600 transition-colors p-1"
                                     >
-                                        <FaTimes size={25} />
+                                        <FaRegWindowClose size={26} />
                                     </button>
                                 </div>
                             </div>

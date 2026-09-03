@@ -12,7 +12,7 @@ export default function Alert({
     open = true,
     onClose,
     title = "Successfully saved!",
-    message = "Anyone with a link can now view this file.",
+    message = "Action completed successfully.",
     duration = 2000,
     type = "success", // primary | secondary | success | warning | danger | info | none
     showProgress = true,
