@@ -23,6 +23,7 @@ export default function CardAcknowledgementSection() {
 
     const accountId = typeof window !== 'undefined' ? window.location.pathname.split('/')[2] : '';
 
+    console.log('attritions',attritions)
     return (
         <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
             {attritions?.map((res) => {
@@ -48,14 +49,14 @@ export default function CardAcknowledgementSection() {
                                 id: 'fullname',
                                 label: 'Fullname',
                                 icon: LuUser,
-                                value: res?.employee?.personal_information?.first_name || res?.fullname,
+                                value: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
                             },
                             {
                                 id: 'email',
                                 label: 'Email',
                                 icon: LuMail,
-                                value: res?.eogs_email || res?.employee?.email || res?.employee?.eogs_email,
-                                title: res?.eogs_email || res?.employee?.email || res?.employee?.eogs_email,
+                                value:  res?.personal_information?.employee?.eogs_email ,
+                                title:  res?.personal_information?.employee?.eogs_email ,
                                 extraClasses: 'max-w-[180px]',
                             },
                             {
@@ -68,7 +69,7 @@ export default function CardAcknowledgementSection() {
                                 id: 'department',
                                 label: 'Department',
                                 icon: LuBuilding,
-                                value: res?.department || res?.employee?.department?.name,
+                                value: res?.department,
                             },
                             {
                                 id: 'account',
@@ -100,12 +101,6 @@ export default function CardAcknowledgementSection() {
                                 label: 'Status',
                                 icon: LuInfo,
                                 value: res?.status,
-                            },
-                            {
-                                id: 'employment_status',
-                                label: 'Employment Status',
-                                icon: LuInfo,
-                                value: res?.employment_status,
                             },
                             {
                                 id: 'reason_for_separation',

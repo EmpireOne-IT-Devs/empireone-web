@@ -20,7 +20,7 @@ class EREmployeeAttritionController extends Controller
      */
     public function index()
     {
-        $attritions = EREmployeeAttrition::with(['employee', 'exit_clearance', 'exit_interview'])->paginate(12);
+        $attritions = EREmployeeAttrition::with(['personal_information', 'exit_clearance', 'exit_interview'])->paginate(12);
         return response()->json($attritions, 200);
     }
 
@@ -65,19 +65,19 @@ class EREmployeeAttritionController extends Controller
         $attrition = EREmployeeAttrition::updateOrCreate(
             ['employee_id' => $request->employee_id],
             [
-                'user_id'               => $request->user_id,
+                'user_id'               => $request->user_id ?? null,
                 'position'              => $request->position,
                 'department'            => $request->department['name'] ?? null,
                 'account'               => $request->account['name'] ?? '',
-                'started_at'            => $request->started_at,
-                'separation_date'       => $request->separation_date,
-                'employment_status'     => $request->employment_status,
-                'status'                => $request->status,
-                'reason_for_separation' => $request->reason_for_separation,
-                'is_rehire'             => $request->is_rehire,
-                'attrition_status'      => 'Pending',
-                'immediate_supervisor' => $immediateSupervisor,
-                'department_manager'    => $departmentManager,
+                'started_at'            => $request->started_at ?? null,
+                'separation_date'       => $request->separation_date ?? null,
+                'employment_status'     => $request->employment_status ?? null,
+                'status'                => $request->status ?? null,
+                'reason_for_separation' => $request->reason_for_separation ?? null,
+                'is_rehire'             => $request->is_rehire ?? null,
+                'attrition_status'      => 'Pending' ?? null,
+                'immediate_supervisor' => $immediateSupervisor ?? null,
+                'department_manager'    => $departmentManager ?? null,
             ]
         );
 

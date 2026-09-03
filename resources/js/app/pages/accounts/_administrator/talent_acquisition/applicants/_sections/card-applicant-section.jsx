@@ -68,6 +68,7 @@ export default function CardApplicantSection() {
 
                     const jobRequisition = res?.job_posting?.job_requisition;
 
+    console.log('props_data',res)
                     return (
                         <DetailsCard
                             key={applicantId}

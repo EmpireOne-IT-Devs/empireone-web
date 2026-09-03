@@ -35,7 +35,7 @@ class JobApplication extends Model
 
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id', 'referral_id')->with(['department','account']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'referral_id')->with(['department', 'account']);
     }
 
     public function applicants(): HasMany
@@ -68,7 +68,7 @@ class JobApplication extends Model
     }
     public function job_offer(): HasOne
     {
-        return $this->hasOne(JobOffer::class, 'user_id', 'user_id')->with(['allowances']);
+        return $this->hasOne(JobOffer::class, 'user_id', 'user_id')->orderBy('id', 'desc')->with(['allowances']);
     }
     public function user(): HasOne
     {

@@ -3,6 +3,7 @@
 namespace App\Models\ER;
 
 use App\Models\Account\AccountEmployee;
+use App\Models\Account\AccountPersonalInformation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -31,6 +32,10 @@ class EREmployeeAttrition extends Model
         return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information', 'user', 'site', 'department', 'er_leader']);
     }
 
+     public function personal_information(): HasOne
+    {
+        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id')->with(['employee']);
+    }
     public function exit_clearance(): HasOne
     {
         return $this->hasOne(ERExitClearance::class, 'e_r_employee_attrition_id', 'id');
