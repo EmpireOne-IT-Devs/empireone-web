@@ -233,7 +233,7 @@ export default function SidebarSection() {
                       href: `/accounts/${account_role}/rnr`,
                       icon: FcCloseUpMode,
                       current: path == "rnr",
-                      is_incoming: true,
+                      is_incoming: false,
                   },
                   {
                       name: "Reward Store",

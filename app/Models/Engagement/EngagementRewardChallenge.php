@@ -15,7 +15,7 @@ class EngagementRewardChallenge extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'reward_challenges';
+    protected $table = 'engagement_reward_challenges';
 
     protected $fillable = [
         'created_by',
@@ -53,7 +53,7 @@ class EngagementRewardChallenge extends Model
     {
         return $this->belongsToMany(
             Account::class,
-            'account_reward_challenge',
+            'engagement_account_reward_challenge',
             'reward_challenge_id',
             'account_id',
         )->withTimestamps();
@@ -63,9 +63,35 @@ class EngagementRewardChallenge extends Model
     {
         return $this->belongsToMany(
             Department::class,
-            'department_reward_challenge',
+            'engagement_department_reward_challenge',
             'reward_challenge_id',
             'department_id',
         )->withTimestamps();
+    }
+
+    public function participants(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'engagement_reward_challenge_participants',
+            'reward_challenge_id',
+            'user_id',
+        )
+            ->using(EngagementRewardChallengeParticipant::class)
+            ->withPivot(['status', 'joined_at', 'submission_path', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Whether an employee (identified by their department/account) can join this challenge.
+     */
+    public function isEligibleForEmployee(?int $departmentId, ?int $accountId): bool
+    {
+        if ($this->all_employees) {
+            return true;
+        }
+
+        return ($departmentId && $this->departments->contains('id', $departmentId))
+            || ($accountId && $this->accounts->contains('id', $accountId));
     }
 }

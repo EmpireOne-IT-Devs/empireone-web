@@ -108,3 +108,46 @@ export async function update_reward_challenge_service(id, formData) {
 export async function delete_reward_challenge_service(id) {
     return await axios.delete(`/api/engagement/reward-challenges/${id}`);
 }
+
+export async function get_my_reward_challenges_service() {
+    return await axios.get("/api/engagement/reward-challenges/my");
+}
+
+export async function get_reward_challenge_profile_summary_service() {
+    return await axios.get("/api/engagement/reward-challenges/profile-summary");
+}
+
+export async function join_reward_challenge_service(id) {
+    return await axios.post(`/api/engagement/reward-challenges/${id}/join`);
+}
+
+export async function leave_reward_challenge_service(id) {
+    return await axios.delete(`/api/engagement/reward-challenges/${id}/leave`);
+}
+
+export async function submit_reward_challenge_proof_service(id, photo) {
+    const formData = new FormData();
+    formData.append("photo", photo);
+
+    return await axios.post(`/api/engagement/reward-challenges/${id}/submit`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}
+
+export async function get_reward_challenge_submissions_service(status) {
+    return await axios.get("/api/engagement/reward-challenge-submissions", {
+        params: status ? { status } : {},
+    });
+}
+
+export async function get_reward_challenge_submission_stats_service() {
+    return await axios.get("/api/engagement/reward-challenge-submissions/stats");
+}
+
+export async function approve_reward_challenge_submission_service(id) {
+    return await axios.post(`/api/engagement/reward-challenge-submissions/${id}/approve`);
+}
+
+export async function decline_reward_challenge_submission_service(id, review_note) {
+    return await axios.post(`/api/engagement/reward-challenge-submissions/${id}/decline`, { review_note });
+}

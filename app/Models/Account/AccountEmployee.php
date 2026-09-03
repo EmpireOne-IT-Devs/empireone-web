@@ -44,9 +44,8 @@ class AccountEmployee extends Model
         'allowance', //
         'employment_status',
         'reason_for_separation',
-        'is_rehire'
+        'is_rehire',
     ];
-
 
     public function routeNotificationForMail($notification)
     {

@@ -19,6 +19,15 @@ import {
     update_reward_challenge_service,
     delete_reward_challenge_service,
     get_reward_challenges_service,
+    get_my_reward_challenges_service,
+    get_reward_challenge_profile_summary_service,
+    join_reward_challenge_service,
+    leave_reward_challenge_service,
+    submit_reward_challenge_proof_service,
+    get_reward_challenge_submissions_service,
+    get_reward_challenge_submission_stats_service,
+    approve_reward_challenge_submission_service,
+    decline_reward_challenge_submission_service,
 } from "../services/engagement-service";
 
 export const get_engagement_posts_thunk = createAsyncThunk(
@@ -299,6 +308,114 @@ export const delete_engagement_reward_challenge_thunk = createAsyncThunk(
         try {
             await delete_reward_challenge_service(id);
             return id;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_my_engagement_reward_challenges_thunk = createAsyncThunk(
+    "engagement/getMyRewardChallenges",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_my_reward_challenges_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_engagement_reward_challenge_profile_summary_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeProfileSummary",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenge_profile_summary_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const join_engagement_reward_challenge_thunk = createAsyncThunk(
+    "engagement/joinRewardChallenge",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await join_reward_challenge_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const leave_engagement_reward_challenge_thunk = createAsyncThunk(
+    "engagement/leaveRewardChallenge",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await leave_reward_challenge_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const submit_engagement_reward_challenge_proof_thunk = createAsyncThunk(
+    "engagement/submitRewardChallengeProof",
+    async ({ id, photo }, { rejectWithValue }) => {
+        try {
+            const response = await submit_reward_challenge_proof_service(id, photo);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_engagement_reward_challenge_submissions_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeSubmissions",
+    async (status, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenge_submissions_service(status);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_engagement_reward_challenge_submission_stats_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeSubmissionStats",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenge_submission_stats_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const approve_engagement_reward_challenge_submission_thunk = createAsyncThunk(
+    "engagement/approveRewardChallengeSubmission",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await approve_reward_challenge_submission_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const decline_engagement_reward_challenge_submission_thunk = createAsyncThunk(
+    "engagement/declineRewardChallengeSubmission",
+    async ({ id, review_note }, { rejectWithValue }) => {
+        try {
+            const response = await decline_reward_challenge_submission_service(id, review_note);
+            return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
         }
