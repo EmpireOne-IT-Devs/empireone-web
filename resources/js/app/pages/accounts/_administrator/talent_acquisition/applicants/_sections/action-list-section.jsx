@@ -25,6 +25,7 @@ export default function ActionListSection({ props_data }) {
     const [open, setOpen] = useState(false);
     const [openItems, setOpenItems] = useState({});
 
+    console.log('props_data', props_data)
     // Ref attached to component container to detect outside clicks
     const containerRef = useRef(null);
 
@@ -94,6 +95,7 @@ export default function ActionListSection({ props_data }) {
             [key]: !prev[key],
         }));
     };
+
 
     return (
         <div
@@ -313,9 +315,25 @@ export default function ActionListSection({ props_data }) {
                                         </>
                                     )}
 
+
+                                {
+                                    props_data?.job_offer && <Button
+                                        variant="primary"
+                                        className="w-full"
+                                        onClick={() =>
+                                            window.open(
+                                                `/accounts/administrator/job_offers/${props_data?.job_offer?.id}`,
+                                                '_blank'
+                                            )
+                                        }
+                                    >
+                                        JOB OFFER
+                                    </Button>
+                                }
                                 {/* Sent Documents Actions */}
                                 {props_data?.final_status == 'Sent Documents' && (
                                     <>
+
                                         <Button
                                             variant="primary"
                                             className="w-full"
