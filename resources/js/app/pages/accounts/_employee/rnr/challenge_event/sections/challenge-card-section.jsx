@@ -61,8 +61,20 @@ function ChallengeCard({ challenge }) {
 
     return (
         <>
-            <Card className="flex h-full w-full flex-col gap-4">
-                <div className="flex items-start justify-between">
+            <Card
+                padding="p-0"
+                className="flex h-full w-full flex-col overflow-hidden rounded-2xl border-t-4"
+                style={{ borderTopColor: challenge.card_color }}
+            >
+                {challenge.banner_url && (
+                    <img
+                        src={challenge.banner_url}
+                        alt={challenge.title}
+                        className="h-32 w-full object-cover"
+                    />
+                )}
+                <div className="flex flex-1 flex-col gap-4 p-5">
+                    <div className="flex items-start justify-between">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${meta.badge}`}>
                         <Icon className="h-5 w-5" />
                     </div>
@@ -188,6 +200,7 @@ function ChallengeCard({ challenge }) {
                             Join Challenge
                         </Button>
                     )}
+                </div>
                 </div>
             </Card>
 
