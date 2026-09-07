@@ -158,7 +158,7 @@ export default function SidebarSection() {
                   )
                       ? [
                             {
-                                name: "Activities",
+                                name: "Engagement Floor",
                                 href: `/accounts/${account_role}/activities`,
                                 icon: FcSportsMode,
                                 current: path == "activities",
@@ -208,7 +208,7 @@ export default function SidebarSection() {
             ? [
                   { is_label: true, name: "Employee Hub" },
                   {
-                      name: "Activities",
+                      name: "Engagement Floor",
                       href: `/accounts/${account_role}/activities`,
                       icon: FcSportsMode,
                       current: path == "activities",
