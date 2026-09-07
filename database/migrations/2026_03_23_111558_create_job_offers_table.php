@@ -27,6 +27,9 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->string('salary')->nullable();
             $table->string('role')->nullable();
+            $table->string('benefit_limit')->nullable();
+            $table->string('dependent')->nullable();
+            $table->string('room')->nullable();
             $table->string('start_date')->nullable();
             $table->longText('declined_reason')->nullable();
             $table->enum('status', [

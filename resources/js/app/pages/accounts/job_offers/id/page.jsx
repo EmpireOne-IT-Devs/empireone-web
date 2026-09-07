@@ -39,7 +39,7 @@ export default function Page() {
         } else if (user?.account_employee?.signature != null) {
             return (
                 <>
-                    {job_offer?.role == "Manager" && (
+                    {/* {job_offer?.role == "Manager" && (
                         <ManagerOfferLetterPreview
                             name="Managerial Offer"
                             type="offer"
@@ -65,7 +65,14 @@ export default function Page() {
                                 user?.account_employee?.signature
                             }
                         />
-                    )}
+                    )} */}
+                    <AgentOfferLetterPreview
+                        name="Agent Offer"
+                        type="offer"
+                        applicant_signature={
+                            user?.account_employee?.signature
+                        }
+                    />
                     {job_offer?.status == "Pending" && (
                         <AcceptJobOfferSection />
                     )}

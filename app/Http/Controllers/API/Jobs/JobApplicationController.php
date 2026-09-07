@@ -424,6 +424,10 @@ class JobApplicationController extends Controller
                     'start_date' => $request->start_date,
                     'salary' => $request->salary,
                     'role' => $request->role,
+                    'room' => $request->room,
+                    'dependent' => $request->dependent,
+                    'benefit_limit' => $request->benefit_limit,
+                    'annual_leave' => $request->annual_leave
                 ]);
                 $jo->load('user');
             } else {
@@ -433,12 +437,16 @@ class JobApplicationController extends Controller
                 ]);
                 $jo = JobOffer::create([
                     'talent_acquisition_manager_id' => $manager->user_id,
-                    'user_id' => $request->user_id,
                     'job_application_id' => $ja->id,
                     'status' => 'Pending',
+                    'user_id' => $request->user_id,
                     'start_date' => $request->start_date,
                     'salary' => $request->salary,
                     'role' => $request->role,
+                    'room' => $request->room,
+                    'dependent' => $request->dependent,
+                    'benefit_limit' => $request->benefit_limit,
+                    'annual_leave' => $request->annual_leave
                 ]);
             }
         }

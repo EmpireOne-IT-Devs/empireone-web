@@ -325,45 +325,79 @@ const OfferLetterPDF = (data) => (
             <Text style={styles.centerTitle}>SCHEDULE OF BENEFITS</Text>
 
             <View style={styles.row}>
-                <Text style={styles.label}>Service Incentive Leave</Text>
+                <Text style={styles.label}>Annual Leave</Text>
                 <Text style={styles.value}>
-                    upon regularization at 0.42 (5.04 days annually){"\n"}
-                    Conversion every February of the following year
+                    {data?.annual_leave} leave credits to be utilized as VL/SL/EL{"\n"}
+                    Max of {data?.annual_leave} un-used leaves credits are convertible to cash
                 </Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Government Mandated Benefits</Text>
-                <Text style={styles.value}>as applicable</Text>
+                <Text style={styles.value}>&nbsp;&nbsp;as applicable</Text>
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Medical Benefits</Text>
                 <Text style={styles.value}>
-                    effective period of coverage is upon regularization
+                    effective period of coverage is upon hire
                 </Text>
             </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Hospitalization</Text>
-                <Text style={styles.value}>
-                    Room and Board: Regular Private{"\n"}Maximum Benefit Limit:
-                    PHP50,000.00
-                </Text>
-            </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Dental</Text>
-                <Text style={styles.value}>Included in the HMO Plan</Text>
-            </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Dependent</Text>
-                <Text style={styles.value}>NA</Text>
-            </View>
-            <View style={styles.row}>
+            <ListItem>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Hospitalization</Text>
+                    <Text style={[styles.value]}>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    Room and Board: {data?.room} {"\n"}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Maximum Benefit Limit: {data?.benefit_limit}{"\n"}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        HMO coverage for work related emergency care, dental services, {"\n"}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In-patient and outpatient upon your start date
+                    </Text>
+                </View>
+            </ListItem>
+            <ListItem>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Dental</Text>
+                    <Text style={[styles.value]}>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Included in the HMO Plan
+                    </Text>
+                </View>
+            </ListItem>
+
+            <ListItem>
+                <View style={styles.row}>
+                    <Text style={styles.label}>Dependent</Text>
+                    <Text style={[styles.value]}>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{data?.dependent}
+                    </Text>
+                </View>
+            </ListItem>
+            <ListItem>
+                <View style={styles.row}>
+                    <Text style={[styles.label]}>
+                        Group Life Insurances with AXA up to Php200,000 (for Principal only)
+                    </Text>
+                </View>
+            </ListItem>
+
+
+            <View style={[styles.row, { marginTop: 20 }]}>
                 <Text style={styles.label}>Allowances</Text>
-                <View style={{ flexDirection: "column", gap: 1 }}>
+                <View style={{ flexDirection: "column", gap: 1, width: "100%", marginLeft: 30 }}>
                     {data?.allowances?.map((res, index) => {
                         return (
-                            <Text key={res.id || index}>
-                                {`${res.allowance_type} - ${res.allowance}`}
-                            </Text>
+                            <ListItem key={res.id || index}>
+                                {`${res.allowance_type}-${res.allowance}`}
+                            </ListItem>
                         );
                     })}
                 </View>
@@ -519,6 +553,10 @@ const AgentOfferLetterPreview = ({ name, type, applicant_signature }) => {
     // Clean data object. NO HTML TAGS here.
     const rawData = {
         date: moment().format("LL"),
+        room: job_offer?.room,
+        dependent: job_offer?.dependent,
+        annual_leave: job_offer?.annual_leave,
+        benefit_limit: job_offer?.benefit_limit,
         date_of_joining: moment(job_offer?.start_date).format("LL"),
         designation:
             job_offer?.job_application?.job_posting?.job_requisition?.title ||

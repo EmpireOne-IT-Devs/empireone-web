@@ -6,7 +6,6 @@ import moment from "moment";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
-// Removed Select import
 import allowances from "@/app/lib/allowance";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_applicants_thunk, get_job_posting_by_id_thunk } from "@/app/redux/job-posting-thunk";
@@ -15,6 +14,12 @@ import { send_job_offer_service } from "@/app/services/job-posting-service";
 export default function SendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // Tracking active states for the interactive pills
+    const [activeLimit, setActiveLimit] = useState("110,000");
+    const [activeRoomBoard, setActiveRoomBoard] = useState("Regular Private");
+    const [activeDependent, setActiveDependent] = useState("Entitled to 1 free dependent");
+
     const dispatch = useDispatch();
 
     const { job_posting } = useSelector((store) => store.job_postings);
@@ -27,6 +32,7 @@ export default function SendJobOfferSection({ data }) {
         reset,
         control,
         getValues,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
@@ -41,6 +47,19 @@ export default function SendJobOfferSection({ data }) {
         control,
         name: "allowances",
     });
+
+    // Update Handlers for Interactive Pills (Adapted for Plain Text)
+    const handleLimitSelect = (amount) => {
+        setActiveLimit(amount);
+    };
+
+    const handleRoomBoardSelect = (roomType) => {
+        setActiveRoomBoard(roomType);
+    };
+
+    const handleDependentSelect = (dependentOption) => {
+        setActiveDependent(dependentOption);
+    };
 
     async function handleOpenModal() {
         try {
@@ -71,6 +90,9 @@ export default function SendJobOfferSection({ data }) {
             await send_job_offer_service({
                 ...data,
                 ...formData,
+                room: activeRoomBoard,
+                dependent: activeDependent,
+                benefit_limit: activeLimit,
                 start_date: moment(formData.start_date).format('LL'),
                 job_application_id: data.id,
             });
@@ -110,7 +132,7 @@ export default function SendJobOfferSection({ data }) {
             </Button>
 
             <Modal
-                width="max-w-3xl"
+                width="max-w-4xl"
                 isOpen={open}
                 onClose={handleCloseModal}
                 title="Send Job Offer"
@@ -141,41 +163,8 @@ export default function SendJobOfferSection({ data }) {
                                 <strong>Current Title:</strong> {reqInfo?.title}
                             </p>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-y-5 gap-5 mt-6">
-                            <Input
-                                label="Position"
-                                type="text"
-                                disabled
-                                value={job_posting?.job_requisition?.title || ""}
-                            />
-
-                            {/* Native Select for Role */}
-                            <div className="flex flex-col space-y-1">
-                                <select
-                                    {...register("role", { required: "Role is required" })}
-                                    className={`w-full border rounded-lg p-2.5 text-sm bg-white focus:ring-blue-500 focus:border-blue-500 outline-none ${errors.role ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                >
-                                    <option value="">Select a role</option>
-                                    <option value="Agent">Agent</option>
-                                    <option value="Support">Support</option>
-                                    <option value="Manager">Manager</option>
-                                </select>
-                                {errors.role && (
-                                    <span className="text-red-500 text-xs mt-1">
-                                        {errors.role.message}
-                                    </span>
-                                )}
-                            </div>
-
-                            <Input
-                                label="Monthly Salary"
-                                type="number"
-                                placeholder="e.g. 50000"
-                                {...register("salary", { required: "Salary is required" })}
-                                error={errors.salary}
-                            />
+                        <div className=" mt-6" />
+                        <div className="mb-3">
                             <Input
                                 label="Start Date"
                                 type="date"
@@ -183,6 +172,98 @@ export default function SendJobOfferSection({ data }) {
                                 {...register("start_date", { required: "Start date is required" })}
                                 error={errors.start_date}
                             />
+                        </div>
+                        <div className="grid grid-cols-2 gap-y-5 gap-5">
+                            <Input
+                                label="Position"
+                                type="text"
+                                disabled
+                                value={job_posting?.job_requisition?.title || ""}
+                            />
+                            <Input
+                                label="Monthly Salary"
+                                type="number"
+                                placeholder="e.g. 50000"
+                                {...register("salary", { required: "Salary is required" })}
+                                error={errors.salary}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="font-black mt-4">
+                        SCHEDULE OF BENEFITS
+                    </div>
+
+                    <Input
+                        label="Annual Leave"
+                        type="number"
+                        placeholder="e.g. 1"
+                        min="1"
+                        {...register("annual_leave", { required: "Annual Leave is required" })}
+                        error={errors.annual_leave}
+                    />
+
+                    {/* Interactive Benefits Guide */}
+                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col gap-4">
+                        <div className="flex items-center gap-1.5 text-blue-700 text-xs font-bold uppercase tracking-wider border-b border-blue-200 pb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                            </svg>
+                            Quick Update Benefits Guide
+                        </div>
+
+                        <div>
+                            <p className="text-[11px] text-blue-800 font-bold mb-1.5">Maximum Benefit Limit:</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['300,000', '110,000', '80,000', '70,000', '50,000'].map((amount) => (
+                                    <div
+                                        key={amount}
+                                        onClick={() => handleLimitSelect(amount)}
+                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeLimit === amount
+                                            ? "bg-blue-600 text-white border-blue-600"
+                                            : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                            }`}
+                                    >
+                                        {amount}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <p className="text-[11px] text-blue-800 font-bold mb-1.5">Room and Board:</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['Open Private', 'Regular Private', 'Ward'].map((room) => (
+                                    <div
+                                        key={room}
+                                        onClick={() => handleRoomBoardSelect(room)}
+                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeRoomBoard === room
+                                            ? "bg-blue-600 text-white border-blue-600"
+                                            : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                            }`}
+                                    >
+                                        {room}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <p className="text-[11px] text-blue-800 font-bold mb-1.5">Dependent Coverage:</p>
+                            <div className="flex flex-wrap gap-2">
+                                {['Entitled to 1 free dependent', 'Entitled to 2 free dependents'].map((dep) => (
+                                    <div
+                                        key={dep}
+                                        onClick={() => handleDependentSelect(dep)}
+                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeDependent === dep
+                                            ? "bg-blue-600 text-white border-blue-600"
+                                            : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                            }`}
+                                    >
+                                        {dep}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -196,7 +277,7 @@ export default function SendJobOfferSection({ data }) {
                                     type="button"
                                     onClick={() =>
                                         append({
-                                            allowance_type: "Monthly",
+                                            allowance_type: "",
                                             allowance: "",
                                         })
                                     }
@@ -210,7 +291,6 @@ export default function SendJobOfferSection({ data }) {
                                     key={field.id}
                                     className="flex gap-4 items-start justify-center"
                                 >
-                                    {/* Native Select for Allowance Type */}
                                     <div className="flex-1 flex flex-col space-y-1">
                                         <select
                                             {...register(`allowances.${index}.allowance_type`, {

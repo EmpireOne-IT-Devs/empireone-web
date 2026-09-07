@@ -20,7 +20,11 @@ class JobOffer extends Model
         'declined_reason',
         'role',
         'start_date',
+        'annual_leave',
         'status',
+        'room',
+        'dependent',
+        'benefit_limit',
     ];
 
     public function job_application(): HasOne
