@@ -111,7 +111,8 @@ export default function AllChallengesSection() {
               <Card
                 key={challenge.id}
                 padding="p-0"
-                className={`overflow-hidden rounded-2xl border-t-4 ${meta.topBorderColor} flex flex-col`}
+                className="overflow-hidden rounded-2xl border-t-4 flex flex-col"
+                style={{ borderTopColor: challenge.card_color }}
               >
                 {challenge.banner_url && (
                   <img
