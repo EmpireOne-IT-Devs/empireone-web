@@ -43,27 +43,27 @@ class EREmployeeChangeFormController extends Controller
         // 3. Prepare array to collect all target updates
         $updateData = [];
 
-        if ($request->info_position_level_to != $ecf->info_position_level_from) {
+        if ($request->info_position_level_to && $request->info_position_level_to != $ecf->info_position_level_from) {
             $updateData['position_level'] = $request->info_position_level_to;
         }
 
-        if ($request->info_department_id_to != $ecf->info_department_id_from) {
+        if ($request->info_department_id_to && $request->info_department_id_to != $ecf->info_department_id_from) {
             $updateData['department_id'] = $request->info_department_id_to;
         }
 
-        if ($request->info_account_id_to != $ecf->info_account_id_from) {
+        if ($request->info_account_id_to && $request->info_account_id_to != $ecf->info_account_id_from) {
             $updateData['account_id'] = $request->info_account_id_to;
         }
 
-        if ($request->info_status_to != $ecf->info_status_from) {
+        if ($request->info_status_to && $request->info_status_to != $ecf->info_status_from) {
             $updateData['status'] = $request->info_status_to;
         }
 
-        if ($request->info_position_to != $ecf->info_position_from) {
+        if ($request->info_position_to && $request->info_position_to != $ecf->info_position_from) {
             $updateData['position'] = $request->info_position_to;
         }
 
-        if ($request->info_reporting_id_to != $ecf->info_reporting_id_from) {
+        if ($request->info_reporting_id_to && $request->info_reporting_id_to != $ecf->info_reporting_id_from) {
             $leader = ERLeader::where('user_id', $request->info_reporting_id_to)->first();
             if ($leader) {
                 $updateData['e_r_leader_id'] = $leader->id;

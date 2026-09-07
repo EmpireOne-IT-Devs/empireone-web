@@ -252,6 +252,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('attrition', EREmployeeAttritionController::class);
         Route::resource('exit_clearance', ERExitClearanceController::class);
         Route::resource('exit_interview', ERExitInterviewController::class);
+        Route::get('search_employee',  [AccountEmployeeController::class, 'search_employee']);
 
         
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);

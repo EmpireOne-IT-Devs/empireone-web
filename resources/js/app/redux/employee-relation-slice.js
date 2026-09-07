@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const employeeRelationSlice = createSlice({
     name: "app",
     initialState: {
+        employee: {},
         employees: [],
         employeesLoading: false,
         pools: [],
@@ -23,6 +24,9 @@ export const employeeRelationSlice = createSlice({
     reducers: {
         setEmployees: (state, action) => {
             state.employees = action.payload;
+        },
+        setEmployee: (state, action) => {
+            state.employee = action.payload;
         },
         setEmployeesLoading: (state, action) => {
             state.employeesLoading = action.payload;
@@ -73,6 +77,7 @@ export const employeeRelationSlice = createSlice({
 });
 
 export const {
+    setEmployee,
     setEmployees,
     setAttrition,
     setAttritions,

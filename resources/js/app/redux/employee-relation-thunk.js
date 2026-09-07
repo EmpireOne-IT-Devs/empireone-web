@@ -17,7 +17,7 @@ import {
     get_leader_by_id_service,
     get_leader_service,
 } from "../services/er-leaders-service";
-import { get_attrition_by_id_service } from "../services/human-resources-service";
+import { get_attrition_by_id_service, search_employee_service } from "../services/human-resources-service";
 import {
     get_performance_evaluation_by_id_service,
     get_performance_evaluation_service,
@@ -39,6 +39,14 @@ export function get_attritions_thunk() {
         dispatch(employeeRelationSlice.actions.setAttritions(result.data));
     };
 }
+export function search_employee_thunk(value) {
+    return async function (dispatch, getState) {
+        const result = await search_employee_service(value);
+        dispatch(employeeRelationSlice.actions.setEmployee(result.data));
+    };
+}
+
+
 
 export function get_attrition_by_id_thunk(id) {
     return async function (dispatch, getState) {

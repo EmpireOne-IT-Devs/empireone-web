@@ -1,0 +1,1 @@
+import{a}from"./app-pRa4eTvA.js";async function t(e){return await a.get(`/api/er/attrition/${e}`)}async function r(e){return await a.post("/api/er/exit_clearance",e)}async function n(e){return await a.post("/api/er/exit_interview",e)}async function s(e){return await a.get(`/api/er/search_employee?search=${e}`)}export{r as a,n as b,t as g,s};

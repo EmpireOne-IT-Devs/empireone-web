@@ -239,10 +239,10 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
                 //         });
                 //     }
                 // });
-
-                Route::inertia('/assessment_process', "accounts/_administrator/human_resources/employee_movements/assessment_process/page");
-                Route::inertia('/assessment_process/promotions', "accounts/_administrator/human_resources/employee_movements/assessment_process/promotions/page");
-                Route::inertia('/assessment_process/transfers', "accounts/_administrator/human_resources/employee_movements/assessment_process/transfers/page");
+                Route::inertia('/', "accounts/_administrator/human_resources/employee_movements/evaluation/page");
+                Route::inertia('/promotions', "accounts/_administrator/human_resources/employee_movements/promotions/page");
+                // Route::inertia('/assessment_process/transfers', "accounts/_administrator/human_resources/employee_movements/assessment_process/transfers/page");
+                Route::inertia('/change_form', 'accounts/_administrator/human_resources/employee_movements/change_form/page');
                 // Route::inertia('/position_and_title', "accounts/_administrator/human_resources/employee_movements/position_and_title/page");
                 // Route::inertia('/tiering', "accounts/_administrator/human_resources/employee_movements/tiering/page");
             });

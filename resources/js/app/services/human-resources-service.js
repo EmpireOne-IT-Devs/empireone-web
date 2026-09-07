@@ -13,3 +13,8 @@ export async function add_exit_clearance_service(data) {
 export async function add_exit_interview_service(data) {
     return await axios.post(`/api/er/exit_interview`,data);
 }
+
+
+export async function search_employee_service(value) {
+    return await axios.get(`/api/er/search_employee?search=${value}`);
+}

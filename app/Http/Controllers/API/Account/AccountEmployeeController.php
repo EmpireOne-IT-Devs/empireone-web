@@ -17,6 +17,33 @@ class AccountEmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function search_employee(Request $request)
+    {
+        $search = $request->search;
+
+        $employees = AccountEmployee::with(['personal_information','department','er_leader','department_manager','account'])
+            ->where('employee_id', 'LIKE', "%{$search}%")
+            ->orWhereHas('personal_information', function ($query) use ($search) {
+                // Searches "First Last" OR "Last First" to catch all typing variations
+                $query->whereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw("CONCAT(last_name, ' ', first_name) LIKE ?", ["%{$search}%"]);
+            })
+            ->limit(20) // Keep response fast
+            ->get()
+            ->map(function ($employee) {
+                // Dynamically append 'name' so your frontend mapping works seamlessly
+                if ($employee->personal_information) {
+                    $employee->name = $employee->personal_information->first_name . ' ' . $employee->personal_information->last_name;
+                } else {
+                    $employee->name = $employee->employee_id; // Fallback if no personal info exists
+                }
+                return $employee;
+            });
+
+        return response()->json([
+            'data' => $employees
+        ], 200);
+    }
     public function add_employee(Request $request)
     {
         // 1. Create or Update the base User
