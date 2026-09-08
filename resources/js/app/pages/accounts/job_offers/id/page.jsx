@@ -23,9 +23,9 @@ export default function Page() {
     }, [job_offer?.user_id]);
 
     function verified_section() {
-        if (user?.account_employee?.signature === undefined) {
+        if (job_offer?.status == "Pending" && user?.account_employee?.signature === undefined) {
             return <VerifySection />;
-        } else if (user?.account_employee?.signature === null) {
+        } else if (job_offer?.status == "Pending" && user?.account_employee?.signature === null) {
             return (
                 user?.account_employee?.signature === null && <VerifySection />
             );

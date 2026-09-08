@@ -112,7 +112,7 @@ export default function SendJobOfferSection({ data }) {
             dispatch(
                 setAlert({
                     type: "success",
-                    title: "Job Offer Sent Successfully!",
+                    title: "Job Offer Created Successfully!",
                     message: "Please review your email.",
                     open: true,
                 })
