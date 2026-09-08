@@ -29,7 +29,7 @@ export default function TabsSection() {
         },
         {
             label: "Employee Movements",
-            path: "/accounts/administrator/human_resources/employee_movements/assessment_process?status=Regular",
+            path: "/accounts/administrator/human_resources/employee_movements?status=Regular",
             active: currentPath === "employee_movements",
         },
         {

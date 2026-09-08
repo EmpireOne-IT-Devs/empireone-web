@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         // store.dispatch(get_employee_applicants_thunk())
         // store.dispatch(get_leader_thunk())
-        store.dispatch(get_employees_thunk());
+        // store.dispatch(get_employees_thunk());
     }, [])
     return (
         <Layout>
