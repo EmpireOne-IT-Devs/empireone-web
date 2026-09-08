@@ -338,7 +338,7 @@ const OfferLetterPDF = (data) => {
                     <Text style={styles.label}>Annual Leave</Text>
                     <Text style={styles.value}>
                         {data?.annual_leave} leave credits to be utilized as VL/SL/EL{"\n"}
-                        Max of {data?.annual_leave} un-used leaves credits are convertible to cash
+                        Max of {data?.annual_leave} un-used leaves credits are convertible to cash upon your {data?.effective_period}
                     </Text>
                 </View>
                 <View style={styles.row}>
@@ -350,7 +350,7 @@ const OfferLetterPDF = (data) => {
                         <View style={styles.row}>
                             <Text style={styles.label}>Medical Benefits</Text>
                             <Text style={styles.value}>
-                                effective period of coverage is {data?.effective_period || "upon hire"}
+                                effective period of coverage is {data?.effective_period}
                             </Text>
                         </View>
 
@@ -371,7 +371,7 @@ const OfferLetterPDF = (data) => {
                                         HMO coverage for work related emergency care, dental services, {"\n"}
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In-patient and outpatient upon your start date
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In-patient and outpatient upon your {data?.effective_period}
                                     </Text>
                                 </View>
                             </ListItem>
