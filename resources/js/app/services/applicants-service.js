@@ -9,7 +9,7 @@ export async function delete_applicant_service(id) {
 }
 
 export async function checking_applicant_service(data) {
-    return (await axios.post(`/api/job/checking_applicant`,data)).data;
+    return (await axios.post(`/api/job/checking_applicant`, data)).data;
 }
 
 export async function get_employee_applicants_service() {
@@ -20,4 +20,8 @@ export async function get_employee_applicants_service() {
 
 export async function get_applicant_pooling_service() {
     return await axios.get("/api/job/get_applicant_pooling");
+}
+
+export async function approve_job_offer_service(data) {
+    return await axios.post("/api/job/approve_job_offer", data);
 }

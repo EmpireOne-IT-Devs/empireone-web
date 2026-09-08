@@ -28,10 +28,12 @@ return new class extends Migration
             $table->string('salary')->nullable();
             $table->string('role')->nullable();
             $table->string('benefit_limit')->nullable();
+            $table->string('effective_period')->nullable();
             $table->string('dependent')->nullable();
             $table->string('room')->nullable();
             $table->string('start_date')->nullable();
             $table->longText('declined_reason')->nullable();
+            $table->json('medical_benefits')->nullable();
             $table->enum('status', [
                 'Pending',
                 'Accepted Job Offer',

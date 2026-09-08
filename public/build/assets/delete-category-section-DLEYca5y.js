@@ -1,1 +1,0 @@
-import{j as t}from"./app-CESGumW_.js";import{p as r}from"./index-Js_VdCBS.js";import"./iconBase-c_pnVLCR.js";function i(){return t.jsx("div",{children:t.jsx(r,{className:"text-2xl cursor-pointer text-red-600"})})}export{i as default};

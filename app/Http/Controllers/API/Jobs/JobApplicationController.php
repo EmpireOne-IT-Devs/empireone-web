@@ -420,25 +420,24 @@ class JobApplicationController extends Controller
                     'talent_acquisition_manager_id' => $manager->user_id,
                     'user_id' => $request->user_id,
                     'job_application_id' => $nja->id,
-                    'status' => 'Pending',
+                    'status' => $request->status,
                     'start_date' => $request->start_date,
                     'salary' => $request->salary,
                     'role' => $request->role,
                     'room' => $request->room,
                     'dependent' => $request->dependent,
                     'benefit_limit' => $request->benefit_limit,
-                    'annual_leave' => $request->annual_leave
+                    'annual_leave' => $request->annual_leave,
+                    'effective_period' => $request->effective_period,
+                    'medical_benefits' => $request->medical_benefits
                 ]);
                 $jo->load('user');
             } else {
-                $ja->update([
-                    'final_status' => 'Sent Job Offer',
-                    'job_posting_id' => $request->job_posting_id,
-                ]);
+
                 $jo = JobOffer::create([
                     'talent_acquisition_manager_id' => $manager->user_id,
                     'job_application_id' => $ja->id,
-                    'status' => 'Pending',
+                    'status' => $request->status,
                     'user_id' => $request->user_id,
                     'start_date' => $request->start_date,
                     'salary' => $request->salary,
@@ -446,7 +445,9 @@ class JobApplicationController extends Controller
                     'room' => $request->room,
                     'dependent' => $request->dependent,
                     'benefit_limit' => $request->benefit_limit,
-                    'annual_leave' => $request->annual_leave
+                    'annual_leave' => $request->annual_leave,
+                    'effective_period' => $request->effective_period,
+                    'medical_benefits' => $request->medical_benefits
                 ]);
             }
         }
@@ -461,19 +462,42 @@ class JobApplicationController extends Controller
             ]);
         }
 
-        Mail::to($send_to)->send(new JobOfferMail(
-            array_merge($data, [
-                'job_offer_id' => $jo->id,
-                'user_role' => $jo->user->role,
-                'position' => $ja->job_posting['job_requisition']['title']
-            ])
-        ));
+
 
         return response()->json([
             'status' => 'success',
         ], 200);
     }
 
+    public function approve_job_offer(Request $request)
+    {
+
+        $ja = JobApplication::where('id', $request->job_application['id'])->first();
+        if ($ja) {
+            $ja->update([
+                'final_status' => 'Sent Job Offer',
+                'job_posting_id' => $request->job_application['job_posting']['id'],
+            ]);
+        }
+        $jo = JobOffer::where('id', $request->id)->first();
+        if ($jo) {
+            $jo->update([
+                'status' => 'Pending'
+            ]);
+        }
+
+        Mail::to($request->user['email'])->send(new JobOfferMail(
+            array_merge($request->all(), [
+                'name' => $request->user['personal_information']['first_name'] . ' ' . $request->user['personal_information']['last_name'],
+                'job_offer_id' => $request->id,
+                'user_role' => 3,
+                'position' => $request['job_application']['job_posting']['job_requisition']['title']
+            ])
+        ));
+        return response()->json([
+            'status' => 'success',
+        ], 200);
+    }
 
     public function send_interview_schedule($data)
     {

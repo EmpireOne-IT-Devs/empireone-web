@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
 
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
@@ -16,13 +15,15 @@ export default function SendJobOfferSection({ data }) {
     const [loading, setLoading] = useState(false);
 
     // Tracking active states for the interactive pills
-    const [activeLimit, setActiveLimit] = useState("110,000");
+    const [upon, setUpon] = useState("Hire");
+    const [activeLimit, setActiveLimit] = useState("80,000");
     const [activeRoomBoard, setActiveRoomBoard] = useState("Regular Private");
     const [activeDependent, setActiveDependent] = useState("Entitled to 1 free dependent");
+    const [activeMedical, setActiveMedical] = useState([]);
 
     const dispatch = useDispatch();
-
     const { job_posting } = useSelector((store) => store.job_postings);
+
     const applicantInfo = data?.applicant?.personal_information;
     const reqInfo = data?.job_posting?.job_requisition;
 
@@ -32,14 +33,14 @@ export default function SendJobOfferSection({ data }) {
         reset,
         control,
         getValues,
-        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
             job_posting_id: data?.job_posting?.id,
             salary: "",
-            role: "",
+            annual_leave: "",
             allowances: [],
+            start_date: "",
         },
     });
 
@@ -48,17 +49,10 @@ export default function SendJobOfferSection({ data }) {
         name: "allowances",
     });
 
-    // Update Handlers for Interactive Pills (Adapted for Plain Text)
-    const handleLimitSelect = (amount) => {
-        setActiveLimit(amount);
-    };
-
-    const handleRoomBoardSelect = (roomType) => {
-        setActiveRoomBoard(roomType);
-    };
-
-    const handleDependentSelect = (dependentOption) => {
-        setActiveDependent(dependentOption);
+    const toggleMedicalBenefit = (benefit) => {
+        setActiveMedical((prev) =>
+            prev.includes(benefit) ? prev.filter((b) => b !== benefit) : [...prev, benefit]
+        );
     };
 
     async function handleOpenModal() {
@@ -83,18 +77,34 @@ export default function SendJobOfferSection({ data }) {
     const handleCloseModal = () => {
         setOpen(false);
         reset();
+        // Reset interactive pills to default states
+        setUpon("Hire");
+        setActiveLimit("80,000");
+        setActiveRoomBoard("Regular Private");
+        setActiveDependent("Entitled to 1 free dependent");
+        setActiveMedical([]);
     };
 
     const onSubmit = async (formData) => {
         try {
+            const formattedDate = new Date(formData.start_date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
             await send_job_offer_service({
                 ...data,
                 ...formData,
-                room: activeRoomBoard,
-                dependent: activeDependent,
-                benefit_limit: activeLimit,
-                start_date: moment(formData.start_date).format('LL'),
+                medical_benefits: activeMedical,
+                // Only send these details if their respective parent medical benefit is selected
+                room: activeMedical.includes("Hospitalization") ? activeRoomBoard : null,
+                benefit_limit: activeMedical.includes("Hospitalization") ? activeLimit : null,
+                dependent: activeMedical.includes("Dependent") ? activeDependent : null,
+                effective_period: activeMedical.length > 0 ? upon : null,
+                start_date: formattedDate,
                 job_application_id: data.id,
+                status: "In Review",
             });
 
             await dispatch(get_applicants_thunk());
@@ -163,7 +173,7 @@ export default function SendJobOfferSection({ data }) {
                                 <strong>Current Title:</strong> {reqInfo?.title}
                             </p>
                         </div>
-                        <div className=" mt-6" />
+                        <div className="mt-6" />
                         <div className="mb-3">
                             <Input
                                 label="Start Date"
@@ -212,59 +222,115 @@ export default function SendJobOfferSection({ data }) {
                             Quick Update Benefits Guide
                         </div>
 
+                        <div className="text-blue-700">
+                            Government Mandated Benefits  ---- as applicable
+                        </div>
+
                         <div>
-                            <p className="text-[11px] text-blue-800 font-bold mb-1.5">Maximum Benefit Limit:</p>
+                            <p className="text-[11px] text-blue-800 font-bold mb-1.5">Medical Benefits:</p>
                             <div className="flex flex-wrap gap-2">
-                                {['300,000', '110,000', '80,000', '70,000', '50,000'].map((amount) => (
-                                    <div
-                                        key={amount}
-                                        onClick={() => handleLimitSelect(amount)}
-                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeLimit === amount
-                                            ? "bg-blue-600 text-white border-blue-600"
-                                            : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                {['Hospitalization', 'Dental', 'Dependent', 'Group Life Insurance'].map((res) => (
+                                    <button
+                                        type="button"
+                                        key={res}
+                                        onClick={() => toggleMedicalBenefit(res)}
+                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeMedical.includes(res)
+                                                ? "bg-blue-600 text-white border-blue-600"
+                                                : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
                                             }`}
                                     >
-                                        {amount}
-                                    </div>
+                                        {res}
+                                    </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div>
-                            <p className="text-[11px] text-blue-800 font-bold mb-1.5">Room and Board:</p>
-                            <div className="flex flex-wrap gap-2">
-                                {['Open Private', 'Regular Private', 'Ward'].map((room) => (
-                                    <div
-                                        key={room}
-                                        onClick={() => handleRoomBoardSelect(room)}
-                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeRoomBoard === room
-                                            ? "bg-blue-600 text-white border-blue-600"
-                                            : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
-                                            }`}
-                                    >
-                                        {room}
-                                    </div>
-                                ))}
+                        {/* Shows if ANY Medical Benefit is selected */}
+                        {activeMedical.length > 0 && (
+                            <div>
+                                <p className="text-[11px] text-blue-800 font-bold mb-1.5">Effective period of coverage is upon:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {['Hire', 'Regularization'].map((res) => (
+                                        <button
+                                            type="button"
+                                            key={res}
+                                            onClick={() => setUpon(res)}
+                                            className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${upon === res
+                                                    ? "bg-blue-600 text-white border-blue-600"
+                                                    : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                }`}
+                                        >
+                                            {res}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        <div>
-                            <p className="text-[11px] text-blue-800 font-bold mb-1.5">Dependent Coverage:</p>
-                            <div className="flex flex-wrap gap-2">
-                                {['Entitled to 1 free dependent', 'Entitled to 2 free dependents'].map((dep) => (
-                                    <div
-                                        key={dep}
-                                        onClick={() => handleDependentSelect(dep)}
-                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeDependent === dep
-                                            ? "bg-blue-600 text-white border-blue-600"
-                                            : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
-                                            }`}
-                                    >
-                                        {dep}
+                        {/* Shows ONLY if 'Hospitalization' is selected */}
+                        {activeMedical.includes("Hospitalization") && (
+                            <>
+                                <div>
+                                    <p className="text-[11px] text-blue-800 font-bold mb-1.5">HMO Maximum Benefit Limit:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['300,000', '110,000', '80,000', '70,000', '50,000'].map((amount) => (
+                                            <button
+                                                type="button"
+                                                key={amount}
+                                                onClick={() => setActiveLimit(amount)}
+                                                className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeLimit === amount
+                                                        ? "bg-blue-600 text-white border-blue-600"
+                                                        : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                    }`}
+                                            >
+                                                {amount}
+                                            </button>
+                                        ))}
                                     </div>
-                                ))}
+                                </div>
+
+                                <div>
+                                    <p className="text-[11px] text-blue-800 font-bold mb-1.5">Room and Board:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['Open Private', 'Regular Private', 'Ward'].map((room) => (
+                                            <button
+                                                type="button"
+                                                key={room}
+                                                onClick={() => setActiveRoomBoard(room)}
+                                                className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeRoomBoard === room
+                                                        ? "bg-blue-600 text-white border-blue-600"
+                                                        : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                    }`}
+                                            >
+                                                {room}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+                        {/* Shows ONLY if 'Dependent' is selected */}
+                        {activeMedical.includes("Dependent") && (
+                            <div>
+                                <p className="text-[11px] text-blue-800 font-bold mb-1.5">Dependent Coverage:</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {['No free dependent', 'Entitled to 1 free dependent', 'Entitled to 2 free dependents'].map((dep) => (
+                                        <button
+                                            type="button"
+                                            key={dep}
+                                            onClick={() => setActiveDependent(dep)}
+                                            className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeDependent === dep
+                                                    ? "bg-blue-600 text-white border-blue-600"
+                                                    : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                }`}
+                                        >
+                                            {dep}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     <div className="flex gap-3 w-full">
@@ -343,7 +409,7 @@ export default function SendJobOfferSection({ data }) {
                         className="w-full flex justify-center items-center"
                         loading={isSubmitting}
                     >
-                        SEND JOB OFFER
+                        CREATE JOB OFFER
                     </Button>
                 </form>
             </Modal>

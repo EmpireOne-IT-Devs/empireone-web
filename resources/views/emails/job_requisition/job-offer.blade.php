@@ -66,7 +66,7 @@
                 <h1>Congratulations! 🎊</h1>
             </div>
             <div class="content">
-                <p>Hi <strong>{{ $user['applicant']['name'] }}</strong>,</p>
+                <p>Hi <strong>{{ $user['name'] }}</strong>,</p>
                 <p>We were incredibly impressed with your interview performance. We are thrilled to officially offer you the position of <strong>{{ $user['position'] }}</strong> on our team!</p>
 
                 <p><strong>Package Details:</strong></p>

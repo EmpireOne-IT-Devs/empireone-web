@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import AcceptJobOfferSection from "./_sections/accept-job-offer-section";
 import VerifySection from "./_sections/verify-section";
 import { get_user_by_id_thunk } from "@/app/redux/app-thunk";
+import ApprovedJOSection from "./jo_documents/approved-jo-section";
 
 export default function Page() {
     const { job_offer } = useSelector((store) => store.applicants);
@@ -31,7 +32,7 @@ export default function Page() {
         } else if (user?.account_employee?.signature != null) {
             return (
                 <>
-                  
+
                     <AgentOfferLetterPreview
                         name="Agent Offer"
                         type="offer"
@@ -42,6 +43,10 @@ export default function Page() {
                     {job_offer?.status == "Pending" && (
                         <AcceptJobOfferSection />
                     )}
+                    {job_offer?.status == "In Review" && (
+                        <ApprovedJOSection props_data={job_offer} />
+                    )}
+
                 </>
             );
         }

@@ -25,6 +25,12 @@ class JobOffer extends Model
         'room',
         'dependent',
         'benefit_limit',
+        'effective_period',
+        'medical_benefits'
+    ];
+
+    protected $casts = [
+        'medical_benefits' => 'array',
     ];
 
     public function job_application(): HasOne
@@ -33,7 +39,7 @@ class JobOffer extends Model
     }
     public function manager(): HasOne
     {
-        return $this->hasOne(User::class, 'id', 'talent_acquisition_manager_id')->with(['account_employee','personal_information']);
+        return $this->hasOne(User::class, 'id', 'talent_acquisition_manager_id')->with(['account_employee', 'personal_information']);
     }
     public function user(): HasOne
     {
