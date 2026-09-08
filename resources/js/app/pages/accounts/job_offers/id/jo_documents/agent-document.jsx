@@ -315,7 +315,7 @@ const OfferLetterPDF = (data) => {
                         outlined.
                     </Text>
                     <View style={styles.signature_over_printed_name_line}>
-                        {data?.applicant_signature && (
+                        {data?.talent_acquisition_manager_signature && (
                             <Image
                                 style={styles.signature_over_printed_name}
                                 src={data?.talent_acquisition_manager_signature}

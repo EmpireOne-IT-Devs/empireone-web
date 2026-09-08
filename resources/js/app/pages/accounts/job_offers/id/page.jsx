@@ -49,6 +49,20 @@ export default function Page() {
 
                 </>
             );
+        } else {
+            return <>
+
+                <AgentOfferLetterPreview
+                    name="Agent Offer"
+                    type="offer"
+                    applicant_signature={
+                        user?.account_employee?.signature
+                    }
+                />
+                {job_offer?.status == "In Review" && (
+                    <ApprovedJOSection props_data={job_offer} />
+                )}
+            </>
         }
     }
     return verified_section();
