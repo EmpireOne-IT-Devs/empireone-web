@@ -35,7 +35,7 @@ export default function FooterSection() {
     const socialLinks = [
         {
             name: "LinkedIn",
-            href: "https://ca.linkedin.com/company/empireonebposolutions",
+            href: "https://ca.linkedin.com/company/EmpireOneCX",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +61,7 @@ export default function FooterSection() {
         // },
         {
             name: "Facebook",
-            href: "https://www.facebook.com/empireonebposolutionsinc",
+            href: "https://www.facebook.com/EmpireOneCX",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +76,7 @@ export default function FooterSection() {
         },
         {
             name: "Instagram",
-            href: "https://www.instagram.com/empireonebposolutions",
+            href: "https://www.instagram.com/EmpireOneCX",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ export default function FooterSection() {
         },
         {
             name: "YouTube",
-            href: "https://www.youtube.com/@empireonebposolutions",
+            href: "https://www.youtube.com/@EmpireOneCX",
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
