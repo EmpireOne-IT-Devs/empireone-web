@@ -337,7 +337,7 @@ const OfferLetterPDF = (data) => {
                 <View style={styles.row}>
                     <Text style={styles.label}>Annual Leave</Text>
                     <Text style={styles.value}>
-                        Upon your {data?.effective_period?.toLowerCase()} {data?.annual_leave} leave credits to be utilized as VL/SL/EL{"\n"}
+                        {data?.annual_leave} leave credits to be utilized as VL/SL/EL upon your {data?.effective_period?.toLowerCase()}{"\n"}
                         Max of {data?.annual_leave} un-used leaves credits are convertible to cash.
                     </Text>
                 </View>
