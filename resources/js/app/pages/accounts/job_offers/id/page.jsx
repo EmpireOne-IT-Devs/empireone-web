@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import AgentOfferLetterPreview from "./jo_documents/agent-document";
-import ManagerOfferLetterPreview from "./jo_documents/manager-document";
-import SupportOfferLetterPreview from "./jo_documents/support-document";
 import store from "@/app/store/store";
 import { get_job_offer_by_id_thunk } from "@/app/redux/applicant-thunk";
 import { useSelector } from "react-redux";
@@ -22,12 +20,6 @@ export default function Page() {
             store.dispatch(get_user_by_id_thunk(job_offer?.user_id));
         }
     }, [job_offer?.user_id]);
-    // const validOffers = ["Managerial Offer", "Agent Offer", "Support Offer"];
-
-    // const hasOffer = job_offer?.documents?.some((res) =>
-    //     validOffers.includes(res.name),
-    // );
-    // console.log("job_offer", user?.account_employee?.signature);
 
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
@@ -39,33 +31,7 @@ export default function Page() {
         } else if (user?.account_employee?.signature != null) {
             return (
                 <>
-                    {/* {job_offer?.role == "Manager" && (
-                        <ManagerOfferLetterPreview
-                            name="Managerial Offer"
-                            type="offer"
-                            applicant_signature={
-                                user?.account_employee?.signature
-                            }
-                        />
-                    )}
-                    {job_offer?.role == "Agent" && (
-                        <AgentOfferLetterPreview
-                            name="Agent Offer"
-                            type="offer"
-                            applicant_signature={
-                                user?.account_employee?.signature
-                            }
-                        />
-                    )}
-                    {job_offer?.role == "Support" && (
-                        <SupportOfferLetterPreview
-                            name="Support Offer"
-                            type="offer"
-                            applicant_signature={
-                                user?.account_employee?.signature
-                            }
-                        />
-                    )} */}
+                  
                     <AgentOfferLetterPreview
                         name="Agent Offer"
                         type="offer"

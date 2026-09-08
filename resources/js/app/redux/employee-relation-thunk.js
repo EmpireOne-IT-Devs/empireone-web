@@ -17,7 +17,10 @@ import {
     get_leader_by_id_service,
     get_leader_service,
 } from "../services/er-leaders-service";
-import { get_attrition_by_id_service, search_employee_service } from "../services/human-resources-service";
+import {
+    get_attrition_by_id_service,
+    search_employee_service,
+} from "../services/human-resources-service";
 import {
     get_performance_evaluation_by_id_service,
     get_performance_evaluation_service,
@@ -45,8 +48,6 @@ export function search_employee_thunk(value) {
         dispatch(employeeRelationSlice.actions.setEmployee(result.data));
     };
 }
-
-
 
 export function get_attrition_by_id_thunk(id) {
     return async function (dispatch, getState) {
@@ -114,7 +115,7 @@ export function get_performance_evaluation_thunk() {
 export function get_employee_change_form_thunk() {
     return async function (dispatch, getState) {
         const result = await get_employee_change_form_service();
-        dispatch(employeeRelationSlice.actions.setECFs(result.data));
+        dispatch(employeeRelationSlice.actions.setChangeForms(result.data));
     };
 }
 
@@ -128,7 +129,9 @@ export function get_employee_change_form_by_id_thunk(id) {
 export function get_acknowledgement_thunk() {
     return async function (dispatch, getState) {
         const result = await get_acknowledgement_service();
-        dispatch(employeeRelationSlice.actions.setAcknowledgements(result.data));
+        dispatch(
+            employeeRelationSlice.actions.setAcknowledgements(result.data),
+        );
     };
 }
 

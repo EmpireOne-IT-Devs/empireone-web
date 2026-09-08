@@ -21,12 +21,8 @@ class EREmployeeChangeFormController extends Controller
      */
     public function index(Request $request)
     {
-        $ecfs = EREmployeeChangeForm::with(['employee'])->paginate();
-        // $job_posting = JobPosting::where('id', $request->job_posting_id)->with(['job_requisition'])->first();
-        return response()->json([
-            ...$ecfs,
-            // 'job_posting' => $job_posting
-        ]);
+        $ecfs = EREmployeeChangeForm::with(['employee','account_to','department_to'])->paginate();
+        return response()->json($ecfs);
     }
 
     public function accept_employee_change_form(Request $request)
