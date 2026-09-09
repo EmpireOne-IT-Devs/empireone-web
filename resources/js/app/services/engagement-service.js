@@ -13,7 +13,9 @@ export async function get_post_event_by_id_service(id) {
 }
 
 export async function update_post_event_by_id_service(id, data) {
-    return await axios.put(`/api/engagement/post_events/${id}`, data);
+    return await axios.post(`/api/engagement/post_events/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
 }
 
 export async function delete_post_event_service(id) {

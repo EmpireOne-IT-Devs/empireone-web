@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-
+import { Link } from "@inertiajs/react";
 const fadeUp = {
     hidden: { opacity: 0, y: 24 },
     visible: (delay = 0) => ({
@@ -236,6 +236,12 @@ export default function FooterSection() {
                             Terms of Service
                         </a>
                     </div> */}
+                    {/* <Link
+                        href="/privacy-policy"
+                        className="text-xs text-white/30 transition-colors duration-200 hover:text-orange-400"
+                    >
+                        Privacy Policy
+                    </Link> */}
                 </motion.div>
             </div>
         </footer>
