@@ -112,9 +112,8 @@ export default function AddAttritionSection({ props_data }) {
         ? `${leaderInfo?.first_name || ''} ${leaderInfo?.last_name || ''}`.trim()
         : null;
 
-    const departmentManager = `${props_data?.department_manager?.first_name || ''} ${props_data?.department_manager?.last_name || ''}`.trim() ?? null;
+    const departmentManager = `${props_data?.department_manager?.employee?.personal_information?.first_name || ''} ${props_data?.department_manager?.employee?.personal_information?.last_name || ''}`.trim() ?? null;
 
-    console.log('props_datasss',)
 
     return (
         <div className="w-full">
