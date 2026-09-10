@@ -28,6 +28,11 @@ export default function TimeKeepingLayout({ children }) {
             active: path === "attendance_settings",
         },
         {
+            label: "Calendar Settings",
+            path: "/accounts/administrator/time_keeping/calendar_settings",
+            active: path === "calendar_settings",
+        },
+        {
             label: "Reports",
             path: "/accounts/administrator/time_keeping/reports",
             active: path === "reports",
