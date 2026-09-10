@@ -181,8 +181,11 @@ export default function SelectedDateSection({ children, data }) {
                             className="text-xs w-full"
                         />
                     </div>
-                    <div className="flex justify-end p-4 border-t border-gray-100">
-                        <Button outlined className="text-xs">
+                    <div className="flex justify-end gap-2 mt-2 border-t border-gray-100">
+                        <Button outlined onClick={() => setOpen(false)} className="text-sm" type="button">
+                            Cancel
+                        </Button>
+                        <Button className="text-sm" type="submit">
                             Add Holiday
                         </Button>
                     </div>
