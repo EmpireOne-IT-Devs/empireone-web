@@ -88,7 +88,7 @@ export default function HRModuleLayout({ children }) {
     };
 
     return (
-        <div className="flex min-h-[78vh] bg-gray-50 font-sans relative">
+        <div className="flex max-h-[88vh] bg-gray-50 font-sans relative">
 
             {/* Mobile Toggle Button */}
             <div className="absolute top-3 left-4 z-30 md:hidden">
