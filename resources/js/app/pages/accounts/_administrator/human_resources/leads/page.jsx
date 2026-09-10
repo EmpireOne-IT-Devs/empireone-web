@@ -11,7 +11,7 @@ export default function Page() {
     useEffect(() => {
         // store.dispatch(get_job_requisitions_thunk());
         store.dispatch(get_leader_thunk())
-    }, []);
+    }, [window.location.search]);
     return (
         <Layout>
             <EmployeeRelationLayout>

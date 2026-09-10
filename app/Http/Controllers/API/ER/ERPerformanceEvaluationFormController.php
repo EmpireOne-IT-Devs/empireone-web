@@ -15,7 +15,29 @@ class ERPerformanceEvaluationFormController extends Controller
      */
     public function index(Request $request)
     {
-        $evaluations = ERPerformanceEvaluationForm::whereIn('recommendation', ['Mid-Probationary', 'Regular', 'Probationary', 'Extended Probationary', 'End of Contract'])->with(['supervisor', 'user', 'employee','applicant','evaluation_form'])->paginate();
+        $locationId = $request->query('location_id');
+
+        // 1. Initialize the base query with your conditions and eager loaded relationships
+        $query = ERPerformanceEvaluationForm::whereIn('recommendation', [
+            'Mid-Probationary',
+            'Regular',
+            'Probationary',
+            'Extended Probationary',
+            'End of Contract'
+        ])->with(['supervisor', 'user', 'employee', 'applicant', 'evaluation_form']);
+
+        // 2. Apply the location filter dynamically if location_id is present
+        if ($locationId) {
+            // Assuming the location_id belongs to the related 'employee' record. 
+            // If it belongs to 'user' instead, change 'employee' to 'user' below.
+            $query->whereHas('employee', function ($q) use ($locationId) {
+                $q->where('location_id', $locationId);
+            });
+        }
+
+        // 3. Execute with pagination
+        $evaluations = $query->paginate();
+
         return response()->json($evaluations, 200);
     }
 

@@ -220,12 +220,14 @@ class JobApplicationController extends Controller
     }
     public function employee_applicants(Request $request)
     {
+        $locationId = $request->query('location_id');
+
         $applications = JobApplication::where([
             ['interview_status', '=', 'Passed'],
             ['final_status', '=', 'Passed']
         ])
             ->whereNull('removed_by')
-            ->with(['job_posting', 'applicant', 'user', 'change_form'])
+            ->with(['job_posting.job_requisition', 'applicant', 'user', 'change_form'])
             ->whereHas('user', function ($query) use ($request) {
                 $query->whereIn('role', [1, 2]);
 
@@ -238,6 +240,12 @@ class JobApplicationController extends Controller
                     });
                 }
             })
+            // Apply the location filter across nested relationships dynamically
+            ->when($locationId, function ($query) use ($locationId) {
+                $query->whereHas('job_posting.job_requisition', function ($q) use ($locationId) {
+                    $q->where('location_id', $locationId);
+                });
+            })
             ->get();
 
         return response()->json([
@@ -246,10 +254,18 @@ class JobApplicationController extends Controller
         ], 200);
     }
 
-    public function get_applicant_pooling()
+    public function get_applicant_pooling(Request $request)
     {
-        $applications = JobApplication::whereIn('final_status', ['Pooled', 'Sent Job Offer', 'Accepted Job Offer'])->with(['job_posting', 'applicant'])->get();
+        $locationId = $request->query('location_id');
+        $query = JobApplication::whereIn('final_status', ['Pooled', 'Sent Job Offer', 'Accepted Job Offer'])
+            ->with(['job_posting.job_requisition', 'applicant']);
+        if ($locationId) {
+            $query->whereHas('job_posting.job_requisition', function ($q) use ($locationId) {
+                $q->where('location_id', $locationId);
+            });
+        }
 
+        $applications = $query->get();
         return response()->json([
             'data' => $applications,
             'status' => 'success',

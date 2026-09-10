@@ -1,0 +1,1 @@
+import{j as o}from"./app-oTa0CiDV.js";import r from"./tabs-section-DumvVAlL.js";import"./header-section-BN89MTed.js";function i({children:t}){return o.jsx(o.Fragment,{children:o.jsx(r,{children:t})})}export{i as default};

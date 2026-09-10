@@ -40,7 +40,7 @@ export default function SidebarSection() {
     const dispatch = useDispatch();
     const path = window.location.pathname.split("/")[3];
     const account_role = window.location.pathname.split("/")[2];
-    console.log("datadata", data?.user?.account_employee?.department_id);
+    console.log("datadata", data?.user?.account_employee);
     // 1. We split the main navigation items and include labels...
     const mainNavigation = [
         { is_label: true, name: "Main Menu" },
@@ -92,22 +92,22 @@ export default function SidebarSection() {
         // ------------------------------------
         ...(data?.user?.leader != null
             ? [
-                  {
-                      name: "My Job Requisition",
-                      href: `/accounts/${account_role}/my_requisition`,
-                      icon: FcFeedback,
-                      current: path == "my_requisition",
-                      is_incoming: false,
-                  },
-                  { is_label: true, name: "Leader Hub" },
-                  {
-                      name: "My Team",
-                      href: `/accounts/${account_role}/my_team`,
-                      icon: FcConferenceCall,
-                      current: path === "my_team",
-                      is_incoming: false,
-                  },
-              ]
+                {
+                    name: "My Job Requisition",
+                    href: `/accounts/${account_role}/my_requisition`,
+                    icon: FcFeedback,
+                    current: path == "my_requisition",
+                    is_incoming: false,
+                },
+                { is_label: true, name: "Leader Hub" },
+                {
+                    name: "My Team",
+                    href: `/accounts/${account_role}/my_team`,
+                    icon: FcConferenceCall,
+                    current: path === "my_team",
+                    is_incoming: false,
+                },
+            ]
             : []),
 
         // ------------------------------------
@@ -115,152 +115,152 @@ export default function SidebarSection() {
         // ------------------------------------
         ...(account_role == "administrator"
             ? [
-                  { is_label: true, name: "Administration" },
+                { is_label: true, name: "Administration" },
 
-                  // CORRECTED: Conditionally render Talent Acquisition
-                  ...([1, 2].includes(
-                      data?.user?.account_employee?.department_id,
-                  )
-                      ? [
-                            {
-                                name: "Talent Acquisition",
-                                href: `/accounts/${account_role}/talent_acquisition/dashboard`,
-                                icon: FcPortraitMode,
-                                current: path === "talent_acquisition",
-                                is_incoming: false,
-                            },
-                            {
-                                name: "Human Resources",
-                                href: `/accounts/${account_role}/human_resources/employees`,
-                                icon: FcPodiumWithAudience,
-                                current: path == "human_resources",
-                                is_incoming: false,
-                            },
-                            {
-                                name: "Timekeeping",
-                                href: `/accounts/${account_role}/time_keeping/dashboard`,
-                                icon: FcOvertime,
-                                current: path == "time_keeping",
-                                is_incoming: false,
-                            },
-                            {
-                                name: "Asset & Inventory",
-                                href: `/accounts/${account_role}/asset_inventory`,
-                                icon: PackageIcon,
-                                current: path == "asset_inventory",
-                                is_incoming: true,
-                            },
-                        ]
-                      : []),
+                // CORRECTED: Conditionally render Talent Acquisition
+                ...([1, 2].includes(
+                    data?.user?.account_employee?.department_id,
+                )
+                    ? [
+                        {
+                            name: "Talent Acquisition",
+                            href: `/accounts/${account_role}/talent_acquisition/dashboard?location_id=${data?.user?.account_employee?.location_id}`,
+                            icon: FcPortraitMode,
+                            current: path === "talent_acquisition",
+                            is_incoming: false,
+                        },
+                        {
+                            name: "Human Resources",
+                            href: `/accounts/${account_role}/human_resources/employees?location_id=${data?.user?.account_employee?.location_id}`,
+                            icon: FcPodiumWithAudience,
+                            current: path == "human_resources",
+                            is_incoming: false,
+                        },
+                        {
+                            name: "Timekeeping",
+                            href: `/accounts/${account_role}/time_keeping/dashboard`,
+                            icon: FcOvertime,
+                            current: path == "time_keeping",
+                            is_incoming: false,
+                        },
+                        {
+                            name: "Asset & Inventory",
+                            href: `/accounts/${account_role}/asset_inventory`,
+                            icon: PackageIcon,
+                            current: path == "asset_inventory",
+                            is_incoming: true,
+                        },
+                    ]
+                    : []),
 
-                  ...([1, 11].includes(
-                      data?.user?.account_employee?.department_id,
-                  )
-                      ? [
-                            {
-                                name: "Engagement Floor",
-                                href: `/accounts/${account_role}/activities`,
-                                icon: FcSportsMode,
-                                current: path == "activities",
-                                is_incoming: false,
-                            },
-                            {
-                                name: "R & R",
-                                href: `/accounts/${account_role}/rnr/peer_recognition`,
-                                icon: FcDiploma1,
-                                current: path == "rnr",
-                                is_incoming: false,
-                            },
-                        ]
-                      : []),
+                ...([1, 11].includes(
+                    data?.user?.account_employee?.department_id,
+                )
+                    ? [
+                        {
+                            name: "Engagement Floor",
+                            href: `/accounts/${account_role}/activities`,
+                            icon: FcSportsMode,
+                            current: path == "activities",
+                            is_incoming: false,
+                        },
+                        {
+                            name: "R & R",
+                            href: `/accounts/${account_role}/rnr/peer_recognition`,
+                            icon: FcDiploma1,
+                            current: path == "rnr",
+                            is_incoming: false,
+                        },
+                    ]
+                    : []),
 
-                  {
-                      name: "Ticketing",
-                      href: `/accounts/${account_role}/ticketing`,
-                      icon: FcCustomerSupport,
-                      current: path == "ticketing",
-                      is_incoming: true,
-                  },
+                {
+                    name: "Ticketing",
+                    href: `/accounts/${account_role}/ticketing`,
+                    icon: FcCustomerSupport,
+                    current: path == "ticketing",
+                    is_incoming: true,
+                },
 
-                  {
-                      name: "E-Store",
-                      href: `/accounts/${account_role}/e_store/rewards_items`,
-                      icon: FcShop,
-                      current: path == "e_store",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "Finance",
-                      href: `/accounts/${account_role}/finance/dashboard`,
-                      icon: FcSalesPerformance,
-                      current: path == "finance",
-                      is_incoming: true,
-                  },
-              ]
+                {
+                    name: "E-Store",
+                    href: `/accounts/${account_role}/e_store/rewards_items`,
+                    icon: FcShop,
+                    current: path == "e_store",
+                    is_incoming: true,
+                },
+                {
+                    name: "Finance",
+                    href: `/accounts/${account_role}/finance/dashboard`,
+                    icon: FcSalesPerformance,
+                    current: path == "finance",
+                    is_incoming: true,
+                },
+            ]
             : []),
 
         // ------------------------------------
         // EMPLOYEE HUB
         // ------------------------------------
         ...(account_role == "employee" || ![1, 11].includes(
-                      data?.user?.account_employee?.department_id,
-                  )
+            data?.user?.account_employee?.department_id,
+        )
             ? [
-                  { is_label: true, name: "Employee Hub" },
-                  {
-                      name: "Engagement Floor",
-                      href: `/accounts/${account_role}/activities`,
-                      icon: FcSportsMode,
-                      current: path == "activities",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "Timekeeping",
-                      href: `/accounts/${account_role}/timekeeping`,
-                      icon: FcOvertime,
-                      current: path == "timekeeping",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "HR Services",
-                      href: `/accounts/${account_role}/hr_services`,
-                      icon: FcPortraitMode,
-                      current: path == "hr_services",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "RNR",
-                      href: `/accounts/${account_role}/rnr`,
-                      icon: FcCloseUpMode,
-                      current: path == "rnr",
-                      is_incoming: false,
-                  },
-                  {
-                      name: "Reward Store",
-                      href: `/accounts/${account_role}/rewards_store`,
-                      icon: FcShop,
-                      current: path == "rewards_store",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "Loan",
-                      href: `/accounts/${account_role}/loan`,
-                      icon: () => (
-                          <FaMoneyBillWave className="text-purple-600" />
-                      ),
-                      current: path == "loan",
-                      is_incoming: true,
-                  },
-                  {
-                      name: "Payroll",
-                      href: `/accounts/${account_role}/payroll`,
-                      icon: () => (
-                          <FaMoneyCheckAlt className="text-green-600" />
-                      ),
-                      current: path == "payroll",
-                      is_incoming: true,
-                  },
-              ]
+                { is_label: true, name: "Employee Hub" },
+                {
+                    name: "Engagement Floor",
+                    href: `/accounts/${account_role}/activities`,
+                    icon: FcSportsMode,
+                    current: path == "activities",
+                    is_incoming: false,
+                },
+                {
+                    name: "Timekeeping",
+                    href: `/accounts/${account_role}/timekeeping`,
+                    icon: FcOvertime,
+                    current: path == "timekeeping",
+                    is_incoming: false,
+                },
+                {
+                    name: "HR Services",
+                    href: `/accounts/${account_role}/hr_services`,
+                    icon: FcPortraitMode,
+                    current: path == "hr_services",
+                    is_incoming: true,
+                },
+                {
+                    name: "RNR",
+                    href: `/accounts/${account_role}/rnr`,
+                    icon: FcCloseUpMode,
+                    current: path == "rnr",
+                    is_incoming: false,
+                },
+                {
+                    name: "Reward Store",
+                    href: `/accounts/${account_role}/rewards_store`,
+                    icon: FcShop,
+                    current: path == "rewards_store",
+                    is_incoming: true,
+                },
+                {
+                    name: "Loan",
+                    href: `/accounts/${account_role}/loan`,
+                    icon: () => (
+                        <FaMoneyBillWave className="text-purple-600" />
+                    ),
+                    current: path == "loan",
+                    is_incoming: true,
+                },
+                {
+                    name: "Payroll",
+                    href: `/accounts/${account_role}/payroll`,
+                    icon: () => (
+                        <FaMoneyCheckAlt className="text-green-600" />
+                    ),
+                    current: path == "payroll",
+                    is_incoming: true,
+                },
+            ]
             : []),
     ];
 

@@ -18,12 +18,29 @@ class EREmployeeAttritionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $attritions = EREmployeeAttrition::with(['personal_information', 'exit_clearance', 'exit_interview'])->paginate(12);
+        $locationId = $request->query('location_id');
+
+        // 1. Initialize query with nested relationship
+        $query = EREmployeeAttrition::with([
+            'personal_information.employee',
+            'exit_clearance',
+            'exit_interview'
+        ]);
+
+        // 2. Filter by location_id through personal_information -> employee
+        if ($locationId) {
+            $query->whereHas('personal_information.employee', function ($q) use ($locationId) {
+                $q->where('location_id', $locationId);
+            });
+        }
+
+        // 3. Paginate filtered or unfiltered results
+        $attritions = $query->paginate(12);
+
         return response()->json($attritions, 200);
     }
-
     /**
      * Show the form for creating a new resource.
      */

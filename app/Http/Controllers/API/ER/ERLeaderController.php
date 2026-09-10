@@ -13,10 +13,32 @@ class ERLeaderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $leaders = ERLeader::with('user')->withCount('subordinates')->get();
-        $users = User::whereIn('role', [1, 2])->with(['personal_information'])->get();
+        // Extract the location_id from the query parameters (e.g., ?location_id=1)
+        $locationId = $request->query('location_id');
+
+        // 1. Initialize the base queries
+        $leadersQuery = ERLeader::with('user', 'employee')->withCount('subordinates');
+        $usersQuery = User::whereIn('role', [1, 2])->with(['personal_information', 'account_employee']);
+
+        // 2. Apply location filtering if a location_id is present
+        if ($locationId) {
+
+            $leadersQuery->whereHas('employee', function ($query) use ($locationId) {
+                $query->where('location_id', $locationId);
+            });
+
+            // Filter Users assuming location_id is on the 'account_employees' table
+            $usersQuery->whereHas('account_employee', function ($query) use ($locationId) {
+                $query->where('location_id', $locationId);
+            });
+        }
+
+        // 3. Execute queries
+        $leaders = $leadersQuery->get();
+        $users = $usersQuery->get();
+
         return response()->json([
             'data' => $leaders,
             'users' => $users,
