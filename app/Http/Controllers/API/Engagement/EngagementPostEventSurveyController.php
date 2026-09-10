@@ -23,6 +23,7 @@ class EngagementPostEventSurveyController extends Controller
                 'post:id,title,headline,category,published_at',
                 'questions.options',
             ])
+            ->withCount('responses')
             ->orderByDesc('created_at')
             ->get()
             ->map(fn ($s) => $this->formatSurvey($s));
@@ -575,6 +576,7 @@ class EngagementPostEventSurveyController extends Controller
             'description'              => $survey->description,
             'status'                   => $survey->status,
             'published_at'             => $survey->published_at?->toDateString(),
+            'total_responses'          => $survey->responses_count ?? 0,
             'event'                    => $survey->post ? [
                 'id'       => $survey->post->id,
                 'headline' => $survey->post->headline ?? $survey->post->title,

@@ -236,12 +236,12 @@ export default function FooterSection() {
                             Terms of Service
                         </a>
                     </div> */}
-                    {/* <Link
+                    <Link
                         href="/privacy-policy"
                         className="text-xs text-white/30 transition-colors duration-200 hover:text-orange-400"
                     >
                         Privacy Policy
-                    </Link> */}
+                    </Link>
                 </motion.div>
             </div>
         </footer>
