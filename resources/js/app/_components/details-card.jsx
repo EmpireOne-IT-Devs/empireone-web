@@ -11,7 +11,7 @@ export default function DetailsCard({
     dropdown,
 }) {
     return (
-        <div className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] xl:w-[calc(25%-1.15rem)] max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between gap-4 text-sm relative overflow-visible h-fit self-start">
+        <div className="w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(50%-1rem)] xl:w-[calc(33.333%-1.15rem)] max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between gap-4 text-sm relative overflow-visible h-fit self-start">
 
             {/* Top Info Section */}
             <div className="flex flex-col gap-3">

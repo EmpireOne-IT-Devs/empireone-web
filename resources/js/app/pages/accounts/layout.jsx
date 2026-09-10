@@ -14,7 +14,7 @@ export default function Layout({ children }) {
     }, []);
 
     return (
-        <div className="h-full bg-white">
+        <div className="h-full">
             <SidebarSection />
             <div
                 className={`${
@@ -23,7 +23,7 @@ export default function Layout({ children }) {
             >
                 <TopbarSection />
                 <main
-                    className={`flex-1 p-6 bg-gray-100 ${
+                    className={`flex-1 p-6  ${
                         desktopCollapsed ? "ml-20" : ""
                     }`}
                 >

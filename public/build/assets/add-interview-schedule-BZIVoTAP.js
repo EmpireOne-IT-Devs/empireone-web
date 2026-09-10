@@ -1,0 +1,1 @@
+import{j as r}from"./app-CoQpWVJI.js";import{M as i}from"./modal-DJxBE8yq.js";import"./index-DlOj2p51.js";import"./iconBase-BlKrkr4r.js";function p({open:t,onClose:e}){return r.jsx(i,{isOpen:t,onClose:e,title:"Add Interview Schedule",width:"max-w-lg"})}export{p as default};

@@ -14,7 +14,7 @@ export default function CardAcknowledgementSection() {
     const accountId = typeof window !== 'undefined' ? window.location.pathname.split('/')[2] : '';
 
     return (
-        <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
+        <div className="flex gap-6 flex-wrap w-full justify-start items-start">
             {employees?.data?.map((res) => {
                 const empId = res.id || res.employee_id;
                 return (

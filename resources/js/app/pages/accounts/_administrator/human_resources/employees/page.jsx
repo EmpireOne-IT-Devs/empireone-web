@@ -12,18 +12,24 @@ export default function Page() {
     useEffect(() => {
         store.dispatch(get_employees_thunk());
     }, [window.location.search]);
+
     return (
         <Layout>
             <EmployeeRelationLayout>
-                <div className="flex w-full gap-3 mt-8">
-                    <div className="flex-1">
+                {/* Changed to flex-col for mobile, and md:flex-row for desktop */}
+                <div className=" flex w-full flex-col gap-3 md:flex-row md:items-center">
+                    {/* Added w-full so the search spans the whole width on mobile */}
+                    <div className="flex-1 w-full">
                         <SearchSection />
                     </div>
-                    <div className="flex-none">
+                    {/* Added w-full for mobile button width, scaling back to auto on md */}
+                    <div className="flex-none w-full md:w-auto">
                         <AddEmployeeSection />
                     </div>
                 </div>
-                <div className="flex flex-col gap-3">
+                
+                {/* Added mt-4 to ensure proper spacing between controls and the card list */}
+                <div className="mt-4 flex flex-col gap-3">
                     <CardAcknowledgementSection />
                     <PaginationSection />
                 </div>
