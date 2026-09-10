@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Timekeeping;
 use App\Http\Controllers\Controller;
 use App\Models\Timekeeping\Attendance;
 use App\Models\Timekeeping\AttendanceEmployeeSettings;
+use App\Models\Timekeeping\Holiday;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,17 @@ class AttendanceController extends Controller
             'time_out' => $setting?->time_out ?? self::SCHEDULE_OUT,
             'is_day_off' => (bool) ($setting?->is_day_off ?? false),
         ];
+    }
+
+    /**
+     * Resolve the holiday (if any) configured for the given date that applies
+     * to the authenticated user's site (or an "All" site holiday).
+     */
+    private function getHolidayForDate(string $date): ?Holiday
+    {
+        $site = Auth::user()?->account_employee?->site?->name;
+
+        return Holiday::forDateAndSite($date, $site);
     }
 
     /**
@@ -95,6 +107,7 @@ class AttendanceController extends Controller
             }
 
             $schedule = $this->getScheduleForDate($dateString);
+            $holiday = $this->getHolidayForDate($dateString);
 
             $records[] = [
                 'user_id' => Auth::id(),
@@ -107,6 +120,11 @@ class AttendanceController extends Controller
                 'late_minutes' => 0,
                 'undertime_minutes' => 0,
                 'remarks' => null,
+                'holiday_name' => $holiday?->name,
+                'is_regular_holiday' => $holiday?->type === 'Regular',
+                'is_special_holiday' => $holiday?->type === 'Special',
+                'regular_holiday_mins' => 0,
+                'special_holiday_mins' => 0,
                 'display_status' => $schedule['is_day_off'] ? 'Day Off' : 'Absent',
             ];
         }
@@ -121,11 +139,18 @@ class AttendanceController extends Controller
     {
         $date = $this->getAttendanceDate($request);
         $schedule = $this->getScheduleForDate($date);
+        $holiday = $this->getHolidayForDate($date);
 
         $attendance = Attendance::firstOrCreate(
             [
                 'user_id' => Auth::id(),
                 'date' => $date,
+            ],
+            [
+                'holiday_id' => $holiday?->id,
+                'holiday_name' => $holiday?->name,
+                'is_regular_holiday' => $holiday?->type === 'Regular',
+                'is_special_holiday' => $holiday?->type === 'Special',
             ]
         );
 
@@ -257,13 +282,44 @@ class AttendanceController extends Controller
             $clockOutTime->diffInMinutes($scheduleOutTime, false)
         );
 
-        $attendance->update([
+        $update = [
             'clock_out' => $clockOutTime->format('H:i:s'),
             'status' => 'clocked_out',
             'undertime_minutes' => $undertimeMinutes,
-        ]);
+        ];
+
+        if ($attendance->is_regular_holiday || $attendance->is_special_holiday) {
+            $workedMinutes = $this->getWorkedMinutes($attendance, $clockOutTime);
+
+            if ($attendance->is_regular_holiday) {
+                $update['regular_holiday_mins'] = $workedMinutes;
+            }
+
+            if ($attendance->is_special_holiday) {
+                $update['special_holiday_mins'] = $workedMinutes;
+            }
+        }
+
+        $attendance->update($update);
 
         return response()->json($attendance->fresh());
+    }
+
+    /**
+     * Total minutes actually worked between clock-in and clock-out, minus any break taken.
+     */
+    private function getWorkedMinutes(Attendance $attendance, Carbon $clockOutTime): int
+    {
+        $clockInTime = Carbon::createFromFormat('H:i:s', $attendance->clock_in);
+        $totalMinutes = max(0, $clockInTime->diffInMinutes($clockOutTime, false));
+
+        if ($attendance->break_start && $attendance->break_end) {
+            $breakStart = Carbon::createFromFormat('H:i:s', $attendance->break_start);
+            $breakEnd = Carbon::createFromFormat('H:i:s', $attendance->break_end);
+            $totalMinutes -= max(0, $breakStart->diffInMinutes($breakEnd, false));
+        }
+
+        return max(0, $totalMinutes);
     }
 
     private function getAttendanceRecord(Request $request): ?Attendance

@@ -1,1 +1,9 @@
+<<<<<<< HEAD:public/build/assets/header-section-CVF-EXQV.js
 import{j as t}from"./app-CKWBVqvu.js";function a(){return t.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[t.jsx("div",{className:"text-2xl font-black",children:"Talent Acquisition"}),t.jsx("div",{className:"text-gray-600",children:"Source, attract, and hire top talent to grow your organization."})]})}export{a as default};
+=======
+<<<<<<<< HEAD:public/build/assets/header-section-U5vXZIZt.js
+import{j as t}from"./app-dbHhARk_.js";function a(){return t.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[t.jsx("div",{className:"text-2xl font-black",children:"Talent Acquisition"}),t.jsx("div",{className:"text-gray-600",children:"Source, attract, and hire top talent to grow your organization."})]})}export{a as default};
+========
+import{j as t}from"./app-oTa0CiDV.js";function a(){return t.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[t.jsx("div",{className:"text-2xl font-black",children:"Talent Acquisition"}),t.jsx("div",{className:"text-gray-600",children:"Source, attract, and hire top talent to grow your organization."})]})}export{a as default};
+>>>>>>>> c6ea2c82712d8e53fb561e1c5402e34a9545d288:public/build/assets/header-section-C_757d0W.js
+>>>>>>> c3f98e153f831d61a9d1b6759ba9fe936d8c6271:public/build/assets/header-section-C_757d0W.js

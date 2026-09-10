@@ -1,0 +1,12 @@
+<<<<<<<< HEAD:public/build/assets/export-applicant-section-X-6TsU4p.js
+import{j as e}from"./app-dbHhARk_.js";import{D as t}from"./download-CmeyfTbI.js";import"./createLucideIcon-mL6thG06.js";function o(){return e.jsx("div",{className:"w-full py-2",children:e.jsxs("div",{className:"flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-5 rounded-2xl border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md",children:[e.jsxs("div",{className:"mb-4 sm:mb-0",children:[e.jsx("h3",{className:"text-lg font-bold text-gray-800",children:"Export Applicant Data"}),e.jsx("p",{className:"text-sm text-gray-500 mt-1",children:"Download a complete CSV report of all applicants, including their contact info and pipeline statuses."})]}),e.jsxs("a",{href:`/api/job/export_applicant_csv${window.location.search}`,className:`
+                        inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white 
+                        px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 
+                        shadow-sm hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap
+========
+import{j as e}from"./app-oTa0CiDV.js";import{D as t}from"./download-BAZBhP9_.js";import"./createLucideIcon-Dzsh2Dt1.js";function o(){return e.jsx("div",{className:"w-full py-2",children:e.jsxs("div",{className:"flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-5 rounded-2xl border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md",children:[e.jsxs("div",{className:"mb-4 sm:mb-0",children:[e.jsx("h3",{className:"text-lg font-bold text-gray-800",children:"Export Applicant Data"}),e.jsx("p",{className:"text-sm text-gray-500 mt-1",children:"Download a complete CSV report of all applicants, including their contact info and pipeline statuses."})]}),e.jsxs("a",{href:`/api/job/export_applicant_csv${window.location.search}`,className:`\r
+                        inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white \r
+                        px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 \r
+                        shadow-sm hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap\r
+>>>>>>>> c6ea2c82712d8e53fb561e1c5402e34a9545d288:public/build/assets/export-applicant-section-7t6F3yuS.js
+                    `,children:[e.jsx(t,{size:18,strokeWidth:2.5}),"Export CSV"]})]})})}export{o as default};

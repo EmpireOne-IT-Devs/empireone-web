@@ -1,1 +1,9 @@
+<<<<<<< HEAD:public/build/assets/newspaper-YORj5gv6.js
 import{c as e}from"./createLucideIcon-DkAXnPnu.js";const a=[["path",{d:"M15 18h-5",key:"95g1m2"}],["path",{d:"M18 14h-8",key:"sponae"}],["path",{d:"M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2",key:"39pd36"}],["rect",{width:"8",height:"4",x:"10",y:"6",rx:"1",key:"aywv1n"}]],t=e("newspaper",a);export{t as N};
+=======
+<<<<<<<< HEAD:public/build/assets/newspaper-CfRSdKX5.js
+import{c as e}from"./createLucideIcon-mL6thG06.js";const a=[["path",{d:"M15 18h-5",key:"95g1m2"}],["path",{d:"M18 14h-8",key:"sponae"}],["path",{d:"M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2",key:"39pd36"}],["rect",{width:"8",height:"4",x:"10",y:"6",rx:"1",key:"aywv1n"}]],t=e("newspaper",a);export{t as N};
+========
+import{c as e}from"./createLucideIcon-Dzsh2Dt1.js";const a=[["path",{d:"M15 18h-5",key:"95g1m2"}],["path",{d:"M18 14h-8",key:"sponae"}],["path",{d:"M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2",key:"39pd36"}],["rect",{width:"8",height:"4",x:"10",y:"6",rx:"1",key:"aywv1n"}]],t=e("newspaper",a);export{t as N};
+>>>>>>>> c6ea2c82712d8e53fb561e1c5402e34a9545d288:public/build/assets/newspaper-D5wZkC8F.js
+>>>>>>> c3f98e153f831d61a9d1b6759ba9fe936d8c6271:public/build/assets/newspaper-D5wZkC8F.js

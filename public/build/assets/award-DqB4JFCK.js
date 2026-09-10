@@ -1,1 +1,9 @@
+<<<<<<< HEAD:public/build/assets/award-DqB4JFCK.js
 import{c}from"./createLucideIcon-DkAXnPnu.js";const a=[["path",{d:"m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526",key:"1yiouv"}],["circle",{cx:"12",cy:"8",r:"6",key:"1vp47v"}]],e=c("award",a);export{e as A};
+=======
+<<<<<<<< HEAD:public/build/assets/award-DzzmV_lK.js
+import{c}from"./createLucideIcon-mL6thG06.js";const a=[["path",{d:"m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526",key:"1yiouv"}],["circle",{cx:"12",cy:"8",r:"6",key:"1vp47v"}]],e=c("award",a);export{e as A};
+========
+import{c}from"./createLucideIcon-Dzsh2Dt1.js";const a=[["path",{d:"m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526",key:"1yiouv"}],["circle",{cx:"12",cy:"8",r:"6",key:"1vp47v"}]],e=c("award",a);export{e as A};
+>>>>>>>> c6ea2c82712d8e53fb561e1c5402e34a9545d288:public/build/assets/award-CiIIU9BU.js
+>>>>>>> c3f98e153f831d61a9d1b6759ba9fe936d8c6271:public/build/assets/award-CiIIU9BU.js

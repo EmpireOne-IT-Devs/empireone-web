@@ -110,6 +110,32 @@ export default function AttendanceLogs({ refreshKey }) {
     const formatTime = (time) =>
         time ? moment(time, "HH:mm:ss").format("hh:mm A") : "-";
 
+    const getHolidayBadge = (log) => {
+        if (!log.is_regular_holiday && !log.is_special_holiday) return "-";
+
+        const label = log.is_regular_holiday
+            ? "Regular Holiday"
+            : "Special Holiday";
+        const badgeColor = log.is_regular_holiday
+            ? "bg-indigo-100 text-indigo-700"
+            : "bg-pink-100 text-pink-700";
+
+        return (
+            <div className="flex flex-col gap-0.5">
+                <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full w-fit ${badgeColor}`}
+                >
+                    {label}
+                </span>
+                {log.holiday_name && (
+                    <span className="text-[11px] text-gray-500">
+                        {log.holiday_name}
+                    </span>
+                )}
+            </div>
+        );
+    };
+
     return (
         <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-200 min-w-0 w-full shrink-0">
             <div className="flex justify-between mb-2">
@@ -157,6 +183,7 @@ export default function AttendanceLogs({ refreshKey }) {
                             <TableColumnsComponent column_name="Undertime (mins)" />
                             <TableColumnsComponent column_name="Breaktime (mins)" />
                             <TableColumnsComponent column_name="Breaktime Limit" />
+                            <TableColumnsComponent column_name="Holiday" />
                             <TableColumnsComponent column_name="Regular Overtime" />
                             <TableColumnsComponent column_name="Dayoff Overtime In minute" />
                             <TableColumnsComponent column_name="Dayoff Overtime Beyond 8hrs (mins)" />
@@ -253,7 +280,39 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {log.breaktime_limit ?? 0}
                                     </td>
 
-                                    {/* Continue your other columns here */}
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {getHolidayBadge(log)}
+                                    </td>
+
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {log.regular_holiday_mins ?? 0}
+                                    </td>
+
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {log.special_holiday_mins ?? 0}
+                                    </td>
+
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {resolveDisplayStatus(log) === "Day Off" ? "Yes" : "No"}
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
                                 </tr>
                             ))
                         )}
