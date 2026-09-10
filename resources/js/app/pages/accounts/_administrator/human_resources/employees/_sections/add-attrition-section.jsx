@@ -110,7 +110,11 @@ export default function AddAttritionSection({ props_data }) {
     const leaderInfo = props_data?.reporting_to?.leader?.user?.personal_information;
     const supervisorName = leaderInfo?.first_name || leaderInfo?.last_name
         ? `${leaderInfo?.first_name || ''} ${leaderInfo?.last_name || ''}`.trim()
-        : 'N/A';
+        : null;
+
+    const departmentManager = `${props_data?.department_manager?.first_name || ''} ${props_data?.department_manager?.last_name || ''}`.trim() ?? null;
+
+    console.log('props_datasss',)
 
     return (
         <div className="w-full">
@@ -211,6 +215,15 @@ export default function AddAttritionSection({ props_data }) {
                             </span>
                         </div>
 
+                        <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
+                                <FiUserCheck className="w-4 h-4 text-purple-600" /> Department Manager
+                            </span>
+                            <span className="text-gray-900 font-medium text-right truncate">
+                                {departmentManager}
+                            </span>
+                        </div>
+
                         {/* Hired Date */}
                         <div className="flex items-center justify-between gap-2">
                             <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
@@ -292,8 +305,48 @@ export default function AddAttritionSection({ props_data }) {
                         </div> */}
                     </div>
 
+                    {(!leaderInfo || !departmentManager) && (
+                        <div
+                            className="flex my-3 items-start rounded-md border-l-4 border-amber-500 bg-amber-50 p-4 shadow-sm transition-all duration-300 hover:shadow-md"
+                            role="alert"
+                        >
+                            <div className="flex items-center space-x-3">
+                                {/* Warning Icon */}
+                                <svg
+                                    className="h-6 w-6 text-amber-500 animate-pulse"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                    />
+                                </svg>
+
+                                <div>
+                                    <h3 className="text-sm font-semibold text-amber-800">
+                                        Missing Required Information
+                                    </h3>
+                                    <p className="mt-1 text-sm text-amber-700">
+                                        You cannot submit this form until both the <strong>manager</strong> and <strong>leader</strong> are defined.{" "}
+                                        <a
+                                            href={`/accounts/administrator/my_team/${props_data?.user_id}/personal_information`}
+                                            target='_blank'
+                                            className="font-medium text-amber-800 underline transition-colors hover:text-amber-900"
+                                        >
+                                            Click here to setup.
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <Button
                         type="submit"
+                        disabled={!leaderInfo || !departmentManager}
                         className="w-full mt-6 flex justify-center items-center gap-2"
                         loading={isSubmitting}
                     >

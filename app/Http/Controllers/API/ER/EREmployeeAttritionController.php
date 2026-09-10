@@ -59,6 +59,7 @@ class EREmployeeAttritionController extends Controller
         $immediateSupervisor = trim(($leaderInfo['first_name'] ?? '') . ' ' . ($leaderInfo['last_name'] ?? ''));
         // dd($e_r_leader?->employee->department->manager->employee->eogs_email);
         // Extract manager full name safely
+        // dd($request->department_manager);
         $managerInfo = $request->department_manager ?? null;
         $departmentManager = trim(($managerInfo['first_name'] ?? '') . ' ' . ($managerInfo['last_name'] ?? ''));
 
