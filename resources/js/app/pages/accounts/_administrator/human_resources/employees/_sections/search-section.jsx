@@ -1,5 +1,3 @@
-
-
 import Input from "@/app/_components/input";
 import React, { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
@@ -28,10 +26,26 @@ export default function SearchSection({ onSearch }) {
             onSearch(searchTerm);
         }
 
-        // 3. Update the URL via Inertia
+        // Parse all existing query parameters (location_id, status, etc.)
+        const currentParams = typeof window !== "undefined" 
+            ? Object.fromEntries(new URLSearchParams(window.location.search))
+            : {};
+
+        // Merge existing parameters with the updated search term
+        const updatedParams = {
+            ...currentParams,
+            search: searchTerm,
+        };
+
+        // If search is cleared, remove the key from params so URL stays clean
+        if (!searchTerm) {
+            delete updatedParams.search;
+        }
+
+        // 3. Update the URL via Inertia while preserving existing query params
         router.get(
             window.location.pathname,
-            { search: searchTerm },
+            updatedParams,
             { preserveState: true, replace: true }
         );
     };
@@ -39,13 +53,12 @@ export default function SearchSection({ onSearch }) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="bg-white shadow p-4 rounded-xl flex items-end gap-4 my-3 "
+            className="bg-white shadow p-4 rounded-xl flex items-end gap-4 my-3"
         >
             <div className="flex-1">
                 <Input
                     label="Search Employees..."
                     name="search"
-                    // 4. Link value and onChange to state for the default value to appear
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Enter name, ID, or department..."
