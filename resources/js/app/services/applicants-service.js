@@ -19,7 +19,7 @@ export async function get_employee_applicants_service() {
 }
 
 export async function get_applicant_pooling_service() {
-    return await axios.get("/api/job/get_applicant_pooling");
+    return await axios.get(`/api/job/get_applicant_pooling${window.location.search}`);
 }
 
 export async function approve_job_offer_service(data) {

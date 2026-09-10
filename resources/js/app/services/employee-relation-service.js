@@ -5,10 +5,7 @@ export async function get_employees_service(data, all = false) {
     const separator = search ? "&" : "?";
     const allParam = all ? `${separator}all=1` : "";
     return (
-        await axios.get(
-            `/api/accounts/employees${search}${allParam}`,
-            data,
-        )
+        await axios.get(`/api/accounts/employees${search}${allParam}`, data)
     ).data;
 }
 
@@ -17,7 +14,7 @@ export async function get_probationary_service() {
 }
 
 export async function get_attritions_service() {
-    return (await axios.get(`/api/er/attrition`)).data;
+    return (await axios.get(`/api/er/attrition${window.location.search}`)).data;
 }
 
 export async function add_attrition_service(data) {

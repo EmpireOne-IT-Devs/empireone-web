@@ -2,29 +2,37 @@ import { Link } from "@inertiajs/react";
 import React from "react";
 
 export default function TabsSection() {
-    // const currentParams = new URLSearchParams(window.location.search);
-    // const currentPath = currentParams.get("status");
-    const currentPath = window.location.pathname.split('/')[5] ?? 'regular'
+    // 1. Safeguard window object for SSR (Server-Side Rendering) to prevent crashes
+    const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+    const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+
+    // 2. Safely extract values
+    const currentLocationId = searchParams ? searchParams.get("location_id") : "";
+
+    // 3. Determine active tab safely. If index 5 is undefined or empty string, fallback to "regular"
+    const currentPath = pathname.split('/')[5] || 'regular';
+
     const tabs = [
         {
             label: "Regularization",
-            path: "/accounts/administrator/human_resources/employee_movements?status=Regular",
+            // Assuming status=Regular is always required here along with location
+            path: `/accounts/administrator/human_resources/employee_movements?location_id=${currentLocationId}&status=Regular`,
             active: currentPath === "regular",
         },
         {
             label: "Promotions & Transfer",
-            path: "/accounts/administrator/human_resources/employee_movements/promotions",
+            path: `/accounts/administrator/human_resources/employee_movements/promotions?location_id=${currentLocationId}`,
             active: currentPath === "promotions",
         },
-         {
+        {
             label: "Employee Change Form",
-            path: "/accounts/administrator/human_resources/employee_movements/change_form",
+            path: `/accounts/administrator/human_resources/employee_movements/change_form?location_id=${currentLocationId}`,
             active: currentPath === "change_form",
         },
     ];
 
     return (
-        <div className="w-full  my-8">
+        <div className="w-full my-8">
             {/* Modern Pill-Style Tab Navigation using standard links */}
             <div className="bg-gray-100/80 p-1.5 rounded-xl inline-flex shadow-inner border border-gray-200 w-full overflow-x-auto">
                 <nav className="flex space-x-1 w-full" aria-label="Tabs">

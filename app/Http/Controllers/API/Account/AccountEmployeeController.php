@@ -21,7 +21,7 @@ class AccountEmployeeController extends Controller
     {
         $search = $request->search;
 
-        $employees = AccountEmployee::with(['personal_information','department','er_leader','department_manager','account'])
+        $employees = AccountEmployee::with(['personal_information', 'department', 'er_leader', 'department_manager', 'account'])
             ->where('employee_id', 'LIKE', "%{$search}%")
             ->orWhereHas('personal_information', function ($query) use ($search) {
                 // Searches "First Last" OR "Last First" to catch all typing variations
@@ -111,6 +111,7 @@ class AccountEmployeeController extends Controller
     {
         // 1. Capture search input
         $search = $request->input('search');
+        $location_id = $request->input('location_id');
         $isAll = $request->boolean('all');
 
         // 2. Fetch all master acknowledgements with items and employee sign-off records.
@@ -137,6 +138,9 @@ class AccountEmployeeController extends Controller
             // Filter by Role
             ->whereHas('user', function ($query) {
                 $query->whereIn('role', [1, 2]);
+            })
+            ->when($location_id, function ($q) use ($location_id) {
+                $q->where('location_id', $location_id);
             })
             // Search Filter
             ->when($search, function ($query, $search) {

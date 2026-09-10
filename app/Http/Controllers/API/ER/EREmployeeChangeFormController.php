@@ -21,10 +21,23 @@ class EREmployeeChangeFormController extends Controller
      */
     public function index(Request $request)
     {
-        $ecfs = EREmployeeChangeForm::with(['employee','account_to','department_to'])->paginate();
+        $locationId = $request->query('location_id');
+
+        // 1. Initialize query with relationships
+        $query = EREmployeeChangeForm::with(['employee', 'account_to', 'department_to']);
+
+        // 2. Filter by location_id through the employee relationship if provided
+        if ($locationId) {
+            $query->whereHas('employee', function ($q) use ($locationId) {
+                $q->where('location_id', $locationId);
+            });
+        }
+
+        // 3. Paginate filtered or unfiltered results
+        $ecfs = $query->paginate();
+
         return response()->json($ecfs);
     }
-
     public function accept_employee_change_form(Request $request)
     {
         // 1. Fetch single model instance
