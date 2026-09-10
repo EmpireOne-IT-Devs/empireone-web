@@ -84,6 +84,12 @@ export default function SelectedDateSection({ children, data }) {
         { value: "Urdaneta", label: "Urdaneta" },
     ];
 
+    const typeOfHolidayOptions = [
+        { value: "", label: "Select Type of Holiday" },
+        { value: "Regular", label: "Regular Holiday" },
+        { value: "Special", label: "Special Holiday" },
+    ];
+
     return (
         <>
             <div className="h-full w-full" onClick={() => setOpen(true)}>
@@ -118,19 +124,7 @@ export default function SelectedDateSection({ children, data }) {
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
-                                        Talent
-                                    </th>
-
-                                    <th scope="col" className="px-6 py-3">
-                                        Start Time
-                                    </th>
-
-                                    <th scope="col" className="px-6 py-3">
-                                        End Time
-                                    </th>
-
-                                    <th scope="col" className="px-6 py-3">
-                                        Duration
+                                        Name of Holiday
                                     </th>
                                 </tr>
                             </thead>
@@ -143,21 +137,6 @@ export default function SelectedDateSection({ children, data }) {
                                     >
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                             {item.talent}
-                                        </td>
-
-                                        <td className="px-6 py-4">
-                                            {formatTime(item.startTime)}
-                                        </td>
-
-                                        <td className="px-6 py-4">
-                                            {formatTime(item.endTime)}
-                                        </td>
-
-                                        <td className="px-6 py-4">
-                                            {calculateDuration(
-                                                item.startTime,
-                                                item.endTime,
-                                            )}
                                         </td>
                                     </tr>
                                 ))}
@@ -176,13 +155,23 @@ export default function SelectedDateSection({ children, data }) {
                     <div className="flex justify-end flex-col gap-3 border-gray-100">
                         <Input placeholder="Enter holiday name" />
                         <Select
+                            options={typeOfHolidayOptions}
+                            outlined
+                            className="text-xs w-full"
+                        />
+                        <Select
                             options={siteOptions}
                             outlined
                             className="text-xs w-full"
                         />
                     </div>
                     <div className="flex justify-end gap-2 mt-2 border-t border-gray-100">
-                        <Button outlined onClick={() => setOpen(false)} className="text-sm" type="button">
+                        <Button
+                            outlined
+                            onClick={() => setOpen(false)}
+                            className="text-sm"
+                            type="button"
+                        >
                             Cancel
                         </Button>
                         <Button className="text-sm" type="submit">
