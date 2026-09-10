@@ -135,7 +135,7 @@ export default function TimekeepingSection() {
     })();
 
     return (
-        <div className="flex flex-1 gap-6">
+        <div className="flex flex-col gap-6">
             <div className="bg-white w-full rounded-2xl shadow-md p-6 border border-gray-200">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="p-3 bg-blue-100 rounded-full">
