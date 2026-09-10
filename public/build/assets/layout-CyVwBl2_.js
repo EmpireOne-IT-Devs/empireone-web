@@ -1,0 +1,1 @@
+import{j as o}from"./app-dbHhARk_.js";import r from"./tabs-section-Qv-FXKzb.js";import"./header-section-CVXKKDr1.js";function i({children:t}){return o.jsx(o.Fragment,{children:o.jsx(r,{children:t})})}export{i as default};

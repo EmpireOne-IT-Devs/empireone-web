@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SelectedDateSection from "./selected-date-section";
 import { change_job_applicant_schedule_service } from "@/app/services/job-applicant-schedule-service";
 import store from "@/app/store/store";
 import { get_job_applicant_schedule_thunk } from "@/app/redux/talent-acquisition-thunk";
 import { setAlert } from "@/app/redux/app-slice";
+import { get_holidays_service } from "@/app/services/holiday-service";
+import moment from "moment";
 
 const formatTime = (timeString) => {
     if (!timeString) return "";
@@ -39,10 +41,30 @@ export default function CalendarSection() {
     const [startTimeInput, setStartTimeInput] = useState("09:00");
     const [endTimeInput, setEndTimeInput] = useState("10:00");
     const [isSavingTime, setIsSavingTime] = useState(false);
+    const [holidays, setHolidays] = useState([]);
 
     const today = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
+
+    const fetchHolidays = useCallback(async () => {
+        const start_date = moment([currentYear, currentMonth, 1]).format("YYYY-MM-DD");
+        const end_date = moment([currentYear, currentMonth, 1])
+            .endOf("month")
+            .format("YYYY-MM-DD");
+
+        try {
+            const res = await get_holidays_service({ start_date, end_date });
+            setHolidays(res.data ?? []);
+        } catch (error) {
+            console.error("Failed to fetch holidays: ", error);
+            setHolidays([]);
+        }
+    }, [currentYear, currentMonth]);
+
+    useEffect(() => {
+        fetchHolidays();
+    }, [fetchHolidays]);
 
     const calendarSchedules = (schedules || []).map((sched) => {
         const [year, month, day] = sched.scheduled_date.split("-");
@@ -179,6 +201,10 @@ export default function CalendarSection() {
                 s.date.getFullYear() === currentYear,
         );
 
+        const dayHolidays = holidays.filter((h) =>
+            moment(h.date).isSame(dateObj, "day"),
+        );
+
         const isToday = today.toDateString() === dateString;
         const isSelected = selectedDate.toDateString() === dateString;
         const isHoveredDropTarget = isDraggingOverDate === dateString;
@@ -187,15 +213,17 @@ export default function CalendarSection() {
             <SelectedDateSection
                 key={day}
                 data={daySchedules}
+                holidays={dayHolidays}
                 selectedDate={dateObj}
-                onSelectDate={setSelectedDate}>
+                onSelectDate={setSelectedDate}
+                onHolidayChange={fetchHolidays}>
                 <div
                     onClick={() => setSelectedDate(dateObj)}
                     onDragOver={(e) => handleDragOver(e, dateString)}
                     onDragLeave={handleDragLeave}
                     onDrop={(e) => handleDrop(e, dateObj)}
                     className={`px-2 border-r border-b border-gray-100 transition-all flex flex-col gap-1 h-[110px] cursor-pointer relative group
-                        ${isSelected ? "bg-blue-50/50 ring-1 ring-inset ring-blue-200 z-10" : "bg-white hover:bg-gray-50"}
+                        ${isSelected ? "bg-blue-50/50 ring-1 ring-inset ring-blue-200 z-10" : dayHolidays.length > 0 ? "bg-rose-50/60 hover:bg-rose-50" : "bg-white hover:bg-gray-50"}
                         ${isHoveredDropTarget ? "bg-blue-100/60 ring-2 ring-dashed ring-blue-400 z-20 scale-[0.98]" : ""}
                     `}
                 >
@@ -213,6 +241,19 @@ export default function CalendarSection() {
                             </div>
                         )}
                     </div>
+
+                    {dayHolidays.length > 0 && (
+                        <div className="flex flex-col gap-0.5">
+                            {dayHolidays.slice(0, 1).map((holiday) => (
+                                <div
+                                    key={holiday.id}
+                                    className="text-[9px] font-bold leading-tight px-2 py-1 rounded-md bg-rose-100 text-rose-700 truncate"
+                                >
+                                    {holiday.name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                     <div className="flex flex-col gap-1 mt-1 flex-1 overflow-y-auto max-h-[64px] pr-0.5 custom-scrollbar">
                         {daySchedules.map((schedule) => (

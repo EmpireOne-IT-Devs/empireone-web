@@ -18,6 +18,17 @@ class Attendance extends Model
         'late_minutes',
         'undertime_minutes',
         'remarks',
+        'holiday_id',
+        'holiday_name',
+        'is_regular_holiday',
+        'is_special_holiday',
+        'regular_holiday_mins',
+        'special_holiday_mins',
+    ];
+
+    protected $casts = [
+        'is_regular_holiday' => 'boolean',
+        'is_special_holiday' => 'boolean',
     ];
 
     protected $appends = ['display_status'];
@@ -25,6 +36,11 @@ class Attendance extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function holiday()
+    {
+        return $this->belongsTo(Holiday::class);
     }
 
     public function getDisplayStatusAttribute(): string

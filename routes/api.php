@@ -46,6 +46,7 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventFileController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\API\Timekeeping\AttendanceEmployeeSettingsController;
+use App\Http\Controllers\API\Timekeeping\HolidayController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
@@ -269,6 +270,9 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('attendance/clock_out', [AttendanceController::class, 'clock_out']);
         Route::get('attendance_employee_settings', [AttendanceEmployeeSettingsController::class, 'index']);
         Route::post('attendance_employee_settings', [AttendanceEmployeeSettingsController::class, 'store']);
+        Route::get('holidays', [HolidayController::class, 'index']);
+        Route::post('holidays', [HolidayController::class, 'store']);
+        Route::delete('holidays/{holiday}', [HolidayController::class, 'destroy']);
     });
 
 
