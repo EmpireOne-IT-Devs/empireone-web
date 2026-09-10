@@ -74,7 +74,31 @@ export const update_engagement_post_thunk = createAsyncThunk(
     "engagement/updatePost",
     async ({ id, data }, { rejectWithValue }) => {
         try {
-            const response = await update_post_event_by_id_service(id, data);
+            const formData = new FormData();
+
+            Object.entries(data ?? {}).forEach(([key, value]) => {
+                if (value === undefined || value === null) return;
+
+                if (key === "retain_file_ids" && Array.isArray(value)) {
+                    value.forEach((fileId) => formData.append("retain_file_ids[]", fileId));
+                    return;
+                }
+
+                if (key === "images" && Array.isArray(value)) {
+                    value.forEach((image) => {
+                        if (image instanceof File) {
+                            formData.append("images[]", image);
+                        }
+                    });
+                    return;
+                }
+
+                formData.append(key, value);
+            });
+
+            formData.append("_method", "PUT");
+
+            const response = await update_post_event_by_id_service(id, formData);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CalendarDays, Newspaper, Send, Megaphone } from "lucide-react";
+import { CalendarDays, Newspaper, Send, Megaphone, ImagePlus, Trash2, X } from "lucide-react";
 import { FaPaperPlane } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import Modal from "@/app/_components/modal";
@@ -19,13 +19,18 @@ const CATEGORIES = [
 export default function EditPostModal({ post, onClose }) {
     const dispatch = useDispatch();
     const { updating } = useSelector((state) => state.engagement);
+    const fileInputRef = useRef(null);
     const [selectedCategory, setSelectedCategory] = useState(post?.category ?? "Event");
+    const [existingImages, setExistingImages] = useState([]);
+    const [newImages, setNewImages] = useState([]);
+    const [newPreviewUrls, setNewPreviewUrls] = useState([]);
 
     const {
         register,
         handleSubmit,
         setValue,
         watch,
+        reset,
         formState: { errors },
     } = useForm({
         defaultValues: {
@@ -36,11 +41,63 @@ export default function EditPostModal({ post, onClose }) {
 
     const content = watch("content");
 
+    useEffect(() => {
+        if (!post) return;
+
+        setSelectedCategory(post?.category ?? "Event");
+        setExistingImages((post?.files ?? []).map((file) => ({
+            id: file.id,
+            name: file.name,
+            url: file.url,
+        })));
+        setNewImages([]);
+        reset({
+            title: post?.title ?? "",
+            content: post?.content ?? "",
+        });
+    }, [post, reset]);
+
+    useEffect(() => {
+        const urls = newImages.map((image) => URL.createObjectURL(image));
+        setNewPreviewUrls(urls);
+
+        return () => {
+            urls.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [newImages]);
+
+    const addImages = (files) => {
+        const validImages = Array.from(files ?? []).filter((file) =>
+            file.type.startsWith("image/"),
+        );
+
+        if (validImages.length === 0) return;
+
+        setNewImages((prev) => [...prev, ...validImages]);
+    };
+
+    const removeExistingImage = (fileId) => {
+        setExistingImages((prev) => prev.filter((file) => file.id !== fileId));
+    };
+
+    const removeNewImage = (indexToRemove) => {
+        setNewImages((prev) => prev.filter((_, index) => index !== indexToRemove));
+    };
+
+    const openFilePicker = () => {
+        fileInputRef.current?.click();
+    };
+
     const onSubmit = async (data) => {
         const result = await dispatch(
             update_engagement_post_thunk({
                 id: post.id,
-                data: { ...data, category: selectedCategory },
+                data: {
+                    ...data,
+                    category: selectedCategory,
+                    retain_file_ids: existingImages.map((file) => file.id),
+                    images: newImages,
+                },
             }),
         );
         if (update_engagement_post_thunk.fulfilled.match(result)) {
@@ -126,6 +183,77 @@ export default function EditPostModal({ post, onClose }) {
                         Content <span className="text-red-500">*</span>
                     </label>
                     <Wysiwyg value={content ?? ""} onChange={(val) => setValue("content", val)} />
+                </div>
+
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between gap-3">
+                        <label className="text-sm font-semibold text-slate-700">
+                            Images <span className="text-xs font-normal text-slate-400">(optional)</span>
+                        </label>
+                        <button
+                            type="button"
+                            onClick={openFilePicker}
+                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+                        >
+                            <ImagePlus className="h-4 w-4" />
+                            Add images
+                        </button>
+                    </div>
+
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpg,image/jpeg,image/png,image/gif,image/webp"
+                        multiple
+                        className="hidden"
+                        onChange={(event) => addImages(event.target.files)}
+                    />
+
+                    {(existingImages.length > 0 || newImages.length > 0) ? (
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                            {existingImages.map((image) => (
+                                <div key={image.id} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                                    <img src={image.url} alt={image.name} className="aspect-square h-full w-full object-cover" />
+                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                                        <p className="truncate text-[11px] font-medium text-white">Existing image</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeExistingImage(image.id)}
+                                        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
+                                    >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
+                            ))}
+
+                            {newImages.map((image, index) => (
+                                <div key={`${image.name}-${index}`} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                                    <img src={newPreviewUrls[index]} alt={image.name} className="aspect-square h-full w-full object-cover" />
+                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-blue-950/75 to-transparent p-2">
+                                        <p className="truncate text-[11px] font-medium text-white">New image</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => removeNewImage(index)}
+                                        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
+                                    >
+                                        <X className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={openFilePicker}
+                            className="flex min-h-28 w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-6 py-5 text-center transition hover:border-slate-300 hover:bg-slate-100"
+                        >
+                            <ImagePlus className="h-6 w-6 text-slate-400" />
+                            <p className="text-sm font-medium text-slate-600">Add or replace post images</p>
+                            <p className="text-xs text-slate-400">PNG, JPG, GIF, WEBP</p>
+                        </button>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">

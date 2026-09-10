@@ -15,6 +15,28 @@ use Illuminate\Support\Carbon;
 
 class EngagementPostEventController extends Controller
 {
+    private function s3PublicUrl(string $path): string
+    {
+        $baseUrl = rtrim(config('filesystems.disks.s3.url') ?? '', '/');
+
+        if ($baseUrl === '') {
+            return $path;
+        }
+
+        return $baseUrl . '/' . ltrim($path, '/');
+    }
+
+    private function s3PathFromUrl(string $url): string
+    {
+        $baseUrl = rtrim(config('filesystems.disks.s3.url') ?? '', '/');
+
+        if ($baseUrl === '') {
+            return ltrim(parse_url($url, PHP_URL_PATH) ?? $url, '/');
+        }
+
+        return ltrim(str_replace($baseUrl, '', $url), '/');
+    }
+
     public function index(): JsonResponse
     {
         $userId = Auth::id();
@@ -74,7 +96,7 @@ class EngagementPostEventController extends Controller
                     'category'          => $post->category,
                     'headline'          => $post->headline,
                     'message'           => $post->message,
-                    'media_url'         => $post->media_path ? Storage::disk('s3')->url($post->media_path) : null,
+                    'media_url'         => $post->media_path ? $this->s3PublicUrl($post->media_path) : null,
                     'media_type'        => $post->media_type,
                     'month'             => $post->month,
                     'year'              => $post->year,
@@ -400,7 +422,7 @@ class EngagementPostEventController extends Controller
             foreach ($request->file('images') as $image) {
                 if ($image->isValid()) {
                     $path = $image->store('unified/engagement/posts', 's3');
-                    $url  = Storage::disk('s3')->url($path);
+                    $url  = $this->s3PublicUrl($path);
 
                     EngagementPostEventFile::create([
                         'engagement_post_event_id' => $post->id,
@@ -449,14 +471,57 @@ class EngagementPostEventController extends Controller
             'headline'   => ['sometimes', 'string', 'max:255'],
             'message'    => ['sometimes', 'string'],
             'publish_to' => ['sometimes', 'string', 'in:All Employees,Department Only,Management'],
+            'retain_file_ids'   => ['sometimes', 'array'],
+            'retain_file_ids.*' => ['integer', 'exists:engagement_post_event_files,id'],
+            'images'            => ['sometimes', 'array'],
+            'images.*'          => ['image', 'mimes:jpg,jpeg,png,gif,webp', 'max:5120'],
         ]);
 
-        $post->update($validated);
+        $postData = $validated;
+        unset($postData['retain_file_ids'], $postData['images']);
+
+        $post->update($postData);
+
+        if ($request->has('retain_file_ids')) {
+            $retainIds = collect($request->input('retain_file_ids', []))
+                ->filter()
+                ->map(fn ($id) => (int) $id)
+                ->values();
+
+            $filesToRemove = EngagementPostEventFile::where('engagement_post_event_id', $post->id)
+                ->when($retainIds->isNotEmpty(), fn ($query) => $query->whereNotIn('id', $retainIds->all()))
+                ->get();
+
+            foreach ($filesToRemove as $file) {
+                $relativePath = $this->s3PathFromUrl($file->url);
+
+                if (Storage::disk('s3')->exists($relativePath)) {
+                    Storage::disk('s3')->delete($relativePath);
+                }
+
+                $file->delete();
+            }
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('unified/engagement/posts', 's3');
+                    $url  = $this->s3PublicUrl($path);
+
+                    EngagementPostEventFile::create([
+                        'engagement_post_event_id' => $post->id,
+                        'name'                     => $image->getClientOriginalName(),
+                        'url'                      => $url,
+                    ]);
+                }
+            }
+        }
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Post updated successfully.',
-            'data'    => $post->fresh(['user:id,name,avatar']),
+            'data'    => $post->fresh(['user:id,name,avatar', 'files']),
         ]);
     }
 
