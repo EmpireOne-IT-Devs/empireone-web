@@ -26,6 +26,7 @@ export default function Page() {
         [&::-webkit-scrollbar-thumb]:rounded-full
     "
                 >
+                    
                     <CardUploadedImageSection refreshKey={refreshKey} />
                 </div>
             </ActivitiesLayout>

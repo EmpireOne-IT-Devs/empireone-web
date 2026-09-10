@@ -138,7 +138,7 @@ export default function SendJobOfferSection({ data }) {
                 className="h-full"
                 onClick={handleOpenModal}
             >
-                SEND&nbsp;JOB&nbsp;OFFER
+                CREATE&nbsp;JOB&nbsp;OFFER
             </Button>
 
             <Modal

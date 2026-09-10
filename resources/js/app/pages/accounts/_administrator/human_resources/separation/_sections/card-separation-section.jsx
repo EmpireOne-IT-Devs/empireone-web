@@ -25,7 +25,7 @@ export default function CardAcknowledgementSection() {
 
     console.log('attritions',attritions)
     return (
-        <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
+        <div className="flex gap-6 flex-wrap w-full justify-start items-start">
             {attritions?.map((res) => {
                 const empId = res.id || res.employee_id;
 

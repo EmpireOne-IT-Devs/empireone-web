@@ -19,7 +19,7 @@ export default function CardTeamSection() {
     const accountId = typeof window !== 'undefined' ? window.location.pathname.split('/')[2] : '';
 
     return (
-        <div className="flex bg-gray-100 gap-6 flex-wrap w-full justify-start items-start">
+        <div className="flex gap-6 flex-wrap w-full justify-start items-start">
             {data?.user?.leader?.subordinates?.map((result) => {
                 const res = result.employee;
                 console.log('daddada', res);

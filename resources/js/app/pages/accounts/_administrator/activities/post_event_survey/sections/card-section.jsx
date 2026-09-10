@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Card from "@/app/_components/card";
+import { useSelector } from "react-redux";
 import {
     TbCalendarEvent,
     TbClipboardList,
@@ -8,38 +9,56 @@ import {
     TbTrendingUp,
 } from "react-icons/tb";
 
-const cards = [
-    {
-        title: "Total Events",
-        value: 5,
-        icon: TbCalendarEvent,
-        color: "text-blue-600",
-        bg: "bg-blue-500",
-    },
-    {
-        title: "Survey Responses",
-        value: 5,
-        icon: TbClipboardList,
-        color: "text-white",
-        bg: "bg-violet-500",
-    },
-    {
-        title: "Active",
-        value: 0,
-        icon: TbCheck,
-        color: "text-white",
-        bg: "bg-emerald-500",
-    },
-    {
-        title: "Inactive",
-        value: 5,
-        icon: TbX,
-        color: "text-white",
-        bg: "bg-orange-500",
-    },
-];
-
 export default function CardSection() {
+    const { surveys = [] } = useSelector((state) => state.post_event_surveys);
+
+    const cards = useMemo(() => {
+        const eventSurveys = surveys.filter((survey) => {
+            const category = String(survey?.event?.category ?? "").trim().toLowerCase();
+            return category === "events calendar" || category === "event";
+        });
+
+        const totalResponses = eventSurveys.reduce(
+            (sum, survey) => sum + (survey.total_responses ?? 0),
+            0,
+        );
+
+        const activeSurveys = eventSurveys.filter(
+            (survey) => survey.status === "published",
+        ).length;
+
+        const inactiveSurveys = eventSurveys.filter(
+            (survey) => survey.status !== "published",
+        ).length;
+
+        return [
+            {
+                title: "Total Events",
+                value: eventSurveys.length,
+                icon: TbCalendarEvent,
+                bg: "bg-blue-500",
+            },
+            {
+                title: "Survey Responses",
+                value: totalResponses,
+                icon: TbClipboardList,
+                bg: "bg-violet-500",
+            },
+            {
+                title: "Active",
+                value: activeSurveys,
+                icon: TbCheck,
+                bg: "bg-emerald-500",
+            },
+            {
+                title: "Inactive",
+                value: inactiveSurveys,
+                icon: TbX,
+                bg: "bg-orange-500",
+            },
+        ];
+    }, [surveys]);
+
     return (
         <div className="flex flex-col sm:flex-row gap-4 my-3">
             {cards.map((card, index) => {
