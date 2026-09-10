@@ -1,9 +1,0 @@
-<<<<<<< HEAD:public/build/assets/open-survey-section-Bns2Wzue.js
-import{j as t,e as s}from"./app-CKWBVqvu.js";import{k as i}from"./index-zySy3LgP.js";import"./iconBase-z9o9Jtln.js";function p({survey:e}){const n=window.location.pathname.split("/")[2],o=()=>{s.visit(`/accounts/${n}/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:o,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(i,{className:"text-base"}),"Open Survey"]})}export{p as default};
-=======
-<<<<<<<< HEAD:public/build/assets/open-survey-section-Qij-_RfF.js
-import{j as t,e as s}from"./app-dbHhARk_.js";import{k as i}from"./index-CYYSr7WQ.js";import"./iconBase-CktC_ZMC.js";function p({survey:e}){const n=window.location.pathname.split("/")[2],o=()=>{s.visit(`/accounts/${n}/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:o,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(i,{className:"text-base"}),"Open Survey"]})}export{p as default};
-========
-import{j as t,e as s}from"./app-oTa0CiDV.js";import{k as i}from"./index-b42SZAoG.js";import"./iconBase-BUQvluSL.js";function p({survey:e}){const n=window.location.pathname.split("/")[2],o=()=>{s.visit(`/accounts/${n}/activities/post_event_survey/${e?.id}`)};return t.jsxs("button",{type:"button",onClick:o,className:"flex items-center gap-1.5 rounded-lg bg-orange-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-orange-600",children:[t.jsx(i,{className:"text-base"}),"Open Survey"]})}export{p as default};
->>>>>>>> c6ea2c82712d8e53fb561e1c5402e34a9545d288:public/build/assets/open-survey-section-Dv37jKrU.js
->>>>>>> c3f98e153f831d61a9d1b6759ba9fe936d8c6271:public/build/assets/open-survey-section-Dv37jKrU.js

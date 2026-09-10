@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/account-service-C3aNhpSA.js
-import{b as t}from"./app-dbHhARk_.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
-========
-import{b as t}from"./app-oTa0CiDV.js";async function e(a){const n=new FormData;return n.append("avatar",a),await t.post("/api/accounts/upload_avatar",n)}async function o(a){return await t.post("/api/accounts/save_signature",a)}async function i(a){return await t.post("/api/accounts/send_documents",a)}async function c(a){return await t.post("/api/accounts/edit_information",a)}async function r(a){return await t.post("/api/accounts/add_employee",a)}export{r as a,o as b,c as e,i as s,e as u};
->>>>>>>> c6ea2c82712d8e53fb561e1c5402e34a9545d288:public/build/assets/account-service-AirjV47V.js
