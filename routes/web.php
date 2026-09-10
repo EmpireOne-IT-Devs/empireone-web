@@ -257,6 +257,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/time_sheets', 'accounts/_administrator/time_keeping/time_sheets/page');
             Route::inertia('/reports', 'accounts/_administrator/time_keeping/reports/page');
             Route::inertia('/attendance_settings', 'accounts/_administrator/time_keeping/attendance_settings/page');
+            Route::inertia('/calendar_settings', 'accounts/_administrator/time_keeping/calendar_settings/page');
         });
 
         // Route::prefix('rnr')->group(function () { ... });
