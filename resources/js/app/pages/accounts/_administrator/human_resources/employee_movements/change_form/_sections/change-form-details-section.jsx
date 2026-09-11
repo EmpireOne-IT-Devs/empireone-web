@@ -83,7 +83,19 @@ export default function ChangeFormDetailsSection({ props_data = {} }) {
                             </div>
                             <div className="pt-2 border-t space-y-2">
                                 <p><span className="text-gray-500 w-24 inline-block">Basic Pay:</span> <span className="font-medium text-green-600">{props_data?.info_basic_pay_to ? `₱${props_data.info_basic_pay_to}` : '-'}</span></p>
-                                <p><span className="text-gray-500 w-24 inline-block">Allowances:</span> <span className="font-medium text-green-600">{props_data?.info_allowances_to ? `₱${props_data.info_allowances_to}` : '-'}</span></p>
+                                <p className="flex items-start gap-2">
+                                    <span className="text-gray-500 w-24 inline-block shrink-0">Allowances:</span>
+                                    <span className="font-medium text-green-600">
+                                        {props_data?.allowances?.length > 0
+                                            ? props_data.allowances.map((res, index) => (
+                                                <span key={index} className="block">
+                                                    {res?.name} - ₱{res?.amount_to}
+                                                </span>
+                                            ))
+                                            : "0"
+                                        }
+                                    </span>
+                                </p>
                             </div>
                         </div>
                     </div>

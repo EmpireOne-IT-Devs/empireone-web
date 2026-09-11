@@ -485,6 +485,16 @@ class JobApplicationController extends Controller
         ], 200);
     }
 
+    public function delete_job_offer(Request $request)
+    {
+        $jo = JobOffer::where('id', $request->id)->first();
+        if ($jo) {
+            $jo->delete();
+        }
+        return response()->json([
+            'status' => 'success',
+        ], 200);
+    }
     public function approve_job_offer(Request $request)
     {
 
