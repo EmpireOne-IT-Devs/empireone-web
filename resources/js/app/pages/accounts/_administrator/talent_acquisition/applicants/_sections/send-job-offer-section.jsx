@@ -9,6 +9,7 @@ import allowances from "@/app/lib/allowance";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_applicants_thunk, get_job_posting_by_id_thunk } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
+import TextArea from "@/app/_components/textarea";
 
 export default function SendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
@@ -33,6 +34,7 @@ export default function SendJobOfferSection({ data }) {
         reset,
         control,
         getValues,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
@@ -41,6 +43,7 @@ export default function SendJobOfferSection({ data }) {
             annual_leave: "",
             allowances: [],
             start_date: "",
+            leave_notes: ""
         },
     });
 
@@ -212,6 +215,29 @@ export default function SendJobOfferSection({ data }) {
                         {...register("annual_leave", { required: "Annual Leave is required" })}
                         error={errors.annual_leave}
                     />
+                    {/* <TextArea
+                        label="Annual Leave Notes"
+                        name="leave_notes"
+                        {...register("leave_notes", { required: "Annual Leave note is required" })}
+                        rows={2}
+                        error={errors?.leave_notes}
+                    /> */}
+
+                    <TextArea
+                        label="Annual Leave Notes"
+                        type="text"
+                        {...register("leave_notes", {
+                            required: "Required!",
+                        })}
+                        className="bg-transparent w-full outline-none text-black"
+                        error={errors?.leave_notes?.message ?? ""}
+                        onChange={(val) =>
+                            setValue(
+                                "leave_notes",
+                                val.target.value,
+                            )
+                        }
+                    />
 
                     {/* Interactive Benefits Guide */}
                     <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col gap-4">
@@ -235,8 +261,8 @@ export default function SendJobOfferSection({ data }) {
                                         key={res}
                                         onClick={() => toggleMedicalBenefit(res)}
                                         className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeMedical.includes(res)
-                                                ? "bg-blue-600 text-white border-blue-600"
-                                                : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                            ? "bg-blue-600 text-white border-blue-600"
+                                            : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
                                             }`}
                                     >
                                         {res}
@@ -256,8 +282,8 @@ export default function SendJobOfferSection({ data }) {
                                             key={res}
                                             onClick={() => setUpon(res)}
                                             className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${upon === res
-                                                    ? "bg-blue-600 text-white border-blue-600"
-                                                    : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                ? "bg-blue-600 text-white border-blue-600"
+                                                : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
                                                 }`}
                                         >
                                             {res}
@@ -279,8 +305,8 @@ export default function SendJobOfferSection({ data }) {
                                                 key={amount}
                                                 onClick={() => setActiveLimit(amount)}
                                                 className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeLimit === amount
-                                                        ? "bg-blue-600 text-white border-blue-600"
-                                                        : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                    ? "bg-blue-600 text-white border-blue-600"
+                                                    : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
                                                     }`}
                                             >
                                                 {amount}
@@ -298,8 +324,8 @@ export default function SendJobOfferSection({ data }) {
                                                 key={room}
                                                 onClick={() => setActiveRoomBoard(room)}
                                                 className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeRoomBoard === room
-                                                        ? "bg-blue-600 text-white border-blue-600"
-                                                        : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                    ? "bg-blue-600 text-white border-blue-600"
+                                                    : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
                                                     }`}
                                             >
                                                 {room}
@@ -321,8 +347,8 @@ export default function SendJobOfferSection({ data }) {
                                             key={dep}
                                             onClick={() => setActiveDependent(dep)}
                                             className={`px-3 py-1.5 text-[10px] font-bold rounded-full shadow-sm transition-all cursor-pointer border ${activeDependent === dep
-                                                    ? "bg-blue-600 text-white border-blue-600"
-                                                    : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
+                                                ? "bg-blue-600 text-white border-blue-600"
+                                                : "bg-white text-blue-700 border-blue-200 hover:bg-blue-100"
                                                 }`}
                                         >
                                             {dep}

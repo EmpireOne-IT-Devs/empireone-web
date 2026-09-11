@@ -337,10 +337,14 @@ const OfferLetterPDF = (data) => {
                 <View style={styles.row}>
                     <Text style={styles.label}>Annual Leave</Text>
                     <Text style={styles.value}>
-                        {data?.annual_leave} leave credits to be utilized as VL/SL/EL upon your {data?.effective_period?.toLowerCase()}{"\n"}
+                        {data?.annual_leave} leave credits to be utilized as VL/SL/EL upon {data?.effective_period?.toLowerCase()}{"\n"}
                         Max of {data?.annual_leave} un-used leaves credits are convertible to cash.
                     </Text>
                 </View>
+
+                <ListItem>
+                    {data?.leave_notes}
+                </ListItem>
                 <View style={styles.row}>
                     <Text style={styles.label}>Government Mandated Benefits</Text>
                     <Text style={styles.value}>&nbsp;&nbsp;as applicable</Text>
@@ -350,7 +354,7 @@ const OfferLetterPDF = (data) => {
                         <View style={styles.row}>
                             <Text style={styles.label}>Medical Benefits</Text>
                             <Text style={styles.value}>
-                                effective period of coverage is {data?.effective_period}
+                                effective period of coverage is upon {data?.effective_period}
                             </Text>
                         </View>
 
@@ -414,8 +418,9 @@ const OfferLetterPDF = (data) => {
                     </>
                 )}
 
+
                 {
-                    data?.allowances.length != 0 && <View style={[styles.row, { marginTop: 20 }]}>
+                    data?.allowances?.length != 0 && <View style={[styles.row, { marginTop: 20 }]}>
                         <Text style={styles.label}>Allowances</Text>
                         <View style={{ flexDirection: "column", gap: 1, width: "100%", marginLeft: 30 }}>
                             {data?.allowances?.map((res, index) => {
@@ -442,6 +447,8 @@ const OfferLetterPDF = (data) => {
                     All Philippines government mandated benefits will be provided as
                     applicable
                 </ListItem>
+
+
 
                 <View style={{ marginTop: 40 }}>
                     <Text style={styles.paragraph}>
@@ -583,6 +590,7 @@ const AgentOfferLetterPreview = ({ name, type, applicant_signature }) => {
         date: moment().format("LL"),
         room: job_offer?.room,
         medical_benefits: job_offer?.medical_benefits,
+        leave_notes: job_offer?.leave_notes,
         dependent: job_offer?.dependent,
         annual_leave: job_offer?.annual_leave,
         benefit_limit: job_offer?.benefit_limit,

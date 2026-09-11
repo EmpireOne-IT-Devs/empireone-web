@@ -445,7 +445,8 @@ class JobApplicationController extends Controller
                     'benefit_limit' => $request->benefit_limit,
                     'annual_leave' => $request->annual_leave,
                     'effective_period' => $request->effective_period,
-                    'medical_benefits' => $request->medical_benefits
+                    'medical_benefits' => $request->medical_benefits,
+                    'leave_notes' => $request->leave_notes
                 ]);
                 $jo->load('user');
             } else {
@@ -463,7 +464,8 @@ class JobApplicationController extends Controller
                     'benefit_limit' => $request->benefit_limit,
                     'annual_leave' => $request->annual_leave,
                     'effective_period' => $request->effective_period,
-                    'medical_benefits' => $request->medical_benefits
+                    'medical_benefits' => $request->medical_benefits,
+                    'leave_notes' => $request->leave_notes
                 ]);
             }
         }
