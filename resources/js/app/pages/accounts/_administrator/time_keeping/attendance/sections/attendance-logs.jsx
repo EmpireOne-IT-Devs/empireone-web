@@ -107,8 +107,11 @@ export default function AttendanceLogs({ refreshKey }) {
         }
     };
 
-    const formatTime = (time) =>
-        time ? moment(time, "HH:mm:ss").format("hh:mm A") : "-";
+    const formatTime = (time) => {
+        if (!time) return "-";
+
+        return moment(time).format("MMM D, YYYY hh:mm A");
+    };
 
     const getHolidayBadge = (log) => {
         if (!log.is_regular_holiday && !log.is_special_holiday) return "-";
@@ -245,7 +248,24 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatTime(log.clock_in)}
+                                        {log.clock_in_date &&
+                                        log.clock_in_time ? (
+                                            <div className="flex flex-col">
+                                                <span className="text-sm text-gray-500">
+                                                    {moment(
+                                                        log.clock_in_date,
+                                                    ).format("LL")}
+                                                </span>
+                                                <span>
+                                                    {moment(
+                                                        log.clock_in_time,
+                                                        "HH:mm:ss",
+                                                    ).format("hh:mm A")}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            "-"
+                                        )}
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
@@ -253,7 +273,24 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatTime(log.clock_out)}
+                                        {log.clock_out_date &&
+                                        log.clock_out_time ? (
+                                            <div className="flex flex-col">
+                                                <span className="text-sm text-gray-500">
+                                                    {moment(
+                                                        log.clock_out_date,
+                                                    ).format("LL")}
+                                                </span>
+                                                <span>
+                                                    {moment(
+                                                        log.clock_out_time,
+                                                        "HH:mm:ss",
+                                                    ).format("hh:mm A")}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            "-"
+                                        )}
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
@@ -284,13 +321,27 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {getHolidayBadge(log)}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.regular_holiday_mins ?? 0}
@@ -300,19 +351,41 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {log.special_holiday_mins ?? 0}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {resolveDisplayStatus(log) === "Day Off" ? "Yes" : "No"}
+                                        -
                                     </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {resolveDisplayStatus(log) === "Day Off"
+                                            ? "Yes"
+                                            : "No"}
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
                                 </tr>
                             ))
                         )}

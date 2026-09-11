@@ -52,19 +52,19 @@ export default function TimekeepingSection() {
 
     const status = attendance?.status;
 
-    const canClockIn = !attendance?.clock_in;
+    const canClockIn = !attendance?.clock_in_at;
 
     const canBreak =
-        attendance?.clock_in &&
-        !attendance?.break_start &&
-        !attendance?.clock_out;
+        attendance?.clock_in_at &&
+        !attendance?.break_start_at &&
+        !attendance?.clock_out_at;
 
     const canBackFromBreak =
-        attendance?.break_start &&
-        !attendance?.break_end &&
-        !attendance?.clock_out;
+        attendance?.break_start_at &&
+        !attendance?.break_end_at &&
+        !attendance?.clock_out_at;
 
-    const canClockOut = attendance?.clock_in && !attendance?.clock_out;
+    const canClockOut = attendance?.clock_in_at && !attendance?.clock_out_at;
 
     const isDayOff = !!schedule?.is_day_off;
 
@@ -107,12 +107,24 @@ export default function TimekeepingSection() {
     };
 
     const formatTime = (t) =>
+        t ? moment(t).format("MMM D, YYYY hh:mm A") : "--:--";
+
+    // Schedule time_in/time_out are hour-of-day only (not a specific punch date).
+    const formatScheduleTime = (t) =>
         t ? moment(t, "HH:mm:ss").format("hh:mm A") : "--:--";
 
+    // A shift like 5pm-2am ends the next calendar day.
+    const isOvernightShift =
+        schedule?.time_in &&
+        schedule?.time_out &&
+        moment(schedule.time_out, "HH:mm:ss").isSameOrBefore(
+            moment(schedule.time_in, "HH:mm:ss"),
+        );
+
     const breakDuration = () => {
-        if (!attendance?.break_start || !attendance?.break_end) return "--:--";
-        const mins = moment(attendance.break_end, "HH:mm:ss").diff(
-            moment(attendance.break_start, "HH:mm:ss"),
+        if (!attendance?.break_start_at || !attendance?.break_end_at) return "--:--";
+        const mins = moment(attendance.break_end_at).diff(
+            moment(attendance.break_start_at),
             "minutes",
         );
         const h = Math.floor(mins / 60)
@@ -246,7 +258,7 @@ export default function TimekeepingSection() {
                                         Break Starts
                                     </p>
                                     <p className="font-bold text-green-700">
-                                        {formatTime(attendance?.break_start)}
+                                        {formatTime(attendance?.break_start_at)}
                                     </p>
                                 </div>
                                 <div className="bg-red-50 p-3 rounded-lg">
@@ -254,7 +266,7 @@ export default function TimekeepingSection() {
                                         Break Ends
                                     </p>
                                     <p className="font-bold text-red-700">
-                                        {formatTime(attendance?.break_end)}
+                                        {formatTime(attendance?.break_end_at)}
                                     </p>
                                 </div>
                                 <div className="bg-orange-50 p-3 rounded-lg">
@@ -272,7 +284,7 @@ export default function TimekeepingSection() {
                                         Clock In
                                     </p>
                                     <p className="font-bold text-green-700">
-                                        {formatTime(attendance?.clock_in)}
+                                        {formatTime(attendance?.clock_in_at)}
                                     </p>
                                 </div>
                                 <div className="bg-red-50 p-3 rounded-lg">
@@ -280,7 +292,7 @@ export default function TimekeepingSection() {
                                         Clock Out
                                     </p>
                                     <p className="font-bold text-red-700">
-                                        {formatTime(attendance?.clock_out)}
+                                        {formatTime(attendance?.clock_out_at)}
                                     </p>
                                 </div>
                             </div>
@@ -292,7 +304,7 @@ export default function TimekeepingSection() {
                                     <p className="font-bold text-green-700">
                                         {schedule?.is_day_off
                                             ? "Day Off"
-                                            : formatTime(schedule?.time_in)}
+                                            : formatScheduleTime(schedule?.time_in)}
                                     </p>
                                 </div>
                                 <div className="bg-red-50 p-3 rounded-lg">
@@ -302,7 +314,9 @@ export default function TimekeepingSection() {
                                     <p className="font-bold text-red-700">
                                         {schedule?.is_day_off
                                             ? "Day Off"
-                                            : formatTime(schedule?.time_out)}
+                                            : `${formatScheduleTime(schedule?.time_out)}${
+                                                  isOvernightShift ? " (next day)" : ""
+                                              }`}
                                     </p>
                                 </div>
                             </div>

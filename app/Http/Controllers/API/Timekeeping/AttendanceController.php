@@ -89,7 +89,7 @@ class AttendanceController extends Controller
         }
 
         $logs = $query->get()->keyBy(
-            fn ($log) => Carbon::parse($log->date)->toDateString()
+            fn($log) => Carbon::parse($log->date)->toDateString()
         );
 
         $endDate = $requestEndDate ?? Carbon::parse(
@@ -112,10 +112,18 @@ class AttendanceController extends Controller
             $records[] = [
                 'user_id' => Auth::id(),
                 'date' => $dateString,
-                'clock_in' => null,
-                'break_start' => null,
-                'break_end' => null,
-                'clock_out' => null,
+                'clock_in_date' => null,
+                'clock_in_time' => null,
+                'break_start_date' => null,
+                'break_start_time' => null,
+                'break_end_date' => null,
+                'break_end_time' => null,
+                'clock_out_date' => null,
+                'clock_out_time' => null,
+                'clock_in_at' => null,
+                'break_start_at' => null,
+                'break_end_at' => null,
+                'clock_out_at' => null,
                 'status' => $schedule['is_day_off'] ? 'day_off' : 'absent',
                 'late_minutes' => 0,
                 'undertime_minutes' => 0,
@@ -154,7 +162,7 @@ class AttendanceController extends Controller
             ]
         );
 
-        if ($attendance->clock_in) {
+        if ($attendance->clock_in_time) {
             return response()->json([
                 'message' => 'Already clocked in for this date.'
             ], 422);
@@ -177,7 +185,8 @@ class AttendanceController extends Controller
             $scheduleTime->diffInMinutes($clockInTime, false)
         );
         $attendance->update([
-            'clock_in' => $clockIn->format('H:i:s'),
+            'clock_in_date' => $clockIn->toDateString(),
+            'clock_in_time' => $clockIn->format('H:i:s'),
             'status' => 'clocked_in',
             'late_minutes' => $lateMinutes,
         ]);
@@ -198,14 +207,17 @@ class AttendanceController extends Controller
             ], 422);
         }
 
-        if ($attendance->break_start) {
+        if ($attendance->break_start_time) {
             return response()->json([
                 'message' => 'Break already started.'
             ], 422);
         }
 
+        $breakStart = Carbon::now();
+
         $attendance->update([
-            'break_start' => now()->format('H:i:s'),
+            'break_start_date' => $breakStart->toDateString(),
+            'break_start_time' => $breakStart->format('H:i:s'),
             'status' => 'on_break',
         ]);
 
@@ -225,20 +237,23 @@ class AttendanceController extends Controller
             ], 404);
         }
 
-        if (!$attendance->break_start) {
+        if (!$attendance->break_start_time) {
             return response()->json([
                 'message' => 'Break has not started.'
             ], 422);
         }
 
-        if ($attendance->break_end) {
+        if ($attendance->break_end_time) {
             return response()->json([
                 'message' => 'Break already ended.'
             ], 422);
         }
 
+        $breakEnd = Carbon::now();
+
         $attendance->update([
-            'break_end' => now()->format('H:i:s'),
+            'break_end_date' => $breakEnd->toDateString(),
+            'break_end_time' => $breakEnd->format('H:i:s'),
             'status' => 'clocked_in',
         ]);
 
@@ -257,7 +272,7 @@ class AttendanceController extends Controller
             ], 404);
         }
 
-        if ($attendance->clock_out) {
+        if ($attendance->clock_out_time) {
             return response()->json([
                 'message' => 'Already clocked out.'
             ], 422);
@@ -267,7 +282,9 @@ class AttendanceController extends Controller
 
         $clockOut = Carbon::now();
 
-        $clockOutTime = Carbon::createFromFormat(
+        // Compare only the time-of-day portion against the scheduled time out,
+        // since the shift may end after midnight on the following calendar day.
+        $clockOutTimeOfDay = Carbon::createFromFormat(
             'H:i:s',
             $clockOut->format('H:i:s')
         );
@@ -279,17 +296,18 @@ class AttendanceController extends Controller
 
         $undertimeMinutes = max(
             0,
-            $clockOutTime->diffInMinutes($scheduleOutTime, false)
+            $clockOutTimeOfDay->diffInMinutes($scheduleOutTime, false)
         );
 
         $update = [
-            'clock_out' => $clockOutTime->format('H:i:s'),
+            'clock_out_date' => $clockOut->toDateString(),
+            'clock_out_time' => $clockOut->format('H:i:s'),
             'status' => 'clocked_out',
             'undertime_minutes' => $undertimeMinutes,
         ];
 
         if ($attendance->is_regular_holiday || $attendance->is_special_holiday) {
-            $workedMinutes = $this->getWorkedMinutes($attendance, $clockOutTime);
+            $workedMinutes = $this->getWorkedMinutes($attendance, $clockOut);
 
             if ($attendance->is_regular_holiday) {
                 $update['regular_holiday_mins'] = $workedMinutes;
@@ -307,16 +325,36 @@ class AttendanceController extends Controller
 
     /**
      * Total minutes actually worked between clock-in and clock-out, minus any break taken.
+     * Uses full datetimes (not just time-of-day) so overnight shifts are computed correctly.
      */
-    private function getWorkedMinutes(Attendance $attendance, Carbon $clockOutTime): int
+    private function getWorkedMinutes(Attendance $attendance, Carbon $clockOut): int
     {
-        $clockInTime = Carbon::createFromFormat('H:i:s', $attendance->clock_in);
-        $totalMinutes = max(0, $clockInTime->diffInMinutes($clockOutTime, false));
+        $clockIn = Carbon::parse(
+            $attendance->clock_in_date . ' ' . $attendance->clock_in_time
+        );
 
-        if ($attendance->break_start && $attendance->break_end) {
-            $breakStart = Carbon::createFromFormat('H:i:s', $attendance->break_start);
-            $breakEnd = Carbon::createFromFormat('H:i:s', $attendance->break_end);
-            $totalMinutes -= max(0, $breakStart->diffInMinutes($breakEnd, false));
+        $totalMinutes = max(
+            0,
+            $clockIn->diffInMinutes($clockOut, false)
+        );
+
+        if (
+            $attendance->break_start_date && $attendance->break_start_time &&
+            $attendance->break_end_date && $attendance->break_end_time
+        ) {
+
+            $breakStart = Carbon::parse(
+                $attendance->break_start_date . ' ' . $attendance->break_start_time
+            );
+
+            $breakEnd = Carbon::parse(
+                $attendance->break_end_date . ' ' . $attendance->break_end_time
+            );
+
+            $totalMinutes -= max(
+                0,
+                $breakStart->diffInMinutes($breakEnd, false)
+            );
         }
 
         return max(0, $totalMinutes);
