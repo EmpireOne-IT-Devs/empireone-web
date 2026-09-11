@@ -14,6 +14,7 @@ class AttendanceController extends Controller
 {
     private const SCHEDULE_IN  = '08:00:00';
     private const SCHEDULE_OUT = '17:00:00';
+    private const DEFAULT_BREAK_MINUTES = 60;
 
     /**
      * Return the attendance record and the employee's schedule for the given date (defaults to today).
@@ -48,6 +49,7 @@ class AttendanceController extends Controller
             'time_in' => $setting?->time_in ?? self::SCHEDULE_IN,
             'time_out' => $setting?->time_out ?? self::SCHEDULE_OUT,
             'is_day_off' => (bool) ($setting?->is_day_off ?? false),
+            'break_minutes' => (int) ($setting?->break_minutes ?? self::DEFAULT_BREAK_MINUTES),
         ];
     }
 
@@ -100,18 +102,27 @@ class AttendanceController extends Controller
 
         for ($date = $endDate->copy(); $date->gte($startDate); $date->subDay()) {
             $dateString = $date->toDateString();
+            $schedule = $this->getScheduleForDate($dateString);
+            $breaktimeLimit = $schedule['is_day_off'] ? 0 : $schedule['break_minutes'];
 
             if ($logs->has($dateString)) {
-                $records[] = $logs->get($dateString);
+                $record = $logs->get($dateString);
+                $breaktimeMinutes = $this->getBreaktimeMinutes($record);
+                $record->breaktime_limit = $breaktimeLimit;
+                $record->breaktime_minutes = $breaktimeMinutes;
+                $record->overbreak_minutes = max(0, $breaktimeMinutes - $breaktimeLimit);
+                $records[] = $record;
                 continue;
             }
 
-            $schedule = $this->getScheduleForDate($dateString);
             $holiday = $this->getHolidayForDate($dateString);
 
             $records[] = [
                 'user_id' => Auth::id(),
                 'date' => $dateString,
+                'breaktime_limit' => $breaktimeLimit,
+                'breaktime_minutes' => 0,
+                'overbreak_minutes' => 0,
                 'clock_in_date' => null,
                 'clock_in_time' => null,
                 'break_start_date' => null,
@@ -358,6 +369,18 @@ class AttendanceController extends Controller
         }
 
         return max(0, $totalMinutes);
+    }
+
+    /**
+     * Minutes actually spent on break (0 if the break hasn't ended yet).
+     */
+    private function getBreaktimeMinutes(Attendance $attendance): int
+    {
+        if (!$attendance->break_start_at || !$attendance->break_end_at) {
+            return 0;
+        }
+
+        return max(0, $attendance->break_start_at->diffInMinutes($attendance->break_end_at, false));
     }
 
     private function getAttendanceRecord(Request $request): ?Attendance
