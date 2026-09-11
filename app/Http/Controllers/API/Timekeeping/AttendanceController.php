@@ -104,6 +104,7 @@ class AttendanceController extends Controller
             $dateString = $date->toDateString();
             $schedule = $this->getScheduleForDate($dateString);
             $breaktimeLimit = $schedule['is_day_off'] ? 0 : $schedule['break_minutes'];
+            $requiredMinutes = $this->getRequiredMinutes($schedule);
 
             if ($logs->has($dateString)) {
                 $record = $logs->get($dateString);
@@ -111,6 +112,10 @@ class AttendanceController extends Controller
                 $record->breaktime_limit = $breaktimeLimit;
                 $record->breaktime_minutes = $breaktimeMinutes;
                 $record->overbreak_minutes = max(0, $breaktimeMinutes - $breaktimeLimit);
+                $record->schedule_time_in = $schedule['time_in'];
+                $record->schedule_time_out = $schedule['time_out'];
+                $record->is_day_off = $schedule['is_day_off'];
+                $record->required_minutes = $requiredMinutes;
                 $records[] = $record;
                 continue;
             }
@@ -123,6 +128,10 @@ class AttendanceController extends Controller
                 'breaktime_limit' => $breaktimeLimit,
                 'breaktime_minutes' => 0,
                 'overbreak_minutes' => 0,
+                'schedule_time_in' => $schedule['time_in'],
+                'schedule_time_out' => $schedule['time_out'],
+                'is_day_off' => $schedule['is_day_off'],
+                'required_minutes' => $requiredMinutes,
                 'clock_in_date' => null,
                 'clock_in_time' => null,
                 'break_start_date' => null,
@@ -381,6 +390,26 @@ class AttendanceController extends Controller
         }
 
         return max(0, $attendance->break_start_at->diffInMinutes($attendance->break_end_at, false));
+    }
+
+    /**
+     * Scheduled shift duration (time_in to time_out, wrapping past midnight for
+     * overnight shifts) minus the employee's break allowance, in minutes.
+     */
+    private function getRequiredMinutes(array $schedule): int
+    {
+        if ($schedule['is_day_off'] || !$schedule['time_in'] || !$schedule['time_out']) {
+            return 0;
+        }
+
+        $start = Carbon::createFromFormat('H:i:s', $schedule['time_in']);
+        $end = Carbon::createFromFormat('H:i:s', $schedule['time_out']);
+
+        if ($end->lessThanOrEqualTo($start)) {
+            $end->addDay();
+        }
+
+        return max(0, $end->diffInMinutes($start, true) - $schedule['break_minutes']);
     }
 
     private function getAttendanceRecord(Request $request): ?Attendance
