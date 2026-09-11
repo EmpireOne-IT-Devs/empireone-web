@@ -1,16 +1,58 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { get_attendance_logs_service } from "@/app/services/attendance-service";
+import {
+    get_attendance_for_date_service,
+    get_attendance_logs_service,
+} from "@/app/services/attendance-service";
 import FilterLogDate from "./filter-log-date";
 import TableColumnsComponent from "../component/table-columns-component";
 
 export default function AttendanceLogs({ refreshKey }) {
+    const [schedule, setSchedule] = useState(null);
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [endDate, setEndDate] = useState("");
     const [startDate, setStartDate] = useState(
         moment().subtract(19, "days").format("YYYY-MM-DD"),
     );
+
+    useEffect(() => {
+        const fetchSchedule = async () => {
+            try {
+                const res = await get_attendance_for_date_service(startDate);
+                setSchedule(res.data.schedule);
+            } catch {
+                setSchedule(null);
+            }
+        };
+
+        fetchSchedule();
+    }, [refreshKey, startDate, endDate]);
+
+    const formatScheduleTime = (t) =>
+        t ? moment(t, "HH:mm:ss").format("hh:mm A") : "--:--";
+
+    const getRequiredMinutes = (timeIn, timeOut, isOvernight = false) => {
+        if (!timeIn || !timeOut) return 0;
+
+        const start = moment(timeIn, ["HH:mm:ss", "HH:mm"]);
+        const end = moment(timeOut, ["HH:mm:ss", "HH:mm"]);
+
+        if (!start.isValid() || !end.isValid()) return 0;
+
+        if (isOvernight || end.isSameOrBefore(start)) {
+            end.add(1, "day");
+        }
+
+        return end.diff(start, "minutes");
+    };
+
+    const isOvernightShift =
+        schedule?.time_in &&
+        schedule?.time_out &&
+        moment(schedule.time_out, "HH:mm:ss").isSameOrBefore(
+            moment(schedule.time_in, "HH:mm:ss"),
+        );
 
     useEffect(() => {
         const fetchLogs = async () => {
@@ -107,8 +149,11 @@ export default function AttendanceLogs({ refreshKey }) {
         }
     };
 
-    const formatTime = (time) =>
-        time ? moment(time, "HH:mm:ss").format("hh:mm A") : "-";
+    const formatTime = (time) => {
+        if (!time) return "-";
+
+        return moment(time).format("MMM D, YYYY hh:mm A");
+    };
 
     const getHolidayBadge = (log) => {
         if (!log.is_regular_holiday && !log.is_special_holiday) return "-";
@@ -183,6 +228,7 @@ export default function AttendanceLogs({ refreshKey }) {
                             <TableColumnsComponent column_name="Undertime (mins)" />
                             <TableColumnsComponent column_name="Breaktime (mins)" />
                             <TableColumnsComponent column_name="Breaktime Limit" />
+                            <TableColumnsComponent column_name="Overbreak (mins)" />
                             <TableColumnsComponent column_name="Holiday" />
                             <TableColumnsComponent column_name="Regular Overtime" />
                             <TableColumnsComponent column_name="Dayoff Overtime In minute" />
@@ -211,7 +257,7 @@ export default function AttendanceLogs({ refreshKey }) {
                         {loading ? (
                             <tr>
                                 <td
-                                    colSpan={30}
+                                    colSpan={32}
                                     className="px-4 py-6 text-center text-sm text-gray-400"
                                 >
                                     Loading...
@@ -220,7 +266,7 @@ export default function AttendanceLogs({ refreshKey }) {
                         ) : logs.length === 0 ? (
                             <tr>
                                 <td
-                                    colSpan={30}
+                                    colSpan={32}
                                     className="px-4 py-6 text-center text-sm text-gray-400"
                                 >
                                     No attendance records found.
@@ -245,7 +291,24 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatTime(log.clock_in)}
+                                        {log.clock_in_date &&
+                                        log.clock_in_time ? (
+                                            <div className="flex flex-col">
+                                                <span className="text-sm text-gray-500">
+                                                    {moment(
+                                                        log.clock_in_date,
+                                                    ).format("LL")}
+                                                </span>
+                                                <span>
+                                                    {moment(
+                                                        log.clock_in_time,
+                                                        "HH:mm:ss",
+                                                    ).format("hh:mm A")}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            "-"
+                                        )}
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
@@ -253,7 +316,24 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatTime(log.clock_out)}
+                                        {log.clock_out_date &&
+                                        log.clock_out_time ? (
+                                            <div className="flex flex-col">
+                                                <span className="text-sm text-gray-500">
+                                                    {moment(
+                                                        log.clock_out_date,
+                                                    ).format("LL")}
+                                                </span>
+                                                <span>
+                                                    {moment(
+                                                        log.clock_out_time,
+                                                        "HH:mm:ss",
+                                                    ).format("hh:mm A")}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            "-"
+                                        )}
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
@@ -281,16 +361,34 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
+                                        {log.overbreak_minutes ?? 0}
+                                    </td>
+
+                                    <td className="px-4 py-3 whitespace-nowrap">
                                         {getHolidayBadge(log)}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.regular_holiday_mins ?? 0}
@@ -300,19 +398,66 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {log.special_holiday_mins ?? 0}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {resolveDisplayStatus(log) === "Day Off" ? "Yes" : "No"}
+                                        -
                                     </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
-                                    <td className="px-4 py-3 whitespace-nowrap">-</td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {schedule?.is_day_off ? (
+                                            "Day Off"
+                                        ) : (
+                                            <>
+                                                {formatScheduleTime(
+                                                    schedule?.time_in,
+                                                )}
+                                                {" - "}
+                                                {formatScheduleTime(
+                                                    schedule?.time_out,
+                                                )}
+
+                                                {isOvernightShift &&
+                                                    " (next day)"}
+
+                                                <span className="ml-2 text-gray-500">
+                                                    (
+                                                    {getRequiredMinutes(
+                                                        schedule?.time_in,
+                                                        schedule?.time_out,
+                                                        isOvernightShift,
+                                                    )}{" "}
+                                                    mins)
+                                                </span>
+                                            </>
+                                        )}
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {resolveDisplayStatus(log) === "Day Off"
+                                            ? "Yes"
+                                            : "No"}
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        -
+                                    </td>
                                 </tr>
                             ))
                         )}
