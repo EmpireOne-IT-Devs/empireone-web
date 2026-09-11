@@ -12,6 +12,10 @@ const allowances = [
         label: "Communication Allowance",
     },
     {
+        value: "Travel Allowance (per diem)",
+        label: "Travel Allowance (per diem)",
+    },
+    {
         value: "Interim Allowance",
         label: "Interim Allowance",
     },
