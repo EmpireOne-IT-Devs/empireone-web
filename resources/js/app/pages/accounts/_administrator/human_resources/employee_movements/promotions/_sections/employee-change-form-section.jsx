@@ -433,7 +433,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                             />
                         </div>
 
-                        {watchedValues.is_tiering && (
+                        {/* {watchedValues.is_tiering && (
                             <Select
                                 label="Tiers"
                                 name="ecf_id"
@@ -449,10 +449,10 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                 }
                                 error={!watchedValues.ecf_id}
                             />
-                        )}
+                        )} */}
                     </div>
 
-                    {watchedValues.is_tiering && (
+                    {/* {watchedValues.is_tiering && (
                         <table className="w-full border-collapse border border-black text-sm mb-6">
                             <tbody>
                                 <tr>
@@ -477,7 +477,7 @@ const EmployeeChangeFormSection = ({ props_data }) => {
                                 </tr>
                             </tbody>
                         </table>
-                    )}
+                    )} */}
 
                     {/* New Information Details */}
                     <div className="my-6">

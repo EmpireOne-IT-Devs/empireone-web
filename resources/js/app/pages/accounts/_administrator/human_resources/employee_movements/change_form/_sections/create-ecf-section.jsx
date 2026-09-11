@@ -411,12 +411,11 @@ const CreateECFSection = () => {
                                 label="Tiering"
                                 {...register("is_tiering")}
                                 checked={watchedValues.is_tiering}
-                                disabled={!watchedValues.is_tiering}
                                 onChange={(val) => setValue("is_tiering", val.target.checked)}
                             />
                         </div>
 
-                        {watchedValues.is_tiering && (
+                        {/* {watchedValues.is_tiering && (
                             <Select
                                 label="Tiers"
                                 name="ecf_id"
@@ -430,10 +429,10 @@ const CreateECFSection = () => {
                                 onChange={(val) => setValue("ecf_id", val, { shouldValidate: true })}
                                 error={!watchedValues.ecf_id}
                             />
-                        )}
+                        )} */}
                     </div>
 
-                    {watchedValues.is_tiering && (
+                    {/* {watchedValues.is_tiering && (
                         <table className="w-full border-collapse border border-black text-sm mb-6">
                             <tbody>
                                 <tr>
@@ -458,7 +457,7 @@ const CreateECFSection = () => {
                                 </tr>
                             </tbody>
                         </table>
-                    )}
+                    )} */}
 
                     {/* New Information Details */}
                     <div className="my-6">

@@ -25,3 +25,8 @@ export async function get_applicant_pooling_service() {
 export async function approve_job_offer_service(data) {
     return await axios.post("/api/job/approve_job_offer", data);
 }
+
+
+export async function delete_job_offer_service(data) {
+    return await axios.post("/api/job/delete_job_offer", data);
+}

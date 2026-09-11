@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import { useDispatch, useSelector } from 'react-redux';
-import { approve_job_offer_service } from '@/app/services/applicants-service';
+import { approve_job_offer_service, delete_job_offer_service } from '@/app/services/applicants-service';
 import { setAlert } from '@/app/redux/app-slice';
 import store from '@/app/store/store';
 import { get_job_offer_by_id_thunk } from '@/app/redux/applicant-thunk';
@@ -36,6 +36,32 @@ export default function ApprovedJOSection({ props_data }) {
         }
     };
 
+    async function delete_job_offer() {
+        try {
+            setIsLoading(true);
+            await delete_job_offer_service(props_data);
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Job Offer has been deleted!",
+                    message:
+                        "The job offer has been deleted and is ready for review.",
+                    open: true,
+                }),
+            );
+            setOpen(false);
+
+            setTimeout(() => {
+                window.close();
+            }, 1000);
+            setIsLoading(false);
+
+        } catch (error) {
+            setIsLoading(false);
+            console.error("Failed to delete job offer:", error);
+        }
+    }
+
     return (
         <>
             <div className="fixed bottom-10 right-10 z-50">
@@ -59,14 +85,14 @@ export default function ApprovedJOSection({ props_data }) {
                         Are you sure you would like to send this job offer?
                     </p>
 
-                    <div className="flex justify-end gap-3">
+                    <div className="flex justify-between gap-3">
                         <Button
                             type="button"
-                            onClick={() => setOpen(false)}
+                            onClick={() => delete_job_offer(false)}
                             disabled={isLoading}
                             variant='danger'
                         >
-                            Cancel
+                            DELETE OFFER
                         </Button>
                         <Button
                             loading={isLoading}

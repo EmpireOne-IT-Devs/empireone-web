@@ -148,6 +148,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('update_job_application_status',  [JobApplicationController::class, 'update_job_application_status']);
         Route::post('send_job_offer',  [JobApplicationController::class, 'send_job_offer']);
         Route::post('approve_job_offer',  [JobApplicationController::class, 'approve_job_offer']);
+        Route::post('delete_job_offer',  [JobApplicationController::class, 'delete_job_offer']);
     });
 
 

@@ -414,18 +414,21 @@ const OfferLetterPDF = (data) => {
                     </>
                 )}
 
-                <View style={[styles.row, { marginTop: 20 }]}>
-                    <Text style={styles.label}>Allowances</Text>
-                    <View style={{ flexDirection: "column", gap: 1, width: "100%", marginLeft: 30 }}>
-                        {data?.allowances?.map((res, index) => {
-                            return (
-                                <ListItem key={res.id || index}>
-                                    {`${res.allowance_type}-${res.allowance}`}
-                                </ListItem>
-                            );
-                        })}
+                {
+                    data?.allowances.length != 0 && <View style={[styles.row, { marginTop: 20 }]}>
+                        <Text style={styles.label}>Allowances</Text>
+                        <View style={{ flexDirection: "column", gap: 1, width: "100%", marginLeft: 30 }}>
+                            {data?.allowances?.map((res, index) => {
+                                return (
+                                    <ListItem key={res.id || index}>
+                                        {`${res.allowance_type}-${res.allowance}`}
+                                    </ListItem>
+                                );
+                            })}
+                        </View>
                     </View>
-                </View>
+                }
+
 
                 <Text style={[styles.bold, { marginTop: 20, marginBottom: 5 }]}>
                     Note:
