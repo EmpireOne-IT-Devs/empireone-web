@@ -1,14 +1,10 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import {
-    get_attendance_for_date_service,
-    get_attendance_logs_service,
-} from "@/app/services/attendance-service";
+import { get_attendance_logs_service } from "@/app/services/attendance-service";
 import FilterLogDate from "./filter-log-date";
 import TableColumnsComponent from "../component/table-columns-component";
 
 export default function AttendanceLogs({ refreshKey }) {
-    const [schedule, setSchedule] = useState(null);
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [endDate, setEndDate] = useState("");
@@ -16,47 +12,13 @@ export default function AttendanceLogs({ refreshKey }) {
         moment().subtract(19, "days").format("YYYY-MM-DD"),
     );
 
-    useEffect(() => {
-        const fetchSchedule = async () => {
-            try {
-                const res = await get_attendance_for_date_service(startDate);
-                setSchedule(res.data.schedule);
-            } catch {
-                setSchedule(null);
-            }
-        };
-
-        fetchSchedule();
-    }, [refreshKey, startDate, endDate]);
-
     const formatScheduleTime = (t) =>
         t ? moment(t, "HH:mm:ss").format("hh:mm A") : "--:--";
-
-    const getRequiredMinutes = (timeIn, timeOut, isOvernight = false) => {
-        if (!timeIn || !timeOut) return 0;
-
-        const start = moment(timeIn, ["HH:mm:ss", "HH:mm"]);
-        const end = moment(timeOut, ["HH:mm:ss", "HH:mm"]);
-
-        if (!start.isValid() || !end.isValid()) return 0;
-
-        if (isOvernight || end.isSameOrBefore(start)) {
-            end.add(1, "day");
-        }
-
-        return end.diff(start, "minutes");
-    };
-
-    const isOvernightShift =
-        schedule?.time_in &&
-        schedule?.time_out &&
-        moment(schedule.time_out, "HH:mm:ss").isSameOrBefore(
-            moment(schedule.time_in, "HH:mm:ss"),
-        );
 
     useEffect(() => {
         const fetchLogs = async () => {
             setLoading(true);
+
 
             try {
                 const res = await get_attendance_logs_service({
@@ -414,37 +376,40 @@ export default function AttendanceLogs({ refreshKey }) {
                                         -
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {schedule?.is_day_off ? (
+                                        {log.is_day_off ? (
                                             "Day Off"
                                         ) : (
                                             <>
                                                 {formatScheduleTime(
-                                                    schedule?.time_in,
+                                                    log.schedule_time_in,
                                                 )}
                                                 {" - "}
                                                 {formatScheduleTime(
-                                                    schedule?.time_out,
+                                                    log.schedule_time_out,
                                                 )}
 
-                                                {isOvernightShift &&
+                                                {log.schedule_time_out &&
+                                                    log.schedule_time_in &&
+                                                    moment(
+                                                        log.schedule_time_out,
+                                                        "HH:mm:ss",
+                                                    ).isSameOrBefore(
+                                                        moment(
+                                                            log.schedule_time_in,
+                                                            "HH:mm:ss",
+                                                        ),
+                                                    ) &&
                                                     " (next day)"}
 
                                                 <span className="ml-2 text-gray-500">
-                                                    (
-                                                    {getRequiredMinutes(
-                                                        schedule?.time_in,
-                                                        schedule?.time_out,
-                                                        isOvernightShift,
-                                                    )}{" "}
+                                                    ({log.required_minutes ?? 0}{" "}
                                                     mins)
                                                 </span>
                                             </>
                                         )}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {resolveDisplayStatus(log) === "Day Off"
-                                            ? "Yes"
-                                            : "No"}
+                                        {log.is_day_off ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         -
