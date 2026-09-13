@@ -70,7 +70,7 @@ export default function ApprovedJOSection({ props_data }) {
                     disabled={loading || isLoading}
                     onClick={() => setOpen(true)}
                 >
-                    SEND JOB OFFER
+                    VIEW ACTION
                 </Button>
             </div>
 

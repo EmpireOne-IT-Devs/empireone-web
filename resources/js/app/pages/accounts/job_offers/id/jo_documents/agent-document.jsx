@@ -340,9 +340,12 @@ const OfferLetterPDF = (data) => {
                         {data?.annual_leave} leave credits to be utilized as VL/SL/EL upon {data?.effective_period?.toLowerCase()}{"\n"}
                         Max of {data?.annual_leave} un-used leaves credits are convertible to cash.
                     </Text> */}
-                    <ListItem>
+                    <Text style={styles.value}>
                         {data?.leave_notes}
-                    </ListItem>
+                    </Text>
+                    {/* <ListItem>
+                       
+                    </ListItem> */}
                 </View>
 
 
