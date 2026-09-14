@@ -3,13 +3,11 @@ import Layout from "../../../layout";
 import EmployeeRelationLayout from "../layout";
 import TableSection from "./_sections/table-section";
 import CreateLeadSection from "./_sections/create-lead-section";
-import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import store from "@/app/store/store";
 import { get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 
 export default function Page() {
     useEffect(() => {
-        // store.dispatch(get_job_requisitions_thunk());
         store.dispatch(get_leader_thunk())
     }, [window.location.search]);
     return (

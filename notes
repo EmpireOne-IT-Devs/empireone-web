@@ -2,8 +2,10 @@ php artisan make:model Engagement/EngagementPostEvent -mcr
 
 
 Task
-- Add supervisor and department manager in add attrition
+- Add supervisor and department manager input in add attrition
 - Add supervisor and department manager in leader page
+- Add Editable Leader.
+- deploy the adjustment
 
 
 

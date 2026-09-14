@@ -87,6 +87,7 @@ export default function EditLeadSection({ props_data }) {
         setOpen(false);
         reset();
     };
+    
 
     return (
         <>

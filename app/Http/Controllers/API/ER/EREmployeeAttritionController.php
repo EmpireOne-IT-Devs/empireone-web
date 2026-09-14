@@ -131,9 +131,9 @@ class EREmployeeAttritionController extends Controller
             $ccEmails = array_values(array_unique(array_filter([
                 $e_r_leader?->employee?->eogs_email ?? '',
                 $department_manager?->employee?->eogs_email ?? '',
-                'scitdept@empireonegroup.com',
-                'scchr@empireonegroup.com',
-                'carcarhr@empireonegroup.com',
+                // 'scitdept@empireonegroup.com',
+                // 'scchr@empireonegroup.com',
+                // 'carcarhr@empireonegroup.com',
             ])));
 
             $this->my_empireone_send_email([

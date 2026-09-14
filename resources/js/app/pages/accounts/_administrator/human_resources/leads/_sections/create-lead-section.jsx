@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 export default function CreateLeadSection() {
     const dispatch = useDispatch();
     const { leaders, users } = useSelector((store) => store.human_resources);
+    const [loading, setLoading] = useState(false)
     console.log('users', users)
     const [open, setOpen] = useState(false);
 
@@ -36,6 +37,7 @@ export default function CreateLeadSection() {
     useEffect(() => {
         register("user_id", { required: "Please select a leader" });
     }, [register]);
+
 
     // Handle form submission
     const onSubmit = async (data) => {
@@ -74,7 +76,9 @@ export default function CreateLeadSection() {
     console.log('availableUsers', leaders)
     return (
         <>
-            <Button onClick={() => setOpen(true)}>ADD LEADER</Button>
+            <Button 
+            loading={loading}
+            onClick={() => setOpen(true)}>ADD LEADER</Button>
 
             <Modal
                 isOpen={open}
