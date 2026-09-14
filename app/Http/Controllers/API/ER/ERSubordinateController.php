@@ -31,8 +31,6 @@ class ERSubordinateController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validate the incoming request payload
-        dd($request->all());
         $request->validate([
             'er_leader_id' => 'required|integer',
             'subordinates' => 'required|array',
