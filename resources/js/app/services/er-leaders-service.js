@@ -16,3 +16,8 @@ export async function get_leader_by_id_service(id) {
 export async function add_subordinates_service(data) {
     return await axios.post("/api/er/subordinates", data);
 }
+
+
+export async function update_leaders_service(data) {
+    return await axios.put(`/api/er/leaders/${data.user_id}`, data);
+}

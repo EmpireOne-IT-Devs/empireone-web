@@ -1,8 +1,8 @@
 
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     FiUserMinus,
     FiUser,
@@ -62,8 +62,9 @@ const EMPLOYMENT_STATUS_OPTIONS = ['Terminated', 'Resigned', 'EOPE', 'AWOL', 'En
 export default function AddAttritionSection({ props_data }) {
     const [open, setOpen] = useState(false)
     const dispatch = useDispatch()
+    const { leaders } = useSelector((store) => store.human_resources);
 
-    const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit, reset, control, watch, setValue, formState: { errors, isSubmitting } } = useForm({
         defaultValues: {
             separation_date: '',
             reason_for_separation: '',
@@ -77,6 +78,7 @@ export default function AddAttritionSection({ props_data }) {
         reset()
     }
 
+    const watchedValues = watch()
     const onSubmit = async (data) => {
         try {
             await add_attrition_service({
@@ -107,12 +109,10 @@ export default function AddAttritionSection({ props_data }) {
         }
     }
 
-    const leaderInfo = props_data?.reporting_to?.leader?.user?.personal_information;
-    const supervisorName = leaderInfo?.first_name || leaderInfo?.last_name
-        ? `${leaderInfo?.first_name || ''} ${leaderInfo?.last_name || ''}`.trim()
-        : null;
-
-    const departmentManager = `${props_data?.department_manager?.employee?.personal_information?.first_name || ''} ${props_data?.department_manager?.employee?.personal_information?.last_name || ''}`.trim() ?? null;
+    useEffect(() => {
+        setValue('supervisor_id', props_data?.e_r_leader_id)
+        setValue('department_manager_id', props_data?.department_manager_id)
+    }, [])
 
 
     return (
@@ -204,24 +204,7 @@ export default function AddAttritionSection({ props_data }) {
                             </span>
                         </div>
 
-                        {/* Supervisor */}
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiUserCheck className="w-4 h-4 text-purple-600" /> Supervisor
-                            </span>
-                            <span className="text-gray-900 font-medium text-right truncate">
-                                {supervisorName}
-                            </span>
-                        </div>
 
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiUserCheck className="w-4 h-4 text-purple-600" /> Department Manager
-                            </span>
-                            <span className="text-gray-900 font-medium text-right truncate">
-                                {departmentManager}
-                            </span>
-                        </div>
 
                         {/* Hired Date */}
                         <div className="flex items-center justify-between gap-2">
@@ -236,7 +219,43 @@ export default function AddAttritionSection({ props_data }) {
 
                     <div className="flex flex-col gap-3 px-2 w-full mt-6">
 
+                        <div className="flex flex-col gap-3">
+                            <Select
+                                label="Supervisor"
+                                required
+                                name="supervisor_id"
+                                // Pass the filtered availableLeaders instead of the full leaders array
+                                options={leaders?.map((res) => ({
+                                    ...res,
+                                    label: `${res?.employee?.personal_information?.first_name} ${res?.employee?.personal_information?.last_name}`,
+                                    value: res.id,
+                                }))}
+                                value={watchedValues.supervisor_id}
+                                onChange={(val) =>
+                                    setValue("supervisor_id", val, { shouldValidate: true })
+                                }
+                                error={errors.supervisor_id?.message}
+                                className="w-full"
+                            />
 
+                            <Select
+                                label="Department Manager"
+                                required
+                                name="department_manager_id"
+                                // Pass the filtered leaders? instead of the full leaders array
+                                options={leaders?.map((res) => ({
+                                    ...res,
+                                    label: `${res?.employee?.personal_information?.first_name} ${res?.employee?.personal_information?.last_name}`,
+                                    value: res.id,
+                                }))}
+                                value={watchedValues.department_manager_id}
+                                onChange={(val) =>
+                                    setValue("department_manager_id", val, { shouldValidate: true })
+                                }
+                                error={errors.department_manager_id?.message}
+                                className="w-full"
+                            />
+                        </div>
                         {/* Rehire eligibility - FIXED WITH CONTROLLER */}
                         <div className="flex flex-col">
                             <label className={`text-sm font-medium text-gray-700 ${isSubmitting ? 'opacity-50' : ''}`}>
@@ -291,61 +310,11 @@ export default function AddAttritionSection({ props_data }) {
                                 error={errors.reason_for_separation}
                             />
                         </div>
-
-                        {/* Employment Status */}
-                        {/* <div className="flex flex-col">
-                            <Select
-                                label="Employment Status"
-                                disabled={isSubmitting}
-                                options={EMPLOYMENT_STATUS_OPTIONS}
-                                {...register("employment_status", { required: "Please select an employment status" })}
-                                error={errors.employment_status}
-                            />
-                        </div> */}
                     </div>
 
-                    {(!leaderInfo || !departmentManager) && (
-                        <div
-                            className="flex my-3 items-start rounded-md border-l-4 border-amber-500 bg-amber-50 p-4 shadow-sm transition-all duration-300 hover:shadow-md"
-                            role="alert"
-                        >
-                            <div className="flex items-center space-x-3">
-                                {/* Warning Icon */}
-                                <svg
-                                    className="h-6 w-6 text-amber-500 animate-pulse"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                                    />
-                                </svg>
 
-                                <div>
-                                    <h3 className="text-sm font-semibold text-amber-800">
-                                        Missing Required Information
-                                    </h3>
-                                    <p className="mt-1 text-sm text-amber-700">
-                                        You cannot submit this form until both the <strong>manager</strong> and <strong>leader</strong> are defined.{" "}
-                                        <a
-                                            href={`/accounts/administrator/my_team/${props_data?.user_id}/personal_information`}
-                                            target='_blank'
-                                            className="font-medium text-amber-800 underline transition-colors hover:text-amber-900"
-                                        >
-                                            Click here to setup.
-                                        </a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                     <Button
                         type="submit"
-                        disabled={!leaderInfo || !departmentManager}
                         className="w-full mt-6 flex justify-center items-center gap-2"
                         loading={isSubmitting}
                     >

@@ -3,6 +3,7 @@
 namespace App\Models\ER;
 
 use App\Models\Account\AccountEmployee;
+use App\Models\Account\AccountPersonalInformation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,7 +25,11 @@ class ERLeader extends Model
     }
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information','department']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information','department','department_manager']);
+    }
+     public function personal_information(): HasOne
+    {
+        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id');
     }
     public function member_handled(): int
     {

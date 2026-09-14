@@ -93,7 +93,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function account_employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id', 'id')->with(['account', 'site', 'department','er_leader']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'id')->with(['account', 'site', 'department','er_leader','department_manager']);
     }
     public function documents(): HasMany
     {

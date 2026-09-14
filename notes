@@ -1,284 +1,34 @@
 php artisan make:model Engagement/EngagementPostEvent -mcr
-php artisan make:model Engagement/EngagementPostEventSurvey -mcr
-php artisan make:model Engagement/EngagementPostEventRating -mcr
-php artisan make:model Engagement/EngagementPostEventQuestion -mcr
-php artisan make:model Engagement/EngagementPostEventFile -mcr
-php artisan make:model Engagement/EngagementPostEventComment -mcr
-php artisan make:model Engagement/EngagementPostEventReact -mcr
 
-php artisan make:model Engagement/EngagementRewardRecognition -mcr
-user_id
-award_category
-company_value
-message
 
-php artisan make:model ER/ERAcknowledgement -mcr
-php artisan make:model ER/ERAcknowledgementItem -mcr
-php artisan make:model ER/ERAcknowledgementEmployee -mcr
+Task
+- Add supervisor and department manager in add attrition
+- Add supervisor and department manager in leader page
 
-task
--fix the calendar when the applicant select schedule of interviewer applying
 
 
-name=Jane%20Doe&email=marlou.developer@gmail.com&start_time=2026-08-20%2010%3A00%3A00&end_time=2026-08-20%2011%3A00%3A00&position=Registered%20Nurse
 
-- add emergency contract
-- add parents name.
 
-Talent Aquisition Table need to clear
--job_applications
--job_a_i_interviews
--job_a_i_interview_qnas
--job_interviewer_schedules
--job_postings
--e_r_employee_change_forms
--job_offer
 
 
 
 
-need to complete to create ERF
 
-employee_id
-started_at 
-position_level
-e_r_leader_id
-account_id
-position
-eogs email
-basic_pay
-allowance
-status
 
 
 
 
 
 
-Application: [Job Title] - [First Name] [Last Name]
 
-2026-04-30
 
-Need to remove when reset
-- job_offers
-- job_applications
-- job_requisition
-- job_requisition_logs
-- job_applicant_schedules
-- account_employees
-- account_documents
--account_contracts
-1342 - gio
-3-chingay
 
-- update the address all employees
-Employee Section: 
-- Department
-- Position
-- Update Email to EOGS
-- Employee ID 
 
 
-Automatic notify PEF 3months & 5th months
 
-er_leader
--user_id
 
-er_subordinate 
--er_leader_id
--subordinate_id
 
 
 
-er_performance_evaluation_form
--user_id
--supervisor_id
--has_supervisor_signature
--date_of_assessment
--remarks
--section1_average
--section2_average
--total_average
--recommendation
 
-er_performance_evaluation_section1
--er_performance_evaluation_form_id
--objective
--action
--outcome
--rating
 
-er_performance_evaluation_section2
--er_performance_evaluation_form_id
--requirments
--description 
--rating 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{
-  "message": "Processing complete",
-  "total": 631,
-  "new_inserts_count": 0,
-  "already_existed_count": 0,
-  "skipped_emails_count": 114,
-  "skipped_emails": [
-    "Emmanuel",
-    "Zain Schine",
-    "JOANE",
-    "Justin",
-    "Darwin",
-    "Karla Mae",
-    "Mark Anthony",
-    "Charlene",
-    "Abegail Ann",
-    "Daisy",
-    "Adrian Christian",
-    "Rechelle",
-    "Katrina",
-    "Jhyle",
-    "Mylen",
-    "Johnrey",
-    "Jaime",
-    "Josh",
-    "Jeramae",
-    "Christ Vein",
-    "Julius",
-    "Rucel Jane",
-    "Dennis",
-    "Shajanie Ann",
-    "NiÃ±a Jane",
-    "Maria Lynde",
-    "MICHELLE",
-    "Jancel Marie",
-    "Lemuel",
-    "Jonnavelle Fatima",
-    "Jiah Mae",
-    "Manley",
-    "Hyacinth",
-    "Ricky",
-    "Leo, Jr.",
-    "Nestle",
-    "Clarice Kate",
-    "Lee Daniel",
-    "Simon Anselle",
-    "Lanmark",
-    "Paul",
-    "Nina Jane",
-    "Louie",
-    "Clea Kaye",
-    "Mary Jocellie",
-    "Ma. Kim",
-    "Charle",
-    "Almera",
-    "Jhuniel",
-    "Irene",
-    "Jainah James",
-    "Shayna Evanleigh",
-    "Michael Jerome",
-    "Genevieve",
-    "Larisha Anne",
-    "Jaynel",
-    "Krizza Joy",
-    "Dylan",
-    "Althea Marie",
-    "Jennielyn",
-    "Jhonreb",
-    "Snickers Jay",
-    "Steve",
-    "Roanne Sitti Jehani",
-    "Tracy Giveryl",
-    "Kristian",
-    "Ray Vee",
-    "Esther",
-    "Rafael",
-    "Cherilyn",
-    "Alan",
-    "Xandra Mae",
-    "Christian Faith",
-    "Syrille",
-    "Grezel Rose",
-    "Ethel",
-    "Jessa Mae",
-    "Alyssa Venice",
-    "Richlie Kaye",
-    "Juverlyn",
-    "John Philip",
-    "Danrhyn",
-    "Geof",
-    "Jhuana",
-    "Renie",
-    "Ralph Lindsey",
-    "Jamaica",
-    "Rendel Mark",
-    "Daisy",
-    "Richelle Mae",
-    "Mar Bhea",
-    "Christi Ann",
-    "NiÃ±a Elsa",
-    "Romel Brian",
-    "Vianca Marie",
-    "Carine",
-    "Shyrine",
-    "Jazheel",
-    "Nichole",
-    "Stephen",
-    "Rogelio",
-    "DEXLIN",
-    "Mary Jane",
-    "Aschell",
-    "Jona Mae",
-    "Ronel Rico",
-    "Zax",
-    "Maria Luz",
-    "John Mark",
-    "Alvin",
-    "Jerry Jr.",
-    "Fretzie",
-    "Anthony Levon",
-    "Jade"
-  ]
-}

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API\ER;
 
 use App\Models\ER\ERLeader;
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\Account\AccountEmployee;
+use App\Models\ER\ERSubordinate;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -51,6 +53,7 @@ class ERLeaderController extends Controller
     public function store(Request $request)
     {
 
+        dd($request->all());
         ERLeader::updateOrCreate(
             // 1. Search criteria: Look for an existing record with this user_id
             ['user_id' => $request->user_id],
@@ -58,6 +61,12 @@ class ERLeaderController extends Controller
             // 2. Values to update: Leave empty because there are no other fields to update
             []
         );
+        $employee = AccountEmployee::where('department_manager_id', $request->department_manager_id)->first();
+        if ($employee) {
+            $employee->update([
+                'department_manager_id' => $request->department_manager_id
+            ]);
+        }
         $user = User::where('id', $request->user_id)->first();
         if ($user) {
             $user->update([
@@ -101,9 +110,32 @@ class ERLeaderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ERLeader $eRLeader)
+    public function update(Request $request, $user_id)
     {
-        //
+        $leader =  ERLeader::where('id', $request->e_r_leader_id)->with(['subordinates'])->first();
+        if ($leader) {
+            $leader->update([
+                'user_id' => $request->user_id
+            ]);
+            foreach ($leader->subordinates as $key => $value) {
+                $employee =  AccountEmployee::where('user_id', $value['employee']['id'])->first();
+                // $sub =  ERSubordinate::where('subordinate_id', $value['employee']['id'])->first();
+                // if ($sub) {
+                //     $sub->update([
+                //         'er_leader_id' => $request->er_leader_id
+                //     ]);
+                // }
+                if ($employee) {
+                    $employee->update([
+                        'department_manager_id' => $request->department_manager_id
+                    ]);
+                }
+            }
+        }
+        return response()->json([
+            'data' => $leader,
+            'status' => 'success',
+        ], 200);
     }
 
     /**

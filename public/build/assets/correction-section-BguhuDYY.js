@@ -1,1 +1,0 @@
-import{j as e}from"./app-BgD5fw8E.js";import{h as r}from"./index-BqSrV9Ro.js";import"./iconBase-BfC8Qww4.js";function n(){return e.jsx("div",{children:e.jsx("button",{title:"Correction",className:"p-1 rounded-md hover:bg-green-500 text-white bg-green-400",children:e.jsx(r,{})})})}export{n as default};

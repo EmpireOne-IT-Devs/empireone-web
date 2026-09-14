@@ -12,8 +12,9 @@ export default function TableSection() {
         { header: "Fullname", accessor: "name" },
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
+        { header: "Department Manager", accessor: "department_manager" },
         { header: "Account", accessor: "account" },
-        { header: "Action", accessor: "action" },
+        // { header: "Action", accessor: "action" },
     ];
     return (
         <>
@@ -40,7 +41,9 @@ export default function TableSection() {
                         account:
                             res?.employee?.account_employee?.account?.name ??
                             "N/A",
-                        action: "button",
+                        department_manager:
+                            `${res?.employee?.account_employee?.department_manager?.personal_information?.first_name ?? ''} ${res?.employee?.account_employee?.department_manager?.personal_information?.last_name ?? ''}`,
+                        // action: "button",
                     })) ?? []
                 }
             />

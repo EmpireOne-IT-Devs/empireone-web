@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Layout from "../../../layout";
 import store from "@/app/store/store";
-import { get_employees_thunk } from "@/app/redux/employee-relation-thunk";
+import { get_employees_thunk, get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 import EmployeeRelationLayout from "../layout";
 import SearchSection from "./_sections/search-section";
 import PaginationSection from "./_sections/pagination-section";
@@ -11,6 +11,7 @@ import CardAcknowledgementSection from "./_sections/card-acknowledgement-section
 export default function Page() {
     useEffect(() => {
         store.dispatch(get_employees_thunk());
+        store.dispatch(get_leader_thunk())
     }, [window.location.search]);
 
     return (
@@ -27,7 +28,7 @@ export default function Page() {
                         <AddEmployeeSection />
                     </div>
                 </div>
-                
+
                 {/* Added mt-4 to ensure proper spacing between controls and the card list */}
                 <div className="mt-4 flex flex-col gap-3">
                     <CardAcknowledgementSection />

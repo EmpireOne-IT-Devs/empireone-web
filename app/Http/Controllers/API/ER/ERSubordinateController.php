@@ -32,6 +32,7 @@ class ERSubordinateController extends Controller
     public function store(Request $request)
     {
         // 1. Validate the incoming request payload
+        dd($request->all());
         $request->validate([
             'er_leader_id' => 'required|integer',
             'subordinates' => 'required|array',
@@ -40,18 +41,18 @@ class ERSubordinateController extends Controller
         $leaderId = $request->er_leader_id;
         $leader = ERLeader::where('id', $leaderId)->with(['employee'])->first();
         $subordinates = $request->subordinates;
-        
+
         foreach ($subordinates as $subordinateId) {
             if ($subordinateId) {
-                // Correct syntax for searching by one column, but creating with both
                 ERSubordinate::updateOrCreate(
-                    ['subordinate_id' => $subordinateId], // 1. Search for this
-                    ['er_leader_id' => $leaderId]         // 2. Add this if creating a new record
+                    ['subordinate_id' => $subordinateId], 
+                    ['er_leader_id' => $leaderId]        
                 );
                 AccountEmployee::where('user_id', $subordinateId)->update([
                     'e_r_leader_id' => $leader->id,
                     'account_id' => $leader['employee']['account_id'] ?? null,
                     'department_id' => $leader['employee']['department_id'] ?? null,
+                    'department_manager_id' => $leader['employee']['department_manager_id']
                 ]);
             }
         }

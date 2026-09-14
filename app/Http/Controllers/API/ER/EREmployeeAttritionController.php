@@ -69,14 +69,13 @@ class EREmployeeAttritionController extends Controller
     public function store(Request $request)
     {
         // Wrap everything in a database transaction for data integrity
-        $e_r_leader = ERLeader::where('id', $request->e_r_leader_id)->with(['employee.personal_information'])->first();
+        $e_r_leader = ERLeader::where('id', $request->supervisor_id)->with(['employee.personal_information'])->first();
+        $department_manager = ERLeader::where('id', $request->department_manager_id)->with(['employee.personal_information'])->first();
 
-        // Extract leader full name safely
         $leaderInfo = $e_r_leader?->employee?->personal_information;
         $immediateSupervisor = trim(($leaderInfo['first_name'] ?? '') . ' ' . ($leaderInfo['last_name'] ?? ''));
-        // dd($e_r_leader?->employee->department->manager->employee->eogs_email);
-        // Extract manager full name safely
-        $managerInfo = $request->department_manager['employee']['personal_information'] ?? null;
+
+        $managerInfo = $department_manager?->employee?->personal_information;
         $departmentManager = trim(($managerInfo['first_name'] ?? '') . ' ' . ($managerInfo['last_name'] ?? ''));
 
         $attrition = EREmployeeAttrition::updateOrCreate(
@@ -130,8 +129,8 @@ class EREmployeeAttritionController extends Controller
 
             // Define CC recipients as an array for clean maintainability
             $ccEmails = array_values(array_unique(array_filter([
-                $e_r_leader?->employee?->eogs_email,
-                $request->department_manager['employee']['eogs_email'],
+                $e_r_leader?->employee?->eogs_email ?? '',
+                $department_manager?->employee?->eogs_email ?? '',
                 'scitdept@empireonegroup.com',
                 'scchr@empireonegroup.com',
                 'carcarhr@empireonegroup.com',
