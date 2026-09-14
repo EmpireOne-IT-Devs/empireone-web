@@ -78,7 +78,7 @@ class EngagementRewardChallenge extends Model
             'user_id',
         )
             ->using(EngagementRewardChallengeParticipant::class)
-            ->withPivot(['status', 'joined_at', 'submission_path', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note'])
+            ->withPivot(['status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note'])
             ->withTimestamps();
     }
 

@@ -17,6 +17,8 @@ import {
     join_engagement_reward_challenge_thunk,
     submit_engagement_reward_challenge_proof_thunk,
 } from "@/app/redux/engagement-thunk";
+import Input from "@/app/_components/input";
+import TextArea from "@/app/_components/textarea";
 
 const STEPS = ["Details", "Start", "Submitted", "Approved"];
 
@@ -40,15 +42,17 @@ function formatDate(dateString) {
 
 export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
     const dispatch = useDispatch();
-    const { rewardChallengeJoiningId, rewardChallengeSubmittingId } = useSelector(
-        (state) => state.engagement,
-    );
+    const { rewardChallengeJoiningId, rewardChallengeSubmittingId } =
+        useSelector((state) => state.engagement);
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState(null);
+    const [challengeDescription, setChallengeDescription] = useState("");
 
     if (!challenge) return null;
 
-    const statusKey = challenge.is_joined ? challenge.participation_status ?? "joined" : "details";
+    const statusKey = challenge.is_joined
+        ? (challenge.participation_status ?? "joined")
+        : "details";
     const currentStep = STEP_INDEX[statusKey] ?? 0;
     const isDeclined = statusKey === "declined";
     const joining = rewardChallengeJoiningId === challenge.id;
@@ -69,13 +73,20 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
         setPreview(null);
     };
 
-    const handleClose = () => {
+    const resetSubmissionForm = () => {
         removePhoto();
+        setChallengeDescription("");
+    };
+
+    const handleClose = () => {
+        resetSubmissionForm();
         onClose();
     };
 
     const handleJoin = async () => {
-        const result = await dispatch(join_engagement_reward_challenge_thunk(challenge.id));
+        const result = await dispatch(
+            join_engagement_reward_challenge_thunk(challenge.id),
+        );
 
         if (join_engagement_reward_challenge_thunk.rejected.match(result)) {
             dispatch(
@@ -100,13 +111,21 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
     };
 
     const handleSubmit = async () => {
-        if (!photo) return;
+        if (!photo || !challengeDescription.trim()) return;
 
         const result = await dispatch(
-            submit_engagement_reward_challenge_proof_thunk({ id: challenge.id, photo }),
+            submit_engagement_reward_challenge_proof_thunk({
+                id: challenge.id,
+                photo,
+                challengeDescription: challengeDescription.trim(),
+            }),
         );
 
-        if (submit_engagement_reward_challenge_proof_thunk.rejected.match(result)) {
+        if (
+            submit_engagement_reward_challenge_proof_thunk.rejected.match(
+                result,
+            )
+        ) {
             dispatch(
                 setAlert({
                     type: "danger",
@@ -118,7 +137,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
             return;
         }
 
-        removePhoto();
+        resetSubmissionForm();
         dispatch(
             setAlert({
                 type: "success",
@@ -175,7 +194,11 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                                     : "bg-gray-100 text-gray-400"
                                         }`}
                                     >
-                                        {isComplete ? <Check className="h-3.5 w-3.5" /> : index + 1}
+                                        {isComplete ? (
+                                            <Check className="h-3.5 w-3.5" />
+                                        ) : (
+                                            index + 1
+                                        )}
                                     </span>
                                     <span
                                         className={`text-[11px] font-medium ${
@@ -192,7 +215,9 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                 {index < STEPS.length - 1 && (
                                     <span
                                         className={`mx-1 mb-4 h-px flex-1 ${
-                                            index < currentStep ? "bg-emerald-300" : "bg-gray-200"
+                                            index < currentStep
+                                                ? "bg-emerald-300"
+                                                : "bg-gray-200"
                                         }`}
                                     />
                                 )}
@@ -210,7 +235,8 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                         <div className="grid grid-cols-2 gap-3">
                             <div className="rounded-xl bg-gray-50 px-3 py-2.5">
                                 <p className="flex items-center gap-1.5 text-xs text-gray-400">
-                                    <ListChecks className="h-3.5 w-3.5" /> Category
+                                    <ListChecks className="h-3.5 w-3.5" />{" "}
+                                    Category
                                 </p>
                                 <p className="mt-0.5 text-sm font-semibold text-gray-800">
                                     {challenge.category}
@@ -237,7 +263,8 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                     <Check className="h-3.5 w-3.5" /> Slots
                                 </p>
                                 <p className="mt-0.5 text-sm font-semibold text-gray-800">
-                                    {challenge.participants_count}/{challenge.max_participants ?? "∞"}
+                                    {challenge.participants_count}/
+                                    {challenge.max_participants ?? "∞"}
                                 </p>
                             </div>
                         </div>
@@ -248,7 +275,13 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                         </div>
 
                         <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                            <Button type="button" variant="light" outlined onClick={handleClose} className="w-full sm:w-auto">
+                            <Button
+                                type="button"
+                                variant="light"
+                                outlined
+                                onClick={handleClose}
+                                className="w-full sm:w-auto"
+                            >
                                 Maybe Later
                             </Button>
                             <Button
@@ -269,10 +302,21 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                     <>
                         {isDeclined && challenge.review_note && (
                             <div className="rounded-xl bg-red-50 px-3 py-2.5 text-sm text-red-600">
-                                <span className="font-semibold">Previous feedback:</span>{" "}
+                                <span className="font-semibold">
+                                    Previous feedback:
+                                </span>{" "}
                                 {challenge.review_note}
                             </div>
                         )}
+
+                        <div className="rounded-2xl border border-gray-100 bg-gray-50/80 px-4 py-3">
+                            <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                                Challenge
+                            </p>
+                            <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                                {challenge.description}
+                            </p>
+                        </div>
 
                         <div>
                             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -298,7 +342,9 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                             ) : (
                                 <label className="flex h-40 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 text-gray-400 transition hover:border-gray-300 hover:bg-gray-50">
                                     <ImagePlus className="h-6 w-6" />
-                                    <span className="text-xs">Upload a photo as proof</span>
+                                    <span className="text-xs">
+                                        Upload a photo as proof
+                                    </span>
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -306,18 +352,38 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                         onChange={handlePhotoChange}
                                     />
                                 </label>
+
                             )}
+
+                            <div className="mt-2">
+                                <TextArea
+                                    name="challenge_description"
+                                    label="Description / Explanation *"
+                                    placeholder="Description / Explanation *"
+                                    value={challengeDescription}
+                                    onChange={(e) => setChallengeDescription(e.target.value)}
+                                    required
+                                    minLength={10}
+                                    maxLength={500}
+                                />
+                            </div>
                         </div>
 
                         <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                            <Button type="button" variant="light" outlined onClick={handleClose} className="w-full sm:w-auto">
+                            <Button
+                                type="button"
+                                variant="light"
+                                outlined
+                                onClick={handleClose}
+                                className="w-full sm:w-auto"
+                            >
                                 Close
                             </Button>
                             <Button
                                 type="button"
                                 variant="primary"
                                 loading={submitting}
-                                disabled={submitting || !photo}
+                                disabled={submitting || !photo || !challengeDescription.trim()}
                                 onClick={handleSubmit}
                                 className="w-full sm:w-auto"
                             >
@@ -330,8 +396,9 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                 {currentStep === 2 && (
                     <>
                         <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                            Your proof was submitted on {formatDate(challenge.submitted_at)} and is
-                            waiting for admin review.
+                            Your proof was submitted on{" "}
+                            {formatDate(challenge.submitted_at)} and is waiting
+                            for admin review.
                         </div>
                         {challenge.submission_url && (
                             <img
@@ -341,7 +408,13 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                             />
                         )}
                         <div className="mt-2 flex justify-end">
-                            <Button type="button" variant="light" outlined onClick={handleClose} className="w-full sm:w-auto">
+                            <Button
+                                type="button"
+                                variant="light"
+                                outlined
+                                onClick={handleClose}
+                                className="w-full sm:w-auto"
+                            >
                                 Close
                             </Button>
                         </div>
@@ -351,8 +424,8 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                 {currentStep === 3 && (
                     <>
                         <div className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                            Approved on {formatDate(challenge.reviewed_at)} — +{challenge.points} pts
-                            awarded to your profile.
+                            Approved on {formatDate(challenge.reviewed_at)} — +
+                            {challenge.points} pts awarded to your profile.
                         </div>
                         {challenge.submission_url && (
                             <img
@@ -362,7 +435,13 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                             />
                         )}
                         <div className="mt-2 flex justify-end">
-                            <Button type="button" variant="light" outlined onClick={handleClose} className="w-full sm:w-auto">
+                            <Button
+                                type="button"
+                                variant="light"
+                                outlined
+                                onClick={handleClose}
+                                className="w-full sm:w-auto"
+                            >
                                 Close
                             </Button>
                         </div>

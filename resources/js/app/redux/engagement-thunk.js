@@ -388,9 +388,9 @@ export const leave_engagement_reward_challenge_thunk = createAsyncThunk(
 
 export const submit_engagement_reward_challenge_proof_thunk = createAsyncThunk(
     "engagement/submitRewardChallengeProof",
-    async ({ id, photo }, { rejectWithValue }) => {
+    async ({ id, photo, challengeDescription }, { rejectWithValue }) => {
         try {
-            const response = await submit_reward_challenge_proof_service(id, photo);
+            const response = await submit_reward_challenge_proof_service(id, photo, challengeDescription);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

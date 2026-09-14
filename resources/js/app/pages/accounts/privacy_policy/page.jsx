@@ -18,7 +18,7 @@ export default function Page() {
         { id: "10", title: "10. Policy Updates" },
         { id: "11", title: "11. Employee Acknowledgment" },
     ];
-
+ 
     const scrollToSection = (id) => {
         setActiveSection(id);
         const element = document.getElementById(id);

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('reward_challenge_participants', function (Blueprint $table) {
             $table->string('submission_path')->nullable()->after('status');
+            $table->text('challenge_description')->nullable()->after('submission_path');
             $table->timestamp('submitted_at')->nullable()->after('submission_path');
             $table->timestamp('reviewed_at')->nullable()->after('submitted_at');
             $table->foreignId('reviewed_by')->nullable()->after('reviewed_at')->constrained('users')->nullOnDelete();
@@ -27,7 +28,7 @@ return new class extends Migration
     {
         Schema::table('reward_challenge_participants', function (Blueprint $table) {
             $table->dropConstrainedForeignId('reviewed_by');
-            $table->dropColumn(['submission_path', 'submitted_at', 'reviewed_at', 'review_note']);
+            $table->dropColumn(['submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'review_note']);
         });
     }
 };

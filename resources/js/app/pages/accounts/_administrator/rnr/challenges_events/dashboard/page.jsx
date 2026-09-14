@@ -10,7 +10,7 @@ export default function Page() {
         <Layout>
             <RnrLayout>
                 <TabsSection>
-                    <div>
+                    <div className="mt-2 bg-slate-100 p-6 rounded-lg font-sans text-slate-800">
                      <HeaderSection />
                      <AllChallengesSection />
                     </div>
