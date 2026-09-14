@@ -36,7 +36,7 @@ class ERExitClearanceController extends Controller
             return array_keys(array_filter($items));
         };
 
-        
+
         $exitClearance = ERExitClearance::updateOrCreate(
             // Match existing clearance by attrition ID
             ['e_r_employee_attrition_id' => $request->input('e_r_employee_attrition_id')],
@@ -69,7 +69,7 @@ class ERExitClearanceController extends Controller
                 'communications_and_equipment' => $filterSelected($request->input('communications')),
 
                 // Employee Confirmation
-                'employee_signature' => $request->input('employeeSignature'),
+                'employee_signature' => $request->is_acknowledge ? $request->input('employeeSignature') : null,
             ]
         );
 

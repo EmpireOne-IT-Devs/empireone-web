@@ -77,6 +77,8 @@ class EREmployeeAttritionController extends Controller
 
         $managerInfo = $department_manager?->employee?->personal_information;
         $departmentManager = trim(($managerInfo['first_name'] ?? '') . ' ' . ($managerInfo['last_name'] ?? ''));
+        $account_employee = AccountEmployee::where('user_id', $request->user_id)->with(['user'])->first();
+        $account_document = AccountDocument::where('user_id', $request->user_id)->first();
 
         $attrition = EREmployeeAttrition::updateOrCreate(
             ['employee_id' => $request->employee_id],
@@ -97,8 +99,6 @@ class EREmployeeAttritionController extends Controller
             ]
         );
 
-        $account_employee = AccountEmployee::where('user_id', $request->user_id)->first();
-        $account_document = AccountDocument::where('user_id', $request->user_id)->first();
 
         if ($account_employee) {
 
@@ -120,7 +120,6 @@ class EREmployeeAttritionController extends Controller
                 'e_r_leader_id'         => null,
                 'is_has_contract'       => null,
                 'employee_id'           => null,
-                'signature'             => null,
                 'onboarding_agree_on'   => null,
                 'status'                => null,
                 'basic_pay'             => null,
@@ -131,9 +130,10 @@ class EREmployeeAttritionController extends Controller
             $ccEmails = array_values(array_unique(array_filter([
                 $e_r_leader?->employee?->eogs_email ?? '',
                 $department_manager?->employee?->eogs_email ?? '',
-                // 'scitdept@empireonegroup.com',
-                // 'scchr@empireonegroup.com',
-                // 'carcarhr@empireonegroup.com',
+                'scitdept@empireonegroup.com',
+                'scchr@empireonegroup.com',
+                'carcarhr@empireonegroup.com',
+                $account_employee->eogs_email ?? $account_employee->user['email']
             ])));
 
             $this->my_empireone_send_email([

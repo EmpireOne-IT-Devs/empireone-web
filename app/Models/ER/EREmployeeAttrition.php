@@ -29,7 +29,7 @@ class EREmployeeAttrition extends Model
 
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id')->with(['personal_information', 'user', 'site', 'department', 'er_leader']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information', 'user', 'site', 'department', 'er_leader']);
     }
 
      public function personal_information(): HasOne

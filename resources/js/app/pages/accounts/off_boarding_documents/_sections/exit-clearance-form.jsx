@@ -5,6 +5,8 @@ import moment from 'moment';
 import { add_exit_clearance_service } from '@/app/services/human-resources-service';
 import Button from '@/app/_components/button';
 import { setAlert } from '@/app/redux/app-slice';
+import store from '@/app/store/store';
+import { get_attrition_by_id_thunk } from '@/app/redux/employee-relation-thunk';
 
 export default function ExitClearanceForm() {
     const { attrition } = useSelector((store) => store.human_resources);
@@ -25,7 +27,7 @@ export default function ExitClearanceForm() {
             return acc;
         }, {});
     };
-    const is_allow_to_edit = Number(attrition?.employee_id) !== Number(attrition?.user?.account_employee?.employee_id);
+    const is_allow_to_edit = Number(attrition?.user_id) !== Number(attrition?.user?.account_employee?.user_id);
 
     console.log('is_allow_to_edit', is_allow_to_edit)
 
@@ -83,7 +85,7 @@ export default function ExitClearanceForm() {
                     exit_clearance?.communications_and_equipment,
                     ['mobilePhone', 'vonage', 'headset', 'yJack']
                 ),
-                employeeSignature: attrition?.employee?.signature || exit_clearance?.employee_signature || '',
+                employeeSignature: attrition?.employee?.signature || exit_clearance?.employee_signature,
             }
         });
 
@@ -123,13 +125,16 @@ export default function ExitClearanceForm() {
 
     };
 
+    //  {is_allow_to_edit ? "SAVE" : "I ACKNOWLEDGE"}
     // Form submission handler
     const onSubmit = async (data) => {
         try {
             await add_exit_clearance_service({
                 ...data,
-                e_r_employee_attrition_id: window.location.pathname.split('/')[3]
+                e_r_employee_attrition_id: window.location.pathname.split('/')[3],
+                is_acknowledge: !is_allow_to_edit
             });
+            await store.dispatch(get_attrition_by_id_thunk(window.location.pathname.split('/')[3]))
             dispatch(
                 setAlert({
                     type: "success",
@@ -454,9 +459,9 @@ export default function ExitClearanceForm() {
                         </span>
                         <div className="flex-grow border-b border-black relative flex justify-center items-end h-16">
                             {/* Signature Image - Overlaying above the line */}
-                            {watchedValues?.employeeSignature ? (
+                            {(watchedValues?.employeeSignature && exit_clearance?.employee_signature) ? (
                                 <img
-                                    src={watchedValues.employeeSignature}
+                                    src={watchedValues?.employeeSignature}
                                     alt="Employee Signature"
                                     className="max-h-52 object-contain absolute -bottom-28 pointer-events-none"
                                 />
@@ -477,18 +482,16 @@ export default function ExitClearanceForm() {
                         </p>
                     </div>
 
-                    {
-                        is_allow_to_edit && <div className="mt-4 flex justify-end no-print">
-                           
-                            <Button
-                                type="submit"
-                                loading={isSubmitting}
-                            >
-                                SAVE
-                            </Button>
-                        </div>
-                    }
 
+                    <div className="mt-4 flex justify-end no-print">
+
+                        <Button
+                            type="submit"
+                            loading={isSubmitting}
+                        >
+                            {is_allow_to_edit ? "SAVE" : "I ACKNOWLEDGE"}
+                        </Button>
+                    </div>
                 </div>
             </form>
         </>
