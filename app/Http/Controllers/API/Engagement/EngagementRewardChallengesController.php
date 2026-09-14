@@ -228,6 +228,7 @@ class EngagementRewardChallengesController extends Controller
 
         $request->validate([
             'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'challenge_description' => ['required', 'string', 'max:1000'],
         ]);
 
         $participant = $engagementRewardChallenge->participants()->where('user_id', $userId)->first();
@@ -255,6 +256,7 @@ class EngagementRewardChallengesController extends Controller
         $engagementRewardChallenge->participants()->updateExistingPivot($userId, [
             'status' => 'submitted',
             'submission_path' => $path,
+            'challenge_description' => $request->string('challenge_description')->toString(),
             'submitted_at' => now(),
             'reviewed_at' => null,
             'reviewed_by' => null,

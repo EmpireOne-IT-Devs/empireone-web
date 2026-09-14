@@ -127,9 +127,10 @@ export async function leave_reward_challenge_service(id) {
     return await axios.delete(`/api/engagement/reward-challenges/${id}/leave`);
 }
 
-export async function submit_reward_challenge_proof_service(id, photo) {
+export async function submit_reward_challenge_proof_service(id, photo, challengeDescription) {
     const formData = new FormData();
     formData.append("photo", photo);
+    formData.append("challenge_description", challengeDescription);
 
     return await axios.post(`/api/engagement/reward-challenges/${id}/submit`, formData, {
         headers: { "Content-Type": "multipart/form-data" },

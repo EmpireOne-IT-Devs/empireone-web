@@ -2,7 +2,7 @@ import React from "react";
 
 export default function HeaderSection() {
   return (
-    <div className="bg-slate-100 p-6 rounded-lg font-sans text-slate-800">
+    <div className="mt-2 bg-slate-100 p-6 rounded-lg font-sans text-slate-800">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Overall Completion Rate Card */}

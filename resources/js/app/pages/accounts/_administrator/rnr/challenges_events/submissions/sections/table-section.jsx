@@ -5,6 +5,7 @@ import Button from "@/app/_components/button";
 import Badge from "@/app/_components/badge";
 import Modal from "@/app/_components/modal";
 import TextArea from "@/app/_components/textarea";
+import Skeleton from "@/app/_components/skeleton";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     get_engagement_reward_challenge_submissions_thunk,
@@ -12,6 +13,7 @@ import {
     approve_engagement_reward_challenge_submission_thunk,
     decline_engagement_reward_challenge_submission_thunk,
 } from "@/app/redux/engagement-thunk";
+import moment from "moment/moment";
 
 const STATUS_BADGE = {
     submitted: { label: "Pending Review", variant: "warning" },
@@ -19,20 +21,11 @@ const STATUS_BADGE = {
     declined: { label: "Rejected", variant: "danger" },
 };
 
-function formatDateTime(value) {
-    if (!value) return "";
-    return new Date(value).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-    });
-}
-
 function DeclineModal({ submission, onClose }) {
     const dispatch = useDispatch();
-    const { challengeSubmissionDecliningId } = useSelector((state) => state.engagement);
+    const { challengeSubmissionDecliningId } = useSelector(
+        (state) => state.engagement,
+    );
     const [note, setNote] = useState("");
 
     if (!submission) return null;
@@ -41,10 +34,17 @@ function DeclineModal({ submission, onClose }) {
 
     const handleDecline = async () => {
         const result = await dispatch(
-            decline_engagement_reward_challenge_submission_thunk({ id: submission.id, review_note: note }),
+            decline_engagement_reward_challenge_submission_thunk({
+                id: submission.id,
+                review_note: note,
+            }),
         );
 
-        if (decline_engagement_reward_challenge_submission_thunk.rejected.match(result)) {
+        if (
+            decline_engagement_reward_challenge_submission_thunk.rejected.match(
+                result,
+            )
+        ) {
             dispatch(
                 setAlert({
                     type: "danger",
@@ -87,7 +87,13 @@ function DeclineModal({ submission, onClose }) {
                     placeholder="Let the employee know why this was declined..."
                 />
                 <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                    <Button type="button" variant="light" outlined onClick={onClose} className="w-full sm:w-auto">
+                    <Button
+                        type="button"
+                        variant="light"
+                        outlined
+                        onClick={onClose}
+                        className="w-full sm:w-auto"
+                    >
                         Cancel
                     </Button>
                     <Button
@@ -108,9 +114,11 @@ function DeclineModal({ submission, onClose }) {
 
 export default function TableSection() {
     const dispatch = useDispatch();
-    const { challengeSubmissions, challengeSubmissionsLoading, challengeSubmissionApprovingId } = useSelector(
-        (state) => state.engagement,
-    );
+    const {
+        challengeSubmissions,
+        challengeSubmissionsLoading,
+        challengeSubmissionApprovingId,
+    } = useSelector((state) => state.engagement);
     const [declineTarget, setDeclineTarget] = useState(null);
 
     useEffect(() => {
@@ -118,9 +126,15 @@ export default function TableSection() {
     }, [dispatch]);
 
     const handleApprove = async (submission) => {
-        const result = await dispatch(approve_engagement_reward_challenge_submission_thunk(submission.id));
+        const result = await dispatch(
+            approve_engagement_reward_challenge_submission_thunk(submission.id),
+        );
 
-        if (approve_engagement_reward_challenge_submission_thunk.rejected.match(result)) {
+        if (
+            approve_engagement_reward_challenge_submission_thunk.rejected.match(
+                result,
+            )
+        ) {
             dispatch(
                 setAlert({
                     type: "danger",
@@ -149,7 +163,11 @@ export default function TableSection() {
     };
 
     if (challengeSubmissionsLoading) {
-        return <p className="mt-6 text-sm text-gray-500">Loading submissions...</p>;
+        return (
+            <div className="mt-6 overflow-hidden rounded-2xl bg-white p-4 shadow-sm">
+                <Skeleton variant="table" lines={5} />
+            </div>
+        );
     }
 
     if (challengeSubmissions.length === 0) {
@@ -168,21 +186,31 @@ export default function TableSection() {
                         <th className="px-4 py-3">Proof</th>
                         <th className="px-4 py-3">Employee</th>
                         <th className="px-4 py-3">Challenge</th>
+
                         <th className="px-4 py-3">Submitted</th>
                         <th className="px-4 py-3">Status</th>
+
+                        <th className="px-4 py-3">Description</th>
                         <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                     {challengeSubmissions.map((submission) => {
-                        const badge = STATUS_BADGE[submission.status] ?? STATUS_BADGE.submitted;
-                        const approving = challengeSubmissionApprovingId === submission.id;
+                        const badge =
+                            STATUS_BADGE[submission.status] ??
+                            STATUS_BADGE.submitted;
+                        const approving =
+                            challengeSubmissionApprovingId === submission.id;
 
                         return (
                             <tr key={submission.id}>
                                 <td className="px-4 py-3">
                                     {submission.submission_url ? (
-                                        <a href={submission.submission_url} target="_blank" rel="noreferrer">
+                                        <a
+                                            href={submission.submission_url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
                                             <img
                                                 src={submission.submission_url}
                                                 alt="Submission proof"
@@ -190,25 +218,46 @@ export default function TableSection() {
                                             />
                                         </a>
                                     ) : (
-                                        <span className="text-xs text-gray-400">No photo</span>
+                                        <span className="text-xs text-gray-400">
+                                            No photo
+                                        </span>
                                     )}
                                 </td>
                                 <td className="px-4 py-3">
-                                    <p className="font-medium text-gray-800">{submission.employee.name}</p>
-                                    <p className="text-xs text-gray-400">{submission.employee.email}</p>
+                                    <p className="font-medium text-gray-800">
+                                        {submission.employee.name}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                        {submission.employee.email}
+                                    </p>
                                 </td>
                                 <td className="px-4 py-3">
-                                    <p className="font-medium text-gray-800">{submission.challenge.title}</p>
-                                    <p className="text-xs text-gray-400">+{submission.challenge.points} pts</p>
+                                    <p className="font-medium text-gray-800">
+                                        {submission.challenge.title}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                        +{submission.challenge.points} pts
+                                    </p>
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-500">
-                                    {formatDateTime(submission.submitted_at)}
+                                    {moment(submission.submitted_at).format(
+                                        "MMM D, YYYY, h:mm A",
+                                    )}
                                 </td>
                                 <td className="px-4 py-3">
-                                    <Badge label={badge.label} variant={badge.variant} />
-                                    {submission.status === "declined" && submission.review_note && (
-                                        <p className="mt-1 text-xs text-gray-400">{submission.review_note}</p>
-                                    )}
+                                    <Badge
+                                        label={badge.label}
+                                        variant={badge.variant}
+                                    />
+                                    {submission.status === "declined" &&
+                                        submission.review_note && (
+                                            <p className="mt-1 text-xs text-gray-400">
+                                                {submission.review_note}
+                                            </p>
+                                        )}
+                                </td>
+                                <td className="px-4 py-3 text-xs text-gray-500">
+                                    {submission.challenge_description || "-"}
                                 </td>
                                 <td className="px-4 py-3 text-right">
                                     {submission.status === "submitted" ? (
@@ -218,9 +267,12 @@ export default function TableSection() {
                                                 variant="danger"
                                                 outlined
                                                 size="sm"
-                                                onClick={() => setDeclineTarget(submission)}
+                                                onClick={() =>
+                                                    setDeclineTarget(submission)
+                                                }
                                             >
-                                                <X className="mr-1 h-3.5 w-3.5" /> Decline
+                                                <X className="mr-1 h-3.5 w-3.5" />{" "}
+                                                Decline
                                             </Button>
                                             <Button
                                                 type="button"
@@ -228,13 +280,18 @@ export default function TableSection() {
                                                 size="sm"
                                                 loading={approving}
                                                 disabled={approving}
-                                                onClick={() => handleApprove(submission)}
+                                                onClick={() =>
+                                                    handleApprove(submission)
+                                                }
                                             >
-                                                <Check className="mr-1 h-3.5 w-3.5" /> Approve
+                                                <Check className="mr-1 h-3.5 w-3.5" />{" "}
+                                                Approve
                                             </Button>
                                         </div>
                                     ) : (
-                                        <span className="text-xs text-gray-400">Reviewed</span>
+                                        <span className="text-xs text-gray-400">
+                                            Reviewed
+                                        </span>
                                     )}
                                 </td>
                             </tr>
@@ -243,7 +300,10 @@ export default function TableSection() {
                 </tbody>
             </table>
 
-            <DeclineModal submission={declineTarget} onClose={handleDeclineClose} />
+            <DeclineModal
+                submission={declineTarget}
+                onClose={handleDeclineClose}
+            />
         </div>
     );
 }

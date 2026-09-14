@@ -21,6 +21,7 @@ class EngagementRewardChallengeParticipant extends Pivot
         'status',
         'joined_at',
         'submission_path',
+        'challenge_description',
         'submitted_at',
         'reviewed_at',
         'reviewed_by',
