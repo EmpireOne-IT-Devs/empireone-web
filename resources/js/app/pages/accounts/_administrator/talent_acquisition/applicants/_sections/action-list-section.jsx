@@ -20,6 +20,7 @@ import SendDocumentsSection from './send-documents-section';
 import ShowApplicantDetailsSection from './show-applicant-details-section';
 import DeleteApplicantSection from './delete-applicant-section';
 import TransferApplicant from './transfer-applicant';
+import { useSelector } from 'react-redux';
 
 export default function ActionListSection({ props_data }) {
     const [open, setOpen] = useState(false);
