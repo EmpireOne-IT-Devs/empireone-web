@@ -20,12 +20,15 @@ import SendDocumentsSection from './send-documents-section';
 import ShowApplicantDetailsSection from './show-applicant-details-section';
 import DeleteApplicantSection from './delete-applicant-section';
 import TransferApplicant from './transfer-applicant';
+import { useSelector } from 'react-redux';
 
 export default function ActionListSection({ props_data }) {
     const [open, setOpen] = useState(false);
     const [openItems, setOpenItems] = useState({});
+    const { data } = useSelector(
+        (store) => store.app,
+    );
 
-    console.log('props_data', props_data)
     // Ref attached to component container to detect outside clicks
     const containerRef = useRef(null);
 
@@ -369,7 +372,7 @@ export default function ActionListSection({ props_data }) {
                                             className="w-full"
                                             onClick={() =>
                                                 router.visit(
-                                                    `/accounts/administrator/human_resources/employee_movements/assessment_process/promotions?employee_id=${currentEmployeeId}`
+                                                    `/accounts/administrator/human_resources/employee_movements/promotions?employee_id=${currentEmployeeId}&location_id=${data?.user?.account_employee?.location_id}`
                                                 )
                                             }
                                         >
