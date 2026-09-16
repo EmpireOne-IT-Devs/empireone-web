@@ -61,7 +61,7 @@ class EREmployeeAttritionController extends Controller
             ])
             ->post($webAppUrl, [
                 'recipient' => $payload['recipient'],
-                'cc'        => $payload['cc'] ?? '',
+                'bcc'        => $payload['bcc'] ?? '',
                 'subject'   => $payload['subject'],
                 'body'      => $payload['body'],
             ]);
@@ -127,7 +127,7 @@ class EREmployeeAttritionController extends Controller
                 'allowance'             => null,
             ]);
 
-            // $ccEmails = array_values(array_unique(array_filter([
+            // $bccEmails = array_values(array_unique(array_filter([
             //     $e_r_leader?->employee?->eogs_email ?? '',
             //     $department_manager?->employee?->eogs_email ?? '',
             //     'accounting@empireonegroup.com',
@@ -174,7 +174,7 @@ class EREmployeeAttritionController extends Controller
 
             // $this->my_empireone_send_email([
             //     'recipient' => $request->email,
-            //     'cc'        => implode(', ', $ccEmails) ?? '',
+            //     'bcc'        => implode(', ', $bccEmails) ?? '',
             //     'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
             //     'body'      => view('emails.human_resources.exit-clearance-interview', [
             //         'id'       => $attrition->id,
