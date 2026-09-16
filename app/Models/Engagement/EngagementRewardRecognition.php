@@ -19,7 +19,6 @@ class EngagementRewardRecognition extends Model
         'award_point',
         'company_value',
         'message',
-        'engagement_post_event_reacts_id',
         'status',
         'published_at',
     ];
@@ -42,5 +41,13 @@ class EngagementRewardRecognition extends Model
     public function employee()
     {
         return $this->belongsTo(User::class, 'employee_id');
+    }
+
+    /**
+     * Reactions on this recognition (shared engagement_post_event_reacts table).
+     */
+    public function reactions()
+    {
+        return $this->hasMany(EngagementPostEventReact::class, 'engagement_reward_recognition_id');
     }
 }

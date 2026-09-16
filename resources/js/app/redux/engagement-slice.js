@@ -145,6 +145,13 @@ const engagementSlice = createSlice({
             if (user_has_reacted !== undefined) state.posts[idx].user_has_reacted = user_has_reacted;
             if (comment_count    !== undefined) state.posts[idx].comment_count    = comment_count;
         },
+        syncRewardRecognitionInteraction(state, action) {
+            const { id, reaction_count, user_has_reacted } = action.payload;
+            const idx = state.rewardRecognitions.findIndex((r) => r.id === id);
+            if (idx === -1) return;
+            if (reaction_count   !== undefined) state.rewardRecognitions[idx].reaction_count   = reaction_count;
+            if (user_has_reacted !== undefined) state.rewardRecognitions[idx].user_has_reacted = user_has_reacted;
+        },
         // Action to clear gallery errors when modal closes
         clearGalleryErrors(state) {
             state.uploadGalleryError = null;
@@ -634,6 +641,7 @@ const engagementSlice = createSlice({
 
 export const {
     syncInteraction,
+    syncRewardRecognitionInteraction,
     clearGalleryErrors,
     clearRecognition,
     clearSearchResults,

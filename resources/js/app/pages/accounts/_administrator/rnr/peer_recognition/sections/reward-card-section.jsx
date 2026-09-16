@@ -14,9 +14,11 @@ import {
     Quote,
     Award,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { get_engagement_reward_recognitions_thunk } from "@/app/redux/engagement-thunk";
+import { syncRewardRecognitionInteraction } from "@/app/redux/engagement-slice";
+import { toggle_reward_recognition_reaction_service } from "@/app/services/engagement-service";
 import moment from "moment";
 
 const VARIANT_BORDER_COLORS = {
@@ -37,7 +39,7 @@ const VARIANT_BADGE_COLORS = {
     secondary: "bg-slate-50 text-slate-700 border-slate-200",
 };
 
-function RewardCard({ item }) {
+function RewardCard({ item, reacting, onReact }) {
     const CategoryIcon = item.category?.icon || Lightbulb;
     const borderColorClasses =
         VARIANT_BORDER_COLORS[item.category?.variant] ||
@@ -150,8 +152,15 @@ function RewardCard({ item }) {
             {/* Footer */}
             <div className="flex items-center justify-between text-gray-500">
                 <div className="flex items-center gap-1">
-                    <button className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm transition-colors hover:bg-red-50 hover:text-red-500 cursor-pointer">
-                        <Heart size={16} />
+                    <button
+                        type="button"
+                        onClick={(e) => onReact(e, item)}
+                        disabled={reacting}
+                        className={`flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm transition-colors hover:bg-red-50 hover:text-red-500 cursor-pointer ${
+                            item.user_has_reacted ? "text-red-500" : ""
+                        }`}
+                    >
+                        <Heart size={16} className={item.user_has_reacted ? "fill-red-500 text-red-500" : ""} />
                         {item.likes}
                     </button>
                 </div>
@@ -170,10 +179,48 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
     const { rewardRecognitions, rewardRecognitionsLoading } = useSelector(
         (state) => state.engagement,
     );
+    const reactingIds = useRef(new Set());
+    const [, forceUpdate] = useState(0);
 
     useEffect(() => {
         dispatch(get_engagement_reward_recognitions_thunk());
     }, [dispatch]);
+
+    async function handleReact(e, item) {
+        e.stopPropagation();
+        if (reactingIds.current.has(item.id)) return;
+
+        reactingIds.current.add(item.id);
+        forceUpdate((n) => n + 1);
+
+        const wasReacted = item.user_has_reacted;
+        const prevCount = item.likes;
+
+        dispatch(
+            syncRewardRecognitionInteraction({
+                id: item.id,
+                reaction_count: wasReacted ? prevCount - 1 : prevCount + 1,
+                user_has_reacted: !wasReacted,
+            }),
+        );
+
+        try {
+            const res = await toggle_reward_recognition_reaction_service(item.id);
+            const { reaction_count, user_has_reacted } = res.data.data;
+            dispatch(syncRewardRecognitionInteraction({ id: item.id, reaction_count, user_has_reacted }));
+        } catch {
+            dispatch(
+                syncRewardRecognitionInteraction({
+                    id: item.id,
+                    reaction_count: prevCount,
+                    user_has_reacted: wasReacted,
+                }),
+            );
+        } finally {
+            reactingIds.current.delete(item.id);
+            forceUpdate((n) => n + 1);
+        }
+    }
 
     const mapCategory = (cat) => {
         const name = (cat || "").toString();
@@ -275,6 +322,7 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
             message: r.message,
             createdAt: r.published_at || r.created_at,
             likes: r.reaction_count || 0,
+            user_has_reacted: r.user_has_reacted || false,
             award_point: r.award_point || 0,
         };
     });
@@ -290,7 +338,12 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
             {rewardRecognitionsLoading
                 ? loadingCards
                 : mapped.map((item) => (
-                      <RewardCard key={item.id} item={item} />
+                      <RewardCard
+                          key={item.id}
+                          item={item}
+                          reacting={reactingIds.current.has(item.id)}
+                          onReact={handleReact}
+                      />
                   ))}
         </div>
     );

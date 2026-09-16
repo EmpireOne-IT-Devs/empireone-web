@@ -8,6 +8,7 @@ class EngagementPostEventReact extends Model
 {
     protected $fillable = [
         'engagement_post_event_id',
+        'engagement_reward_recognition_id',
         'user_id',
         'react',
     ];
@@ -15,5 +16,10 @@ class EngagementPostEventReact extends Model
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class);
+    }
+
+    public function rewardRecognition()
+    {
+        return $this->belongsTo(EngagementRewardRecognition::class, 'engagement_reward_recognition_id');
     }
 }

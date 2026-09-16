@@ -216,6 +216,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'show']);
         Route::put('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'update']);
         Route::delete('reward-recognitions/{engagementRewardRecognition}', [EngagementRewardRecognitionController::class, 'destroy']);
+        Route::post('reward-recognitions/{id}/react', [EngagementRewardRecognitionController::class, 'toggleReaction']);
 
         Route::get('reward-challenges', [EngagementRewardChallengesController::class, 'index']);
         Route::get('reward-challenges/my', [EngagementRewardChallengesController::class, 'myChallenges']);

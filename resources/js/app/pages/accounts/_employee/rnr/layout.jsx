@@ -18,7 +18,7 @@ export default function RnrLayout({ children }) {
             active: path === "challenge_event",
         },
         {
-            label: "My Profiles",
+            label: "My Points",
             path: "/accounts/employee/rnr/my_profile",
             active: path === "my_profile",
         },

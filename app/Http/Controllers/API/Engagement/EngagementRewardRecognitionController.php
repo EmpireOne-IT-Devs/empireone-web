@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Engagement;
 use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Department;
+use App\Models\Engagement\EngagementPostEventReact;
 use App\Models\Engagement\EngagementRewardRecognition;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,21 +17,61 @@ class EngagementRewardRecognitionController extends Controller
      */
     public function index()
     {
-        $recognitions = EngagementRewardRecognition::latest()->get()->map(function ($recognition) {
-            $userPayload = $this->formatUserPayload($recognition->user_id);
-            $employeePayload = $this->formatEmployeePayload(
-                $recognition->employee_id,
-                $recognition->department_id,
-                $recognition->account_id,
-            );
+        $userId = auth()->id();
 
-            return array_merge($recognition->toArray(), [
-                'user' => $userPayload,
-                'employee' => $employeePayload,
-            ]);
-        });
+        $recognitions = EngagementRewardRecognition::withCount(['reactions as reaction_count'])
+            ->withExists(['reactions as user_has_reacted' => fn($q) => $q->where('user_id', $userId)])
+            ->latest()
+            ->get()
+            ->map(function ($recognition) {
+                $userPayload = $this->formatUserPayload($recognition->user_id);
+                $employeePayload = $this->formatEmployeePayload(
+                    $recognition->employee_id,
+                    $recognition->department_id,
+                    $recognition->account_id,
+                );
+
+                return array_merge($recognition->toArray(), [
+                    'user' => $userPayload,
+                    'employee' => $employeePayload,
+                ]);
+            });
 
         return response()->json($recognitions);
+    }
+
+    /**
+     * Toggle the current user's reaction on a recognition.
+     */
+    public function toggleReaction($id)
+    {
+        EngagementRewardRecognition::findOrFail($id);
+
+        $existing = EngagementPostEventReact::where('engagement_reward_recognition_id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $userHasReacted = false;
+        } else {
+            EngagementPostEventReact::create([
+                'engagement_reward_recognition_id' => $id,
+                'user_id'                          => auth()->id(),
+                'react'                             => 'Heart',
+            ]);
+            $userHasReacted = true;
+        }
+
+        $reactionCount = EngagementPostEventReact::where('engagement_reward_recognition_id', $id)->count();
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => [
+                'reaction_count'   => $reactionCount,
+                'user_has_reacted' => $userHasReacted,
+            ],
+        ]);
     }
 
     /**

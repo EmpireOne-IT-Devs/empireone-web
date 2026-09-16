@@ -8,6 +8,7 @@ export default function Page() {
         <Layout>
             <RnrLayout>
                 <PointsSummarySection />
+                
             </RnrLayout>
         </Layout>
     );

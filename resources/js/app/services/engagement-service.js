@@ -86,6 +86,10 @@ export async function delete_reward_recognition_service(id) {
     return await axios.delete(`/api/engagement/reward-recognitions/${id}`);
 }
 
+export async function toggle_reward_recognition_reaction_service(id) {
+    return await axios.post(`/api/engagement/reward-recognitions/${id}/react`);
+}
+
 export async function get_reward_challenges_service() {
     return await axios.get("/api/engagement/reward-challenges");
 }
