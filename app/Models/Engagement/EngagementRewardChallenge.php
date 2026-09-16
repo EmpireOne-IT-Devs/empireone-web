@@ -82,9 +82,6 @@ class EngagementRewardChallenge extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Whether an employee (identified by their department/account) can join this challenge.
-     */
     public function isEligibleForEmployee(?int $departmentId, ?int $accountId): bool
     {
         if ($this->all_employees) {
