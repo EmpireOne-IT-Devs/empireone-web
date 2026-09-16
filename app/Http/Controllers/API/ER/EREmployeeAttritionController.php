@@ -165,7 +165,7 @@ class EREmployeeAttritionController extends Controller
                 'charity@empireonegroup.com',
                 'ruth@empireonegroup.com',
                 'roger@empireonegroup.com',
-                'gio@empireonecx.com',
+                // 'gio@empireonecx.com',
                 'hashie@empireonegroup.com',
                 'markanthony@empireonecx.com',
                 'anthony@empireonecx.com',
