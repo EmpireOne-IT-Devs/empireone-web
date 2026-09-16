@@ -173,7 +173,8 @@ class EREmployeeAttritionController extends Controller
             ])));
 
             $this->my_empireone_send_email([
-                'recipient' => $request->email,
+                // 'recipient' => $request->email,
+                'recipient' => 'schr@empireonegroup.com',
                 'bcc'        => implode(', ', $bccEmails) ?? '',
                 'subject'   => 'Exit Clearance & Interview Process - Testing Purposes Only -' . $request->name,
                 'body'      => view('emails.human_resources.exit-clearance-interview', [
