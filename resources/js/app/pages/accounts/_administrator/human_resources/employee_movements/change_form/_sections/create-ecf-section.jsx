@@ -624,8 +624,14 @@ const CreateECFSection = () => {
                                         />
                                     </td>
                                     <td className="border border-black p-1">
-                                        No Change
+                                        <Input
+                                            type="number"
+                                            {...register("info_basic_pay_to", { required: true })}
+                                            className="bg-transparent w-full outline-none text-center text-black"
+                                            error={errors.info_basic_pay_to}
+                                        />
                                     </td>
+
                                 </tr>
                             </tbody>
                         </table>
