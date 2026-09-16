@@ -27,9 +27,9 @@ class ERLeaderController extends Controller
         // 2. Apply location filtering if a location_id is present
         if ($locationId) {
 
-            $leadersQuery->whereHas('employee', function ($query) use ($locationId) {
-                $query->where('location_id', $locationId);
-            });
+            // $leadersQuery->whereHas('employee', function ($query) use ($locationId) {
+            //     $query->where('location_id', $locationId);
+            // });
 
             // Filter Users assuming location_id is on the 'account_employees' table
             $usersQuery->whereHas('account_employee', function ($query) use ($locationId) {
