@@ -53,7 +53,6 @@ class ERLeaderController extends Controller
     public function store(Request $request)
     {
 
-        dd($request->all());
         ERLeader::updateOrCreate(
             // 1. Search criteria: Look for an existing record with this user_id
             ['user_id' => $request->user_id],
