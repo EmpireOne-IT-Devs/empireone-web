@@ -100,6 +100,7 @@ class EREmployeeAttritionController extends Controller
         );
 
 
+
         if ($account_employee) {
 
             // FIX: Ensure document actually exists before updating
@@ -126,61 +127,61 @@ class EREmployeeAttritionController extends Controller
                 'allowance'             => null,
             ]);
 
-            $ccEmails = array_values(array_unique(array_filter([
-                $e_r_leader?->employee?->eogs_email ?? '',
-                $department_manager?->employee?->eogs_email ?? '',
-                'accounting@empireonegroup.com',
-                'bem@empireonegroup.com',
-                'carcarhr@empireonegroup.com',
-                'compben@empireonegroup.com',
-                'compliance@empireonecx.com',
-                'edwin@empireonegroup.com',
-                'elona@empireonegroup.com',
-                'eunice@empireonegroup.com',
-                'grecar@empireonecx.com',
-                'honeylyn@empireonegroup.com',
-                'john@empireonegroup.com',
-                'jona@empireonegroup.com',
-                'juliepearl.labasan@empireonegroup.com',
-                'marc@empireonecx.com',
-                'mark@empireonecx.com',
-                'milcah@empireonegroup.com',
-                'mlourdes@empireonegroup.com',
-                'paul@empireonegroup.com',
-                'SCaccounting@empireonegroup.com',
-                'schr@empireonegroup.com',
-                'scitns@empireonegroup.com',
-                'wfm-scheduler@empireonegroup.com',
-                'peter@empireonegroup.com',
-                'chaquira@empireonegroup.com',
-                'scchr@empireonegroup.com',
-                'rheamae@empireonegroup.com',
-                'mika@empireonecx.com',
-                'quincy@empireonecx.com',
-                'charmaine@empireonecx.com',
-                'jrusiana@empireonecx.com',
-                'markpatena@empireonegroup.com',
-                'jude@empireonecx.com',
-                'charity@empireonegroup.com',
-                'ruth@empireonegroup.com',
-                'roger@empireonegroup.com',
-                'gio@empireonecx.com',
-                'hashie@empireonegroup.com',
-                'markanthony@empireonecx.com',
-                'anthony@empireonecx.com',
-                'empireone.hrd@empireonegroup.com',
-            ])));
+            // $ccEmails = array_values(array_unique(array_filter([
+            //     $e_r_leader?->employee?->eogs_email ?? '',
+            //     $department_manager?->employee?->eogs_email ?? '',
+            //     'accounting@empireonegroup.com',
+            //     'bem@empireonegroup.com',
+            //     'carcarhr@empireonegroup.com',
+            //     'compben@empireonegroup.com',
+            //     'compliance@empireonecx.com',
+            //     'edwin@empireonegroup.com',
+            //     'elona@empireonegroup.com',
+            //     'eunice@empireonegroup.com',
+            //     'grecar@empireonecx.com',
+            //     'honeylyn@empireonegroup.com',
+            //     'john@empireonegroup.com',
+            //     'jona@empireonegroup.com',
+            //     'juliepearl.labasan@empireonegroup.com',
+            //     'marc@empireonecx.com',
+            //     'mark@empireonecx.com',
+            //     'milcah@empireonegroup.com',
+            //     'mlourdes@empireonegroup.com',
+            //     'paul@empireonegroup.com',
+            //     'SCaccounting@empireonegroup.com',
+            //     'schr@empireonegroup.com',
+            //     'scitns@empireonegroup.com',
+            //     'wfm-scheduler@empireonegroup.com',
+            //     'peter@empireonegroup.com',
+            //     'chaquira@empireonegroup.com',
+            //     'scchr@empireonegroup.com',
+            //     'rheamae@empireonegroup.com',
+            //     'mika@empireonecx.com',
+            //     'quincy@empireonecx.com',
+            //     'charmaine@empireonecx.com',
+            //     'jrusiana@empireonecx.com',
+            //     'markpatena@empireonegroup.com',
+            //     'jude@empireonecx.com',
+            //     'charity@empireonegroup.com',
+            //     'ruth@empireonegroup.com',
+            //     'roger@empireonegroup.com',
+            //     'gio@empireonecx.com',
+            //     'hashie@empireonegroup.com',
+            //     'markanthony@empireonecx.com',
+            //     'anthony@empireonecx.com',
+            //     'empireone.hrd@empireonegroup.com',
+            // ])));
 
-            $this->my_empireone_send_email([
-                'recipient' => $request->email,
-                'cc'        => implode(', ', $ccEmails) ?? '',
-                'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
-                'body'      => view('emails.human_resources.exit-clearance-interview', [
-                    'id'       => $attrition->id,
-                    'name'     => $request->name,
-                    'position' => $account_employee->position ?? 'N/A',
-                ])->render(),
-            ]);
+            // $this->my_empireone_send_email([
+            //     'recipient' => $request->email,
+            //     'cc'        => implode(', ', $ccEmails) ?? '',
+            //     'subject'   => 'Exit Clearance & Interview Process - ' . $request->name,
+            //     'body'      => view('emails.human_resources.exit-clearance-interview', [
+            //         'id'       => $attrition->id,
+            //         'name'     => $request->name,
+            //         'position' => $account_employee->position ?? 'N/A',
+            //     ])->render(),
+            // ]);
 
             User::where('id', $request->user_id)->update([
                 'role' => '3',
