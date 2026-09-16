@@ -13,15 +13,21 @@ class JobApplicantScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $schedules = JobApplicantSchedule::with(['application', 'interviewer'])->get();
+        $schedules = JobApplicantSchedule::with(['application.job_posting.job_requisition', 'interviewer'])
+            ->when($request->filled('location_id') && $request->location_id !== '0', function ($query) use ($request) {
+                $query->whereHas('application.job_posting.job_requisition', function ($q) use ($request) {
+                    $q->where('location_id', $request->location_id);
+                });
+            })
+            ->get();
+
         return response()->json([
             'data' => $schedules,
             'status' => 'success',
         ], 200);
     }
-
     public function delete_interview_schedule($data)
     {
         $scriptUrl = env('DELETE_INTERVIEW_SCHEDULE');

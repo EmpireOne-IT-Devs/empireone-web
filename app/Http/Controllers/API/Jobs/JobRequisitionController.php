@@ -160,39 +160,41 @@ class JobRequisitionController extends Controller
         $status = $request->query('status');
 
         // 1. Create a base query that filters out expired requisitions at the database level
-        $unexpiredQuery = JobRequisition::where(function ($query) {
-            $query->whereNull('created_at') // Retain records with no creation date
-                ->orWhere(function ($q) {
-                    $q->where(function ($sub) {
-                        $sub->whereIn(DB::raw('LOWER(position_level)'), ['agent', 'rank and file'])
-                            ->where('created_at', '>=', Carbon::now()->subWeeks(3));
-                    })
-                        ->orWhere(function ($sub) {
-                            $sub->where(DB::raw('LOWER(position_level)'), 'supervisor')
-                                ->where('created_at', '>=', Carbon::now()->subWeeks(5));
+        $unexpiredQuery = JobRequisition::when($request->filled('location_id') && $request->location_id !== '0', function ($query) use ($request) {
+            $query->where('location_id', $request->location_id);
+        })
+            ->where(function ($query) {
+                $query->whereNull('created_at') // Retain records with no creation date
+                    ->orWhere(function ($q) {
+                        $q->where(function ($sub) {
+                            $sub->whereIn(DB::raw('LOWER(position_level)'), ['agent', 'rank and file'])
+                                ->where('created_at', '>=', Carbon::now()->subWeeks(3));
                         })
-                        ->orWhere(function ($sub) {
-                            $sub->where(DB::raw('LOWER(position_level)'), 'manager')
-                                ->where('created_at', '>=', Carbon::now()->subMonths(2));
-                        })
-                        ->orWhere(function ($sub) {
-                            $sub->whereIn(DB::raw('LOWER(position_level)'), ['director', 'executive'])
-                                ->where('created_at', '>=', Carbon::now()->subMonths(3));
-                        })
-                        ->orWhere(function ($sub) {
-                            // Default fallback: keep if level doesn't match above, or is null
-                            $sub->whereNotIn(DB::raw('LOWER(position_level)'), [
-                                'agent',
-                                'rank and file',
-                                'supervisor',
-                                'manager',
-                                'director',
-                                'executive'
-                            ])->orWhereNull('position_level');
-                        });
-                });
-        });
-
+                            ->orWhere(function ($sub) {
+                                $sub->where(DB::raw('LOWER(position_level)'), 'supervisor')
+                                    ->where('created_at', '>=', Carbon::now()->subWeeks(5));
+                            })
+                            ->orWhere(function ($sub) {
+                                $sub->where(DB::raw('LOWER(position_level)'), 'manager')
+                                    ->where('created_at', '>=', Carbon::now()->subMonths(2));
+                            })
+                            ->orWhere(function ($sub) {
+                                $sub->whereIn(DB::raw('LOWER(position_level)'), ['director', 'executive'])
+                                    ->where('created_at', '>=', Carbon::now()->subMonths(3));
+                            })
+                            ->orWhere(function ($sub) {
+                                // Default fallback: keep if level doesn't match above, or is null
+                                $sub->whereNotIn(DB::raw('LOWER(position_level)'), [
+                                    'agent',
+                                    'rank and file',
+                                    'supervisor',
+                                    'manager',
+                                    'director',
+                                    'executive'
+                                ])->orWhereNull('position_level');
+                            });
+                    });
+            });
         // 2. Calculate stats using cloned instances of the base query (so we don't mutate it)
         $stats = [
             'total'       => (clone $unexpiredQuery)->count(),

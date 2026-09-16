@@ -21,7 +21,13 @@ class JobPostingController extends Controller
     {
         $erps = JobApplication::whereNotNull('referral_id')
             ->whereNull('removed_by')
-            ->with(['referral', 'applicant', 'employee'])
+            ->with(['referral', 'applicant', 'employee', 'job_posting.job_requisition'])
+            // Filter by location_id inside nested job_posting -> job_requisition relationship
+            ->when($request->filled('location_id') && $request->location_id !== '0', function ($query) use ($request) {
+                $query->whereHas('job_posting.job_requisition', function ($q) use ($request) {
+                    $q->where('location_id', $request->location_id);
+                });
+            })
             // Apply the filter BEFORE paginating, and only if job_posting_id is provided
             ->when($request->filled('job_posting_id'), function ($query) use ($request) {
                 $query->where('job_posting_id', $request->job_posting_id);

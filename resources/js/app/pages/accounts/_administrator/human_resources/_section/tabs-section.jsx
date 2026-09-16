@@ -3,7 +3,7 @@ import { Link } from "@inertiajs/react";
 import HeaderSection from "./header-section";
 import { useSelector } from "react-redux";
 
-export default function HRModuleLayout({ children }) {
+export default function HRTabsSection({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Store only the single active tab label (or null if none are explicitly expanded)

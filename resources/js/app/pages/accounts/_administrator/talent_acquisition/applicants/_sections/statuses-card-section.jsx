@@ -355,7 +355,7 @@ export default function StatusesCardSection() {
                     {/* Mobile-Responsive Inputs Container */}
                     <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end w-full lg:justify-end">
                         {/* Location Select */}
-                        <div className="w-full md:w-64">
+                        {/* <div className="w-full md:w-64">
                             <Select
                                 label="Location"
                                 name="location_id"
@@ -374,7 +374,7 @@ export default function StatusesCardSection() {
                                     });
                                 }}
                             />
-                        </div>
+                        </div> */}
 
                         {/* Search Date Input */}
                         <div className="w-full md:w-64">

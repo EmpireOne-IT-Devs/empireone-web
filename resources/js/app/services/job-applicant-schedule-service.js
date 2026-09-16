@@ -1,5 +1,9 @@
 export async function get_job_applicant_schedule_service() {
-    return (await axios.get(`/api/job/job_applicant_schedules`)).data;
+    return (
+        await axios.get(
+            `/api/job/job_applicant_schedules${window.location.search}`,
+        )
+    ).data;
 }
 
 export async function change_job_applicant_schedule_service(data) {

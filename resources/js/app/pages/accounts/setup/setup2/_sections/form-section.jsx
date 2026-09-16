@@ -45,8 +45,8 @@ export default function FormSection() {
                     ? moment(data.user.account_employee.started_at).format('YYYY-MM-DD')
                     : '',
                 position_level: data?.user?.account_employee?.position_level,
-                basic_pay: data?.user?.account_employee?.basic_pay,
-                allowance: data?.user?.account_employee?.allowance,
+                // basic_pay: data?.user?.account_employee?.basic_pay,
+                // allowance: data?.user?.account_employee?.allowance,
                 employee_id: data?.user?.account_employee?.employee_id,
                 department_id: data?.user?.account_employee?.department_id,
                 account_id: data?.user?.account_employee?.account_id,
@@ -243,7 +243,7 @@ export default function FormSection() {
                         },
                     ]}
                 />
-                <Input
+                {/* <Input
                     label="Basic Pay"
                     name="basic_pay"
                     type="number"
@@ -259,7 +259,7 @@ export default function FormSection() {
                     type="number"
                     {...register("allowance", { required: true })}
                     error={errors.allowance}
-                />
+                /> */}
                 <Button
                     type="submit"
                     variant='secondary'

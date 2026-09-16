@@ -3,33 +3,14 @@ import { Link, router } from '@inertiajs/react';
 import moment from 'moment';
 import React from 'react';
 import {
-    FiMapPin,
-    FiMap,
-    FiHash,
-    FiChevronDown,
-    FiPlusCircle,
     FiBriefcase,
-    FiRadio,
-    FiArchive,
     FiMoreHorizontal
 } from 'react-icons/fi';
 import { LuArrowUpDown } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
 
 
-const StatusBadge = ({ status }) => {
-    const styles = {
-        Live: 'bg-green-100 text-green-700',
-        Closed: 'bg-red-50 text-red-700',
-        Draft: 'bg-gray-100 text-gray-700'
-    };
 
-    return (
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status]}`}>
-            {status}
-        </span>
-    );
-};
 
 export default function TableSection() {
     const { job_postings, loading } = useSelector(
@@ -210,40 +191,6 @@ export default function TableSection() {
     return (
         <div className="min-h-screen bg-gray-50/50 flex flex-col md:flex-row gap-4 md:gap-6 text-sm font-sans text-gray-800">
 
-            <div className="w-full md:w-64 flex-shrink-0">
-                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-200 font-semibold text-gray-900">
-                        Locations
-                    </div>
-                    {/* ADDED: max-h-48 and overflow-y-auto so a long list doesn't take up the whole screen on mobile */}
-                    <div className="flex flex-col py-2 max-h-48 overflow-y-auto md:max-h-none">
-                        {[
-                            { id: 0, name: "All" },
-                            ...(Array.isArray(data?.locations) ? data.locations : [])
-                        ].map((loc) => {
-                            const isActive = String(currentLocationId) === String(loc.id);
-                            return (
-                                <Link
-                                    key={loc.id ?? loc.name}
-
-                                    href={`?location_id=${loc.id}`}
-                                    className={`flex justify-between items-center px-4 py-2 cursor-pointer transition-colors ${isActive
-                                        ? "bg-purple-50 text-purple-700 font-semibold"
-                                        : "hover:bg-gray-50 text-gray-600"
-                                        }`}
-                                >
-                                    <span className="font-medium">{loc.name}</span>
-                                    <span className={isActive ? "text-purple-600" : "text-gray-400"}>
-                                        {loc.site ?? "All Sites"}
-                                    </span>
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Content */}
             {/* ADDED: min-w-0 to prevent flex blowout if the table scales too large */}
             <div className="flex-1 flex flex-col gap-4 min-w-0">
                 {/* Jobs Table Card */}

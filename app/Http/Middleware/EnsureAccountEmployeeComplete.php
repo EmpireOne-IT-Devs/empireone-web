@@ -64,7 +64,6 @@ class EnsureAccountEmployeeComplete
             'e_r_leader_id',
             'position',
             'eogs_email',
-            'basic_pay',
             'status',
             'signature',
             'department_id',

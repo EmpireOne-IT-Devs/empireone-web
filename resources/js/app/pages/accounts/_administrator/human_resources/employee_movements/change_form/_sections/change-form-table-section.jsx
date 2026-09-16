@@ -2,6 +2,7 @@ import Table from "@/app/_components/table";
 import React from "react";
 import { useSelector } from "react-redux";
 import ChangeFormDetailsSection from "./change-form-details-section";
+import { FcSearch  } from "react-icons/fc";
 
 
 export default function ChangeFormTableSection() {
@@ -16,7 +17,7 @@ export default function ChangeFormTableSection() {
         { header: "Action", accessor: "action" },
     ];
 
-    console.log('change_forms',change_forms)
+    console.log('change_forms', change_forms)
     return (
         <>
             <Table
@@ -35,7 +36,14 @@ export default function ChangeFormTableSection() {
                             res?.employee?.account_employee?.started_at,
                         action: (
                             <div className="flex gap-3">
-                               <ChangeFormDetailsSection props_data={res} />
+                                <ChangeFormDetailsSection props_data={res} />
+                                <a
+                                    href={`/accounts/my_documents/${res?.id}/employee_change_form`}
+                                    target="_blank"
+                                    title="View Change Form PDF"
+                                >
+                                    <FcSearch  className='text-2xl' />
+                                </a>
                             </div>
                         ),
                     })) ?? []

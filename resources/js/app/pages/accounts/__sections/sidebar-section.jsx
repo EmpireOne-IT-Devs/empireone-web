@@ -124,7 +124,7 @@ export default function SidebarSection() {
                     ? [
                         {
                             name: "Talent Acquisition",
-                            href: `/accounts/${account_role}/talent_acquisition/dashboard?location_id=${data?.user?.account_employee?.location_id}`,
+                            href: `/accounts/${account_role}/talent_acquisition/job_posting?location_id=${data?.user?.account_employee?.location_id}`,
                             icon: FcPortraitMode,
                             current: path === "talent_acquisition",
                             is_incoming: false,
