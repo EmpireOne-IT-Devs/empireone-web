@@ -110,23 +110,6 @@ class EREmployeeAttritionController extends Controller
                 ]);
             }
 
-            $account_employee->update([
-                'employment_status'     => $request->employment_status,
-                'reason_for_separation' => $request->reason_for_separation,
-                'is_rehire'             => $request->is_rehire,
-                'position'              => null,
-                'department_id'         => null,
-                'account_id'            => null,
-                'started_at'            => null,
-                'e_r_leader_id'         => null,
-                'is_has_contract'       => null,
-                'employee_id'           => null,
-                'onboarding_agree_on'   => null,
-                'status'                => null,
-                'basic_pay'             => null,
-                'allowance'             => null,
-            ]);
-
             $bccEmails = array_values(array_unique(array_filter([
                 $e_r_leader?->employee?->eogs_email ?? '',
                 $department_manager?->employee?->eogs_email ?? '',
@@ -171,6 +154,24 @@ class EREmployeeAttritionController extends Controller
                 'anthony@empireonecx.com',
                 'empireone.hrd@empireonegroup.com',
             ])));
+
+            $account_employee->update([
+                'employment_status'     => $request->employment_status,
+                'reason_for_separation' => $request->reason_for_separation,
+                'is_rehire'             => $request->is_rehire,
+                'position'              => null,
+                'department_id'         => null,
+                'account_id'            => null,
+                'started_at'            => null,
+                'e_r_leader_id'         => null,
+                'is_has_contract'       => null,
+                'employee_id'           => null,
+                'onboarding_agree_on'   => null,
+                'status'                => null,
+                'basic_pay'             => null,
+                'allowance'             => null,
+            ]);
+
 
             $this->my_empireone_send_email([
                 // 'recipient' => $request->email,
