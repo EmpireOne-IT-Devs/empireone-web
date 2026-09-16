@@ -34,7 +34,7 @@ class EREmployeeChangeFormController extends Controller
         }
 
         // 3. Paginate filtered or unfiltered results
-        $ecfs = $query->paginate();
+        $ecfs = $query->orderBy('id','desc')->paginate();
 
         return response()->json($ecfs);
     }
