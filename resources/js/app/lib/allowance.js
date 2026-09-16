@@ -28,6 +28,10 @@ const allowances = [
         label: "Incentives and Bonuses",
     },
     {
+        value: "POC Allowance",
+        label: "POC Allowance",
+    },
+    {
         value: "Role Allowance",
         label: "Role Allowance",
     },
