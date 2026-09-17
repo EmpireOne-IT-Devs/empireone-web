@@ -42,6 +42,7 @@ export default function Tabs({ tabs, children }) {
                     {tabs.map((tab, idx) => {
                         if (tab.children) {
                             const isOpen = openDropdown === idx;
+                            const Icon = tab.icon;
                             return (
                                 <div key={idx}>
                                     <button
@@ -54,6 +55,7 @@ export default function Tabs({ tabs, children }) {
                                                 : "text-gray-600 hover:text-blue-700"
                                         }`}
                                     >
+                                        {Icon && <Icon size={16} />}
                                         {tab.label}
                                         <ChevronDown
                                             size={14}
@@ -70,16 +72,18 @@ export default function Tabs({ tabs, children }) {
                             );
                         }
 
+                        const Icon = tab.icon;
                         return (
                             <Link
                                 key={idx}
                                 href={tab.path}
-                                className={`py-3 sm:py-4 px-2 sm:px-0 text-sm sm:text-base font-medium transition-colors relative outline-none ${
+                                className={`py-3 sm:py-4 px-2 sm:px-0 text-sm sm:text-base font-medium transition-colors relative outline-none flex items-center gap-1 ${
                                     tab.active
                                         ? "text-blue-800"
                                         : "text-gray-600 hover:text-blue-700"
                                 }`}
                             >
+                                {Icon && <Icon size={16} />}
                                 {tab.label}
                                 {tab.active && (
                                     <span className="absolute left-0 right-0 -bottom-px mx-auto h-0.5 w-full bg-blue-800 rounded z-10" />

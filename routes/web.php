@@ -199,6 +199,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
                 Route::inertia('/report', 'accounts/_administrator/rnr/challenges_events/report/page');
             });
             Route::inertia('/employee_profiles', 'accounts/_administrator/rnr/employee_profiles/page');
+            Route::inertia('/my_profile', 'accounts/_administrator/rnr/my_profile/page');
         });
         Route::prefix('ticketing')->group(function () {
             Route::inertia('/', 'accounts/_administrator/ticketing/dashboard/page');

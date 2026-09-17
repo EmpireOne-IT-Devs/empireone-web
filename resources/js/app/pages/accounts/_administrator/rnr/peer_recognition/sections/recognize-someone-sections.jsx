@@ -38,6 +38,7 @@ const COMPANY_VALUES = [
 const AWARD_POINT_PRESETS = [50, 100, 250, 500];
 
 export default function RecognizeSomeoneSections({ onCategoryChange }) {
+    const { data } = useSelector((store) => store.app);
     const dispatch = useDispatch();
     const { rewardSearchResults, rewardSearching, rewardCreating } =
         useSelector((state) => state.engagement);
@@ -180,15 +181,18 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
         <div>
             <div className="mt-4 flex items-start justify-between gap-4 p-2">
                 <AwardCategorySection onChange={onCategoryChange} />
-
-                <Button
-                    variant="engagement"
-                    onClick={() => setIsOpen(true)}
-                    className="shrink-0 rounded-full"
-                >
-                    <HeartIcon className="mr-2 h-4 w-4" />
-                    Recognize Someone
-                </Button>
+                {[1, 11].includes(
+                    data?.user?.account_employee?.department_id,
+                ) && (
+                    <Button
+                        variant="engagement"
+                        onClick={() => setIsOpen(true)}
+                        className="shrink-0 rounded-full"
+                    >
+                        <HeartIcon className="mr-2 h-4 w-4" />
+                        Recognize Someone
+                    </Button>
+                )}
             </div>
 
             <div className="flex justify-end items-end p-3">
@@ -233,11 +237,17 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                                     {selectedEmployee.first_name}{" "}
                                     {selectedEmployee.last_name}
                                 </div>
-                                {((typeof selectedEmployee.department === 'string' ? selectedEmployee.department : selectedEmployee.department?.name) || selectedEmployee.account?.name) && (
+                                {((typeof selectedEmployee.department ===
+                                "string"
+                                    ? selectedEmployee.department
+                                    : selectedEmployee.department?.name) ||
+                                    selectedEmployee.account?.name) && (
                                     <div className="text-xs text-green-700">
-                                        {(typeof selectedEmployee.department === 'string'
+                                        {(typeof selectedEmployee.department ===
+                                        "string"
                                             ? selectedEmployee.department
-                                            : selectedEmployee.department?.name) ||
+                                            : selectedEmployee.department
+                                                  ?.name) ||
                                             selectedEmployee.account?.name}
                                     </div>
                                 )}
