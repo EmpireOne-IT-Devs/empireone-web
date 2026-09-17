@@ -1,1 +1,0 @@
-import{j as e}from"./app-JvSsW_F5.js";import{i as t}from"./index-AyLC9Jmc.js";import"./iconBase-DylTx_mS.js";function n(){return e.jsx("div",{children:e.jsx("button",{title:"Leave",className:"p-1 rounded-md hover:bg-green-500 text-white bg-green-400",children:e.jsx(t,{})})})}export{n as default};

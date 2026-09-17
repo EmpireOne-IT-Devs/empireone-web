@@ -1,30 +1,18 @@
+import React, { useEffect, useState, useMemo } from 'react';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { FcLeave } from 'react-icons/fc';
+import { FiPlus, FiTrash2 } from 'react-icons/fi';
+import moment from 'moment';
 
+import Button from '@/app/_components/button';
+import Modal from '@/app/_components/modal';
+import Radio from '@/app/_components/radio';
 
-import React, { useEffect, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-    FiUserMinus,
-    FiUser,
-    FiMail,
-    FiBriefcase,
-    FiMapPin,
-    FiLayers,
-    FiCalendar,
-    FiUserCheck,
-    FiLoader
-} from 'react-icons/fi'
-
-import Button from '@/app/_components/button'
-import Input from '@/app/_components/input'
-import Modal from '@/app/_components/modal'
-import Radio from '@/app/_components/radio'
-import Select from '@/app/_components/select'
-import { setAlert } from '@/app/redux/app-slice'
-import { add_attrition_service } from '@/app/services/employee-relation-service'
-import store from '@/app/store/store'
-import { get_employees_thunk } from '@/app/redux/employee-relation-thunk'
-import { FcLeave } from 'react-icons/fc'
+import { setAlert } from '@/app/redux/app-slice';
+import { add_attrition_service } from '@/app/services/employee-relation-service';
+import store from '@/app/store/store';
+import { get_employees_thunk } from '@/app/redux/employee-relation-thunk';
 
 const TERMINATION_REASONS = [
     "Resignation - Personal",
@@ -50,53 +38,88 @@ const TERMINATION_REASONS = [
     "End of Contract (Fixed Term)"
 ];
 
-const REASON_OPTIONS = TERMINATION_REASONS.map((reason) => ({
-    label: reason,
-    value: reason
-}));
-
-const EMPLOYMENT_STATUS_OPTIONS = ['Terminated', 'Resigned', 'EOPE', 'AWOL', 'End of Contract', 'Trainee Fallout'].map((status) => ({
-    label: status,
-    value: status
-}));
-
-export default function AddAttritionSection({ props_data }) {
-    const [open, setOpen] = useState(false)
-    const dispatch = useDispatch()
+export default function AddAttritionSection({ props_data, onAction }) {
+    const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
     const { leaders } = useSelector((store) => store.human_resources);
+    const { data } = useSelector((store) => store.app);
 
     const { register, handleSubmit, reset, control, watch, setValue, formState: { errors, isSubmitting } } = useForm({
         defaultValues: {
             separation_date: '',
             reason_for_separation: '',
             is_rehire: '',
-            employment_status: ''
+            supervisor_id: '',
+            department_manager_id: '',
+            clearance_departments: []
         }
-    })
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "clearance_departments"
+    });
+
+    const watchedClearanceDepts = watch("clearance_departments");
+
+    // Leader options for upper modal form controls
+    const leaderOptions = useMemo(() => {
+        return leaders?.map((res) => ({
+            label: `${res?.employee?.personal_information?.first_name || ''} ${res?.employee?.personal_information?.last_name || ''}`.trim() || res?.user?.name,
+            value: res.id,
+        })) || [];
+    }, [leaders]);
+
+    // Filter out departments that are already added to the clearance table
+    const availableDepartmentOptions = useMemo(() => {
+        const selectedDeptIds = (watchedClearanceDepts || []).map((dept) => String(dept.department_id)).filter(Boolean);
+        return (data?.departments || []).filter((dept) => !selectedDeptIds.includes(String(dept.id)));
+    }, [data?.departments, watchedClearanceDepts]);
+
+    const handleOpenModal = () => {
+        setOpen(true);
+        if (onAction) onAction();
+    };
 
     const handleCloseModal = () => {
-        setOpen(false)
-        reset()
-    }
+        setOpen(false);
+        reset({
+            separation_date: '',
+            reason_for_separation: '',
+            is_rehire: '',
+            supervisor_id: '',
+            department_manager_id: '',
+            clearance_departments: []
+        });
+    };
 
-    const watchedValues = watch()
-    const onSubmit = async (data) => {
+    useEffect(() => {
+        if (open && props_data) {
+            setValue('supervisor_id', props_data?.e_r_leader_id || '');
+            setValue('department_manager_id', props_data?.department_manager_id || '');
+        }
+    }, [open, props_data, setValue]);
+
+    const handleAddDepartment = () => {
+        append({ department_id: '', assigned_leader_id: '', payable: '0.00' });
+    };
+
+    const onSubmit = async (formData) => {
         try {
             await add_attrition_service({
                 ...props_data,
-                ...data
-            })
+                ...formData
+            });
             await store.dispatch(get_employees_thunk());
             dispatch(
                 setAlert({
                     type: "success",
                     title: "Attrition Created Successfully!",
-                    message: "The attrition has been created and is ready for review.",
+                    message: "The exit clearance form has been generated and filed.",
                     open: true,
                 })
             );
-            handleCloseModal()
-
+            handleCloseModal();
         } catch (error) {
             console.error("Failed to add attrition:", error);
             dispatch(
@@ -108,219 +131,341 @@ export default function AddAttritionSection({ props_data }) {
                 })
             );
         }
-    }
+    };
 
-    useEffect(() => {
-        setValue('supervisor_id', props_data?.e_r_leader_id)
-        setValue('department_manager_id', props_data?.department_manager_id)
-    }, [])
-
+    const employeeName = props_data?.user?.name || `${props_data?.personal_information?.first_name || ''} ${props_data?.personal_information?.last_name || ''}`.trim() || 'N/A';
+    const accountDept = `${props_data?.account?.name || props_data?.account || ''} / ${props_data?.department?.name || ''}`.replace(/^ \/ | \/ $/g, '') || 'N/A';
 
     return (
         <>
             <button
                 type="button"
-                onClick={() => setOpen(true)}
+                onClick={handleOpenModal}
                 className="group flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
             >
                 <FcLeave
                     size={20}
-                    className="shrink-0 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:duration-300 group-hover:ease-in"
+                    className="shrink-0 transition-transform duration-200 ease-out group-hover:scale-110"
                 />
                 ADD TO ATTRITION
             </button>
+
             <Modal
                 isOpen={open}
                 onClose={handleCloseModal}
-                title={props_data?.user?.name || "Attrition Form"}
+                width="max-w-5xl"
+                title=""
             >
-                <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col min-h-96 items-center justify-between"
-                >
-                    <div className="flex flex-col gap-3 w-full">
-                        <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                            <div className="flex items-center justify-center gap-2">
-                                <span className="text-xs font-semibold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
-                                    Employee Details
-                                </span>
-                            </div>
-                            <span className="font-mono text-xs font-bold text-gray-500">
-                                #{props_data?.employee_id || 'N/A'}
-                            </span>
+                <form onSubmit={handleSubmit(onSubmit)} className="p-4 bg-white font-sans text-gray-900 text-xs">
+                    {/* Header Logo & Document Date */}
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center text-2xl font-black tracking-tight">
+                            <span className="bg-purple-600 text-white px-2 py-0.5 rounded-l-md italic">E1</span>
+                            <span className="text-purple-900 ml-2">Empire<span className="text-purple-600">One</span>CX</span>
                         </div>
-
-                        {/* Fullname */}
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiUser className="w-4 h-4 text-purple-600" /> Fullname
-                            </span>
-                            <span className="font-semibold text-gray-900 text-right truncate">
-                                {props_data?.user?.name || props_data?.personal_information?.first_name || 'N/A'}
-                            </span>
-                        </div>
-
-                        {/* Email */}
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiMail className="w-4 h-4 text-purple-600" /> Email
-                            </span>
-                            <span
-                                className="text-gray-900 font-medium truncate max-w-[180px] text-right"
-                                title={props_data?.user?.email || props_data?.eogs_email || ''}
-                            >
-                                {props_data?.user?.email || props_data?.eogs_email || 'N/A'}
-                            </span>
-                        </div>
-
-                        {/* Department */}
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiLayers className="w-4 h-4 text-purple-600" /> Department
-                            </span>
-                            <span className="text-gray-900 font-medium text-right truncate">
-                                {props_data?.department?.name || 'N/A'}
-                            </span>
-                        </div>
-
-                        {/* Account */}
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiBriefcase className="w-4 h-4 text-purple-600" /> Account
-                            </span>
-                            <span className="text-gray-900 font-medium text-right truncate">
-                                {typeof props_data?.account === 'object' ? props_data?.account?.name : props_data?.account || 'N/A'}
-                            </span>
-                        </div>
-
-                        {/* Site */}
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiMapPin className="w-4 h-4 text-purple-600" /> Site
-                            </span>
-                            <span className="text-gray-900 font-medium text-right truncate">
-                                {props_data?.site?.location?.name || 'N/A'}
-                            </span>
-                        </div>
-
-
-
-                        {/* Hired Date */}
-                        <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-gray-500 flex items-center gap-1.5 shrink-0">
-                                <FiCalendar className="w-4 h-4 text-purple-600" /> Hired Date
-                            </span>
-                            <span className="text-gray-900 font-medium text-right truncate">
-                                {props_data?.started_at || 'N/A'}
-                            </span>
+                        <div className="text-right">
+                            <span className="font-bold uppercase tracking-wider text-gray-700">DATE: </span>
+                            <span className="font-semibold text-gray-900">{moment().format('MMMM D, YYYY')}</span>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-3 px-2 w-full mt-6">
+                    <div className="mb-3">
+                        <h1 className="text-sm font-bold tracking-wide text-gray-800 uppercase">EXIT CLEARANCE</h1>
+                    </div>
 
-                        <div className="flex flex-col gap-3">
-                            <Select
-                                label="Supervisor"
-                                required
-                                name="supervisor_id"
-                                // Pass the filtered availableLeaders instead of the full leaders array
-                                options={leaders?.map((res) => ({
-                                    ...res,
-                                    label: `${res?.employee?.personal_information?.first_name} ${res?.employee?.personal_information?.last_name}`,
-                                    value: res.id,
-                                }))}
-                                value={watchedValues.supervisor_id}
-                                onChange={(val) =>
-                                    setValue("supervisor_id", val, { shouldValidate: true })
-                                }
-                                error={errors.supervisor_id?.message}
-                                className="w-full"
-                            />
+                    {/* Table Grid Structure */}
+                    <div className="border border-gray-900 mb-4 overflow-hidden">
+                        <table className="w-full border-collapse text-xs">
+                            <tbody>
+                                {/* Row 1 */}
+                                <tr className="border-b border-gray-900">
+                                    <td className="w-1/2 p-2.5 border-r border-gray-900 align-top">
+                                        <span className="font-bold text-gray-800 block">Name:</span>
+                                        <span className="text-gray-900 font-medium">{employeeName}</span>
+                                    </td>
+                                    <td className="w-1/2 p-2.5 align-top">
+                                        <span className="font-bold text-gray-800 block">ID Number:</span>
+                                        <span className="text-gray-900 font-medium">{props_data?.employee_id || 'N/A'}</span>
+                                    </td>
+                                </tr>
 
-                            <Select
-                                label="Department Manager"
-                                required
-                                name="department_manager_id"
-                                // Pass the filtered leaders? instead of the full leaders array
-                                options={leaders?.map((res) => ({
-                                    ...res,
-                                    label: `${res?.employee?.personal_information?.first_name} ${res?.employee?.personal_information?.last_name}`,
-                                    value: res.id,
-                                }))}
-                                value={watchedValues.department_manager_id}
-                                onChange={(val) =>
-                                    setValue("department_manager_id", val, { shouldValidate: true })
-                                }
-                                error={errors.department_manager_id?.message}
-                                className="w-full"
-                            />
-                        </div>
-                        {/* Rehire eligibility - FIXED WITH CONTROLLER */}
-                        <div className="flex flex-col">
-                            <label className={`text-sm font-medium text-gray-700 ${isSubmitting ? 'opacity-50' : ''}`}>
-                                Eligible for rehire
-                            </label>
-                            <Controller
-                                name="is_rehire"
-                                control={control}
-                                rules={{ required: "Please confirm rehire eligibility" }}
-                                render={({ field }) => (
-                                    <div className="flex gap-4 mt-1.5">
-                                        <Radio
-                                            label="Yes"
-                                            value="Yes"
-                                            checked={field.value === "Yes"}
-                                            onChange={() => field.onChange("Yes")}
+                                {/* Row 2 */}
+                                <tr className="border-b border-gray-900">
+                                    <td className="w-1/2 p-2.5 border-r border-gray-900 align-top">
+                                        <span className="font-bold text-gray-800 block">Account / Department:</span>
+                                        <span className="text-gray-900 font-medium">{accountDept}</span>
+                                    </td>
+                                    <td className="w-1/2 p-2.5 align-top">
+                                        <span className="font-bold text-gray-800 block">Position Title:</span>
+                                        <span className="text-gray-900 font-medium">{props_data?.position || 'N/A'}</span>
+                                    </td>
+                                </tr>
+
+                                {/* Row 3 */}
+                                <tr className="border-b border-gray-900">
+                                    <td className="w-1/2 p-2.5 border-r border-gray-900 align-top">
+                                        <span className="font-bold text-gray-800 block">Date Hired:</span>
+                                        <span className="text-gray-900 font-medium">{props_data?.started_at || 'N/A'}</span>
+                                    </td>
+                                    <td className="w-1/2 p-2.5 align-top">
+                                        <span className="font-bold text-gray-800 block mb-0.5">Date Separated:</span>
+                                        <input
+                                            type="date"
                                             disabled={isSubmitting}
+                                            {...register("separation_date", { required: true })}
+                                            className="w-full bg-transparent border-0 outline-none p-0 focus:ring-0 text-xs text-gray-900 cursor-pointer font-medium"
                                         />
-                                        <Radio
-                                            label="No"
-                                            value="No"
-                                            checked={field.value === "No"}
-                                            onChange={() => field.onChange("No")}
-                                            disabled={isSubmitting}
+                                    </td>
+                                </tr>
+
+                                {/* Row 4 */}
+                                <tr className="border-b border-gray-900">
+                                    <td className="w-1/2 p-2.5 border-r border-gray-900 align-top">
+                                        <span className="font-bold text-gray-800 block mb-0.5">Immediate Supervisor:</span>
+                                        <Controller
+                                            name="supervisor_id"
+                                            control={control}
+                                            rules={{ required: "Supervisor required" }}
+                                            render={({ field }) => (
+                                                <select
+                                                    {...field}
+                                                    disabled={isSubmitting}
+                                                    className="w-full bg-transparent border-0 outline-none p-0 focus:ring-0 text-xs text-gray-900 cursor-pointer font-medium"
+                                                >
+                                                    <option value="">Select Supervisor...</option>
+                                                    {leaderOptions.map((opt) => (
+                                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                    ))}
+                                                </select>
+                                            )}
                                         />
-                                    </div>
-                                )}
-                            />
-                            {errors.is_rehire && (
-                                <span className="text-xs text-red-500 mt-1">{errors.is_rehire.message}</span>
+                                    </td>
+                                    <td className="w-1/2 p-2.5 align-top">
+                                        <span className="font-bold text-gray-800 block mb-0.5">Department Manager:</span>
+                                        <Controller
+                                            name="department_manager_id"
+                                            control={control}
+                                            rules={{ required: "Manager required" }}
+                                            render={({ field }) => (
+                                                <select
+                                                    {...field}
+                                                    disabled={isSubmitting}
+                                                    className="w-full bg-transparent border-0 outline-none p-0 focus:ring-0 text-xs text-gray-900 cursor-pointer font-medium"
+                                                >
+                                                    <option value="">Select Department Manager...</option>
+                                                    {leaderOptions.map((opt) => (
+                                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                    ))}
+                                                </select>
+                                            )}
+                                        />
+                                    </td>
+                                </tr>
+
+                                {/* Row 5 */}
+                                <tr>
+                                    <td className="w-1/2 p-2.5 border-r border-gray-900 align-top">
+                                        <span className="font-bold text-gray-800 block">Employment Status:</span>
+                                        <span className="text-gray-900 font-medium">{props_data?.status || 'Regular'}</span>
+                                    </td>
+                                    <td className="w-1/2 p-2.5 align-top">
+                                        <span className="font-bold text-gray-800 block mb-0.5">Reason for Separation:</span>
+                                        <Controller
+                                            name="reason_for_separation"
+                                            control={control}
+                                            rules={{ required: "Reason required" }}
+                                            render={({ field }) => (
+                                                <select
+                                                    {...field}
+                                                    disabled={isSubmitting}
+                                                    className="w-full bg-transparent border-0 outline-none p-0 focus:ring-0 text-xs text-gray-900 cursor-pointer font-medium"
+                                                >
+                                                    <option value="">Select Reason...</option>
+                                                    {TERMINATION_REASONS.map((reason) => (
+                                                        <option key={reason} value={reason}>{reason}</option>
+                                                    ))}
+                                                </select>
+                                            )}
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Rehire Eligibility Selection */}
+                    <div className="my-3 p-2.5 border border-gray-200 rounded bg-gray-50 flex items-center justify-between">
+                        <span className="font-bold text-gray-800">Eligible for Rehire:</span>
+                        <Controller
+                            name="is_rehire"
+                            control={control}
+                            rules={{ required: "Please confirm rehire eligibility" }}
+                            render={({ field }) => (
+                                <div className="flex gap-6">
+                                    <Radio
+                                        label="Yes"
+                                        value="Yes"
+                                        checked={field.value === "Yes"}
+                                        onChange={() => field.onChange("Yes")}
+                                        disabled={isSubmitting}
+                                    />
+                                    <Radio
+                                        label="No"
+                                        value="No"
+                                        checked={field.value === "No"}
+                                        onChange={() => field.onChange("No")}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
                             )}
-                        </div>
+                        />
+                    </div>
+                    {errors.is_rehire && (
+                        <span className="text-xs text-red-500 block mb-2">{errors.is_rehire.message}</span>
+                    )}
 
-                        {/* Separation Date */}
-                        <div className="flex flex-col">
-                            <Input
-                                type="date"
-                                label="Separation Date"
-                                disabled={isSubmitting}
-                                {...register("separation_date", { required: "Separation date is required" })}
-                                error={errors.separation_date}
-                            />
-                        </div>
-
-                        {/* Reason for separation */}
-                        <div className="flex flex-col">
-                            <Select
-                                label="Reason for separation"
-                                disabled={isSubmitting}
-                                options={REASON_OPTIONS}
-                                {...register("reason_for_separation", { required: "Please select a reason for separation" })}
-                                error={errors.reason_for_separation}
-                            />
-                        </div>
+                    {/* Certification Text & Add Department Button */}
+                    <div className="flex items-center justify-between my-3">
+                        <p className="text-xs text-gray-700">
+                            We are here to certify that the above employee is cleared with any accountability or financial obligation to the following:
+                        </p>
+                        <button
+                            type="button"
+                            onClick={handleAddDepartment}
+                            disabled={availableDepartmentOptions.length === 0}
+                            className={`flex items-center gap-1.5 px-3 py-1 font-bold rounded border transition-colors shrink-0 ml-2 ${availableDepartmentOptions.length === 0
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                : 'bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-200 cursor-pointer'
+                                }`}
+                        >
+                            <FiPlus size={14} />
+                            <span>Add Department</span>
+                        </button>
                     </div>
 
+                    {/* Clearance Signatures Table */}
+                    <div className="border border-gray-900 overflow-x-auto mb-4">
+                        <table className="w-full text-xs text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-gray-900 bg-gray-50 text-center font-bold text-gray-800">
+                                    <th className="p-2 border-r border-gray-900 w-1/2">Department</th>
+                                    <th className="p-2 border-r border-gray-900 w-1/2">Assigned</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-900">
+                                {fields.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={2} className="p-4 text-center text-gray-400 italic">
+                                            No clearance departments added yet. Click "+ Add Department" above to add one.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    fields.map((row, index) => {
+                                        const currentDeptId = watchedClearanceDepts?.[index]?.department_id;
+                                        const selectedDept = (data?.departments || []).find((d) => String(d.id) === String(currentDeptId));
+
+                                        // Parse available leaders specifically belonging to the selected department
+                                        const departmentLeadersOptions = selectedDept?.department_leaders?.map((leader) => {
+                                            const personalInfo = leader?.employee?.personal_information;
+                                            const fullName = personalInfo
+                                                ? `${personalInfo.first_name || ''} ${personalInfo.last_name || ''}`.trim()
+                                                : leader?.employee?.user?.name || `Leader #${leader.id}`;
+
+                                            return {
+                                                id: leader.id,
+                                                name: fullName
+                                            };
+                                        }) || [];
+
+                                        return (
+                                            <tr key={row.id} className="hover:bg-gray-50/50 transition-colors">
+                                                {/* Department Select Cell */}
+                                                <td className="p-2 border-r border-gray-900 text-gray-800">
+                                                    <div className="flex items-center gap-1">
+                                                        <Controller
+                                                            name={`clearance_departments.${index}.department_id`}
+                                                            control={control}
+                                                            rules={{ required: "Select a department" }}
+                                                            render={({ field }) => (
+                                                                <select
+                                                                    {...field}
+                                                                    onChange={(e) => {
+                                                                        field.onChange(e);
+                                                                        // Reset assigned leader when department changes
+                                                                        setValue(`clearance_departments.${index}.assigned_leader_id`, '');
+                                                                    }}
+                                                                    className="w-full py-0.5 px-1 bg-transparent border border-gray-300 rounded focus:border-purple-600 focus:outline-none text-xs font-semibold cursor-pointer"
+                                                                >
+                                                                    <option value="">Select Department...</option>
+                                                                    {/* Retain current selection option if selected */}
+                                                                    {selectedDept && (
+                                                                        <option value={selectedDept.id}>{selectedDept.name}</option>
+                                                                    )}
+                                                                    {/* List remaining unselected departments */}
+                                                                    {availableDepartmentOptions.map((dept) => (
+                                                                        <option key={dept.id} value={dept.id}>
+                                                                            {dept.name}
+                                                                        </option>
+                                                                    ))}
+                                                                </select>
+                                                            )}
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => remove(index)}
+                                                            className="text-red-500 hover:text-red-700 p-1 rounded shrink-0"
+                                                            title="Remove Department"
+                                                        >
+                                                            <FiTrash2 size={14} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+
+                                                {/* Assigned Department Leader Cell */}
+                                                <td className="p-2 text-gray-800">
+                                                    <Controller
+                                                        name={`clearance_departments.${index}.assigned_leader_id`}
+                                                        control={control}
+                                                        rules={{ required: "Select an assigned leader" }}
+                                                        render={({ field }) => (
+                                                            <select
+                                                                {...field}
+                                                                disabled={!currentDeptId}
+                                                                className="w-full py-0.5 px-1 bg-transparent border border-gray-300 rounded focus:border-purple-600 focus:outline-none text-xs font-semibold cursor-pointer disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                                            >
+                                                                <option value="">
+                                                                    {currentDeptId
+                                                                        ? departmentLeadersOptions.length > 0
+                                                                            ? "Select Leader..."
+                                                                            : "No leaders found for this department"
+                                                                        : "Select a department first..."}
+                                                                </option>
+                                                                {departmentLeadersOptions.map((leader) => (
+                                                                    <option key={leader.id} value={leader.id}>
+                                                                        {leader.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        )}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
                     <Button
                         type="submit"
-                        className="w-full mt-6 flex justify-center items-center gap-2"
+                        className="w-full py-2.5 bg-purple-700 hover:bg-purple-800 text-white font-bold tracking-wide rounded"
                         loading={isSubmitting}
                     >
-                        SUBMIT
+                        CONFIRM & SUBMIT ATTRITION
                     </Button>
                 </form>
             </Modal>
         </>
-    )
+    );
 }

@@ -95,8 +95,10 @@ class AppController extends Controller
             // Calculate percentage
             $percent = round(($filledCount / $requiredFields->count()) * 100);
         }
-
-        $departments = Department::with(['categories'])->get();
+        $departments = Department::with([
+            'categories',
+            'department_leaders' // Automatically includes 'employee' as defined in Department model
+        ])->get();
         $locations = Location::with(['sites'])->get();
         $position = JobPosition::with(['job_requisition'])->get();
         $sites = Site::get();
@@ -117,10 +119,10 @@ class AppController extends Controller
         // 2. Build and execute the query using dot notation
         $leaders = $location_id
             ? ERLeader::with('user')
-                ->whereHas('user.account_employee', function ($query) use ($location_id) {
-                    $query->where('location_id', $location_id);
-                })
-                ->get()
+            ->whereHas('user.account_employee', function ($query) use ($location_id) {
+                $query->where('location_id', $location_id);
+            })
+            ->get()
             : collect();
 
         return response()->json([
