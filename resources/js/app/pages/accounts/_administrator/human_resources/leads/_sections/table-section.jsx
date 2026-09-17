@@ -9,6 +9,7 @@ export default function TableSection() {
 
 
     const columns = [
+        { header: "ID", accessor: "id" },
         { header: "Employee ID", accessor: "employee_id" },
         { header: "Fullname", accessor: "name" },
         { header: "Position", accessor: "position" },

@@ -1,1 +1,0 @@
-import{r as o,j as t}from"./app-BpbnRilw.js";import n from"./tabs-section-CQlvLNz2.js";import"./header-section-Cl5D2Fsw.js";function d({children:e}){const[s,i]=o.useState(!1);return typeof window<"u"&&window.location.pathname.split("/")[4],t.jsx(t.Fragment,{children:t.jsx(n,{children:e})})}export{d as default};

@@ -1,0 +1,10 @@
+import{r as m,j as r}from"./app-BG2m34xr.js";import p from"./layout-B1hkxknp.js";import e from"./layout-Ck_1UNFf.js";import s from"./header-section-Bb2mNdBi.js";import a from"./search-section-CmQFQYSL.js";import n from"./card-uploaded-image-section-BgLVWkpL.js";import"./topbar-section-eUEfZfbX.js";import"./Bars3Icon-ClQ-3dMg.js";import"./MagnifyingGlassIcon-BDhSsZrn.js";import"./portal-7e1LXibK.js";import"./app-thunk-DxtXoIqL.js";import"./user-service-C2ffUP9r.js";import"./sidebar-section-CQd6wCLY.js";import"./index-DTLNqdbf.js";import"./iconBase-aomkOkC-.js";import"./tooltip-DrkD56vT.js";import"./index-DTJ9leEF.js";import"./index-Ca8fM4Y_.js";import"./package-Drz81pAW.js";import"./createLucideIcon-DKGISmbD.js";import"./dialog-DIraa_l7.js";import"./ask-ai-section-DLKBMgBd.js";import"./sparkles-gKbcfL--.js";import"./x-DedT69tt.js";import"./send-VEKn9Elk.js";import"./message-circle-HZIvFXb9.js";import"./header-section-B3mZh7k9.js";import"./tabs-section-BJst54Ev.js";import"./tabs-DpYc7YjF.js";import"./chevron-down-CcLck8j4.js";import"./image-D3YGx0PX.js";import"./input-pIN8LyMR.js";import"./index-nFPYorsY.js";import"./upload-image-section-CMvWqSPN.js";import"./button-DmxLU4Ky.js";import"./index-DxDTe6h6.js";import"./index-BV1PQsQG.js";import"./modal-CGSR3R9K.js";import"./engagement-gallery-service-ygi0rPAD.js";import"./download-BHBgL7xd.js";import"./cloud-upload-YJ36zlYz.js";import"./images-DQKIus2P.js";import"./card-Cu5FDdNy.js";import"./skeleton-CxBz11lN.js";import"./calendar-BLNy9O0-.js";import"./folder-BY67Vjyz.js";import"./chevron-left-CHWCc9dp.js";import"./chevron-right-CcOXkPW2.js";function mr(){const[o,t]=m.useState(0);return r.jsx(p,{children:r.jsxs(e,{children:[r.jsx(s,{}),r.jsx(a,{onUploadSuccess:()=>t(i=>i+1)}),r.jsx("div",{className:`
+        flex
+        max-h-[500px]
+        overflow-y-auto
+        pr-2
+        [&::-webkit-scrollbar]:w-2
+        [&::-webkit-scrollbar-track]:bg-gray-100
+        [&::-webkit-scrollbar-thumb]:bg-gray-400
+        [&::-webkit-scrollbar-thumb]:rounded-full
+    `,children:r.jsx(n,{refreshKey:o})})]})})}export{mr as default};

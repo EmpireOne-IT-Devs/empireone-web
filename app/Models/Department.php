@@ -58,12 +58,12 @@ class Department extends Model
             ERLeader::class,        // Final Model
             AccountEmployee::class, // Intermediate Model
             'department_id',        // Foreign key on account_employees table
-            'user_id',          // Foreign key on e_r_leaders table
+            'user_id',              // Foreign key on e_r_leaders table (connects via user_id)
             'id',                   // Local key on departments table
-            'id'                    // Local key on account_employees table
+            'user_id'               // Local key on account_employees table
         )->with(['employee']);
     }
-
+    
     public function manager(): HasOne
     {
         return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'manager_id')->with(['employee']);
