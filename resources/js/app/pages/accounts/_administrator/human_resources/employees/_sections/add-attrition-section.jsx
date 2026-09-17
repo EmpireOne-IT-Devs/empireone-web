@@ -117,17 +117,18 @@ export default function AddAttritionSection({ props_data }) {
 
 
     return (
-        <div className="w-full">
+        <>
             <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="group flex items-center gap-2 font-medium"
+                className="group flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
             >
-
-                <FcLeave size={20} className="shrink-0" />
+                <FcLeave
+                    size={20}
+                    className="shrink-0 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:duration-300 group-hover:ease-in"
+                />
                 ADD TO ATTRITION
             </button>
-
             <Modal
                 isOpen={open}
                 onClose={handleCloseModal}
@@ -320,6 +321,6 @@ export default function AddAttritionSection({ props_data }) {
                     </Button>
                 </form>
             </Modal>
-        </div>
+        </>
     )
 }

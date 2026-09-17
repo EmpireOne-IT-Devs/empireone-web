@@ -21,6 +21,49 @@ use Illuminate\Support\Facades\Mail;
 class AccountContractController extends Controller
 {
 
+    public function update_personal_information(Request $request)
+    {
+
+        AccountPersonalInformation::where('user_id', $request->user_id)->update([
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'suffix' => $request->suffix,
+            'gender' => $request->gender,
+            'date_of_birth' => $request->date_of_birth,
+            'birth_place' => $request->birth_place,
+            'nationality' => $request->nationality,
+            'previous_employee_status' => $request->previous_employee_status,
+            'marital_status' => $request->marital_status,
+            'region' => $request->region,
+            'province' => $request->province,
+            'city' => $request->city,
+            'barangay' => $request->barangay,
+            'street' => $request->street,
+            'zip_code' => $request->zip_code,
+            'school_name' => $request->school_name,
+            'degree' => $request->degree,
+            'course' => $request->course,
+            'year_graduated' => $request->year_graduated,
+            'awards' => $request->awards,
+            'government_type' => $request->government_type,
+            'id_number' => $request->id_number,
+            'sss' => $request->sss,
+            'tin' => $request->tin,
+            'philhealth' => $request->philhealth,
+            'pagibig' => $request->pagibig,
+            'contact' => $request->contact,
+            'contact_name' => $request->contact_name,
+            'contact_address' => $request->contact_address,
+            'contact_relationship' => $request->contact_relationship,
+            'contact_number' => $request->contact_number,
+        ]);
+
+        return response()->json([
+            'message' => 'Information record saved successfully',
+        ], 200);
+    }
+
     public function update_employee_information(Request $request)
     {
         AccountEmployee::updateOrCreate(
