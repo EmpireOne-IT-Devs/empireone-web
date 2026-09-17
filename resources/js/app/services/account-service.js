@@ -18,6 +18,11 @@ export async function edit_information_service(data) {
     return await axios.post(`/api/accounts/edit_information`, data);
 }
 
+
+export async function update_employee_information_service(data) {
+    return await axios.post(`/api/accounts/update_employee_information`, data);
+}
+
 export async function add_employee_service(data) {
     return await axios.post(`/api/accounts/add_employee`, data);
 }

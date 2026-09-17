@@ -21,6 +21,39 @@ use Illuminate\Support\Facades\Mail;
 class AccountContractController extends Controller
 {
 
+    public function update_employee_information(Request $request)
+    {
+        AccountEmployee::updateOrCreate(
+            ['user_id' => $request->user_id],
+            [
+                'employee_id' => $request->employee_id ?? null,
+                'account_id' => $request->account_id ?? null,
+                'department_id' => $request->department_id ?? null,
+                'position' => $request->position ?? null,
+                'eogs_email' => $request->eogs_email ?? null,
+                'status' => $request->status ?? null,
+                'e_r_leader_id' => $request->e_r_leader_id ?? null,
+                'started_at' => $request->started_at ?? null,
+                'position_level' => $request->position_level ?? null,
+                'department_manager_id' => $request->department_manager_id ?? null,
+                'basic_pay' => $request->basic_pay ?? null,
+                'allowance' => $request->allowance ?? null,
+            ]
+        );
+
+        $leader = ERLeader::where('id', $request->e_r_leader_id)->first();
+
+        if ($leader) {
+            ERSubordinate::updateOrCreate(
+                ['subordinate_id' => $request->user_id],
+                ['er_leader_id' => $leader->id]
+            );
+        }
+
+        return response()->json([
+            'message' => 'Information record saved successfully',
+        ], 200);
+    }
 
     public function edit_information(Request $request)
     {
@@ -110,7 +143,8 @@ class AccountContractController extends Controller
                 'started_at' => $request->started_at ?? null,
                 'position_level' => $request->position_level ?? null,
                 'department_manager_id' => $request->department_manager_id ?? null,
-
+                'basic_pay' => $request->basic_pay ?? null,
+                'allowance' => $request->allowance ?? null,
             ]
         );
 

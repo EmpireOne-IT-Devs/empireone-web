@@ -169,6 +169,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('contract', AccountContractController::class);
         Route::post('agree_onboarding',  [AccountContractController::class, 'agree_onboarding']);
         Route::post('edit_information',  [AccountContractController::class, 'edit_information']);
+        Route::post('update_employee_information',  [AccountContractController::class, 'update_employee_information']);
+        
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);

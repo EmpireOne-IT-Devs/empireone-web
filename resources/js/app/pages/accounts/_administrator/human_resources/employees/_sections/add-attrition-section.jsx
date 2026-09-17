@@ -24,6 +24,7 @@ import { setAlert } from '@/app/redux/app-slice'
 import { add_attrition_service } from '@/app/services/employee-relation-service'
 import store from '@/app/store/store'
 import { get_employees_thunk } from '@/app/redux/employee-relation-thunk'
+import { FcLeave } from 'react-icons/fc'
 
 const TERMINATION_REASONS = [
     "Resignation - Personal",
@@ -122,11 +123,8 @@ export default function AddAttritionSection({ props_data }) {
                 onClick={() => setOpen(true)}
                 className="group flex items-center gap-2 font-medium"
             >
-                <FiUserMinus
-                    size={18}
-                    strokeWidth={2.5}
-                    className="transition-transform duration-200 group-hover:scale-110"
-                />
+
+                <FcLeave size={20} className="shrink-0" />
                 ADD TO ATTRITION
             </button>
 

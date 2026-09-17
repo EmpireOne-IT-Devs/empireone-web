@@ -6,6 +6,7 @@ import { get_employee_change_form_thunk } from "@/app/redux/employee-relation-th
 import TabsSection from "../_sections/tabs-section";
 import CreateECFSection from "./_sections/create-ecf-section";
 import ChangeFormTableSection from "./_sections/change-form-table-section";
+import PaginationSection from "./_sections/pagination-section";
 
 export default function Page() {
 
@@ -20,7 +21,10 @@ export default function Page() {
                     <div className="flex items-center justify-end">
                         <CreateECFSection />
                     </div>
-                    <ChangeFormTableSection />
+                    <div className="flex flex-col gap-3">
+                        <ChangeFormTableSection />
+                        <PaginationSection />
+                    </div>
                 </div>
             </EmployeeRelationLayout>
         </Layout>

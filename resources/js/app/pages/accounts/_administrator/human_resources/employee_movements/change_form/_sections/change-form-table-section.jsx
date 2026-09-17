@@ -16,6 +16,7 @@ export default function ChangeFormTableSection() {
         { header: "Department", accessor: "department" },
         { header: "Action", accessor: "action" },
     ];
+    
 
     console.log('change_forms', change_forms)
     return (
