@@ -29,6 +29,10 @@ return new class extends Migration
             $table->string('eogs_email')->nullable();
             $table->string('started_at')->nullable();
             $table->date('separation_date')->nullable();
+            $table->date('last_working_date')->nullable();
+            $table->enum('is_liquidated', ['Yes', 'No'])->nullable();
+            $table->bigInteger('days_of_liquidated')->nullable();
+            $table->json('clearance_departments')->nullable();
             $table->enum('status', [
                 'Probationary',
                 'Regular',

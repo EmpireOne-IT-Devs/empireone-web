@@ -25,14 +25,21 @@ class EREmployeeAttrition extends Model
         'reason_for_separation',
         'is_rehire',
         'attrition_status',
+        'last_working_date',
+        'is_liquidated',
+        'days_of_liquidated',
+        'clearance_departments'
     ];
 
+    protected $casts = [
+        'clearance_departments' => 'array',
+    ];
     public function employee(): HasOne
     {
         return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information', 'user', 'site', 'department', 'er_leader']);
     }
 
-     public function personal_information(): HasOne
+    public function personal_information(): HasOne
     {
         return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id')->with(['employee']);
     }
@@ -40,7 +47,7 @@ class EREmployeeAttrition extends Model
     {
         return $this->hasOne(ERExitClearance::class, 'e_r_employee_attrition_id', 'id');
     }
-      public function exit_interview(): HasOne
+    public function exit_interview(): HasOne
     {
         return $this->hasOne(ERExitInterview::class, 'e_r_employee_attrition_id', 'id');
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\ER;
 
 use App\Http\Controllers\Controller;
 use App\Models\Account\AccountEmployee;
+use App\Models\ER\EREmployeeAttrition;
 use App\Models\ER\ERExitClearance;
 use Illuminate\Http\Request;
 
@@ -30,48 +31,81 @@ class ERExitClearanceController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->clearance_departments);
+        // dd($request->assigned_id);
         // Helper function to extract array of keys where value is true
         $filterSelected = function ($items) {
             if (!is_array($items)) return [];
             return array_keys(array_filter($items));
         };
 
+        // Fetch existing clearance record
+        $clearance = ERExitClearance::where('e_r_employee_attrition_id', $request->e_r_employee_attrition_id)->first();
 
+        // Preserve existing signature if already signed; otherwise, check acknowledgement condition
+        $employeeSignature = $clearance?->employee_signature;
+
+        if (empty($employeeSignature) && $request->is_acknowledge) {
+            $employeeSignature = $request->input('employeeSignature');
+        }
+
+        // 1. Base update data containing common fields
+        $updateData = [
+            'clearance_date' => $request->input('date')
+                ? date('Y-m-d', strtotime($request->input('date')))
+                : null,
+            'employee_signature' => $employeeSignature,
+        ];
+
+        // 2. Conditionally update IT Assets only if user has permission
+        if ($request->input('canEditHR')) {
+            $updateData['company_assets_and_retrieval'] = $filterSelected($request->input('assets'));
+        }
+
+        // 3. Conditionally update Compliance / Keys
+        if ($request->input('canEditCompliance')) {
+            $updateData['keys'] = $filterSelected($request->input('keys'));
+        }
+
+        // 4. Conditionally update Devices & Equipment
+        if ($request->input('canEditIT')) {
+            $updateData['computer_or_devices'] = $filterSelected($request->input('devices'));
+            $updateData['communications_and_equipment'] = $filterSelected($request->input('communications'));
+        }
+
+        // 5. Save the conditionally constructed array
         $exitClearance = ERExitClearance::updateOrCreate(
-            // Match existing clearance by attrition ID
             ['e_r_employee_attrition_id' => $request->input('e_r_employee_attrition_id')],
-            [
-                'clearance_date' => $request->input('date')
-                    ? date('Y-m-d', strtotime($request->input('date')))
-                    : null,
-
-                // Sign-offs
-                'supervisor_signature'   => $request->input('signOffs.supervisor.signature'),
-                'supervisor_date_signed' => $request->input('signOffs.supervisor.dateSigned') ?: null,
-                'supervisor_payables'    => $request->input('signOffs.supervisor.payables') ?: 0.00,
-
-                'dept_head_signature'   => $request->input('signOffs.deptHead.signature'),
-                'dept_head_date_signed' => $request->input('signOffs.deptHead.dateSigned') ?: null,
-                'dept_head_payables'    => $request->input('signOffs.deptHead.payables') ?: 0.00,
-
-                'it_signature'   => $request->input('signOffs.it.signature'),
-                'it_date_signed' => $request->input('signOffs.it.dateSigned') ?: null,
-                'it_payables'    => $request->input('signOffs.it.payables') ?: 0.00,
-
-                'hr_signature'   => $request->input('signOffs.hrAdmin.signature'),
-                'hr_date_signed' => $request->input('signOffs.hrAdmin.dateSigned') ?: null,
-                'hr_payables'    => $request->input('signOffs.hrAdmin.payables') ?: 0.00,
-
-                // Convert frontend checkbox objects (e.g. {idBadge: true, lanyard: false}) to JSON arrays (e.g. ["idBadge"])
-                'company_assets_and_retrieval'  => $filterSelected($request->input('assets')),
-                'keys'                          => $filterSelected($request->input('keys')),
-                'computer_or_devices'           => $filterSelected($request->input('devices')),
-                'communications_and_equipment' => $filterSelected($request->input('communications')),
-
-                // Employee Confirmation
-                'employee_signature' => $request->is_acknowledge ? $request->input('employeeSignature') : null,
-            ]
+            $updateData
         );
+
+        $att = EREmployeeAttrition::find($request->e_r_employee_attrition_id);
+
+        if ($att) {
+            // 1. Get existing database records
+            $dbDepartments = is_string($att->clearance_departments)
+                ? json_decode($att->clearance_departments, true)
+                : $att->clearance_departments;
+
+            // 2. Find the updated item from the request payload using assigned_id
+            $incomingPayload = collect($request->clearance_departments)
+                ->firstWhere('assigned_leader_user_id', $request->assigned_id);
+
+            // 3. Map through DB records and update payables if matched
+            if ($incomingPayload) {
+                $updatedDepartments = collect($dbDepartments)->map(function ($department) use ($request, $incomingPayload) {
+                    if (
+                        isset($department['assigned_leader_user_id']) &&
+                        $department['assigned_leader_user_id'] == $request->assigned_id
+                    ) {
+                        $department = $incomingPayload ?? $department;
+                    }
+                    return $department;
+                })->toArray();
+                $att->clearance_departments = $updatedDepartments;
+                $att->save();
+            }
+        }
 
         return response()->json([
             'message' => 'Exit clearance saved successfully',

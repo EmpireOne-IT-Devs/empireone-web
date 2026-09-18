@@ -44,14 +44,25 @@ export default function AddAttritionSection({ props_data, onAction }) {
     const { leaders } = useSelector((store) => store.human_resources);
     const { data } = useSelector((store) => store.app);
 
-    const { register, handleSubmit, reset, control, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+    const {
+        register,
+        handleSubmit,
+        reset,
+        control,
+        watch,
+        setValue,
+        formState: { errors, isSubmitting }
+    } = useForm({
         defaultValues: {
             separation_date: '',
             reason_for_separation: '',
             is_rehire: '',
             supervisor_id: '',
             department_manager_id: '',
-            clearance_departments: []
+            clearance_departments: [],
+            last_working_date: '',
+            is_liquidated: '',
+            days_of_liquidated: ''
         }
     });
 
@@ -61,6 +72,7 @@ export default function AddAttritionSection({ props_data, onAction }) {
     });
 
     const watchedClearanceDepts = watch("clearance_departments");
+    const isLiquidated = watch("is_liquidated");
 
     // Leader options for upper modal form controls
     const leaderOptions = useMemo(() => {
@@ -89,7 +101,10 @@ export default function AddAttritionSection({ props_data, onAction }) {
             is_rehire: '',
             supervisor_id: '',
             department_manager_id: '',
-            clearance_departments: []
+            clearance_departments: [],
+            last_working_date: '',
+            is_liquidated: '',
+            days_of_liquidated: ''
         });
     };
 
@@ -101,15 +116,41 @@ export default function AddAttritionSection({ props_data, onAction }) {
     }, [open, props_data, setValue]);
 
     const handleAddDepartment = () => {
-        append({ department_id: '', assigned_leader_id: '', payable: '0.00' });
+        append({ department_id: '', assigned_leader_id: '' });
     };
 
     const onSubmit = async (formData) => {
         try {
+            // Map clearance_departments to inject full department and assigned leader details
+            const enrichedClearanceDepartments = (formData?.clearance_departments || []).map((item) => {
+                const matchedDept = (data?.departments || []).find((d) => String(d.id) === String(item.department_id));
+                const matchedLeader = matchedDept?.department_leaders?.find((l) => String(l.id) === String(item.assigned_leader_id));
+
+                const leaderPersonalInfo = matchedLeader?.employee?.personal_information;
+                const leaderName = leaderPersonalInfo
+                    ? `${leaderPersonalInfo.first_name || ''} ${leaderPersonalInfo.last_name || ''}`.trim()
+                    : matchedLeader?.employee?.user?.name || `Leader #${item.assigned_leader_id}`;
+
+                return {
+                    department_id: item.department_id,
+                    assigned_email: matchedLeader?.employee?.eogs_email,
+                    department_name: matchedDept?.name || '',
+                    assigned_leader_id: item.assigned_leader_id,
+                    assigned_leader_name: leaderName,
+                    is_assigned_sign: false,
+                    date_signed: '',
+                    assigned_leader_user_id: matchedLeader?.user_id || matchedLeader?.employee?.user_id || null,
+                    payables: item.payables || '0.00'
+                };
+            });
+
             await add_attrition_service({
                 ...props_data,
-                ...formData
+                ...formData,
+                clearance_departments: enrichedClearanceDepartments,
+                department_leaders: enrichedClearanceDepartments
             });
+
             await store.dispatch(get_employees_thunk());
             dispatch(
                 setAlert({
@@ -131,6 +172,11 @@ export default function AddAttritionSection({ props_data, onAction }) {
                 })
             );
         }
+    };
+
+    // Client-side validation failure logger
+    const onError = (formErrors) => {
+        console.warn("Form validation errors blocking submission:", formErrors);
     };
 
     const employeeName = props_data?.user?.name || `${props_data?.personal_information?.first_name || ''} ${props_data?.personal_information?.last_name || ''}`.trim() || 'N/A';
@@ -156,7 +202,7 @@ export default function AddAttritionSection({ props_data, onAction }) {
                 width="max-w-5xl"
                 title=""
             >
-                <form onSubmit={handleSubmit(onSubmit)} className="p-4 bg-white font-sans text-gray-900 text-xs">
+                <form onSubmit={handleSubmit(onSubmit, onError)} className="p-4 bg-white font-sans text-gray-900 text-xs">
                     {/* Header Logo & Document Date */}
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center text-2xl font-black tracking-tight">
@@ -212,9 +258,12 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                         <input
                                             type="date"
                                             disabled={isSubmitting}
-                                            {...register("separation_date", { required: true })}
+                                            {...register("separation_date", { required: "Date separated is required" })}
                                             className="w-full bg-transparent border-0 outline-none p-0 focus:ring-0 text-xs text-gray-900 cursor-pointer font-medium"
                                         />
+                                        {errors.separation_date && (
+                                            <span className="text-xs text-red-500 block mt-1">{errors.separation_date.message}</span>
+                                        )}
                                     </td>
                                 </tr>
 
@@ -239,6 +288,9 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                                 </select>
                                             )}
                                         />
+                                        {errors.supervisor_id && (
+                                            <span className="text-xs text-red-500 block mt-1">{errors.supervisor_id.message}</span>
+                                        )}
                                     </td>
                                     <td className="w-1/2 p-2.5 align-top">
                                         <span className="font-bold text-gray-800 block mb-0.5">Department Manager:</span>
@@ -259,11 +311,14 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                                 </select>
                                             )}
                                         />
+                                        {errors.department_manager_id && (
+                                            <span className="text-xs text-red-500 block mt-1">{errors.department_manager_id.message}</span>
+                                        )}
                                     </td>
                                 </tr>
 
                                 {/* Row 5 */}
-                                <tr>
+                                <tr className="border-b border-gray-900">
                                     <td className="w-1/2 p-2.5 border-r border-gray-900 align-top">
                                         <span className="font-bold text-gray-800 block">Employment Status:</span>
                                         <span className="text-gray-900 font-medium">{props_data?.status || 'Regular'}</span>
@@ -287,11 +342,89 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                                 </select>
                                             )}
                                         />
+                                        {errors.reason_for_separation && (
+                                            <span className="text-xs text-red-500 block mt-1">{errors.reason_for_separation.message}</span>
+                                        )}
+                                    </td>
+                                </tr>
+
+                                {/* Row 6 */}
+                                <tr>
+                                    <td className="w-1/2 p-2.5 border-r border-gray-900 align-top">
+                                        <span className="font-bold text-gray-800 block mb-0.5">Last Working Date:</span>
+                                        <input
+                                            type="date"
+                                            disabled={isSubmitting}
+                                            {...register("last_working_date", { required: "Last working date is required" })}
+                                            className="w-full bg-transparent border-0 outline-none p-0 focus:ring-0 text-xs text-gray-900 cursor-pointer font-medium"
+                                        />
+                                        {errors.last_working_date && (
+                                            <span className="text-xs text-red-500 block mt-1">{errors.last_working_date.message}</span>
+                                        )}
+                                    </td>
+                                    <td className="w-1/2 p-2.5 align-top">
+                                        <span className="font-bold text-gray-800 block mb-0.5">EmpireOne Email:</span>
+                                        <span className="text-gray-900 font-medium">{props_data?.eogs_email || 'N/A'}</span>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Liquidated Damages Selection */}
+                    <div className="my-3 p-2.5 border border-gray-200 rounded bg-gray-50 flex items-center justify-between">
+                        <span className="font-bold text-gray-800">Liquidated Damages:</span>
+                        <Controller
+                            name="is_liquidated"
+                            control={control}
+                            rules={{ required: "Please select Liquidated Damages option" }}
+                            render={({ field }) => (
+                                <div className="flex gap-6">
+                                    <Radio
+                                        label="Yes"
+                                        value="Yes"
+                                        checked={field.value === "Yes"}
+                                        onChange={() => field.onChange("Yes")}
+                                        disabled={isSubmitting}
+                                    />
+                                    <Radio
+                                        label="No"
+                                        value="No"
+                                        checked={field.value === "No"}
+                                        onChange={() => {
+                                            field.onChange("No");
+                                            setValue("days_of_liquidated", "");
+                                        }}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+                            )}
+                        />
+                    </div>
+                    {errors.is_liquidated && (
+                        <span className="text-xs text-red-500 block mb-2">{errors.is_liquidated.message}</span>
+                    )}
+
+                    {/* Conditional Input for Liquidated Days */}
+                    {isLiquidated === 'Yes' && (
+                        <div className="mb-3 p-2.5 border border-purple-200 rounded bg-purple-50/50 flex flex-col gap-1">
+                            <label className="font-bold text-purple-900">Days of Liquidated Damages:</label>
+                            <input
+                                type="number"
+                                min={0}
+                                placeholder="Enter number of days..."
+                                disabled={isSubmitting}
+                                {...register("days_of_liquidated", {
+                                    required: "Days of liquidated damages is required",
+                                    valueAsNumber: true
+                                })}
+                                className="w-full p-2 border border-gray-300 rounded focus:border-purple-600 focus:outline-none bg-white text-xs"
+                            />
+                            {errors.days_of_liquidated && (
+                                <span className="text-xs text-red-500">{errors.days_of_liquidated.message}</span>
+                            )}
+                        </div>
+                    )}
 
                     {/* Rehire Eligibility Selection */}
                     <div className="my-3 p-2.5 border border-gray-200 rounded bg-gray-50 flex items-center justify-between">
@@ -397,11 +530,9 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                                                     className="w-full py-0.5 px-1 bg-transparent border border-gray-300 rounded focus:border-purple-600 focus:outline-none text-xs font-semibold cursor-pointer"
                                                                 >
                                                                     <option value="">Select Department...</option>
-                                                                    {/* Retain current selection option if selected */}
                                                                     {selectedDept && (
                                                                         <option value={selectedDept.id}>{selectedDept.name}</option>
                                                                     )}
-                                                                    {/* List remaining unselected departments */}
                                                                     {availableDepartmentOptions.map((dept) => (
                                                                         <option key={dept.id} value={dept.id}>
                                                                             {dept.name}
