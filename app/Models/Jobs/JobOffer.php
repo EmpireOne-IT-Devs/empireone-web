@@ -27,7 +27,8 @@ class JobOffer extends Model
         'benefit_limit',
         'effective_period',
         'medical_benefits',
-        'leave_notes'
+        'leave_notes',
+        'e_r_leader_id'
     ];
 
     protected $casts = [

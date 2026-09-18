@@ -1,0 +1,1 @@
+import{r as o,j as t}from"./app-DDuoSM5-.js";import n from"./tabs-section-y9eMB3CU.js";import"./header-section-D_BcjQhy.js";function d({children:e}){const[s,i]=o.useState(!1);return typeof window<"u"&&window.location.pathname.split("/")[4],t.jsx(t.Fragment,{children:t.jsx(n,{children:e})})}export{d as default};

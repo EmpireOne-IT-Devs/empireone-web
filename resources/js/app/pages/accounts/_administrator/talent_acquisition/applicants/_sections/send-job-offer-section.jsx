@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import React, { useMemo, useState } from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 
 import Button from "@/app/_components/button";
@@ -10,6 +10,7 @@ import { setAlert } from "@/app/redux/app-slice";
 import { get_applicants_thunk, get_job_posting_by_id_thunk } from "@/app/redux/job-posting-thunk";
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import TextArea from "@/app/_components/textarea";
+import Select from "@/app/_components/select";
 
 export default function SendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
@@ -24,10 +25,18 @@ export default function SendJobOfferSection({ data }) {
 
     const dispatch = useDispatch();
     const { job_posting } = useSelector((store) => store.job_postings);
-
+    const { data: app_data } = useSelector((store) => store.app);
+    console.log('app_dataapp_data', app_data?.leaders)
     const applicantInfo = data?.applicant?.personal_information;
     const reqInfo = data?.job_posting?.job_requisition;
-
+    const leaderOptions = useMemo(
+        () =>
+            app_data?.leaders?.map((item) => ({
+                label: item?.user?.name || '',
+                value: item.id,
+            })) || [],
+        [data?.leaders]
+    );
     const {
         register,
         handleSubmit,
@@ -43,7 +52,8 @@ export default function SendJobOfferSection({ data }) {
             annual_leave: "",
             allowances: [],
             start_date: "",
-            leave_notes: ""
+            leave_notes: "",
+            e_r_leader_id: ""
         },
     });
 
@@ -177,7 +187,8 @@ export default function SendJobOfferSection({ data }) {
                             </p>
                         </div>
                         <div className="mt-6" />
-                        <div className="mb-3">
+
+                        <div className="mb-3 flex gap-3">
                             <Input
                                 label="Start Date"
                                 type="date"
@@ -185,6 +196,42 @@ export default function SendJobOfferSection({ data }) {
                                 {...register("start_date", { required: "Start date is required" })}
                                 error={errors.start_date}
                             />
+
+                            {/* <Controller
+                                name="e_r_leader_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        label="Reporting to"
+                                        options={leaderOptions}
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        error={errors.e_r_leader_id}
+                                    />
+                                )}
+                            /> */}
+
+                            {/* <Select
+                                label="Reporting to"
+                                options={leaderOptions}
+                                {...register("e_r_leader_id", { required: "Reporting to required" })}
+                                error={errors.e_r_leader_id}
+                            /> */}
+
+                            <select
+
+                                {...register("e_r_leader_id", { required: "Reporting to required" })}
+                                className={`w-full border rounded-lg p-2.5 text-sm h-11 bg-white focus:ring-blue-500 focus:border-blue-500 outline-none ${errors.e_r_leader_id ? "border-red-500" : "border-gray-300"
+                                    }`}
+                            >
+                                <option value="">Select Reporting To</option>
+                                {leaderOptions.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ))}
+                            </select>
+
                         </div>
                         <div className="grid grid-cols-2 gap-y-5 gap-5">
                             <Input

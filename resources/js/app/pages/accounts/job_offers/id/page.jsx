@@ -21,7 +21,7 @@ export default function Page() {
             store.dispatch(get_user_by_id_thunk(job_offer?.user_id));
         }
     }, [job_offer?.user_id]);
-
+console.log('job_offer',job_offer)
     function verified_section() {
         if (job_offer?.status == "Pending" && user?.account_employee?.signature === undefined) {
             return <VerifySection />;

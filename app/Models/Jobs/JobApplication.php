@@ -17,6 +17,7 @@ class JobApplication extends Model
         'user_id',
         'interviewer_id',
         'job_posting_id',
+        'e_r_leader_id',
         'removed_by',
         'transferred_to',
         'threadId',

@@ -65,7 +65,7 @@ class JobOfferController extends Controller
             $er_leader = ERLeader::where('user_id', $requestor_id)->first();
 
             AccountEmployee::where('user_id', $request->user_id)->update([
-                'e_r_leader_id' => $er_leader->id ?? 0,
+                'e_r_leader_id' => $request->e_r_leader_id ?? ($er_leader->id ?? 0),
                 'department_id' => $request->job_application['job_posting']['job_requisition']['department_id'],
                 'account_id' => $request->job_application['job_posting']['job_requisition']['account_id'] ?? null,
                 'site_id' => $request->job_application['job_posting']['job_requisition']['location_id'],

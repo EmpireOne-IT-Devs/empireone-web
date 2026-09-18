@@ -430,7 +430,7 @@ class JobApplicationController extends Controller
                     $ja,
                     'user_id' => $ja->user_id,
                     'job_posting_id' => $request->job_posting_id,
-                    'final_status' => 'Sent Job Offer',
+                    'final_status' => 'Sent Job Offer'
                 ]);
                 $jo = JobOffer::create([
                     'talent_acquisition_manager_id' => $manager->user_id,
@@ -446,7 +446,8 @@ class JobApplicationController extends Controller
                     'annual_leave' => $request->annual_leave,
                     'effective_period' => $request->effective_period,
                     'medical_benefits' => $request->medical_benefits,
-                    'leave_notes' => $request->leave_notes
+                    'leave_notes' => $request->leave_notes,
+                    'e_r_leader_id' => $request->e_r_leader_id
                 ]);
                 $jo->load('user');
             } else {
@@ -465,7 +466,8 @@ class JobApplicationController extends Controller
                     'annual_leave' => $request->annual_leave,
                     'effective_period' => $request->effective_period,
                     'medical_benefits' => $request->medical_benefits,
-                    'leave_notes' => $request->leave_notes
+                    'leave_notes' => $request->leave_notes,
+                    'e_r_leader_id' => $request->e_r_leader_id
                 ]);
             }
         }
@@ -553,6 +555,10 @@ class JobApplicationController extends Controller
                 'role' => 3,
                 'email_verified_at' => now()
             ]
+        );
+
+        AccountEmployee::firstOrCreate(
+            ['user_id' => $user->id]
         );
 
         // 2. Save Personal Info
