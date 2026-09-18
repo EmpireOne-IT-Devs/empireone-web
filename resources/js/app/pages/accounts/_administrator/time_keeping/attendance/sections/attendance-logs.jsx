@@ -3,9 +3,7 @@ import React, { useEffect, useState } from "react";
 import { get_attendance_logs_service } from "@/app/services/attendance-service";
 import FilterLogDate from "./filter-log-date";
 import TableColumnsComponent from "../component/table-columns-component";
-import OvertimeSection from "./overtime-section";
-import LeaveSection from "./leave-section";
-import CorrectionSection from "./correction-section";
+import AttendanceAction from "../component/attendance-action";
 
 export default function AttendanceLogs({ refreshKey }) {
     const [logs, setLogs] = useState([]);
@@ -252,9 +250,7 @@ export default function AttendanceLogs({ refreshKey }) {
                                 "
                                     >
                                         <span className="flex gap-2">
-                                            <OvertimeSection />
-                                            <LeaveSection />
-                                            <CorrectionSection />
+                                            <AttendanceAction />
                                             {moment(log.date).format("LL")}
                                         </span>
                                     </td>
