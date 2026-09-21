@@ -23,7 +23,7 @@ export default function Modal({
     if (!mounted) return null;
 
     const modalContent = (
-        <Transition show={isOpen} as={Fragment}>
+        <Transition show={isOpen} appear as={Fragment}>
             <div
                 className="fixed inset-0 z-[9999]"
                 // 🛑 CRITICAL FIX: Stop event propagation!

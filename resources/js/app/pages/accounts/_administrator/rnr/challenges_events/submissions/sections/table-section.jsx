@@ -1,116 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Check, X } from "lucide-react";
+import { Check, ChevronDown, Eye, X } from "lucide-react";
 import Button from "@/app/_components/button";
 import Badge from "@/app/_components/badge";
-import Modal from "@/app/_components/modal";
-import TextArea from "@/app/_components/textarea";
 import Skeleton from "@/app/_components/skeleton";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     get_engagement_reward_challenge_submissions_thunk,
     get_engagement_reward_challenge_submission_stats_thunk,
     approve_engagement_reward_challenge_submission_thunk,
-    decline_engagement_reward_challenge_submission_thunk,
 } from "@/app/redux/engagement-thunk";
 import moment from "moment/moment";
+import ProofSection from "./proof-section";
+import DeclineSection from "./decline-section";
 
 const STATUS_BADGE = {
     submitted: { label: "Pending Review", variant: "warning" },
     approved: { label: "Approved", variant: "success" },
     declined: { label: "Rejected", variant: "danger" },
 };
-
-function DeclineModal({ submission, onClose }) {
-    const dispatch = useDispatch();
-    const { challengeSubmissionDecliningId } = useSelector(
-        (state) => state.engagement,
-    );
-    const [note, setNote] = useState("");
-
-    if (!submission) return null;
-
-    const declining = challengeSubmissionDecliningId === submission.id;
-
-    const handleDecline = async () => {
-        const result = await dispatch(
-            decline_engagement_reward_challenge_submission_thunk({
-                id: submission.id,
-                review_note: note,
-            }),
-        );
-
-        if (
-            decline_engagement_reward_challenge_submission_thunk.rejected.match(
-                result,
-            )
-        ) {
-            dispatch(
-                setAlert({
-                    type: "danger",
-                    title: "Unable to decline submission",
-                    message: result.payload?.message || "Please try again.",
-                    open: true,
-                }),
-            );
-            return;
-        }
-
-        dispatch(
-            setAlert({
-                type: "success",
-                title: "Submission declined",
-                message: `${submission.employee.name}'s submission was declined.`,
-                open: true,
-            }),
-        );
-        onClose();
-    };
-
-    return (
-        <Modal
-            isOpen={Boolean(submission)}
-            onClose={onClose}
-            width="max-w-md"
-            title={
-                <h2 className="text-[15px] font-semibold leading-snug text-neutral-800">
-                    Decline Submission
-                </h2>
-            }
-        >
-            <div className="mt-2 flex flex-col gap-4 pb-2">
-                <TextArea
-                    label="Reason (optional)"
-                    name="review_note"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder="Let the employee know why this was declined..."
-                />
-                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-end">
-                    <Button
-                        type="button"
-                        variant="light"
-                        outlined
-                        onClick={onClose}
-                        className="w-full sm:w-auto"
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="danger"
-                        loading={declining}
-                        disabled={declining}
-                        onClick={handleDecline}
-                        className="w-full sm:w-auto"
-                    >
-                        Decline Submission
-                    </Button>
-                </div>
-            </div>
-        </Modal>
-    );
-}
 
 export default function TableSection() {
     const dispatch = useDispatch();
@@ -120,10 +28,57 @@ export default function TableSection() {
         challengeSubmissionApprovingId,
     } = useSelector((state) => state.engagement);
     const [declineTarget, setDeclineTarget] = useState(null);
+    const [proofTarget, setProofTarget] = useState(null);
+    const [selectedChallengeId, setSelectedChallengeId] = useState(null);
+    const [isChallengeFilterOpen, setIsChallengeFilterOpen] = useState(false);
+    const challengeFilterRef = useRef(null);
 
     useEffect(() => {
         dispatch(get_engagement_reward_challenge_submissions_thunk());
     }, [dispatch]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!challengeFilterRef.current?.contains(event.target)) {
+                setIsChallengeFilterOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const challengeOptions = useMemo(() => {
+        const seen = new Map();
+        challengeSubmissions.forEach((submission) => {
+            const challenge = submission.challenge;
+            if (challenge?.id && !seen.has(challenge.id)) {
+                seen.set(challenge.id, challenge);
+            }
+        });
+        return Array.from(seen.values());
+    }, [challengeSubmissions]);
+
+    const filteredSubmissions = useMemo(() => {
+        if (!selectedChallengeId) return challengeSubmissions;
+        return challengeSubmissions.filter(
+            (submission) => submission.challenge?.id === selectedChallengeId,
+        );
+    }, [challengeSubmissions, selectedChallengeId]);
+
+    const selectedChallenge = useMemo(
+        () =>
+            challengeOptions.find(
+                (challenge) => challenge.id === selectedChallengeId,
+            ) ?? null,
+        [challengeOptions, selectedChallengeId],
+    );
+
+    const handleSelectChallenge = (challengeId) => {
+        setSelectedChallengeId(challengeId);
+        setIsChallengeFilterOpen(false);
+    };
 
     const handleApprove = async (submission) => {
         const result = await dispatch(
@@ -179,23 +134,106 @@ export default function TableSection() {
     }
 
     return (
-        <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm">
+        <div className="mt-6 overflow-visible rounded-2xl bg-white shadow-sm">
             <table className="w-full text-left text-sm">
                 <thead className="border-b border-gray-100 text-xs uppercase text-gray-400">
                     <tr>
-                        <th className="px-4 py-3">Proof</th>
                         <th className="px-4 py-3">Employee</th>
-                        <th className="px-4 py-3">Challenge</th>
+                        <th
+                            className="relative px-4 py-3"
+                            ref={challengeFilterRef}
+                        >
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setIsChallengeFilterOpen((value) => !value)
+                                }
+                                className={`flex items-center gap-1 uppercase tracking-wide transition-colors ${
+                                    selectedChallenge
+                                        ? "text-orange-600"
+                                        : "text-gray-400 hover:text-gray-600"
+                                }`}
+                            >
+                                <span className="max-w-[140px] truncate">
+                                    {selectedChallenge?.title ?? "Challenge"}
+                                </span>
+                                <ChevronDown
+                                    className={`h-3.5 w-3.5 shrink-0 transition-transform ${
+                                        isChallengeFilterOpen
+                                            ? "rotate-180"
+                                            : ""
+                                    }`}
+                                />
+                            </button>
+
+                            {isChallengeFilterOpen && (
+                                <div className="absolute left-0 top-full z-20 mt-1 max-h-72 w-56 overflow-auto rounded-xl border border-gray-100 bg-white text-left normal-case text-gray-700 shadow-lg">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleSelectChallenge(null)
+                                        }
+                                        className={`block w-full px-4 py-2 text-left text-sm ${
+                                            !selectedChallengeId
+                                                ? "bg-orange-50 font-medium text-orange-700"
+                                                : "hover:bg-gray-50"
+                                        }`}
+                                    >
+                                        All Challenges
+                                    </button>
+                                    {challengeOptions.length === 0 ? (
+                                        <div className="px-4 py-2 text-sm text-gray-400">
+                                            No challenges available.
+                                        </div>
+                                    ) : (
+                                        challengeOptions.map((challenge) => {
+                                            const isActive =
+                                                challenge.id ===
+                                                selectedChallengeId;
+
+                                            return (
+                                                <button
+                                                    key={challenge.id}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleSelectChallenge(
+                                                            challenge.id,
+                                                        )
+                                                    }
+                                                    className={`block w-full truncate px-4 py-2 text-left text-sm ${
+                                                        isActive
+                                                            ? "bg-orange-50 font-medium text-orange-700"
+                                                            : "hover:bg-gray-50"
+                                                    }`}
+                                                >
+                                                    {challenge.title}
+                                                </button>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            )}
+                        </th>
 
                         <th className="px-4 py-3">Submitted</th>
                         <th className="px-4 py-3">Status</th>
 
-                        <th className="px-4 py-3">Description</th>
                         <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                    {challengeSubmissions.map((submission) => {
+                    {filteredSubmissions.length === 0 && (
+                        <tr>
+                            <td
+                                colSpan={5}
+                                className="px-4 py-6 text-center text-sm text-gray-500"
+                            >
+                                No submissions found for{" "}
+                                {selectedChallenge?.title ?? "this challenge"}.
+                            </td>
+                        </tr>
+                    )}
+                    {filteredSubmissions.map((submission) => {
                         const badge =
                             STATUS_BADGE[submission.status] ??
                             STATUS_BADGE.submitted;
@@ -204,25 +242,6 @@ export default function TableSection() {
 
                         return (
                             <tr key={submission.id}>
-                                <td className="px-4 py-3">
-                                    {submission.submission_url ? (
-                                        <a
-                                            href={submission.submission_url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            <img
-                                                src={submission.submission_url}
-                                                alt="Submission proof"
-                                                className="h-12 w-12 rounded-lg object-cover"
-                                            />
-                                        </a>
-                                    ) : (
-                                        <span className="text-xs text-gray-400">
-                                            No photo
-                                        </span>
-                                    )}
-                                </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
                                         {submission.employee.name}
@@ -256,43 +275,54 @@ export default function TableSection() {
                                             </p>
                                         )}
                                 </td>
-                                <td className="px-4 py-3 text-xs text-gray-500">
-                                    {submission.challenge_description || "-"}
-                                </td>
                                 <td className="px-4 py-3 text-right">
-                                    {submission.status === "submitted" ? (
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Button
-                                                type="button"
-                                                variant="danger"
-                                                outlined
-                                                size="sm"
-                                                onClick={() =>
-                                                    setDeclineTarget(submission)
-                                                }
-                                            >
-                                                <X className="mr-1 h-3.5 w-3.5" />{" "}
-                                                Decline
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant="success"
-                                                size="sm"
-                                                loading={approving}
-                                                disabled={approving}
-                                                onClick={() =>
-                                                    handleApprove(submission)
-                                                }
-                                            >
-                                                <Check className="mr-1 h-3.5 w-3.5" />{" "}
-                                                Approve
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <span className="text-xs text-gray-400">
-                                            Reviewed
-                                        </span>
-                                    )}
+                                    <div className="flex items-center justify-end gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="light"
+                                            outlined
+                                            size="sm"
+                                            onClick={() =>
+                                                setProofTarget(submission)
+                                            }
+                                        >
+                                            <Eye className="mr-1 h-3.5 w-3.5" />{" "}
+                                            View
+                                        </Button>
+                                        {submission.status === "submitted" && (
+                                            <>
+                                                <Button
+                                                    type="button"
+                                                    variant="danger"
+                                                    outlined
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        setDeclineTarget(
+                                                            submission,
+                                                        )
+                                                    }
+                                                >
+                                                    <X className="mr-1 h-3.5 w-3.5" />{" "}
+                                                    Decline
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="success"
+                                                    size="sm"
+                                                    loading={approving}
+                                                    disabled={approving}
+                                                    onClick={() =>
+                                                        handleApprove(
+                                                            submission,
+                                                        )
+                                                    }
+                                                >
+                                                    <Check className="mr-1 h-3.5 w-3.5" />{" "}
+                                                    Approve
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         );
@@ -300,9 +330,19 @@ export default function TableSection() {
                 </tbody>
             </table>
 
-            <DeclineModal
+            <DeclineSection
                 submission={declineTarget}
                 onClose={handleDeclineClose}
+            />
+            <ProofSection
+                submission={proofTarget}
+                onClose={() => setProofTarget(null)}
+                onApprove={handleApprove}
+                onDecline={(submission) => {
+                    setProofTarget(null);
+                    setDeclineTarget(submission);
+                }}
+                approvingId={challengeSubmissionApprovingId}
             />
         </div>
     );

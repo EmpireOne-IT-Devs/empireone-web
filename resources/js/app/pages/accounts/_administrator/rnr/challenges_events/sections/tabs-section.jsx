@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react";
 import React from "react";
+import { useSelector } from "react-redux";
 import {
     LayoutDashboard,
     Settings,
@@ -8,9 +9,20 @@ import {
     FileText,
 } from "lucide-react";
 import CreateNewChallenge from "./create-new-challenge";
+import ChallengeEventSection from "@/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-event-section";
+
+// Only these departments get the admin management view; everyone else gets the employee experience.
+const MANAGE_DEPARTMENT_IDS = [1, 11];
 
 export default function TabsSection({ children }) {
-    const currentPath = window.location.pathname.split("/").filter(Boolean).at(-1);
+     const { data } = useSelector((store) => store.app);
+    const canManageChallenges = MANAGE_DEPARTMENT_IDS.includes(
+        data?.user?.account_employee?.department_id,
+    );
+    const currentPath = window.location.pathname
+        .split("/")
+        .filter(Boolean)
+        .at(-1);
     const tabs = [
         {
             label: "Dashboard",
@@ -44,6 +56,14 @@ export default function TabsSection({ children }) {
         },
     ];
 
+    if (!canManageChallenges) {
+        return (
+            <div className="mt-4">
+                <ChallengeEventSection />
+            </div>
+        );
+    }
+
     return (
         <div>
             <div className="mt-6 flex items-center border-b border-gray-200 px-4 sm:px-6 lg:px-8">
@@ -71,7 +91,9 @@ export default function TabsSection({ children }) {
                     })}
                 </nav>
                 <div className="shrink-0 pl-4">
-                    <CreateNewChallenge />
+                    {[1, 11].includes(
+                        data?.user?.account_employee?.department_id,
+                    ) && <CreateNewChallenge />}
                 </div>
             </div>
 

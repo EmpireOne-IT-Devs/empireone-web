@@ -121,6 +121,7 @@ class EngagementChallengeSubmissionsController extends Controller
             'submission_url' => $participant->submission_path
                 ? Storage::disk('s3')->url($participant->submission_path)
                 : null,
+            'challenge_description' => $participant->challenge_description,
             'submitted_at' => $participant->submitted_at?->toDateTimeString(),
             'reviewed_at' => $participant->reviewed_at?->toDateTimeString(),
             'review_note' => $participant->review_note,
