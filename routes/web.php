@@ -259,6 +259,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::redirect('/', '/accounts/administrator/time_keeping/dashboard');
             Route::inertia('/dashboard', 'accounts/_administrator/time_keeping/dashboard/page');
             Route::inertia('/attendance', 'accounts/_administrator/time_keeping/attendance/page');
+            Route::inertia('/employee_calendar', 'accounts/_administrator/time_keeping/employee_calendar/page');
             Route::inertia('/time_sheets', 'accounts/_administrator/time_keeping/time_sheets/page');
             Route::inertia('/reports', 'accounts/_administrator/time_keeping/reports/page');
             Route::inertia('/attendance_settings', 'accounts/_administrator/time_keeping/attendance_settings/page');
