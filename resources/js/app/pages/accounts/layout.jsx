@@ -23,7 +23,7 @@ export default function Layout({ children }) {
             >
                 <TopbarSection />
                 <main
-                    className={`flex-1 p-6  ${
+                    className={`flex-1${
                         desktopCollapsed ? "ml-20" : ""
                     }`}
                 >

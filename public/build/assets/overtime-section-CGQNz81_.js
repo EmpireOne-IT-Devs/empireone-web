@@ -1,1 +1,0 @@
-import{j as e}from"./app-BEe887v1.js";import{j as t}from"./index-B1pSnWFk.js";import"./iconBase-D39j6A-s.js";function m(){return e.jsx("div",{children:e.jsx("button",{title:"Overtime",className:"p-1 rounded-md hover:bg-blue-500 text-white bg-blue-400",children:e.jsx(t,{})})})}export{m as default};

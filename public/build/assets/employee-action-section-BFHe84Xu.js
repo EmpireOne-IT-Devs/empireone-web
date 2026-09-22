@@ -1,0 +1,17 @@
+import{r as s,j as t}from"./app-BoyE-jgD.js";import{x as m}from"./index-CHhMzZdB.js";import c from"./add-attrition-section-D5gyzAGD.js";import b from"./update-employee-C4L2PxgP.js";import"./iconBase-DgWDNstR.js";import"./index.esm-BJqBeg0E.js";import"./index-CclZ3sa7.js";import"./moment-BMQglvow.js";import"./button-DS1Kpex4.js";import"./index-C8uE5F5M.js";import"./modal-CrtU86oh.js";import"./index-HsOqA3qF.js";import"./radio-jVqwPad8.js";import"./employee-relation-thunk-DoXb05an.js";import"./applicants-service-BK0ixYDx.js";import"./employee-change-form-service-Be_19gbw.js";import"./er-leaders-service-RfG3-A0d.js";import"./human-resources-service-CVgI7dtE.js";import"./performance-evaluation-service-Bq5WC0S1.js";import"./employee-information-form-CBw3xdFJ.js";import"./input-XqjseTQf.js";import"./select-KIuimUoD.js";import"./account-service-DBul2La5.js";import"./hash-14RVd3Uv.js";import"./createLucideIcon-BVgw58uR.js";import"./building-2-B9B_5AzD.js";import"./briefcase-BUQKCl3h.js";import"./mail-C0R50FYz.js";import"./personal-information-form-CDLEvuYM.js";import"./index-BNUWXGHR.js";import"./user-DR_5HXag.js";import"./calendar-Dq9VcXua.js";function P({props_data:a}){const[o,e]=s.useState(!1),r=s.useRef(null),u=()=>e(n=>!n),p=()=>e(!1);return s.useEffect(()=>{const n=i=>{r.current&&!r.current.contains(i.target)&&e(!1)},l=i=>{i.key==="Escape"&&e(!1)};return o&&(document.addEventListener("mousedown",n),document.addEventListener("keydown",l)),()=>{document.removeEventListener("mousedown",n),document.removeEventListener("keydown",l)}},[o]),t.jsxs("div",{className:"relative inline-block text-left",ref:r,children:[t.jsx("button",{type:"button",onClick:u,"aria-expanded":o,"aria-haspopup":"true",className:`
+                    relative p-2 rounded-full transition-all duration-150 outline-none
+                    hover:bg-black/5 active:bg-black/10
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600
+                    ${o?"bg-black/10":""}
+                `,children:t.jsx(m,{size:20})}),t.jsxs("div",{className:`
+                    absolute left-0 top-full mt-1 min-w-[200px] py-1.5 bg-white rounded-md z-[100]
+                    shadow-[0px_5px_5px_-3px_rgba(0,0,0,0.2),0px_8px_10px_1px_rgba(0,0,0,0.14),0px_3px_14px_2px_rgba(0,0,0,0.12)]
+                    transform transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] origin-top-left
+                    ${o?"opacity-100 scale-100 translate-y-0 pointer-events-auto":"opacity-0 scale-95 -translate-y-2 pointer-events-none"}
+                `,children:[t.jsx("div",{className:`\r
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150\r
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800\r
+                    `,children:t.jsx(c,{props_data:a,onAction:p})}),t.jsx("div",{className:`\r
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150\r
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800\r
+                    `,children:t.jsx(b,{props_data:a,onAction:p})})]})]})}export{P as default};
