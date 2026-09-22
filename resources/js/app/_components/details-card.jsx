@@ -54,12 +54,8 @@ export default function DetailsCard({
             {/* Bottom Actions */}
             {!hideViewButton && (
                 <div className="pt-2 flex items-center justify-end gap-2 border-t border-gray-100/80">
-                    <button
-                        onClick={onView}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer"
-                    >
-                        <LuEye className="w-3.5 h-3.5" /> View Profile
-                    </button>
+                       {onView}
+                   
                 </div>
             )}
         </div>

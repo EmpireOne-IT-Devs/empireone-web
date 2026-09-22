@@ -6,6 +6,7 @@ import { LuBriefcase, LuBuilding, LuMail, LuMapPin, LuUser } from 'react-icons/l
 import DetailsCard from '@/app/_components/details-card';
 import EmployeeActionSection from './employee-action-section';
 import AcknowledgementsListSection from './acknowledgements-list-section';
+import ShowEmployeeDetailsSection from './show-employee-details-section';
 
 export default function CardAcknowledgementSection() {
     const { employees } = useSelector((store) => store.human_resources);
@@ -22,7 +23,7 @@ export default function CardAcknowledgementSection() {
                         key={empId}
                         data={res}
                         badgeRight={`#${res.employee_id}`}
-                        onView={() => router.visit(`/accounts/${accountId}/my_team/${res?.user_id}/personal_information`)}
+                        onView={<ShowEmployeeDetailsSection props_data={res}/>}
                         list={[
                             {
                                 id: 'fullname',

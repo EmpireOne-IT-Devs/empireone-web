@@ -6,7 +6,7 @@ import { FaRegWindowClose, FaTimes } from "react-icons/fa";
 export default function Modal({
     isOpen,
     onClose,
-    title,
+    title = '',
     children,
     width = "sm:max-w-lg",
     closeOnClickOutside = false, // Set to false to prevent closing on outside click
