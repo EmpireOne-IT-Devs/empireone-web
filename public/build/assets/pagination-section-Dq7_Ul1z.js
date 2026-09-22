@@ -1,0 +1,1 @@
+import{u as o,j as t}from"./app-CHtPxNw2.js";import{P as r}from"./pagination-ilskICmu.js";function i(){const{change_forms:a}=o(n=>n.human_resources);return t.jsx(t.Fragment,{children:t.jsx(r,{data:a})})}export{i as default};
