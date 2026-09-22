@@ -1,0 +1,10 @@
+import{r as m,j as r}from"./app-Di0beO0S.js";import p from"./layout-BCNvAM3m.js";import e from"./layout-DjxJ1mCC.js";import s from"./header-section-DoSxjy9J.js";import a from"./search-section-L2YOR_hB.js";import n from"./card-uploaded-image-section-BycziFOP.js";import"./topbar-section-C2ytj7up.js";import"./Bars3Icon-CQPLwuz0.js";import"./MagnifyingGlassIcon-DlT2JVKy.js";import"./portal-YbTsm4sU.js";import"./app-thunk-DYRRcIVB.js";import"./user-service-B8xVgRVT.js";import"./sidebar-section-BPz0tu7H.js";import"./index-Bzheau38.js";import"./iconBase-BxHZ1YbW.js";import"./tooltip-Dxw-3F9W.js";import"./index-B20-4TcD.js";import"./index-D4F1uyxk.js";import"./package-CBK4EEY0.js";import"./createLucideIcon-Di7KjUGE.js";import"./dialog-qYXTZvVi.js";import"./ask-ai-section-C3rloBwf.js";import"./sparkles-DCEeHld9.js";import"./x-D3UwT9SN.js";import"./send-BgJuiHlx.js";import"./message-circle-VRRfMH4l.js";import"./header-section-CnkRODjg.js";import"./tabs-section-KXaCPCYB.js";import"./tabs-DgbN1GQx.js";import"./chevron-down-C8vlh2OO.js";import"./image-CZceoIlN.js";import"./input-BsizlN7A.js";import"./index-f_ILio93.js";import"./upload-image-section-nT04xeGy.js";import"./button-IGriCwUJ.js";import"./index-Dy9fVO19.js";import"./index-BIjvyVws.js";import"./modal-BKODKE_m.js";import"./engagement-gallery-service-CKKW1USb.js";import"./download-B-yi7Nfy.js";import"./cloud-upload-DHW8yxEP.js";import"./images-DdfQ7VB7.js";import"./card-CWbuvKQm.js";import"./skeleton-6sDQhdBw.js";import"./calendar-DZyUKYp6.js";import"./folder-C8lAYq8p.js";import"./chevron-left-udi2WoUR.js";import"./maximize-2-D9-N2l9c.js";import"./chevron-right-7glB8SOI.js";function pr(){const[o,t]=m.useState(0);return r.jsx(p,{children:r.jsxs(e,{children:[r.jsx(s,{}),r.jsx(a,{onUploadSuccess:()=>t(i=>i+1)}),r.jsx("div",{className:`
+        flex
+        max-h-[500px]
+        overflow-y-auto
+        pr-2
+        [&::-webkit-scrollbar]:w-2
+        [&::-webkit-scrollbar-track]:bg-gray-100
+        [&::-webkit-scrollbar-thumb]:bg-gray-400
+        [&::-webkit-scrollbar-thumb]:rounded-full
+    `,children:r.jsx(n,{refreshKey:o})})]})})}export{pr as default};
