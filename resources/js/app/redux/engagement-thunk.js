@@ -6,6 +6,7 @@ import {
     update_post_event_by_id_service,
     delete_post_event_service,
     get_upcoming_birthdays_service,
+    get_upcoming_work_anniversaries_service,
     cast_poll_vote_service,
     upload_gallery_service,
     get_reward_recognitions_service,
@@ -123,6 +124,18 @@ export const get_upcoming_birthdays_thunk = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await get_upcoming_birthdays_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const get_upcoming_work_anniversaries_thunk = createAsyncThunk(
+    "engagement/getUpcomingWorkAnniversaries",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_upcoming_work_anniversaries_service();
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

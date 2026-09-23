@@ -211,6 +211,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('surveys/{id}', [EngagementPostEventSurveyController::class, 'destroy']);
 
         Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
+        Route::get('upcoming_work_anniversaries', [EngagementBirthdayController::class, 'upcoming_work_anniversaries']);
         Route::get('upcoming_events',    [EngagementPostEventController::class, 'upcoming_events']);
 
         Route::get('reward-recognitions', [EngagementRewardRecognitionController::class, 'index']);
