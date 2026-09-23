@@ -20,7 +20,10 @@ class EngagementChallengeSubmissionsController extends Controller
         ]);
 
         $submissions = EngagementRewardChallengeParticipant::query()
-            ->with(['challenge:id,title,points,category,type,card_color', 'user:id,name,email'])
+            ->with([
+                'challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'card_color']),
+                'user:id,name,email',
+            ])
             ->whereNotNull('submitted_at')
             ->when($validated['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
             ->latest('submitted_at')
@@ -66,7 +69,14 @@ class EngagementChallengeSubmissionsController extends Controller
             ], 422);
         }
 
-        $participant->loadMissing('challenge');
+        $participant->loadMissing(['challenge' => fn ($query) => $query->withTrashed()]);
+
+        if (! $participant->challenge) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The challenge for this submission no longer exists.',
+            ], 422);
+        }
 
         $participant->update([
             'status' => 'approved',
@@ -79,7 +89,7 @@ class EngagementChallengeSubmissionsController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Submission approved and points awarded.',
-            'data' => $this->formatSubmission($participant->fresh(['challenge', 'user'])),
+            'data' => $this->formatSubmission($participant->fresh(['user'])->load(['challenge' => fn ($query) => $query->withTrashed()])),
         ]);
     }
 
@@ -109,7 +119,7 @@ class EngagementChallengeSubmissionsController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Submission declined.',
-            'data' => $this->formatSubmission($participant->fresh(['challenge', 'user'])),
+            'data' => $this->formatSubmission($participant->fresh(['user'])->load(['challenge' => fn ($query) => $query->withTrashed()])),
         ]);
     }
 
@@ -126,19 +136,19 @@ class EngagementChallengeSubmissionsController extends Controller
             'reviewed_at' => $participant->reviewed_at?->toDateTimeString(),
             'review_note' => $participant->review_note,
             'points_awarded' => $participant->points_awarded,
-            'challenge' => [
+            'challenge' => $participant->challenge ? [
                 'id' => $participant->challenge->id,
                 'title' => $participant->challenge->title,
                 'points' => $participant->challenge->points,
                 'category' => $participant->challenge->category,
                 'type' => $participant->challenge->type,
                 'card_color' => $participant->challenge->card_color,
-            ],
-            'employee' => [
+            ] : null,
+            'employee' => $participant->user ? [
                 'id' => $participant->user->id,
                 'name' => $participant->user->name,
                 'email' => $participant->user->email,
-            ],
+            ] : null,
         ];
     }
 }

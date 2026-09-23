@@ -33,13 +33,14 @@ export default function TabsSection() {
                       path: `/accounts/${role}/activities/poll_analytics`,
                       active: currentPath === "poll_analytics",
                   },
-                  {
+                
+              ]
+            : []),
+              {
                       label: "Department Showcase",
                       path: `/accounts/${role}/activities/department_showcase`,
                       active: currentPath === "department_showcase",
                   },
-              ]
-            : []),
 
         {
             label: "Post Event Survey",

@@ -28,7 +28,7 @@ export default function Layout({ children }) {
                     }`}
                 >
                     {/* Added the animation wrapper here */}
-                    <div className="animate-slideUp">
+                    <div className="animate-slideUp p-4">
                         {children}
                     </div>
                 </main>

@@ -79,4 +79,110 @@ class EngagementBirthdayController extends Controller
             'data'   => $users,
         ], 200);
     }
+
+    /**
+     * Employees whose hire date (account_employee.started_at) falls in the
+     * current month and whose anniversary has already occurred (or is today).
+     */
+    public function upcoming_work_anniversaries(): JsonResponse
+    {
+        $now = now();
+        $currentMonth = $now->month;
+        $currentYear = $now->year;
+        $today = $now->copy()->startOfDay();
+
+        $users = User::query()
+            ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_EMPLOYEE])
+            ->whereHas('account_employee', fn ($query) => $query->whereNotNull('started_at'))
+            ->with([
+                'personal_information:id,user_id,first_name,middle_name,last_name,suffix',
+                'account_employee.department',
+                'account_employee.location',
+            ])
+            ->get()
+            ->map(function ($user) use ($currentMonth, $currentYear, $today) {
+                $employee = $user->account_employee;
+
+                if (! $employee || ! $employee->started_at) {
+                    return null;
+                }
+
+                try {
+                    $hireDate = Carbon::parse($employee->started_at)->startOfDay();
+                } catch (\Exception) {
+                    return null;
+                }
+
+                if ($hireDate->month !== $currentMonth) {
+                    return null;
+                }
+
+                $years = $currentYear - $hireDate->year;
+
+                if ($years < 1) {
+                    return null;
+                }
+
+                $anniversaryDate = $hireDate->copy()->year($currentYear);
+
+                if ($anniversaryDate->greaterThan($today)) {
+                    return null;
+                }
+
+                $info = $user->personal_information;
+                $firstName = $info->first_name ?? '';
+                $lastName = $info->last_name ?? '';
+
+                $fullName = trim(
+                    collect([$firstName, $info->middle_name ?? null, $lastName, $info->suffix ?? null])
+                        ->filter()
+                        ->join(' ')
+                );
+
+                return [
+                    'user_id'            => $user->id,
+                    'employee_id'        => $employee->employee_id,
+                    'name'               => $fullName ?: ($user->name ?? ''),
+                    'initials'           => strtoupper(
+                                                mb_substr($firstName, 0, 1) .
+                                                mb_substr($lastName, 0, 1)
+                                            ),
+                    'department'         => $employee->department?->name,
+                    'position'           => $employee->position,
+                    'location'           => $employee->location?->name,
+                    'avatar'             => $user->avatar,
+                    'profile_picture'    => $user->avatar,
+                    'hire_date'          => $hireDate->toDateString(),
+                    'anniversary_date'   => $anniversaryDate->toDateString(),
+                    'anniversary_day'    => $anniversaryDate->day,
+                    'anniversary_years'  => $years,
+                    'anniversary_label'  => $this->ordinal($years).' Work Anniversary',
+                    'is_today'           => $anniversaryDate->isSameDay($today),
+                ];
+            })
+            ->filter()
+            ->sortBy(fn ($item) => $item['anniversary_day'])
+            ->values();
+
+        return response()->json([
+            'status' => 'success',
+            'month'  => now()->format('F'),
+            'count'  => $users->count(),
+            'data'   => $users,
+        ], 200);
+    }
+
+    private function ordinal(int $number): string
+    {
+        if (in_array($number % 100, [11, 12, 13], true)) {
+            return $number.'th';
+        }
+
+        return $number.match ($number % 10) {
+            1 => 'st',
+            2 => 'nd',
+            3 => 'rd',
+            default => 'th',
+        };
+    }
 }

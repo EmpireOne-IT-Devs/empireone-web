@@ -5,6 +5,7 @@ import {
     update_engagement_post_thunk,
     delete_engagement_post_thunk,
     get_upcoming_birthdays_thunk,
+    get_upcoming_work_anniversaries_thunk,
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
     upload_gallery_thunk,
@@ -36,6 +37,7 @@ export {
     update_engagement_post_thunk,
     delete_engagement_post_thunk,
     get_upcoming_birthdays_thunk,
+    get_upcoming_work_anniversaries_thunk,
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
     upload_gallery_thunk,
@@ -81,6 +83,11 @@ const engagementSlice = createSlice({
         birthdayMonth: "",
         birthdayCount: 0,
         birthdaysLoading: false,
+
+        workAnniversaries: [],
+        workAnniversaryMonth: "",
+        workAnniversaryCount: 0,
+        workAnniversariesLoading: false,
 
         // Gallery upload states
         uploadingGallery: false,
@@ -272,6 +279,21 @@ const engagementSlice = createSlice({
             })
             .addCase(get_upcoming_birthdays_thunk.rejected, (state) => {
                 state.birthdaysLoading = false;
+            });
+
+        // ── Upcoming Work Anniversaries ──────────────────────────────────────
+        builder
+            .addCase(get_upcoming_work_anniversaries_thunk.pending, (state) => {
+                state.workAnniversariesLoading = true;
+            })
+            .addCase(get_upcoming_work_anniversaries_thunk.fulfilled, (state, action) => {
+                state.workAnniversariesLoading = false;
+                state.workAnniversaries = action.payload.data ?? [];
+                state.workAnniversaryMonth = action.payload.month ?? "";
+                state.workAnniversaryCount = action.payload.count ?? 0;
+            })
+            .addCase(get_upcoming_work_anniversaries_thunk.rejected, (state) => {
+                state.workAnniversariesLoading = false;
             });
 
         // ── Publish Rich Post (Birthday / Poll) ─────────────────────────────
