@@ -140,7 +140,7 @@ const CreateECFSection = () => {
                 setValue(key, value);
             });
         }
-    }, [open,employee?.name]);
+    }, [open,watchedValues?.name]);
 
     // Track the new reporting leader name
     useEffect(() => {
