@@ -14,7 +14,8 @@ export default function Page() {
                     <UpcomingBirthdaySection />
                     <div className="flex flex-col gap-3">
                        
-                        <RecentActivitySection/>
+                       
+                        <WorkAnniversarySection />
                     </div>
                 </div>
             </ActivitiesLayout>
