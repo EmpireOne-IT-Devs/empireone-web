@@ -96,9 +96,9 @@ const CreateECFSection = () => {
     const leader_information = employee_information?.er_leader?.employee;
     const agent_account = employee_information?.account;
 
-    const new_report = leaders?.find((res) => res.user_id == watchedValues.info_reporting_id_to);
+    const new_report = data?.leaders?.find((res) => res.id == watchedValues.info_reporting_id_to);
     const selected_ecf = agent_account?.ecfs?.find((res) => res.id == watchedValues.ecf_id);
-
+    // console.log('waaaa',wat)
     // Centralized Form Updater: Runs whenever the active employee changes
     useEffect(() => {
         if (employee_information) {
@@ -124,8 +124,8 @@ const CreateECFSection = () => {
                 info_position_from: employee_information?.position,
                 info_position_to: employee_information?.position,
                 info_reporting_from: reportingName,
-                info_reporting_id_from: leader_information?.id,
-                info_reporting_id_to: employee_information?.user?.id,
+                info_reporting_id_from: leader_information?.e_r_leader_id,
+                info_reporting_id_to: leader_information?.e_r_leader_id,
                 info_basic_pay_from: employee_information?.basic_pay,
                 info_basic_pay_to: employee_information?.basic_pay,
                 position: employee_information?.position,
@@ -140,7 +140,7 @@ const CreateECFSection = () => {
                 setValue(key, value);
             });
         }
-    }, [open,watchedValues?.name]);
+    }, [open, watchedValues?.name]);
 
     // Track the new reporting leader name
     useEffect(() => {
@@ -167,6 +167,7 @@ const CreateECFSection = () => {
                 })
             );
             reset()
+            setValue("name", '');
             setOpen(false);
         } catch (error) {
             console.error(error);
@@ -514,7 +515,20 @@ const CreateECFSection = () => {
                                         />
                                     </td>
                                     <td className="border border-black p-1">
-                                        No Change
+
+                                        <Select
+                                            name="info_position_level_to"
+                                            className="w-full text-center"
+                                            options={['Rank and File', 'Supervisor', 'Manager', 'Executive']?.map((res) => ({
+                                                label: res,
+                                                value: res,
+                                            }))}
+                                            value={watchedValues?.info_position_level_to}
+                                            onChange={(val) =>
+                                                setValue("info_position_level_to", val)
+                                            }
+                                            error={errors?.info_position_level_to}
+                                        />
                                     </td>
 
                                 </tr>
@@ -533,7 +547,19 @@ const CreateECFSection = () => {
                                         />
                                     </td>
                                     <td className="border border-black p-1">
-                                        No Change
+                                        <Select
+                                            name="info_department_id_to"
+                                            className="w-full text-center"
+                                            options={data?.departments?.map((res) => ({
+                                                label: res?.name,
+                                                value: res?.id,
+                                            }))}
+                                            value={watchedValues?.info_department_id_to}
+                                            onChange={(val) =>
+                                                setValue("info_department_id_to", val)
+                                            }
+                                            error={errors?.info_department_id_to}
+                                        />
                                     </td>
 
                                 </tr>
@@ -552,7 +578,19 @@ const CreateECFSection = () => {
                                         />
                                     </td>
                                     <td className="border border-black p-1">
-                                        No Change
+                                        <Select
+                                            name="info_account_id_to"
+                                            className="w-full text-center"
+                                            options={data?.accounts?.map((res) => ({
+                                                label: res?.name,
+                                                value: res?.id,
+                                            }))}
+                                            value={watchedValues?.info_account_id_to}
+                                            onChange={(val) =>
+                                                setValue("info_account_id_to", val)
+                                            }
+                                            error={errors?.info_account_id_to}
+                                        />
                                     </td>
 
                                 </tr>
@@ -616,7 +654,11 @@ const CreateECFSection = () => {
                                         />
                                     </td>
                                     <td className="border border-black p-1">
-                                        No Change
+                                        <Input
+                                            type="text"
+                                            {...register("info_position_to", { required: true })}
+                                            className="bg-transparent w-full outline-none text-center text-black"
+                                        />
                                     </td>
 
                                 </tr>
@@ -635,7 +677,19 @@ const CreateECFSection = () => {
                                         />
                                     </td>
                                     <td className="border border-black p-1">
-                                        No Change
+                                        <Select
+                                            name="info_reporting_id_to"
+                                            className="w-full text-center"
+                                            options={data?.leaders?.map((res) => ({
+                                                label: `${res?.user?.personal_information?.first_name} ${res?.user?.personal_information?.last_name}`,
+                                                value: res?.id,
+                                            }))}
+                                            value={watchedValues?.info_reporting_id_to}
+                                            onChange={(val) =>
+                                                setValue("info_reporting_id_to", val)
+                                            }
+                                            error={errors?.info_reporting_id_to}
+                                        />
                                     </td>
                                 </tr>
 
