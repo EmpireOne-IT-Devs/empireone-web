@@ -41,6 +41,7 @@ const defaultFormValues = {
     info_account_id_to: null,
     info_account_id_from: null,
     info_status_from: null,
+    info_status_to: null,
     info_position_from: null,
     info_position_to: null,
     info_reporting_from: null,
@@ -119,6 +120,7 @@ const CreateECFSection = () => {
                 info_account_id_from: employee_information?.account?.id,
                 info_account_id_to: employee_information?.account_id,
                 info_status_from: employee_information?.status,
+                info_status_to: employee_information?.status,
                 info_position_from: employee_information?.position,
                 info_position_to: employee_information?.position,
                 info_reporting_from: reportingName,
@@ -138,7 +140,7 @@ const CreateECFSection = () => {
                 setValue(key, value);
             });
         }
-    }, [employee_information, personal_information, leader_information, setValue]);
+    }, [open]);
 
     // Track the new reporting leader name
     useEffect(() => {
@@ -164,6 +166,7 @@ const CreateECFSection = () => {
                     open: true,
                 })
             );
+            reset()
             setOpen(false);
         } catch (error) {
             console.error(error);
@@ -380,7 +383,6 @@ const CreateECFSection = () => {
                             {employee_information?.status === "Probationary" && (
                                 <Checkbox
                                     label="Regular"
-                                    disabled
                                     {...register("regular")}
                                     checked={watchedValues.regular}
                                     onChange={(val) => setValue("regular", val.target.checked)}
@@ -561,15 +563,41 @@ const CreateECFSection = () => {
                                         Status:
                                     </td>
                                     <td className="border border-black p-1">
-                                        <Input
+                                        {/* <Input
                                             type="text"
                                             {...register("info_status_from", { required: true })}
-                                            disabled
+
                                             className="bg-transparent w-full outline-none text-center text-black"
+                                        /> */}
+                                        <Select
+                                            name="info_status_from"
+                                            className="w-full text-center"
+                                            options={['Probationary', 'Regular']?.map((res) => ({
+                                                label: res,
+                                                value: res,
+                                            }))}
+                                            value={watchedValues?.info_status_from}
+                                            onChange={(val) =>
+                                                setValue("info_status_from", val)
+                                            }
+                                            error={errors?.info_status_from}
                                         />
                                     </td>
                                     <td className="border border-black p-1">
-                                        No Change
+
+                                        <Select
+                                            name="info_status_to"
+                                            className="w-full text-center"
+                                            options={['Probationary', 'Regular']?.map((res) => ({
+                                                label: res,
+                                                value: res,
+                                            }))}
+                                            value={watchedValues?.info_status_to}
+                                            onChange={(val) =>
+                                                setValue("info_status_to", val)
+                                            }
+                                            error={errors?.info_status_to}
+                                        />
                                     </td>
 
                                 </tr>
