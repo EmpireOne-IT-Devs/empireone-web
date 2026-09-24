@@ -86,8 +86,14 @@ const engagementSlice = createSlice({
 
         workAnniversaries: [],
         workAnniversaryMonth: "",
+        workAnniversaryYear: null,
         workAnniversaryCount: 0,
         workAnniversariesLoading: false,
+        workAnniversaryFilters: {
+            year: new Date().getFullYear(),
+            month: new Date().getMonth() + 1,
+            location_id: null,
+        },
 
         // Gallery upload states
         uploadingGallery: false,
@@ -178,6 +184,12 @@ const engagementSlice = createSlice({
             state.rewardChallengeCreateError = null;
             state.rewardChallengeUpdateError = null;
             state.rewardChallengeDeleteError = null;
+        },
+        setWorkAnniversaryFilters(state, action) {
+            state.workAnniversaryFilters = {
+                ...state.workAnniversaryFilters,
+                ...action.payload,
+            };
         },
     },
     extraReducers: (builder) => {
@@ -290,6 +302,7 @@ const engagementSlice = createSlice({
                 state.workAnniversariesLoading = false;
                 state.workAnniversaries = action.payload.data ?? [];
                 state.workAnniversaryMonth = action.payload.month ?? "";
+                state.workAnniversaryYear = action.payload.year ?? null;
                 state.workAnniversaryCount = action.payload.count ?? 0;
             })
             .addCase(get_upcoming_work_anniversaries_thunk.rejected, (state) => {
@@ -668,5 +681,6 @@ export const {
     clearRecognition,
     clearSearchResults,
     clearErrors,
+    setWorkAnniversaryFilters,
 } = engagementSlice.actions;
 export default engagementSlice.reducer;

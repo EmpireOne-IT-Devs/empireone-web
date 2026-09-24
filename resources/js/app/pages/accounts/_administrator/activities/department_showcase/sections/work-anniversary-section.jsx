@@ -19,11 +19,12 @@ export default function WorkAnniversarySection() {
     workAnniversaries,
     workAnniversaryMonth,
     workAnniversariesLoading,
+    workAnniversaryFilters,
   } = useSelector((state) => state.engagement);
 
   useEffect(() => {
-    dispatch(get_upcoming_work_anniversaries_thunk());
-  }, [dispatch]);
+    dispatch(get_upcoming_work_anniversaries_thunk(workAnniversaryFilters));
+  }, [dispatch, workAnniversaryFilters]);
 
   const anniversaries = workAnniversaries ?? [];
   const displayMonth =

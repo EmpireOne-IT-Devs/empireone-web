@@ -137,8 +137,8 @@ class EngagementRewardRecognitionController extends Controller
     {
         $validated = $request->validate([
             'employee_id' => ['required', 'exists:users,id'],
-            'award_category' => ['nullable', 'string'],
-            'company_value' => ['nullable', 'string'],
+            'award_category' => ['nullable', 'string', 'max:255'],
+            'company_value' => ['nullable', 'string', 'in:Innovation,Teamwork,Excellence,Leadership,Customer Focus,Integrity,Resilience,Creativity'],
             'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
         ]);
@@ -196,8 +196,8 @@ class EngagementRewardRecognitionController extends Controller
     public function update(Request $request, EngagementRewardRecognition $engagementRewardRecognition)
     {
         $validated = $request->validate([
-            'award_category' => ['nullable', 'string'],
-            'company_value' => ['nullable', 'string'],
+            'award_category' => ['nullable', 'string', 'max:255'],
+            'company_value' => ['nullable', 'string', 'in:Innovation,Teamwork,Excellence,Leadership,Customer Focus,Integrity,Resilience,Creativity'],
             'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
         ]);

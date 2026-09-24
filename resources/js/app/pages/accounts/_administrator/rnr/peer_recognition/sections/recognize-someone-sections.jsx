@@ -2,7 +2,7 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import TextArea from "@/app/_components/textarea";
-import { HeartIcon, Star } from "lucide-react";
+import { HeartIcon, SparklesIcon, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { FaPaperPlane } from "react-icons/fa6";
@@ -14,15 +14,6 @@ import {
     search_reward_recognition_employees_thunk,
 } from "@/app/redux/engagement-thunk";
 import { clearSearchResults } from "@/app/redux/engagement-slice";
-
-const AWARD_CATEGORIES = [
-    "Employee of the Month",
-    "Innovation Award",
-    "Rising Star Award",
-    "Team Excellence Award",
-    "Customer Champion Award",
-    "Mentor of the Quarter",
-];
 
 const COMPANY_VALUES = [
     "Innovation",
@@ -138,7 +129,7 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
 
         const payload = {
             employee_id: selectedEmployee.id,
-            award_category: data.award_category || null,
+            award_category: data.award_category.trim() || null,
             company_value: data.company_value || null,
             award_point: data.award_point ? Number(data.award_point) : null,
             message: data.message.trim(),
@@ -179,8 +170,20 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
 
     return (
         <div>
-            <div className="mt-4 flex items-start justify-between gap-4 p-2">
-                <AwardCategorySection onChange={onCategoryChange} />
+            <div className="mt-4 flex items-center justify-between gap-4 border-b border-gray-100 p-2 pb-4">
+                <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-pink-500">
+                        <SparklesIcon className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-semibold text-gray-900">
+                            Recognize a Colleague
+                        </h2>
+                        <p className="text-sm text-gray-500">
+                            Give a shoutout to someone who made your week better
+                        </p>
+                    </div>
+                </div>
                 {[1, 11].includes(
                     data?.user?.account_employee?.department_id,
                 ) && (
@@ -307,34 +310,16 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                             </div>
                         )}
 
-                        <div className="mt-2 text-sm font-semibold text-gray-900">
-                            Award Category
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {AWARD_CATEGORIES.map((category) => {
-                                const selected =
-                                    selectedAwardCategory === category;
-                                return (
-                                    <button
-                                        key={category}
-                                        type="button"
-                                        onClick={() =>
-                                            setValue(
-                                                "award_category",
-                                                selected ? "" : category,
-                                            )
-                                        }
-                                        className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                                            selected
-                                                ? "bg-orange-600 text-white"
-                                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                        }`}
-                                    >
-                                        {category}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                        <Input
+                            label="Award"
+                            name="award_category"
+                            placeholder="e.g. Outstanding Team Player"
+                            value={selectedAwardCategory}
+                            onChange={(e) =>
+                                setValue("award_category", e.target.value)
+                            }
+                            error={errors.award_category}
+                        />
 
                         <div className="mt-2 text-sm font-semibold text-gray-900">
                             Company Value
@@ -438,10 +423,6 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                                 />
                             )}
                         />
-
-                        {/* {formError && (
-                            <p className="text-sm text-red-500">{formError}</p>
-                        )} */}
                     </div>
                     <div className="flex flex-col justify-end gap-2 mt-4 sm:flex-row">
                         <Button
