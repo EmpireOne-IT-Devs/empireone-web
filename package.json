@@ -43,6 +43,8 @@
         "draftjs-to-html": "^0.9.1",
         "framer-motion": "^12.26.1",
         "gsap": "^3.14.2",
+        "html2canvas": "^1.4.1",
+        "jspdf": "^4.2.1",
         "lucide-react": "^0.562.0",
         "moment": "^2.30.1",
         "number-to-words": "^1.2.4",

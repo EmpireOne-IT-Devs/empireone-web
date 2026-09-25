@@ -8,7 +8,6 @@ import { useForm, Controller } from "react-hook-form";
 import { FaPaperPlane } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
-import AwardCategorySection from "../award-category-section";
 import {
     create_engagement_reward_recognition_thunk,
     search_reward_recognition_employees_thunk,
@@ -27,6 +26,55 @@ const COMPANY_VALUES = [
 ];
 
 const AWARD_POINT_PRESETS = [50, 100, 250, 500];
+
+const VALUE_AWARDS = [
+    {
+        label: "RELIABILITY — We deliver on our promises.",
+        value: "Reliability",
+    },
+    { label: "EXCELLENCE — We raise the standard.", value: "Excellence" },
+    { label: "ADAPTABILITY — We evolve with purpose.", value: "Adaptability" },
+    {
+        label: "COLLABORATION — We achieve more together.",
+        value: "Collaboration",
+    },
+    {
+        label: "INTEGRITY — We protect trust and do what’s right.",
+        value: "Integrity",
+    },
+];
+
+const PEOPLE_AWARDS = [
+    {
+        label: "The Excellence Award — Raises the Bar",
+        value: "The Excellence Award",
+    },
+    {
+        label: "The One Team Award — Better Together",
+        value: "The One Team Award",
+    },
+    { label: "The Empathy Award — People First", value: "The Empathy Award" },
+    {
+        label: "The Initiative Award — Makes It Happen",
+        value: "The Initiative Award",
+    },
+    {
+        label: "The Innovation Award — Thinks Different",
+        value: "The Innovation Award",
+    },
+    {
+        label: "The Customer Champion — Goes the Extra Mile",
+        value: "The Customer Champion",
+    },
+    {
+        label: "The Integrity Award — Leads with Trust",
+        value: "The Integrity Award",
+    },
+    {
+        label: "The Ownership Award — Owns It. Delivers It",
+        value: "The Ownership Award",
+    },
+];
 
 export default function RecognizeSomeoneSections({ onCategoryChange }) {
     const { data } = useSelector((store) => store.app);
@@ -53,15 +101,13 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
             employee_id: "",
             award_category: "",
             company_value: "",
-            award_point: "",
             message: "",
         },
     });
 
     const searchTerm = watch("search_term");
-    const selectedAwardCategory = watch("award_category");
+    const selectedCategory = watch("award_category");
     const selectedCompanyValue = watch("company_value");
-    const awardPoint = watch("award_point");
 
     useEffect(() => {
         if (!isOpen) {
@@ -116,7 +162,7 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
         dispatch(clearSearchResults());
     };
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (formData) => {
         setFormError("");
 
         if (!selectedEmployee) {
@@ -129,10 +175,9 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
 
         const payload = {
             employee_id: selectedEmployee.id,
-            award_category: data.award_category.trim() || null,
-            company_value: data.company_value || null,
-            award_point: data.award_point ? Number(data.award_point) : null,
-            message: data.message.trim(),
+            award_category: formData.award_category.trim() || null,
+            company_value: formData.company_value || null,
+            message: formData.message.trim(),
         };
 
         const result = await dispatch(
@@ -310,16 +355,48 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                             </div>
                         )}
 
-                        <Input
-                            label="Award"
-                            name="award_category"
-                            placeholder="e.g. Outstanding Team Player"
-                            value={selectedAwardCategory}
-                            onChange={(e) =>
-                                setValue("award_category", e.target.value)
-                            }
-                            error={errors.award_category}
-                        />
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-900 mb-1">
+                                Category
+                            </label>
+                            <select
+                                name="award_category"
+                                value={selectedCategory}
+                                onChange={(e) => {
+                                    setValue("award_category", e.target.value);
+                                }}
+                                className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            >
+                                <option value="">
+                                    Select an Award Category
+                                </option>
+                                <optgroup label="VALUE AWARDS — Recognition tied to company values">
+                                    {VALUE_AWARDS.map((award) => (
+                                        <option
+                                            key={award.value}
+                                            value={award.value}
+                                        >
+                                            {award.label}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                                <optgroup label="PEOPLE AWARDS — Recognition for how someone makes others feel">
+                                    {PEOPLE_AWARDS.map((award) => (
+                                        <option
+                                            key={award.value}
+                                            value={award.value}
+                                        >
+                                            {award.label}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                            </select>
+                            {errors.award_category && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.award_category.message}
+                                </p>
+                            )}
+                        </div>
 
                         <div className="mt-2 text-sm font-semibold text-gray-900">
                             Company Value
@@ -344,57 +421,6 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                                         }`}
                                     >
                                         {value}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <div className="mt-2 text-sm font-semibold text-gray-900">
-                            Award Points{" "}
-                            <span className="font-normal text-gray-400">
-                                (optional)
-                            </span>
-                        </div>
-                        <Input
-                            name="award_point"
-                            type="number"
-                            min="0"
-                            placeholder="e.g. 100"
-                            iconLeft={
-                                <Star className="h-4 w-4 text-amber-400" />
-                            }
-                            iconRight={
-                                <span className="text-xs text-gray-400">
-                                    pts
-                                </span>
-                            }
-                            value={awardPoint}
-                            onChange={(e) =>
-                                setValue("award_point", e.target.value)
-                            }
-                            error={errors.award_point}
-                        />
-                        <div className="flex flex-wrap gap-2">
-                            {AWARD_POINT_PRESETS.map((points) => {
-                                const selected =
-                                    String(awardPoint) === String(points);
-                                return (
-                                    <button
-                                        key={points}
-                                        type="button"
-                                        onClick={() =>
-                                            setValue(
-                                                "award_point",
-                                                selected ? "" : String(points),
-                                            )
-                                        }
-                                        className={`rounded-full border px-4 py-1.5 text-xs font-medium transition ${
-                                            selected
-                                                ? "border-amber-500 bg-amber-100 text-amber-800"
-                                                : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
-                                        }`}
-                                    >
-                                        +{points}
                                     </button>
                                 );
                             })}

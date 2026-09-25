@@ -3,15 +3,35 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RecognitionReceivedMail;
 use App\Models\Account;
 use App\Models\Department;
 use App\Models\Engagement\EngagementPostEventReact;
 use App\Models\Engagement\EngagementRewardRecognition;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class EngagementRewardRecognitionController extends Controller
 {
+    private const AWARD_CATEGORIES = [
+        'Reliability',
+        'Excellence',
+        'Adaptability',
+        'Collaboration',
+        'Integrity',
+        'The Excellence Award',
+        'The One Team Award',
+        'The Empathy Award',
+        'The Initiative Award',
+        'The Innovation Award',
+        'The Customer Champion',
+        'The Integrity Award',
+        'The Ownership Award',
+    ];
+
     /**
      * Display all recognitions.
      */
@@ -137,7 +157,7 @@ class EngagementRewardRecognitionController extends Controller
     {
         $validated = $request->validate([
             'employee_id' => ['required', 'exists:users,id'],
-            'award_category' => ['nullable', 'string', 'max:255'],
+            'award_category' => ['nullable', Rule::in(self::AWARD_CATEGORIES)],
             'company_value' => ['nullable', 'string', 'in:Innovation,Teamwork,Excellence,Leadership,Customer Focus,Integrity,Resilience,Creativity'],
             'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
@@ -162,6 +182,8 @@ class EngagementRewardRecognitionController extends Controller
             'published_at' => now(),
         ]);
 
+        $this->sendRecognitionEmail($recognition, $employee);
+
         return response()->json([
             'message' => 'Recognition sent successfully.',
             'data' => array_merge($recognition->toArray(), [
@@ -173,6 +195,39 @@ class EngagementRewardRecognitionController extends Controller
                 ),
             ]),
         ], 201);
+    }
+
+    /**
+     * Email the recognized employee on their work email. Failures are
+     * logged only so they never block the recognition itself.
+     */
+    private function sendRecognitionEmail(EngagementRewardRecognition $recognition, ?User $employee): void
+    {
+        if (!$employee) {
+            return;
+        }
+
+        $workEmail = $employee->account_employee?->eogs_email ?: $employee->email;
+
+        if (!$workEmail) {
+            return;
+        }
+
+        $recipientInfo = $employee->personal_information;
+        $recipientName = trim(($recipientInfo->first_name ?? '') . ' ' . ($recipientInfo->last_name ?? '')) ?: 'Colleague';
+
+        $senderInfo = User::with('personal_information')->find($recognition->user_id)?->personal_information;
+        $senderName = trim(($senderInfo->first_name ?? '') . ' ' . ($senderInfo->last_name ?? '')) ?: 'A colleague';
+
+        try {
+            Mail::to($workEmail)->send(new RecognitionReceivedMail($recognition, $recipientName, $senderName));
+        } catch (\Throwable $e) {
+            Log::warning('Failed to send recognition email', [
+                'recognition_id' => $recognition->id,
+                'email' => $workEmail,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -196,7 +251,7 @@ class EngagementRewardRecognitionController extends Controller
     public function update(Request $request, EngagementRewardRecognition $engagementRewardRecognition)
     {
         $validated = $request->validate([
-            'award_category' => ['nullable', 'string', 'max:255'],
+            'award_category' => ['nullable', Rule::in(self::AWARD_CATEGORIES)],
             'company_value' => ['nullable', 'string', 'in:Innovation,Teamwork,Excellence,Leadership,Customer Focus,Integrity,Resilience,Creativity'],
             'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
