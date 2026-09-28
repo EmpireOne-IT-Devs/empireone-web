@@ -4,13 +4,16 @@ import { ChevronDown, Flame } from "lucide-react";
 
 import { get_engagement_reward_challenges_thunk } from "@/app/redux/engagement-thunk";
 
-export default function FilterChallengeLeaderboardSection() {
+export default function FilterChallengeLeaderboardSection({
+    selectedChallengeId,
+    onSelectChallenge,
+    limit,
+    onSelectLimit,
+}) {
     const dispatch = useDispatch();
     const { rewardChallenges = [] } = useSelector((state) => state.engagement);
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedChallengeId, setSelectedChallengeId] = useState(null);
-    const [limit, setLimit] = useState(10);
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -19,8 +22,8 @@ export default function FilterChallengeLeaderboardSection() {
 
     useEffect(() => {
         if (selectedChallengeId || rewardChallenges.length === 0) return;
-        setSelectedChallengeId(rewardChallenges[0].id);
-    }, [rewardChallenges, selectedChallengeId]);
+        onSelectChallenge(rewardChallenges[0].id);
+    }, [rewardChallenges, selectedChallengeId, onSelectChallenge]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -83,9 +86,7 @@ export default function FilterChallengeLeaderboardSection() {
                                         key={challenge.id}
                                         type="button"
                                         onClick={() => {
-                                            setSelectedChallengeId(
-                                                challenge.id,
-                                            );
+                                            onSelectChallenge(challenge.id);
                                             setIsOpen(false);
                                         }}
                                         className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors ${
@@ -121,8 +122,8 @@ export default function FilterChallengeLeaderboardSection() {
                     return (
                         <button
                             key={value}
-                            type="butto"
-                            onClick={() => setLimit(value)}
+                            type="button"
+                            onClick={() => onSelectLimit(value)}
                             className={`rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
                                 active
                                     ? "border border-gray-200 bg-white text-gray-900 shadow-sm"

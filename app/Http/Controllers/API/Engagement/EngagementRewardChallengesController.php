@@ -38,6 +38,7 @@ class EngagementRewardChallengesController extends Controller
     public function participants(EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
     {
         $participants = $engagementRewardChallenge->participants()
+            ->with('department:id,name')
             ->orderByDesc('engagement_reward_challenge_participants.joined_at')
             ->get()
             ->map(fn (User $user) => [
@@ -45,8 +46,10 @@ class EngagementRewardChallengesController extends Controller
                 'participant_id' => $user->pivot->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'department' => $user->department?->name,
                 'status' => $user->pivot->status,
                 'challenge_description' => $user->pivot->challenge_description,
+                'points_awarded' => $user->pivot->points_awarded,
                 'joined_at' => $user->pivot->joined_at?->toDateTimeString(),
                 'submitted_at' => $user->pivot->submitted_at?->toDateTimeString(),
                 'reviewed_at' => $user->pivot->reviewed_at?->toDateTimeString(),
