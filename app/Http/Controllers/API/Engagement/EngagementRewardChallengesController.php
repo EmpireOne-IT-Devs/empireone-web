@@ -33,6 +33,38 @@ class EngagementRewardChallengesController extends Controller
     }
 
     /**
+     * List every participant of a specific challenge for the admin manage view.
+     */
+    public function participants(EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    {
+        $participants = $engagementRewardChallenge->participants()
+            ->orderByDesc('engagement_reward_challenge_participants.joined_at')
+            ->get()
+            ->map(fn (User $user) => [
+                'id' => $user->id,
+                'participant_id' => $user->pivot->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'status' => $user->pivot->status,
+                'challenge_description' => $user->pivot->challenge_description,
+                'joined_at' => $user->pivot->joined_at?->toDateTimeString(),
+                'submitted_at' => $user->pivot->submitted_at?->toDateTimeString(),
+                'reviewed_at' => $user->pivot->reviewed_at?->toDateTimeString(),
+                'submission_url' => $user->pivot->submission_path
+                    ? Storage::disk('s3')->url($user->pivot->submission_path)
+                    : null,
+            ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'challenge' => $this->formatChallenge($engagementRewardChallenge),
+                'participants' => $participants,
+            ],
+        ]);
+    }
+
+    /**
      * Shape a challenge for the frontend, including the display-only lifecycle status.
      */
     private function formatChallenge(EngagementRewardChallenge $challenge, ?int $currentUserId = null): array

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "@inertiajs/react";
 import { Flame, Lightbulb, Brain, Sprout, BookOpen, Users } from "lucide-react";
 
 import Table from "@/app/_components/table";
@@ -105,10 +106,14 @@ export default function ChallengeTableSection() {
                 />
             ),
             participants: (
-                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500">
-                    <Users className="h-3.5 w-3.5 text-slate-400" />
+                <Link
+                    href={`/accounts/administrator/rnr/challenges_events/manage/participants?id=${challenge.id}`}
+                    title="View all participants"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+                >
+                    <Users className="h-3.5 w-3.5" />
                     {participantsCount}/{maxParticipants}
-                </span>
+                </Link>
             ),
             points: (
                 <span className="text-sm font-bold text-yellow-500">

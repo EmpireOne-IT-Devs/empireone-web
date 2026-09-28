@@ -1,12 +1,10 @@
 import Tabs from "@/app/_components/tabs";
 import React from "react";
-import { useSelector } from "react-redux";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function TabsSection() {
-    const { data } = useSelector((store) => store.app);
-    const isAllowedDepartment = [1, 11].includes(
-        data?.user?.account_employee?.department_id,
-    );
+    const { isReady, isContentManager } = useCurrentEmployee();
+    const isAllowedDepartment = isContentManager;
     const currentPath = window.location.pathname.split("/")[4];
     const role = window.location.pathname.split("/")[2];
     const tabs = [
@@ -53,6 +51,11 @@ export default function TabsSection() {
             active: currentPath === "company_gallery",
         },
     ];
+
+    // Don't render the tab list until we know the department, or tabs pop in/out.
+    if (!isReady) {
+        return <div className="h-10 w-full animate-pulse rounded-lg bg-gray-200" />;
+    }
 
     return <Tabs tabs={tabs} />;
 }

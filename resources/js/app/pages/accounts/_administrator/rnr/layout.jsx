@@ -7,14 +7,14 @@ import {
     Coins
 } from "lucide-react";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import HeaderSection from "./sections/header-section";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function RnrLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
     const path = window.location.pathname.split("/")[4];
 
-    const { data } = useSelector((store) => store.app);
+    const { isReady, isContentManager } = useCurrentEmployee();
 
     const tabs = [
         {
@@ -29,7 +29,7 @@ export default function RnrLayout({ children }) {
             icon: Zap,
             active: path === "challenges_events",
         },
-        ...([1, 11].includes(data?.user?.account_employee?.department_id)
+        ...(isContentManager
             ? [
                   {
                       label: "Employee Profiles",
@@ -52,7 +52,12 @@ export default function RnrLayout({ children }) {
         <div>
             <HeaderSection />
 
-            <Tabs tabs={tabs} activeIndex={activeTab} />
+            {/* Hold the tab row as a skeleton until the department is known, so tabs don't pop in. */}
+            {!isReady ? (
+                <div className="h-10 w-full animate-pulse rounded-lg bg-gray-200" />
+            ) : (
+                <Tabs tabs={tabs} activeIndex={activeTab} />
+            )}
 
             <div className="p-3">{children}</div>
         </div>

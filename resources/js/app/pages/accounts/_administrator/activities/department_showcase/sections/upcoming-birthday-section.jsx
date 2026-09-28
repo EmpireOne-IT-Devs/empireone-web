@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Cake } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
-
 import { get_upcoming_birthdays_thunk } from "@/app/redux/engagement-slice";
 import CreateBirthdayPost from "./create-birthday-post";
 import ViewBirthdaySection from "./view-birthday-section";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 const CARD_COLORS = [
     {
@@ -56,8 +56,7 @@ const CARD_COLORS = [
 ];
 
 export default function UpcomingBirthdaySection() {
-
-        const { data } = useSelector((store) => store.app);
+    const { isReady, isContentManager } = useCurrentEmployee();
     const dispatch = useDispatch();
 
     const {
@@ -257,16 +256,15 @@ export default function UpcomingBirthdaySection() {
                 <span className="inline-flex items-center justify-center bg-[#0b2265] text-white font-bold text-[9px] sm:text-[10px] md:text-xs px-1.5 sm:px-2 py-0.5 rounded-full min-w-[18px] sm:min-w-[20px] shrink-0">
                     {birthdayCount}
                 </span>
-               
-                    {[1, 11].includes(
-                        data?.user?.account_employee?.department_id,
-                    ) ? (
-                        <div className="ml-auto mr-4 flex items-center gap-1 sm:gap-2 shrink-0">
-                            <ViewBirthdaySection />
-                            <CreateBirthdayPost />
-                        </div>
-                    ) : null}
-                
+
+                {!isReady ? (
+                    <div className="ml-auto mr-4 h-8 w-24 shrink-0 animate-pulse rounded-lg bg-gray-200" />
+                ) : isContentManager ? (
+                    <div className="ml-auto mr-4 flex items-center gap-1 sm:gap-2 shrink-0">
+                        <ViewBirthdaySection />
+                        <CreateBirthdayPost />
+                    </div>
+                ) : null}
             </div>
 
             {/* Loading skeleton */}

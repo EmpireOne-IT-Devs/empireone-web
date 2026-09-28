@@ -1,6 +1,5 @@
 import { Link } from "@inertiajs/react";
 import React from "react";
-import { useSelector } from "react-redux";
 import {
     LayoutDashboard,
     Settings,
@@ -10,15 +9,12 @@ import {
 } from "lucide-react";
 import CreateNewChallenge from "./create-new-challenge";
 import ChallengeEventSection from "@/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-event-section";
-
-// Only these departments get the admin management view; everyone else gets the employee experience.
-const MANAGE_DEPARTMENT_IDS = [1, 11];
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function TabsSection({ children }) {
-     const { data } = useSelector((store) => store.app);
-    const canManageChallenges = MANAGE_DEPARTMENT_IDS.includes(
-        data?.user?.account_employee?.department_id,
-    );
+    // Only content-manager departments get the admin management view; everyone else gets the employee experience.
+    const { isReady, isContentManager: canManageChallenges } =
+        useCurrentEmployee();
     const currentPath = window.location.pathname
         .split("/")
         .filter(Boolean)
@@ -34,7 +30,7 @@ export default function TabsSection({ children }) {
             label: "Manage",
             icon: Settings,
             path: "/accounts/administrator/rnr/challenges_events/manage",
-            active: currentPath === "manage",
+            active: ["manage", "participants"].includes(currentPath),
         },
         {
             label: "Leaderboard",
@@ -55,6 +51,16 @@ export default function TabsSection({ children }) {
             active: currentPath === "report",
         },
     ];
+
+    // Skeleton until the user data is loaded, so the view doesn't flip between employee/admin.
+    if (!isReady) {
+        return (
+            <div className="mt-6 space-y-4 px-4 sm:px-6 lg:px-8">
+                <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
+                <div className="h-64 w-full animate-pulse rounded-lg bg-gray-200" />
+            </div>
+        );
+    }
 
     if (!canManageChallenges) {
         return (
@@ -91,9 +97,7 @@ export default function TabsSection({ children }) {
                     })}
                 </nav>
                 <div className="shrink-0 pl-4">
-                    {[1, 11].includes(
-                        data?.user?.account_employee?.department_id,
-                    ) && <CreateNewChallenge />}
+                    {canManageChallenges && <CreateNewChallenge />}
                 </div>
             </div>
 

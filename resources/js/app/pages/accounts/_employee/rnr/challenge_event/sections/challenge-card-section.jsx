@@ -408,7 +408,11 @@ function ChallengeCard({ challenge }) {
     );
 }
 
-export default function ChallengeCardSection({ challenges = [], loading = false }) {
+export default function ChallengeCardSection({
+    challenges = [],
+    loading = false,
+    archived = false,
+}) {
     if (loading) {
         return (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -424,9 +428,15 @@ export default function ChallengeCardSection({ challenges = [], loading = false 
             <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-12 text-center shadow-lg shadow-slate-100">
                 <Sparkles className="h-12 w-12 text-slate-300 mb-4" />
                 <p className="text-sm font-medium text-gray-500">
-                    No challenges available right now.
+                    {archived
+                        ? "No archived challenges yet."
+                        : "No challenges available right now."}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">Check back later for new opportunities.</p>
+                <p className="text-xs text-gray-400 mt-1">
+                    {archived
+                        ? "Ended challenges will appear here automatically."
+                        : "Check back later for new opportunities."}
+                </p>
             </div>
         );
     }
