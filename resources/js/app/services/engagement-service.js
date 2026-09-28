@@ -98,6 +98,10 @@ export async function get_reward_challenges_service() {
     return await axios.get("/api/engagement/reward-challenges");
 }
 
+export async function get_reward_challenge_participants_service(id) {
+    return await axios.get(`/api/engagement/reward-challenges/${id}/participants`);
+}
+
 export async function get_reward_challenge_options_service() {
     return await axios.get("/api/engagement/reward-challenges/options");
 }

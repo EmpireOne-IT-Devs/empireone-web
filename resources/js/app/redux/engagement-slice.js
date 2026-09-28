@@ -20,6 +20,7 @@ import {
     update_engagement_reward_challenge_thunk,
     delete_engagement_reward_challenge_thunk,
     get_engagement_reward_challenges_thunk,
+    get_engagement_reward_challenge_participants_thunk,
     get_my_engagement_reward_challenges_thunk,
     join_engagement_reward_challenge_thunk,
     leave_engagement_reward_challenge_thunk,
@@ -52,6 +53,7 @@ export {
     update_engagement_reward_challenge_thunk,
     delete_engagement_reward_challenge_thunk,
     get_engagement_reward_challenges_thunk,
+    get_engagement_reward_challenge_participants_thunk,
     get_my_engagement_reward_challenges_thunk,
     join_engagement_reward_challenge_thunk,
     leave_engagement_reward_challenge_thunk,
@@ -128,6 +130,12 @@ const engagementSlice = createSlice({
         rewardChallengeUpdateError: null,
         rewardChallengeDeleting: false,
         rewardChallengeDeleteError: null,
+
+        // Admin challenge participants view
+        rewardChallengeParticipants: [],
+        rewardChallengeParticipantsChallenge: null,
+        rewardChallengeParticipantsLoading: false,
+        rewardChallengeParticipantsError: null,
 
         // Employee-facing challenge participation states
         myRewardChallenges: [],
@@ -497,6 +505,21 @@ const engagementSlice = createSlice({
             .addCase(get_engagement_reward_challenges_thunk.rejected, (state, action) => {
                 state.rewardChallengesLoading = false;
                 state.rewardChallengesError = action.payload;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenge_participants_thunk.pending, (state) => {
+                state.rewardChallengeParticipantsLoading = true;
+                state.rewardChallengeParticipantsError = null;
+            })
+            .addCase(get_engagement_reward_challenge_participants_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeParticipantsLoading = false;
+                state.rewardChallengeParticipants = action.payload?.data?.participants ?? [];
+                state.rewardChallengeParticipantsChallenge = action.payload?.data?.challenge ?? null;
+            })
+            .addCase(get_engagement_reward_challenge_participants_thunk.rejected, (state, action) => {
+                state.rewardChallengeParticipantsLoading = false;
+                state.rewardChallengeParticipantsError = action.payload;
             });
 
         builder

@@ -1,18 +1,15 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import Layout from "../../../layout";
 import ActivitiesLayout from "../layout";
 import HeaderSection from "./sections/header-section";
 import UpcomingBirthdaySection from "./sections/upcoming-birthday-section";
 import FilterWorkAnniversarySection from "./sections/filter-work-anniversary-section";
 import WorkAnniversarySection from "./sections/work-anniversary-section";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function Page() {
-  const { data } = useSelector((store) => store.app);
-
-  const canFilterWorkAnniversary = [1, 11].includes(
-    data?.user?.account_employee?.department_id
-  );
+  const { isReady, isContentManager: canFilterWorkAnniversary } =
+    useCurrentEmployee();
 
   return (
     <Layout>
@@ -57,10 +54,16 @@ export default function Page() {
 
               {/* Work Anniversary Section */}
               <section className="shrink-0 flex flex-col gap-3">
-                {canFilterWorkAnniversary && (
+                {!isReady ? (
                   <div className="shrink-0 bg-gray-50 px-4 pt-4 pb-3 border-b border-gray-100 rounded-xl">
-                    <FilterWorkAnniversarySection />
+                    <div className="h-16 animate-pulse rounded-lg bg-gray-200" />
                   </div>
+                ) : (
+                  canFilterWorkAnniversary && (
+                    <div className="shrink-0 bg-gray-50 px-4 pt-4 pb-3 border-b border-gray-100 rounded-xl">
+                      <FilterWorkAnniversarySection />
+                    </div>
+                  )
                 )}
 
                 <WorkAnniversarySection />

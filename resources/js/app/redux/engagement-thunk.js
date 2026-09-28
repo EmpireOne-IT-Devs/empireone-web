@@ -20,6 +20,7 @@ import {
     update_reward_challenge_service,
     delete_reward_challenge_service,
     get_reward_challenges_service,
+    get_reward_challenge_participants_service,
     get_my_reward_challenges_service,
     get_reward_challenge_profile_summary_service,
     join_reward_challenge_service,
@@ -272,6 +273,18 @@ export const get_engagement_reward_challenges_thunk = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await get_reward_challenges_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_engagement_reward_challenge_participants_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeParticipants",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenge_participants_service(id);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

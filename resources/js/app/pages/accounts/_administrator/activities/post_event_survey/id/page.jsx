@@ -9,6 +9,7 @@ import SurveyInfoSection from "./sections/survey-info-section";
 import QuestionsSection from "./sections/questions-section";
 import ResponsesSection from "./sections/responses-section";
 import SurveyFormSection from "./sections/survey-form-section";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function Page() {
     const id = window.location.pathname.split("/")[5];
@@ -18,20 +19,19 @@ export default function Page() {
     const { selectedSurvey, selectedSurveyLoading } = useSelector(
         (state) => state.post_event_surveys
     );
-    const { data } = useSelector((state) => state.app);
+    const { isReady, isContentManager: canManage } = useCurrentEmployee();
 
     useEffect(() => {
         dispatch(get_post_event_survey_thunk(id));
     }, [dispatch, id]);
 
     // Only departments 1 & 11 get full management access (Questions preview + Responses analytics).
-    const canManage = [1, 11].includes(data?.user?.account_employee?.department_id);
-
     const TABS = canManage
         ? ["Questions", "Responses", "Answer Survey"]
         : ["Answer Survey"];
 
-    if (selectedSurveyLoading || !selectedSurvey) {
+    // Wait for the user data too, so the tab set doesn't flicker between roles.
+    if (selectedSurveyLoading || !selectedSurvey || !isReady) {
         return (
             <Layout>
                 <ActivitiesLayout>

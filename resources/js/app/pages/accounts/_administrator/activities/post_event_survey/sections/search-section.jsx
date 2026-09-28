@@ -1,20 +1,17 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { TbSearch } from "react-icons/tb";
 
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import CreateSurveySection from "./create-survey-section";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function SearchSection() {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
 
-    const { data } = useSelector((store) => store.app);
-
-    const canCreateSurvey = [1, 11].includes(
-        data?.user?.account_employee?.department_id,
-    );
+    const { isReady, isContentManager: canCreateSurvey } =
+        useCurrentEmployee();
 
     return (
         <div className="my-3 flex flex-col gap-3 rounded-2xl border-2 bg-white p-5 sm:flex-row sm:items-end">
@@ -42,10 +39,16 @@ export default function SearchSection() {
                 />
             </div>
 
-            {canCreateSurvey && (
-                <div className="w-full shrink-0 sm:w-auto">
-                    <CreateSurveySection />
+            {!isReady ? (
+                <div className="w-full shrink-0 sm:w-40">
+                    <div className="h-11 animate-pulse rounded-lg bg-gray-200" />
                 </div>
+            ) : (
+                canCreateSurvey && (
+                    <div className="w-full shrink-0 sm:w-auto">
+                        <CreateSurveySection />
+                    </div>
+                )
             )}
         </div>
     );
