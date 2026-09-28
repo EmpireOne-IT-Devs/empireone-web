@@ -229,6 +229,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('disciplinary_records', 'accounts/_administrator/human_resources/disciplinary_records/page');
             Route::inertia('separation', 'accounts/_administrator/human_resources/separation/page');
             Route::inertia('acknowledgements', 'accounts/_administrator/human_resources/acknowledgements/page');
+            Route::inertia('201Files', 'accounts/_administrator/human_resources/201Files/page');
 
             Route::prefix('leads')->group(function () {
                 Route::inertia('', 'accounts/_administrator/human_resources/leads/page');

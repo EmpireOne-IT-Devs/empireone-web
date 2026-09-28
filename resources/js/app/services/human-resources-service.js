@@ -19,3 +19,12 @@ export async function search_employee_service(value) {
 export async function employee_change_form_service() {
     return await axios.get(`/api/er/employee_change_form`);
 }
+
+
+export async function get_201_files_service() {
+    return await axios.get(`/api/er/get_201_files${window.location.search}`);
+}
+
+export async function update_201_files_service(data) {
+    return await axios.post(`/api/er/update_201_files`,data);
+}

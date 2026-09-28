@@ -17,6 +17,40 @@ class AccountEmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function get_201_files(Request $request)
+    {
+        $search = $request->filled('search') ? trim($request->search) : null;
+        $location_id = $request->filled('location_id') ? $request->location_id : null;
+
+        $users = User::query()
+            ->whereIn('role', [1, 2])
+
+            // Only apply location filter if location_id is non-empty
+            ->when(!is_null($location_id) && $location_id !== '', function ($q) use ($location_id) {
+                $q->whereHas('account_employee', function ($empQuery) use ($location_id) {
+                    $empQuery->where('location_id', $location_id);
+                });
+            })
+
+            // Only apply search filter if search term is provided
+            ->when(!is_null($search) && $search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('email', 'like', "%{$search}%")
+                        ->orWhereHas('account_employee', function ($empQuery) use ($search) {
+                            $empQuery->where('employee_id', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('personal_information', function ($piQuery) use ($search) {
+                            $piQuery->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->with(['personal_information', 'files', 'account_employee'])
+            ->orderBy('id', 'desc')
+            ->paginate();
+
+        return response()->json($users, 200);
+    }
     public function search_employee(Request $request)
     {
         $search = $request->search;

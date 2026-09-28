@@ -246,12 +246,9 @@ class JobApplicationController extends Controller
                     $q->where('location_id', $locationId);
                 });
             })
-            ->get();
+            ->paginate();
 
-        return response()->json([
-            'data' => $applications,
-            'status' => 'success',
-        ], 200);
+        return response()->json($applications, 200);
     }
 
     public function get_applicant_pooling(Request $request)

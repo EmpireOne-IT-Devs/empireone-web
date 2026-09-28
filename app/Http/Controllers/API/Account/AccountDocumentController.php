@@ -21,6 +21,19 @@ class AccountDocumentController extends Controller
     {
         return 'dadawda';
     }
+
+    public function update_201_files(Request $request)
+    {
+        $file = AccountDocument::where('id', $request->id)->first();
+        if ($file) {
+            $file->update([
+                'status' => $request->status
+            ]);
+        }
+        return response()->json([
+            'status'  => 'success',
+        ], 200);
+    }
     public function re_upload_documents(Request $request)
     {
 

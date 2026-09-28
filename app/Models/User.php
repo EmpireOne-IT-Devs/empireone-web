@@ -71,6 +71,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ERPerformanceEvaluationForm::class, 'user_id', 'id')->with(['section1s', 'section2s', 'supervisor']);
     }
+    public function files(): HasMany
+    {
+        return $this->hasMany(AccountDocument::class, 'user_id', 'id')->where('status', '<>', 'Archived');
+    }
     public function subordinate(): HasOne
     {
         return $this->hasOne(ERSubordinate::class, 'subordinate_id', 'id')->with(['leader']);
@@ -93,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function account_employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id', 'id')->with(['account', 'site', 'department','er_leader','department_manager']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'id')->with(['account', 'site', 'department', 'er_leader', 'department_manager']);
     }
     public function documents(): HasMany
     {

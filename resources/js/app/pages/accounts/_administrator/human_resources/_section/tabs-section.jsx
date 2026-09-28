@@ -5,7 +5,9 @@ import {
     FcBriefcase,
     FcVoicePresentation,
     FcFolder,
-    FcDocument
+    FcDocument,
+    FcOpenedFolder,
+    FcNightPortrait
 } from "react-icons/fc";
 import SubSidebarSection from "./../../../__sections/sub-sidebar-section";
 
@@ -49,12 +51,22 @@ export default function HRTabsSection({ children }) {
         },
         {
             label: "Separation",
-            icon: <FcFolder className="w-5 h-5 shrink-0" />,
+            icon: <FcNightPortrait className="w-5 h-5 shrink-0" />,
             active: currentPath === "separation",
             children: data?.locations?.map((res) => ({
                 label: res.name,
                 path: `/accounts/administrator/human_resources/separation?location_id=${res.id}`,
                 active: currentPath === "separation" && currentLocationId === String(res.id),
+            }))
+        },
+         {
+            label: "201Files",
+            icon: <FcOpenedFolder className="w-5 h-5 shrink-0" />,
+            active: currentPath === "201Files",
+            children: data?.locations?.map((res) => ({
+                label: res.name,
+                path: `/accounts/administrator/human_resources/201Files?location_id=${res.id}`,
+                active: currentPath === "201Files" && currentLocationId === String(res.id),
             }))
         },
         {

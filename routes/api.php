@@ -54,6 +54,7 @@ use App\Http\Controllers\ERAcknowledgementController;
 use App\Http\Controllers\ERAcknowledgementEmployeeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SiteController;
+use App\Models\Account\AccountDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -261,6 +262,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('exit_clearance', ERExitClearanceController::class);
         Route::resource('exit_interview', ERExitInterviewController::class);
         Route::get('search_employee',  [AccountEmployeeController::class, 'search_employee']);
+        Route::get('get_201_files',  [AccountEmployeeController::class, 'get_201_files']);
+        Route::post('update_201_files',  [AccountDocumentController::class, 'update_201_files']);
 
 
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);

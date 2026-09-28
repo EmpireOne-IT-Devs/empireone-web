@@ -18,6 +18,7 @@ import {
     get_leader_service,
 } from "../services/er-leaders-service";
 import {
+    get_201_files_service,
     get_attrition_by_id_service,
     search_employee_service,
 } from "../services/human-resources-service";
@@ -46,6 +47,13 @@ export function search_employee_thunk(value) {
     return async function (dispatch, getState) {
         const result = await search_employee_service(value);
         dispatch(employeeRelationSlice.actions.setEmployee(result.data));
+    };
+}
+
+export function get_201_files_thunk(value) {
+    return async function (dispatch, getState) {
+        const result = await get_201_files_service(value);
+        dispatch(employeeRelationSlice.actions.setFiles(result.data));
     };
 }
 
