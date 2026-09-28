@@ -17,7 +17,7 @@ const tabs = [
     {
         label: "Employee of the Month",
         icon: Medal,
-    },
+    }, 
     {
         label: "Innovation Award",
         icon: Lightbulb,

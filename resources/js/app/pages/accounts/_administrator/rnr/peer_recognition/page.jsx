@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Layout from "../../../layout";
 import RnrLayout from "../layout";
+import AwardCategorySection from "./award-category-section";
 import RewardCardSection from "./sections/reward-card-section";
 import RecognizeSomeoneSections from "./sections/recognize-someone-sections";
 
@@ -10,7 +11,8 @@ export default function Page() {
     return (
         <Layout>
             <RnrLayout>
-                <RecognizeSomeoneSections onCategoryChange={setSelectedCategory} />
+              
+                <RecognizeSomeoneSections />
                 <RewardCardSection selectedCategory={selectedCategory} />
             </RnrLayout>
         </Layout>

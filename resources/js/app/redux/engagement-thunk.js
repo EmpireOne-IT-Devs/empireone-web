@@ -133,9 +133,9 @@ export const get_upcoming_birthdays_thunk = createAsyncThunk(
 
 export const get_upcoming_work_anniversaries_thunk = createAsyncThunk(
     "engagement/getUpcomingWorkAnniversaries",
-    async (_, { rejectWithValue }) => {
+    async (params = {}, { rejectWithValue }) => {
         try {
-            const response = await get_upcoming_work_anniversaries_service();
+            const response = await get_upcoming_work_anniversaries_service(params);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
