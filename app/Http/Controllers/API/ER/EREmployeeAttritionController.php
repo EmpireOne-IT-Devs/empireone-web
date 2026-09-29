@@ -112,58 +112,11 @@ class EREmployeeAttritionController extends Controller
 
 
         if ($account_employee) {
-
-            //     // FIX: Ensure document actually exists before updating
             if ($account_document) {
                 $account_document->update([
                     'status' => 'Archived'
                 ]);
             }
-
-            // $bccEmails = array_values(array_unique(array_filter([
-            //     $e_r_leader?->employee?->eogs_email ?? '',
-            //     $department_manager?->employee?->eogs_email ?? '',
-            //     'accounting@empireonegroup.com',
-            //     'bem@empireonegroup.com',
-            //     'carcarhr@empireonegroup.com',
-            //     'compben@empireonegroup.com',
-            //     'compliance@empireonecx.com',
-            //     'edwin@empireonegroup.com',
-            //     'elona@empireonegroup.com',
-            //     'eunice@empireonegroup.com',
-            //     'grecar@empireonecx.com',
-            //     'honeylyn@empireonegroup.com',
-            //     'john@empireonegroup.com',
-            //     'jona@empireonegroup.com',
-            //     'juliepearl.labasan@empireonegroup.com',
-            //     'marc@empireonecx.com',
-            //     'mark@empireonecx.com',
-            //     'milcah@empireonegroup.com',
-            //     'mlourdes@empireonegroup.com',
-            //     'paul@empireonegroup.com',
-            //     'scaccounting@empireonegroup.com',
-            //     // 'schr@empireonegroup.com',
-            //     'scitns@empireonegroup.com',
-            //     'wfm-scheduler@empireonegroup.com',
-            //     'peter@empireonegroup.com',
-            //     'chaquira@empireonegroup.com',
-            //     'scchr@empireonegroup.com',
-            //     'rheamae@empireonegroup.com',
-            //     'mika@empireonecx.com',
-            //     // 'quincy@empireonecx.com',
-            //     'charmaine@empireonecx.com',
-            //     'jrusiana@empireonecx.com',
-            //     'markpatena@empireonegroup.com',
-            //     'jude@empireonecx.com',
-            //     'charity@empireonegroup.com',
-            //     'ruth@empireonegroup.com',
-            //     'roger@empireonegroup.com',
-            //     // 'gio@empireonecx.com',
-            //     'hashie@empireonegroup.com',
-            //     'markanthony@empireonecx.com',
-            //     'anthony@empireonecx.com',
-            //     'empireone.hrd@empireonegroup.com',
-            // ])));
 
             $account_employee->update([
                 'employment_status'     => $request->employment_status,
@@ -188,11 +141,21 @@ class EREmployeeAttritionController extends Controller
                 $e_r_leader?->employee?->eogs_email ?? '',
                 $department_manager?->employee?->eogs_email ?? '',
                 'anthony@empireonecx.com',
-                ...($emails ?? []), 
+                ...($emails ?? []),
+            ])));
+
+            $bccEmails2 = array_values(array_unique(array_filter([
+                'webdev@empireonegroup.com',
+                'scchr@empireonegroup.com',
+                'carcarhr@empireonegroup.com',
+                'john@empireonegroup.com',
+                'compben@empireonegroup.com',
+                'jane.rabago@empireonegroup.com',
+                'anthony@empireonecx.com',
+                'empireone.hrd@empireonegroup.com'
             ])));
 
             $this->my_empireone_send_email([
-                // 'recipient' => $request->email,
                 'recipient' => 'webdev@empireonegroup.com',
                 'bcc'       => implode(', ', $bccEmails) ?? '',
                 'subject'   => 'Offboarding Request - ' . $fullName . ' (' . ($attrition->employee_id ?? 'N/A') . ')',
@@ -209,6 +172,16 @@ class EREmployeeAttritionController extends Controller
                     'eligibility_for_rehire'  => isset($attrition->is_rehire) ? ($attrition->is_rehire ? 'Yes' : 'No') : 'N/A',
                     'notice_period'           => isset($attrition->days_of_liquidated) ? ($attrition->days_of_liquidated > 0 ? $attrition->days_of_liquidated . ' Days' : 'No') : 'N/A',
                     'clawback'                => isset($attrition->is_liquidated) ? ($attrition->is_liquidated ? 'Yes' : 'No') : 'N/A',
+                ])->render(),
+            ]);
+
+            $this->my_empireone_send_email([
+                'recipient' => $request->eogs_email,
+                'bcc'       => !empty($bccEmails2) ? implode(', ', $bccEmails2) : '',
+                'subject'   => 'Required: Employee Exit Survey - ' . $fullName . ' (' . ($attrition->employee_id ?? 'N/A') . ')',
+                'body'      => view('emails.human_resources.exit-survey', [
+                    'id'   => $attrition->id,
+                    'name' => $fullName,
                 ])->render(),
             ]);
 

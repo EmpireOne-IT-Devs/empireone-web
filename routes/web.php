@@ -317,7 +317,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
     });
 
     Route::prefix('off_boarding_documents/{id}')->group(function () {
-        Route::inertia('/exit-clearance', 'accounts/off_boarding_documents/exit-clearance-page');
+        Route::inertia('/exit-survey', 'accounts/off_boarding_documents/exit-survey-page');
         Route::inertia('/exit-interview', 'accounts/off_boarding_documents/exit-interview-page');
     });
 });
