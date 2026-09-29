@@ -213,6 +213,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
         Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
         Route::get('upcoming_work_anniversaries', [EngagementBirthdayController::class, 'upcoming_work_anniversaries']);
+        Route::post('send_work_anniversary_email', [EngagementBirthdayController::class, 'send_work_anniversary_email']);
         Route::get('upcoming_events',    [EngagementPostEventController::class, 'upcoming_events']);
 
         Route::get('reward-recognitions', [EngagementRewardRecognitionController::class, 'index']);

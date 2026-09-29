@@ -6,6 +6,7 @@ import {
     delete_engagement_post_thunk,
     get_upcoming_birthdays_thunk,
     get_upcoming_work_anniversaries_thunk,
+    send_work_anniversary_email_thunk,
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
     upload_gallery_thunk,
@@ -39,6 +40,7 @@ export {
     delete_engagement_post_thunk,
     get_upcoming_birthdays_thunk,
     get_upcoming_work_anniversaries_thunk,
+    send_work_anniversary_email_thunk,
     publish_engagement_post_thunk,
     cast_poll_vote_thunk,
     upload_gallery_thunk,
@@ -96,6 +98,8 @@ const engagementSlice = createSlice({
             month: new Date().getMonth() + 1,
             location_id: null,
         },
+        sendingAnniversaryEmail: false,
+        sendAnniversaryEmailError: null,
 
         // Gallery upload states
         uploadingGallery: false,
@@ -315,6 +319,20 @@ const engagementSlice = createSlice({
             })
             .addCase(get_upcoming_work_anniversaries_thunk.rejected, (state) => {
                 state.workAnniversariesLoading = false;
+            });
+
+        // ── Send Work Anniversary Email ──────────────────────────────────────
+        builder
+            .addCase(send_work_anniversary_email_thunk.pending, (state) => {
+                state.sendingAnniversaryEmail = true;
+                state.sendAnniversaryEmailError = null;
+            })
+            .addCase(send_work_anniversary_email_thunk.fulfilled, (state) => {
+                state.sendingAnniversaryEmail = false;
+            })
+            .addCase(send_work_anniversary_email_thunk.rejected, (state, action) => {
+                state.sendingAnniversaryEmail = false;
+                state.sendAnniversaryEmailError = action.payload;
             });
 
         // ── Publish Rich Post (Birthday / Poll) ─────────────────────────────

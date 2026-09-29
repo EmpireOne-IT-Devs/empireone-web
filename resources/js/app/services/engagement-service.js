@@ -46,6 +46,10 @@ export async function get_upcoming_work_anniversaries_service(params = {}) {
     return await axios.get("/api/engagement/upcoming_work_anniversaries", { params });
 }
 
+export async function send_work_anniversary_email_service(payload) {
+    return await axios.post("/api/engagement/send_work_anniversary_email", payload);
+}
+
 export async function cast_poll_vote_service(postId, optionId) {
     return await axios.post(`/api/engagement/polls/${postId}/vote`, { option_id: optionId });
 }

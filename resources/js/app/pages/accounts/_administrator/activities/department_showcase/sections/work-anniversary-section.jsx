@@ -1,165 +1,393 @@
-import React, { useEffect } from "react";
+import React, { memo, useEffect, useMemo, useRef } from "react";
 import { Award, Medal, Calendar, Building2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Skeleton from "@/app/_components/skeleton";
-import { get_upcoming_work_anniversaries_thunk } from "@/app/redux/engagement-slice";
+import {
+    get_upcoming_work_anniversaries_thunk,
+} from "@/app/redux/engagement-slice";
 
-const AVATAR_COLORS = [
-  "bg-gradient-to-br from-blue-600 to-indigo-800",
-  "bg-gradient-to-br from-emerald-500 to-teal-700",
-  "bg-gradient-to-br from-orange-500 to-amber-700",
-  "bg-gradient-to-br from-purple-600 to-violet-800",
-  "bg-gradient-to-br from-pink-500 to-rose-700",
+const COLORS = [
+    "bg-gradient-to-br from-blue-600 to-indigo-800",
+    "bg-gradient-to-br from-emerald-500 to-teal-700",
+    "bg-gradient-to-br from-orange-500 to-amber-700",
+    "bg-gradient-to-br from-purple-600 to-violet-800",
+    "bg-gradient-to-br from-pink-500 to-rose-700",
 ];
 
-export default function WorkAnniversarySection() {
-  const dispatch = useDispatch();
-  const {
-    workAnniversaries,
-    workAnniversaryMonth,
-    workAnniversariesLoading,
-    workAnniversaryFilters,
-  } = useSelector((state) => state.engagement);
+const SIZE =
+    "w-[130px] sm:w-[160px] md:w-[185px] lg:w-[205px] xl:w-[220px]";
 
-  useEffect(() => {
-    dispatch(get_upcoming_work_anniversaries_thunk(workAnniversaryFilters));
-  }, [dispatch, workAnniversaryFilters]);
+/* -------------------------------------------------------------------------- */
+/* Employee Card                                                              */
+/* -------------------------------------------------------------------------- */
 
-  const anniversaries = workAnniversaries ?? [];
-  const displayMonth =
-    workAnniversaryMonth ||
-    new Date().toLocaleString("default", { month: "long" });
+const EmployeeCard = memo(({ employee, index }) => {
+    const image = employee.profile_picture || employee.avatar;
 
-  return (
-    <div className="w-full flex flex-col font-sans antialiased my-4">
-      {/* Header Banner */}
-      <div className="flex items-center justify-between mb-5 px-1">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200/60">
-            <Award size={20} className="stroke-[2.25]" />
-          </div>
-          <div>
-            <h2 className="text-base font-bold text-slate-900 tracking-tight">
-              Work Anniversaries
-            </h2>
-            <p className="text-xs font-medium text-slate-500">
-              Celebrating milestones for {displayMonth}
-            </p>
-          </div>
-        </div>
-        {anniversaries.length > 0 && !workAnniversariesLoading && (
-          <span className="px-2.5 py-1 text-xs font-semibold text-indigo-700 bg-indigo-50 rounded-full border border-indigo-100">
-            {anniversaries.length} {anniversaries.length === 1 ? 'Person' : 'People'}
-          </span>
-        )}
-      </div>
+    const date = employee.anniversary_date
+        ? new Date(employee.anniversary_date).toLocaleDateString("default", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+          })
+        : null;
 
-      {/* Loading Skeleton */}
-      {workAnniversariesLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Skeleton variant="card" className="h-44 rounded-2xl" />
-          <Skeleton variant="card" className="h-44 rounded-2xl" />
-          <Skeleton variant="card" className="h-44 rounded-2xl" />
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!workAnniversariesLoading && anniversaries.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
-            <Award size={22} />
-          </div>
-          <p className="text-sm font-semibold text-slate-700">No Anniversaries Found</p>
-          <p className="text-xs text-slate-500 mt-1">
-            There are no work anniversaries scheduled for {displayMonth}.
-          </p>
-        </div>
-      )}
-
-      {/* Card Grid */}
-      {!workAnniversariesLoading && anniversaries.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {anniversaries.map((employee, index) => {
-            const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
-            const anniversaryDateLabel = employee.anniversary_date
-              ? new Date(employee.anniversary_date).toLocaleDateString("default", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              : null;
-
-            return (
-              <Card
-                key={employee.user_id}
-                className="group relative overflow-hidden bg-white border border-slate-200/80 rounded-2xl p-5 transition-all duration-300 hover:shadow-md hover:border-indigo-200 hover:-translate-y-0.5 flex flex-col justify-between"
-              >
-                {/* Decorative top accent gradient line */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                <div>
-                  {/* Top Header Row within Card */}
-                  <div className="flex items-start justify-between gap-3">
-                    {/* Avatar with Ribbon Badge */}
-                    <div className="relative shrink-0">
-                      {employee.profile_picture || employee.avatar ? (
+    return (
+        <Card
+            variant="default"
+            padding="p-0"
+            className={`group relative shrink-0 aspect-square ${SIZE}
+                overflow-hidden rounded-2xl border border-slate-200/80
+                bg-white shadow-sm transition-all duration-300
+                hover:border-indigo-200 hover:shadow-md`}
+        >
+            <div className="flex h-full w-full flex-col items-center justify-center p-3 text-center sm:p-4">
+                {/* Profile */}
+                <div className="relative mb-2">
+                    {image ? (
                         <img
-                          src={employee.profile_picture ?? employee.avatar}
-                          alt={employee.name}
-                          className="w-14 h-14 rounded-2xl object-cover ring-2 ring-white shadow-sm"
+                            src={image}
+                            alt={employee.name}
+                            loading="lazy"
+                            className="
+                                h-11 w-11 rounded-2xl object-cover
+                                shadow-sm ring-2 ring-white
+                                sm:h-12 sm:w-12
+                                md:h-14 md:w-14
+                                lg:h-16 lg:w-16
+                            "
                         />
-                      ) : (
+                    ) : (
                         <div
-                          className={`w-14 h-14 rounded-2xl ${avatarColor} flex items-center justify-center text-white font-bold text-base tracking-wide ring-2 ring-white shadow-sm`}
+                            className={`
+                                flex h-11 w-11 items-center justify-center
+                                rounded-2xl text-white font-bold
+                                sm:h-12 sm:w-12
+                                md:h-14 md:w-14
+                                lg:h-16 lg:w-16
+                                ${COLORS[index % COLORS.length]}
+                            `}
                         >
-                          {employee.initials || "?"}
+                            {employee.initials || "?"}
                         </div>
-                      )}
-                      
-                      {/* Badge Icon Overlay */}
-                      <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-amber-400 to-amber-600 text-white p-1.5 rounded-xl ring-2 ring-white shadow-sm flex items-center justify-center">
-                        <Medal size={12} className="stroke-[2.5]" />
-                      </div>
-                    </div>
-
-                    {/* Milestone Highlight Badge */}
-                    {employee.anniversary_label && (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200/80 shadow-2xs">
-                        🎉 {employee.anniversary_label}
-                      </span>
                     )}
-                  </div>
 
-                  {/* Employee Details */}
-                  <div className="mt-3.5">
-                    <h3 className="text-sm font-bold text-slate-800 tracking-tight group-hover:text-indigo-950 transition-colors truncate">
-                      {employee.name}
-                    </h3>
-
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium mt-1">
-                      <Building2 size={12} className="text-slate-400 shrink-0" />
-                      <span className="uppercase tracking-wider truncate">
-                        {employee.department ?? "General"}
-                      </span>
-                    </div>
-                  </div>
+                    <span className="absolute -bottom-1 -right-1 rounded-xl bg-amber-500 p-1 text-white ring-2 ring-white">
+                        <Medal size={11} />
+                    </span>
                 </div>
 
-                {/* Footer Section: Date Info */}
-                {anniversaryDateLabel && (
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-                    <div className="flex items-center gap-1.5 text-slate-500">
-                      <Calendar size={13} className="text-indigo-500 shrink-0" />
-                      <span>{anniversaryDateLabel}</span>
-                    </div>
-                  </div>
+                {/* Anniversary Label */}
+                {employee.anniversary_label && (
+                    <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[9px] font-bold text-amber-800">
+                        🎉 {employee.anniversary_label}
+                    </span>
                 )}
-              </Card>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
+
+                {/* Employee Name */}
+                <h3
+                    title={employee.name}
+                    className="
+                        mt-2 w-full truncate
+                        text-[10px] font-bold text-slate-800
+                        sm:text-xs md:text-sm
+                    "
+                >
+                    {employee.name}
+                </h3>
+
+                {/* Department */}
+                <div
+                    className="
+                        mt-1 flex w-full items-center justify-center
+                        gap-1 truncate text-[8px] text-slate-500
+                        sm:text-[9px]
+                    "
+                >
+                    <Building2 size={10} className="shrink-0" />
+
+                    <span className="truncate">
+                        {employee.department || "General"}
+                    </span>
+                </div>
+
+                {/* Anniversary Date */}
+                {date && (
+                    <div className="mt-2 flex items-center gap-1 text-[8px] text-slate-500 sm:text-[9px]">
+                        <Calendar
+                            size={10}
+                            className="shrink-0 text-indigo-500"
+                        />
+
+                        <span>{date}</span>
+                    </div>
+                )}
+            </div>
+        </Card>
+    );
+});
+
+/* -------------------------------------------------------------------------- */
+/* Work Anniversary Section                                                   */
+/* -------------------------------------------------------------------------- */
+
+export default function WorkAnniversarySection() {
+    const dispatch = useDispatch();
+
+    const {
+        workAnniversaries = [],
+        workAnniversaryMonth,
+        workAnniversariesLoading,
+        workAnniversaryFilters,
+    } = useSelector((state) => state.engagement);
+
+    const firstRowRef = useRef(null);
+    const secondRowRef = useRef(null);
+
+    const firstPaused = useRef(false);
+    const secondPaused = useRef(false);
+
+    /* ---------------------------------------------------------------------- */
+    /* Fetch Anniversaries                                                    */
+    /* ---------------------------------------------------------------------- */
+
+    useEffect(() => {
+        dispatch(
+            get_upcoming_work_anniversaries_thunk(
+                workAnniversaryFilters,
+            ),
+        );
+    }, [dispatch, workAnniversaryFilters]);
+
+    /* ---------------------------------------------------------------------- */
+    /* Split Employees                                                        */
+    /* ---------------------------------------------------------------------- */
+
+    const { firstRow, secondRow } = useMemo(() => {
+        // Less than 15 employees = ONE ROW
+        if (workAnniversaries.length < 15) {
+            return {
+                firstRow: workAnniversaries,
+                secondRow: [],
+            };
+        }
+
+        // 15 or more employees = TWO ROWS
+        const midpoint = Math.ceil(workAnniversaries.length / 2);
+
+        return {
+            firstRow: workAnniversaries.slice(0, midpoint),
+            secondRow: workAnniversaries.slice(midpoint),
+        };
+    }, [workAnniversaries]);
+
+    /* ---------------------------------------------------------------------- */
+    /* Auto Scroll                                                            */
+    /* ---------------------------------------------------------------------- */
+
+    useEffect(() => {
+        let frame;
+
+        const animate = () => {
+            const first = firstRowRef.current;
+            const second = secondRowRef.current;
+
+            /* -------------------------------------------------------------- */
+            /* First Row - Move LEFT                                          */
+            /* -------------------------------------------------------------- */
+
+            if (first && !firstPaused.current) {
+                first.scrollLeft += 0.7;
+
+                if (
+                    first.scrollLeft + first.clientWidth >=
+                    first.scrollWidth - 1
+                ) {
+                    first.scrollLeft = 0;
+                }
+            }
+
+            /* -------------------------------------------------------------- */
+            /* Second Row - Move RIGHT                                        */
+            /* -------------------------------------------------------------- */
+
+            if (second && !secondPaused.current) {
+                second.scrollLeft -= 0.7;
+
+                if (second.scrollLeft <= 0) {
+                    second.scrollLeft =
+                        second.scrollWidth - second.clientWidth;
+                }
+            }
+
+            frame = requestAnimationFrame(animate);
+        };
+
+        if (workAnniversaries.length > 0) {
+            frame = requestAnimationFrame(animate);
+        }
+
+        return () => cancelAnimationFrame(frame);
+    }, [workAnniversaries]);
+
+    /* ---------------------------------------------------------------------- */
+    /* Carousel Row                                                           */
+    /* ---------------------------------------------------------------------- */
+
+    const renderRow = (employees, ref, paused) => {
+        if (!employees.length) {
+            return null;
+        }
+
+        return (
+            <div
+                ref={ref}
+                onMouseEnter={() => {
+                    paused.current = true;
+                }}
+                onMouseLeave={() => {
+                    paused.current = false;
+                }}
+                onTouchStart={() => {
+                    paused.current = true;
+                }}
+                onTouchEnd={() => {
+                    setTimeout(() => {
+                        paused.current = false;
+                    }, 800);
+                }}
+                className="
+                    flex
+                    gap-3
+                    overflow-x-auto
+                    overflow-y-hidden
+                    select-none
+                    sm:gap-4
+
+                    /* Hide scrollbar - Firefox */
+                    [scrollbar-width:none]
+
+                    /* Hide scrollbar - IE/old Edge */
+                    [-ms-overflow-style:none]
+
+                    /* Hide scrollbar - Chrome/Edge/Safari */
+                    [&::-webkit-scrollbar]:hidden
+                "
+            >
+                {employees.map((employee, index) => (
+                    <EmployeeCard
+                        key={`${employee.user_id}-${index}`}
+                        employee={employee}
+                        index={index}
+                    />
+                ))}
+            </div>
+        );
+    };
+
+    const month =
+        workAnniversaryMonth ||
+        new Date().toLocaleString("default", {
+            month: "long",
+        });
+
+    /* ---------------------------------------------------------------------- */
+    /* Render                                                                 */
+    /* ---------------------------------------------------------------------- */
+
+    return (
+        <section className="my-4 w-full">
+            {/* Header */}
+            <div className="mb-4 flex items-center justify-between px-1">
+                <div className="flex items-center gap-2.5 p-2">
+                    <div className="rounded-xl bg-indigo-50 p-2 text-indigo-700">
+                        <Award size={20} />
+                    </div>
+
+                    <div>
+                        <h2 className="text-sm font-bold text-slate-900 sm:text-base">
+                            Work Anniversaries
+                        </h2>
+
+                        <p className="text-[10px] text-slate-500 sm:text-xs">
+                            Celebrating milestones for {month}
+                        </p>
+                    </div>
+                </div>
+
+                {!workAnniversariesLoading &&
+                    workAnniversaries.length > 0 && (
+                        <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-semibold text-indigo-700">
+                            {workAnniversaries.length}{" "}
+                            {workAnniversaries.length === 1
+                                ? "Person"
+                                : "People"}
+                        </span>
+                    )}
+            </div>
+
+            {/* Loading */}
+            {workAnniversariesLoading ? (
+                <div
+                    className="
+                        flex
+                        gap-3
+                        overflow-hidden
+                        sm:gap-4
+                    "
+                >
+                    {[1, 2, 3, 4, 5].map((item) => (
+                        <Skeleton
+                            key={item}
+                            variant="card"
+                            className={`shrink-0 aspect-square ${SIZE} rounded-2xl`}
+                        />
+                    ))}
+                </div>
+            ) : workAnniversaries.length > 0 ? (
+                /*
+                 * 1 - 14 employees:
+                 *     ONE ROW
+                 *
+                 * 15+ employees:
+                 *     TWO ROWS
+                 *
+                 * First row  -> moves LEFT
+                 * Second row -> moves RIGHT
+                 */
+                <div className="flex flex-col gap-3 sm:gap-4">
+                    {renderRow(
+                        firstRow,
+                        firstRowRef,
+                        firstPaused,
+                    )}
+
+                    {workAnniversaries.length >= 15 &&
+                        renderRow(
+                            secondRow,
+                            secondRowRef,
+                            secondPaused,
+                        )}
+                </div>
+            ) : (
+                /* Empty State */
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+                    <Award
+                        className="mx-auto mb-3 text-slate-400"
+                        size={24}
+                    />
+
+                    <p className="text-sm font-semibold text-slate-700">
+                        No Anniversaries Found
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-500">
+                        There are no work anniversaries scheduled for{" "}
+                        {month}.
+                    </p>
+                </div>
+            )}
+        </section>
+    );
 }
