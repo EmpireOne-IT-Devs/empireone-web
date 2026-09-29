@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WorkAnniversaryMail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class EngagementBirthdayController extends Controller
 {
@@ -206,5 +209,91 @@ class EngagementBirthdayController extends Controller
             3 => 'rd',
             default => 'th',
         };
+    }
+
+    /**
+     * Send a work-anniversary email to the selected employees.
+     */
+    public function send_work_anniversary_email(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'user_ids' => ['required', 'array', 'min:1'],
+            'user_ids.*' => ['integer', 'distinct'],
+            'message' => ['required', 'string', 'max:2000'],
+            'year' => ['nullable', 'integer', 'min:2000', 'max:2100'],
+            'month' => ['nullable', 'integer', 'min:1', 'max:12'],
+        ]);
+
+        $filterYear = $validated['year'] ?? now()->year;
+        $filterMonth = $validated['month'] ?? now()->month;
+
+        $users = User::query()
+            ->whereIn('id', $validated['user_ids'])
+            ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_EMPLOYEE])
+            ->with([
+                'personal_information:id,user_id,first_name,middle_name,last_name,suffix',
+                'account_employee',
+            ])
+            ->get();
+
+        $sent = [];
+        $failed = [];
+
+        foreach ($users as $user) {
+            $employee = $user->account_employee;
+
+            if (! $employee || ! $employee->started_at) {
+                $failed[] = $user->id;
+                continue;
+            }
+
+            try {
+                $hireDate = Carbon::parse($employee->started_at)->startOfDay();
+            } catch (\Exception) {
+                $failed[] = $user->id;
+                continue;
+            }
+
+            $years = $filterYear - $hireDate->year;
+
+            if ($years < 1) {
+                $failed[] = $user->id;
+                continue;
+            }
+
+            $info = $user->personal_information;
+            $fullName = trim(
+                collect([$info?->first_name, $info?->middle_name, $info?->last_name, $info?->suffix])
+                    ->filter()
+                    ->join(' ')
+            );
+
+            $payload = [
+                'user_id' => $user->id,
+                'name' => $fullName ?: ($user->name ?? ''),
+                'anniversary_years' => $years,
+                'anniversary_label' => $this->ordinal($years).' Work Anniversary',
+            ];
+
+            try {
+                Mail::to($user->email)->send(new WorkAnniversaryMail($payload, $validated['message']));
+                $sent[] = $user->id;
+            } catch (\Exception $e) {
+                Log::error('Work anniversary email failed', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'error' => $e->getMessage(),
+                ]);
+                $failed[] = $user->id;
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'sent_count' => count($sent),
+            'failed_count' => count($failed),
+            'sent' => $sent,
+            'failed' => $failed,
+        ], 200);
     }
 }
