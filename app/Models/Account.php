@@ -11,6 +11,7 @@ class Account extends Model
 {
     protected $fillable = [
         'name',
+        'description'
     ];
 
     public function ecfs(): HasMany

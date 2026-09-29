@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
@@ -251,6 +252,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::prefix('er')->group(function () {
+        Route::resource('accounts',  AccountController::class);
+        Route::resource('departments',  DepartmentController::class);
         Route::resource('leaders', ERLeaderController::class);
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
