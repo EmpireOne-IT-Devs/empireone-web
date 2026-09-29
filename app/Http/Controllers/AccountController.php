@@ -28,7 +28,24 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'id'          => 'nullable|integer|exists:accounts,id',
+            'name'        => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        Account::updateOrCreate(
+            [
+                'id' => $request->input('id'), 
+            ],
+            [
+                'name'        => $validated['name'],
+                'description' => $validated['description'],
+            ]
+        );
+
+        // 3. Return JSON response for Inertia/API or redirect
+        return response()->json('success', 200);
     }
 
     /**

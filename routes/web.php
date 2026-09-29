@@ -236,6 +236,11 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
                 Route::inertia('', 'accounts/_administrator/human_resources/leads/page');
                 Route::inertia('/{id}', 'accounts/_administrator/human_resources/leads/id/page');
             });
+
+            Route::prefix('sourcing')->group(function () {
+                Route::inertia('accounts', 'accounts/_administrator/human_resources/sourcing/accounts/page');
+                Route::inertia('departments', 'accounts/_administrator/human_resources/sourcing/departments/page');
+            });
             Route::prefix('employee_movements')->group(function () {
                 // Route::prefix('assessment_process')->group(function () {
                 //     $assessmentTypes = ['mid_regularization', 'regularization', 'extended_regularization', 'none_regularization'];

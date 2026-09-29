@@ -28,3 +28,10 @@ export async function get_201_files_service() {
 export async function update_201_files_service(data) {
     return await axios.post(`/api/er/update_201_files`,data);
 }
+
+export async function update_or_create_account_service(data) {
+    return await axios.post(`/api/er/accounts`,data);
+}
+export async function update_or_create_department_service(data) {
+    return await axios.post(`/api/er/departments`,data);
+}

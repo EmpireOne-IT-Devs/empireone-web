@@ -7,7 +7,8 @@ import {
     FcFolder,
     FcDocument,
     FcOpenedFolder,
-    FcNightPortrait
+    FcNightPortrait,
+    FcServices
 } from "react-icons/fc";
 import SubSidebarSection from "./../../../__sections/sub-sidebar-section";
 
@@ -15,6 +16,7 @@ export default function HRTabsSection({ children }) {
     const { data } = useSelector((store) => store.app);
 
     const currentPath = typeof window !== "undefined" ? window.location.pathname.split("/")[4] : "";
+    const currentSubPath = typeof window !== "undefined" ? window.location.pathname.split("/")[5] : "";
     const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
     const currentLocationId = searchParams ? searchParams.get("location_id") : null;
 
@@ -59,7 +61,7 @@ export default function HRTabsSection({ children }) {
                 active: currentPath === "separation" && currentLocationId === String(res.id),
             }))
         },
-         {
+        {
             label: "201Files",
             icon: <FcOpenedFolder className="w-5 h-5 shrink-0" />,
             active: currentPath === "201Files",
@@ -70,11 +72,30 @@ export default function HRTabsSection({ children }) {
             }))
         },
         {
+            label: "Sourcing",
+            icon: <FcServices className="w-5 h-5 shrink-0" />,
+            active: currentPath === "sourcing",
+            children: [{
+                label: 'Accounts',
+                path: '/accounts/administrator/human_resources/sourcing/accounts',
+                active: currentSubPath === "accounts",
+            }, {
+                label: 'Departments',
+                path: '/accounts/administrator/human_resources/sourcing/departments',
+                active: currentSubPath === "departments",
+            }]?.map((res) => ({
+                label: res.label,
+                path: res.path,
+                active: res.active,
+            }))
+        },
+        {
             label: "Acknowledgements",
             icon: <FcDocument className="w-5 h-5 shrink-0" />,
             path: "/accounts/administrator/human_resources/acknowledgements",
             active: currentPath === "acknowledgements",
         },
+
     ];
 
     return (
