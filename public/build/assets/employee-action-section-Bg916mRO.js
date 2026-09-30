@@ -1,0 +1,17 @@
+import{r as s,j as t}from"./app-Cck0cc_R.js";import{y as m}from"./index-CS-aPCrV.js";import c from"./add-attrition-section-DRVEdbbz.js";import b from"./update-employee-DXAi31e4.js";import"./iconBase-C86Zt5VL.js";import"./index.esm-CR1d91f_.js";import"./index-CTm3VcRC.js";import"./moment-BMQglvow.js";import"./button-eGMGpN5T.js";import"./index-x0NTu0Og.js";import"./modal-zNgGqKrU.js";import"./index-Di8nZfBN.js";import"./radio-DMaNWFQ5.js";import"./employee-relation-thunk-CSoPFTuQ.js";import"./applicants-service-BQDh2zUa.js";import"./employee-change-form-service-CwRQRdUv.js";import"./er-leaders-service-VG8ujYGp.js";import"./human-resources-service-idH1EP2E.js";import"./performance-evaluation-service-BClkAK6g.js";import"./employee-information-form-Jr6WT_R5.js";import"./input-nztopJ5_.js";import"./select-CGFi1zFI.js";import"./account-service-BiuzUc9-.js";import"./hash-B27_iMOy.js";import"./createLucideIcon-PUPHdkKZ.js";import"./building-2-enx0Woxl.js";import"./briefcase-Ct1NUG5o.js";import"./mail-h7Qv5Iae.js";import"./personal-information-form-BVsWYNLS.js";import"./index-BNUWXGHR.js";import"./user-zBPf-bLj.js";import"./calendar-Nvt8jy1N.js";function P({props_data:a}){const[o,e]=s.useState(!1),r=s.useRef(null),u=()=>e(n=>!n),p=()=>e(!1);return s.useEffect(()=>{const n=i=>{r.current&&!r.current.contains(i.target)&&e(!1)},l=i=>{i.key==="Escape"&&e(!1)};return o&&(document.addEventListener("mousedown",n),document.addEventListener("keydown",l)),()=>{document.removeEventListener("mousedown",n),document.removeEventListener("keydown",l)}},[o]),t.jsxs("div",{className:"relative inline-block text-left",ref:r,children:[t.jsx("button",{type:"button",onClick:u,"aria-expanded":o,"aria-haspopup":"true",className:`
+                    relative p-2 rounded-full transition-all duration-150 outline-none
+                    hover:bg-black/5 active:bg-black/10
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600
+                    ${o?"bg-black/10":""}
+                `,children:t.jsx(m,{size:20})}),t.jsxs("div",{className:`
+                    absolute left-0 top-full mt-1 min-w-[200px] py-1.5 bg-white rounded-md z-[100]
+                    shadow-[0px_5px_5px_-3px_rgba(0,0,0,0.2),0px_8px_10px_1px_rgba(0,0,0,0.14),0px_3px_14px_2px_rgba(0,0,0,0.12)]
+                    transform transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] origin-top-left
+                    ${o?"opacity-100 scale-100 translate-y-0 pointer-events-auto":"opacity-0 scale-95 -translate-y-2 pointer-events-none"}
+                `,children:[t.jsx("div",{className:`\r
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150\r
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800\r
+                    `,children:t.jsx(c,{props_data:a,onAction:p})}),t.jsx("div",{className:`\r
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150\r
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800\r
+                    `,children:t.jsx(b,{props_data:a,onAction:p})})]})]})}export{P as default};
