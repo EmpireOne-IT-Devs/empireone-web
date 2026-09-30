@@ -6,7 +6,7 @@ import { get_201_files_thunk } from '@/app/redux/employee-relation-thunk';
 import TableSection from './_sections/table-section';
 import PaginationSection from './_sections/pagination-section';
 import SearchSection from './_sections/search-section';
-import LoadingState from '@/app/_components/loading-state';
+import Loading from '@/app/_components/loading-page';
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 {loading ? (
-                    <LoadingState />
+                    <Loading />
                 ) : (
                     <div className='flex gap-3 flex-col'>
                         <SearchSection />

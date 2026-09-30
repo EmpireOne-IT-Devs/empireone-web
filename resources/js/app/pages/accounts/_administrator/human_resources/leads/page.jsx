@@ -5,7 +5,7 @@ import TableSection from "./_sections/table-section";
 import CreateLeadSection from "./_sections/create-lead-section";
 import store from "@/app/store/store";
 import { get_leader_thunk } from "@/app/redux/employee-relation-thunk";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 {loading ? (
-                    <LoadingState />
+                    <Loading/>
                 ) : (
                     <div className="flex-col flex gap-3 my-3">
                         <div className="flex w-full items-end justify-end">

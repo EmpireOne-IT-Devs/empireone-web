@@ -6,7 +6,7 @@ import store from "@/app/store/store";
 import { get_employee_applicants_thunk, get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 import TabsSection from "../_sections/tabs-section";
 import PaginationSection from "./_sections/pagination-section";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function Page() {
             <EmployeeRelationLayout>
                 <TabsSection />
                 {loading ? (
-                    <LoadingState />
+                    <Loading />
                 ) : (
                     <div className="flex flex-col gap-3">
                         <ApplicantTableSection />

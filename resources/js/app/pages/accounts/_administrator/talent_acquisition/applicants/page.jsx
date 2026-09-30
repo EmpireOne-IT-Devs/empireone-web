@@ -7,7 +7,7 @@ import PaginationSection from "./_sections/pagination-section";
 import StatusesCardSection from "./_sections/statuses-card-section";
 import ExportApplicantSection from "./_sections/export-applicant-section";
 import CardApplicantSection from "./_sections/card-applicant-section";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function Page() {
         <Layout>
             <JobPostingLayout>
                 {loading ? (
-                    <LoadingState />
+                    <Loading />
                 ) : (
                     <div className="flex flex-col gap-3">
                         <ExportApplicantSection />

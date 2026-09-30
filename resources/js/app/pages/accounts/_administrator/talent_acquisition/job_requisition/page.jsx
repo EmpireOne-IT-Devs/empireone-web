@@ -10,7 +10,7 @@ import JobPostingLayout from "../layout";
 import CreateJobRequisition from "./_sections/create-requisition-section";
 import { usePage } from "@inertiajs/react";
 import { get_job_interviewer_schedule_thunk } from "@/app/redux/app-thunk";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const { url } = usePage();
@@ -38,7 +38,7 @@ export default function Page() {
         <Layout>
             <JobPostingLayout>
                 {loading ? (
-                    <LoadingState />
+                    <Loading />
                 ) : (
                     <div className="space-y-6">
                         {/* <HeaderSection /> */}

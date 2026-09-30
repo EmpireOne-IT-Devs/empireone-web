@@ -1,19 +1,10 @@
 import React from "react";
 
-/**
- * E1 loading page
- * - The E1 mark sits inside a circular loader (rotating gradient arc + faint track).
- * - The mark is drawn as inline SVG so it stays sharp and needs no image import.
- *   To use your PNG instead, see the note above <LogoMark />.
- */
 
 const E_PATH =
     "M33 275 L33 128 Q33 28 133 28 L270 28 L220 82 L112 82 Q85 82 85 109 L85 127 L240 127 L188 182 L85 182 L85 222 L240 222 L188 275 Z";
 const ONE_PATH = "M232 105 L295 28 L325 28 L325 272 L270 272 L270 105 Z";
 
-// Swap-in option:
-//   import E1Icon from './E1Icon.png'
-//   <img src={E1Icon} alt="E1" className="w-9 h-9 object-contain e1-breathe" />
 function LogoMark({ className = "" }) {
     return (
         <svg
