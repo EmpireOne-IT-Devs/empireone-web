@@ -1,35 +1,163 @@
-import React from 'react'
+import React from "react";
 
-export default function LoadingPage() {
+/**
+ * E1 loading page
+ * - The E1 mark sits inside a circular loader (rotating gradient arc + faint track).
+ * - The mark is drawn as inline SVG so it stays sharp and needs no image import.
+ *   To use your PNG instead, see the note above <LogoMark />.
+ */
+
+const E_PATH =
+    "M33 275 L33 128 Q33 28 133 28 L270 28 L220 82 L112 82 Q85 82 85 109 L85 127 L240 127 L188 182 L85 182 L85 222 L240 222 L188 275 Z";
+const ONE_PATH = "M232 105 L295 28 L325 28 L325 272 L270 272 L270 105 Z";
+
+// Swap-in option:
+//   import E1Icon from './E1Icon.png'
+//   <img src={E1Icon} alt="E1" className="w-9 h-9 object-contain e1-breathe" />
+function LogoMark({ className = "" }) {
     return (
-        <div className="pt-36 flex flex-col items-center justify-center bg-white text-slate-800 p-4 relative overflow-hidden">
-          
+        <svg
+            viewBox="25 20 308 263"
+            className={className}
+            role="img"
+            aria-label="E1"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <defs>
+                <linearGradient
+                    id="e1-fill"
+                    x1="33"
+                    y1="0"
+                    x2="325"
+                    y2="0"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop offset="0" stopColor="#8A4BFF" />
+                    <stop offset="1" stopColor="#2A6CFF" />
+                </linearGradient>
+                {/* light band that sweeps across the mark */}
+                <linearGradient id="e1-shine" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stopColor="#fff" stopOpacity="0" />
+                    <stop offset="0.5" stopColor="#fff" stopOpacity="0.75" />
+                    <stop offset="1" stopColor="#fff" stopOpacity="0" />
+                </linearGradient>
+                <clipPath id="e1-clip">
+                    <path d={E_PATH} />
+                    <path d={ONE_PATH} />
+                </clipPath>
+            </defs>
+
+            <path d={E_PATH} fill="url(#e1-fill)" />
+            <path d={ONE_PATH} fill="url(#e1-fill)" />
+
+            <g clipPath="url(#e1-clip)">
+                <rect
+                    className="e1-shine"
+                    x="-120"
+                    y="20"
+                    width="110"
+                    height="263"
+                    fill="url(#e1-shine)"
+                />
+            </g>
+        </svg>
+    );
+}
+
+export default function LoadingPage({
+    title = "Loading your experience",
+    message = "Please wait a moment while we set things up...",
+}) {
+    const size = 112; // ring diameter in px
+    const stroke = 5;
+    const r = (size - stroke) / 2;
+    const circumference = 2 * Math.PI * r;
+
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-white text-slate-800 p-4 relative overflow-hidden">
+            <style>{`
+                @keyframes e1-orbit { to { transform: rotate(360deg); } }
+                @keyframes e1-arc {
+                    0%   { stroke-dashoffset: ${circumference * 0.85}; }
+                    50%  { stroke-dashoffset: ${circumference * 0.35}; }
+                    100% { stroke-dashoffset: ${circumference * 0.85}; }
+                }
+                @keyframes e1-shine { 0% { transform: translateX(0); } 60%, 100% { transform: translateX(560px); } }
+                @keyframes e1-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+                .e1-orbit   { animation: e1-orbit 1.6s linear infinite; transform-origin: center; }
+                .e1-arc     { animation: e1-arc 1.6s ease-in-out infinite; }
+                .e1-shine   { animation: e1-shine 2.4s ease-in-out infinite; }
+                .e1-breathe { animation: e1-breathe 2.4s ease-in-out infinite; }
+                @media (prefers-reduced-motion: reduce) {
+                    .e1-orbit, .e1-arc, .e1-shine, .e1-breathe { animation: none; }
+                }
+            `}</style>
+
+            {/* soft background glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100/60 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-sky-100/80 rounded-full blur-2xl pointer-events-none" />
 
-            <div className="relative z-10 flex flex-col items-center max-w-sm w-full bg-white/80 backdrop-blur-md border border-slate-100 rounded-2xl p-8 shadow-xl shadow-purple-500/5 text-center">
-                {/* Animated Spinner Ring */}
-                <div className="relative mb-6 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full border-4 border-purple-50" />
-                    <div className="absolute w-16 h-16 rounded-full border-4 border-purple-600 border-t-transparent animate-spin" />
+            <div
+                role="status"
+                aria-live="polite"
+                className="relative z-10 flex flex-col items-center max-w-sm w-full p-8 text-center"
+            >
+                {/* Logo inside circular loader */}
+                <div
+                    className="relative mb-7 flex items-center justify-center"
+                    style={{ width: size, height: size }}
+                >
+                    <svg
+                        width={size}
+                        height={size}
+                        viewBox={`0 0 ${size} ${size}`}
+                        className="absolute inset-0"
+                    >
+                        <defs>
+                            <linearGradient
+                                id="e1-ring"
+                                x1="0"
+                                y1="0"
+                                x2="1"
+                                y2="1"
+                            >
+                                <stop offset="0" stopColor="#8A4BFF" />
+                                <stop offset="1" stopColor="#2A6CFF" />
+                            </linearGradient>
+                        </defs>
 
-                    {/* Inner pulsing dot */}
-                    <div className="absolute w-3 h-3 bg-purple-500 rounded-full animate-ping" />
+                        <circle
+                            cx={size / 2}
+                            cy={size / 2}
+                            r={r}
+                            fill="none"
+                            stroke="#EEE9FF"
+                            strokeWidth={stroke}
+                        />
+                        <g className="e1-orbit">
+                            <circle
+                                className="e1-arc"
+                                cx={size / 2}
+                                cy={size / 2}
+                                r={r}
+                                fill="none"
+                                stroke="url(#e1-ring)"
+                                strokeWidth={stroke}
+                                strokeLinecap="round"
+                                strokeDasharray={circumference}
+                                strokeDashoffset={circumference * 0.75}
+                                transform={`rotate(-90 ${size / 2} ${size / 2})`}
+                            />
+                        </g>
+                    </svg>
+
+                    <LogoMark className="e1-breathe relative w-14 h-12" />
                 </div>
-
-                {/* Text area */}
                 <h2 className="text-xl font-semibold tracking-wide text-slate-900 mb-2">
-                    Loading your experience
+                    {title}
                 </h2>
-                <p className="text-sm text-slate-500 animate-pulse">
-                    Please wait a moment while we set things up...
-                </p>
-
-                {/* Progress bar */}
-                <div className="w-full bg-purple-50 h-1.5 rounded-full mt-6 overflow-hidden">
-                    <div className="bg-gradient-to-r from-purple-500 to-sky-400 h-full w-2/3 rounded-full animate-[pulse_1.5s_ease-in-out_infinite]" />
-                </div>
+                <p className="text-sm text-slate-500">{message}</p>
             </div>
         </div>
-    )
+    );
 }
