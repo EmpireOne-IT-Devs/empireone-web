@@ -95,27 +95,19 @@ export default function FIlesTableSection({ props_data }) {
             url: `/accounts/my_documents/${data?.user?.id}/contract`
         });
     }
-
-    // Filter documents based on search and status
     const filteredList = rawList.filter((res) => {
-        const searchLower = search_documents.toLowerCase();
-        const matchesSearch =
-            !search_documents ||
-            res.name?.toLowerCase().includes(searchLower) ||
-            res.status?.toLowerCase().includes(searchLower);
 
         const matchesStatus =
             filter_status === "all" ||
-            res.status?.toLowerCase() === filter_status.toLowerCase();
+            ((res.status?.toLowerCase() == 'completed') ? 'approved' : res.status?.toLowerCase()) === filter_status.toLowerCase();
 
-        return matchesSearch && matchesStatus;
+        return matchesStatus;
     });
-
     // Compute status counts for interactive filter badges
     const statusCounts = {
         all: rawList.length,
         pending: rawList.filter(d => d.status?.toLowerCase() === "pending").length,
-        completed: rawList.filter(d => ["completed", "approved", "signed"].includes(d.status?.toLowerCase())).length,
+        completed: rawList.filter(d => ["completed", "approved"].includes(d.status?.toLowerCase())).length,
         declined: rawList.filter(d => d.status?.toLowerCase() === "declined").length,
     };
 
@@ -151,7 +143,6 @@ export default function FIlesTableSection({ props_data }) {
             setLoadingId(null);
         }
     }
-
     // Format filtered data for table display
     const formattedData = filteredList.map((res) => {
         const employeeFullName = [
@@ -257,7 +248,7 @@ export default function FIlesTableSection({ props_data }) {
     const statusFilterOptions = [
         { label: "All Files", key: "all", count: statusCounts.all },
         { label: "Pending", key: "pending", count: statusCounts.pending },
-        { label: "Completed / Approved", key: "completed", count: statusCounts.completed },
+        { label: "Completed / Approved", key: "approved", count: statusCounts.completed },
         { label: "Declined", key: "declined", count: statusCounts.declined },
     ];
 
@@ -267,10 +258,10 @@ export default function FIlesTableSection({ props_data }) {
             {notification && (
                 <div
                     className={`flex items-center justify-between px-4 py-3 rounded-lg text-xs font-medium border shadow-sm transition-all duration-300 ${notification.type === "success"
-                            ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                            : notification.type === "danger"
-                                ? "bg-amber-50 text-amber-800 border-amber-200"
-                                : "bg-rose-50 text-rose-800 border-rose-200"
+                        ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                        : notification.type === "danger"
+                            ? "bg-amber-50 text-amber-800 border-amber-200"
+                            : "bg-rose-50 text-rose-800 border-rose-200"
                         }`}
                 >
                     <div className="flex items-center gap-2">
@@ -312,15 +303,15 @@ export default function FIlesTableSection({ props_data }) {
                             type="button"
                             onClick={() => handleStatusFilter(item.key)}
                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${isActive
-                                    ? "bg-blue-600 text-white shadow-sm ring-2 ring-blue-500/20"
-                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+                                ? "bg-blue-600 text-white shadow-sm ring-2 ring-blue-500/20"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
                                 }`}
                         >
                             <span>{item.label}</span>
                             <span
                                 className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isActive
-                                        ? "bg-white/20 text-white"
-                                        : "bg-gray-200 text-gray-700"
+                                    ? "bg-white/20 text-white"
+                                    : "bg-gray-200 text-gray-700"
                                     }`}
                             >
                                 {item.count}
