@@ -7,7 +7,7 @@ import SearchSection from "./_sections/search-section";
 import PaginationSection from "./_sections/pagination-section";
 import AddEmployeeSection from "./_sections/add-employee-section";
 import CardAcknowledgementSection from "./_sections/card-acknowledgement-section";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 {loading ? (
-                    <LoadingState />
+                    <Loading/>
                 ) : (
                     <>
                         {/* Changed to flex-col for mobile, and md:flex-row for desktop */}

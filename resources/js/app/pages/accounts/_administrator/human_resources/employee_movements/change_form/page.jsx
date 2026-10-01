@@ -7,7 +7,7 @@ import TabsSection from "../_sections/tabs-section";
 import CreateECFSection from "./_sections/create-ecf-section";
 import ChangeFormTableSection from "./_sections/change-form-table-section";
 import PaginationSection from "./_sections/pagination-section";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function Page() {
             <EmployeeRelationLayout>
                 <TabsSection />
                 {loading ? (
-                    <LoadingState />
+                    <Loading />
                 ) : (
                     <div className="py-3">
                         <div className="flex items-center justify-end">

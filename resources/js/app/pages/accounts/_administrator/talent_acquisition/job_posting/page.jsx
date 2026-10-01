@@ -7,7 +7,7 @@ import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import store from "@/app/store/store";
 import TableSection from "./_sections/table-section";
 import ExportJobPosting from "./_sections/export-job-posting";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
 
@@ -29,7 +29,7 @@ export default function Page() {
         <Layout>
             <JobPostingLayout>
                 {
-                    loading ? <LoadingState /> : <div>
+                    loading ? <Loading /> : <div>
                         <div className="w-full flex items-center justify-end py-3">
                             <ExportJobPosting />
                         </div>

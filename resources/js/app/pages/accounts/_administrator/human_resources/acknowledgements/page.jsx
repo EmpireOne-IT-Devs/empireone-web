@@ -4,7 +4,7 @@ import store from "@/app/store/store";
 import { get_acknowledgement_thunk } from "@/app/redux/employee-relation-thunk";
 import EmployeeRelationLayout from "../layout";
 import SidebarTabsSection from "./_sections/sidebar-tabs-section";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 {loading ? (
-                    <LoadingState />
+                    <Loading />
                 ) : (
                     <SidebarTabsSection />
                 )}

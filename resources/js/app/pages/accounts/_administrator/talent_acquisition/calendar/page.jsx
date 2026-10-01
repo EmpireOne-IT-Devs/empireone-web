@@ -7,7 +7,7 @@ import store from "@/app/store/store";
 import { get_job_applicant_schedule_thunk } from "@/app/redux/talent-acquisition-thunk";
 import { get_job_interviewer_schedule_thunk } from "@/app/redux/app-thunk";
 import { usePage } from "@inertiajs/react";
-import LoadingState from "@/app/_components/loading-state";
+import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
     const { url } = usePage();
@@ -33,7 +33,7 @@ export default function Page() {
         <Layout>
             <JobPostingLayout>
                 {loading ? (
-                    <LoadingState />
+                    <Loading />
                 ) : (
                     <div className="flex flex-col lg:flex-row gap-6 w-full mt-5">
                         <CalendarSection />
