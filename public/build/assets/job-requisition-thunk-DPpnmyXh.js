@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/job-requisition-thunk-BdNhCONC.js
-import{g as o,a as n}from"./job-requisition-service-Dubi1suh.js";import{al as e}from"./app-CXLTVWnX.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
-========
-import{g as o,a as n}from"./job-requisition-service-BRXkwBPA.js";import{al as e}from"./app-Cck0cc_R.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
->>>>>>>> 2ea3132fd53f5c4c2460a9e695286aba03d6c7aa:public/build/assets/job-requisition-thunk-DPpnmyXh.js
