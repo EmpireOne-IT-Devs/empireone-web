@@ -300,4 +300,4 @@ export default function AnnouncementsSection({ onCardClick }) {
             </Modal>
         </div>
     );
-}
+} 
