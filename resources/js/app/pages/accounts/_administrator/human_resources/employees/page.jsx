@@ -6,8 +6,8 @@ import EmployeeRelationLayout from "../layout";
 import SearchSection from "./_sections/search-section";
 import PaginationSection from "./_sections/pagination-section";
 import AddEmployeeSection from "./_sections/add-employee-section";
-import CardAcknowledgementSection from "./_sections/card-acknowledgement-section";
 import Loading from "@/app/_components/loading-page";
+import EmployeesTableSection from "./_sections/employees-table-section";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -48,7 +48,7 @@ export default function Page() {
 
                         {/* Added mt-4 to ensure proper spacing between controls and the card list */}
                         <div className="mt-4 flex flex-col gap-3">
-                            <CardAcknowledgementSection />
+                            <EmployeesTableSection />
                             <PaginationSection />
                         </div>
                     </>

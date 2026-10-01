@@ -166,7 +166,8 @@ class AccountEmployeeController extends Controller
             'department',
             'account',
             'site',
-            'reporting_to'
+            'reporting_to',
+            'files'
         ])
             ->whereNotNull('employee_id')
             // Filter by Role

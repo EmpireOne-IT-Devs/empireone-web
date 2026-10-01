@@ -73,7 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function files(): HasMany
     {
-        return $this->hasMany(AccountDocument::class, 'user_id', 'id')->where('status', '<>', 'Archived');
+        return $this->hasMany(AccountDocument::class, 'user_id', 'id');
     }
     public function subordinate(): HasOne
     {
