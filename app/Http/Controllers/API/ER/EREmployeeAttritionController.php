@@ -37,7 +37,7 @@ class EREmployeeAttritionController extends Controller
         }
 
         // 3. Paginate filtered or unfiltered results
-        $attritions = $query->paginate(12);
+        $attritions = $query->orderBy('id','desc')->paginate(12);
 
         return response()->json($attritions, 200);
     }
