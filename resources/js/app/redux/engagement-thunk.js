@@ -335,6 +335,13 @@ function build_reward_challenge_form_data(data) {
     if (data.banner) {
         formData.append("banner", data.banner);
     }
+
+    if (data.banner_position_x !== undefined && data.banner_position_x !== null) {
+        formData.append("banner_position_x", Math.round(data.banner_position_x));
+    }
+    if (data.banner_position_y !== undefined && data.banner_position_y !== null) {
+        formData.append("banner_position_y", Math.round(data.banner_position_y));
+    }
     data.account_ids?.forEach((id) => formData.append("account_ids[]", id));
     data.department_ids?.forEach((id) => formData.append("department_ids[]", id));
 

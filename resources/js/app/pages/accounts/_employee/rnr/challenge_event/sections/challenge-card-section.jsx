@@ -293,6 +293,9 @@ function ChallengeCard({ challenge }) {
                             src={challenge.banner_url}
                             alt={challenge.title}
                             className="h-36 w-full object-cover"
+                            style={{
+                                objectPosition: `${challenge.banner_position_x ?? 50}% ${challenge.banner_position_y ?? 50}%`,
+                            }}
                         />
                     ) : (
                         <div className={`h-36 w-full bg-gradient-to-r ${meta.gradient}`} />

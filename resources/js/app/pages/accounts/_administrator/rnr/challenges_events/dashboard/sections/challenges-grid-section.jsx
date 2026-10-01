@@ -114,6 +114,9 @@ export default function ChallengesGridSection({
                     src={challenge.banner_url}
                     alt={challenge.title}
                     className="h-32 w-full object-cover"
+                    style={{
+                      objectPosition: `${challenge.banner_position_x ?? 50}% ${challenge.banner_position_y ?? 50}%`,
+                    }}
                   />
                 )}
                 <div className="flex flex-1 flex-col justify-between p-5">
