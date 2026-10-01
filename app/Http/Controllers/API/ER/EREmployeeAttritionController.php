@@ -138,8 +138,8 @@ class EREmployeeAttritionController extends Controller
             $bccEmails = array_values(array_unique(array_filter([
                 'webdev@empireonegroup.com',
                 'scchr@empireonegroup.com',
-                $e_r_leader?->employee?->eogs_email ?? '',
-                $department_manager?->employee?->eogs_email ?? '',
+                // $e_r_leader?->employee?->eogs_email ?? '',
+                // $department_manager?->employee?->eogs_email ?? '',
                 'anthony@empireonecx.com',
                 ...($emails ?? []),
             ])));
