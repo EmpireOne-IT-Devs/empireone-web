@@ -119,9 +119,9 @@ class AppController extends Controller
         // 2. Build and execute the query using dot notation
         $leaders = $location_id
             ? ERLeader::with('user')
-            ->whereHas('user.account_employee', function ($query) use ($location_id) {
-                $query->where('location_id', $location_id);
-            })
+            // ->whereHas('user.account_employee', function ($query) use ($location_id) {
+            //     $query->where('location_id', $location_id);
+            // })
             ->get()
             : collect();
 

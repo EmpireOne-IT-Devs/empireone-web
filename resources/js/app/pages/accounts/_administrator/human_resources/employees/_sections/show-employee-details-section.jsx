@@ -141,7 +141,7 @@ export default function ShowEmployeeDetailsSection({ props_data }) {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer"
+                className="flex items-center underline gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer"
             >
                 {props_data?.employee_id || "View Employee"}
             </button>

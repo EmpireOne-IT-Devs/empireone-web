@@ -141,7 +141,22 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
                             />
                         )}
                     />
-
+                    <Controller
+                        name="location_id"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                label="Location"
+                                options={data?.locations?.map(res => ({
+                                    label: res.name,
+                                    value: res.id,
+                                }))}
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={errors.location_id}
+                            />
+                        )}
+                    />
                     <Controller
                         name="e_r_leader_id"
                         control={control}
