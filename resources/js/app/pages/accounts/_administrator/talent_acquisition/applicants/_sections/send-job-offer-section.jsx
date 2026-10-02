@@ -11,6 +11,7 @@ import { get_applicants_thunk, get_job_posting_by_id_thunk } from "@/app/redux/j
 import { send_job_offer_service } from "@/app/services/job-posting-service";
 import TextArea from "@/app/_components/textarea";
 import Select from "@/app/_components/select";
+import Checkbox from "@/app/_components/checkbox";
 
 export default function SendJobOfferSection({ data }) {
     const [open, setOpen] = useState(false);
@@ -44,6 +45,7 @@ export default function SendJobOfferSection({ data }) {
         control,
         getValues,
         setValue,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
@@ -53,10 +55,12 @@ export default function SendJobOfferSection({ data }) {
             allowances: [],
             start_date: "",
             leave_notes: "",
-            e_r_leader_id: ""
+            e_r_leader_id: "",
+            is_annual_leave: false
         },
     });
 
+    const watchedValues = watch()
     const { fields, append, remove } = useFieldArray({
         control,
         name: "allowances",
@@ -253,15 +257,42 @@ export default function SendJobOfferSection({ data }) {
                     <div className="font-black mt-4">
                         SCHEDULE OF BENEFITS
                     </div>
-
-                    <Input
-                        label="Annual Leave"
-                        type="number"
-                        placeholder="e.g. 1"
-                        min="1"
-                        {...register("annual_leave", { required: "Annual Leave is required" })}
-                        error={errors.annual_leave}
+                    <Checkbox
+                        label="Is has annual leave?"
+                        {...register("is_annual_leave")}
+                        onChange={(val) =>
+                            setValue("is_annual_leave", val.target.checked)
+                        }
                     />
+                    {
+                        watchedValues.is_annual_leave && <>
+                            <Input
+                                label="Annual Leave"
+                                type="number"
+                                placeholder="e.g. 1"
+                                min="1"
+                                {...register("annual_leave", { required: "Annual Leave is required" })}
+                                error={errors.annual_leave}
+                            />
+                            <TextArea
+                                label="Annual Leave Notes"
+                                type="text"
+                                {...register("leave_notes", {
+                                    required: "Required!",
+                                })}
+                                className="bg-transparent w-full outline-none text-black"
+                                error={errors?.leave_notes?.message ?? ""}
+                                onChange={(val) =>
+                                    setValue(
+                                        "leave_notes",
+                                        val.target.value,
+                                    )
+                                }
+                            />
+
+                        </>
+                    }
+
                     {/* <TextArea
                         label="Annual Leave Notes"
                         name="leave_notes"
@@ -270,21 +301,6 @@ export default function SendJobOfferSection({ data }) {
                         error={errors?.leave_notes}
                     /> */}
 
-                    <TextArea
-                        label="Annual Leave Notes"
-                        type="text"
-                        {...register("leave_notes", {
-                            required: "Required!",
-                        })}
-                        className="bg-transparent w-full outline-none text-black"
-                        error={errors?.leave_notes?.message ?? ""}
-                        onChange={(val) =>
-                            setValue(
-                                "leave_notes",
-                                val.target.value,
-                            )
-                        }
-                    />
 
                     {/* Interactive Benefits Guide */}
                     <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col gap-4">

@@ -323,7 +323,7 @@ export default function ActionListSection({ props_data }) {
 
 
                                 {
-                                    (props_data?.contract_type && props_data?.job_offer) && <Button
+                                    props_data?.job_offer && <Button
                                         variant="primary"
                                         className="w-full"
                                         onClick={() =>
