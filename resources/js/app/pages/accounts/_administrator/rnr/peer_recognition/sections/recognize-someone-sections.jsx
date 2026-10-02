@@ -360,7 +360,7 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
 
                         <div>
                             <label className="block text-sm font-semibold text-gray-900 mb-1">
-                                Category
+                                Award Category
                             </label>
                             <select
                                 name="award_category"
