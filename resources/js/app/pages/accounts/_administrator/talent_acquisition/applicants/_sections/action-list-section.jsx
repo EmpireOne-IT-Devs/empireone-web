@@ -309,7 +309,7 @@ export default function ActionListSection({ props_data }) {
                                                     className="w-full"
                                                     onClick={() =>
                                                         window.open(
-                                                            `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type}?contract_type=${props_data?.contract_type}`,
+                                                            `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type}`,
                                                             '_blank'
                                                         )
                                                     }

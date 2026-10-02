@@ -1,0 +1,17 @@
+import{r as a,j as t}from"./app-2YEj9cqI.js";import{y as m}from"./index-DtjDi4Cz.js";import c from"./add-attrition-section-DOVh3iFB.js";import b from"./update-employee-DRZ_2-_F.js";import"./iconBase-CQEUL3gw.js";import"./index.esm-I0R2th3R.js";import"./index-BS0L7NcU.js";import"./moment-BMQglvow.js";import"./button-CYTvay8Y.js";import"./index-CH5ttsmf.js";import"./modal-CKL0cxIY.js";import"./index-DreRWHYg.js";import"./radio-D_7XDTQb.js";import"./employee-relation-thunk-m5HWgUC2.js";import"./applicants-service-D-60YX_J.js";import"./employee-change-form-service-DpaNioJe.js";import"./er-leaders-service-BK8F1grG.js";import"./human-resources-service-B7bnjsrQ.js";import"./performance-evaluation-service-CyK7h5BT.js";import"./employee-information-form-BAn7Flq_.js";import"./input-xdaxMSGd.js";import"./select-Dl4-OpTS.js";import"./account-service-a16CROto.js";import"./hash-Owtd8UBv.js";import"./createLucideIcon-Czs-DCSk.js";import"./building-2-b7-wZXUB.js";import"./briefcase-B5mXshaO.js";import"./mail-Bn6yVoxZ.js";import"./personal-information-form-BSWDwU-o.js";import"./index-BNUWXGHR.js";import"./user-gzrsf26K.js";import"./calendar-Dx5DACDI.js";function J({props_data:p}){const[o,e]=a.useState(!1),i=a.useRef(null),u=n=>{n.stopPropagation(),e(r=>!r)},l=()=>e(!1);return a.useEffect(()=>{const n=s=>{i.current&&!i.current.contains(s.target)&&e(!1)},r=s=>{s.key==="Escape"&&e(!1)};return o&&(document.addEventListener("mousedown",n),document.addEventListener("keydown",r)),()=>{document.removeEventListener("mousedown",n),document.removeEventListener("keydown",r)}},[o]),t.jsxs("div",{className:"relative inline-block text-left",ref:i,children:[t.jsx("button",{type:"button",onClick:u,"aria-expanded":o,"aria-haspopup":"true",className:`
+                    relative p-2 rounded-full transition-all duration-150 outline-none
+                    hover:bg-black/5 active:bg-black/10
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600
+                    ${o?"bg-black/10":""}
+                `,children:t.jsx(m,{size:20})}),t.jsxs("div",{className:`
+                    absolute right-0 top-full mt-1 min-w-[200px] py-1.5 bg-white rounded-md z-[9999]
+                    shadow-[0px_5px_5px_-3px_rgba(0,0,0,0.2),0px_8px_10px_1px_rgba(0,0,0,0.14),0px_3px_14px_2px_rgba(0,0,0,0.12)]
+                    transform transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] origin-top-right
+                    ${o?"opacity-100 scale-100 translate-y-0 pointer-events-auto":"opacity-0 scale-95 -translate-y-2 pointer-events-none"}
+                `,children:[t.jsx("div",{className:`\r
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150\r
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800\r
+                    `,children:t.jsx(c,{props_data:p,onAction:l})}),t.jsx("div",{className:`\r
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150\r
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800\r
+                    `,children:t.jsx(b,{props_data:p,onAction:l})})]})]})}export{J as default};
