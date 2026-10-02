@@ -299,28 +299,31 @@ export default function ActionListSection({ props_data }) {
                                     )}
 
                                 {/* Accepted Job Offer Documents */}
-                                {props_data?.final_status ==
-                                    'Accepted Job Offer' && (
+                                {(props_data?.final_status ==
+                                    'Accepted Job Offer') && (
                                         <>
                                             <SendDocumentsSection data={props_data} />
-                                            <Button
-                                                variant="primary"
-                                                className="w-full"
-                                                onClick={() =>
-                                                    window.open(
-                                                        `/accounts/my_documents/${props_data?.user_id}/contract`,
-                                                        '_blank'
-                                                    )
-                                                }
-                                            >
-                                                CONTRACT
-                                            </Button>
+                                            {
+                                                props_data?.contract_type &&  <Button
+                                                    variant="primary"
+                                                    className="w-full"
+                                                    onClick={() =>
+                                                        window.open(
+                                                            `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type}?contract_type=${props_data?.contract_type}`,
+                                                            '_blank'
+                                                        )
+                                                    }
+                                                >
+                                                    CONTRACT
+                                                </Button>
+                                            }
+
                                         </>
                                     )}
 
 
                                 {
-                                    props_data?.job_offer && <Button
+                                    (props_data?.contract_type && props_data?.job_offer) && <Button
                                         variant="primary"
                                         className="w-full"
                                         onClick={() =>
@@ -334,7 +337,7 @@ export default function ActionListSection({ props_data }) {
                                     </Button>
                                 }
                                 {/* Sent Documents Actions */}
-                                {props_data?.final_status == 'Sent Documents' && (
+                                {(props_data?.contract_type && props_data?.final_status == 'Sent Documents') && (
                                     <>
 
                                         <Button
@@ -342,7 +345,7 @@ export default function ActionListSection({ props_data }) {
                                             className="w-full"
                                             onClick={() =>
                                                 window.open(
-                                                    `/accounts/my_documents/${props_data?.user_id}/contract`,
+                                                    `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type}`,
                                                     '_blank'
                                                 )
                                             }

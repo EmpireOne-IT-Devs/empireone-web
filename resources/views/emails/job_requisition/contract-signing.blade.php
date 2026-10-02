@@ -82,10 +82,13 @@
                     To review the full offer letter and sign the contract, please click the link below:
                 </p>
                 <div class="button-container">
-                    <a href="{{ config('app.url') }}/accounts/my_documents/{{$user['user']['id']}}/contract"
-                        class="btn-primary" style="color: white !important;">Click to Sign Contract</a>
+                    <a
+                        href="{{ config('app.url') }}/accounts/my_documents/{{ $user['user']['id'] }}/contract?{{ http_build_query(['contract_type' => $user['contract_type'] ?? '']) }}"
+                        class="btn-primary"
+                        style="color: #ffffff !important; text-decoration: none;">
+                        Click to Sign Contract
+                    </a>
                 </div>
-
             </div>
         </div>
         <div class="footer">

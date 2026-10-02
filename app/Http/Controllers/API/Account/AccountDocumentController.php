@@ -84,7 +84,8 @@ class AccountDocumentController extends Controller
         $application = JobApplication::where('id', $request->id)->first();
         if ($application) {
             $application->update([
-                'final_status' => 'Sent Documents'
+                'final_status' => 'Sent Documents',
+                'contract_type' => $request->contract_type,
             ]);
         }
         return response()->json([

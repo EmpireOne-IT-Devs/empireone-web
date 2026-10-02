@@ -1,30 +1,29 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { FaSpinner } from "react-icons/fa6";
-import { InfoIcon, MailIcon, SendIcon } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { InfoIcon, MailIcon, SendIcon, AlertCircleIcon } from "lucide-react";
 
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import Radio from "@/app/_components/radio";
-import { get_applicants_thunk, get_job_offers_thunk } from "@/app/redux/job-posting-thunk";
+import { get_applicants_thunk } from "@/app/redux/job-posting-thunk";
 import { send_documents_service } from "@/app/services/account-service";
-import store from "@/app/store/store";
 
 export default function SendDocumentsSection({ data }) {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const today = new Date().toLocaleDateString("en-CA");
-
-    const { control, handleSubmit, reset, watch } = useForm({
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm({
         defaultValues: {
-            signType: "",
-            signDate: "",
-            signTime: "",
+            contract_type: "",
         },
     });
-
-    const signType = watch("signType");
 
     const onSubmit = async (formData) => {
         try {
@@ -33,11 +32,12 @@ export default function SendDocumentsSection({ data }) {
                 ...data,
                 ...formData,
             });
-            await store.dispatch(get_applicants_thunk());
-            setLoading(false);
+            await dispatch(get_applicants_thunk());
             setOpen(false);
             reset();
         } catch (error) {
+            console.error("Failed to send documents:", error);
+        } finally {
             setLoading(false);
         }
     };
@@ -46,7 +46,10 @@ export default function SendDocumentsSection({ data }) {
         <>
             <Button
                 className="w-full"
-                variant="success" onClick={() => setOpen(true)} outlined>
+                variant="success"
+                onClick={() => setOpen(true)}
+                outlined
+            >
                 <span className="text-green-500">
                     <SendIcon className="w-4 h-4 mr-2" />
                 </span>
@@ -77,7 +80,7 @@ export default function SendDocumentsSection({ data }) {
                     className="space-y-4 mt-4"
                     onSubmit={handleSubmit(onSubmit)}
                 >
-                    <ul className="mx-4 list-disc">
+                    <ul className="mx-4 list-disc text-sm text-neutral-600">
                         <li>Onboarding Documents</li>
                         <li>Contract Signing</li>
                     </ul>
@@ -87,92 +90,41 @@ export default function SendDocumentsSection({ data }) {
                         contract signing to this candidate?
                     </p>
 
-                    {/* <div className="flex flex-col gap-2 bg-gray-100 border border-gray-100 rounded-lg px-3.5 py-2.5">
-                    
+                    {/* Interactive Contract Selection Section */}
+                    <div className="flex flex-col gap-2.5 bg-red-50 border border-red-200 rounded-lg px-3.5 py-3">
+                        <label className="text-xs font-semibold text-red-800 uppercase tracking-wider">
+                            Select the type of contract
+                        </label>
+
                         <Controller
                             control={control}
-                            name="signType"
+                            name="contract_type"
+                            rules={{ required: "Please select a contract type" }}
                             render={({ field }) => (
-                                <Radio
-                                    label="Face to Face Signing"
-                                    value="face_to_face"
-                                    checked={field.value === "face_to_face"}
-                                    onChange={() => {
-                                        field.onChange("face_to_face");
-                                        reset(
-                                            {
-                                                signType: "face_to_face",
-                                                signDate: "",
-                                                signTime: "",
-                                            },
-                                            { keepValues: true },
-                                        );
-                                    }}
-                                />
-                            )}
-                        />
-
-                        {signType === "face_to_face" && (
-                            <div className="mt-2 flex flex-col gap-2">
-                                <div>
-                                    <span className="text-sm text-neutral-500 block mb-1">
-                                        Schedule Signing Session:
-                                    </span>
-                                    <div className="flex gap-2">
-                                        <Controller
-                                            control={control}
-                                            name="signDate"
-                                            render={({ field }) => (
-                                                <input
-                                                    type="date"
-                                                    min={today}
-                                                    className="border rounded px-2 py-1 text-sm"
-                                                    {...field}
-                                                    required
-                                                />
-                                            )}
-                                        />
-                                        <Controller
-                                            control={control}
-                                            name="signTime"
-                                            render={({ field }) => (
-                                                <input
-                                                    type="time"
-                                                    className="border rounded px-2 py-1 text-sm"
-                                                    {...field}
-                                                    required
-                                                />
-                                            )}
-                                        />
-                                    </div>
+                                <div className="flex flex-col gap-2">
+                                    <Radio
+                                        label="Probation Part Time"
+                                        value="probation_part_time"
+                                        checked={field.value === "probation_part_time"}
+                                        onChange={() => field.onChange("probation_part_time")}
+                                    />
+                                    {/* <Radio
+                                        label="Probation Full Time"
+                                        value="probation_full_time"
+                                        checked={field.value === "probation_full_time"}
+                                        onChange={() => field.onChange("probation_full_time")}
+                                    /> */}
                                 </div>
-                            </div>
-                        )}
-
-                        <Controller
-                            control={control}
-                            name="signType"
-                            render={({ field }) => (
-                                <Radio
-                                    label="Online Signing"
-                                    value="online"
-                                    checked={field.value === "online"}
-                                    onChange={() => {
-                                        field.onChange("online");
-                                        reset(
-                                            {
-                                                signType: "online",
-                                                signDate: "",
-                                                signTime: "",
-                                            },
-                                            { keepValues: true },
-                                        );
-                                    }}
-                                />
                             )}
                         />
 
-                    </div> */}
+                        {errors.contract_type && (
+                            <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
+                                <AlertCircleIcon size={14} />
+                                {errors.contract_type.message}
+                            </p>
+                        )}
+                    </div>
 
                     <div className="flex items-start gap-2 px-3.5 py-2.5 rounded-lg bg-blue-50 border border-blue-100">
                         <span className="text-blue-500 shrink-0 mt-px">
@@ -192,7 +144,7 @@ export default function SendDocumentsSection({ data }) {
                             className="w-full"
                         >
                             <div className="mr-2">
-                                <SendIcon className="w-3.5 h-3.5 " />
+                                <SendIcon className="w-3.5 h-3.5" />
                             </div>
                             Yes, Send
                         </Button>
