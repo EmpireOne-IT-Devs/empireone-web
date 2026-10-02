@@ -13,6 +13,7 @@ import {
     search_reward_recognition_employees_thunk,
 } from "@/app/redux/engagement-thunk";
 import { clearSearchResults } from "@/app/redux/engagement-slice";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 const COMPANY_VALUES = [
     "Innovation",
@@ -77,7 +78,7 @@ const PEOPLE_AWARDS = [
 ];
 
 export default function RecognizeSomeoneSections({ onCategoryChange }) {
-    const { data } = useSelector((store) => store.app);
+    const { isReady, isContentManager } = useCurrentEmployee();
     const dispatch = useDispatch();
     const { rewardSearchResults, rewardSearching, rewardCreating } =
         useSelector((state) => state.engagement);
@@ -229,17 +230,19 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                         </p>
                     </div>
                 </div>
-                {[1, 11].includes(
-                    data?.user?.account_employee?.department_id,
-                ) && (
-                    <Button
-                        variant="engagement"
-                        onClick={() => setIsOpen(true)}
-                        className="shrink-0 rounded-full"
-                    >
-                        <HeartIcon className="mr-2 h-4 w-4" />
-                        Recognize Someone
-                    </Button>
+                {!isReady ? (
+                    <div className="h-10 w-44 shrink-0 animate-pulse rounded-full bg-gray-200" />
+                ) : (
+                    isContentManager && (
+                        <Button
+                            variant="engagement"
+                            onClick={() => setIsOpen(true)}
+                            className="shrink-0 rounded-full"
+                        >
+                            <HeartIcon className="mr-2 h-4 w-4" />
+                            Recognize Someone
+                        </Button>
+                    )
                 )}
             </div>
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
@@ -54,6 +55,7 @@ use App\Http\Controllers\ERAcknowledgementController;
 use App\Http\Controllers\ERAcknowledgementEmployeeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SiteController;
+use App\Models\Account\AccountDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -212,6 +214,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
         Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
         Route::get('upcoming_work_anniversaries', [EngagementBirthdayController::class, 'upcoming_work_anniversaries']);
+        Route::post('send_work_anniversary_email', [EngagementBirthdayController::class, 'send_work_anniversary_email']);
         Route::get('upcoming_events',    [EngagementPostEventController::class, 'upcoming_events']);
 
         Route::get('reward-recognitions', [EngagementRewardRecognitionController::class, 'index']);
@@ -226,6 +229,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenges/my', [EngagementRewardChallengesController::class, 'myChallenges']);
         Route::get('reward-challenges/profile-summary', [EngagementRewardChallengesController::class, 'profileSummary']);
         Route::get('reward-challenges/options', [EngagementRewardChallengesController::class, 'options']);
+        Route::get('reward-challenges/{engagementRewardChallenge}/participants', [EngagementRewardChallengesController::class, 'participants']);
         Route::post('reward-challenges', [EngagementRewardChallengesController::class, 'store']);
         Route::post('reward-challenges/{engagementRewardChallenge}/join', [EngagementRewardChallengesController::class, 'join']);
         Route::delete('reward-challenges/{engagementRewardChallenge}/leave', [EngagementRewardChallengesController::class, 'leave']);
@@ -249,6 +253,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::prefix('er')->group(function () {
+        Route::resource('accounts',  AccountController::class);
+        Route::resource('departments',  DepartmentController::class);
         Route::resource('leaders', ERLeaderController::class);
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
@@ -261,6 +267,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('exit_clearance', ERExitClearanceController::class);
         Route::resource('exit_interview', ERExitInterviewController::class);
         Route::get('search_employee',  [AccountEmployeeController::class, 'search_employee']);
+        Route::get('get_201_files',  [AccountEmployeeController::class, 'get_201_files']);
+        Route::post('update_201_files',  [AccountDocumentController::class, 'update_201_files']);
 
 
         Route::get('performance_evaluation_by_user_id/{user_id}',  [ERPerformanceEvaluationFormController::class, 'performance_evaluation_by_user_id']);

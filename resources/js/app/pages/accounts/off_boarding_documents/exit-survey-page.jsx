@@ -1,0 +1,23 @@
+import React, { useEffect, useState } from 'react'
+import ExitSurveyForm from './_sections/exit-survey-form'
+import store from '@/app/store/store'
+import { get_attrition_by_id_thunk } from '@/app/redux/employee-relation-thunk'
+
+export default function ExitInterviewPage() {
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        async function get_data(params) {
+            await store.dispatch(get_attrition_by_id_thunk(window.location.pathname.split('/')[3]))
+            setLoading(false)
+        }
+        get_data()
+    }, [])
+    return (
+        <div>
+            {
+                !loading ? <ExitSurveyForm /> : "Loading..."
+            }
+
+        </div>
+    )
+}

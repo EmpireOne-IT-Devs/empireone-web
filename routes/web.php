@@ -194,6 +194,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
                 Route::redirect('/', '/accounts/administrator/rnr/challenges_events/dashboard');
                 Route::inertia('/dashboard', 'accounts/_administrator/rnr/challenges_events/dashboard/page');
                 Route::inertia('/manage', 'accounts/_administrator/rnr/challenges_events/manage/page');
+                Route::inertia('/manage/participants', 'accounts/_administrator/rnr/challenges_events/manage/participants/page');
                 Route::inertia('/leaderboard', 'accounts/_administrator/rnr/challenges_events/leaderboard/page');
                 Route::inertia('/submissions', 'accounts/_administrator/rnr/challenges_events/submissions/page');
                 Route::inertia('/report', 'accounts/_administrator/rnr/challenges_events/report/page');
@@ -218,7 +219,6 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/applicants', 'accounts/_administrator/talent_acquisition/applicants/page');
             Route::inertia('/interviews', 'accounts/_administrator/talent_acquisition/interviews/page');
             Route::inertia('/erp', 'accounts/_administrator/talent_acquisition/erp/page');
-            Route::inertia('/qr_code', 'accounts/_administrator/talent_acquisition/qr_code/page');
             Route::inertia('/ai_interviews', 'accounts/_administrator/talent_acquisition/ai_interviews/page');
             Route::inertia('/job_posting/{id}/applicants', 'accounts/_administrator/talent_acquisition/job_posting/id/page');
         });
@@ -229,10 +229,16 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('disciplinary_records', 'accounts/_administrator/human_resources/disciplinary_records/page');
             Route::inertia('separation', 'accounts/_administrator/human_resources/separation/page');
             Route::inertia('acknowledgements', 'accounts/_administrator/human_resources/acknowledgements/page');
+            Route::inertia('201Files', 'accounts/_administrator/human_resources/201Files/page');
 
             Route::prefix('leads')->group(function () {
                 Route::inertia('', 'accounts/_administrator/human_resources/leads/page');
                 Route::inertia('/{id}', 'accounts/_administrator/human_resources/leads/id/page');
+            });
+
+            Route::prefix('sourcing')->group(function () {
+                Route::inertia('accounts', 'accounts/_administrator/human_resources/sourcing/accounts/page');
+                Route::inertia('departments', 'accounts/_administrator/human_resources/sourcing/departments/page');
             });
             Route::prefix('employee_movements')->group(function () {
                 // Route::prefix('assessment_process')->group(function () {
@@ -310,8 +316,8 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
     });
 
     Route::prefix('off_boarding_documents/{id}')->group(function () {
+        Route::inertia('/exit-survey', 'accounts/off_boarding_documents/exit-survey-page');
         Route::inertia('/exit-clearance', 'accounts/off_boarding_documents/exit-clearance-page');
-        Route::inertia('/exit-interview', 'accounts/off_boarding_documents/exit-interview-page');
     });
 });
 

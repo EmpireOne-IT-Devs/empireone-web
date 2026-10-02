@@ -26,7 +26,8 @@ class JobApplication extends Model
         'final_status',
         'referral_id',
         'source',
-        'interview_type'
+        'interview_type',
+        'contract_type'
     ];
 
     public function referral(): HasOne

@@ -72,6 +72,7 @@ class AccountContractController extends Controller
                 'employee_id' => $request->employee_id ?? null,
                 'account_id' => $request->account_id ?? null,
                 'department_id' => $request->department_id ?? null,
+                'location_id' => $request->location_id ?? null,
                 'position' => $request->position ?? null,
                 'eogs_email' => $request->eogs_email ?? null,
                 'status' => $request->status ?? null,

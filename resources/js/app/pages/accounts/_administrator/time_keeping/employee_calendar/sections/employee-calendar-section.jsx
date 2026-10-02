@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import store from "@/app/store/store";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import moment from "moment";
 import { get_attendance_logs_service } from "@/app/services/attendance-service";
 
 const formatTime = (timeString) => {
-    if (!timeString) return "";
+    if (!timeString) return "--:--";
     const [hourString, minute] = timeString.split(":");
     const hour = parseInt(hourString, 10);
+    if (Number.isNaN(hour)) return "--:--";
     const ampm = hour >= 12 ? "PM" : "AM";
     const formattedHour = hour % 12 || 12;
     return `${formattedHour.toString().padStart(2, "0")}:${minute} ${ampm}`;
@@ -21,18 +21,48 @@ const formatDate = (date) => {
 
 const getColorByStatus = (status) => {
     switch (status?.toLowerCase()) {
-        case "scheduled":
-            return "bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-500";
-        case "pending":
-            return "bg-amber-50 text-amber-700 border-amber-200 ring-amber-500";
-        case "cancelled":
-            return "bg-rose-50 text-rose-700 border-rose-200 ring-rose-500";
         case "present":
-            return "bg-emerald-800 text-white border-emerald-900";
+            return "bg-teal-600 text-white border-teal-700";
+        case "late":
+            return "bg-blue-500 text-white border-blue-600";
+        case "undertime":
+            return "bg-orange-500 text-white border-orange-600";
+        case "clocked in":
+            return "bg-green-500 text-white border-green-600";
+        case "on break":
+            return "bg-amber-500 text-white border-amber-600";
+        case "day off":
+            return "bg-emerald-600 text-white border-emerald-700";
         case "absent":
-            return "bg-rose-800 text-white border-rose-900";
+            return "bg-red-600 text-white border-red-700";
         default:
-            return "bg-emerald-800 text-white border-emerald-900";
+            return "bg-gray-500 text-white border-gray-600";
+    }
+};
+
+// Solid tile background reflecting the legend colors, based on the day's primary attendance status.
+const getTileColorByStatus = (status) => {
+    switch (status?.toLowerCase()) {
+        case "present":
+            return "bg-teal-600 hover:bg-teal-700 text-white";
+        case "late":
+            return "bg-blue-500 hover:bg-blue-600 text-white";
+        case "clocked in":
+            return "bg-green-500 hover:bg-green-600 text-white";
+        case "on break":
+            return "bg-amber-500 hover:bg-amber-600 text-white";
+        case "undertime":
+            return "bg-orange-500 hover:bg-orange-600 text-white";
+        case "day off":
+            return "bg-emerald-600 hover:bg-emerald-700 text-white";
+        case "leave":
+            return "bg-purple-500 hover:bg-purple-600 text-white";
+        case "voluntary time-off":
+            return "bg-yellow-500 hover:bg-yellow-600 text-gray-900";
+        case "absent":
+            return "bg-red-600 hover:bg-red-700 text-white";
+        default:
+            return "bg-gray-50/40 hover:bg-gray-100/60 text-gray-400";
     }
 };
 
@@ -41,33 +71,10 @@ export default function EmployeeCalendarSection() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isDraggingOverDate, setIsDraggingOverDate] = useState(null);
 
-    // --- 1. Declare dispatch and useSelector at the very top ---
     const dispatch = useDispatch();
 
-    const schedules = useSelector(
-        (state) =>
-            state.attendance?.attendanceLogs ||
-            state.attendance?.schedules ||
-            state.employeeCalendar?.schedules ||
-            [],
-    );
-
-    useEffect(() => {
-        const fetchLogs = async () => {
-            try {
-                // 1. Call your async service function
-                const response = await get_attendance_logs_service();
-
-                // 2. Dispatch the action with your fetched payload
-                // (Adjust 'setAttendanceLogs' to match the actual action creator exported from your slice)
-                // dispatch(setAttendanceLogs(response?.data || response));
-            } catch (error) {
-                console.error("Failed to fetch attendance logs:", error);
-            }
-        };
-
-        fetchLogs();
-    }, [dispatch, currentDate]);
+    const [logs, setLogs] = useState([]);
+    const [isLoadingLogs, setIsLoadingLogs] = useState(false);
 
     // --- State for Post-Drop Time Editing Modal ---
     const [timeEditTarget, setTimeEditTarget] = useState(null);
@@ -80,55 +87,78 @@ export default function EmployeeCalendarSection() {
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
 
-    const calendarSchedules = schedules.map((sched) => {
-        // Map your log fields (using cin_date or scheduled_date as fallback)
-        const dateSource =
-            sched.cin_date || sched.scheduled_date || sched.created_at;
-        const schedMoment = moment(dateSource);
-        const formattedSchedDate = schedMoment.isValid()
-            ? schedMoment.format("YYYY-MM-DD")
-            : "";
+    useEffect(() => {
+        const startDate = moment([currentYear, currentMonth]).startOf("month").format("YYYY-MM-DD");
+        const endDate = moment([currentYear, currentMonth]).endOf("month").format("YYYY-MM-DD");
 
-        const firstName =
-            sched?.application?.applicant?.personal_information?.first_name ||
-            sched?.first_name ||
-            "";
-        const lastName =
-            sched?.application?.applicant?.personal_information?.last_name ||
-            sched?.last_name ||
-            "";
+        const fetchLogs = async () => {
+            setIsLoadingLogs(true);
+            try {
+                const response = await get_attendance_logs_service({
+                    start_date: startDate,
+                    end_date: endDate,
+                });
+                setLogs(response?.data?.data ?? []);
+            } catch (error) {
+                console.error("Failed to fetch attendance logs:", error);
+                setLogs([]);
+            } finally {
+                setIsLoadingLogs(false);
+            }
+        };
 
-        const fullName = `${firstName} ${lastName}`.trim();
+        fetchLogs();
+    }, [currentYear, currentMonth]);
+
+    const resolveDisplayStatus = (log) => {
+        // Lateness must show as "Late" even while still clocked in / on break, not just after clock-out.
+        if (log.status === "clocked_in") {
+            return log.late_minutes > 0 ? "Late" : "Present";
+        }
+
+        if (log.status === "on_break") {
+            return log.late_minutes > 0 ? "Late" : "On Break";
+        }
+
+        if (log.status === "clocked_out") {
+            if (log.late_minutes > 0) return "Late";
+            if (log.undertime_minutes > 0) return "Undertime";
+            return "Present";
+        }
+
+        return log.display_status || log.status;
+    };
+
+    const calendarSchedules = logs.map((log) => {
+        const status = resolveDisplayStatus(log);
 
         return {
-            id: sched.id,
-            title: fullName || sched.title || "Attendance Log",
-            dateString: formattedSchedDate,
+            id: log.id ?? `${log.user_id}-${log.date}`,
+            title: log.holiday_name || status,
+            dateString: moment(log.date).format("YYYY-MM-DD"),
 
-            // Schedule times & metrics mapping to match your logs format
-            tin: sched.start_time || sched.tin,
-            tinC: sched.tin_c || "",
-            cinDate: sched.cin_date || "sss",
-            cinTime: sched.cin_time || "",
-            cinCDate: sched.cinc_date || "",
-            cinCTime: sched.cinc_time || "",
+            scheduleTimeIn: log.schedule_time_in,
+            scheduleTimeOut: log.schedule_time_out,
+            clockInTime: log.clock_in_time,
+            clockInDate: log.clock_in_date,
+            breakStartTime: log.break_start_time,
+            breakEndTime: log.break_end_time,
+            clockOutTime: log.clock_out_time,
+            clockOutDate: log.clock_out_date,
 
-            tout: sched.end_time || sched.tout,
-            toutC: sched.tout_c || "",
-            coutDate: sched.cout_date || "",
-            coutTime: sched.cout_time || "",
-            coutCDate: sched.coutc_date || "",
-            coutCTime: sched.coutc_time || "",
+            lateMinutes: log.late_minutes ?? 0,
+            undertimeMinutes: log.undertime_minutes ?? 0,
+            breaktimeMinutes: log.breaktime_minutes ?? 0,
+            overbreakMinutes: log.overbreak_minutes ?? 0,
+            requiredMinutes: log.required_minutes ?? 0,
+            isDayOff: !!log.is_day_off,
 
-            nightDiff: sched.night_diff ?? 0,
-            regularHolidayNightDiff: sched.regular_holiday_night_diff ?? 0,
-            specialHolidayNightDiff: sched.special_holiday_night_diff ?? 0,
-            overtimeNightDiff: sched.overtime_night_diff ?? 0,
-            dayOffOvertimeNightDiff: sched.dayoff_overtime_night_diff ?? 0,
-            minutesRequiredPresent: sched.minutes_required_present ?? 480,
+            holidayName: log.holiday_name,
+            isRegularHoliday: !!log.is_regular_holiday,
+            isSpecialHoliday: !!log.is_special_holiday,
 
-            color: getColorByStatus(sched.status),
-            status: sched.status,
+            color: getColorByStatus(status),
+            status,
         };
     });
 
@@ -157,9 +187,9 @@ export default function EmployeeCalendarSection() {
         e.dataTransfer.setData("text/plain", schedule.id);
         e.dataTransfer.setData(
             "start_time",
-            schedule.raw_start_time || "09:00",
+            schedule.scheduleTimeIn || "09:00",
         );
-        e.dataTransfer.setData("end_time", schedule.raw_end_time || "10:00");
+        e.dataTransfer.setData("end_time", schedule.scheduleTimeOut || "10:00");
         e.dataTransfer.setData("title", schedule.title);
         e.dataTransfer.effectAllowed = "move";
     };
@@ -256,6 +286,13 @@ export default function EmployeeCalendarSection() {
             (h) => h.date === formattedCellDate,
         );
 
+        const tileStatus = daySchedules[0]?.status;
+        // Future dates have no real attendance yet, so keep them neutral instead of coloring as Absent.
+        const isFutureDate = dateObj > today;
+        const tileColor = isFutureDate
+            ? "bg-gray-200 hover:bg-gray-100/60 text-white"
+            : getTileColorByStatus(tileStatus);
+
         return (
             <div
                 key={`day-${day}`}
@@ -263,9 +300,9 @@ export default function EmployeeCalendarSection() {
                 onDragOver={(e) => handleDragOver(e, dateString)}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, dateObj)}
-                className={`px-1.5 py-1 border-r border-b text-white border-gray-200 transition-all flex flex-col gap-1 min-h-[140px] cursor-pointer relative group overflow-hidden
-                ${isSelected ? "bg-emerald-600 ring-1 ring-inset ring-blue-200 z-10" : dayHolidays.length > 0 ? "bg-rose-50/60 hover:bg-rose-50" : "bg-emerald-900/90 hover:bg-emerald-900"}
-                ${isHoveredDropTarget ? "bg-blue-100/60 ring-2 ring-dashed ring-blue-400 z-20 scale-[0.98]" : ""}
+                className={`px-1.5 py-1 border-r border-b border-gray-200 transition-all flex flex-col gap-1 min-h-[140px] cursor-pointer relative group overflow-hidden ${tileColor}
+                ${isSelected ? "ring-2 ring-inset ring-blue-400 z-10" : ""}
+                ${isHoveredDropTarget ? "ring-2 ring-dashed ring-blue-400 z-20 scale-[0.98]" : ""}
             `}
             >
                 <div className="flex justify-end items-start p-1">
@@ -280,99 +317,70 @@ export default function EmployeeCalendarSection() {
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     )}
                 </div>
-                <div className="flex flex-col gap-1 mt-1 flex-1 overflow-y-auto max-h-[260px] pr-0.5 custom-scrollbar text-xs">
-                    <div className="font-bold mb-1">
-                        {/* {schedule.title} */}
-                    </div>
+                <div className="flex flex-col gap-1.5 mt-1 flex-1 overflow-y-auto max-h-[260px] pr-0.5 custom-scrollbar text-[11px]">
+                    {isLoadingLogs && daySchedules.length === 0 && (
+                        <span className="opacity-60 italic">Loading...</span>
+                    )}
 
-                    <div>
-                        <strong>TIn:</strong>
-                        {/* {formatTime(schedule.tin)} */}
-                    </div>
+                    {daySchedules.map((schedule) => (
+                        <div
+                            key={schedule.id}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, schedule)}
+                            className="rounded-md border border-white/30 bg-black/15 px-1.5 py-1 flex flex-col gap-0.5 cursor-grab"
+                        >
+                            <div className="flex items-center justify-between gap-1">
+                                <span className="font-bold truncate">
+                                    {schedule.status}
+                                </span>
+                                <span className="text-[10px] font-semibold">
+                                    Late {schedule.lateMinutes > 0 ? `${schedule.lateMinutes}m` : "--"}
+                                </span>
+                            </div>
 
-                    <div>
-                        <strong>TInC:</strong>
-                        {/* {schedule.tinC || ""} */}
-                    </div>
+                            <div className="truncate">
+                                <strong>Holiday:</strong>{" "}
+                                {schedule.holidayName || "--"}
+                            </div>
 
-                    <div>
-                        <strong>CIn Date:</strong>{" "}
-                        {/* {formatDate(schedule.cinDate)} */}
-                    </div>
+                            <div>
+                                <strong>Schedule:</strong>{" "}
+                                {formatTime(schedule.scheduleTimeIn)} -{" "}
+                                {formatTime(schedule.scheduleTimeOut)}
+                            </div>
 
-                    <div>
-                        <strong>CIn Time:</strong>{" "}
-                        {/* {formatTime(schedule.cinTime)} */}
-                    </div>
+                            <div>
+                                <strong>Time In:</strong>{" "}
+                                {formatTime(schedule.clockInTime)}
+                                {" "}
+                                ({schedule.clockInDate
+                                    ? formatDate(schedule.clockInDate)
+                                    : "--"})
+                            </div>
 
-                    <div>
-                        <strong>CInC Date:</strong>{" "}
-                        {/* {formatDate(schedule.cinCDate)} */}
-                    </div>
+                            <div>
+                                <strong>Time Out:</strong>{" "}
+                                {formatTime(schedule.clockOutTime)}
+                                {" "}
+                                ({schedule.clockOutDate
+                                    ? formatDate(schedule.clockOutDate)
+                                    : "--"})
+                            </div>
 
-                    <div>
-                        <strong>CInC Time:</strong>{" "}
-                        {/* {formatTime(schedule.cinCTime)} */}
-                    </div>
+                            <div>
+                                <strong>Break:</strong>{" "}
+                                {formatTime(schedule.breakStartTime)} -{" "}
+                                {formatTime(schedule.breakEndTime)}
+                            </div>
 
-                    <div className="mt-1">
-                        <strong>TOut:</strong>{" "}
-                        {/* {formatTime(schedule.tout)} */}
-                    </div>
-
-                    <div>
-                        <strong>TOutC:</strong> {/* {schedule.toutC || ""} */}
-                    </div>
-
-                    <div>
-                        <strong>COut Date:</strong>{" "}
-                        {/* {formatDate(schedule.coutDate)} */}
-                    </div>
-
-                    <div>
-                        <strong>COut Time:</strong>{" "}
-                        {/* {formatTime(schedule.coutTime)} */}
-                    </div>
-
-                    <div>
-                        <strong>COutC Date:</strong>{" "}
-                        {/* {formatDate(schedule.coutCDate)} */}
-                    </div>
-
-                    <div>
-                        <strong>COutC Time:</strong>{" "}
-                        {/* {formatTime(schedule.coutCTime)} */}
-                    </div>
-
-                    <div>
-                        <strong>Night Diff:</strong>{" "}
-                        {/* {schedule.nightDiff} */}
-                    </div>
-
-                    <div>
-                        <strong>Regular Holiday Night Diff:</strong>{" "}
-                        {/* {schedule.regularHolidayNightDiff} */}
-                    </div>
-
-                    <div>
-                        <strong>Special Holiday Night Diff:</strong>{" "}
-                        {/* {schedule.specialHolidayNightDiff} */}
-                    </div>
-
-                    <div>
-                        <strong>Overtime Night Diff:</strong>{" "}
-                        {/* {schedule.overtimeNightDiff} */}
-                    </div>
-
-                    <div>
-                        <strong>DayOff Overtime Night Diff:</strong>{" "}
-                        {/* {schedule.dayOffOvertimeNightDiff} */}
-                    </div>
-
-                    <div>
-                        <strong>Minutes Required Present:</strong>{" "}
-                        {/* {schedule.minutesRequiredPresent} */}
-                    </div>
+                            <div>
+                                <strong>Undertime:</strong>{" "}
+                                {schedule.undertimeMinutes > 0
+                                    ? `${schedule.undertimeMinutes}m`
+                                    : "--"}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         );

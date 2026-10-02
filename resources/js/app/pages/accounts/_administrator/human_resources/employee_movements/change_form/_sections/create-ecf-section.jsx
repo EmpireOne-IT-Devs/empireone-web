@@ -261,7 +261,7 @@ const CreateECFSection = () => {
                   <td colSpan="3" className="border border-black p-1 px-2 font-bold uppercase">
                     <Input
                       type="text"
-                      {...register("name", { required: true })}
+                      {...register("name")}
                       disabled
                       className="bg-transparent w-full outline-none text-left text-black"
                       error={errors.name}
@@ -275,7 +275,7 @@ const CreateECFSection = () => {
                   <td className="border border-black p-1 px-2 text-center">
                     <Input
                       type="text"
-                      {...register("employee_id", { required: true })}
+                      {...register("employee_id")}
                       disabled
                       className="bg-transparent w-full outline-none text-center text-black"
                       error={errors.employee_id}
@@ -287,7 +287,7 @@ const CreateECFSection = () => {
                   <td className="border border-black p-1 px-2 text-center">
                     <Input
                       type="text"
-                      {...register("hire_date", { required: true })}
+                      {...register("hire_date")}
                       disabled
                       className="bg-transparent w-full outline-none text-center text-black"
                       error={errors.hire_date}
@@ -301,7 +301,7 @@ const CreateECFSection = () => {
                   <td className="border border-black p-1 px-2 text-center">
                     <Input
                       type="text"
-                      {...register("position_level", { required: true })}
+                      {...register("position_level")}
                       disabled
                       className="bg-transparent w-full outline-none text-center text-black"
                       error={errors.position_level}
@@ -313,7 +313,7 @@ const CreateECFSection = () => {
                   <td className="border border-black p-1 px-2 text-center">
                     <Input
                       type="text"
-                      {...register("position", { required: true })}
+                      {...register("position")}
                       disabled
                       className="bg-transparent w-full outline-none text-center text-black"
                       error={errors.position}
@@ -327,7 +327,7 @@ const CreateECFSection = () => {
                   <td className="border border-black p-1 px-2 text-center">
                     <Input
                       type="text"
-                      {...register("department", { required: true })}
+                      {...register("department")}
                       disabled
                       className="bg-transparent w-full outline-none text-center text-black"
                       error={errors.department}
@@ -353,7 +353,7 @@ const CreateECFSection = () => {
                   <td className="border border-black p-1 px-2 text-center">
                     <Input
                       type="text"
-                      {...register("reporting_to", { required: true })}
+                      {...register("reporting_to")}
                       disabled
                       className="bg-transparent w-full outline-none text-center text-black"
                       error={errors.reporting_to}

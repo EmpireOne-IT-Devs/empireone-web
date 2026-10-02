@@ -18,18 +18,19 @@ export default function Page() {
     const employer_name = `${hr?.personal_information?.first_name ?? ''} ${hr?.personal_information?.last_name ?? ''}`
     const employer_position = `${hr?.position}`
     const employer_signature = `${hr?.signature}`
-    
+
     const data = {
         user_id: user.id,
-        allowances:user?.allowances,
+        allowances: user?.allowances,
         signature: user?.account_employee?.signature ?? null,
         employee_name:
             `${user?.personal_information?.first_name} ${user?.personal_information?.middle_name == null ? '' : user?.personal_information?.middle_name} ${user?.personal_information?.last_name}`,
+        first_name:`${user?.personal_information?.first_name}`,
         employer_name: employer_name,
         employer_position: employer_position,
-        employer_signature:employer_signature,
-        reported_to:`${user?.account_employee?.er_leader?.employee?.personal_information?.first_name} ${user?.account_employee?.er_leader?.employee?.personal_information?.last_name}` ,
-        contract_signed_at:moment().add(1, 'days').format('LLL'),
+        employer_signature: employer_signature,
+        reported_to: `${user?.account_employee?.er_leader?.employee?.personal_information?.first_name} ${user?.account_employee?.er_leader?.employee?.personal_information?.last_name}`,
+        contract_signed_at: moment().add(1, 'days').format('LLL'),
         residence:
             // user?.account_contract?.residence ??
             `${user?.personal_information?.barangay}  ${user?.personal_information?.city}`,

@@ -1,7 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { Building2, ImagePlus, Landmark, PlusCircleIcon, Users, X } from "lucide-react";
+import {
+    Building2,
+    ImagePlus,
+    Landmark,
+    PlusCircleIcon,
+    Users,
+    X,
+} from "lucide-react";
 
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
@@ -93,10 +100,19 @@ export default function CreateNewChallenge() {
 
     // Load eligibility options (departments, accounts & employee count) when the modal opens
     useEffect(() => {
-        if (isOpen && rewardChallengeDepartments.length === 0 && rewardChallengeAccounts.length === 0) {
+        if (
+            isOpen &&
+            rewardChallengeDepartments.length === 0 &&
+            rewardChallengeAccounts.length === 0
+        ) {
             dispatch(get_engagement_reward_challenge_options_thunk());
         }
-    }, [isOpen, dispatch, rewardChallengeDepartments.length, rewardChallengeAccounts.length]);
+    }, [
+        isOpen,
+        dispatch,
+        rewardChallengeDepartments.length,
+        rewardChallengeAccounts.length,
+    ]);
 
     const handleClose = () => {
         setIsOpen(false);
@@ -119,6 +135,7 @@ export default function CreateNewChallenge() {
         if (bannerPreview) URL.revokeObjectURL(bannerPreview);
         setBannerFile(null);
         setBannerPreview(null);
+        setBannerPosition({ x: 50, y: 50 });
     };
 
     const toggleAllEmployees = () => {
@@ -152,14 +169,66 @@ export default function CreateNewChallenge() {
         setValue("department_ids", [], { shouldValidate: true });
         setValue("account_ids", updated, { shouldValidate: true });
     };
+    const [bannerPosition, setBannerPosition] = useState({ x: 50, y: 50 });
+    const [isDraggingBanner, setIsDraggingBanner] = useState(false);
+    const bannerRef = useRef(null);
+    const dragStartRef = useRef({ x: 0, y: 0 });
 
+    const handleBannerDragStart = (e) => {
+        e.preventDefault();
+
+        setIsDraggingBanner(true);
+
+        dragStartRef.current = {
+            x: e.clientX,
+            y: e.clientY,
+            positionX: bannerPosition.x,
+            positionY: bannerPosition.y,
+        };
+    };
+
+    const handleBannerDragMove = (e) => {
+        if (!isDraggingBanner || !bannerRef.current) return;
+
+        const rect = bannerRef.current.getBoundingClientRect();
+
+        const deltaX = e.clientX - dragStartRef.current.x;
+        const deltaY = e.clientY - dragStartRef.current.y;
+
+        const sensitivity = 0.5;
+
+        setBannerPosition({
+            x: Math.max(
+                0,
+                Math.min(
+                    100,
+                    dragStartRef.current.positionX -
+                        (deltaX / rect.width) * 100 * sensitivity,
+                ),
+            ),
+            y: Math.max(
+                0,
+                Math.min(
+                    100,
+                    dragStartRef.current.positionY -
+                        (deltaY / rect.height) * 100 * sensitivity,
+                ),
+            ),
+        });
+    };
+
+    const handleBannerDragEnd = () => {
+        setIsDraggingBanner(false);
+    };
     const onSubmit = async (data) => {
         if (
             !data.all_employees &&
             data.department_ids.length === 0 &&
             data.account_ids.length === 0
         ) {
-            setParticipantsError("Select at least one department or account, or choose All Employees.");
+            setParticipantsError(
+                "Select at least one department or account, or choose All Employees.",
+            );
             return;
         }
         setParticipantsError("");
@@ -173,14 +242,20 @@ export default function CreateNewChallenge() {
             all_employees: data.all_employees,
             account_ids: data.all_employees ? [] : data.account_ids,
             department_ids: data.all_employees ? [] : data.department_ids,
-            max_participants: data.max_participants ? Number(data.max_participants) : null,
+            max_participants: data.max_participants
+                ? Number(data.max_participants)
+                : null,
             start_date: data.start_date,
             deadline: data.deadline,
             card_color: data.card_color,
             banner: bannerFile,
+            banner_position_x: bannerPosition.x,
+            banner_position_y: bannerPosition.y,
         };
 
-        const result = await dispatch(create_engagement_reward_challenge_thunk(payload));
+        const result = await dispatch(
+            create_engagement_reward_challenge_thunk(payload),
+        );
 
         if (result.error) {
             const msg =
@@ -252,27 +327,60 @@ export default function CreateNewChallenge() {
                         </label>
 
                         {bannerPreview ? (
-                            <div className="relative overflow-hidden rounded-2xl border border-gray-200">
-                                <img
-                                    src={bannerPreview}
-                                    alt="Challenge banner preview"
-                                    className="h-32 w-full object-cover"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={removeBanner}
-                                    className="absolute right-2 top-2 rounded-full bg-white/90 p-1 shadow transition hover:bg-white"
-                                    aria-label="Remove banner image"
+                            <div className="space-y-2">
+                                {/* Draggable Banner Preview */}
+                                <div
+                                    ref={bannerRef}
+                                    className={`relative h-32 overflow-hidden rounded-2xl border border-gray-200 bg-gray-100 ${
+                                        isDraggingBanner
+                                            ? "cursor-grabbing"
+                                            : "cursor-grab"
+                                    }`}
+                                    onPointerMove={handleBannerDragMove}
+                                    onPointerUp={handleBannerDragEnd}
+                                    onPointerLeave={handleBannerDragEnd}
+                                    onPointerCancel={handleBannerDragEnd}
                                 >
-                                    <X className="h-4 w-4 text-gray-600" />
-                                </button>
+                                    <img
+                                        src={bannerPreview}
+                                        alt="Challenge banner preview"
+                                        draggable={false}
+                                        onPointerDown={handleBannerDragStart}
+                                        style={{
+                                            objectPosition: `${bannerPosition.x}% ${bannerPosition.y}%`,
+                                        }}
+                                        className="h-full w-full select-none object-cover"
+                                    />
+
+                                    {/* Drag Indicator */}
+                                    <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
+                                        Drag to adjust image position
+                                    </div>
+
+                                    {/* Remove Button */}
+                                    <button
+                                        type="button"
+                                        onClick={removeBanner}
+                                        className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 shadow transition hover:bg-white"
+                                        aria-label="Remove banner image"
+                                    >
+                                        <X className="h-4 w-4 text-gray-600" />
+                                    </button>
+                                </div>
+
+                                <p className="text-xs text-gray-400">
+                                    Click and drag the image to adjust which
+                                    area is visible.
+                                </p>
                             </div>
                         ) : (
                             <label className="flex h-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 text-gray-400 transition hover:border-gray-300 hover:bg-gray-50">
                                 <ImagePlus className="h-5 w-5" />
+
                                 <span className="text-xs">
                                     Upload banner image
                                 </span>
+
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -450,7 +558,9 @@ export default function CreateNewChallenge() {
                                 <div className="flex flex-wrap gap-2">
                                     {rewardChallengeAccounts.map((account) => {
                                         const isSelected =
-                                            selectedAccountIds?.includes(account.id);
+                                            selectedAccountIds?.includes(
+                                                account.id,
+                                            );
                                         return (
                                             <button
                                                 key={account.id}
@@ -477,7 +587,9 @@ export default function CreateNewChallenge() {
                             </>
                         )}
                         {participantsError && (
-                            <p className="mt-2 text-sm text-red-500">{participantsError}</p>
+                            <p className="mt-2 text-sm text-red-500">
+                                {participantsError}
+                            </p>
                         )}
                         <div className="mt-6 text-xs text-gray-400">
                             <Input

@@ -33,6 +33,41 @@ class EngagementRewardChallengesController extends Controller
     }
 
     /**
+     * List every participant of a specific challenge for the admin manage view.
+     */
+    public function participants(EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    {
+        $participants = $engagementRewardChallenge->participants()
+            ->with('department:id,name')
+            ->orderByDesc('engagement_reward_challenge_participants.joined_at')
+            ->get()
+            ->map(fn (User $user) => [
+                'id' => $user->id,
+                'participant_id' => $user->pivot->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'department' => $user->department?->name,
+                'status' => $user->pivot->status,
+                'challenge_description' => $user->pivot->challenge_description,
+                'points_awarded' => $user->pivot->points_awarded,
+                'joined_at' => $user->pivot->joined_at?->toDateTimeString(),
+                'submitted_at' => $user->pivot->submitted_at?->toDateTimeString(),
+                'reviewed_at' => $user->pivot->reviewed_at?->toDateTimeString(),
+                'submission_url' => $user->pivot->submission_path
+                    ? Storage::disk('s3')->url($user->pivot->submission_path)
+                    : null,
+            ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'challenge' => $this->formatChallenge($engagementRewardChallenge),
+                'participants' => $participants,
+            ],
+        ]);
+    }
+
+    /**
      * Shape a challenge for the frontend, including the display-only lifecycle status.
      */
     private function formatChallenge(EngagementRewardChallenge $challenge, ?int $currentUserId = null): array
@@ -57,6 +92,8 @@ class EngagementRewardChallengesController extends Controller
             'category' => $challenge->category,
             'points' => $challenge->points,
             'banner_url' => $challenge->banner_path ? Storage::disk('s3')->url($challenge->banner_path) : null,
+            'banner_position_x' => $challenge->banner_position_x ?? 50,
+            'banner_position_y' => $challenge->banner_position_y ?? 50,
             'all_employees' => $challenge->all_employees,
             'departments' => $challenge->departments,
             'accounts' => $challenge->accounts,
@@ -317,6 +354,8 @@ class EngagementRewardChallengesController extends Controller
             'category' => ['required', 'string', 'in:Wellness,Sales,Learning,Teamwork,Innovation'],
             'points' => ['required', 'integer', 'min:1'],
             'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'banner_position_x' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'banner_position_y' => ['nullable', 'integer', 'min:0', 'max:100'],
             'all_employees' => ['required', 'boolean'],
             'account_ids' => ['nullable', 'array'],
             'account_ids.*' => ['integer', 'distinct', 'exists:accounts,id'],
@@ -352,6 +391,8 @@ class EngagementRewardChallengesController extends Controller
             'category' => $validated['category'],
             'points' => $validated['points'],
             'banner_path' => $bannerPath,
+            'banner_position_x' => $validated['banner_position_x'] ?? 50,
+            'banner_position_y' => $validated['banner_position_y'] ?? 50,
             'all_employees' => $validated['all_employees'],
             'max_participants' => $validated['max_participants'] ?? null,
             'start_date' => $validated['start_date'],
@@ -404,6 +445,8 @@ class EngagementRewardChallengesController extends Controller
             'category' => ['sometimes', 'string', 'in:Wellness,Sales,Learning,Teamwork,Innovation'],
             'points' => ['sometimes', 'integer', 'min:1'],
             'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'banner_position_x' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'banner_position_y' => ['nullable', 'integer', 'min:0', 'max:100'],
             'all_employees' => ['sometimes', 'boolean'],
             'account_ids' => ['nullable', 'array'],
             'account_ids.*' => ['integer', 'distinct', 'exists:accounts,id'],

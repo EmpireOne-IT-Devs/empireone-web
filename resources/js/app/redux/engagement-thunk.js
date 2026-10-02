@@ -7,6 +7,7 @@ import {
     delete_post_event_service,
     get_upcoming_birthdays_service,
     get_upcoming_work_anniversaries_service,
+    send_work_anniversary_email_service,
     cast_poll_vote_service,
     upload_gallery_service,
     get_reward_recognitions_service,
@@ -20,6 +21,7 @@ import {
     update_reward_challenge_service,
     delete_reward_challenge_service,
     get_reward_challenges_service,
+    get_reward_challenge_participants_service,
     get_my_reward_challenges_service,
     get_reward_challenge_profile_summary_service,
     join_reward_challenge_service,
@@ -136,6 +138,18 @@ export const get_upcoming_work_anniversaries_thunk = createAsyncThunk(
     async (params = {}, { rejectWithValue }) => {
         try {
             const response = await get_upcoming_work_anniversaries_service(params);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const send_work_anniversary_email_thunk = createAsyncThunk(
+    "engagement/sendWorkAnniversaryEmail",
+    async (payload, { rejectWithValue }) => {
+        try {
+            const response = await send_work_anniversary_email_service(payload);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
@@ -279,6 +293,18 @@ export const get_engagement_reward_challenges_thunk = createAsyncThunk(
     },
 );
 
+export const get_engagement_reward_challenge_participants_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeParticipants",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenge_participants_service(id);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
 export const get_engagement_reward_challenge_options_thunk = createAsyncThunk(
     "engagement/getRewardChallengeOptions",
     async (_, { rejectWithValue }) => {
@@ -308,6 +334,13 @@ function build_reward_challenge_form_data(data) {
     }
     if (data.banner) {
         formData.append("banner", data.banner);
+    }
+
+    if (data.banner_position_x !== undefined && data.banner_position_x !== null) {
+        formData.append("banner_position_x", Math.round(data.banner_position_x));
+    }
+    if (data.banner_position_y !== undefined && data.banner_position_y !== null) {
+        formData.append("banner_position_y", Math.round(data.banner_position_y));
     }
     data.account_ids?.forEach((id) => formData.append("account_ids[]", id));
     data.department_ids?.forEach((id) => formData.append("department_ids[]", id));

@@ -422,6 +422,8 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
         award_title: item.category?.name,
         category: item.category?.name,
         message: item.message,
+        created_at: item.createdAt,
+        pointsAwarded: item.pointsAwarded ?? 0,
         company_name: "",
         badge_variant: item.category?.variant,
     });

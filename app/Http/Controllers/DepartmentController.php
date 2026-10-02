@@ -32,16 +32,22 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+        $validated = $request->validate([
+            'id'          => 'nullable|integer|exists:accounts,id',
+            'name'        => 'required|string|max:255',
         ]);
 
-        $department = Department::create($validatedData);
+        Department::updateOrCreate(
+            [
+                'id' => $request->input('id'),
+            ],
+            [
+                'name'        => $validated['name'],
+            ]
+        );
 
-        return response()->json([
-            'message' => 'Department created successfully!',
-            'department' => $department
-        ], 201);
+        // 3. Return JSON response for Inertia/API or redirect
+        return response()->json('success', 200);
     }
 
     /**

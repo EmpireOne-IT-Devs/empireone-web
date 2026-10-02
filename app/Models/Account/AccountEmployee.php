@@ -13,6 +13,7 @@ use App\Models\Site;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
@@ -91,5 +92,9 @@ class AccountEmployee extends Model
     public function location(): HasOne
     {
         return $this->hasOne(Location::class, 'id', 'location_id');
+    }
+    public function files(): HasMany
+    {
+        return $this->hasMany(AccountDocument::class, 'user_id', 'user_id');
     }
 }

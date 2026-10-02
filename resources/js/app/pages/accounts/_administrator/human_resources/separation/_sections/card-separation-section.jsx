@@ -35,8 +35,8 @@ export default function CardAcknowledgementSection() {
                     href: `/accounts/off_boarding_documents/${res.id}/exit-clearance`,
                     ...res.exit_clearance
                 }, {
-                    document_type: 'Exit Interview',
-                    href: `/accounts/off_boarding_documents/${res.id}/exit-interview`,
+                    document_type: 'Exit Survey',
+                    href: `/accounts/off_boarding_documents/${res.id}/exit-survey`,
                     ...res.exit_interview
                 }]
                 return (

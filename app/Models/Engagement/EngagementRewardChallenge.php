@@ -25,6 +25,8 @@ class EngagementRewardChallenge extends Model
         'category',
         'points',
         'banner_path',
+        'banner_position_x',
+        'banner_position_y',
         'all_employees',
         'max_participants',
         'start_date',
@@ -37,6 +39,8 @@ class EngagementRewardChallenge extends Model
     {
         return [
             'points' => 'integer',
+            'banner_position_x' => 'integer',
+            'banner_position_y' => 'integer',
             'all_employees' => 'boolean',
             'max_participants' => 'integer',
             'start_date' => 'date',
@@ -78,7 +82,7 @@ class EngagementRewardChallenge extends Model
             'user_id',
         )
             ->using(EngagementRewardChallengeParticipant::class)
-            ->withPivot(['status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note'])
+            ->withPivot(['id', 'status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note', 'points_awarded'])
             ->withTimestamps();
     }
 

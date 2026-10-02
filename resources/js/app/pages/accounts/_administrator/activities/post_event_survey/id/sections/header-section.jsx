@@ -7,15 +7,14 @@ import {
     reopen_post_event_survey_thunk,
     get_post_event_survey_thunk,
 } from "@/app/redux/post-event-survey-slice";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function HeaderSection({ surveyId }) {
     const dispatch = useDispatch();
     const { selectedSurvey, closing, reopening } = useSelector(
         (state) => state.post_event_surveys
     );
-    const { data } = useSelector((state) => state.app);
-
-    const canManage = [1, 11].includes(data?.user?.account_employee?.department_id);
+    const { isReady, isContentManager: canManage } = useCurrentEmployee();
 
     const handleBack = () => {
         const account_role = window.location.pathname.split("/")[2];
@@ -53,24 +52,29 @@ export default function HeaderSection({ surveyId }) {
                 </div>
             </div>
 
-            {selectedSurvey && canManage && (
-                <button
-                    type="button"
-                    onClick={handleToggleStatus}
-                    disabled={isWorking}
-                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed ${
-                        isClosed
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-red-500 text-white hover:bg-red-600"
-                    }`}
-                >
-                    {isWorking
-                        ? "Updating…"
-                        : isClosed
-                        ? "Reopen Survey"
-                        : "Close Survey"}
-                </button>
-            )}
+            {selectedSurvey &&
+                (!isReady ? (
+                    <div className="h-9 w-32 animate-pulse rounded-lg bg-gray-200" />
+                ) : (
+                    canManage && (
+                        <button
+                            type="button"
+                            onClick={handleToggleStatus}
+                            disabled={isWorking}
+                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed ${
+                                isClosed
+                                    ? "bg-green-500 text-white hover:bg-green-600"
+                                    : "bg-red-500 text-white hover:bg-red-600"
+                            }`}
+                        >
+                            {isWorking
+                                ? "Updating…"
+                                : isClosed
+                                ? "Reopen Survey"
+                                : "Close Survey"}
+                        </button>
+                    )
+                ))}
         </div>
     );
 }

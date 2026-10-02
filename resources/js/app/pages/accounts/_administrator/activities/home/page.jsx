@@ -1,14 +1,14 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import Layout from "../../../layout";
 import ActivitiesLayout from "../layout";
 import CreatePostCardSection from "./sections/create-post-card-section";
 import PostCardSection from "./sections/post-card-section";
 import UpcomingEventSection from "./sections/upcoming-event-section";
 import AnnouncementsSection from "../company_newsfeed/sections/announcements-section";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function Page() {
-    const { data } = useSelector((store) => store.app);
+    const { isReady, isContentManager } = useCurrentEmployee();
     return (
         <Layout>
             <ActivitiesLayout>
@@ -34,9 +34,11 @@ export default function Page() {
                     {/* Left Column - Posts (Expanded width) */}
                     <div className="lg:col-span-8 xl:col-span-9 h-full min-h-0">
                         <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-none sm:rounded-xl border-0 sm:border border-gray-200 bg-gray-100 shadow-none sm:shadow-sm">
-                            {[1, 11].includes(
-                                data?.user?.account_employee?.department_id,
-                            ) ? (
+                            {!isReady ? (
+                                <div className="shrink-0 bg-gray-50 px-4 pt-4 pb-3 border-b border-gray-100">
+                                    <div className="h-20 animate-pulse rounded-lg bg-gray-200" />
+                                </div>
+                            ) : isContentManager ? (
                                 <div className="shrink-0 bg-gray-50 px-4 pt-4 pb-3 border-b border-gray-100">
                                     <CreatePostCardSection />
                                 </div>
@@ -64,12 +66,16 @@ export default function Page() {
                         <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
                             <AnnouncementsSection />
                         </div>
-                        {[1, 11].includes(
-                            data?.user?.account_employee?.department_id,
-                        ) && (
-                            <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-                                <UpcomingEventSection />
+                        {!isReady ? (
+                            <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
+                                <div className="h-40 animate-pulse rounded-lg bg-gray-200" />
                             </div>
+                        ) : (
+                            isContentManager && (
+                                <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+                                    <UpcomingEventSection />
+                                </div>
+                            )
                         )}
                     </div>
                 </div>
