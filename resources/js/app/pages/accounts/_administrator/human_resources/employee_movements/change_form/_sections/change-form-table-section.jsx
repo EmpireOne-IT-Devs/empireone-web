@@ -5,7 +5,7 @@ import ChangeFormDetailsSection from "./change-form-details-section";
 import { FcSearch  } from "react-icons/fc";
 
 
-export default function ChangeFormTableSection() {
+export default function ChangeFormTableSection({ loading }) {
     const { change_forms } = useSelector((store) => store.human_resources);
     const role = window.location.pathname.split("/")[2];
 
@@ -21,7 +21,8 @@ export default function ChangeFormTableSection() {
     console.log('change_forms', change_forms)
     return (
         <>
-            <Table
+            <Table 
+            isloading={loading}
                 columns={columns}
                 data={
                     change_forms?.data?.map((res) => ({

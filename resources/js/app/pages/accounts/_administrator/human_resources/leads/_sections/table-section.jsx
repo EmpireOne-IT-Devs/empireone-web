@@ -4,9 +4,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import EditLeadSection from "./edit-lead-section";
 
-export default function TableSection() {
+export default function TableSection({ loading }) {
     const { leaders } = useSelector((store) => store.human_resources);
-
 
     const columns = [
         { header: "ID", accessor: "id" },
@@ -20,10 +19,11 @@ export default function TableSection() {
         { header: "Action", accessor: "action" },
     ];
 
-    console.log('leaders', leaders)
+    console.log("leaders", leaders);
     return (
         <div>
             <Table
+                isloading={loading}
                 columns={columns}
                 data={
                     leaders?.map((res) => ({
@@ -38,11 +38,11 @@ export default function TableSection() {
                                 {res?.user?.account_employee?.employee_id}
                             </Link>
                         ),
-                        name: `${res?.user?.personal_information?.first_name ?? ''} ${res?.user?.personal_information?.middle_name ?? ''} ${res?.user?.personal_information?.last_name ?? ''}`,
+                        name: `${res?.user?.personal_information?.first_name ?? ""} ${res?.user?.personal_information?.middle_name ?? ""} ${res?.user?.personal_information?.last_name ?? ""}`,
                         position: `${res?.user?.account_employee?.position} `,
                         department:
                             res?.user?.account_employee?.department?.name,
-                        department_manager: `${res?.employee?.department_manager?.personal_information?.first_name ?? ''} ${res?.employee?.department_manager?.personal_information?.last_name ?? ''}`,
+                        department_manager: `${res?.employee?.department_manager?.personal_information?.first_name ?? ""} ${res?.employee?.department_manager?.personal_information?.last_name ?? ""}`,
                         account:
                             res?.user?.account_employee?.account?.name ?? "N/A",
                         subordinates_count: res?.subordinates_count,

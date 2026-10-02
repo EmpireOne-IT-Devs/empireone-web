@@ -104,13 +104,6 @@ export function getAwardMessage(cert) {
     );
 }
 
-// ============================================================================
-// FORMAT CERTIFICATE DATE
-// ============================================================================
-// Supports: issued_at, created_at, recognition_date, certificate_date, date
-// Output: moment "MMM D, YYYY" (e.g. Oct 1, 2026)
-// ============================================================================
-
 export function formatCertificateDate(cert) {
     if (!cert) return "";
 
@@ -128,18 +121,6 @@ export function formatCertificateDate(cert) {
     return date.isValid() ? date.format("MMM D, YYYY") : "";
 }
 
-// ============================================================================
-// GET CERTIFICATE SEQUENCE / COUNT
-// ============================================================================
-//
-// Examples:
-//
-// REC-19       → CERT-2026-019
-// REC-123      → CERT-2026-123
-// CERT-2026-8841 → CERT-2026-8841
-//
-// Year comes from the certificate's issue date (falls back to current year).
-// ============================================================================
 
 export function getCertificateCount(cert) {
     if (!cert) return "";
@@ -165,9 +146,6 @@ export function getCertificateCount(cert) {
     return `CERT-${year}-${sequence}`;
 }
 
-// ============================================================================
-// PRINT STYLES
-// ============================================================================
 
 const PRINT_STYLES = `
 @page {

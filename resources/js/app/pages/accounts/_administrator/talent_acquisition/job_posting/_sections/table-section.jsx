@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
 
 
 
-export default function TableSection() {
-    const { job_postings, loading } = useSelector(
+export default function TableSection({ loading }) {
+    const { job_postings } = useSelector(
         (state) => state.job_postings,
     );
     const { data } = useSelector(
@@ -206,7 +206,7 @@ export default function TableSection() {
 
                     {/* Dynamic Table Component injected here */}
                     {/* (Assuming your `<Table />` component still has the mobile card view built-in from the earlier steps) */}
-                    <Table columns={tableColumns} data={job_postings} />
+                    <Table columns={tableColumns} data={job_postings} isloading={loading} />
 
                 </div>
             </div>

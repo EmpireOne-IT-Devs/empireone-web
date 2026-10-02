@@ -25,16 +25,12 @@ export default function Page() {
     return (
         <Layout>
             <EmployeeRelationLayout>
-                {loading ? (
-                    <Loading/>
-                ) : (
-                    <div className="flex-col flex gap-3 my-3">
-                        <div className="flex w-full items-end justify-end">
-                            <CreateLeadSection />
-                        </div>
-                        <TableSection />
+                <div className="flex-col flex gap-3 my-3">
+                    <div className="flex w-full items-end justify-end">
+                        <CreateLeadSection />
                     </div>
-                )}
+                    <TableSection loading={loading} />
+                </div>
             </EmployeeRelationLayout>
         </Layout>
     );

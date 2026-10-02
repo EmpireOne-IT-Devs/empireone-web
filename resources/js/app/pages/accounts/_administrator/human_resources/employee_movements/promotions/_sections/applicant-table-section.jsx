@@ -9,7 +9,7 @@ import { Link, router } from "@inertiajs/react";
 import EmployeeChangeFormSection from "./employee-change-form-section";
 import Button from "@/app/_components/button";
 
-export default function ApplicantTableSection() {
+export default function ApplicantTableSection({loading}) {
     const { applicants } = useSelector(
         (store) => store.human_resources,
     );
@@ -86,7 +86,7 @@ export default function ApplicantTableSection() {
     }));
     return (
         <div className="flex flex-col gap-3">
-            <Table columns={columns} data={tableData} />
+            <Table columns={columns} data={tableData} isloading={loading} />
         </div>
     );
 }

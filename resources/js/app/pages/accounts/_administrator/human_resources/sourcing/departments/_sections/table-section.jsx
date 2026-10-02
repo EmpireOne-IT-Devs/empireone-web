@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import Table from "@/app/_components/table";
 import EditDepartmentSection from "./edit-department-section";
 
-export default function TableSection() {
+export default function TableSection({ loading }) {
     const { data } = useSelector((store) => store.app);
 
     // Columns configured specifically for Departments
@@ -29,5 +29,5 @@ export default function TableSection() {
         }));
     }, [data?.departments]);
 
-    return <Table columns={columns} data={formattedData} />;
+    return <Table columns={columns} data={formattedData} isloading={loading} />;
 }
