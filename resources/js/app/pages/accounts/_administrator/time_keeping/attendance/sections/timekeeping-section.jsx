@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Clock, LogIn, LogOut, TriangleAlert } from "lucide-react";
 import moment from "moment";
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import Modal from "@/app/_components/modal";
@@ -181,13 +183,14 @@ export default function TimekeepingSection() {
                                     })}
                                 </p>
                             </div>
-                            <input
-                                type="date"
-                                value={selectedDate}
-                                onChange={(e) =>
-                                    setSelectedDate(e.target.value)
+                            <DatePicker
+                                format="MM/DD/YYYY"
+                                allowClear={false}
+                                value={dayjs(selectedDate, "YYYY-MM-DD")}
+                                onChange={(v) =>
+                                    v && setSelectedDate(v.format("YYYY-MM-DD"))
                                 }
-                                className="border rounded-lg px-2 py-2 mt-1 text-sm"
+                                className="mt-1"
                             />
                         </div>
                         <div>

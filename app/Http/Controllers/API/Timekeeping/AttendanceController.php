@@ -4,10 +4,14 @@ namespace App\Http\Controllers\API\Timekeeping;
 
 use App\Http\Controllers\Controller;
 use App\Models\Timekeeping\Attendance;
+use App\Models\Timekeeping\AttendanceCorrection;
 use App\Models\Timekeeping\AttendanceEmployeeSettings;
 use App\Models\Timekeeping\Holiday;
+use App\Models\Timekeeping\LeaveRequest;
+use App\Models\Timekeeping\OvertimeRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
@@ -15,6 +19,7 @@ class AttendanceController extends Controller
     private const SCHEDULE_IN  = '08:00:00';
     private const SCHEDULE_OUT = '17:00:00';
     private const DEFAULT_BREAK_MINUTES = 60;
+    private const DAYOFF_REGULAR_MINUTES = 480;
 
     /**
      * Return the attendance record and the employee's schedule for the given date (defaults to today).
@@ -51,6 +56,151 @@ class AttendanceController extends Controller
             'is_day_off' => (bool) ($setting?->is_day_off ?? false),
             'break_minutes' => (int) ($setting?->break_minutes ?? self::DEFAULT_BREAK_MINUTES),
         ];
+    }
+
+    /**
+     * Flatten a filed correction request into the fields the logs table shows.
+     * Datetimes are plain app-timezone strings so the client doesn't re-shift them.
+     */
+    private function correctionSummary(?AttendanceCorrection $correction): array
+    {
+        $format = fn($value) => $value?->format('Y-m-d H:i:s');
+
+        return [
+            'clock_in_correction' => $format($correction?->clock_in_correction),
+            'clock_out_correction' => $format($correction?->clock_out_correction),
+            'correction_status' => $correction?->status,
+            'correction_endorsed_at' => $format($correction?->endorsed_at),
+            'correction_granted_at' => $format($correction?->granted_at),
+        ];
+    }
+
+    /**
+     * Time in/out for one specific date: a filed, non-declined correction
+     * overrides the weekday schedule for that date only.
+     */
+    private function resolveTimes(array $schedule, ?AttendanceCorrection $correction): array
+    {
+        $active = $correction && $correction->status !== 'declined';
+
+        return [
+            'time_in' => ($active ? $correction->time_in_correction?->format('H:i:s') : null) ?? $schedule['time_in'],
+            'time_out' => ($active ? $correction->time_out_correction?->format('H:i:s') : null) ?? $schedule['time_out'],
+        ];
+    }
+
+    /**
+     * Clock in/out for one date: a filed, non-declined correction wins over the
+     * stored punch. A Time In/Out correction stands in when no explicit Clock
+     * In/Out correction exists, mirroring how a granted correction is applied.
+     */
+    private function effectivePunch(?AttendanceCorrection $correction, string $clockColumn, string $timeColumn): ?Carbon
+    {
+        if (!$correction || $correction->status === 'declined') {
+            return null;
+        }
+
+        return $correction->{$clockColumn} ?? $correction->{$timeColumn};
+    }
+
+    /**
+     * Overtime, holiday and night-differential minutes for one date, driven by
+     * the filed overtime requests and the effective clock in/out.
+     */
+    private function derivedFields(
+        array $schedule,
+        bool $isRegularHoliday,
+        bool $isSpecialHoliday,
+        Collection $overtimeRequests,
+        ?Carbon $clockIn,
+        ?Carbon $clockOut,
+        int $breaktimeMinutes,
+    ): array {
+        $isDayOff = $schedule['is_day_off'];
+        $overtimeMinutes = (int) $overtimeRequests->sum('overtime_minutes');
+
+        $fields = [
+            'regular_overtime_mins' => 0,
+            'dayoff_overtime_mins' => 0,
+            'dayoff_overtime_beyond_8hrs_mins' => 0,
+            'dayoff_overtime_regular_holiday_mins' => 0,
+            'dayoff_overtime_special_holiday_mins' => 0,
+            'regular_holiday_overtime_mins' => 0,
+            'special_holiday_overtime_mins' => 0,
+            'night_diff_mins' => 0,
+            'regular_holiday_night_diff_mins' => 0,
+            'special_holiday_night_diff_mins' => 0,
+            'overtime_night_diff_mins' => 0,
+            'dayoff_overtime_night_diff_mins' => 0,
+        ];
+
+        if ($isDayOff && $isRegularHoliday) {
+            $fields['dayoff_overtime_regular_holiday_mins'] = $overtimeMinutes;
+        } elseif ($isDayOff && $isSpecialHoliday) {
+            $fields['dayoff_overtime_special_holiday_mins'] = $overtimeMinutes;
+        } elseif ($isDayOff) {
+            $fields['dayoff_overtime_mins'] = min($overtimeMinutes, self::DAYOFF_REGULAR_MINUTES);
+            $fields['dayoff_overtime_beyond_8hrs_mins'] = max(0, $overtimeMinutes - self::DAYOFF_REGULAR_MINUTES);
+        } elseif ($isRegularHoliday) {
+            $fields['regular_holiday_overtime_mins'] = $overtimeMinutes;
+        } elseif ($isSpecialHoliday) {
+            $fields['special_holiday_overtime_mins'] = $overtimeMinutes;
+        } else {
+            $fields['regular_overtime_mins'] = $overtimeMinutes;
+        }
+
+        $overtimeNightDiff = $overtimeRequests->sum(fn($r) => $this->nightDiffMinutes($r->start_at, $r->end_at));
+        $fields[$isDayOff ? 'dayoff_overtime_night_diff_mins' : 'overtime_night_diff_mins'] = $overtimeNightDiff;
+
+        if (!$clockIn || !$clockOut || $clockOut->lessThanOrEqualTo($clockIn)) {
+            return $fields;
+        }
+
+        // Night diff from the overtime window is reported separately, so exclude it from the regular figure.
+        $overtimeNightDiffWorked = $overtimeRequests->sum(function ($r) use ($clockIn, $clockOut) {
+            $start = $r->start_at->greaterThan($clockIn) ? $r->start_at : $clockIn;
+            $end = $r->end_at->lessThan($clockOut) ? $r->end_at : $clockOut;
+
+            return $end->greaterThan($start) ? $this->nightDiffMinutes($start, $end) : 0;
+        });
+        $nightDiff = max(0, $this->nightDiffMinutes($clockIn, $clockOut) - $overtimeNightDiffWorked);
+
+        if ($isRegularHoliday) {
+            $fields['regular_holiday_night_diff_mins'] = $nightDiff;
+        } elseif ($isSpecialHoliday) {
+            $fields['special_holiday_night_diff_mins'] = $nightDiff;
+        } else {
+            $fields['night_diff_mins'] = $nightDiff;
+        }
+
+        if ($isRegularHoliday || $isSpecialHoliday) {
+            $workedMinutes = max(0, intdiv($clockOut->timestamp - $clockIn->timestamp, 60) - $breaktimeMinutes);
+            $fields[$isRegularHoliday ? 'regular_holiday_mins' : 'special_holiday_mins'] = $workedMinutes;
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Minutes of the given period that fall inside the 10:00 PM - 6:00 AM night differential window.
+     */
+    private function nightDiffMinutes(Carbon $start, Carbon $end): int
+    {
+        $total = 0;
+
+        for ($day = $start->copy()->startOfDay()->subDay(); $day->lte($end); $day->addDay()) {
+            $windowStart = $day->copy()->setTime(22, 0);
+            $windowEnd = $day->copy()->addDay()->setTime(6, 0);
+
+            $from = $start->greaterThan($windowStart) ? $start : $windowStart;
+            $to = $end->lessThan($windowEnd) ? $end : $windowEnd;
+
+            if ($to->greaterThan($from)) {
+                $total += intdiv($to->timestamp - $from->timestamp, 60);
+            }
+        }
+
+        return $total;
     }
 
     /**
@@ -100,29 +250,100 @@ class AttendanceController extends Controller
 
         $records = [];
 
+        $corrections = AttendanceCorrection::where('user_id', Auth::id())
+            ->where('date', '>=', $startDate->toDateString())
+            ->where('date', '<=', $endDate->toDateString())
+            ->orderBy('id')
+            ->get()
+            ->keyBy(fn($c) => $c->date->toDateString());
+
+        // Declined filings are ignored; anything else reflects on the logs as soon as it is filed.
+        $overtimeRequests = OvertimeRequest::where('user_id', Auth::id())
+            ->where('date', '>=', $startDate->toDateString())
+            ->where('date', '<=', $endDate->toDateString())
+            ->where('status', '!=', 'declined')
+            ->get()
+            ->groupBy(fn($r) => Carbon::parse($r->date)->toDateString());
+
+        $leaveRequests = LeaveRequest::where('user_id', Auth::id())
+            ->where('date', '>=', $startDate->toDateString())
+            ->where('date', '<=', $endDate->toDateString())
+            ->where('status', '!=', 'declined')
+            ->orderBy('id')
+            ->get()
+            ->keyBy(fn($l) => $l->date->toDateString());
+
         for ($date = $endDate->copy(); $date->gte($startDate); $date->subDay()) {
             $dateString = $date->toDateString();
             $schedule = $this->getScheduleForDate($dateString);
             $breaktimeLimit = $schedule['is_day_off'] ? 0 : $schedule['break_minutes'];
             $requiredMinutes = $this->getRequiredMinutes($schedule);
+            $correctionModel = $corrections->get($dateString);
+            $correction = $this->correctionSummary($correctionModel);
+            $times = $this->resolveTimes($schedule, $correctionModel);
+            $holiday = $this->getHolidayForDate($dateString);
+            $leave = $leaveRequests->get($dateString);
+            $isVoluntaryTimeOff = $leave?->leave_type === LeaveRequest::VOLUNTARY_TIME_OFF;
+            $leaveFields = [
+                'is_on_leave' => $leave !== null && !$isVoluntaryTimeOff,
+                'is_voluntary_time_off' => $isVoluntaryTimeOff,
+                'leave_type' => $leave?->leave_type,
+            ];
 
             if ($logs->has($dateString)) {
                 $record = $logs->get($dateString);
                 $breaktimeMinutes = $this->getBreaktimeMinutes($record);
+                $isRegularHoliday = $record->is_regular_holiday || $holiday?->type === 'Regular';
+                $isSpecialHoliday = !$isRegularHoliday && ($record->is_special_holiday || $holiday?->type === 'Special');
+                $derived = $this->derivedFields(
+                    $schedule,
+                    $isRegularHoliday,
+                    $isSpecialHoliday,
+                    $overtimeRequests->get($dateString, collect()),
+                    $this->effectivePunch($correctionModel, 'clock_in_correction', 'time_in_correction') ?? $record->clock_in_at,
+                    $this->effectivePunch($correctionModel, 'clock_out_correction', 'time_out_correction') ?? $record->clock_out_at,
+                    $breaktimeMinutes,
+                );
+                $record->is_regular_holiday = $isRegularHoliday;
+                $record->is_special_holiday = $isSpecialHoliday;
+                $record->holiday_name = $record->holiday_name ?? $holiday?->name;
+                foreach ([...$derived, ...$leaveFields] as $key => $value) {
+                    $record->{$key} = $value;
+                }
                 $record->breaktime_limit = $breaktimeLimit;
                 $record->breaktime_minutes = $breaktimeMinutes;
                 $record->overbreak_minutes = max(0, $breaktimeMinutes - $breaktimeLimit);
                 $record->schedule_time_in = $schedule['time_in'];
                 $record->schedule_time_out = $schedule['time_out'];
+                $record->time_in = $times['time_in'];
+                $record->time_out = $times['time_out'];
                 $record->is_day_off = $schedule['is_day_off'];
                 $record->required_minutes = $requiredMinutes;
+                foreach ($correction as $key => $value) {
+                    $record->{$key} = $value;
+                }
                 $records[] = $record;
                 continue;
             }
 
-            $holiday = $this->getHolidayForDate($dateString);
+            $isRegularHoliday = $holiday?->type === 'Regular';
+            $isSpecialHoliday = $holiday?->type === 'Special';
+            $derived = $this->derivedFields(
+                $schedule,
+                $isRegularHoliday,
+                $isSpecialHoliday,
+                $overtimeRequests->get($dateString, collect()),
+                $this->effectivePunch($correctionModel, 'clock_in_correction', 'time_in_correction'),
+                $this->effectivePunch($correctionModel, 'clock_out_correction', 'time_out_correction'),
+                0,
+            );
+            $onLeave = $leaveFields['is_on_leave'] || $leaveFields['is_voluntary_time_off'];
+            $placeholderStatus = $schedule['is_day_off'] ? 'Day Off' : ($onLeave ? 'On Leave' : 'Absent');
 
             $records[] = [
+                ...$correction,
+                ...$derived,
+                ...$leaveFields,
                 'user_id' => Auth::id(),
                 'date' => $dateString,
                 'breaktime_limit' => $breaktimeLimit,
@@ -130,6 +351,8 @@ class AttendanceController extends Controller
                 'overbreak_minutes' => 0,
                 'schedule_time_in' => $schedule['time_in'],
                 'schedule_time_out' => $schedule['time_out'],
+                'time_in' => $times['time_in'],
+                'time_out' => $times['time_out'],
                 'is_day_off' => $schedule['is_day_off'],
                 'required_minutes' => $requiredMinutes,
                 'clock_in_date' => null,
@@ -144,16 +367,16 @@ class AttendanceController extends Controller
                 'break_start_at' => null,
                 'break_end_at' => null,
                 'clock_out_at' => null,
-                'status' => $schedule['is_day_off'] ? 'day_off' : 'absent',
+                'status' => strtolower(str_replace(' ', '_', $placeholderStatus)),
                 'late_minutes' => 0,
                 'undertime_minutes' => 0,
                 'remarks' => null,
                 'holiday_name' => $holiday?->name,
-                'is_regular_holiday' => $holiday?->type === 'Regular',
-                'is_special_holiday' => $holiday?->type === 'Special',
-                'regular_holiday_mins' => 0,
-                'special_holiday_mins' => 0,
-                'display_status' => $schedule['is_day_off'] ? 'Day Off' : 'Absent',
+                'is_regular_holiday' => $isRegularHoliday,
+                'is_special_holiday' => $isSpecialHoliday,
+                'regular_holiday_mins' => $derived['regular_holiday_mins'] ?? 0,
+                'special_holiday_mins' => $derived['special_holiday_mins'] ?? 0,
+                'display_status' => $placeholderStatus,
             ];
         }
 
