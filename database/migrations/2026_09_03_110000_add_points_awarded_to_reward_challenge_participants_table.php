@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reward_challenge_participants', function (Blueprint $table) {
+        Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
             $table->unsignedInteger('points_awarded')->nullable()->after('review_note');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reward_challenge_participants', function (Blueprint $table) {
+        Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
             $table->dropColumn('points_awarded');
         });
     }
