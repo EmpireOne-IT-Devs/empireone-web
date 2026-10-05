@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('engagement_reward_challenge_participants')) {
+            return;
+        }
+
         Schema::create('engagement_reward_challenge_participants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('reward_challenge_id')

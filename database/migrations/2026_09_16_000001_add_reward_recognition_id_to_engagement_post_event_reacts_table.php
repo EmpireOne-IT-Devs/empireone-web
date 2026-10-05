@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('engagement_post_event_reacts', 'engagement_reward_recognition_id')) {
+            return;
+        }
+
         Schema::table('engagement_post_event_reacts', function (Blueprint $table) {
             $table->foreignId('engagement_reward_recognition_id')
                 ->nullable()

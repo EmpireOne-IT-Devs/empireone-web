@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('engagement_reward_challenge_participants', 'submission_path')) {
+            return;
+        }
+
         Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
             $table->string('submission_path')->nullable()->after('status');
             $table->text('challenge_description')->nullable()->after('submission_path');

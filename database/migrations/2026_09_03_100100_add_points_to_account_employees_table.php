@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('account_employees', 'points')) {
+            return;
+        }
+
         Schema::table('account_employees', function (Blueprint $table) {
             $table->unsignedInteger('points')->default(0)->after('basic_pay');
         });

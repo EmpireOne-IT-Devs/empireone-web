@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('engagement_reward_challenge_participants', 'points_awarded')) {
+            return;
+        }
+
         Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
             $table->unsignedInteger('points_awarded')->nullable()->after('review_note');
         });
