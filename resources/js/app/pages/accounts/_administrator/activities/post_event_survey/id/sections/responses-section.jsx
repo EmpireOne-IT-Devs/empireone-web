@@ -4,6 +4,7 @@ import { get_survey_responses_thunk } from "@/app/redux/post-event-survey-slice"
 import { export_survey_responses_service } from "@/app/services/post-event-survey-service";
 import Skeleton from "@/app/_components/skeleton";
 import Table from "@/app/_components/table";
+import Select from "@/app/_components/select";
 import moment from "moment";
 import EmployeeAnswerViewer from "./employee-answer-viewer";
 import Button from "@/app/_components/button";
@@ -127,11 +128,15 @@ export default function ResponsesSection({ surveyId }) {
     };
 
     const surveyQuestions = questions ?? [];
-    const sites = [...new Set(
+    const siteNames = [...new Set(
         response_tracker
             .map((row) => row.site)
             .filter((site) => site && site !== "N/A")
     )].sort((a, b) => a.localeCompare(b));
+    const siteOptions = [
+        { label: "All Sites", value: "" },
+        ...siteNames.map((site) => ({ label: site, value: site })),
+    ];
 
     // Every survey question is surfaced as its own column, mirroring a spreadsheet response sheet.
     const questionColumns = surveyQuestions.map((question) => ({
@@ -152,7 +157,11 @@ export default function ResponsesSection({ surveyId }) {
         // { header: "Action", accessor: "view_survey" },
     ];
 
-    const tableData = response_tracker.map((row) => {
+    const filteredResponseTracker = selectedSite
+        ? response_tracker.filter((row) => row.site === selectedSite)
+        : response_tracker;
+
+    const tableData = filteredResponseTracker.map((row) => {
         const questionAnswers = {};
         surveyQuestions.forEach((question) => {
             questionAnswers[`question_${question.id}`] = formatQuestionAnswer(
@@ -270,17 +279,15 @@ export default function ResponsesSection({ surveyId }) {
                 <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-semibold text-gray-700">Employee Response Tracker</h3>
                     <div className="flex items-center gap-2">
-                        <select
-                            aria-label="Filter export by site"
-                            value={selectedSite}
-                            onChange={(event) => setSelectedSite(event.target.value)}
-                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                        >
-                            <option value="">All Sites</option>
-                            {sites.map((site) => (
-                                <option key={site} value={site}>{site}</option>
-                            ))}
-                        </select>
+                        <div className="w-48">
+                            <Select
+                                name="site_filter"
+                                label="Site"
+                                options={siteOptions}
+                                value={selectedSite}
+                                onChange={(value) => setSelectedSite(value)}
+                            />
+                        </div>
                         <Button
                             type="button"
                             onClick={handleExport}
@@ -302,9 +309,9 @@ export default function ResponsesSection({ surveyId }) {
                     ) : (
                         <>
                             <Table columns={columns} data={tableData} />
-                            {response_tracker.length === 0 && (
+                            {filteredResponseTracker.length === 0 && (
                                 <p className="px-5 py-6 text-sm text-gray-400 text-center">
-                                    No employees found.
+                                    {selectedSite ? "No employees found for this site." : "No employees found."}
                                 </p>
                             )}
                         </>
