@@ -1,32 +1,208 @@
+import { ConfigProvider, DatePicker } from "antd";
+import dayjs from "dayjs";
+import moment from "moment";
 import React, { useState } from "react";
-import { FaClock, FaXmark } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
+import { setAlert } from "@/app/redux/app-slice";
+import { create_attendance_correction_service } from "@/app/services/attendance-service";
 
-export default function CorrectionSection() {
+const DATE_FORMAT = "YYYY-MM-DD";
+const DATETIME_LOCAL_FORMAT = "YYYY-MM-DDTHH:mm";
+const DISPLAY_DATE_FORMAT = "MM/DD/YYYY";
+const DISPLAY_DATETIME_FORMAT = "MM/DD/YYYY hh:mm A";
+
+// Native datetime-local follows browser locale (dd/mm/yyyy); this always shows month first.
+// The popup z-index must exceed the parent Modal's z-[9999] or the calendar is hidden behind it.
+function DateTimeInput({ value, onChange }) {
+    return (
+        <ConfigProvider theme={{ token: { zIndexPopupBase: 10000 } }}>
+            <DatePicker
+                showTime={{ format: "hh:mm A", use12Hours: true }}
+                use12Hours
+                inputReadOnly
+                format={DISPLAY_DATETIME_FORMAT}
+                placeholder="MM/DD/YYYY --:-- --"
+                value={value ? dayjs(value, DATETIME_LOCAL_FORMAT) : null}
+                onChange={(v) => onChange(v ? v.format(DATETIME_LOCAL_FORMAT) : "")}
+                className="w-full py-2"
+            />
+        </ConfigProvider>
+    );
+}
+
+const TIME_ONLY_KEYS = [
+    "time_in_correction",
+    "time_out_correction",
+    "break_start_correction",
+    "break_end_correction",
+    "time_in_2_correction",
+    "time_out_2_correction",
+];
+
+export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
+    const dispatch = useDispatch();
+
     const inputClass =
         "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500";
 
     const labelClass = "mb-1 block text-sm font-medium text-gray-700";
 
+    // A shift like 5pm-2am ends the next calendar day.
+    const isOvernightShift =
+        log?.schedule_time_in &&
+        log?.schedule_time_out &&
+        moment(log.schedule_time_out, "HH:mm:ss").isSameOrBefore(
+            moment(log.schedule_time_in, "HH:mm:ss"),
+        );
+
+    const toDatetimeLocal = (value) =>
+        value ? moment(value).format(DATETIME_LOCAL_FORMAT) : "";
+
+    const toTimeOnly = (time) =>
+        time ? moment(time, "HH:mm:ss").format("HH:mm") : "";
+
+    // The left "current value" column displays the actual attendance record.
+    const currentValues = {
+        time_in: toTimeOnly(log?.time_in ?? log?.schedule_time_in),
+        time_out: toTimeOnly(log?.time_out ?? log?.schedule_time_out),
+        clock_in: toDatetimeLocal(log?.clock_in_at),
+        clock_out: toDatetimeLocal(log?.clock_out_at),
+        break_start: log?.break_start_at ? moment(log.break_start_at).format("HH:mm") : "",
+        break_end: log?.break_end_at ? moment(log.break_end_at).format("HH:mm") : "",
+    };
+
+    const [form, setForm] = useState({
+        attendanceDate: date ? dayjs(date) : dayjs(),
+        reason: "",
+        time_in_correction: "",
+        time_out_correction: "",
+        clock_in_correction: "",
+        clock_out_correction: "",
+        break_start_correction: "",
+        break_end_correction: "",
+        break1_start: "",
+        break1_end: "",
+        break2_start: "",
+        break2_end: "",
+        break3_start: "",
+        break3_end: "",
+        time_in_2_correction: "",
+        time_out_2_correction: "",
+        clock_in_2_correction: "",
+        clock_out_2_correction: "",
+        shift2_break1_start: "",
+        shift2_break1_end: "",
+        shift2_break2_start: "",
+        shift2_break2_end: "",
+        shift2_break3_start: "",
+        shift2_break3_end: "",
+    });
+
+    const [errors, setErrors] = useState({});
+    const [submitting, setSubmitting] = useState(false);
+
+    const handleDateChange = (value) => {
+        setForm((prev) => ({ ...prev, attendanceDate: value }));
+    };
+
+    const handleFieldChange = (field) => (event) => {
+        const value = event?.target ? event.target.value : event;
+        setForm((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const handleSubmit = async () => {
+        setErrors({});
+
+        setSubmitting(true);
+
+        const payload = Object.entries(form).reduce((acc, [key, value]) => {
+            if (key === "attendanceDate") {
+                acc.date = value ? value.format(DATE_FORMAT) : null;
+            } else if (TIME_ONLY_KEYS.includes(key) && value) {
+                // Time-only input; anchor to the row's date, next day when an overnight shift wraps past midnight.
+                const base = moment(form.attendanceDate.format(DATE_FORMAT));
+                if (
+                    isOvernightShift &&
+                    value < moment(log.schedule_time_in, "HH:mm:ss").format("HH:mm")
+                ) {
+                    base.add(1, "day");
+                }
+                acc[key] = `${base.format(DATE_FORMAT)}T${value}`;
+            } else {
+                acc[key] = value === "" ? null : value;
+            }
+            return acc;
+        }, {});
+
+        try {
+            await create_attendance_correction_service(payload);
+
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Correction request submitted successfully!",
+                }),
+            );
+
+            setIsOpen(false);
+            onSaved?.();
+        } catch (err) {
+            if (err.response?.status === 422) {
+                setErrors(err.response.data?.errors ?? {});
+            } else {
+                dispatch(
+                    setAlert({
+                        type: "error",
+                        title:
+                            err.response?.data?.message ??
+                            "Failed to submit correction request.",
+                    }),
+                );
+            }
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const fieldError = (field) =>
+        errors[field]?.[0] ? (
+            <p className="mt-1 text-xs text-red-600">{errors[field][0]}</p>
+        ) : null;
+
     const correctionFields = [
-        ["Time In", "Time In Correction"],
-        ["Time Out", "Time Out Correction"],
-        ["Clock In", "Clock In Correction"],
-        ["Clock Out", "Clock Out Correction"],
-        ["Break Start", "Break Start Correction"],
-        ["Break End", "Break End Correction"],
+        { label: "Time In", key: "time_in", correctionKey: "time_in_correction", timeOnly: true },
+        { label: "Time Out", key: "time_out", correctionKey: "time_out_correction", timeOnly: true },
+        { label: "Clock In", key: "clock_in", correctionKey: "clock_in_correction" },
+        { label: "Clock Out", key: "clock_out", correctionKey: "clock_out_correction" },
+        { label: "Break Start", key: "break_start", correctionKey: "break_start_correction", timeOnly: true },
+        { label: "Break End", key: "break_end", correctionKey: "break_end_correction", timeOnly: true },
     ];
 
     const breakFields = [
-        ["Break Time Start 1", "Break Time End 1"],
-        ["Break Time Start 2", "Break Time End 2"],
-        ["Break Time Start 3", "Break Time End 3"],
+        { index: 1, startKey: "break1_start", endKey: "break1_end" },
+        { index: 2, startKey: "break2_start", endKey: "break2_end" },
+        { index: 3, startKey: "break3_start", endKey: "break3_end" },
     ];
 
     const shift2Fields = [
-        ["Time In 2", "Time In 2 Correction"],
-        ["Time Out 2", "Time Out 2 Correction"],
-        ["Clock In 2", "Clock In 2 Correction"],
-        ["Clock Out 2", "Clock Out 2 Correction"],
+        { label: "Time In 2", correctionKey: "time_in_2_correction", timeOnly: true },
+        { label: "Time Out 2", correctionKey: "time_out_2_correction", timeOnly: true },
+        { label: "Clock In 2", correctionKey: "clock_in_2_correction" },
+        { label: "Clock Out 2", correctionKey: "clock_out_2_correction" },
+    ];
+
+    const shift2BreakFields = [
+        { index: 1, startKey: "shift2_break1_start", endKey: "shift2_break1_end" },
+        { index: 2, startKey: "shift2_break2_start", endKey: "shift2_break2_end" },
+        { index: 3, startKey: "shift2_break3_start", endKey: "shift2_break3_end" },
+    ];
+
+    const summaryFields = [
+        { label: "Late", value: log?.late_minutes != null ? `${log.late_minutes} min(s)` : "" },
+        { label: "Regular Overtime", value: "" },
+        { label: "Undertime", value: log?.undertime_minutes != null ? `${log.undertime_minutes} min(s)` : "" },
+        { label: "Breaktime Limit", value: log?.breaktime_limit != null ? `${log.breaktime_limit} min(s)` : "" },
+        { label: "Breaktime", value: log?.breaktime_minutes != null ? `${log.breaktime_minutes} min(s)` : "" },
     ];
 
     return (
@@ -51,10 +227,13 @@ export default function CorrectionSection() {
                     </h3>
 
                     <div className="max-w-sm">
-                        <input
-                            type="date"
-                            defaultValue="2026-09-19"
-                            className={inputClass}
+                        <DatePicker
+                            name="attendanceDate"
+                            format={DISPLAY_DATE_FORMAT}
+                            value={form.attendanceDate}
+                            onChange={handleDateChange}
+                            disabled
+                            className={`${inputClass} w-full`}
                         />
                     </div>
 
@@ -79,26 +258,53 @@ export default function CorrectionSection() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {correctionFields.map(([label, correctionLabel]) => (
-                            <React.Fragment key={label}>
+                        {correctionFields.map(({ label, key, correctionKey, timeOnly }) => (
+                            <React.Fragment key={key}>
                                 <div>
                                     <label className={labelClass}>
                                         {label}
                                     </label>
-                                    <input
-                                        type="datetime-local"
-                                        className={inputClass}
-                                    />
+                                    {currentValues[key] ? (
+                                        <input
+                                            type={timeOnly ? "time" : "text"}
+                                            value={
+                                                timeOnly
+                                                    ? currentValues[key]
+                                                    : moment(currentValues[key]).format(DISPLAY_DATETIME_FORMAT)
+                                            }
+                                            readOnly
+                                            disabled
+                                            className={`${inputClass} bg-gray-50`}
+                                        />
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            value="No Data"
+                                            readOnly
+                                            disabled
+                                            className={`${inputClass} bg-gray-50`}
+                                        />
+                                    )}
                                 </div>
 
                                 <div>
                                     <label className={labelClass}>
-                                        {correctionLabel}
+                                        {label} Correction
                                     </label>
-                                    <input
-                                        type="datetime-local"
-                                        className={inputClass}
-                                    />
+                                    {timeOnly ? (
+                                        <input
+                                            type="time"
+                                            value={form[correctionKey]}
+                                            onChange={handleFieldChange(correctionKey)}
+                                            className={inputClass}
+                                        />
+                                    ) : (
+                                        <DateTimeInput
+                                            value={form[correctionKey]}
+                                            onChange={handleFieldChange(correctionKey)}
+                                        />
+                                    )}
+                                    {fieldError(correctionKey)}
                                 </div>
                             </React.Fragment>
                         ))}
@@ -111,8 +317,12 @@ export default function CorrectionSection() {
                         </label>
 
                         <input
-                            type="number"
-                            value=""
+                            type="text"
+                            value={
+                                log?.breaktime_minutes != null
+                                    ? `${log.breaktime_minutes} min(s)`
+                                    : ""
+                            }
                             placeholder="No Data"
                             readOnly
                             className={`${inputClass} bg-gray-50`}
@@ -126,34 +336,34 @@ export default function CorrectionSection() {
                         </h4>
 
                         <div className="space-y-4">
-                            {breakFields.map(
-                                ([startLabel, endLabel], index) => (
-                                    <div
-                                        key={index}
-                                        className="grid grid-cols-1 gap-4 md:grid-cols-2"
-                                    >
-                                        <div>
-                                            <label className={labelClass}>
-                                                {startLabel}
-                                            </label>
-                                            <input
-                                                type="datetime-local"
-                                                className={inputClass}
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className={labelClass}>
-                                                {endLabel}
-                                            </label>
-                                            <input
-                                                type="datetime-local"
-                                                className={inputClass}
-                                            />
-                                        </div>
+                            {breakFields.map(({ index, startKey, endKey }) => (
+                                <div
+                                    key={index}
+                                    className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                                >
+                                    <div>
+                                        <label className={labelClass}>
+                                            Break Time Start {index}
+                                        </label>
+                                        <DateTimeInput
+                                            value={form[startKey]}
+                                            onChange={handleFieldChange(startKey)}
+                                        />
+                                        {fieldError(startKey)}
                                     </div>
-                                ),
-                            )}
+
+                                    <div>
+                                        <label className={labelClass}>
+                                            Break Time End {index}
+                                        </label>
+                                        <DateTimeInput
+                                            value={form[endKey]}
+                                            onChange={handleFieldChange(endKey)}
+                                        />
+                                        {fieldError(endKey)}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -172,26 +382,39 @@ export default function CorrectionSection() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {shift2Fields.map(([label, correctionLabel]) => (
-                            <React.Fragment key={label}>
+                        {shift2Fields.map(({ label, correctionKey, timeOnly }) => (
+                            <React.Fragment key={correctionKey}>
                                 <div>
                                     <label className={labelClass}>
                                         {label}
                                     </label>
                                     <input
-                                        type="datetime-local"
-                                        className={inputClass}
+                                        type="text"
+                                        value="No Data"
+                                        readOnly
+                                        disabled
+                                        className={`${inputClass} bg-gray-50`}
                                     />
                                 </div>
 
                                 <div>
                                     <label className={labelClass}>
-                                        {correctionLabel}
+                                        {label} Correction
                                     </label>
-                                    <input
-                                        type="datetime-local"
-                                        className={inputClass}
-                                    />
+                                    {timeOnly ? (
+                                        <input
+                                            type="time"
+                                            value={form[correctionKey]}
+                                            onChange={handleFieldChange(correctionKey)}
+                                            className={inputClass}
+                                        />
+                                    ) : (
+                                        <DateTimeInput
+                                            value={form[correctionKey]}
+                                            onChange={handleFieldChange(correctionKey)}
+                                        />
+                                    )}
+                                    {fieldError(correctionKey)}
                                 </div>
                             </React.Fragment>
                         ))}
@@ -204,32 +427,33 @@ export default function CorrectionSection() {
                         </h4>
 
                         <div className="space-y-4">
-                            {[1, 2, 3].map((breakNumber) => (
+                            {shift2BreakFields.map(({ index, startKey, endKey }) => (
                                 <div
-                                    key={breakNumber}
+                                    key={index}
                                     className="grid grid-cols-1 gap-4 md:grid-cols-2"
                                 >
                                     <div>
                                         <label className={labelClass}>
-                                            Shift 2 Break Time Start{" "}
-                                            {breakNumber}
+                                            Shift 2 Break Time Start {index}
                                         </label>
 
-                                        <input
-                                            type="datetime-local"
-                                            className={inputClass}
+                                        <DateTimeInput
+                                            value={form[startKey]}
+                                            onChange={handleFieldChange(startKey)}
                                         />
+                                        {fieldError(startKey)}
                                     </div>
 
                                     <div>
                                         <label className={labelClass}>
-                                            Shift 2 Break Time End {breakNumber}
+                                            Shift 2 Break Time End {index}
                                         </label>
 
-                                        <input
-                                            type="datetime-local"
-                                            className={inputClass}
+                                        <DateTimeInput
+                                            value={form[endKey]}
+                                            onChange={handleFieldChange(endKey)}
                                         />
+                                        {fieldError(endKey)}
                                     </div>
                                 </div>
                             ))}
@@ -250,18 +474,13 @@ export default function CorrectionSection() {
                     </p>
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {[
-                            "Late",
-                            "Regular Overtime",
-                            "Undertime",
-                            "Breaktime Limit",
-                            "Breaktime",
-                        ].map((field) => (
-                            <div key={field}>
-                                <label className={labelClass}>{field}</label>
+                        {summaryFields.map(({ label, value }) => (
+                            <div key={label}>
+                                <label className={labelClass}>{label}</label>
 
                                 <input
                                     type="text"
+                                    value={value}
                                     placeholder="No Data"
                                     readOnly
                                     className={`${inputClass} bg-gray-50`}
@@ -278,10 +497,12 @@ export default function CorrectionSection() {
                     </h3>
 
                     <div>
-                        <label className={labelClass}>Correction Reason</label>
+                        <label className={labelClass}>Correction Reason (Optional)</label>
 
                         <textarea
                             rows={4}
+                            value={form.reason}
+                            onChange={handleFieldChange("reason")}
                             placeholder="Enter the reason for this correction request..."
                             className={inputClass}
                         />
@@ -349,9 +570,11 @@ export default function CorrectionSection() {
 
                 <button
                     type="button"
-                    className="rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    className="rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    Submit Correction
+                    {submitting ? "Submitting..." : "Submit Correction"}
                 </button>
             </div>
         </>
