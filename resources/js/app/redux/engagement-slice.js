@@ -31,6 +31,8 @@ import {
     approve_engagement_reward_challenge_submission_thunk,
     decline_engagement_reward_challenge_submission_thunk,
     get_engagement_reward_challenge_profile_summary_thunk,
+    get_engagement_reward_challenge_report_thunk,
+    get_engagement_reward_challenge_employee_profiles_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -65,6 +67,8 @@ export {
     approve_engagement_reward_challenge_submission_thunk,
     decline_engagement_reward_challenge_submission_thunk,
     get_engagement_reward_challenge_profile_summary_thunk,
+    get_engagement_reward_challenge_report_thunk,
+    get_engagement_reward_challenge_employee_profiles_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -140,6 +144,20 @@ const engagementSlice = createSlice({
         rewardChallengeParticipantsChallenge: null,
         rewardChallengeParticipantsLoading: false,
         rewardChallengeParticipantsError: null,
+
+        // Admin challenge report (historical trends) view
+        rewardChallengeReport: { quarters: [], top_challenges: [] },
+        rewardChallengeReportLoading: false,
+        rewardChallengeReportError: null,
+
+        // Admin RnR employee profiles view
+        rewardChallengeEmployeeProfiles: {
+            summary: { total_employees: 0, avg_points: 0, top_engager: null, at_risk_count: 0 },
+            employees: [],
+            departments: [],
+        },
+        rewardChallengeEmployeeProfilesLoading: false,
+        rewardChallengeEmployeeProfilesError: null,
 
         // Employee-facing challenge participation states
         myRewardChallenges: [],
@@ -538,6 +556,38 @@ const engagementSlice = createSlice({
             .addCase(get_engagement_reward_challenge_participants_thunk.rejected, (state, action) => {
                 state.rewardChallengeParticipantsLoading = false;
                 state.rewardChallengeParticipantsError = action.payload;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenge_report_thunk.pending, (state) => {
+                state.rewardChallengeReportLoading = true;
+                state.rewardChallengeReportError = null;
+            })
+            .addCase(get_engagement_reward_challenge_report_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeReportLoading = false;
+                state.rewardChallengeReport = action.payload?.data ?? { quarters: [], top_challenges: [] };
+            })
+            .addCase(get_engagement_reward_challenge_report_thunk.rejected, (state, action) => {
+                state.rewardChallengeReportLoading = false;
+                state.rewardChallengeReportError = action.payload;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenge_employee_profiles_thunk.pending, (state) => {
+                state.rewardChallengeEmployeeProfilesLoading = true;
+                state.rewardChallengeEmployeeProfilesError = null;
+            })
+            .addCase(get_engagement_reward_challenge_employee_profiles_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeEmployeeProfilesLoading = false;
+                state.rewardChallengeEmployeeProfiles = action.payload?.data ?? {
+                    summary: { total_employees: 0, avg_points: 0, top_engager: null, at_risk_count: 0 },
+                    employees: [],
+                    departments: [],
+                };
+            })
+            .addCase(get_engagement_reward_challenge_employee_profiles_thunk.rejected, (state, action) => {
+                state.rewardChallengeEmployeeProfilesLoading = false;
+                state.rewardChallengeEmployeeProfilesError = action.payload;
             });
 
         builder

@@ -229,6 +229,10 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenges/my', [EngagementRewardChallengesController::class, 'myChallenges']);
         Route::get('reward-challenges/profile-summary', [EngagementRewardChallengesController::class, 'profileSummary']);
         Route::get('reward-challenges/options', [EngagementRewardChallengesController::class, 'options']);
+        Route::get('reward-challenges/report', [EngagementRewardChallengesController::class, 'report']);
+        Route::get('reward-challenges/report/export', [EngagementRewardChallengesController::class, 'exportReport']);
+        Route::get('reward-challenges/employee-profiles', [EngagementRewardChallengesController::class, 'employeeProfiles']);
+        Route::get('reward-challenges/employee-profiles/export', [EngagementRewardChallengesController::class, 'exportEmployeeProfiles']);
         Route::get('reward-challenges/{engagementRewardChallenge}/participants', [EngagementRewardChallengesController::class, 'participants']);
         Route::post('reward-challenges', [EngagementRewardChallengesController::class, 'store']);
         Route::post('reward-challenges/{engagementRewardChallenge}/join', [EngagementRewardChallengesController::class, 'join']);

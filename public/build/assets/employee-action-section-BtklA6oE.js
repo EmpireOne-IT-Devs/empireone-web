@@ -1,0 +1,17 @@
+import{r as a,j as t}from"./app-35QgM4I6.js";import{y as m}from"./index-C1E8c_5F.js";import c from"./add-attrition-section-BSgQPAH3.js";import b from"./update-employee-Cs-ufWjb.js";import"./iconBase-C0DjUpbN.js";import"./index.esm-CTJEm-6n.js";import"./index-DwAZ2Cvh.js";import"./moment-BMQglvow.js";import"./button-CSJZZvF2.js";import"./index-Dn0GS5sY.js";import"./modal-DUoTSNSH.js";import"./index-D9FWCeiR.js";import"./radio-CXsJcmMJ.js";import"./employee-relation-thunk-Bp7LnBrY.js";import"./applicants-service-coaNUD2I.js";import"./employee-change-form-service--qdgi0Ve.js";import"./er-leaders-service-sDCsjceS.js";import"./human-resources-service-Kz9loqZh.js";import"./performance-evaluation-service-DhlGxOIf.js";import"./employee-information-form-C9vOZmWA.js";import"./input-Bc9J1D9_.js";import"./select-DJslrJ_Z.js";import"./account-service-CCekOniW.js";import"./hash-Boh9zpSk.js";import"./createLucideIcon-CDTX5XRx.js";import"./building-2-zavJH603.js";import"./briefcase-CXIKdHXG.js";import"./mail-DInTT5aC.js";import"./personal-information-form-Ca1aawvO.js";import"./index-BNUWXGHR.js";import"./user-RIIp_kCD.js";import"./calendar-DaIz5_uS.js";function J({props_data:p}){const[o,e]=a.useState(!1),r=a.useRef(null),u=n=>{n.stopPropagation(),e(i=>!i)},l=()=>e(!1);return a.useEffect(()=>{const n=s=>{r.current&&!r.current.contains(s.target)&&e(!1)},i=s=>{s.key==="Escape"&&e(!1)};return o&&(document.addEventListener("mousedown",n),document.addEventListener("keydown",i)),()=>{document.removeEventListener("mousedown",n),document.removeEventListener("keydown",i)}},[o]),t.jsxs("div",{className:"relative inline-block text-left",ref:r,children:[t.jsx("button",{type:"button",onClick:u,"aria-expanded":o,"aria-haspopup":"true",className:`
+                    relative p-2 rounded-full transition-all duration-150 outline-none
+                    hover:bg-black/5 active:bg-black/10
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600
+                    ${o?"bg-black/10":""}
+                `,children:t.jsx(m,{size:20})}),t.jsxs("div",{className:`
+                    absolute right-0 top-full mt-1 min-w-[200px] py-1.5 bg-white rounded-md z-[9999]
+                    shadow-[0px_5px_5px_-3px_rgba(0,0,0,0.2),0px_8px_10px_1px_rgba(0,0,0,0.14),0px_3px_14px_2px_rgba(0,0,0,0.12)]
+                    transform transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] origin-top-right
+                    ${o?"opacity-100 scale-100 translate-y-0 pointer-events-auto":"opacity-0 scale-95 -translate-y-2 pointer-events-none"}
+                `,children:[t.jsx("div",{className:`
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800
+                    `,children:t.jsx(c,{props_data:p,onAction:l})}),t.jsx("div",{className:`
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800
+                    `,children:t.jsx(b,{props_data:p,onAction:l})})]})]})}export{J as default};

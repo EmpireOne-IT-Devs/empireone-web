@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class EngagementRewardChallengesController extends Controller
 {
@@ -149,14 +150,14 @@ class EngagementRewardChallengesController extends Controller
 
         $history = EngagementRewardChallengeParticipant::query()
             ->where('user_id', $userId)
-            ->with('challenge:id,title,points,category,type')
+            ->with(['challenge' => fn ($query) => $query->withTrashed()->select('id', 'title', 'points', 'category', 'type')])
             ->latest('joined_at')
             ->get()
             ->map(fn (EngagementRewardChallengeParticipant $participant) => [
                 'id' => $participant->id,
-                'challenge_title' => $participant->challenge->title,
-                'category' => $participant->challenge->category,
-                'points' => $participant->points_awarded ?? $participant->challenge->points,
+                'challenge_title' => $participant->challenge?->title ?? 'Challenge removed',
+                'category' => $participant->challenge?->category ?? 'N/A',
+                'points' => $participant->points_awarded ?? $participant->challenge?->points ?? 0,
                 'status' => $participant->status,
                 'joined_at' => $participant->joined_at?->toDateString(),
                 'submitted_at' => $participant->submitted_at?->toDateString(),
@@ -516,5 +517,357 @@ class EngagementRewardChallengesController extends Controller
             'status' => 'success',
             'message' => 'Challenge deleted successfully.',
         ]);
+    }
+
+    /**
+     * Aggregate quarterly challenge performance and the most-joined challenges,
+     * powering the admin Reports tab's "Historical Trends" widget.
+     */
+    public function report(): JsonResponse
+    {
+        $challenges = EngagementRewardChallenge::query()
+            ->withCount('participants')
+            ->with('participants:id')
+            ->orderBy('start_date')
+            ->get();
+
+        $quarters = $challenges
+            ->groupBy(fn (EngagementRewardChallenge $challenge) => $challenge->start_date->year.'-Q'.(int) ceil($challenge->start_date->month / 3))
+            ->map(function ($group, $key) {
+                [$year, $quarterLabel] = explode('-', $key);
+                $quarterNumber = (int) str_replace('Q', '', $quarterLabel);
+                $isCurrentQuarter = (int) $year === now()->year && $quarterNumber === (int) ceil(now()->month / 3);
+
+                $participants = $group->flatMap(fn (EngagementRewardChallenge $challenge) => $challenge->participants);
+                $totalParticipants = $participants->count();
+                $approvedParticipants = $participants->filter(fn (User $user) => $user->pivot->status === 'approved')->count();
+                $totalPoints = (int) $participants->sum(fn (User $user) => $user->pivot->points_awarded ?? 0);
+
+                return [
+                    'year' => (int) $year,
+                    'quarter' => $quarterNumber,
+                    'title' => "Q{$quarterNumber} {$year}".($isCurrentQuarter ? ' (YTD)' : '')." — {$group->count()} ".Str::plural('Challenge', $group->count()),
+                    'completion' => $totalParticipants > 0 ? (int) round(($approvedParticipants / $totalParticipants) * 100) : 0,
+                    'participants' => $totalParticipants.' '.Str::plural('participant', $totalParticipants),
+                    'points' => number_format($totalPoints).' pts awarded',
+                ];
+            })
+            ->sortBy([['year', 'asc'], ['quarter', 'asc']])
+            ->values();
+
+        $topChallenges = $challenges
+            ->sortByDesc('participants_count')
+            ->take(5)
+            ->values()
+            ->map(fn (EngagementRewardChallenge $challenge, int $index) => [
+                'rank' => $index + 1,
+                'title' => $challenge->title,
+                'category' => $challenge->category,
+                'participants' => $challenge->participants_count,
+            ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'quarters' => $quarters,
+                'top_challenges' => $topChallenges,
+            ],
+        ]);
+    }
+
+    /**
+     * Stream a CSV download for one of the predefined report types shown
+     * in the admin Reports tab's "Export Reports" panel.
+     */
+    public function exportReport(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => [
+                'required',
+                'in:top10_leaderboard,top20_leaderboard,full_participation,points_distribution,department_analytics,completion_details',
+            ],
+        ]);
+
+        return match ($validated['type']) {
+            'top10_leaderboard' => $this->exportLeaderboardCsv(10),
+            'top20_leaderboard' => $this->exportLeaderboardCsv(20),
+            'full_participation' => $this->exportParticipationCsv(),
+            'points_distribution' => $this->exportPointsDistributionCsv(),
+            'department_analytics' => $this->exportDepartmentAnalyticsCsv(),
+            'completion_details' => $this->exportCompletionDetailsCsv(),
+        };
+    }
+
+    private function exportLeaderboardCsv(int $limit)
+    {
+        $participants = EngagementRewardChallengeParticipant::query()
+            ->with(['user:id,name,email', 'challenge:id,title'])
+            ->orderByDesc('points_awarded')
+            ->limit($limit)
+            ->get();
+
+        return $this->streamCsv("top{$limit}_leaderboard.csv", ['Rank', 'Name', 'Email', 'Challenge', 'Points Awarded', 'Status'], function ($handle) use ($participants) {
+            foreach ($participants as $index => $participant) {
+                fputcsv($handle, [
+                    $index + 1,
+                    $participant->user?->name ?? 'N/A',
+                    $participant->user?->email ?? 'N/A',
+                    $participant->challenge?->title ?? 'N/A',
+                    $participant->points_awarded ?? 0,
+                    ucfirst($participant->status),
+                ]);
+            }
+        });
+    }
+
+    private function exportParticipationCsv()
+    {
+        $participants = EngagementRewardChallengeParticipant::query()
+            ->with(['user:id,name,email', 'user.department:id,name', 'challenge:id,title,category'])
+            ->orderByDesc('joined_at')
+            ->get();
+
+        return $this->streamCsv('full_participation_report.csv', ['Name', 'Email', 'Department', 'Challenge', 'Category', 'Status', 'Points Awarded', 'Joined At', 'Submitted At'], function ($handle) use ($participants) {
+            foreach ($participants as $participant) {
+                fputcsv($handle, [
+                    $participant->user?->name ?? 'N/A',
+                    $participant->user?->email ?? 'N/A',
+                    $participant->user?->department?->name ?? 'N/A',
+                    $participant->challenge?->title ?? 'N/A',
+                    $participant->challenge?->category ?? 'N/A',
+                    ucfirst($participant->status),
+                    $participant->points_awarded ?? 0,
+                    optional($participant->joined_at)->toDateTimeString() ?? '',
+                    optional($participant->submitted_at)->toDateTimeString() ?? '',
+                ]);
+            }
+        });
+    }
+
+    private function exportPointsDistributionCsv()
+    {
+        $rows = EngagementRewardChallengeParticipant::query()
+            ->selectRaw('user_id, SUM(points_awarded) as total_points, COUNT(CASE WHEN status = "approved" THEN 1 END) as challenges_completed')
+            ->groupBy('user_id')
+            ->orderByDesc('total_points')
+            ->with('user:id,name,email')
+            ->get();
+
+        return $this->streamCsv('points_distribution_report.csv', ['Name', 'Email', 'Total Points', 'Challenges Completed'], function ($handle) use ($rows) {
+            foreach ($rows as $row) {
+                fputcsv($handle, [
+                    $row->user?->name ?? 'N/A',
+                    $row->user?->email ?? 'N/A',
+                    (int) $row->total_points,
+                    (int) $row->challenges_completed,
+                ]);
+            }
+        });
+    }
+
+    private function exportDepartmentAnalyticsCsv()
+    {
+        $participants = EngagementRewardChallengeParticipant::query()
+            ->with('user:id,department_id')
+            ->get()
+            ->groupBy(fn (EngagementRewardChallengeParticipant $participant) => $participant->user?->department_id ?? 0);
+
+        $departments = Department::whereIn('id', $participants->keys()->filter())->pluck('name', 'id');
+
+        return $this->streamCsv('department_analytics_report.csv', ['Department', 'Total Participants', 'Completed', 'Completion Rate', 'Total Points'], function ($handle) use ($participants, $departments) {
+            foreach ($participants as $departmentId => $group) {
+                $total = $group->count();
+                $completed = $group->where('status', 'approved')->count();
+                $points = (int) $group->sum('points_awarded');
+
+                fputcsv($handle, [
+                    $departments[$departmentId] ?? 'Unassigned',
+                    $total,
+                    $completed,
+                    $total > 0 ? round(($completed / $total) * 100).'%' : '0%',
+                    $points,
+                ]);
+            }
+        });
+    }
+
+    private function exportCompletionDetailsCsv()
+    {
+        $challenges = EngagementRewardChallenge::query()
+            ->withCount('participants')
+            ->with('participants:id')
+            ->get();
+
+        return $this->streamCsv('completion_details_report.csv', ['Challenge', 'Category', 'Start Date', 'Deadline', 'Participants', 'Completed', 'Completion Rate'], function ($handle) use ($challenges) {
+            foreach ($challenges as $challenge) {
+                $total = $challenge->participants_count;
+                $completed = $challenge->participants->filter(fn (User $user) => $user->pivot->status === 'approved')->count();
+
+                fputcsv($handle, [
+                    $challenge->title,
+                    $challenge->category,
+                    $challenge->start_date->toDateString(),
+                    $challenge->deadline->toDateString(),
+                    $total,
+                    $completed,
+                    $total > 0 ? round(($completed / $total) * 100).'%' : '0%',
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Shared CSV streaming helper so each export only needs to supply its header and row writer.
+     */
+    private function streamCsv(string $filename, array $header, callable $writeRows)
+    {
+        return response()->streamDownload(function () use ($header, $writeRows) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $header);
+            $writeRows($handle);
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
+    /**
+     * Admin "Employee Profiles" tab: every employee who has joined at least one
+     * challenge, with their RnR points, department, last activity, and status.
+     * Accepts optional `department` and `search` (name or employee ID) filters.
+     */
+    public function employeeProfiles(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'department' => ['nullable', 'string', 'max:255'],
+            'search' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $allEmployees = $this->buildEmployeeProfiles();
+
+        $filtered = $allEmployees->filter(function (array $employee) use ($validated) {
+            $matchesDepartment = empty($validated['department'])
+                || $validated['department'] === 'All'
+                || $employee['department'] === $validated['department'];
+
+            $matchesSearch = empty($validated['search']) || str_contains(
+                strtolower($employee['name'].' '.$employee['employee_id']),
+                strtolower($validated['search']),
+            );
+
+            return $matchesDepartment && $matchesSearch;
+        })->values();
+
+        $totalEmployees = $allEmployees->count();
+        $avgPoints = $totalEmployees > 0 ? (int) round($allEmployees->avg('points')) : 0;
+        $topEngager = $allEmployees->sortByDesc('points')->first();
+        $atRiskCount = $allEmployees->where('points', 0)->count();
+
+        $departments = Department::orderBy('name')->pluck('name')->values();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'summary' => [
+                    'total_employees' => $totalEmployees,
+                    'avg_points' => $avgPoints,
+                    'top_engager' => $topEngager ? [
+                        'name' => $topEngager['name'],
+                        'points' => $topEngager['points'],
+                        'department' => $topEngager['department'],
+                    ] : null,
+                    'at_risk_count' => $atRiskCount,
+                ],
+                'employees' => $filtered,
+                'departments' => $departments,
+            ],
+        ]);
+    }
+
+    /**
+     * Stream a CSV of the employee profiles, honoring the same filters as employeeProfiles().
+     */
+    public function exportEmployeeProfiles(Request $request)
+    {
+        $validated = $request->validate([
+            'department' => ['nullable', 'string', 'max:255'],
+            'search' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $employees = $this->buildEmployeeProfiles()->filter(function (array $employee) use ($validated) {
+            $matchesDepartment = empty($validated['department'])
+                || $validated['department'] === 'All'
+                || $employee['department'] === $validated['department'];
+
+            $matchesSearch = empty($validated['search']) || str_contains(
+                strtolower($employee['name'].' '.$employee['employee_id']),
+                strtolower($validated['search']),
+            );
+
+            return $matchesDepartment && $matchesSearch;
+        })->values();
+
+        return $this->streamCsv('employee_profiles.csv', ['Employee Name', 'Employee ID', 'Department', 'Position', 'Points', 'Last Active', 'Status'], function ($handle) use ($employees) {
+            foreach ($employees as $employee) {
+                fputcsv($handle, [
+                    $employee['name'],
+                    $employee['employee_id'],
+                    $employee['department'],
+                    $employee['position'],
+                    $employee['points'],
+                    $employee['last_active'] ?? '',
+                    $employee['status'],
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Build the full (unfiltered) list of RnR employee profiles: every employee
+     * who has joined at least one challenge, with aggregated points and activity.
+     *
+     * @return \Illuminate\Support\Collection<int, array>
+     */
+    private function buildEmployeeProfiles(): \Illuminate\Support\Collection
+    {
+        $participantUserIds = EngagementRewardChallengeParticipant::query()
+            ->distinct()
+            ->pluck('user_id');
+
+        $users = User::query()
+            ->whereIn('id', $participantUserIds)
+            ->whereIn('role', [User::ROLE_ADMIN, User::ROLE_EMPLOYEE])
+            ->with(['account_employee.department:id,name'])
+            ->get(['id', 'name']);
+
+        $participantsByUser = EngagementRewardChallengeParticipant::query()
+            ->whereIn('user_id', $participantUserIds)
+            ->get(['user_id', 'status', 'points_awarded', 'joined_at', 'submitted_at', 'reviewed_at'])
+            ->groupBy('user_id');
+
+        return $users->map(function (User $user) use ($participantsByUser) {
+            $participants = $participantsByUser->get($user->id, collect());
+            $employee = $user->account_employee;
+
+            $points = (int) $participants->where('status', 'approved')->sum('points_awarded');
+
+            $lastActive = $participants
+                ->flatMap(fn (EngagementRewardChallengeParticipant $p) => array_filter([
+                    $p->joined_at, $p->submitted_at, $p->reviewed_at,
+                ]))
+                ->sort()
+                ->last();
+
+            return [
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'employee_id' => $employee?->employee_id ?? 'N/A',
+                'department' => $employee?->department?->name ?? 'Unassigned',
+                'position' => $employee?->position ?? 'N/A',
+                'points' => $points,
+                'last_active' => $lastActive?->toDateTimeString(),
+                'status' => $employee?->employment_status ? 'Inactive' : 'Active',
+            ];
+        })->values();
     }
 }

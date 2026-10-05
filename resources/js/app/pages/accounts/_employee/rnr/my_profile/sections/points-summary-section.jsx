@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Award } from "lucide-react";
+import { Trophy } from "lucide-react";
 import Badge from "@/app/_components/badge";
 import { get_engagement_reward_challenge_profile_summary_thunk } from "@/app/redux/engagement-thunk";
 
 const STATUS_BADGE = {
-    joined: { label: "In Progress", variant: "info" },
-    submitted: { label: "Pending Review", variant: "warning" },
-    approved: { label: "Approved", variant: "success" },
-    declined: { label: "Declined", variant: "danger" },
+    joined:    { label: "In progress",    variant: "info" },
+    submitted: { label: "Pending review", variant: "warning" },
+    approved:  { label: "Approved",       variant: "success" },
+    declined:  { label: "Declined",       variant: "danger" },
 };
 
 function formatDate(dateString) {
@@ -33,56 +33,62 @@ export default function PointsSummarySection() {
     const { total_points: totalPoints, challenge_history: history } = challengeProfileSummary;
 
     return (
-        <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4 rounded-2xl bg-white p-6 shadow-sm">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-600">
-                    <Award className="h-7 w-7" />
+        <div className="flex flex-col gap-3">
+            {/* Hero points card */}
+            <div className="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-5">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[10px] bg-amber-50 text-amber-600">
+                    <Trophy className="h-5 w-5" />
                 </div>
                 <div>
-                    <p className="text-sm text-gray-500">Total Points</p>
-                    <p className="text-2xl font-bold text-gray-900">{totalPoints}</p>
+                    <p className="mb-0.5 text-xs tracking-wide text-gray-400">Total points</p>
+                    <p className="text-3xl font-medium leading-none text-gray-900">
+                        {totalPoints?.toLocaleString()}
+                    </p>
                 </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-6 shadow-sm">
-                <h3 className="mb-3 text-sm font-bold text-gray-900">Challenge History</h3>
+            {/* Challenge history */}
+            <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
+                <div className="border-b border-gray-100 px-5 py-4">
+                    <h3 className="text-xs font-medium text-gray-400">Challenge history</h3>
+                </div>
 
                 {challengeProfileSummaryLoading ? (
-                    <p className="text-sm text-gray-500">Loading...</p>
+                    <p className="px-5 py-4 text-sm text-gray-400">Loading…</p>
                 ) : history.length === 0 ? (
-                    <p className="text-sm text-gray-500">
-                        You haven&apos;t joined any challenges yet.
+                    <p className="px-5 py-4 text-sm text-gray-400">
+                        No challenges joined yet.
                     </p>
                 ) : (
-                    <div className="flex flex-col divide-y divide-gray-50">
+                    <ul className="divide-y divide-gray-50">
                         {history.map((item) => {
                             const badge = STATUS_BADGE[item.status] ?? STATUS_BADGE.joined;
 
                             return (
-                                <div
+                                <li
                                     key={item.id}
-                                    className="flex items-center justify-between gap-3 py-3"
+                                    className="flex items-center justify-between gap-3 px-5 py-3.5"
                                 >
-                                    <div>
-                                        <p className="text-sm font-semibold text-gray-800">
+                                    <div className="min-w-0">
+                                        <p className="truncate text-sm font-medium text-gray-900">
                                             {item.challenge_title}
                                         </p>
-                                        <p className="text-xs text-gray-400">
+                                        <p className="mt-0.5 text-xs text-gray-400">
                                             {item.category} · Joined {formatDate(item.joined_at)}
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex flex-shrink-0 items-center gap-2">
                                         <Badge label={badge.label} variant={badge.variant} />
                                         {item.status === "approved" && (
-                                            <span className="text-sm font-semibold text-emerald-600">
+                                            <span className="text-xs font-medium text-emerald-600">
                                                 +{item.points} pts
                                             </span>
                                         )}
                                     </div>
-                                </div>
+                                </li>
                             );
                         })}
-                    </div>
+                    </ul>
                 )}
             </div>
         </div>

@@ -5,11 +5,11 @@ namespace App\Http\Controllers\API\Engagement;
 use App\Http\Controllers\Controller;
 use App\Mail\WorkAnniversaryMail;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class EngagementBirthdayController extends Controller
 {
@@ -276,9 +276,22 @@ class EngagementBirthdayController extends Controller
             ];
 
             try {
-                Mail::to($user->email)->send(new WorkAnniversaryMail($payload, $validated['message']));
+                $mailable = new WorkAnniversaryMail($payload, $validated['message']);
+                $htmlBody = $mailable->render();
+
+                $client = new Client();
+                $client->post(env('WORK_ANNIVERSARY'), [
+                    'headers' => [
+                        'Content-Type' => 'application/x-www-form-urlencoded',
+                    ],
+                    'form_params' => [
+                        'recipient' => $user->email,
+                        'subject' => config('app.name')." — Happy {$payload['anniversary_label']}! 🎉",
+                        'body' => $htmlBody,
+                    ],
+                ]);
                 $sent[] = $user->id;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Log::error('Work anniversary email failed', [
                     'user_id' => $user->id,
                     'email' => $user->email,
