@@ -263,15 +263,15 @@ export default function ResponsesSection({ surveyId }) {
             <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
                 <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-semibold text-gray-700">Employee Response Tracker</h3>
-                    <Button
-                        type="button"
-                        onClick={handleExport}
+                        <Button
+                            type="button"
+                            onClick={handleExport}
                         disabled={exporting || total_responses === 0}
                         className="flex items-center gap-1.5 rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:opacity-50"
-                    >
-                        <Download size={14} />
-                        {exporting ? "Exporting…" : "Export Responses"}
-                    </Button>
+                        >
+                            <Download size={14} />
+                            {exporting ? "Exporting…" : "Export Responses"}
+                        </Button>
                 </div>
                 <div className="p-4">
                     {selectedUserId ? (
