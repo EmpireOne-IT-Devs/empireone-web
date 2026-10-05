@@ -245,20 +245,31 @@ class EngagementPostEventSurveyController extends Controller
     }
 
     // ── Admin: export only submitted responses as a CSV (importable into Google Sheets) ──
-    public function exportResponses(int $id)
+    public function exportResponses(Request $request, int $id)
     {
+        $validated = $request->validate([
+            'site' => 'nullable|string|max:255',
+        ]);
+
         $survey = EngagementPostEventSurvey::with(['questions'])->findOrFail($id);
 
         // Only responses actually submitted are included; employees who never answered are skipped.
-        $responses = EngagementPostEventSurveyResponse::with([
+        $responseQuery = EngagementPostEventSurveyResponse::with([
                 'user.account_employee.account',
                 'user.account_employee.department',
                 'user.account_employee.location',
                 'answers',
             ])
             ->where('engagement_post_event_survey_id', $id)
-            ->orderBy('submitted_at')
-            ->get();
+            ->orderBy('submitted_at');
+
+        if (!empty($validated['site'])) {
+            $responseQuery->whereHas('user.account_employee.location', function ($query) use ($validated) {
+                $query->where('name', $validated['site']);
+            });
+        }
+
+        $responses = $responseQuery->get();
 
         $questions = $survey->questions;
         $filename  = 'survey_' . $survey->id . '_responses_' . now()->format('Ymd_His') . '.csv';

@@ -89,6 +89,7 @@ export default function ResponsesSection({ surveyId }) {
         (state) => state.post_event_surveys
     );
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedSite, setSelectedSite] = useState("");
     const [exporting, setExporting] = useState(false);
 
     useEffect(() => {
@@ -98,12 +99,12 @@ export default function ResponsesSection({ surveyId }) {
     const handleExport = async () => {
         setExporting(true);
         try {
-            const response = await export_survey_responses_service(surveyId);
+            const response = await export_survey_responses_service(surveyId, selectedSite);
             const blob = new Blob([response.data], { type: "text/csv" });
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = `survey_${surveyId}_responses.csv`;
+            link.download = `survey_${surveyId}_responses${selectedSite ? `_site_${selectedSite}` : ""}.csv`;
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -126,6 +127,11 @@ export default function ResponsesSection({ surveyId }) {
     };
 
     const surveyQuestions = questions ?? [];
+    const sites = [...new Set(
+        response_tracker
+            .map((row) => row.site)
+            .filter((site) => site && site !== "N/A")
+    )].sort((a, b) => a.localeCompare(b));
 
     // Every survey question is surfaced as its own column, mirroring a spreadsheet response sheet.
     const questionColumns = surveyQuestions.map((question) => ({
@@ -263,15 +269,28 @@ export default function ResponsesSection({ surveyId }) {
             <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
                 <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-semibold text-gray-700">Employee Response Tracker</h3>
-                    <Button
-                        type="button"
-                        onClick={handleExport}
-                        disabled={exporting || total_responses === 0}
-                        className="flex items-center gap-1.5 rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:opacity-50"
-                    >
-                        <Download size={14} />
-                        {exporting ? "Exporting…" : "Export Responses"}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <select
+                            aria-label="Filter export by site"
+                            value={selectedSite}
+                            onChange={(event) => setSelectedSite(event.target.value)}
+                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        >
+                            <option value="">All Sites</option>
+                            {sites.map((site) => (
+                                <option key={site} value={site}>{site}</option>
+                            ))}
+                        </select>
+                        <Button
+                            type="button"
+                            onClick={handleExport}
+                            disabled={exporting || total_responses === 0}
+                            className="flex items-center gap-1.5 rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:opacity-50"
+                        >
+                            <Download size={14} />
+                            {exporting ? "Exporting…" : "Export Responses"}
+                        </Button>
+                    </div>
                 </div>
                 <div className="p-4">
                     {selectedUserId ? (
