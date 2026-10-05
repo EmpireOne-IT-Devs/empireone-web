@@ -1,1 +1,0 @@
-import{b as n,j as t}from"./app-Dyduka7c.js";import{P as o}from"./pagination-C1fUHgWT.js";function i(){const{files:a}=n(e=>e.human_resources);return t.jsx(t.Fragment,{children:t.jsx(o,{data:a})})}export{i as default};
