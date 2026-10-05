@@ -1,26 +1,34 @@
 import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
+import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { FaClock, FaXmark, FaPlus } from "react-icons/fa6";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     get_leave_requests_service,
+    get_leave_credits_service,
     create_leave_request_service,
 } from "@/app/services/leave-service";
+import { DatePicker } from "antd";
 
 const VOLUNTARY_TIME_OFF = "Voluntary Time Off";
+const DEDUCTIBLE_TYPES = ["Emergency Leave", "Sick Leave", "Vacation Leave"];
 
 export default function LeaveSection({ date, onSaved }) {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [leaveRequests, setLeaveRequests] = useState([]);
+    const [credits, setCredits] = useState(null);
 
     const [form, setForm] = useState({
-        attendanceDate: date,
+        attendanceDate: dayjs(date),
         leaveType: "",
         leaveReason: "",
     });
+
+    const DATE_FORMAT = "MM/DD/YYYY";
+    const DATE_TIME_FORMAT = "MM/DD/YYYY hh:mm A";
 
     const leaveTypes = [
         "Emergency Leave",
@@ -38,50 +46,10 @@ export default function LeaveSection({ date, onSaved }) {
         VOLUNTARY_TIME_OFF,
     ];
 
-    const leaveCredits = [
-        {
-            date: "2026-08-31 12:00 AM",
-            credit: "0.42",
-            note: "",
-            deleted: "No",
-        },
-        {
-            date: "2026-07-31 12:00 AM",
-            credit: "0.42",
-            note: "",
-            deleted: "No",
-        },
-        {
-            date: "2026-06-30 12:00 AM",
-            credit: "0.42",
-            note: "",
-            deleted: "No",
-        },
-        {
-            date: "2026-05-31 12:00 AM",
-            credit: "0.42",
-            note: "",
-            deleted: "No",
-        },
-        {
-            date: "2026-04-30 12:00 AM",
-            credit: "0.42",
-            note: "",
-            deleted: "No",
-        },
-        {
-            date: "2026-03-31 12:00 AM",
-            credit: "0.42",
-            note: "",
-            deleted: "No",
-        },
-        {
-            date: "2026-02-04 12:00 AM",
-            credit: "0.42",
-            note: "",
-            deleted: "No",
-        },
-    ];
+    const leaveCredits = credits?.history ?? [];
+    const isDeductible = DEDUCTIBLE_TYPES.includes(form.leaveType);
+    const noCredits =
+        isDeductible && (!credits?.is_regular || credits.balance < 1);
 
     const inputClass =
         "w-full rounded-md border border-gray-300 px-3 py-2 text-sm " +
@@ -98,6 +66,13 @@ export default function LeaveSection({ date, onSaved }) {
         }));
     };
 
+    const handleDateChange = (name) => (date) => {
+        setForm((prev) => ({
+            ...prev,
+            [name]: date,
+        }));
+    };
+
     const fetchLeaveRequests = useCallback(async () => {
         try {
             const res = await get_leave_requests_service(date);
@@ -107,9 +82,22 @@ export default function LeaveSection({ date, onSaved }) {
         }
     }, [date]);
 
+    const fetchCredits = useCallback(async () => {
+        try {
+            const res = await get_leave_credits_service();
+            setCredits(res.data.data);
+        } catch {
+            setCredits(null);
+        }
+    }, []);
+
     useEffect(() => {
         fetchLeaveRequests();
     }, [fetchLeaveRequests]);
+
+    useEffect(() => {
+        fetchCredits();
+    }, [fetchCredits]);
 
     const activeLeave = leaveRequests.find((r) => r.status !== "declined");
     const isOnLeave =
@@ -124,7 +112,7 @@ export default function LeaveSection({ date, onSaved }) {
 
         try {
             await create_leave_request_service({
-                date: form.attendanceDate,
+                date: form.attendanceDate.format("YYYY-MM-DD"),
                 leave_type: form.leaveType,
                 reason: form.leaveReason,
             });
@@ -138,6 +126,7 @@ export default function LeaveSection({ date, onSaved }) {
 
             setForm((prev) => ({ ...prev, leaveType: "", leaveReason: "" }));
             fetchLeaveRequests();
+            fetchCredits();
             onSaved?.();
         } catch (err) {
             dispatch(
@@ -183,9 +172,15 @@ export default function LeaveSection({ date, onSaved }) {
                         </div>
 
                         <div className="text-2xl font-bold text-green-600">
-                            2.94
+                            {(credits?.balance ?? 0).toFixed(2)}
                         </div>
                     </div>
+
+                    <p className="mt-2 text-xs text-gray-500">
+                        {credits?.is_regular
+                            ? `${credits.year} credits: earned ${credits.earned.toFixed(2)} - used ${credits.used} | ${credits.annual_entitlement} days/year, credited monthly (regularized ${moment(credits.regularization_date).format("LL")}).`
+                            : "Leave credits start accruing once you are regularized."}
+                    </p>
                 </div>
 
                 {/* Leave Request Form */}
@@ -201,13 +196,13 @@ export default function LeaveSection({ date, onSaved }) {
                                 <label className={labelClass}>
                                     Attendance Date
                                 </label>
-
-                                <input
-                                    type="date"
+                                <DatePicker
                                     name="attendanceDate"
+                                    format={DATE_FORMAT}
                                     value={form.attendanceDate}
+                                    onChange={handleDateChange("attendanceDate")}
+                                    className={`${inputClass} w-full`}
                                     disabled
-                                    className={`${inputClass} bg-gray-50`}
                                 />
                             </div>
 
@@ -252,11 +247,19 @@ export default function LeaveSection({ date, onSaved }) {
                             </div>
                         </div>
 
+                        {noCredits && (
+                            <p className="mt-3 text-sm text-red-600">
+                                {credits?.is_regular
+                                    ? "Insufficient leave credits for this leave type."
+                                    : "Only regular employees can use leave credits."}
+                            </p>
+                        )}
+
                         {/* Submit */}
                         <div className="mt-4 flex justify-end">
                             <button
                                 type="submit"
-                                disabled={submitting}
+                                disabled={submitting || noCredits}
                                 className="inline-flex items-center gap-2 rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600 disabled:opacity-60"
                             >
                                 <FaPlus />
@@ -280,12 +283,20 @@ export default function LeaveSection({ date, onSaved }) {
 
                         <StatusItem
                             label="Leave Endorsed"
-                            value={latestLeave?.status === "endorsed" ? "Yes" : "No"}
+                            value={
+                                latestLeave?.status === "endorsed"
+                                    ? "Yes"
+                                    : "No"
+                            }
                         />
 
                         <StatusItem
                             label="Leave Approved"
-                            value={latestLeave?.status === "approved" ? "Yes" : "No"}
+                            value={
+                                latestLeave?.status === "approved"
+                                    ? "Yes"
+                                    : "No"
+                            }
                         />
 
                         <StatusItem
@@ -299,7 +310,9 @@ export default function LeaveSection({ date, onSaved }) {
                             label="Leave Date Filed"
                             value={
                                 latestLeave
-                                    ? moment(latestLeave.created_at).format("LLL")
+                                    ? moment(latestLeave.created_at).format(
+                                          "LLL",
+                                      )
                                     : "No Data"
                             }
                         />
@@ -385,6 +398,17 @@ export default function LeaveSection({ date, onSaved }) {
                             </thead>
 
                             <tbody>
+                                {leaveCredits.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan={4}
+                                            className="px-4 py-6 text-center text-gray-500"
+                                        >
+                                            No leave credits yet.
+                                        </td>
+                                    </tr>
+                                )}
+
                                 {leaveCredits.map((item, index) => (
                                     <tr
                                         key={index}

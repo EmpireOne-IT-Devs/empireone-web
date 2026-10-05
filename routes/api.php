@@ -297,6 +297,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('overtime_requests/{overtimeRequest}/approve', [OvertimeRequestController::class, 'approve']);
         Route::post('overtime_requests/{overtimeRequest}/decline', [OvertimeRequestController::class, 'decline']);
 
+        Route::get('leave_requests/credits', [LeaveRequestController::class, 'credits']);
         Route::get('leave_requests', [LeaveRequestController::class, 'index']);
         Route::post('leave_requests', [LeaveRequestController::class, 'store']);
 
