@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import moment from "moment";
+import { useDispatch } from "react-redux";
 import { FaClock, FaXmark, FaPlus } from "react-icons/fa6";
+import { setAlert } from "@/app/redux/app-slice";
+import {
+    get_leave_requests_service,
+    create_leave_request_service,
+} from "@/app/services/leave-service";
 
-export default function LeaveSection() {
+const VOLUNTARY_TIME_OFF = "Voluntary Time Off";
+
+export default function LeaveSection({ date, onSaved }) {
+    const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [leaveRequests, setLeaveRequests] = useState([]);
 
     const [form, setForm] = useState({
-        attendanceDate: "2026-09-19",
+        attendanceDate: date,
         leaveType: "",
         leaveReason: "",
     });
@@ -23,6 +35,7 @@ export default function LeaveSection() {
         "Suspension Type Example",
         "Vacation Leave",
         "VAWC (Violence Against Women and Children)",
+        VOLUNTARY_TIME_OFF,
     ];
 
     const leaveCredits = [
@@ -85,16 +98,59 @@ export default function LeaveSection() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const fetchLeaveRequests = useCallback(async () => {
+        try {
+            const res = await get_leave_requests_service(date);
+            setLeaveRequests(res.data.data ?? []);
+        } catch {
+            setLeaveRequests([]);
+        }
+    }, [date]);
+
+    useEffect(() => {
+        fetchLeaveRequests();
+    }, [fetchLeaveRequests]);
+
+    const activeLeave = leaveRequests.find((r) => r.status !== "declined");
+    const isOnLeave =
+        !!activeLeave && activeLeave.leave_type !== VOLUNTARY_TIME_OFF;
+    const declinedLeave = leaveRequests.find((r) => r.status === "declined");
+    const latestLeave = activeLeave ?? declinedLeave;
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Leave Request:", form);
+        setSubmitting(true);
 
-        // Add your API request here
-        // Example:
-        // dispatch(createLeaveRequest(form));
+        try {
+            await create_leave_request_service({
+                date: form.attendanceDate,
+                leave_type: form.leaveType,
+                reason: form.leaveReason,
+            });
 
-        setIsOpen(false);
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Leave request submitted successfully!",
+                }),
+            );
+
+            setForm((prev) => ({ ...prev, leaveType: "", leaveReason: "" }));
+            fetchLeaveRequests();
+            onSaved?.();
+        } catch (err) {
+            dispatch(
+                setAlert({
+                    type: "error",
+                    title:
+                        err.response?.data?.message ||
+                        "Failed to submit leave request.",
+                }),
+            );
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -150,8 +206,8 @@ export default function LeaveSection() {
                                     type="date"
                                     name="attendanceDate"
                                     value={form.attendanceDate}
-                                    onChange={handleChange}
-                                    className={inputClass}
+                                    disabled
+                                    className={`${inputClass} bg-gray-50`}
                                 />
                             </div>
 
@@ -200,10 +256,11 @@ export default function LeaveSection() {
                         <div className="mt-4 flex justify-end">
                             <button
                                 type="submit"
-                                className="inline-flex items-center gap-2 rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600"
+                                disabled={submitting}
+                                className="inline-flex items-center gap-2 rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600 disabled:opacity-60"
                             >
                                 <FaPlus />
-                                Add Leave
+                                {submitting ? "Submitting..." : "Add Leave"}
                             </button>
                         </div>
                     </div>
@@ -216,17 +273,36 @@ export default function LeaveSection() {
                     </h3>
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-                        <StatusItem label="Is On Leave" value="No" />
+                        <StatusItem
+                            label="Is On Leave"
+                            value={isOnLeave ? "Yes" : "No"}
+                        />
 
-                        <StatusItem label="Leave Endorsed" value="No" />
+                        <StatusItem
+                            label="Leave Endorsed"
+                            value={latestLeave?.status === "endorsed" ? "Yes" : "No"}
+                        />
 
-                        <StatusItem label="Leave Approved" value="No" />
+                        <StatusItem
+                            label="Leave Approved"
+                            value={latestLeave?.status === "approved" ? "Yes" : "No"}
+                        />
 
-                        <StatusItem label="Leave Declined" value="No" />
+                        <StatusItem
+                            label="Leave Declined"
+                            value={declinedLeave && !activeLeave ? "Yes" : "No"}
+                        />
 
                         <StatusItem label="Leave Paid Time Off" value="No" />
 
-                        <StatusItem label="Leave Date Filed" value="No Data" />
+                        <StatusItem
+                            label="Leave Date Filed"
+                            value={
+                                latestLeave
+                                    ? moment(latestLeave.created_at).format("LLL")
+                                    : "No Data"
+                            }
+                        />
                     </div>
                 </div>
 

@@ -8,6 +8,7 @@ import AttendanceAction from "../component/attendance-action";
 export default function AttendanceLogs({ refreshKey }) {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [reloadKey, setReloadKey] = useState(0);
     const [endDate, setEndDate] = useState("");
     const [startDate, setStartDate] = useState(
         moment().subtract(19, "days").format("YYYY-MM-DD"),
@@ -34,7 +35,7 @@ export default function AttendanceLogs({ refreshKey }) {
         };
 
         fetchLogs();
-    }, [refreshKey, startDate, endDate]);
+    }, [refreshKey, reloadKey, startDate, endDate]);
 
     const resolveDisplayStatus = (log) => {
         if (log.display_status) return log.display_status;
@@ -102,6 +103,13 @@ export default function AttendanceLogs({ refreshKey }) {
                     </span>
                 );
 
+            case "On Leave":
+                return (
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-teal-100 text-teal-700">
+                        On Leave
+                    </span>
+                );
+
             default:
                 return (
                     <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
@@ -115,6 +123,21 @@ export default function AttendanceLogs({ refreshKey }) {
         if (!time) return "-";
 
         return moment(time).format("MMM D, YYYY hh:mm A");
+    };
+
+    const formatCorrection = (time, status) => {
+        if (!time) return "-";
+
+        return (
+            <div className="flex flex-col">
+                <span>{formatTime(time)}</span>
+                {status && (
+                    <span className="text-[11px] capitalize text-gray-500">
+                        {status}
+                    </span>
+                )}
+            </div>
+        );
     };
 
     const getHolidayBadge = (log) => {
@@ -152,8 +175,11 @@ export default function AttendanceLogs({ refreshKey }) {
             <FilterLogDate
                 startDate={startDate}
                 endDate={endDate}
-                onStartDateChange={setStartDate}
-                onEndDateChange={setEndDate}
+                onSearch={(start, end) => {
+                    setStartDate(start);
+                    setEndDate(end);
+                    setReloadKey((k) => k + 1);
+                }}
             />
 
             {/* ONLY THIS AREA SCROLLS HORIZONTALLY AND VERTICALLY */}
@@ -181,8 +207,10 @@ export default function AttendanceLogs({ refreshKey }) {
                                 Date
                             </th>
 
+                            <TableColumnsComponent column_name="Time In" />
                             <TableColumnsComponent column_name="Clock In" />
                             <TableColumnsComponent column_name="Clock In Correction" />
+                            <TableColumnsComponent column_name="Time Out" />
                             <TableColumnsComponent column_name="Clock Out" />
                             <TableColumnsComponent column_name="Clock Out Correction" />
                             <TableColumnsComponent column_name="Status" />
@@ -250,11 +278,21 @@ export default function AttendanceLogs({ refreshKey }) {
                                 "
                                     >
                                         <span className="flex gap-2">
-                                            <AttendanceAction />
+                                            <AttendanceAction
+                                                date={log.date}
+                                                log={log}
+                                                onSaved={() =>
+                                                    setReloadKey((k) => k + 1)
+                                                }
+                                            />
                                             {moment(log.date).format("LL")}
                                         </span>
                                     </td>
-
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {log.is_day_off
+                                            ? "-"
+                                            : formatScheduleTime(log.time_in)}
+                                    </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.clock_in_date &&
                                         log.clock_in_time ? (
@@ -277,9 +315,16 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatTime(log.clock_in_correction)}
+                                        {formatCorrection(
+                                            log.clock_in_correction,
+                                            log.correction_status,
+                                        )}
                                     </td>
-
+                                    <td className="px-4 py-3 whitespace-nowrap">
+                                        {log.is_day_off
+                                            ? "-"
+                                            : formatScheduleTime(log.time_out)}
+                                    </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.clock_out_date &&
                                         log.clock_out_time ? (
@@ -302,7 +347,10 @@ export default function AttendanceLogs({ refreshKey }) {
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        {formatTime(log.clock_out_correction)}
+                                        {formatCorrection(
+                                            log.clock_out_correction,
+                                            log.correction_status,
+                                        )}
                                     </td>
 
                                     <td className="px-4 py-3 whitespace-nowrap">
@@ -331,27 +379,22 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {getHolidayBadge(log)}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
+                                    {[
+                                        "regular_overtime_mins",
+                                        "dayoff_overtime_mins",
+                                        "dayoff_overtime_beyond_8hrs_mins",
+                                        "dayoff_overtime_regular_holiday_mins",
+                                        "dayoff_overtime_special_holiday_mins",
+                                        "regular_holiday_overtime_mins",
+                                        "special_holiday_overtime_mins",
+                                    ].map((key) => (
+                                        <td
+                                            key={key}
+                                            className="px-4 py-3 whitespace-nowrap"
+                                        >
+                                            {log[key] ?? 0}
+                                        </td>
+                                    ))}
 
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.regular_holiday_mins ?? 0}
@@ -361,50 +404,28 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {log.special_holiday_mins ?? 0}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
+                                    {[
+                                        "night_diff_mins",
+                                        "regular_holiday_night_diff_mins",
+                                        "special_holiday_night_diff_mins",
+                                        "overtime_night_diff_mins",
+                                        "dayoff_overtime_night_diff_mins",
+                                    ].map((key) => (
+                                        <td
+                                            key={key}
+                                            className="px-4 py-3 whitespace-nowrap"
+                                        >
+                                            {log[key] ?? 0}
+                                        </td>
+                                    ))}
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.is_day_off ? (
                                             "Day Off"
                                         ) : (
                                             <>
-                                                {formatScheduleTime(
-                                                    log.schedule_time_in,
-                                                )}
-                                                {" - "}
-                                                {formatScheduleTime(
-                                                    log.schedule_time_out,
-                                                )}
-
-                                                {log.schedule_time_out &&
-                                                    log.schedule_time_in &&
-                                                    moment(
-                                                        log.schedule_time_out,
-                                                        "HH:mm:ss",
-                                                    ).isSameOrBefore(
-                                                        moment(
-                                                            log.schedule_time_in,
-                                                            "HH:mm:ss",
-                                                        ),
-                                                    ) &&
-                                                    " (next day)"}
-
-                                                <span className="ml-2 text-gray-500">
-                                                    ({log.required_minutes ?? 0}{" "}
-                                                    mins)
+                                                <span>
+                                                    {log.required_minutes ??
+                                                        0}{" "}
                                                 </span>
                                             </>
                                         )}
@@ -413,16 +434,18 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {log.is_day_off ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {log.is_on_leave ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {log.is_voluntary_time_off
+                                            ? "Yes"
+                                            : "No"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {formatTime(log.correction_endorsed_at)}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {formatTime(log.correction_granted_at)}
                                     </td>
                                 </tr>
                             ))

@@ -5,6 +5,7 @@ use App\Http\Controllers\AIController;
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
 use App\Http\Controllers\API\Timekeeping\AttendanceController;
+use App\Http\Controllers\API\Timekeeping\AttendanceCorrectionController;
 use App\Http\Controllers\API\Account\AccountDocumentController;
 use App\Http\Controllers\API\Account\AccountEmployeeController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
@@ -48,6 +49,8 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventFileController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\API\Timekeeping\AttendanceEmployeeSettingsController;
 use App\Http\Controllers\API\Timekeeping\HolidayController;
+use App\Http\Controllers\API\Timekeeping\OvertimeRequestController;
+use App\Http\Controllers\API\Timekeeping\LeaveRequestController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
@@ -287,6 +290,21 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('holidays', [HolidayController::class, 'index']);
         Route::post('holidays', [HolidayController::class, 'store']);
         Route::delete('holidays/{holiday}', [HolidayController::class, 'destroy']);
+
+        Route::get('overtime_requests', [OvertimeRequestController::class, 'index']);
+        Route::post('overtime_requests', [OvertimeRequestController::class, 'store']);
+        Route::post('overtime_requests/{overtimeRequest}/endorse', [OvertimeRequestController::class, 'endorse']);
+        Route::post('overtime_requests/{overtimeRequest}/approve', [OvertimeRequestController::class, 'approve']);
+        Route::post('overtime_requests/{overtimeRequest}/decline', [OvertimeRequestController::class, 'decline']);
+
+        Route::get('leave_requests', [LeaveRequestController::class, 'index']);
+        Route::post('leave_requests', [LeaveRequestController::class, 'store']);
+
+        Route::get('attendance_corrections', [AttendanceCorrectionController::class, 'index']);
+        Route::post('attendance_corrections', [AttendanceCorrectionController::class, 'store']);
+        Route::post('attendance_corrections/{attendanceCorrection}/endorse', [AttendanceCorrectionController::class, 'endorse']);
+        Route::post('attendance_corrections/{attendanceCorrection}/grant', [AttendanceCorrectionController::class, 'grant']);
+        Route::post('attendance_corrections/{attendanceCorrection}/decline', [AttendanceCorrectionController::class, 'decline']);
     });
 
 
