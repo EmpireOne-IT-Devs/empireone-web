@@ -20,9 +20,10 @@ export async function get_survey_responses_service(id) {
     return await axios.get(`/api/engagement/surveys/${id}/responses`);
 }
 
-export async function export_survey_responses_service(id) {
+export async function export_survey_responses_service(id, site = "") {
     return await axios.get(`/api/engagement/surveys/${id}/responses/export`, {
         responseType: "blob",
+        params: site ? { site } : {},
     });
 }
 
@@ -41,4 +42,3 @@ export async function reopen_post_event_survey_service(id) {
 export async function delete_post_event_survey_service(id) {
     return await axios.delete(`/api/engagement/surveys/${id}`);
 }
-
