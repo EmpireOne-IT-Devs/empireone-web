@@ -108,12 +108,12 @@ export default function SendDocumentsSection({ data }) {
                                         checked={field.value === "probation_part_time"}
                                         onChange={() => field.onChange("probation_part_time")}
                                     />
-                                    {/* <Radio
+                                    <Radio
                                         label="Probation Full Time"
                                         value="probation_full_time"
                                         checked={field.value === "probation_full_time"}
                                         onChange={() => field.onChange("probation_full_time")}
-                                    /> */}
+                                    />
                                 </div>
                             )}
                         />
