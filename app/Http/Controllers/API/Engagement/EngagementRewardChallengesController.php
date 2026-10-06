@@ -7,10 +7,12 @@ use App\Models\Account;
 use App\Models\Account\AccountEmployee;
 use App\Models\Department;
 use App\Models\Engagement\EngagementRewardChallenge;
+use App\Models\Engagement\EngagementRewardChallengeDailyLog;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -69,6 +71,25 @@ class EngagementRewardChallengesController extends Controller
     }
 
     /**
+     * Validation closure ensuring a challenge's day count never exceeds the
+     * number of calendar days actually available between start and deadline.
+     */
+    private function durationDaysRule(?string $startDate, ?string $deadline): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) use ($startDate, $deadline) {
+            if (! $value || ! $startDate || ! $deadline) {
+                return;
+            }
+
+            $maxDays = Carbon::parse($startDate)->diffInDays(Carbon::parse($deadline)) + 1;
+
+            if ($value > $maxDays) {
+                $fail("Duration days cannot exceed the {$maxDays} day(s) available between the start date and deadline.");
+            }
+        };
+    }
+
+    /**
      * Shape a challenge for the frontend, including the display-only lifecycle status.
      */
     private function formatChallenge(EngagementRewardChallenge $challenge, ?int $currentUserId = null): array
@@ -85,6 +106,16 @@ class EngagementRewardChallengesController extends Controller
             ? $challenge->participants()->where('user_id', $currentUserId)->first()
             : null;
 
+        $pivot = $participant?->pivot;
+        $isDailyChallenge = $challenge->isDailyChallenge();
+
+        // Only fire this extra, single-row, indexed lookup for daily challenges
+        // the employee has actually joined — list views for non-daily
+        // challenges (the vast majority) never pay this cost.
+        $todayLog = ($isDailyChallenge && $pivot && ! $pivot->isDailyChallengeComplete())
+            ? $pivot->dailyLogs()->whereDate('log_date', $today)->first()
+            : null;
+
         return [
             'id' => $challenge->id,
             'title' => $challenge->title,
@@ -92,6 +123,8 @@ class EngagementRewardChallengesController extends Controller
             'type' => $challenge->type,
             'category' => $challenge->category,
             'points' => $challenge->points,
+            'duration_days' => $challenge->duration_days,
+            'is_daily_challenge' => $isDailyChallenge,
             'banner_url' => $challenge->banner_path ? Storage::disk('s3')->url($challenge->banner_path) : null,
             'banner_position_x' => $challenge->banner_position_x ?? 50,
             'banner_position_y' => $challenge->banner_position_y ?? 50,
@@ -101,13 +134,17 @@ class EngagementRewardChallengesController extends Controller
             'max_participants' => $challenge->max_participants,
             'participants_count' => $challenge->participants_count ?? $challenge->participants()->count(),
             'is_joined' => (bool) $participant,
-            'participation_status' => $participant?->pivot->status,
-            'submission_url' => $participant?->pivot->submission_path
-                ? Storage::disk('s3')->url($participant->pivot->submission_path)
+            'participation_status' => $pivot?->status,
+            'required_days' => $pivot?->required_days,
+            'completed_days' => $pivot?->completed_days,
+            'submitted_today' => (bool) $todayLog,
+            'daily_window_ends_at' => $isDailyChallenge ? $challenge->dailyWindowEndDate()->toDateString() : null,
+            'submission_url' => $pivot?->submission_path
+                ? Storage::disk('s3')->url($pivot->submission_path)
                 : null,
-            'submitted_at' => $participant?->pivot->submitted_at?->toDateTimeString(),
-            'reviewed_at' => $participant?->pivot->reviewed_at?->toDateTimeString(),
-            'review_note' => $participant?->pivot->review_note,
+            'submitted_at' => $pivot?->submitted_at?->toDateTimeString(),
+            'reviewed_at' => $pivot?->reviewed_at?->toDateTimeString(),
+            'review_note' => $pivot?->review_note,
             'start_date' => $challenge->start_date->toDateString(),
             'deadline' => $challenge->deadline->toDateString(),
             'card_color' => $challenge->card_color,
@@ -223,6 +260,8 @@ class EngagementRewardChallengesController extends Controller
         $engagementRewardChallenge->participants()->attach($userId, [
             'status' => 'joined',
             'joined_at' => now(),
+            'required_days' => $engagementRewardChallenge->isDailyChallenge() ? $engagementRewardChallenge->duration_days : null,
+            'completed_days' => 0,
         ]);
 
         return response()->json([
@@ -247,6 +286,13 @@ class EngagementRewardChallengesController extends Controller
             ], 422);
         }
 
+        if ($participant && $participant->pivot->completed_days > 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "You can't leave after logging progress on this challenge.",
+            ], 422);
+        }
+
         $engagementRewardChallenge->participants()->detach($userId);
         $engagementRewardChallenge->load(['departments:id,name', 'accounts:id,name']);
 
@@ -263,6 +309,13 @@ class EngagementRewardChallengesController extends Controller
     public function submitProof(Request $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
     {
         $userId = auth()->id();
+
+        if ($engagementRewardChallenge->isDailyChallenge()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This is a multi-day challenge. Use the daily submission endpoint instead.',
+            ], 422);
+        }
 
         $request->validate([
             'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
@@ -311,6 +364,145 @@ class EngagementRewardChallengesController extends Controller
     }
 
     /**
+     * Submit today's proof photo for a multi-day challenge. One submission is
+     * allowed per calendar day; missing a day simply forfeits that day — the
+     * employee can still submit on any later day within the challenge window.
+     */
+    public function submitDailyProof(Request $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    {
+        $userId = auth()->id();
+
+        if (! $engagementRewardChallenge->isDailyChallenge()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This challenge does not use daily submissions.',
+            ], 422);
+        }
+
+        $request->validate([
+            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'challenge_description' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $participant = $engagementRewardChallenge->participants()->where('user_id', $userId)->first();
+
+        if (! $participant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Join this challenge before submitting proof.',
+            ], 422);
+        }
+
+        $pivot = $participant->pivot;
+
+        if ($pivot->isDailyChallengeComplete()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You already completed this challenge.',
+            ], 422);
+        }
+
+        $today = now()->startOfDay();
+        $windowEnd = $engagementRewardChallenge->dailyWindowEndDate();
+
+        if ($today->lt($engagementRewardChallenge->start_date) || $today->gt($windowEnd)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Today is outside this challenge\'s submission window.',
+            ], 422);
+        }
+
+        if ($pivot->dailyLogs()->whereDate('log_date', $today)->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "You already submitted today's proof. Come back tomorrow!",
+            ], 422);
+        }
+
+        $path = $request->file('photo')->store('unified/engagement/reward_challenges/submissions', 's3');
+
+        try {
+            $pivot->dailyLogs()->create([
+                'log_date' => $today,
+                'submission_path' => $path,
+                'challenge_description' => $request->string('challenge_description')->toString(),
+                'status' => 'submitted',
+                'submitted_at' => now(),
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Two near-simultaneous submissions both passed the exists() check
+            // above; the unique index is the real guard against double-logging.
+            Storage::disk('s3')->delete($path);
+
+            if ($e->getCode() === '23000') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "You already submitted today's proof. Come back tomorrow!",
+                ], 422);
+            }
+
+            throw $e;
+        }
+
+        // First-ever submission flips the display status away from the bare
+        // "joined" state so the UI can show an in-progress indicator.
+        if ($pivot->status === 'joined') {
+            $pivot->update(['status' => 'submitted']);
+        }
+
+        $engagementRewardChallenge->load(['departments:id,name', 'accounts:id,name']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Day's proof submitted for review.",
+            'data' => $this->formatChallenge($engagementRewardChallenge, $userId),
+        ]);
+    }
+
+    /**
+     * The authenticated employee's full day-by-day log for a multi-day
+     * challenge, used to render the per-day progress view. Kept as its own
+     * on-demand endpoint (rather than bundled into the list/my-challenges
+     * responses) so browsing the challenge list never pays for loading
+     * every participant's full submission history.
+     */
+    public function myDailyLogs(EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    {
+        $userId = auth()->id();
+
+        $participant = $engagementRewardChallenge->participants()->where('user_id', $userId)->first();
+
+        if (! $participant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You have not joined this challenge.',
+            ], 422);
+        }
+
+        $logs = $participant->pivot->dailyLogs()
+            ->orderBy('log_date')
+            ->get()
+            ->map(fn (EngagementRewardChallengeDailyLog $log) => [
+                'id' => $log->id,
+                'log_date' => $log->log_date->toDateString(),
+                'status' => $log->status,
+                'submission_url' => Storage::disk('s3')->url($log->submission_path),
+                'challenge_description' => $log->challenge_description,
+                'review_note' => $log->review_note,
+                'reviewed_at' => $log->reviewed_at?->toDateTimeString(),
+            ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'required_days' => $participant->pivot->required_days,
+                'completed_days' => $participant->pivot->completed_days,
+                'logs' => $logs,
+            ],
+        ]);
+    }
+
+    /**
      * Display department, account & employee options for the create-challenge form.
      */
     public function options(): JsonResponse
@@ -354,6 +546,13 @@ class EngagementRewardChallengesController extends Controller
             'type' => ['required', 'string', 'in:Individual,Team'],
             'category' => ['required', 'string', 'in:Wellness,Sales,Learning,Teamwork,Innovation'],
             'points' => ['required', 'integer', 'min:1'],
+            'duration_days' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:366',
+                $this->durationDaysRule($request->input('start_date'), $request->input('deadline')),
+            ],
             'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'banner_position_x' => ['nullable', 'integer', 'min:0', 'max:100'],
             'banner_position_y' => ['nullable', 'integer', 'min:0', 'max:100'],
@@ -391,6 +590,7 @@ class EngagementRewardChallengesController extends Controller
             'type' => $validated['type'],
             'category' => $validated['category'],
             'points' => $validated['points'],
+            'duration_days' => $validated['duration_days'] ?? null,
             'banner_path' => $bannerPath,
             'banner_position_x' => $validated['banner_position_x'] ?? 50,
             'banner_position_y' => $validated['banner_position_y'] ?? 50,
@@ -445,6 +645,16 @@ class EngagementRewardChallengesController extends Controller
             'type' => ['sometimes', 'string', 'in:Individual,Team'],
             'category' => ['sometimes', 'string', 'in:Wellness,Sales,Learning,Teamwork,Innovation'],
             'points' => ['sometimes', 'integer', 'min:1'],
+            'duration_days' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:366',
+                $this->durationDaysRule(
+                    $request->input('start_date', $engagementRewardChallenge->start_date->toDateString()),
+                    $request->input('deadline', $engagementRewardChallenge->deadline->toDateString()),
+                ),
+            ],
             'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'banner_position_x' => ['nullable', 'integer', 'min:0', 'max:100'],
             'banner_position_y' => ['nullable', 'integer', 'min:0', 'max:100'],

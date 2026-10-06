@@ -237,17 +237,19 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenges/employee-profiles', [EngagementRewardChallengesController::class, 'employeeProfiles']);
         Route::get('reward-challenges/employee-profiles/export', [EngagementRewardChallengesController::class, 'exportEmployeeProfiles']);
         Route::get('reward-challenges/{engagementRewardChallenge}/participants', [EngagementRewardChallengesController::class, 'participants']);
+        Route::get('reward-challenges/{engagementRewardChallenge}/my-daily-logs', [EngagementRewardChallengesController::class, 'myDailyLogs']);
         Route::post('reward-challenges', [EngagementRewardChallengesController::class, 'store']);
         Route::post('reward-challenges/{engagementRewardChallenge}/join', [EngagementRewardChallengesController::class, 'join']);
         Route::delete('reward-challenges/{engagementRewardChallenge}/leave', [EngagementRewardChallengesController::class, 'leave']);
         Route::post('reward-challenges/{engagementRewardChallenge}/submit', [EngagementRewardChallengesController::class, 'submitProof']);
+        Route::post('reward-challenges/{engagementRewardChallenge}/submit-daily', [EngagementRewardChallengesController::class, 'submitDailyProof']);
         Route::put('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'update']);
         Route::delete('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'destroy']);
 
         Route::get('reward-challenge-submissions', [EngagementChallengeSubmissionsController::class, 'index']);
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
-        Route::post('reward-challenge-submissions/{participant}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
-        Route::post('reward-challenge-submissions/{participant}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
+        Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
+        Route::post('reward-challenge-submissions/{id}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);

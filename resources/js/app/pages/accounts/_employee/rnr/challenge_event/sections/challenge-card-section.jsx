@@ -165,6 +165,23 @@ function ChallengeCard({ challenge }) {
             );
         }
 
+        // Multi-day challenge in progress — show day progress instead of the
+        // generic single-shot "Pending Review" label.
+        if (challenge.is_daily_challenge && status === "submitted") {
+            return (
+                <Button
+                    type="button"
+                    variant="warning"
+                    className="w-full gap-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white shadow-lg shadow-amber-200 hover:shadow-amber-300"
+                    onClick={() => setIsFlowModalOpen(true)}
+                >
+                    <Clock className="h-4 w-4" />
+                    Day {challenge.completed_days ?? 0}/{challenge.required_days ?? challenge.duration_days}
+                    {challenge.submitted_today ? " · Submitted today" : " · Submit today"}
+                </Button>
+            );
+        }
+
         // Submitted state
         if (status === "submitted") {
             return (
@@ -389,7 +406,11 @@ function ChallengeCard({ challenge }) {
                     {/* Status badge */}
                     {statusInfo && (
                         <Badge
-                            label={statusInfo.label}
+                            label={
+                                challenge.is_daily_challenge && statusInfo.label === "Pending Review"
+                                    ? `In Progress · Day ${challenge.completed_days ?? 0}/${challenge.required_days ?? challenge.duration_days}`
+                                    : statusInfo.label
+                            }
                             variant={statusInfo.variant}
                             icon={statusInfo.icon}
                             outlined

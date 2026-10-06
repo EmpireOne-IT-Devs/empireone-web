@@ -3,13 +3,22 @@ import Button from "@/app/_components/button";
 import { ArrowLeft } from "lucide-react";
 import moment from "moment/moment";
 
-const NEXT_STEPS = (challenge) => [
-    { emoji: "🎯", text: "Complete the main challenge activity as described" },
-    { emoji: "📸", text: "Capture evidence: photo, screenshot, doc, or video link" },
-    { emoji: "✍️", text: "Write a short description explaining your submission" },
-    { emoji: "📤", text: `Submit before the deadline: ${moment(challenge.deadline).format("MMM D, YYYY")}` },
-    { emoji: "⭐", text: `Earn ${challenge.points} points after admin verification` },
-];
+const NEXT_STEPS = (challenge) =>
+    challenge.is_daily_challenge
+        ? [
+              { emoji: "🎯", text: "Complete the daily activity as described" },
+              { emoji: "📸", text: "Capture a new photo each day as proof" },
+              { emoji: "📅", text: `Submit once per day for ${challenge.required_days ?? challenge.duration_days} day(s) — missed days are simply skipped` },
+              { emoji: "📤", text: `Window ends: ${moment(challenge.daily_window_ends_at ?? challenge.deadline).format("MMM D, YYYY")}` },
+              { emoji: "⭐", text: `Earn ${challenge.points} points once every required day is approved` },
+          ]
+        : [
+              { emoji: "🎯", text: "Complete the main challenge activity as described" },
+              { emoji: "📸", text: "Capture evidence: photo, screenshot, doc, or video link" },
+              { emoji: "✍️", text: "Write a short description explaining your submission" },
+              { emoji: "📤", text: `Submit before the deadline: ${moment(challenge.deadline).format("MMM D, YYYY")}` },
+              { emoji: "⭐", text: `Earn ${challenge.points} points after admin verification` },
+          ];
 
 export default function ChallengeFlowNextStepsSection({
     challenge,

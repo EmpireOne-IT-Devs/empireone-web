@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <Layout>
         <RnrLayout>
-            <div className="mt-4">
+            <div >
                 <ChallengeEventSection />
             </div>
         </RnrLayout>

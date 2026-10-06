@@ -29,6 +29,8 @@ import {
     join_reward_challenge_service,
     leave_reward_challenge_service,
     submit_reward_challenge_proof_service,
+    submit_reward_challenge_daily_proof_service,
+    get_reward_challenge_my_daily_logs_service,
     get_reward_challenge_submissions_service,
     get_reward_challenge_submission_stats_service,
     approve_reward_challenge_submission_service,
@@ -358,6 +360,9 @@ function build_reward_challenge_form_data(data) {
     if (data.max_participants) {
         formData.append("max_participants", data.max_participants);
     }
+    if (data.duration_days) {
+        formData.append("duration_days", data.duration_days);
+    }
     if (data.banner) {
         formData.append("banner", data.banner);
     }
@@ -463,6 +468,30 @@ export const submit_engagement_reward_challenge_proof_thunk = createAsyncThunk(
     async ({ id, photo, challengeDescription }, { rejectWithValue }) => {
         try {
             const response = await submit_reward_challenge_proof_service(id, photo, challengeDescription);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const submit_engagement_reward_challenge_daily_proof_thunk = createAsyncThunk(
+    "engagement/submitRewardChallengeDailyProof",
+    async ({ id, photo, challengeDescription }, { rejectWithValue }) => {
+        try {
+            const response = await submit_reward_challenge_daily_proof_service(id, photo, challengeDescription);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_engagement_reward_challenge_my_daily_logs_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeMyDailyLogs",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await get_reward_challenge_my_daily_logs_service(id);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

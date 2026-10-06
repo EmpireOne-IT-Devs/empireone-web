@@ -24,6 +24,7 @@ class EngagementRewardChallenge extends Model
         'type',
         'category',
         'points',
+        'duration_days',
         'banner_path',
         'banner_position_x',
         'banner_position_y',
@@ -39,6 +40,7 @@ class EngagementRewardChallenge extends Model
     {
         return [
             'points' => 'integer',
+            'duration_days' => 'integer',
             'banner_position_x' => 'integer',
             'banner_position_y' => 'integer',
             'all_employees' => 'boolean',
@@ -82,7 +84,7 @@ class EngagementRewardChallenge extends Model
             'user_id',
         )
             ->using(EngagementRewardChallengeParticipant::class)
-            ->withPivot(['id', 'status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note', 'points_awarded'])
+            ->withPivot(['id', 'status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note', 'points_awarded', 'required_days', 'completed_days'])
             ->withTimestamps();
     }
 
@@ -94,5 +96,26 @@ class EngagementRewardChallenge extends Model
 
         return ($departmentId && $this->departments->contains('id', $departmentId))
             || ($accountId && $this->accounts->contains('id', $accountId));
+    }
+
+    /**
+     * Multi-day challenges let an employee submit one proof per calendar day
+     * instead of a single one-off submission.
+     */
+    public function isDailyChallenge(): bool
+    {
+        return (int) $this->duration_days > 1;
+    }
+
+    /**
+     * Last calendar day an employee may still submit a daily proof —
+     * whichever comes first between the challenge's own day count and its
+     * overall deadline.
+     */
+    public function dailyWindowEndDate(): \Illuminate\Support\Carbon
+    {
+        $byDuration = $this->start_date->copy()->addDays(max(0, (int) $this->duration_days - 1));
+
+        return $byDuration->lt($this->deadline) ? $byDuration : $this->deadline->copy();
     }
 }

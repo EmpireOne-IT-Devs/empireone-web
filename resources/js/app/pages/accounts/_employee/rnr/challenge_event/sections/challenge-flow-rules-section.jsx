@@ -4,13 +4,22 @@ import Button from "@/app/_components/button";
 import Checkbox from "@/app/_components/checkbox";
 import moment from "moment/moment";
 
-const JOIN_RULES = (challenge) => [
-    `Completing this challenge will earn you ${challenge.points} engagement points.`,
-    "You must submit valid evidence to be counted as completed.",
-    "Leaving a challenge after joining will not remove your progress.",
-    "Evidence is reviewed by an admin before points are awarded.",
-    `Deadline: ${moment(challenge.deadline).format("MMM D, YYYY")}. Late submissions will not be accepted.`,
-];
+const JOIN_RULES = (challenge) =>
+    challenge.is_daily_challenge
+        ? [
+              `Completing this challenge will earn you ${challenge.points} engagement points.`,
+              `You may submit one proof photo per day for ${challenge.required_days ?? challenge.duration_days} day(s).`,
+              "If you miss a day, it's simply skipped — you can still submit on any later day within the window.",
+              "Each day's evidence is reviewed by an admin individually before it counts.",
+              `Points are only awarded once every required day has been approved. Window ends: ${moment(challenge.daily_window_ends_at ?? challenge.deadline).format("MMM D, YYYY")}.`,
+          ]
+        : [
+              `Completing this challenge will earn you ${challenge.points} engagement points.`,
+              "You must submit valid evidence to be counted as completed.",
+              "Leaving a challenge after joining will not remove your progress.",
+              "Evidence is reviewed by an admin before points are awarded.",
+              `Deadline: ${moment(challenge.deadline).format("MMM D, YYYY")}. Late submissions will not be accepted.`,
+          ];
 
 export default function ChallengeFlowRulesSection({
     challenge,

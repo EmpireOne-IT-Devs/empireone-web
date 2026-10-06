@@ -153,6 +153,20 @@ export async function submit_reward_challenge_proof_service(id, photo, challenge
     });
 }
 
+export async function submit_reward_challenge_daily_proof_service(id, photo, challengeDescription) {
+    const formData = new FormData();
+    formData.append("photo", photo);
+    formData.append("challenge_description", challengeDescription);
+
+    return await axios.post(`/api/engagement/reward-challenges/${id}/submit-daily`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}
+
+export async function get_reward_challenge_my_daily_logs_service(id) {
+    return await axios.get(`/api/engagement/reward-challenges/${id}/my-daily-logs`);
+}
+
 export async function get_reward_challenge_report_service() {
     return await axios.get("/api/engagement/reward-challenges/report");
 }
