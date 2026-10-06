@@ -92,6 +92,81 @@ class EngagementPostEventSurveyController extends Controller
         ], 201);
     }
 
+    // ── Admin: update survey (blocked once responses exist, to avoid
+    //    silently orphaning/deleting an employee's already-submitted answers)
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $survey = EngagementPostEventSurvey::with('questions.options')->findOrFail($id);
+
+        $validated = $request->validate([
+            'engagement_post_event_id'  => 'required|exists:engagement_post_events,id',
+            'title'                     => 'required|string|max:255',
+            'description'               => 'nullable|string',
+            'questions'                 => 'required|array|min:1',
+            'questions.*.question_text' => 'required|string',
+            'questions.*.question_type' => 'required|in:short_answer,paragraph,multiple_choice,checkboxes,dropdown,rating',
+            'questions.*.is_required'   => 'boolean',
+            'questions.*.options'       => 'nullable|array',
+            'questions.*.options.*'     => 'nullable|string',
+        ]);
+
+        $hasResponses = EngagementPostEventSurveyResponse::where('engagement_post_event_survey_id', $id)->exists();
+
+        if ($hasResponses) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'This survey already has responses and can no longer be edited. Duplicate it instead to publish a revised version.',
+            ], 422);
+        }
+
+        $survey = DB::transaction(function () use ($survey, $validated) {
+            $survey->update([
+                'engagement_post_event_id' => $validated['engagement_post_event_id'],
+                'title'                    => $validated['title'],
+                'description'              => $validated['description'] ?? null,
+            ]);
+
+            // Safe to fully replace every question: we already confirmed above
+            // that zero responses exist, so no answers can be orphaned here.
+            foreach ($survey->questions as $question) {
+                $question->options()->delete();
+                $question->delete();
+            }
+
+            foreach ($validated['questions'] as $index => $q) {
+                $question = EngagementPostEventQuestion::create([
+                    'engagement_post_event_id'        => $validated['engagement_post_event_id'],
+                    'engagement_post_event_survey_id' => $survey->id,
+                    'user_id'                          => Auth::id(),
+                    'question'                         => $q['question_text'],
+                    'type'                             => $q['question_type'],
+                    'is_required'                      => $q['is_required'] ?? false,
+                    'sort_order'                       => $index,
+                ]);
+
+                $hasOptions = in_array($q['question_type'], ['multiple_choice', 'checkboxes', 'dropdown']);
+                if ($hasOptions && !empty($q['options'])) {
+                    foreach ($q['options'] as $optIndex => $optText) {
+                        if (!empty($optText)) {
+                            EngagementPostEventQuestionOption::create([
+                                'engagement_post_event_question_id' => $question->id,
+                                'option_text'                       => $optText,
+                                'sort_order'                        => $optIndex,
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            return $survey->fresh(['post:id,title,headline,category,published_at', 'questions.options']);
+        });
+
+        return response()->json([
+            'message' => 'Survey updated successfully.',
+            'data'    => $this->formatSurvey($survey),
+        ]);
+    }
+
     // ── Shared: get single survey ────────────────────────────────────────────
     public function show(int $id): JsonResponse
     {

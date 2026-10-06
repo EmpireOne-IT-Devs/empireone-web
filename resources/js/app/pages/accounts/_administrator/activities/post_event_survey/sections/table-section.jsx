@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { get_post_event_surveys_thunk } from "@/app/redux/post-event-survey-slice";
 import OpenSurveySection from "./open-survey-section";
+import SurveyActionsSection from "./survey-actions-section";
 import Skeleton from "@/app/_components/skeleton";
 import Table from "@/app/_components/table";
 import moment from "moment";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 const categoryColors = {
     "Events Calendar": "bg-indigo-100 text-indigo-600",
@@ -22,9 +24,10 @@ const columns = [
     { header: "Date", accessor: "date" },
     { header: "Status", accessor: "status" },
     { header: "Survey", accessor: "survey" },
+    { header: "Actions", accessor: "actions" },
 ];
 
-const buildRows = (surveys = []) =>
+const buildRows = (surveys = [], createSurveyRef, canManage) =>
     surveys.filter(isEventSurvey).map((survey) => ({
         event_id: (
             <span className="text-sm text-gray-600">
@@ -86,14 +89,21 @@ const buildRows = (surveys = []) =>
 
         // Cleaned up to use the dedicated standalone component
         survey: <OpenSurveySection survey={survey} />,
+
+        // Edit/Duplicate/Delete consolidated into a single dropdown menu
+        // instead of crowding the row with separate buttons.
+        actions: canManage ? (
+            <SurveyActionsSection survey={survey} createSurveyRef={createSurveyRef} />
+        ) : null,
     }));
 
-export default function TableSection() {
+export default function TableSection({ createSurveyRef }) {
     const dispatch = useDispatch();
 
     const { surveys = [], surveysLoading = false } = useSelector(
         (state) => state.post_event_surveys,
     );
+    const { isContentManager: canManage } = useCurrentEmployee();
 
     useEffect(() => {
         dispatch(get_post_event_surveys_thunk());
@@ -106,7 +116,11 @@ export default function TableSection() {
                     <Skeleton variant="table" />
                 </div>
             ) : (
-                <Table columns={columns} data={buildRows(surveys)} />
+                <Table
+                
+                    columns={columns}
+                    data={buildRows(surveys, createSurveyRef, canManage)}
+                />
             )}
         </div>
     );

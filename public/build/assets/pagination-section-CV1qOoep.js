@@ -1,0 +1,1 @@
+import{b as n,j as t}from"./app-VimyZE9i.js";import{P as o}from"./pagination-D83L-2LV.js";function i(){const{files:a}=n(e=>e.human_resources);return t.jsx(t.Fragment,{children:t.jsx(o,{data:a})})}export{i as default};

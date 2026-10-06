@@ -3,10 +3,14 @@ import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import Textarea from "@/app/_components/textarea";
-import { create_post_event_survey_thunk } from "@/app/redux/post-event-survey-slice";
+import {
+    create_post_event_survey_thunk,
+    update_post_event_survey_thunk,
+} from "@/app/redux/post-event-survey-slice";
 import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
-import { Folder, PlusCircleIcon, Trash2, GripVertical, Plus, Star } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { setAlert } from "@/app/redux/app-slice";
+import { Folder, PlusCircleIcon, Trash2, GripVertical, Plus, Star, Copy, Pencil } from "lucide-react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const QUESTION_TYPES = [
@@ -81,10 +85,12 @@ const makeQuestion = () => ({
     options: ["Option 1"],
 });
 
-export default function CreateSurveySection() {
+export default forwardRef(function CreateSurveySection(_props, ref) {
     const dispatch = useDispatch();
     const { posts } = useSelector((state) => state.engagement);
-    const { creating, createError } = useSelector((state) => state.post_event_surveys);
+    const { creating, createError, updating, updateError } = useSelector(
+        (state) => state.post_event_surveys,
+    );
 
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState("");
@@ -92,6 +98,9 @@ export default function CreateSurveySection() {
     const [engagementPostId, setEngagementPostId] = useState("");
     const [questions, setQuestions] = useState([makeQuestion()]);
     const [formError, setFormError] = useState("");
+    const [duplicatingFrom, setDuplicatingFrom] = useState(null);
+    const [editingSurveyId, setEditingSurveyId] = useState(null);
+    const [editingTitle, setEditingTitle] = useState(null);
 
     useEffect(() => {
         if (isOpen) dispatch(get_engagement_posts_thunk());
@@ -112,7 +121,59 @@ export default function CreateSurveySection() {
         setEngagementPostId("");
         setQuestions([makeQuestion()]);
         setFormError("");
+        setDuplicatingFrom(null);
+        setEditingSurveyId(null);
+        setEditingTitle(null);
     };
+
+    const fillFromSurvey = (survey) => {
+        setTitle(survey?.title ?? "");
+        setDescription(survey?.description ?? "");
+        setEngagementPostId(
+            survey?.event?.id != null ? String(survey.event.id) : "",
+        );
+        // Fresh local ids only — the original survey's/question ids are
+        // never reused here, so React keys stay unique either way.
+        const loadedQuestions = (survey?.questions ?? []).map((q, index) => ({
+            id: Date.now() + index,
+            question_type: q.question_type,
+            question_text: q.question_text,
+            is_required: Boolean(q.is_required),
+            options: (q.options ?? []).map((o) => o.option_text),
+        }));
+        setQuestions(loadedQuestions.length > 0 ? loadedQuestions : [makeQuestion()]);
+        setFormError("");
+    };
+
+    // Expose imperative entry points so the table's row actions can trigger
+    // this same modal without it needing to know anything about the table.
+    useImperativeHandle(ref, () => ({
+        openDuplicate: (survey) => {
+            resetForm();
+            fillFromSurvey(survey);
+            setDuplicatingFrom(survey?.title ?? null);
+            setIsOpen(true);
+        },
+        openEdit: (survey) => {
+            if ((survey?.total_responses ?? 0) > 0) {
+                dispatch(
+                    setAlert({
+                        type: "danger",
+                        title: "Can't edit this survey",
+                        message:
+                            "This survey already has responses, so it can no longer be edited. Duplicate it instead to publish a revised version.",
+                        open: true,
+                    }),
+                );
+                return;
+            }
+            resetForm();
+            fillFromSurvey(survey);
+            setEditingSurveyId(survey?.id ?? null);
+            setEditingTitle(survey?.title ?? null);
+            setIsOpen(true);
+        },
+    }));
 
     const handleClose = () => {
         setIsOpen(false);
@@ -174,7 +235,10 @@ export default function CreateSurveySection() {
             })),
         };
 
-        const result = await dispatch(create_post_event_survey_thunk(payload));
+        const result = editingSurveyId
+            ? await dispatch(update_post_event_survey_thunk({ id: editingSurveyId, data: payload }))
+            : await dispatch(create_post_event_survey_thunk(payload));
+
         if (!result.error) handleClose();
     };
 
@@ -192,7 +256,13 @@ export default function CreateSurveySection() {
 
     return (
         <div>
-            <Button variant="secondary" onClick={() => setIsOpen(true)}>
+            <Button
+                variant="secondary"
+                onClick={() => {
+                    resetForm();
+                    setIsOpen(true);
+                }}
+            >
                 <PlusCircleIcon size={16} className="mr-2" />
                 Create Survey
             </Button>
@@ -204,19 +274,41 @@ export default function CreateSurveySection() {
                 title={
                     <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50 text-pink-600 shrink-0">
-                            <Folder size={20} />
+                            {editingTitle ? (
+                                <Pencil size={20} />
+                            ) : duplicatingFrom ? (
+                                <Copy size={20} />
+                            ) : (
+                                <Folder size={20} />
+                            )}
                         </div>
                         <div>
                             <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
                                 Activities / Post Event Survey
                             </p>
                             <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
-                                Event Survey Creation
+                                {editingTitle
+                                    ? `Editing “${editingTitle}”`
+                                    : duplicatingFrom
+                                      ? `Duplicating “${duplicatingFrom}”`
+                                      : "Event Survey Creation"}
                             </h2>
                         </div>
                     </div>
                 }
             >
+                {duplicatingFrom && (
+                    <div className="mb-3 flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5 text-sm text-blue-700">
+                        <Copy size={14} className="shrink-0" />
+                        This is a copy. Review the fields below and publish to create a brand-new survey — the original is untouched.
+                    </div>
+                )}
+                {editingTitle && (
+                    <div className="mb-3 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2.5 text-sm text-amber-700">
+                        <Pencil size={14} className="shrink-0" />
+                        You're editing this survey directly. Changes are saved to the same survey once you confirm below.
+                    </div>
+                )}
                 <div className="flex flex-col gap-5 overflow-y-auto pb-4">
                     <div className="rounded-xl border border-gray-200 p-5 flex flex-col gap-4 bg-gray-50">
                        
@@ -385,21 +477,35 @@ export default function CreateSurveySection() {
                         <Plus size={16} /> Add Question
                     </button>
 
-                    {(formError || createError) && (
-                        <p className="text-sm text-red-500">{formError || createError?.message || "Failed to publish survey."}</p>
+                    {(formError || createError || updateError) && (
+                        <p className="text-sm text-red-500">
+                            {formError ||
+                                createError?.message ||
+                                updateError?.message ||
+                                "Failed to publish survey."}
+                        </p>
                     )}
 
                     <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
-                        <Button variant="secondary" outlined onClick={handleClose} disabled={creating}>
+                        <Button
+                            variant="secondary"
+                            outlined
+                            onClick={handleClose}
+                            disabled={creating || updating}
+                        >
                             Cancel
                         </Button>
-                        <Button variant="primary" onClick={handleSubmit} loading={creating}>
-                            Publish Survey
+                        <Button
+                            variant="primary"
+                            onClick={handleSubmit}
+                            loading={creating || updating}
+                        >
+                            {editingSurveyId ? "Save Changes" : "Publish Survey"}
                         </Button>
                     </div>
                 </div>
             </Modal>
         </div>
     );
-}
+});
 

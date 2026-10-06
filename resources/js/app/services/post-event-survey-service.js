@@ -12,6 +12,10 @@ export async function create_post_event_survey_service(data) {
     return await axios.post("/api/engagement/surveys", data);
 }
 
+export async function update_post_event_survey_service(id, data) {
+    return await axios.put(`/api/engagement/surveys/${id}`, data);
+}
+
 export async function submit_post_event_survey_service(id, data) {
     return await axios.post(`/api/engagement/surveys/${id}/submit`, data);
 }

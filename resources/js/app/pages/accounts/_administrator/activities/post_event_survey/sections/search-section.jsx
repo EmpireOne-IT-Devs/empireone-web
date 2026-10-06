@@ -6,7 +6,7 @@ import Select from "@/app/_components/select";
 import CreateSurveySection from "./create-survey-section";
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
-export default function SearchSection() {
+export default function SearchSection({ createSurveyRef }) {
     const [search, setSearch] = useState("");
     const [status, setStatus] = useState("all");
 
@@ -46,7 +46,7 @@ export default function SearchSection() {
             ) : (
                 canCreateSurvey && (
                     <div className="w-full shrink-0 sm:w-auto">
-                        <CreateSurveySection />
+                        <CreateSurveySection ref={createSurveyRef} />
                     </div>
                 )
             )}

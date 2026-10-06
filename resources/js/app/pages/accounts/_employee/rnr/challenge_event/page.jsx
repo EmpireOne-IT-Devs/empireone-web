@@ -8,7 +8,7 @@ export default function Page() {
     <Layout>
         <RnrLayout>
             <div >
-                <ChallengeEventSection />
+                <ChallengeEventSection  />
             </div>
         </RnrLayout>
     </Layout>

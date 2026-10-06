@@ -206,6 +206,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('surveys', [EngagementPostEventSurveyController::class, 'index']);
         Route::post('surveys', [EngagementPostEventSurveyController::class, 'store']);
         Route::get('surveys/{id}', [EngagementPostEventSurveyController::class, 'show']);
+        Route::put('surveys/{id}', [EngagementPostEventSurveyController::class, 'update']);
         Route::post('surveys/{id}/submit', [EngagementPostEventSurveyController::class, 'submit']);
         Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
         Route::get('surveys/{id}/responses/export', [EngagementPostEventSurveyController::class, 'exportResponses']);
