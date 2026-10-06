@@ -70,7 +70,7 @@ class AccountPersonalInformationController extends Controller
     public function get_user_by_id($id)
     {
 
-        $users = User::where('id', $id)->with(['job_offer','evaluations', 'subordinate', 'department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee', 'is_passed', 'account_contract'])->first();
+        $users = User::where('id', $id)->with(['job_offer','application','evaluations', 'subordinate', 'department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee', 'is_passed', 'account_contract'])->first();
         $hr = AccountEmployee::where('position', 'PH Lead, Talent Acquisition')->whereIn('status', ['Probationary', 'Regular'])->with(['personal_information'])->first();
         return response()->json([
             'data' => $users,

@@ -5,7 +5,7 @@ const Table = ({ columns, data, isloading = false, skeletonRows = 12 }) => {
     const skeletonArray = Array.from({ length: skeletonRows });
 
     return (
-        <div className="overflow-hidden">
+        <>
             {/* Mobile View: Card Layout */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
                 {isloading ? (
@@ -46,7 +46,7 @@ const Table = ({ columns, data, isloading = false, skeletonRows = 12 }) => {
             </div>
 
             {/* Desktop View: Standard Table Layout */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden md:block">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="text-gray-500 text-xs font-medium border-b border-gray-200">
@@ -88,7 +88,7 @@ const Table = ({ columns, data, isloading = false, skeletonRows = 12 }) => {
                     </tbody>
                 </table>
             </div>
-        </div>
+        </>
     );
 };
 

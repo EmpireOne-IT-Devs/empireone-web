@@ -172,6 +172,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('upload_avatar',  [AccountPersonalInformationController::class, 'upload_avatar']);
         Route::get('get_user_by_id/{user_id}',  [AccountPersonalInformationController::class, 'get_user_by_id']);
         Route::resource('contract', AccountContractController::class);
+        Route::post('send_contract',  [AccountDocumentController::class, 'send_contract']);
+
         Route::post('agree_onboarding',  [AccountContractController::class, 'agree_onboarding']);
         Route::post('edit_information',  [AccountContractController::class, 'edit_information']);
         Route::post('update_employee_information',  [AccountContractController::class, 'update_employee_information']);

@@ -128,9 +128,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(AccountContract::class, 'user_id', 'id');
     }
-     public function job_offer(): HasOne
+    public function job_offer(): HasOne
     {
-        return $this->hasOne(JobOffer::class, 'user_id', 'id')->with(['allowances'])->orderBy('id','desc');
+        return $this->hasOne(JobOffer::class, 'user_id', 'id')->with(['allowances'])->orderBy('id', 'desc');
+    }
+    public function application(): HasOne
+    {
+        return $this->hasOne(JobApplication::class, 'user_id', 'id')->orderBy('id', 'desc');
     }
     public function is_passed(): HasOne
     {

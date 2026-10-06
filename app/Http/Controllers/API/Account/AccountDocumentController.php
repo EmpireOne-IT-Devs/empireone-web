@@ -79,14 +79,30 @@ class AccountDocumentController extends Controller
         //     ]);
         // }
         Mail::to($request->user['email'])->send(new OnboardingDocumentsMail($request->all()));
-        Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
-        // started_at
+        // Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
+
         $application = JobApplication::where('id', $request->id)->first();
         if ($application) {
             $application->update([
                 'final_status' => 'Sent Documents',
                 'contract_type' => $request->contract_type,
             ]);
+        }
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'The documents to be sign are sent.',
+        ], 200);
+    }
+
+
+    public function send_contract(Request $request)
+    {
+        $application = JobApplication::where('id', $request->application['id'])->first();
+        if ($application) {
+            $application->update([
+                'final_status' => 'Sent Contract',
+            ]);
+            Mail::to($request->email)->send(new ContractSigningMail($request->all()));
         }
         return response()->json([
             'status'  => 'success',

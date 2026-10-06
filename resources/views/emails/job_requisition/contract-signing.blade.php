@@ -68,9 +68,9 @@
             <div class="content">
                 <p>
                     This is an automated notification to inform you that
-                    <strong>{{ $user['user']['name'] }}</strong> has a contract ready to be signed
+                    <strong>{{ $user['name'] }}</strong> has a contract ready to be signed
                     for the position of
-                    <strong>{{ $user['job_posting']['job_requisition']['title'] }}</strong>.
+                    <strong>{{ $user['account_employee']['position'] ?? 'N/A' }}</strong>.
                 </p>
 
                 <p>
@@ -83,7 +83,7 @@
                 </p>
                 <div class="button-container">
                     <a
-                        href="{{ config('app.url') }}/accounts/my_documents/{{ $user['user']['id'] }}/contract?{{ http_build_query(['contract_type' => $user['contract_type'] ?? '']) }}"
+                        href="{{ config('app.url') }}/accounts/my_documents/{{ $user['id'] }}/contract"
                         class="btn-primary"
                         style="color: #ffffff !important; text-decoration: none;">
                         Click to Sign Contract

@@ -8,6 +8,7 @@ import Button from "@/app/_components/button";
 import AgreeSection from "./_sections/agree-section";
 import moment from "moment";
 import FullTimeProbationaryContractSection from "./_sections/full-time-probationary-contract-section";
+import SendContractSection from "./_sections/send-contract-section";
 
 export default function Page() {
     const { user, hr } = useSelector((store) => store.app);
@@ -44,7 +45,7 @@ export default function Page() {
         ended_at: `${moment(user?.account_employee?.started_at).add(179, "days").format("LL")}`,
         salary: `${user?.job_offer?.salary}`,
     };
-
+    console.log('useruser', user)
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
             return null;
@@ -53,15 +54,17 @@ export default function Page() {
         } else {
             return (
                 <>
-                    {contract_type === 'probation_part_time' && (
+                    {(user?.application?.contract_type ?? 'probation_full_time') === 'probation_part_time' && (
                         <PartTimeProbationaryContractSection data={data} />
                     )}
-                    {contract_type === 'probation_full_time' && (
+                    {(user?.application?.contract_type ?? 'probation_full_time') === 'probation_full_time' && (
                         <FullTimeProbationaryContractSection data={data} />
                     )}
                     {!user?.account_employee?.is_has_contract && (
                         <AgreeSection data={data} user={user} />
                     )}
+                    {user?.application?.final_status == "Sent Documents" && <SendContractSection props_data={user}/>}
+
                 </>
             );
         }
