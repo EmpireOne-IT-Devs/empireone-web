@@ -152,7 +152,7 @@
                                                         <tr>
                                                             <td align="center" bgcolor="#fdfcff" style="background-color:#fdfcff;">
                                                                 <img
-                    src="https://curtis-crm.s3.amazonaws.com/unified/engagement/posts/TunMznlomltslVRHaoeeEI9D2GWrYbUCZNEpWSbZ.png"
+                     src="https://curtis-crm.s3.amazonaws.com/unified/engagement/posts/9xoGxFkFQWHdVYuE6mpF5QVJ6UdwsZi4Ms2zxqYu.png"
                     alt="{{ config('app.name') }} Logo"
                     width="120"
                     style="

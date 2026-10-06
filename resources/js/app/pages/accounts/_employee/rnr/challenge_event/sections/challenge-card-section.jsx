@@ -111,7 +111,7 @@ function getTimeRemaining(deadline) {
     return `${hours}h remaining`;
 }
 
-function ChallengeCard({ challenge }) {
+function ChallengeCard({ challenge, highlighted = false }) {
     const dispatch = useDispatch();
     const { rewardChallengeLeavingId } = useSelector((state) => state.engagement);
     const [isFlowModalOpen, setIsFlowModalOpen] = useState(false);
@@ -300,8 +300,9 @@ function ChallengeCard({ challenge }) {
     return (
         <>
             <Card
+                id={`challenge-${challenge.id}`}
                 padding="p-0"
-                className={`group flex h-full w-full flex-col overflow-hidden rounded-2xl border ${meta.border} bg-white shadow-lg shadow-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
+                className={`group flex h-full w-full flex-col overflow-hidden rounded-2xl border ${meta.border} bg-white shadow-lg shadow-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${highlighted ? "ring-4 ring-indigo-400 ring-offset-2" : ""}`}
             >
                 {/* Banner with gradient overlay */}
                 <div className="relative">
@@ -436,6 +437,7 @@ export default function ChallengeCardSection({
     challenges = [],
     loading = false,
     archived = false,
+    highlightId = null,
 }) {
     if (loading) {
         return (
@@ -468,7 +470,11 @@ export default function ChallengeCardSection({
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {challenges.map((challenge) => (
-                <ChallengeCard key={challenge.id} challenge={challenge} />
+                <ChallengeCard
+                    key={challenge.id}
+                    challenge={challenge}
+                    highlighted={Boolean(highlightId) && highlightId === challenge.id}
+                />
             ))}
         </div>
     );

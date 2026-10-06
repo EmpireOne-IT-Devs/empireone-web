@@ -13,6 +13,7 @@ import Card from "@/app/_components/card";
 import Skeleton from "@/app/_components/skeleton";
 import EditChallengeSection from "./edit-challenge-section";
 import DeleteChallengeSection from "./delete-challenge-section";
+import ShareChallengeSection from "./share-challenge-section";
 
 const CATEGORY_META = {
   Wellness: {
@@ -133,6 +134,7 @@ export default function ChallengesGridSection({
                         >
                           {archived ? "Archived" : challenge.status}
                         </span>
+                        <ShareChallengeSection challenge={challenge} />
                         {!archived && (
                           <EditChallengeSection challenge={challenge} />
                         )}

@@ -12,10 +12,38 @@ export default function ChallengeEventSection() {
     );
     const [filter, setFilter] = useState("All");
     const [showArchived, setShowArchived] = useState(false);
+    const [sharedId] = useState(() =>
+        Number(new URLSearchParams(window.location.search).get("challenge")) || null,
+    );
+    const [highlightId, setHighlightId] = useState(null);
 
     useEffect(() => {
         dispatch(get_my_engagement_reward_challenges_thunk());
     }, [dispatch]);
+
+    // Shared link (?challenge=ID): show the right tab, then scroll to and highlight the card once.
+    useEffect(() => {
+        if (!sharedId || highlightId !== null || myRewardChallengesLoading) return;
+        const shared = myRewardChallenges.find((challenge) => challenge.id === sharedId);
+        if (!shared) return;
+        setFilter("All");
+        setShowArchived(shared.status === "Completed");
+        setHighlightId(sharedId);
+    }, [sharedId, highlightId, myRewardChallenges, myRewardChallengesLoading]);
+
+    useEffect(() => {
+        if (!highlightId) return;
+        const frame = requestAnimationFrame(() => {
+            document
+                .getElementById(`challenge-${highlightId}`)
+                ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+        const timer = setTimeout(() => setHighlightId(0), 4000);
+        return () => {
+            cancelAnimationFrame(frame);
+            clearTimeout(timer);
+        };
+    }, [highlightId]);
 
     const activeCount = useMemo(
         () => myRewardChallenges.filter((challenge) => challenge.status === "Active").length,
@@ -77,6 +105,7 @@ export default function ChallengeEventSection() {
                 challenges={filteredChallenges}
                 loading={myRewardChallengesLoading}
                 archived={showArchived}
+                highlightId={highlightId}
             />
         </div>
     );
