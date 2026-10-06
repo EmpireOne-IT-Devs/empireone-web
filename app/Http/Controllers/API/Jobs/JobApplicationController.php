@@ -1111,7 +1111,7 @@ class JobApplicationController extends Controller
             SUM(CASE WHEN final_status = 'Hired' THEN 1 ELSE 0 END) as final_hired,
             SUM(CASE WHEN final_status = 'Rejected' THEN 1 ELSE 0 END) as final_rejected,
             SUM(CASE WHEN final_status = 'No Show' THEN 1 ELSE 0 END) as no_shows,
-            SUM(CASE WHEN final_status = 'Sent Documents' THEN 1 ELSE 0 END) as sent_documents,
+            SUM(CASE WHEN final_status IN ('Sent Documents', 'Sent Contract') THEN 1 ELSE 0 END) as sent_documents,
             
             
             -- Pipeline Computations

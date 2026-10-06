@@ -429,6 +429,19 @@ const PartTimeProbationaryContract = ({ data }) => {
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <View style={styles.signatureBlock}>
                         <Text style={styles.text}>Sincerely,</Text>
+                        {data?.employer_signature && (
+                            <Image
+                                style={{
+                                    position: "absolute",
+                                    bottom: 20,
+                                    left: 10,
+                                    height: 50,
+                                    width: 140,
+                                    zIndex: 1,
+                                }}
+                                src={data?.employer_signature}
+                            />
+                        )}
                         <Text style={[styles.text, styles.bold, { marginTop: 40 }]}>
                             {data?.employer_name}
                         </Text>
@@ -436,6 +449,7 @@ const PartTimeProbationaryContract = ({ data }) => {
                             {data?.employer_position}
                         </Text>
                     </View>
+
 
                     <View style={styles.signatureBlock}>
                         <Text style={styles.text}>Conforme:</Text>

@@ -233,7 +233,7 @@ const FullTimeProbationaryContract = ({ data }) => {
                     • HMO coverage for work related emergency care, dental services, In-patient and outpatient upon your start date.
                 </Text>
                 {
-                    data?.allowances && data?.allowances?.map((res,i) => {
+                    data?.allowances && data?.allowances?.map((res, i) => {
                         return <Text key={i} style={[styles.text, styles.bulletIndent]}>
                             • {res?.allowance_type} <Text style={styles.bold}>{numberToWords?.toWords(Number(res.allowance)).toUpperCase()}</Text> (PHP <Text style={styles.bold}>{Number(res?.allowance)?.toLocaleString("en-US", {
                                 minimumFractionDigits: 2,
@@ -242,7 +242,7 @@ const FullTimeProbationaryContract = ({ data }) => {
                         </Text>
                     })
                 }
-                
+
                 <Text style={[styles.text, { marginTop: 6 }]}>Upon regularization, you shall be entitled to the following benefits:</Text>
 
                 <Text style={[styles.text, styles.bulletIndent]}>
@@ -457,6 +457,19 @@ const FullTimeProbationaryContract = ({ data }) => {
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 250 }}>
                     <View style={styles.signatureBlock}>
                         <Text style={styles.text}>Sincerely,</Text>
+                        {data?.employer_signature && (
+                            <Image
+                                style={{
+                                    position: "absolute",
+                                    bottom: 20,
+                                    left: 10,
+                                    height: 50,
+                                    width: 140,
+                                    zIndex: 1,
+                                }}
+                                src={data?.employer_signature}
+                            />
+                        )}
                         <Text style={[styles.text, styles.bold, { marginTop: 40 }]}>
                             {data?.employer_name || "Anthony S. Aragon"}
                         </Text>
