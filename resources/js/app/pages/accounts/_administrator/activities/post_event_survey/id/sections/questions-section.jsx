@@ -182,9 +182,9 @@ function QuestionRow({ question, index, isLast }) {
                         style={sans}
                     >
                         {question.question_text}
-                        {question.is_required && (
+                        {question.is_required ? (
                             <span className="ml-1 text-indigo-500">*</span>
-                        )}
+                        ) : null}
                     </p>
                     <TypeCaption type={question.question_type} />
                 </div>

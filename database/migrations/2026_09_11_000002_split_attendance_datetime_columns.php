@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('attendances', 'clock_in_date')) {
+            return;
+        }
+
         Schema::table('attendances', function (Blueprint $table) {
             $table->date('clock_in_date')->nullable()->after('clock_in');
             $table->time('clock_in_time')->nullable()->after('clock_in_date');

@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasColumn('engagement_reward_challenges', 'banner_position_x')) {
+            return;
+        }
+
         Schema::table('engagement_reward_challenges', function (Blueprint $table) {
             $table->unsignedTinyInteger('banner_position_x')->default(50)->after('banner_path');
             $table->unsignedTinyInteger('banner_position_y')->default(50)->after('banner_position_x');

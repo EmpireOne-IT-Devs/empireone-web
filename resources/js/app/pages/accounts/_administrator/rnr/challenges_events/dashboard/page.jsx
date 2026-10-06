@@ -19,7 +19,7 @@ export default function Page() {
         <Layout>
             <RnrLayout>
                 <TabsSection>
-                    <div className="mt-2 bg-slate-100 p-6 rounded-lg font-sans text-slate-800">
+                    <div className="mt-2 bg-slate-200 p-6 rounded-lg font-sans text-slate-800">
                      <HeaderSection />
                      <div className="mt-4 flex items-center gap-2">
                         {viewTabs.map((tab) => {

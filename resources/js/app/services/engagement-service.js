@@ -153,6 +153,28 @@ export async function submit_reward_challenge_proof_service(id, photo, challenge
     });
 }
 
+export async function get_reward_challenge_report_service() {
+    return await axios.get("/api/engagement/reward-challenges/report");
+}
+
+export async function export_reward_challenge_report_service(type) {
+    return await axios.get("/api/engagement/reward-challenges/report/export", {
+        params: { type },
+        responseType: "blob",
+    });
+}
+
+export async function get_reward_challenge_employee_profiles_service(params = {}) {
+    return await axios.get("/api/engagement/reward-challenges/employee-profiles", { params });
+}
+
+export async function export_reward_challenge_employee_profiles_service(params = {}) {
+    return await axios.get("/api/engagement/reward-challenges/employee-profiles/export", {
+        params,
+        responseType: "blob",
+    });
+}
+
 export async function get_reward_challenge_submissions_service(status) {
     return await axios.get("/api/engagement/reward-challenge-submissions", {
         params: status ? { status } : {},

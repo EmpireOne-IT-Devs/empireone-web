@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { TbSearch } from "react-icons/tb";
 import Input from "@/app/_components/input";
 import { Download } from "lucide-react";
 import Button from "@/app/_components/button";
 
-export default function SearchSection() {
-    const [search, setSearch] = useState("");
-
+export default function SearchSection({ search, onSearchChange, exporting, onExport }) {
     const handleSubmit = (e) => {
         e.preventDefault();
     };
@@ -21,15 +19,15 @@ export default function SearchSection() {
                             label="Search employee name, EOID #..."
                             name="search"
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => onSearchChange(e.target.value)}
                         />
                     </form>
                 </div>
             </div>
-            
-            <Button>
+
+            <Button onClick={onExport} disabled={exporting}>
                 <Download className="w-4 h-4 mr-2" />
-                Export
+                {exporting ? "Exporting…" : "Export"}
             </Button>
         </div>
     );

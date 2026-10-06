@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('e_r_exit_clearances')) {
+            return;
+        }
+
         Schema::create('e_r_exit_clearances', function (Blueprint $table) {
             $table->id();
 

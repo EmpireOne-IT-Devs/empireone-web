@@ -10,7 +10,7 @@ export default function TabsSection() {
     const tabs = [
         {
             label: "Home",
-            path: "/accounts/administrator/activities/home",
+            path: `/accounts/${role}/activities/home`,
             active: currentPath === "home",
         },
         {
