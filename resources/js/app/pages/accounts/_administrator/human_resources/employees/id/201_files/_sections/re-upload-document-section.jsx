@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_documents_by_user_thunk } from "@/app/redux/applicant-thunk";
 import store from "@/app/store/store";
+import { get_user_by_id_thunk } from "@/app/redux/app-thunk";
 
 export default function ReUploadDocumentSection({ data }) {
     const [open, setOpen] = useState(false);
@@ -49,10 +50,14 @@ export default function ReUploadDocumentSection({ data }) {
             formDataParsed.documents.forEach((doc, index) => {
                 formData.append(`documents[${index}][name]`, doc.name);
                 formData.append(`documents[${index}][file]`, doc.file[0]);
+                formData.append(`documents[${index}][status]`, 'Approved');
             });
 
             await re_upload_documents_service(formData);
-            await store.dispatch(get_documents_by_user_thunk());
+            // await store.dispatch(get_documents_by_user_thunk());
+            await store.dispatch(
+                get_user_by_id_thunk(window.location.pathname.split("/")[4]),
+            );
             dispatch(
                 setAlert({
                     type: "success",

@@ -12,9 +12,9 @@ export default function EmployeeLayout({ children }) {
     }, []);
     return (
         <>
-            <div className="min-h-screen  text-slate-700 font-sans">
+            <div className="min-h-screen  text-slate-700 font-sans p-3">
                 <HeaderSection />
-                <TabsSection />
+                {/* <TabsSection /> */}
                 {children}
             </div>
         </>

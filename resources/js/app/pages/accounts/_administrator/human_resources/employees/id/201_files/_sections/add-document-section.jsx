@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import { get_documents_by_user_thunk } from "@/app/redux/applicant-thunk";
 import store from "@/app/store/store";
+import { get_user_by_id_thunk } from "@/app/redux/app-thunk";
 
 export default function AddDocumentSection() {
     const [open, setOpen] = useState(false);
@@ -61,12 +62,16 @@ export default function AddDocumentSection() {
             data.documents.forEach((doc, index) => {
                 formData.append(`documents[${index}][name]`, doc.name);
                 formData.append(`documents[${index}][file]`, doc.file[0]);
+                formData.append(`documents[${index}][status]`, 'Approved');
             });
             for (let pair of formData.entries()) {
                 console.log(pair[0] + ", " + pair[1]);
             }
             await add_documents_service(formData);
-            await store.dispatch(get_documents_by_user_thunk());
+            // await store.dispatch(get_documents_by_user_thunk());
+            await store.dispatch(
+                get_user_by_id_thunk(window.location.pathname.split("/")[4]),
+            );
             await dispatch(
                 setAlert({
                     type: "success",
@@ -237,7 +242,7 @@ export default function AddDocumentSection() {
                                 variant="secondary"
                                 className="w-full py-3 "
                             >
-                                Submit documents
+                               UPLOAD DOCUMENTS
                             </Button>
                         </div>
                     </div>
