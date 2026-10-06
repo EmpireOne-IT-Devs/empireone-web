@@ -60,39 +60,35 @@ export default function CardSection() {
     }, [surveys]);
 
     return (
-        <div className="flex flex-col sm:flex-row gap-4 my-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 my-3">
             {cards.map((card, index) => {
                 const Icon = card.icon;
 
                 return (
                     <Card
                         key={index}
-                        className="flex-1 flex flex-col gap-3 rounded-2xl border border-gray-200 shadow-sm"
-                        padding="p-5"
+                        className="min-w-0 flex flex-col gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm"
+                        padding="p-3 sm:p-5"
                     >
-                        <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
+                        <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                                 <div
-                                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.bg}`}
+                                    className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg sm:rounded-xl flex items-center justify-center ${card.bg}`}
                                 >
-                                    <Icon className="text-2xl text-white" />
+                                    <Icon className="text-xl sm:text-2xl text-white" />
                                 </div>
 
-                                <span className="text-2xl font-bold text-gray-900 leading-none">
+                                <span className="text-xl sm:text-2xl font-bold text-gray-900 leading-none truncate">
                                     {card.value}
                                 </span>
                             </div>
 
-                            <TbTrendingUp className="text-green-500 text-lg" />
+                            <TbTrendingUp className="shrink-0 text-green-500 text-base sm:text-lg" />
                         </div>
 
-                        <div>
-                            <p className="text-sm text-gray-500 mt-1">
-                                {card.title}
-                            </p>
-                        </div>
-
-                      
+                        <p className="text-xs sm:text-sm text-gray-500 sm:mt-1 leading-snug">
+                            {card.title}
+                        </p>
                     </Card>
                 );
             })}

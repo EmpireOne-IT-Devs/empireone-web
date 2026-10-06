@@ -13,24 +13,12 @@ export default function SurveyInfoSection({ survey }) {
     if (!survey) return null;
 
     return (
-        <div className="w-full rounded-2xl border border-orange-100 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-            {/* Top Row: Survey ID, Title, Description, and Status */}
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="flex flex-col gap-1.5 max-w-2xl">
-                    <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-orange-600 bg-orange-50 w-fit px-2.5 py-0.5 rounded-md font-mono">
-                        <Hash className="w-3 h-3 text-orange-500" />
-                        <span>SID-{String(survey.id).padStart(2, "0")}</span>
-                    </div>
-
-                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-snug">
-                        {survey.title}
-                    </h2>
-
-                    {survey.description && (
-                        <p className="text-sm text-slate-600 leading-relaxed mt-0.5">
-                            {survey.description}
-                        </p>
-                    )}
+        <div className="w-full rounded-2xl border border-orange-100 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+            {/* Top Row: Survey ID + Status */}
+            <div className="flex items-center justify-between gap-3">
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-orange-600 bg-orange-50 w-fit px-2.5 py-0.5 rounded-md font-mono">
+                    <Hash className="w-3 h-3 text-orange-500" />
+                    <span>SID-{String(survey.id).padStart(2, "0")}</span>
                 </div>
 
                 <span
@@ -44,41 +32,54 @@ export default function SurveyInfoSection({ survey }) {
                 </span>
             </div>
 
+            {/* Title + Description */}
+            <div className="flex flex-col gap-1.5 max-w-2xl mt-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight leading-snug break-words">
+                    {survey.title}
+                </h2>
+
+                {survey.description && (
+                    <p className="text-sm text-slate-600 leading-relaxed mt-0.5 break-words">
+                        {survey.description}
+                    </p>
+                )}
+            </div>
+
             {/* Bottom Row: Metadata Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-5 mt-5 border-t border-slate-100">
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-orange-50/40 border border-orange-100/60">
-                    <div className="p-2 bg-white rounded-lg text-orange-500 shadow-2xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-slate-100">
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-orange-50/40 border border-orange-100/60 min-w-0">
+                    <div className="p-2 bg-white rounded-lg text-orange-500 shadow-2xs shrink-0">
                         <Calendar className="w-4 h-4" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                         <p className="text-xs font-medium text-slate-400 uppercase tracking-wider font-mono">
                             Linked Event
                         </p>
-                        <p className="font-semibold text-slate-800 text-sm mt-0.5 line-clamp-1">
+                        <p className="font-semibold text-slate-800 text-sm mt-0.5 line-clamp-2 sm:line-clamp-1 break-words">
                             {survey.event?.headline ?? "—"}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-orange-50/40 border border-orange-100/60">
-                    <div className="p-2 bg-white rounded-lg text-orange-500 shadow-2xs">
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-orange-50/40 border border-orange-100/60 min-w-0">
+                    <div className="p-2 bg-white rounded-lg text-orange-500 shadow-2xs shrink-0">
                         <Tag className="w-4 h-4" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                         <p className="text-xs font-medium text-slate-400 uppercase tracking-wider font-mono">
                             Category
                         </p>
-                        <p className="font-semibold text-slate-800 text-sm mt-0.5">
+                        <p className="font-semibold text-slate-800 text-sm mt-0.5 break-words">
                             {survey.event?.category ?? "—"}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-orange-50/40 border border-orange-100/60">
-                    <div className="p-2 bg-white rounded-lg text-orange-500 shadow-2xs">
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-orange-50/40 border border-orange-100/60 min-w-0">
+                    <div className="p-2 bg-white rounded-lg text-orange-500 shadow-2xs shrink-0">
                         <CalendarDays className="w-4 h-4" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                         <p className="text-xs font-medium text-slate-400 uppercase tracking-wider font-mono">
                             Published
                         </p>
