@@ -133,92 +133,99 @@ export default function ActionListSection({ props_data }) {
                     }
     `}
             >
-           
+
                 {/* Send Job Offer */}
-                {canSendOffer && (
-                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
-                        <SendJobOfferSection data={props_data} />
-                    </div>
-                )}
+                <div className='flex flex-col w-full gap-2 pt-3'>
+                    {canSendOffer && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <SendJobOfferSection data={props_data} />
+                        </div>
+                    )}
 
-                {/* Resend Job Offer */}
-                {props_data?.final_status === 'Declined Job Offer' && (
-                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
-                        <ResendJobOfferSection data={props_data} />
-                    </div>
-                )}
+                    {/* Resend Job Offer */}
+                    {props_data?.final_status === 'Declined Job Offer' && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <ResendJobOfferSection data={props_data} />
+                        </div>
+                    )}
 
-                {/* Send Documents */}
-                {props_data?.final_status === 'Accepted Job Offer' && (
-                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
-                        <SendDocumentsSection data={props_data} />
-                    </div>
-                )}
+                    {/* Send Documents */}
+                    {props_data?.final_status === 'Accepted Job Offer' && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <SendDocumentsSection data={props_data} />
+                        </div>
+                    )}
+                    {props_data?.job_offer && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <Button
+                                type="button"
+                                onClick={() =>
+                                    window.open(
+                                        `/accounts/administrator/job_offers/${props_data?.job_offer?.id}`,
+                                        '_blank'
+                                    )
+                                }
+                            >
+                                <div className='text-white'>
+                                    JOB OFFER
+                                </div>
+                            </Button>
+                        </div>
+                    )}
+
+
+                    {/* Contract & Onboarding */}
+                    {props_data?.contract_type && props_data?.final_status === 'Sent Documents' && (
+                        <>
+                            <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] px-3 transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                                <Button
+                                    type="button"
+                                    onClick={() =>
+                                        window.open(
+                                            `/accounts/my_documents/${props_data?.user_id}/contract`,
+                                            '_blank'
+                                        )
+                                    }
+                                >
+                                    CONTRACT
+                                </Button>
+                            </div>
+                            <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] px-3 transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                                <Button
+                                    type="button"
+                                    onClick={() =>
+                                        window.open(
+                                            `/accounts/my_documents/${props_data?.user_id}/onboarding`,
+                                            '_blank'
+                                        )
+                                    }
+                                >
+                                    ONBOARDING
+                                </Button>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Create ECF */}
+                    {props_data?.final_status === 'Passed' && currentEmployeeId && (
+                        <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] px-3 transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <Button
+                                type="button"
+                                onClick={() =>
+                                    router.visit(
+                                        `/accounts/administrator/human_resources/employee_movements/promotions?employee_id=${currentEmployeeId}&location_id=${data?.user?.account_employee?.location_id}`
+                                    )
+                                }
+                            >
+                                CREATE ECF
+                            </Button>
+                        </div>
+                    )}
+                </div>
 
                 {/* View Job Offer */}
-                {props_data?.job_offer && (
-                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
-                        <button
-                            type="button"
-                            onClick={() =>
-                                window.open(
-                                    `/accounts/administrator/job_offers/${props_data?.job_offer?.id}`,
-                                    '_blank'
-                                )
-                            }
-                        >
-                            JOB OFFER
-                        </button>
-                    </div>
-                )}
 
-                {/* Contract & Onboarding */}
-                {props_data?.contract_type && props_data?.final_status === 'Sent Documents' && (
-                    <>
-                        <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    window.open(
-                                        `/accounts/my_documents/${props_data?.user_id}/contract`,
-                                        '_blank'
-                                    )
-                                }
-                            >
-                                CONTRACT
-                            </button>
-                        </div>
-                        <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    window.open(
-                                        `/accounts/my_documents/${props_data?.user_id}/onboarding`,
-                                        '_blank'
-                                    )
-                                }
-                            >
-                                ONBOARDING
-                            </button>
-                        </div>
-                    </>
-                )}
 
-                {/* Create ECF */}
-                {props_data?.final_status === 'Passed' && currentEmployeeId && (
-                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
-                        <button
-                            type="button"
-                            onClick={() =>
-                                router.visit(
-                                    `/accounts/administrator/human_resources/employee_movements/promotions?employee_id=${currentEmployeeId}&location_id=${data?.user?.account_employee?.location_id}`
-                                )
-                            }
-                        >
-                            CREATE ECF
-                        </button>
-                    </div>
-                )}
 
                 {/* Transfer, Details, and Delete Modals / Actions */}
                 <div className="border-t border-gray-100 flex flex-col gap-2 mt-1 pt-1 p-3">

@@ -155,7 +155,7 @@ export default function ApplicantTableSection({ loading=false }) {
     ];
 
     return (
-        <div className="w-full h-96">
+        <div className="w-full">
             <Table
                 isloading={loading}
                 columns={columns}
