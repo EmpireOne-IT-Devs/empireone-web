@@ -1073,7 +1073,11 @@ class JobApplicationController extends Controller
             })
             // B. Apply STATUS filters independently of the text search
             ->when($request->final_status, function ($query) use ($request) {
-                $query->where('final_status', $request->final_status);
+                if ($request->final_status === 'Sent Documents') {
+                    $query->whereIn('final_status', ['Sent Documents', 'Sent Contract']);
+                } else {
+                    $query->where('final_status', $request->final_status);
+                }
             })
 
             ->when($request->interview_status, function ($query) use ($request) {
