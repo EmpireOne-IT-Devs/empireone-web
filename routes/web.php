@@ -152,6 +152,16 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             // Route::inertia('/none_regularization', 'accounts/my_team/none_regularization/page');
         });
 
+
+          Route::prefix('reach')->group(function () use ($employeeDetailsRoutes) {
+            Route::inertia('dashboard', 'accounts/reach/dashboard/page');
+            Route::inertia('recognation', 'accounts/reach/recognation/page');
+            Route::inertia('evaluation', 'accounts/reach/evaluation/page');
+            Route::inertia('action_plan', 'accounts/reach/action_plan/page');
+            Route::inertia('commitment', 'accounts/reach/commitment/page');
+            Route::inertia('handoff', 'accounts/reach/handoff/page');
+        });
+
         Route::prefix('activities')->group(function () {
             Route::redirect('/', '/accounts/administrator/activities/home');
             Route::inertia('/home', 'accounts/_administrator/activities/home/page');

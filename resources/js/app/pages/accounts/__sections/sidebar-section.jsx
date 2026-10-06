@@ -101,10 +101,10 @@ export default function SidebarSection() {
                 },
                 { is_label: true, name: "Leader Hub" },
                 {
-                    name: "My Team",
-                    href: `/accounts/${account_role}/my_team`,
+                    name: "REACH",
+                    href: `/accounts/${account_role}/reach/dashboard`,
                     icon: FcConferenceCall,
-                    current: path === "my_team",
+                    current: path === "reach",
                     is_incoming: false,
                 },
             ]

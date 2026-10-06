@@ -300,23 +300,22 @@ export default function ActionListSection({ props_data }) {
 
                                 {/* Accepted Job Offer Documents */}
                                 {(props_data?.final_status ==
-                                    'Accepted Job Offer') && (
+                                    'Accepted Job Offer' || props_data?.final_status ==
+                                    'Sent Documents') && (
                                         <>
                                             <SendDocumentsSection data={props_data} />
-                                            {
-                                                props_data?.contract_type &&  <Button
+                                           <Button
                                                     variant="primary"
                                                     className="w-full"
                                                     onClick={() =>
                                                         window.open(
-                                                            `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type}`,
+                                                            `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type??'probation_full_time'}`,
                                                             '_blank'
                                                         )
                                                     }
                                                 >
                                                     CONTRACT
                                                 </Button>
-                                            }
 
                                         </>
                                     )}
