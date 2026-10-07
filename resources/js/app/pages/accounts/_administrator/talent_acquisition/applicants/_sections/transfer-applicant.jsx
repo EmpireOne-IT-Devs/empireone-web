@@ -40,6 +40,7 @@ export default function TransferApplicant({ data }) {
         }, {});
     }, [job_postings]);
 
+    console.log('groupedJobPostings',job_postings)
     // Automatically set the first available job posting as the default value when the modal opens
     useEffect(() => {
         if (open && job_postings?.length > 0) {
