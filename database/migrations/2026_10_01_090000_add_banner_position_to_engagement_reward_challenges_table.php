@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('engagement_reward_challenges', function (Blueprint $table) {
+        Schema::table('reward_challenges', function (Blueprint $table) {
             $table->unsignedTinyInteger('banner_position_x')->default(50)->after('banner_path');
             $table->unsignedTinyInteger('banner_position_y')->default(50)->after('banner_position_x');
         });
@@ -16,7 +16,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('engagement_reward_challenges', function (Blueprint $table) {
+        Schema::table('reward_challenges', function (Blueprint $table) {
             $table->dropColumn(['banner_position_x', 'banner_position_y']);
         });
     }
