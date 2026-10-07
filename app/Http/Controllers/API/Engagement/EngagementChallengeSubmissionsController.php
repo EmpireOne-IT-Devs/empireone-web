@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Engagement;
 use App\Http\Controllers\Controller;
 use App\Models\Engagement\EngagementRewardChallengeDailyLog;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
+use Illuminate\Support\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -24,35 +25,47 @@ class EngagementChallengeSubmissionsController extends Controller
     {
         $validated = $request->validate([
             'status' => ['nullable', 'string', 'in:submitted,approved,declined'],
+            'challenge_id' => ['nullable', 'integer', 'exists:engagement_reward_challenges,id'],
+            'location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'search' => ['nullable', 'string', 'max:255'],
         ]);
-        $status = $validated['status'] ?? null;
-
-        $singleSubmissions = EngagementRewardChallengeParticipant::query()
-            ->with([
-                'challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'card_color']),
-                'user:id,name,email',
-            ])
-            ->whereNotNull('submitted_at')
-            ->when($status, fn ($query, $status) => $query->where('status', $status))
-            ->get()
-            ->map(fn (EngagementRewardChallengeParticipant $participant) => $this->formatSubmission($participant));
-
-        $dailySubmissions = EngagementRewardChallengeDailyLog::query()
-            ->with([
-                'participant.challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'card_color', 'start_date']),
-                'participant.user:id,name,email',
-            ])
-            ->when($status, fn ($query, $status) => $query->where('status', $status))
-            ->get()
-            ->map(fn (EngagementRewardChallengeDailyLog $log) => $this->formatDailyLog($log));
-
-        $submissions = $singleSubmissions->concat($dailySubmissions)
-            ->sortByDesc('submitted_at')
-            ->values();
 
         return response()->json([
             'status' => 'success',
-            'data' => $submissions,
+            'data' => $this->buildSubmissionsCollection($validated),
+        ]);
+    }
+
+    public function export(Request $request)
+    {
+        $validated = $request->validate([
+            'status' => ['nullable', 'string', 'in:submitted,approved,declined'],
+            'challenge_id' => ['nullable', 'integer', 'exists:engagement_reward_challenges,id'],
+            'location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'search' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $submissions = $this->buildSubmissionsCollection($validated);
+
+        return response()->streamDownload(function () use ($submissions) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['EOID', 'Fullname', 'Challenge Title', 'Department', 'Account', 'Points', 'Email'], "\t");
+
+            foreach ($submissions as $submission) {
+                fputcsv($handle, [
+                    $submission['employee']['eoid'] ?? '',
+                    $submission['employee']['name'] ?? '',
+                    $submission['challenge']['title'] ?? '',
+                    $submission['employee']['department_name'] ?? '',
+                    $submission['employee']['account_name'] ?? '',
+                    $submission['challenge']['points'] ?? '',
+                    $submission['employee']['email'] ?? '',
+                ], "\t");
+            }
+
+            fclose($handle);
+        }, 'challenge_submissions_'.now()->format('Ymd_His').'.xls', [
+            'Content-Type' => 'application/vnd.ms-excel',
         ]);
     }
 
@@ -250,8 +263,66 @@ class EngagementChallengeSubmissionsController extends Controller
         ]);
     }
 
+    private function buildSubmissionsCollection(array $filters): Collection
+    {
+        $status = $filters['status'] ?? null;
+        $challengeId = $filters['challenge_id'] ?? null;
+        $locationId = $filters['location_id'] ?? null;
+        $search = trim((string) ($filters['search'] ?? ''));
+
+        $singleSubmissions = EngagementRewardChallengeParticipant::query()
+            ->with([
+                'challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'card_color']),
+                'user' => fn ($query) => $query
+                    ->select(['id', 'name', 'email'])
+                    ->with([
+                        'account_employee' => fn ($accountQuery) => $accountQuery
+                            ->select(['id', 'user_id', 'employee_id', 'location_id', 'department_id', 'account_id'])
+                            ->with(['location:id,name', 'department:id,name', 'account:id,name']),
+                    ]),
+            ])
+            ->whereNotNull('submitted_at')
+            ->when($status, fn ($query, $value) => $query->where('status', $value))
+            ->when($challengeId, fn ($query, $value) => $query->where('reward_challenge_id', $value))
+            ->when($locationId, fn ($query, $value) => $query->whereHas('user.account_employee', fn ($locationQuery) => $locationQuery->where('location_id', $value)))
+            ->when($search !== '', fn ($query) => $query->whereHas('user', function ($userQuery) use ($search) {
+                $userQuery->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            }))
+            ->get()
+            ->map(fn (EngagementRewardChallengeParticipant $participant) => $this->formatSubmission($participant));
+
+        $dailySubmissions = EngagementRewardChallengeDailyLog::query()
+            ->with([
+                'participant.challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'card_color', 'start_date']),
+                'participant.user' => fn ($query) => $query
+                    ->select(['id', 'name', 'email'])
+                    ->with([
+                        'account_employee' => fn ($accountQuery) => $accountQuery
+                            ->select(['id', 'user_id', 'employee_id', 'location_id', 'department_id', 'account_id'])
+                            ->with(['location:id,name', 'department:id,name', 'account:id,name']),
+                    ]),
+            ])
+            ->when($status, fn ($query, $value) => $query->where('status', $value))
+            ->when($challengeId, fn ($query, $value) => $query->whereHas('participant', fn ($participantQuery) => $participantQuery->where('reward_challenge_id', $value)))
+            ->when($locationId, fn ($query, $value) => $query->whereHas('participant.user.account_employee', fn ($locationQuery) => $locationQuery->where('location_id', $value)))
+            ->when($search !== '', fn ($query) => $query->whereHas('participant.user', function ($userQuery) use ($search) {
+                $userQuery->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            }))
+            ->get()
+            ->map(fn (EngagementRewardChallengeDailyLog $log) => $this->formatDailyLog($log));
+
+        return $singleSubmissions->concat($dailySubmissions)
+            ->sortByDesc('submitted_at')
+            ->values();
+    }
+
     private function formatSubmission(EngagementRewardChallengeParticipant $participant): array
     {
+        $accountEmployee = $participant->user?->account_employee;
+        $location = $accountEmployee?->location;
+
         return [
             'id' => (string) $participant->id,
             'status' => $participant->status,
@@ -275,6 +346,11 @@ class EngagementChallengeSubmissionsController extends Controller
                 'id' => $participant->user->id,
                 'name' => $participant->user->name,
                 'email' => $participant->user->email,
+                'eoid' => $accountEmployee?->employee_id,
+                'location_id' => $location?->id,
+                'location_name' => $location?->name,
+                'department_name' => $accountEmployee?->department?->name,
+                'account_name' => $accountEmployee?->account?->name,
             ] : null,
         ];
     }
@@ -283,6 +359,8 @@ class EngagementChallengeSubmissionsController extends Controller
     {
         $participant = $log->participant;
         $challenge = $participant?->challenge;
+        $accountEmployee = $participant?->user?->account_employee;
+        $location = $accountEmployee?->location;
 
         // Prefixing the description is a zero-risk way to surface "which day
         // is this" in the existing review modal without needing any
@@ -313,6 +391,11 @@ class EngagementChallengeSubmissionsController extends Controller
                 'id' => $participant->user->id,
                 'name' => $participant->user->name,
                 'email' => $participant->user->email,
+                'eoid' => $accountEmployee?->employee_id,
+                'location_id' => $location?->id,
+                'location_name' => $location?->name,
+                'department_name' => $accountEmployee?->department?->name,
+                'account_name' => $accountEmployee?->account?->name,
             ] : null,
         ];
     }

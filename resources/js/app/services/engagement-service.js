@@ -189,14 +189,21 @@ export async function export_reward_challenge_employee_profiles_service(params =
     });
 }
 
-export async function get_reward_challenge_submissions_service(status) {
+export async function get_reward_challenge_submissions_service(params = {}) {
     return await axios.get("/api/engagement/reward-challenge-submissions", {
-        params: status ? { status } : {},
+        params,
     });
 }
 
 export async function get_reward_challenge_submission_stats_service() {
     return await axios.get("/api/engagement/reward-challenge-submissions/stats");
+}
+
+export async function export_reward_challenge_submissions_service(params = {}) {
+    return await axios.get("/api/engagement/reward-challenge-submissions/export", {
+        params,
+        responseType: "blob",
+    });
 }
 
 export async function approve_reward_challenge_submission_service(id) {

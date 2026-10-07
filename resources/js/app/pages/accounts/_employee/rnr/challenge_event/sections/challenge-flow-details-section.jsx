@@ -18,10 +18,6 @@ export default function ChallengeFlowDetailsSection({
 }) {
     return (
         <>
-            <p className="text-sm leading-relaxed text-gray-600">
-                {challenge.description}
-            </p>
-
             <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-gray-50 px-3 py-2.5">
                     <p className="flex items-center gap-1.5 text-xs text-gray-400">

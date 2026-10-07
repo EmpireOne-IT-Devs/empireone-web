@@ -7,7 +7,8 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
-import TextArea from "@/app/_components/textarea";
+import Wysiwyg from "@/app/_components/wysiwyg";
+import { htmlToPlainText } from "@/app/lib/rich-text";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     update_engagement_reward_challenge_thunk,
@@ -379,15 +380,24 @@ export default function EditChallengeSection({ challenge }) {
                     <Controller
                         name="description"
                         control={control}
-                        rules={{ required: "Description is required." }}
+                        rules={{
+                            validate: (value) =>
+                                htmlToPlainText(value) !== "" || "Description is required.",
+                        }}
                         render={({ field, fieldState }) => (
-                            <TextArea
-                                label="Description"
-                                placeholder="Describe what participants need to do and how to complete the challenge..."
-                                rows={3}
-                                {...field}
-                                error={fieldState.error?.message}
-                            />
+                            <div>
+                                <span className="mb-1 block text-sm font-semibold text-gray-900">
+                                    Description / Challenge Guide
+                                </span>
+                                <p className="mb-2 text-xs text-gray-500">
+                                    Explain the goal, what participants need to do, and what proof to submit. Use headings and bullet lists for a clear guide.
+                                </p>
+                                <Wysiwyg
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    error={fieldState.error?.message}
+                                />
+                            </div>
                         )}
                     />
 

@@ -126,16 +126,12 @@ export default function ChallengeFlowSubmitSection({
                 </div>
             )}
 
-            <div className="rounded-2xl border border-gray-100 bg-gray-50/80 px-4 py-3">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                    {isDaily
-                        ? `Day ${(challenge.completed_days ?? 0) + 1} of ${challenge.required_days ?? 1}`
-                        : "Challenge"}
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                    {challenge.description}
-                </p>
-            </div>
+            {isDaily && (
+                <div className="flex w-fit items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                    <Clock3 className="h-3.5 w-3.5" />
+                    Day {(challenge.completed_days ?? 0) + 1} of {challenge.required_days ?? 1}
+                </div>
+            )}
 
             <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">

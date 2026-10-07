@@ -31,15 +31,6 @@ export default function ChallengeFlowRulesSection({
 
     return (
         <>
-            <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                    Challenge
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                    {challenge.description}
-                </p>
-            </div>
-
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
                 <p className="flex items-center gap-1.5 text-sm font-semibold text-amber-800">
                     <Flag className="h-4 w-4" />

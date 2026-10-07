@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {
     Building2,
+    ChevronDown,
     ImagePlus,
     Landmark,
     PlusCircleIcon,
@@ -14,7 +15,8 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
-import TextArea from "@/app/_components/textarea";
+import Wysiwyg from "@/app/_components/wysiwyg";
+import { htmlToPlainText } from "@/app/lib/rich-text";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     create_engagement_reward_challenge_thunk,
@@ -66,6 +68,8 @@ export default function CreateNewChallenge() {
     const [bannerFile, setBannerFile] = useState(null);
     const [bannerPreview, setBannerPreview] = useState(null);
     const [participantsError, setParticipantsError] = useState("");
+    const [openEligibilityDropdown, setOpenEligibilityDropdown] = useState(null);
+    const participantsDropdownRef = useRef(null);
 
     const {
         register,
@@ -99,6 +103,21 @@ export default function CreateNewChallenge() {
         };
     }, [bannerPreview]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                participantsDropdownRef.current &&
+                !participantsDropdownRef.current.contains(event.target)
+            ) {
+                setOpenEligibilityDropdown(null);
+            }
+        };
+
+        window.addEventListener("mousedown", handleClickOutside, true);
+        return () =>
+            window.removeEventListener("mousedown", handleClickOutside, true);
+    }, []);
+
     // Load eligibility options (departments, accounts & employee count) when the modal opens
     useEffect(() => {
         if (
@@ -118,6 +137,7 @@ export default function CreateNewChallenge() {
     const handleClose = () => {
         setIsOpen(false);
         setParticipantsError("");
+        setOpenEligibilityDropdown(null);
         reset(DEFAULT_VALUES);
         removeBanner();
     };
@@ -407,15 +427,24 @@ export default function CreateNewChallenge() {
                     <Controller
                         name="description"
                         control={control}
-                        rules={{ required: "Description is required." }}
+                        rules={{
+                            validate: (value) =>
+                                htmlToPlainText(value) !== "" || "Description is required.",
+                        }}
                         render={({ field, fieldState }) => (
-                            <TextArea
-                                label="Description"
-                                placeholder="Describe what participants need to do and how to complete the challenge..."
-                                rows={3}
-                                {...field}
-                                error={fieldState.error?.message}
-                            />
+                            <div>
+                                <span className="mb-1 block text-sm font-semibold text-gray-900">
+                                    Description / Challenge Guide
+                                </span>
+                                <p className="mb-2 text-xs text-gray-500">
+                                    Explain the goal, what participants need to do, and what proof to submit. Use headings and bullet lists for a clear guide.
+                                </p>
+                                <Wysiwyg
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    error={fieldState.error?.message}
+                                />
+                            </div>
                         )}
                     />
 
@@ -553,77 +582,171 @@ export default function CreateNewChallenge() {
 
                         <div className="my-2 flex items-center gap-2 text-xs text-gray-400">
                             <span className="h-px flex-1 bg-gray-200" />
-                            or select departments
+                            or select departments & accounts
                             <span className="h-px flex-1 bg-gray-200" />
                         </div>
 
-                        <div className="flex flex-wrap gap-2">
-                            {rewardChallengeDepartments.map((dept) => {
-                                const isSelected =
-                                    selectedDepartmentIds?.includes(dept.id);
-                                return (
+                        <div
+                            ref={participantsDropdownRef}
+                            className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+                        >
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setOpenEligibilityDropdown((current) =>
+                                            current === "departments"
+                                                ? null
+                                                : "departments",
+                                        )
+                                    }
+                                    className={`flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-sm transition ${
+                                        selectedDepartmentIds?.length > 0
+                                            ? "border-orange-300 bg-orange-50/60 text-orange-800"
+                                            : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                                    }`}
+                                >
+                                    <span className="flex min-w-0 items-center gap-2">
+                                        <Building2 className="h-4 w-4 shrink-0" />
+                                        <span className="truncate text-left">
+                                            {selectedDepartmentIds?.length > 0
+                                                ? `${selectedDepartmentIds.length} department(s) selected`
+                                                : "Select Department(s)"}
+                                        </span>
+                                    </span>
+                                    <ChevronDown
+                                        className={`h-4 w-4 shrink-0 transition-transform ${
+                                            openEligibilityDropdown ===
+                                            "departments"
+                                                ? "rotate-180"
+                                                : ""
+                                        }`}
+                                    />
+                                </button>
+
+                                {openEligibilityDropdown === "departments" && (
+                                    <div className="absolute z-20 mt-1.5 max-h-56 w-full overflow-y-auto rounded-xl border border-gray-200 bg-white p-1 shadow-lg">
+                                        {rewardChallengeDepartments.map(
+                                            (dept) => {
+                                                const isSelected =
+                                                    selectedDepartmentIds?.includes(
+                                                        dept.id,
+                                                    );
+                                                return (
+                                                    <button
+                                                        key={dept.id}
+                                                        type="button"
+                                                        aria-pressed={
+                                                            isSelected
+                                                        }
+                                                        onClick={() =>
+                                                            toggleDepartment(
+                                                                dept.id,
+                                                            )
+                                                        }
+                                                        className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs transition ${
+                                                            isSelected
+                                                                ? "bg-orange-50 text-orange-800"
+                                                                : "text-gray-700 hover:bg-gray-50"
+                                                        }`}
+                                                    >
+                                                        <span className="truncate">
+                                                            {dept.name}
+                                                        </span>
+                                                        <span className="ml-2 shrink-0 text-[11px] text-gray-400">
+                                                            {
+                                                                dept.employees_count
+                                                            }
+                                                        </span>
+                                                    </button>
+                                                );
+                                            },
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {rewardChallengeAccounts.length > 0 && (
+                                <div className="relative">
                                     <button
-                                        key={dept.id}
                                         type="button"
-                                        aria-pressed={isSelected}
                                         onClick={() =>
-                                            toggleDepartment(dept.id)
+                                            setOpenEligibilityDropdown(
+                                                (current) =>
+                                                    current === "accounts"
+                                                        ? null
+                                                        : "accounts",
+                                            )
                                         }
-                                        className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                                            isSelected
-                                                ? "border-orange-400 bg-orange-50 text-orange-700"
-                                                : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                                        className={`flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-sm transition ${
+                                            selectedAccountIds?.length > 0
+                                                ? "border-orange-300 bg-orange-50/60 text-orange-800"
+                                                : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                                         }`}
                                     >
-                                        <Building2 className="h-3.5 w-3.5" />
-                                        {dept.name}{" "}
-                                        <span className="text-gray-400">
-                                            {dept.employees_count}
+                                        <span className="flex min-w-0 items-center gap-2">
+                                            <Landmark className="h-4 w-4 shrink-0" />
+                                            <span className="truncate text-left">
+                                                {selectedAccountIds?.length > 0
+                                                    ? `${selectedAccountIds.length} account(s) selected`
+                                                    : "Select Account(s)"}
+                                            </span>
                                         </span>
+                                        <ChevronDown
+                                            className={`h-4 w-4 shrink-0 transition-transform ${
+                                                openEligibilityDropdown ===
+                                                "accounts"
+                                                    ? "rotate-180"
+                                                    : ""
+                                            }`}
+                                        />
                                     </button>
-                                );
-                            })}
+
+                                    {openEligibilityDropdown === "accounts" && (
+                                        <div className="absolute z-20 mt-1.5 max-h-56 w-full overflow-y-auto rounded-xl border border-gray-200 bg-white p-1 shadow-lg">
+                                            {rewardChallengeAccounts.map(
+                                                (account) => {
+                                                    const isSelected =
+                                                        selectedAccountIds?.includes(
+                                                            account.id,
+                                                        );
+                                                    return (
+                                                        <button
+                                                            key={account.id}
+                                                            type="button"
+                                                            aria-pressed={
+                                                                isSelected
+                                                            }
+                                                            onClick={() =>
+                                                                toggleAccount(
+                                                                    account.id,
+                                                                )
+                                                            }
+                                                            className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs transition ${
+                                                                isSelected
+                                                                    ? "bg-orange-50 text-orange-800"
+                                                                    : "text-gray-700 hover:bg-gray-50"
+                                                            }`}
+                                                        >
+                                                            <span className="truncate">
+                                                                {
+                                                                    account.name
+                                                                }
+                                                            </span>
+                                                            <span className="ml-2 shrink-0 text-[11px] text-gray-400">
+                                                                {
+                                                                    account.employees_count
+                                                                }
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                },
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
-
-                        {rewardChallengeAccounts.length > 0 && (
-                            <>
-                                <div className="my-2 flex items-center gap-2 text-xs text-gray-400">
-                                    <span className="h-px flex-1 bg-gray-200" />
-                                    or select accounts
-                                    <span className="h-px flex-1 bg-gray-200" />
-                                </div>
-
-                                <div className="flex flex-wrap gap-2">
-                                    {rewardChallengeAccounts.map((account) => {
-                                        const isSelected =
-                                            selectedAccountIds?.includes(
-                                                account.id,
-                                            );
-                                        return (
-                                            <button
-                                                key={account.id}
-                                                type="button"
-                                                aria-pressed={isSelected}
-                                                onClick={() =>
-                                                    toggleAccount(account.id)
-                                                }
-                                                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                                                    isSelected
-                                                        ? "border-orange-400 bg-orange-50 text-orange-700"
-                                                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
-                                                }`}
-                                            >
-                                                <Landmark className="h-3.5 w-3.5" />
-                                                {account.name}{" "}
-                                                <span className="text-gray-400">
-                                                    {account.employees_count}
-                                                </span>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </>
-                        )}
                         {participantsError && (
                             <p className="mt-2 text-sm text-red-500">
                                 {participantsError}

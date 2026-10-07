@@ -250,6 +250,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'destroy']);
 
         Route::get('reward-challenge-submissions', [EngagementChallengeSubmissionsController::class, 'index']);
+        Route::get('reward-challenge-submissions/export', [EngagementChallengeSubmissionsController::class, 'export']);
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
         Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
         Route::post('reward-challenge-submissions/{id}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);

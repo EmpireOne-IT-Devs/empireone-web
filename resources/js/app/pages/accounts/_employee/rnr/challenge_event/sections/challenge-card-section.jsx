@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     BookOpen,
@@ -20,6 +20,7 @@ import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Skeleton from "@/app/_components/skeleton";
 import { setAlert } from "@/app/redux/app-slice";
+import { htmlToPlainText } from "@/app/lib/rich-text";
 import { leave_engagement_reward_challenge_thunk } from "@/app/redux/engagement-thunk";
 import ChallengeFlowSection from "./challenge-flow-section";
 
@@ -115,6 +116,10 @@ function ChallengeCard({ challenge, highlighted = false }) {
     const dispatch = useDispatch();
     const { rewardChallengeLeavingId } = useSelector((state) => state.engagement);
     const [isFlowModalOpen, setIsFlowModalOpen] = useState(false);
+    const descriptionPreview = useMemo(
+        () => htmlToPlainText(challenge.description),
+        [challenge.description],
+    );
 
     const meta = CATEGORY_META[challenge.category] ?? DEFAULT_CATEGORY_META;
     const Icon = meta.icon;
@@ -373,7 +378,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
 
                     {/* Description */}
                     <p className="text-sm leading-relaxed text-gray-500 line-clamp-2">
-                        {challenge.description}
+                        {descriptionPreview}
                     </p>
 
                     {/* Participants & Progress */}

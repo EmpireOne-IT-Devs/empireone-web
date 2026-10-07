@@ -28,15 +28,6 @@ export default function ChallengeFlowNextStepsSection({
     return (
         <>
             <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                    Challenge
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                    {challenge.description}
-                </p>
-            </div>
-
-            <div>
                 <p className="mb-2 text-sm font-semibold text-gray-800">
                     What You Need To Do
                 </p>

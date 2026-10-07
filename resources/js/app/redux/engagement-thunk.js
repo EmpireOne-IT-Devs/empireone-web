@@ -501,9 +501,9 @@ export const get_engagement_reward_challenge_my_daily_logs_thunk = createAsyncTh
 
 export const get_engagement_reward_challenge_submissions_thunk = createAsyncThunk(
     "engagement/getRewardChallengeSubmissions",
-    async (status, { rejectWithValue }) => {
+    async (params = {}, { rejectWithValue }) => {
         try {
-            const response = await get_reward_challenge_submissions_service(status);
+            const response = await get_reward_challenge_submissions_service(params);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

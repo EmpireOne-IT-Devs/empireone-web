@@ -73,7 +73,7 @@ export default function ChallengeEventSection() {
     ];
 
     return (
-        <div className="flex flex-col gap-6 min-h-screen p-6 bg-gradient-to-br border border-orange-200  rounded-lg from-orange-100 via-purple-200 to-slate-100/80">
+        <div className="flex flex-col gap-6 min-h-screen p-6 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-white border border-slate-200 rounded-lg">
             <HeaderSection
                 activeCount={activeCount}
                 joinedCount={joinedCount}

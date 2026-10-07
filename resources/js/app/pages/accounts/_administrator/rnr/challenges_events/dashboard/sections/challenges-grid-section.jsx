@@ -14,6 +14,7 @@ import Skeleton from "@/app/_components/skeleton";
 import EditChallengeSection from "./edit-challenge-section";
 import DeleteChallengeSection from "./delete-challenge-section";
 import ShareChallengeSection from "./share-challenge-section";
+import { htmlToPlainText } from "@/app/lib/rich-text";
 
 const CATEGORY_META = {
   Wellness: {
@@ -146,8 +147,8 @@ export default function ChallengesGridSection({
                     <h3 className="text-base font-bold text-slate-900 mb-1">
                       {challenge.title}
                     </h3>
-                    <p className="text-xs text-slate-500 min-h-[32px] mb-4">
-                      {challenge.description}
+                    <p className="text-xs text-slate-500 min-h-[32px] mb-4 line-clamp-2">
+                      {htmlToPlainText(challenge.description)}
                     </p>
 
                     {/* Stats */}

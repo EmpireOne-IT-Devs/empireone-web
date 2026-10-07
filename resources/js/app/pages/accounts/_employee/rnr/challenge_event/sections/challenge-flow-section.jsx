@@ -5,6 +5,7 @@ import Modal from "@/app/_components/modal";
 import { setAlert } from "@/app/redux/app-slice";
 import { join_engagement_reward_challenge_thunk } from "@/app/redux/engagement-thunk";
 import ChallengeFlowProgressSection from "./challenge-flow-progress-section";
+import ChallengeGuideSection from "./challenge-guide-section";
 import ChallengeFlowDetailsSection from "./challenge-flow-details-section";
 import ChallengeFlowRulesSection from "./challenge-flow-rules-section";
 import ChallengeFlowNextStepsSection from "./challenge-flow-next-steps-section";
@@ -104,6 +105,11 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                     currentStep={currentStep}
                     isDeclined={isDeclined}
                     challenge={challenge}
+                />
+
+                <ChallengeGuideSection
+                    challenge={challenge}
+                    defaultExpanded={currentStep === 0}
                 />
 
                 {currentStep === 0 && preJoinStage === "details" && (

@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Check, ChevronDown, Eye, X } from "lucide-react";
+import { Check, Eye, X } from "lucide-react";
 import Button from "@/app/_components/button";
 import Badge from "@/app/_components/badge";
 import Skeleton from "@/app/_components/skeleton";
@@ -20,7 +20,7 @@ const STATUS_BADGE = {
     declined: { label: "Rejected", variant: "danger" },
 };
 
-export default function TableSection() {
+export default function TableSection({ filters }) {
     const dispatch = useDispatch();
     const {
         challengeSubmissions,
@@ -29,56 +29,22 @@ export default function TableSection() {
     } = useSelector((state) => state.engagement);
     const [declineTarget, setDeclineTarget] = useState(null);
     const [proofTarget, setProofTarget] = useState(null);
-    const [selectedChallengeId, setSelectedChallengeId] = useState(null);
-    const [isChallengeFilterOpen, setIsChallengeFilterOpen] = useState(false);
-    const challengeFilterRef = useRef(null);
+    const requestParams = useMemo(() => {
+        const params = {};
+        if (filters?.status) params.status = filters.status;
+        if (filters?.challenge_id) params.challenge_id = filters.challenge_id;
+        if (filters?.location_id) params.location_id = filters.location_id;
+        if (filters?.search?.trim()) params.search = filters.search.trim();
+        return params;
+    }, [filters]);
 
     useEffect(() => {
-        dispatch(get_engagement_reward_challenge_submissions_thunk());
-    }, [dispatch]);
+        const debounceId = setTimeout(() => {
+            dispatch(get_engagement_reward_challenge_submissions_thunk(requestParams));
+        }, 250);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (!challengeFilterRef.current?.contains(event.target)) {
-                setIsChallengeFilterOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () =>
-            document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    const challengeOptions = useMemo(() => {
-        const seen = new Map();
-        challengeSubmissions.forEach((submission) => {
-            const challenge = submission.challenge;
-            if (challenge?.id && !seen.has(challenge.id)) {
-                seen.set(challenge.id, challenge);
-            }
-        });
-        return Array.from(seen.values());
-    }, [challengeSubmissions]);
-
-    const filteredSubmissions = useMemo(() => {
-        if (!selectedChallengeId) return challengeSubmissions;
-        return challengeSubmissions.filter(
-            (submission) => submission.challenge?.id === selectedChallengeId,
-        );
-    }, [challengeSubmissions, selectedChallengeId]);
-
-    const selectedChallenge = useMemo(
-        () =>
-            challengeOptions.find(
-                (challenge) => challenge.id === selectedChallengeId,
-            ) ?? null,
-        [challengeOptions, selectedChallengeId],
-    );
-
-    const handleSelectChallenge = (challengeId) => {
-        setSelectedChallengeId(challengeId);
-        setIsChallengeFilterOpen(false);
-    };
+        return () => clearTimeout(debounceId);
+    }, [dispatch, requestParams]);
 
     const handleApprove = async (submission) => {
         const result = await dispatch(
@@ -102,6 +68,7 @@ export default function TableSection() {
         }
 
         dispatch(get_engagement_reward_challenge_submission_stats_thunk());
+        dispatch(get_engagement_reward_challenge_submissions_thunk(requestParams));
         dispatch(
             setAlert({
                 type: "success",
@@ -115,6 +82,7 @@ export default function TableSection() {
     const handleDeclineClose = () => {
         setDeclineTarget(null);
         dispatch(get_engagement_reward_challenge_submission_stats_thunk());
+        dispatch(get_engagement_reward_challenge_submissions_thunk(requestParams));
     };
 
     if (challengeSubmissionsLoading) {
@@ -138,83 +106,13 @@ export default function TableSection() {
             <table className="w-full text-left text-sm">
                 <thead className="border-b border-gray-100 text-xs uppercase text-gray-400">
                     <tr>
-                        <th className="px-4 py-3">Employee</th>
-                        <th
-                            className="relative px-4 py-3"
-                            ref={challengeFilterRef}
-                        >
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setIsChallengeFilterOpen((value) => !value)
-                                }
-                                className={`flex items-center gap-1 uppercase tracking-wide transition-colors ${
-                                    selectedChallenge
-                                        ? "text-orange-600"
-                                        : "text-gray-400 hover:text-gray-600"
-                                }`}
-                            >
-                                <span className="max-w-[140px] truncate">
-                                    {selectedChallenge?.title ?? "Challenge"}
-                                </span>
-                                <ChevronDown
-                                    className={`h-3.5 w-3.5 shrink-0 transition-transform ${
-                                        isChallengeFilterOpen
-                                            ? "rotate-180"
-                                            : ""
-                                    }`}
-                                />
-                            </button>
-
-                            {isChallengeFilterOpen && (
-                                <div className="absolute left-0 top-full z-20 mt-1 max-h-72 w-56 overflow-auto rounded-xl border border-gray-100 bg-white text-left normal-case text-gray-700 shadow-lg">
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleSelectChallenge(null)
-                                        }
-                                        className={`block w-full px-4 py-2 text-left text-sm ${
-                                            !selectedChallengeId
-                                                ? "bg-orange-50 font-medium text-orange-700"
-                                                : "hover:bg-gray-50"
-                                        }`}
-                                    >
-                                        All Challenges
-                                    </button>
-                                    {challengeOptions.length === 0 ? (
-                                        <div className="px-4 py-2 text-sm text-gray-400">
-                                            No challenges available.
-                                        </div>
-                                    ) : (
-                                        challengeOptions.map((challenge) => {
-                                            const isActive =
-                                                challenge.id ===
-                                                selectedChallengeId;
-
-                                            return (
-                                                <button
-                                                    key={challenge.id}
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleSelectChallenge(
-                                                            challenge.id,
-                                                        )
-                                                    }
-                                                    className={`block w-full truncate px-4 py-2 text-left text-sm ${
-                                                        isActive
-                                                            ? "bg-orange-50 font-medium text-orange-700"
-                                                            : "hover:bg-gray-50"
-                                                    }`}
-                                                >
-                                                    {challenge.title}
-                                                </button>
-                                            );
-                                        })
-                                    )}
-                                </div>
-                            )}
-                        </th>
-
+                        <th className="px-4 py-3">EOID</th>
+                        <th className="px-4 py-3">Fullname</th>
+                        <th className="px-4 py-3">Challenge Title</th>
+                        <th className="px-4 py-3">Department</th>
+                        <th className="px-4 py-3">Account</th>
+                        <th className="px-4 py-3">Points</th>
+                        <th className="px-4 py-3">Email</th>
                         <th className="px-4 py-3">Submitted</th>
                         <th className="px-4 py-3">Status</th>
 
@@ -222,18 +120,17 @@ export default function TableSection() {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                    {filteredSubmissions.length === 0 && (
+                    {challengeSubmissions.length === 0 && (
                         <tr>
                             <td
-                                colSpan={5}
+                                colSpan={10}
                                 className="px-4 py-6 text-center text-sm text-gray-500"
                             >
-                                No submissions found for{" "}
-                                {selectedChallenge?.title ?? "this challenge"}.
+                                No submissions found for the selected filters.
                             </td>
                         </tr>
                     )}
-                    {filteredSubmissions.map((submission) => {
+                    {challengeSubmissions.map((submission) => {
                         const badge =
                             STATUS_BADGE[submission.status] ??
                             STATUS_BADGE.submitted;
@@ -244,20 +141,40 @@ export default function TableSection() {
                             <tr key={submission.id}>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
-                                        {submission.employee.name}
+                                        {submission.employee.eoid ?? "-"}
                                     </p>
+                                </td>
+                                  <td className="px-4 py-3">
                                     <p className="text-xs text-gray-400">
                                         {submission.employee.email}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
-                                        {submission.challenge.title}
-                                    </p>
-                                    <p className="text-xs text-gray-400">
-                                        +{submission.challenge.points} pts
+                                        {submission.employee.name}
                                     </p>
                                 </td>
+                                <td className="px-4 py-3">
+                                    <p className="font-medium text-gray-800">
+                                        {submission.challenge.title}
+                                    </p>
+                                </td>
+                                <td className="px-4 py-3">
+                                    <p className="text-sm text-gray-700">
+                                        {submission.employee.department_name ?? "-"}
+                                    </p>
+                                </td>
+                                <td className="px-4 py-3">
+                                    <p className="text-sm text-gray-700">
+                                        {submission.employee.account_name ?? "-"}
+                                    </p>
+                                </td>
+                                <td className="px-4 py-3">
+                                    <p className="font-medium text-yellow-500">
+                                        +{submission.challenge.points}
+                                    </p>
+                                </td>
+                              
                                 <td className="px-4 py-3 text-xs text-gray-500">
                                     {moment(submission.submitted_at).format(
                                         "MMM D, YYYY, h:mm A",
