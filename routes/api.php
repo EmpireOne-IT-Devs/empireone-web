@@ -24,6 +24,7 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventSurveyController;
 use App\Http\Controllers\API\Engagement\EngagementPollController;
 use App\Http\Controllers\API\Engagement\EngagementBirthdayController;
 use App\Http\Controllers\API\Engagement\EngagementChallengeSubmissionsController;
+use App\Http\Controllers\API\Engagement\EngagementEStoreController;
 use App\Http\Controllers\API\Engagement\EngagementRewardChallengesController;
 use App\Http\Controllers\API\Engagement\EngagementRewardRecognitionController;
 use App\Http\Controllers\API\Jobs\JobAIInterviewController;
@@ -254,6 +255,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
         Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
         Route::post('reward-challenge-submissions/{id}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
+        Route::apiResource('e-store-items', EngagementEStoreController::class);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);

@@ -11,6 +11,7 @@ class EngagementPostEventFile extends Model
     protected $fillable = [
         'engagement_post_event_id',
         'company_gallery_id',
+        'engagement_e_store_id',
         'name',
         'url',
     ];
@@ -23,5 +24,10 @@ class EngagementPostEventFile extends Model
     public function companyGallery(): BelongsTo
     {
         return $this->belongsTo(CompanyGallery::class, 'company_gallery_id');
+    }
+
+    public function eStoreItem(): BelongsTo
+    {
+        return $this->belongsTo(EngagementEStore::class, 'engagement_e_store_id');
     }
 }

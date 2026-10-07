@@ -1,239 +1,321 @@
-import React, { useState } from "react";
-import {
-    Gift,
-    Crown,
-    Utensils,
-    CreditCard,
-    Shirt,
-    Laptop,
-    PlusCircle,
-    Store,
-} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
+import { PackagePlus, Store, X, UploadCloud } from "lucide-react";
 import Modal from "@/app/_components/modal";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
 import Button from "@/app/_components/button";
-const ICON_OPTIONS = [
-    { label: "Gift", value: "gift", icon: Gift },
-    { label: "Crown", value: "crown", icon: Crown },
-    { label: "Meal", value: "meal", icon: Utensils },
-    { label: "Card", value: "card", icon: CreditCard },
-    { label: "Shirt", value: "shirt", icon: Shirt },
-    { label: "Laptop", value: "laptop", icon: Laptop },
-];
+import { setAlert } from "@/app/redux/app-slice";
+import { create_engagement_e_store_item_thunk } from "@/app/redux/engagement-thunk";
 
-const TYPE_OPTIONS = [
+const REWARD_TYPE_OPTIONS = [
     { label: "Avatar Decoration", value: "Avatar Decoration" },
     { label: "Meal Voucher", value: "Meal Voucher" },
     { label: "Gift Card", value: "Gift Card" },
     { label: "Merchandise", value: "Merchandise" },
     { label: "Workplace Perk", value: "Workplace Perk" },
 ];
-const RARITY_OPTIONS = [
-    { label: "Common", value: "Common" },
-    { label: "Uncommon", value: "Uncommon" },
-    { label: "Rare", value: "Rare" },
-    { label: "Epic", value: "Epic" },
-    { label: "Legendary", value: "Legendary" },
-];
 
-const inputClass =
-    "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400";
-const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+const DEFAULT_VALUES = {
+    product_image: null,
+    product_name: "",
+    customer_description: "",
+    reward_type: "",
+    point_cost: "",
+    quantity: "",
+};
 
 export default function AddRewardSection() {
+    const dispatch = useDispatch();
+    const { eStoreItemCreating } = useSelector((state) => state.engagement);
     const [isOpen, setIsOpen] = useState(false);
-    const [form, setForm] = useState({
-        name: "",
-        type: "Avatar Decoration",
-        description: "",
-        category: "",
-        icon: "gift",
-        color: "#3730a3",
-        pointsCost: 100,
-        rarity: "Common",
-        stock: "",
-        expiryDays: "",
-    });
+    const [previewUrl, setPreviewUrl] = useState(null);
 
-    const set = (field) => (e) =>
-        setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    const setVal = (field) => (val) =>
-        setForm((prev) => ({ ...prev, [field]: val }));
+    const {
+        register,
+        control,
+        handleSubmit,
+        watch,
+        reset,
+        setValue,
+        formState: { errors },
+    } = useForm({ defaultValues: DEFAULT_VALUES });
 
-    const selectedIcon =
-        ICON_OPTIONS.find((o) => o.value === form.icon) || ICON_OPTIONS[0];
-    const PreviewIcon = selectedIcon.icon;
+    const form = watch();
+
+    useEffect(() => {
+        register("product_image", {
+            validate: (value) => {
+                if (!value) return true;
+                const allowed = ["image/png", "image/jpeg", "image/webp"];
+                return (
+                    allowed.includes(value.type) ||
+                    "Only PNG, JPG, or WEBP is allowed."
+                );
+            },
+        });
+    }, [register]);
+
+    const imageLabel = useMemo(
+        () => form.product_image?.name || null,
+        [form.product_image],
+    );
+
+    const closeModal = () => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+        setIsOpen(false);
+        reset(DEFAULT_VALUES);
+    };
+
+    const handleImageChange = (event) => {
+        const file = event.target.files?.[0] ?? null;
+        setValue("product_image", file, { shouldValidate: true });
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(file ? URL.createObjectURL(file) : null);
+    };
+
+    const clearImage = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setValue("product_image", null, { shouldValidate: true });
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+    };
+
+    const onSubmit = async (data) => {
+        const payload = new FormData();
+        if (data.product_image) payload.append("product_image", data.product_image);
+        payload.append("product_name", data.product_name);
+        payload.append("customer_description", data.customer_description || "");
+        payload.append("reward_type", data.reward_type);
+        payload.append("point_cost", String(data.point_cost));
+        if (data.quantity !== "" && data.quantity !== null && data.quantity !== undefined) {
+            payload.append("quantity", String(data.quantity));
+        }
+
+        const result = await dispatch(create_engagement_e_store_item_thunk(payload));
+
+        if (create_engagement_e_store_item_thunk.rejected.match(result)) {
+            dispatch(
+                setAlert({
+                    type: "danger",
+                    title: "Unable to create reward item",
+                    message: result.payload?.message || "Please check your inputs and try again.",
+                    open: true,
+                }),
+            );
+            return;
+        }
+
+        dispatch(
+            setAlert({
+                type: "success",
+                title: "Reward published",
+                message: `${data.product_name} was added successfully.`,
+                open: true,
+            }),
+        );
+        closeModal();
+    };
 
     return (
         <>
-            <div className="flex justify-end ">
-                <Button
-                outlined
-                onClick={() => setIsOpen(true)}>
-                    <PlusCircle size={16} />
+            <div className="flex justify-end">
+                <Button outlined onClick={() => setIsOpen(true)}>
+                    <PackagePlus size={16} />
                     <div className="ml-2">Add New Reward Item</div>
                 </Button>
             </div>
 
             <Modal
                 isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
+                onClose={closeModal}
+                width="max-w-2xl"
                 title={
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
-                            <Store />
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                            <Store size={18} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
+                            <p className="text-[10px] font-medium uppercase tracking-widest text-neutral-400">
                                 E-Store
                             </p>
-                            <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
-                                Add New Reward Item
+                            <h2 className="text-sm font-semibold text-neutral-800">
+                                Publish reward item
                             </h2>
                         </div>
                     </div>
                 }
-                width="max-w-2xl"
             >
-                <div className="flex flex-col gap-4 overflow-y-auto max-h-[60vh] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent p-3 ">
-                    <Input
-                        label="Name"
-                        name="name"
-                        placeholder="Enter reward name"
-                        value={form.name}
-                        onChange={set("name")}
-                    />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="px-5 pb-5 pt-4 space-y-5">
 
-                    <Select
-                        label="Type"
-                        name="type"
-                        options={TYPE_OPTIONS}
-                        value={form.type}
-                        onChange={setVal("type")}
-                    />
-
-                    <div>
-                        <label className={labelClass}>Description</label>
-                        <textarea
-                            className={inputClass}
-                            rows={3}
-                            placeholder="Enter description"
-                            value={form.description}
-                            onChange={set("description")}
-                        />
-                    </div>
-
-                    <Input
-                        label="Category"
-                        name="category"
-                        value={form.category}
-                        onChange={set("category")}
-                    />
-
-                    <div className="grid grid-cols-2 gap-3">
+                        {/* Image upload — full width, horizontal layout */}
                         <div>
-                            <Select
-                                label="Icon"
-                                name="icon"
-                                options={ICON_OPTIONS}
-                                value={form.icon}
-                                onChange={setVal("icon")}
-                            />
-                        </div>
-                        <div>
-                            <Input
-                                label="Color"
-                                type="color"
-                                className="w-full h-[38px] border border-gray-300 rounded-md cursor-pointer px-1"
-                                value={form.color}
-                                onChange={set("color")}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <Input
-                                label="Points Cost"
-                                name="pointsCost"
-                                type="number"
-                                value={form.pointsCost}
-                                onChange={set("pointsCost")}
-                                min={0}
-                            />
-                        </div>
-                        <div>
-                            <Select
-                                label="Rarity (Optional)"
-                                name="rarity"
-                                options={RARITY_OPTIONS}
-                                value={form.rarity}
-                                onChange={setVal("rarity")}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <Input
-                                label="Stock (Optional)"
-                                name="stock"
-                                value={form.stock}
-                                onChange={set("stock")}
-                            />
-                        </div>
-                        <div>
-                            <Input
-                                label="Expiry Days (Optional)"
-                                name="expiryDays"
-                                value={form.expiryDays}
-                                onChange={set("expiryDays")}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className={labelClass}>Preview:</label>
-                        <div className="flex items-center gap-3 border border-gray-200 rounded-lg p-3 bg-gray-50">
-                            <div
-                                className="p-2 rounded-xl shrink-0"
-                                style={{ backgroundColor: form.color + "22" }}
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Product image
+                            </p>
+                            <label
+                                htmlFor="product_image"
+                                className={`group relative flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed p-4 transition-colors
+                                    ${previewUrl
+                                        ? "border-orange-200 bg-orange-50/30"
+                                        : "border-gray-200 bg-gray-50 hover:border-orange-300 hover:bg-orange-50/20"
+                                    }`}
                             >
-                                <PreviewIcon
-                                    size={20}
-                                    style={{ color: form.color }}
+                                {previewUrl ? (
+                                    <>
+                                        <img
+                                            src={previewUrl}
+                                            alt="Product preview"
+                                            className="h-20 w-20 flex-shrink-0 rounded-lg object-cover shadow-sm"
+                                        />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium text-gray-800">
+                                                {imageLabel}
+                                            </p>
+                                            <p className="mt-0.5 text-xs text-gray-500">
+                                                Click to replace image
+                                            </p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={clearImage}
+                                            className="flex-shrink-0 rounded-full p-1 text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                                            aria-label="Remove image"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white">
+                                            <UploadCloud size={24} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700 group-hover:text-orange-700 transition-colors">
+                                                Upload product image
+                                            </p>
+                                            <p className="mt-0.5 text-xs text-gray-400">
+                                                PNG, JPG, or WEBP · Optional
+                                            </p>
+                                        </div>
+                                    </>
+                                )}
+                            </label>
+                            <input
+                                id="product_image"
+                                type="file"
+                                accept="image/png,image/jpeg,image/webp"
+                                className="hidden"
+                                onChange={handleImageChange}
+                            />
+                            {errors.product_image?.message && (
+                                <p className="mt-1.5 text-xs text-red-500">
+                                    {errors.product_image.message}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Divider */}
+                        <div className="border-t border-gray-100" />
+
+                        {/* Product details */}
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <Input
+                                    label="Product name"
+                                    placeholder="e.g. Travel Backpack"
+                                    error={errors.product_name?.message}
+                                    {...register("product_name", {
+                                        required: "Product name is required.",
+                                    })}
+                                />
+                                <Controller
+                                    name="reward_type"
+                                    control={control}
+                                    rules={{ required: "Reward type is required." }}
+                                    render={({ field, fieldState }) => (
+                                        <Select
+                                            label="Reward type"
+                                            name="reward_type"
+                                            options={[
+                                                { label: "Select reward type", value: "" },
+                                                ...REWARD_TYPE_OPTIONS,
+                                            ]}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            error={fieldState.error?.message}
+                                        />
+                                    )}
                                 />
                             </div>
-                            <div className="flex flex-col">
-                                <span className="font-semibold text-gray-900 text-sm">
-                                    {form.name || "Item Name"}
-                                </span>
-                                <span className="text-xs text-gray-400">
-                                    {form.description || "Description"}
-                                </span>
-                                <span
-                                    className="text-xs font-semibold mt-0.5"
-                                    style={{ color: form.color }}
-                                >
-                                    {form.pointsCost} pts
-                                </span>
+
+                            <Input
+                                label="Description"
+                                placeholder="e.g. Durable everyday carry bag with laptop compartment"
+                                error={errors.customer_description?.message}
+                                {...register("customer_description")}
+                            />
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Input
+                                    label="Points cost"
+                                    type="number"
+                                    min={0}
+                                    placeholder="e.g. 1000"
+                                    error={errors.point_cost?.message}
+                                    {...register("point_cost", {
+                                        required: "Points cost is required.",
+                                        valueAsNumber: true,
+                                        min: {
+                                            value: 0,
+                                            message: "Points cost cannot be negative.",
+                                        },
+                                    })}
+                                />
+                                <Input
+                                    label="Quantity"
+                                    type="number"
+                                    min={0}
+                                    placeholder="Blank = unlimited"
+                                    error={errors.quantity?.message}
+                                    {...register("quantity", {
+                                        setValueAs: (value) =>
+                                            value === "" ? "" : Number(value),
+                                        validate: (value) =>
+                                            value === "" ||
+                                            value >= 0 ||
+                                            "Quantity cannot be negative.",
+                                    })}
+                                />
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 pt-2 sticky bottom-0 bg-white mt-4">
-                    <button
-                        onClick={() => setIsOpen(false)}
-                        className="w-full border border-gray-300 text-gray-600 text-sm font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                        <PlusCircle size={16} />
-                        Add Reward
-                    </button>
-                </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-end gap-3 border-t border-gray-100 px-5 py-4">
+                        <Button
+                            variant="secondary"
+                            type="button"
+                            onClick={closeModal}
+                           
+                        >
+                            Cancel
+                        </Button>
+                
+                        <Button
+                        variant="engagement"
+                            type="submit"
+                            disabled={eStoreItemCreating}
+                            
+                        >
+                            {eStoreItemCreating ? "Publishing…" : "Publish reward"}
+                        </Button>
+                    </div>
+                </form>
             </Modal>
         </>
     );

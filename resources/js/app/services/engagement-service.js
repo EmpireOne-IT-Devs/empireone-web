@@ -213,3 +213,13 @@ export async function approve_reward_challenge_submission_service(id) {
 export async function decline_reward_challenge_submission_service(id, review_note) {
     return await axios.post(`/api/engagement/reward-challenge-submissions/${id}/decline`, { review_note });
 }
+
+export async function create_e_store_item_service(data) {
+    return await axios.post("/api/engagement/e-store-items", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}
+
+export async function get_e_store_items_service(params = {}) {
+    return await axios.get("/api/engagement/e-store-items", { params });
+}

@@ -19,7 +19,7 @@ export default function SearchSection() {
             <div className="w-full md:w-48 shrink-0">
                 <Select
                     label="All Types"
-                    value={status}
+                    value=""
              
                     options={[
                         { value: "all_types", label: "All Types" },
@@ -36,7 +36,7 @@ export default function SearchSection() {
              <div className="w-full md:w-48 shrink-0">
                 <Select
                     label="All Status"
-                    value={status}
+                    value=""
              
                     options={[
                         { value: "all_status", label: "All Status" },

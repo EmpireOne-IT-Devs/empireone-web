@@ -35,6 +35,8 @@ import {
     get_reward_challenge_submission_stats_service,
     approve_reward_challenge_submission_service,
     decline_reward_challenge_submission_service,
+    create_e_store_item_service,
+    get_e_store_items_service,
 } from "../services/engagement-service";
 
 export const get_engagement_posts_thunk = createAsyncThunk(
@@ -540,6 +542,30 @@ export const decline_engagement_reward_challenge_submission_thunk = createAsyncT
     async ({ id, review_note }, { rejectWithValue }) => {
         try {
             const response = await decline_reward_challenge_submission_service(id, review_note);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const create_engagement_e_store_item_thunk = createAsyncThunk(
+    "engagement/createEStoreItem",
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await create_e_store_item_service(data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_engagement_e_store_items_thunk = createAsyncThunk(
+    "engagement/getEStoreItems",
+    async (params = {}, { rejectWithValue }) => {
+        try {
+            const response = await get_e_store_items_service(params);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
