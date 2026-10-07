@@ -237,11 +237,11 @@ class JobPostingController extends Controller
         // Determine the location ID: either from the request, or fallback to the user's profile
         $locationId = $request->location_id ?? $user?->account_employee?->location_id;
         // Apply the filter if we have a location ID from EITHER source
-        if ($locationId != "0" && $request->location_type != 'all') {
-            $query->whereHas('job_requisition', function ($q) use ($locationId) {
-                $q->where('location_id', $locationId);
-            });
-        }
+        // if ($locationId != "0" && $request->location_type != 'all') {
+        //     $query->whereHas('job_requisition', function ($q) use ($locationId) {
+        //         $q->where('location_id', $locationId);
+        //     });
+        // }
 
         // CORRECTED IF STATEMENT:
         // Checks if user exists, if their department is NOT 1 or 2, and if their role is 1 or 2
