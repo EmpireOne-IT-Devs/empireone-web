@@ -101,10 +101,10 @@ export default function SidebarSection() {
                 },
                 { is_label: true, name: "Leader Hub" },
                 {
-                    name: "My Team",
-                    href: `/accounts/${account_role}/my_team`,
+                    name: "REACH",
+                    href: `/accounts/${account_role}/reach/dashboard`,
                     icon: FcConferenceCall,
-                    current: path === "my_team",
+                    current: path === "reach",
                     is_incoming: false,
                 },
             ]
@@ -233,7 +233,7 @@ export default function SidebarSection() {
                     href: `/accounts/${account_role}/rnr`,
                     icon: FcCloseUpMode,
                     current: path == "rnr",
-                    is_incoming: true,
+                    is_incoming: false,
                 },
                 {
                     name: "Reward Store",

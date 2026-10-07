@@ -292,7 +292,7 @@ export default function StatusesCardSection() {
                     onClick={() => handleCardClick('final_status', 'Sent Job Offer')}
                 />
                 <StatCard
-                    title="Sent Documents"
+                    title="Sent Documents/Contract"
                     count={data.sent_documents}
                     type="success"
                     icon={Files}

@@ -5,7 +5,7 @@ import CorrectionSection from "../sections/correction-section";
 import OvertimeSection from "../sections/overtime-section";
 import LeaveSection from "../sections/leave-section";
 
-export default function AttendanceAction() {
+export default function AttendanceAction({ date, log, onSaved }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("correction");
 
@@ -27,16 +27,16 @@ export default function AttendanceAction() {
     const renderActiveSection = () => {
         switch (activeTab) {
             case "correction":
-                return <CorrectionSection />;
+                return <CorrectionSection date={date} log={log} setIsOpen={setIsModalOpen} onSaved={onSaved} />;
 
             case "overtime":
-                return <OvertimeSection />;
+                return <OvertimeSection date={date} onSaved={onSaved} />;
 
             case "leave":
-                return <LeaveSection />;
+                return <LeaveSection date={date} onSaved={onSaved} />;
 
             default:
-                return <CorrectionSection />;
+                return <CorrectionSection date={date} log={log} setIsOpen={setIsModalOpen} onSaved={onSaved} />;
         }
     };
 

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FcMenu } from "react-icons/fc";
 import AddAttritionSection from './add-attrition-section';
 import UpdateEmployee from './update-employee';
+import { FcOpenedFolder } from 'react-icons/fc';
 
 export default function EmployeeActionSection({ props_data }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -68,6 +69,25 @@ export default function EmployeeActionSection({ props_data }) {
                     }
                 `}
             >
+                <div
+                    className="
+                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150
+                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800
+                    "
+                >
+
+                    <button
+                        onClick={() => window.open(`/accounts/administrator/human_resources/${props_data?.id}/201_files`, '_blank', 'noopener,noreferrer')}
+                        className="group flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                    >
+                        <FcOpenedFolder
+                            size={20}
+                            className="shrink-0 transition-transform duration-200 ease-out group-hover:scale-110"
+                        />
+                        201 Files
+                    </button>
+
+                </div>
                 <div
                     className="
                         w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150

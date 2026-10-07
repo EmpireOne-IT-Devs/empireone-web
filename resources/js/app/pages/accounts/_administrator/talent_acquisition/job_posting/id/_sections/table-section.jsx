@@ -12,7 +12,7 @@ import { FcApproval, FcButtingIn } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
 import { router } from "@inertiajs/react";
 
-export default function TableSection() {
+export default function TableSection({ loading }) {
     const [openModal, setOpenModal] = useState(false);
     const { job_applications, search_applicant_status } = useSelector(
         (store) => store.job_postings,
@@ -134,7 +134,7 @@ export default function TableSection() {
     return (
         <>
             <div className="flex flex-col gap-3">
-                <Table columns={columns} data={tableData} />
+                <Table columns={columns} data={tableData}   isloading={loading}/>
             </div>
         </>
     );

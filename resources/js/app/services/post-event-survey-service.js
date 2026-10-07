@@ -12,6 +12,10 @@ export async function create_post_event_survey_service(data) {
     return await axios.post("/api/engagement/surveys", data);
 }
 
+export async function update_post_event_survey_service(id, data) {
+    return await axios.put(`/api/engagement/surveys/${id}`, data);
+}
+
 export async function submit_post_event_survey_service(id, data) {
     return await axios.post(`/api/engagement/surveys/${id}/submit`, data);
 }
@@ -20,9 +24,10 @@ export async function get_survey_responses_service(id) {
     return await axios.get(`/api/engagement/surveys/${id}/responses`);
 }
 
-export async function export_survey_responses_service(id) {
+export async function export_survey_responses_service(id, site = "") {
     return await axios.get(`/api/engagement/surveys/${id}/responses/export`, {
         responseType: "blob",
+        params: site ? { site } : {},
     });
 }
 
@@ -41,4 +46,3 @@ export async function reopen_post_event_survey_service(id) {
 export async function delete_post_event_survey_service(id) {
     return await axios.delete(`/api/engagement/surveys/${id}`);
 }
-

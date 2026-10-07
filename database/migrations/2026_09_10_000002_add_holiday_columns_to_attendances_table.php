@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasColumn('attendances', 'holiday_id')) {
+            return;
+        }
+
         Schema::table('attendances', function (Blueprint $table) {
             $table->foreignId('holiday_id')->nullable()->after('remarks')->constrained('holidays')->nullOnDelete();
             $table->string('holiday_name')->nullable()->after('holiday_id');

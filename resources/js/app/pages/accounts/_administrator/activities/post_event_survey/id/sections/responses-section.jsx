@@ -4,6 +4,7 @@ import { get_survey_responses_thunk } from "@/app/redux/post-event-survey-slice"
 import { export_survey_responses_service } from "@/app/services/post-event-survey-service";
 import Skeleton from "@/app/_components/skeleton";
 import Table from "@/app/_components/table";
+import Select from "@/app/_components/select";
 import moment from "moment";
 import EmployeeAnswerViewer from "./employee-answer-viewer";
 import Button from "@/app/_components/button";
@@ -89,6 +90,7 @@ export default function ResponsesSection({ surveyId }) {
         (state) => state.post_event_surveys
     );
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedSite, setSelectedSite] = useState("");
     const [exporting, setExporting] = useState(false);
 
     useEffect(() => {
@@ -98,12 +100,12 @@ export default function ResponsesSection({ surveyId }) {
     const handleExport = async () => {
         setExporting(true);
         try {
-            const response = await export_survey_responses_service(surveyId);
+            const response = await export_survey_responses_service(surveyId, selectedSite);
             const blob = new Blob([response.data], { type: "text/csv" });
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = `survey_${surveyId}_responses.csv`;
+            link.download = `survey_${surveyId}_responses${selectedSite ? `_site_${selectedSite}` : ""}.csv`;
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -126,6 +128,15 @@ export default function ResponsesSection({ surveyId }) {
     };
 
     const surveyQuestions = questions ?? [];
+    const siteNames = [...new Set(
+        response_tracker
+            .map((row) => row.site)
+            .filter((site) => site && site !== "N/A")
+    )].sort((a, b) => a.localeCompare(b));
+    const siteOptions = [
+        { label: "All Sites", value: "" },
+        ...siteNames.map((site) => ({ label: site, value: site })),
+    ];
 
     // Every survey question is surfaced as its own column, mirroring a spreadsheet response sheet.
     const questionColumns = surveyQuestions.map((question) => ({
@@ -146,7 +157,11 @@ export default function ResponsesSection({ surveyId }) {
         // { header: "Action", accessor: "view_survey" },
     ];
 
-    const tableData = response_tracker.map((row) => {
+    const filteredResponseTracker = selectedSite
+        ? response_tracker.filter((row) => row.site === selectedSite)
+        : response_tracker;
+
+    const tableData = filteredResponseTracker.map((row) => {
         const questionAnswers = {};
         surveyQuestions.forEach((question) => {
             questionAnswers[`question_${question.id}`] = formatQuestionAnswer(
@@ -263,15 +278,26 @@ export default function ResponsesSection({ surveyId }) {
             <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
                 <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between gap-3">
                     <h3 className="text-sm font-semibold text-gray-700">Employee Response Tracker</h3>
-                    <Button
-                        type="button"
-                        onClick={handleExport}
-                        disabled={exporting || total_responses === 0}
-                        className="flex items-center gap-1.5 rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:opacity-50"
-                    >
-                        <Download size={14} />
-                        {exporting ? "Exporting…" : "Export Responses"}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <div className="w-48">
+                            <Select
+                                name="site_filter"
+                                label="Site"
+                                options={siteOptions}
+                                value={selectedSite}
+                                onChange={(value) => setSelectedSite(value)}
+                            />
+                        </div>
+                        <Button
+                            type="button"
+                            onClick={handleExport}
+                            disabled={exporting || total_responses === 0}
+                            className="flex items-center gap-1.5 rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-gray-700 disabled:opacity-50"
+                        >
+                            <Download size={14} />
+                            {exporting ? "Exporting…" : "Export Responses"}
+                        </Button>
+                    </div>
                 </div>
                 <div className="p-4">
                     {selectedUserId ? (
@@ -283,9 +309,9 @@ export default function ResponsesSection({ surveyId }) {
                     ) : (
                         <>
                             <Table columns={columns} data={tableData} />
-                            {response_tracker.length === 0 && (
+                            {filteredResponseTracker.length === 0 && (
                                 <p className="px-5 py-6 text-sm text-gray-400 text-center">
-                                    No employees found.
+                                    {selectedSite ? "No employees found for this site." : "No employees found."}
                                 </p>
                             )}
                         </>

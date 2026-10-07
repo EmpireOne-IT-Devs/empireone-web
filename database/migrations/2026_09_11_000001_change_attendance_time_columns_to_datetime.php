@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -11,6 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // The follow-up migration (split_attendance_datetime_columns) later
+        // drops these columns entirely, so skip if that's already happened.
+        if (! Schema::hasColumn('attendances', 'clock_in')) {
+            return;
+        }
+
         DB::statement('ALTER TABLE attendances MODIFY clock_in DATETIME NULL');
         DB::statement('ALTER TABLE attendances MODIFY break_start DATETIME NULL');
         DB::statement('ALTER TABLE attendances MODIFY break_end DATETIME NULL');

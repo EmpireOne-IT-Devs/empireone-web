@@ -45,13 +45,13 @@ export default function SendDocumentsSection({ data }) {
     return (
         <>
             <Button
-                className="w-full"
+                className="w-full "
                 variant="success"
                 onClick={() => setOpen(true)}
                 outlined
             >
                 <span className="text-green-500">
-                    <SendIcon className="w-4 h-4 mr-2" />
+                    <SendIcon className="w-4 h-4 " />
                 </span>
                 Send Documents
             </Button>
@@ -108,12 +108,12 @@ export default function SendDocumentsSection({ data }) {
                                         checked={field.value === "probation_part_time"}
                                         onChange={() => field.onChange("probation_part_time")}
                                     />
-                                    {/* <Radio
+                                    <Radio
                                         label="Probation Full Time"
                                         value="probation_full_time"
                                         checked={field.value === "probation_full_time"}
                                         onChange={() => field.onChange("probation_full_time")}
-                                    /> */}
+                                    />
                                 </div>
                             )}
                         />

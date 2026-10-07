@@ -35,33 +35,34 @@ export default function HeaderSection({ surveyId }) {
     const isWorking = closing || reopening;
 
     return (
-        <div className="w-full px-6 pt-6 pb-4 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-3">
+        <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6 pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <button
                     type="button"
                     onClick={handleBack}
-                    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition"
+                    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition shrink-0 py-1 -ml-1 pr-1"
+                    aria-label="Go back"
                 >
                     <ArrowLeft size={16} />
-                    Back
+                    <span>Back</span>
                 </button>
-                <span className="text-gray-300">|</span>
-                <div className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                    <ClipboardList size={20} />
-                    Survey Details
+                <span className="text-gray-300 shrink-0">|</span>
+                <div className="flex items-center gap-2 text-base sm:text-lg font-bold text-gray-800 min-w-0">
+                    <ClipboardList size={20} className="shrink-0" />
+                    <span className="truncate">Survey Details</span>
                 </div>
             </div>
 
             {selectedSurvey &&
                 (!isReady ? (
-                    <div className="h-9 w-32 animate-pulse rounded-lg bg-gray-200" />
+                    <div className="h-10 sm:h-9 w-full sm:w-32 animate-pulse rounded-lg bg-gray-200" />
                 ) : (
                     canManage && (
                         <button
                             type="button"
                             onClick={handleToggleStatus}
                             disabled={isWorking}
-                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed ${
+                            className={`w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-lg text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed ${
                                 isClosed
                                     ? "bg-green-500 text-white hover:bg-green-600"
                                     : "bg-red-500 text-white hover:bg-red-600"

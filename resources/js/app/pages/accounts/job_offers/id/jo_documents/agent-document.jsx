@@ -334,19 +334,22 @@ const OfferLetterPDF = (data) => {
                 <Text style={styles.centerTitle}>ANNEXURE I</Text>
                 <Text style={styles.centerTitle}>SCHEDULE OF BENEFITS</Text>
 
-                <View style={styles.row}>
-                    <Text style={styles.label}>Annual Leave</Text>
-                    {/* <Text style={styles.value}>
+                {
+                    data?.leave_notes && <View style={styles.row}>
+                        <Text style={styles.label}>Annual Leave</Text>
+                        {/* <Text style={styles.value}>
                         {data?.annual_leave} leave credits to be utilized as VL/SL/EL upon {data?.effective_period?.toLowerCase()}{"\n"}
                         Max of {data?.annual_leave} un-used leaves credits are convertible to cash.
                     </Text> */}
-                    <Text style={styles.value}>
-                        {data?.leave_notes}
-                    </Text>
-                    {/* <ListItem>
+                        <Text style={styles.value}>
+                            {data?.leave_notes}
+                        </Text>
+                        {/* <ListItem>
                        
                     </ListItem> */}
-                </View>
+                    </View>
+                }
+
 
 
                 <View style={styles.row}>

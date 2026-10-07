@@ -36,9 +36,10 @@ export default function Layout({ children }) {
                 >
                     {/* Added the animation wrapper here */}
                     <div className="animate-slideUp p-4">
-                        {
+                        {/* {
                             loading ? <LoadingPage /> : children
-                        }
+                        } */}
+                        {children}
                     </div>
                 </main>
             </div>

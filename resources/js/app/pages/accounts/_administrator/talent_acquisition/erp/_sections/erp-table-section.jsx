@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import Table from "@/app/_components/table";
 
-export default function ERPTableSection() {
+export default function ERPTableSection({ loading }) {
     const { erps } = useSelector(
         (store) => store.job_postings,
     );
@@ -109,7 +109,7 @@ export default function ERPTableSection() {
     });
     return (
         <div className="flex flex-col gap-3 bg-white rounded-md shadow-md">
-            <Table columns={columns} data={tableData} />
+            <Table columns={columns} data={tableData} isloading={loading} />
         </div>
     );
 }

@@ -17,27 +17,29 @@ class ERLeaderController extends Controller
      */
     public function index(Request $request)
     {
-        // Extract the location_id from the query parameters (e.g., ?location_id=1)
+        // 1. Get location_id filter from query parameters (?location_id=1)
         $locationId = $request->query('location_id');
 
-        // 1. Initialize the base queries
-        $leadersQuery = ERLeader::with('user', 'employee')->withCount('subordinates');
-        $usersQuery = User::whereIn('role', [1, 2])->with(['personal_information', 'account_employee']);
+        // 2. Build base query for ERLeaders
+        $leadersQuery = ERLeader::with(['user', 'employee'])
+            ->withCount('subordinates');
 
-        // 2. Apply location filtering if a location_id is present
+        // 3. Build base query for Users
+        $usersQuery = User::whereIn('role', [1, 2])
+            ->with(['personal_information', 'account_employee']);
+
+        // 4. Apply location_id filtering if provided
         if ($locationId) {
+            $leadersQuery->whereHas('employee', function ($query) use ($locationId) {
+                $query->where('location_id', $locationId);
+            });
 
-            // $leadersQuery->whereHas('employee', function ($query) use ($locationId) {
-            //     $query->where('location_id', $locationId);
-            // });
-
-            // Filter Users assuming location_id is on the 'account_employees' table
             $usersQuery->whereHas('account_employee', function ($query) use ($locationId) {
                 $query->where('location_id', $locationId);
             });
         }
 
-        // 3. Execute queries
+        // 5. Execute queries simultaneously
         $leaders = $leadersQuery->get();
         $users = $usersQuery->get();
 

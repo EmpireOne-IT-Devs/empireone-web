@@ -12,10 +12,38 @@ export default function ChallengeEventSection() {
     );
     const [filter, setFilter] = useState("All");
     const [showArchived, setShowArchived] = useState(false);
+    const [sharedId] = useState(() =>
+        Number(new URLSearchParams(window.location.search).get("challenge")) || null,
+    );
+    const [highlightId, setHighlightId] = useState(null);
 
     useEffect(() => {
         dispatch(get_my_engagement_reward_challenges_thunk());
     }, [dispatch]);
+
+    // Shared link (?challenge=ID): show the right tab, then scroll to and highlight the card once.
+    useEffect(() => {
+        if (!sharedId || highlightId !== null || myRewardChallengesLoading) return;
+        const shared = myRewardChallenges.find((challenge) => challenge.id === sharedId);
+        if (!shared) return;
+        setFilter("All");
+        setShowArchived(shared.status === "Completed");
+        setHighlightId(sharedId);
+    }, [sharedId, highlightId, myRewardChallenges, myRewardChallengesLoading]);
+
+    useEffect(() => {
+        if (!highlightId) return;
+        const frame = requestAnimationFrame(() => {
+            document
+                .getElementById(`challenge-${highlightId}`)
+                ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+        const timer = setTimeout(() => setHighlightId(0), 4000);
+        return () => {
+            cancelAnimationFrame(frame);
+            clearTimeout(timer);
+        };
+    }, [highlightId]);
 
     const activeCount = useMemo(
         () => myRewardChallenges.filter((challenge) => challenge.status === "Active").length,
@@ -45,14 +73,14 @@ export default function ChallengeEventSection() {
     ];
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6 min-h-screen p-6 bg-gradient-to-br border border-orange-200  rounded-lg from-orange-100 via-purple-200 to-slate-100/80">
             <HeaderSection
                 activeCount={activeCount}
                 joinedCount={joinedCount}
                 filter={filter}
                 onFilterChange={setFilter}
             />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 border-b border-white pb-3">
                 {viewTabs.map((tab) => {
                     const Icon = tab.icon;
                     const active = showArchived === tab.archived;
@@ -61,10 +89,10 @@ export default function ChallengeEventSection() {
                             key={tab.label}
                             type="button"
                             onClick={() => setShowArchived(tab.archived)}
-                            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-all shadow-sm ${
                                 active
-                                    ? "bg-gray-900 text-white"
-                                    : "bg-white text-gray-500 hover:text-gray-700"
+                                    ? "bg-gray-900 text-white shadow-gray-200"
+                                    : "bg-white text-gray-600 hover:text-gray-900 hover:bg-slate-50 border border-slate-200/80"
                             }`}
                         >
                             <Icon className="h-4 w-4" />
@@ -77,6 +105,7 @@ export default function ChallengeEventSection() {
                 challenges={filteredChallenges}
                 loading={myRewardChallengesLoading}
                 archived={showArchived}
+                highlightId={highlightId}
             />
         </div>
     );

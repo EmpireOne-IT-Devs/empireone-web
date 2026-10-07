@@ -12,11 +12,15 @@ export default function Page() {
 
     useEffect(() => {
         async function get_data() {
-            try {
-                await store.dispatch(get_leader_thunk());
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
+            await newFunction();
+
+            async function newFunction() {
+                try {
+                    await store.dispatch(get_leader_thunk());
+                    setLoading(false);
+                } catch (error) {
+                    setLoading(false);
+                }
             }
         }
         get_data();
@@ -25,16 +29,12 @@ export default function Page() {
     return (
         <Layout>
             <EmployeeRelationLayout>
-                {loading ? (
-                    <Loading/>
-                ) : (
-                    <div className="flex-col flex gap-3 my-3">
-                        <div className="flex w-full items-end justify-end">
-                            <CreateLeadSection />
-                        </div>
-                        <TableSection />
+                <div className="flex-col flex gap-3 my-3">
+                    <div className="flex w-full items-end justify-end">
+                        <CreateLeadSection />
                     </div>
-                )}
+                    <TableSection loading={loading} />
+                </div>
             </EmployeeRelationLayout>
         </Layout>
     );

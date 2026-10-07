@@ -245,9 +245,9 @@ function QuestionRow({ question, index, isLast, value, onChange, disabled }) {
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-x-4 sm:gap-y-1.5">
                     <p className="text-[15px] font-medium leading-snug text-zinc-900" style={sans}>
                         {question.question_text}
-                        {question.is_required && (
+                        {question.is_required ? (
                             <span className="ml-1 text-indigo-500">*</span>
-                        )}
+                        ) : null}
                     </p>
                     <TypeCaption type={question.question_type} />
                 </div>

@@ -11,7 +11,7 @@ import Loading from "@/app/_components/loading-page";
 
 export default function Page() {
 
-    const [loading, setLoading] = useState(true)
+     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function get_data(params) {
@@ -29,11 +29,11 @@ export default function Page() {
         <Layout>
             <JobPostingLayout>
                 {
-                    loading ? <Loading /> : <div>
+                      <div>
                         <div className="w-full flex items-center justify-end py-3">
                             <ExportJobPosting />
                         </div>
-                        <TableSection />
+                        <TableSection loading={loading}/>
                     </div>
                 }
             </JobPostingLayout>

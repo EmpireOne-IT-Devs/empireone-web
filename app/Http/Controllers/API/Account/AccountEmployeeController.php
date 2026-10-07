@@ -196,7 +196,7 @@ class AccountEmployeeController extends Controller
         // Allow callers (e.g. dropdown selectors) to request the full list, unpaginated
         $employees = $isAll
             ? $employees->get()
-            : $employees->paginate(12);
+            : $employees->paginate(10);
 
         // 4. Transform the paginated/collection items safely without losing pagination metadata
         $employeeCollection = $employees instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator

@@ -21,7 +21,7 @@ export default function Page() {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     {/* Toolbar */}
                     <SearchSection />
-                    <TableSection />
+                    <TableSection loading={loading} />
                 </div>
             </div>
         </Layout>

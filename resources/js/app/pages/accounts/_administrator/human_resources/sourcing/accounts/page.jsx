@@ -12,7 +12,7 @@ export default function Page() {
                 <div className='w-full flex items-center justify-end py-3'>
                     <AddAccountSection />
                 </div>
-                <TableSection />
+                <TableSection  loading={loading} />
             </EmployeeRelationLayout>
         </Layout>
     )

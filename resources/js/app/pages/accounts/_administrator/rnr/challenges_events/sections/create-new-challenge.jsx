@@ -43,6 +43,7 @@ const DEFAULT_VALUES = {
     type: "Individual",
     category: CATEGORIES[0],
     points: "",
+    duration_days: "",
     all_employees: true,
     department_ids: [],
     account_ids: [],
@@ -239,6 +240,7 @@ export default function CreateNewChallenge() {
             type: data.type,
             category: data.category,
             points: Number(data.points),
+            duration_days: data.duration_days ? Number(data.duration_days) : null,
             all_employees: data.all_employees,
             account_ids: data.all_employees ? [] : data.account_ids,
             department_ids: data.all_employees ? [] : data.department_ids,
@@ -479,6 +481,42 @@ export default function CreateNewChallenge() {
                             },
                         })}
                     />
+
+                    {/* Multi-day challenge support: leave blank for a single proof submission */}
+                    <div>
+                        <Input
+                            label="Duration (days) — optional"
+                            type="number"
+                            min={1}
+                            placeholder="e.g. 7 for a 1-week challenge"
+                            error={errors.duration_days?.message}
+                            {...register("duration_days", {
+                                min: {
+                                    value: 1,
+                                    message: "Duration must be at least 1 day.",
+                                },
+                                validate: (value, formValues) => {
+                                    if (!value || !formValues.start_date || !formValues.deadline) {
+                                        return true;
+                                    }
+                                    const days =
+                                        Math.round(
+                                            (new Date(formValues.deadline) - new Date(formValues.start_date)) /
+                                                (1000 * 60 * 60 * 24),
+                                        ) + 1;
+                                    return (
+                                        Number(value) <= days ||
+                                        `Duration can't exceed the ${days} day(s) between start date and deadline.`
+                                    );
+                                },
+                            })}
+                        />
+                        <p className="mt-1 text-xs text-gray-400">
+                            Leave blank for a single one-time proof submission. Set a number of
+                            days (e.g. 7) to let employees submit one proof per day — missed days
+                            are simply skipped.
+                        </p>
+                    </div>
 
                     {/* Department Selection & Participants */}
                     <div>

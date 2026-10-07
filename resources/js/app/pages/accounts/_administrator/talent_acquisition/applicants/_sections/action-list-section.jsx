@@ -21,6 +21,7 @@ import ShowApplicantDetailsSection from './show-applicant-details-section';
 import DeleteApplicantSection from './delete-applicant-section';
 import TransferApplicant from './transfer-applicant';
 import { useSelector } from 'react-redux';
+import { FcMenu } from 'react-icons/fc';
 
 export default function ActionListSection({ props_data }) {
     const [open, setOpen] = useState(false);
@@ -109,324 +110,136 @@ export default function ActionListSection({ props_data }) {
             <button
                 onClick={() => setOpen(!open)}
                 type="button"
-                className="w-full flex items-center justify-between py-1.5 px-2 -mx-2 rounded-lg hover:bg-slate-100/70 transition-colors group cursor-pointer select-none"
-            >
+                className={`
+                    relative p-2 rounded-full transition-all duration-150 outline-none
+                    hover:bg-black/5 active:bg-black/10
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600
+                    ${open ? 'bg-black/10' : ''}
+                `}  >
                 <div className="flex items-center gap-1.5 flex-wrap">
-                    <LuFolder className="w-4 h-4 text-purple-600 group-hover:text-purple-700 transition-colors" />
-                    <span className="text-xs font-bold text-left text-gray-700 group-hover:text-gray-900 uppercase tracking-wider">
-                        Actions & Documents
-                    </span>
+                    <FcMenu size={20} />
+                </div>
 
-                    {/* Count Badges */}
-                    {totalDocs > 0 && (
-                        <div className="flex items-center gap-1 ml-1">
-                            {/* Done Count Badge */}
-                            <span className="bg-emerald-50 text-emerald-700 font-semibold text-[10px] px-2 py-0.5 rounded-full border border-emerald-200/60 flex items-center gap-1">
-                                <LuCheckCheck className="w-2.5 h-2.5" /> {doneCount}
-                            </span>
+            </button>
 
-                            {/* Incomplete Count Badge */}
-                            <span className="bg-amber-50 text-amber-700 font-semibold text-[10px] px-2 py-0.5 rounded-full border border-amber-200/60 flex items-center gap-1">
-                                <LuX className="w-2.5 h-2.5" /> {incompleteCount}
-                            </span>
+            <div
+                className={`
+        absolute right-0 top-full mt-1 min-w-[200px] py-1.5 bg-white rounded-md z-[9999]
+        shadow-[0px_5px_5px_-3px_rgba(0,0,0,0.2),0px_8px_10px_1px_rgba(0,0,0,0.14),0px_3px_14px_2px_rgba(0,0,0,0.12)]
+        transform transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] origin-top-right
+        ${open
+                        ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
+                        : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
+                    }
+    `}
+            >
+
+                {/* Send Job Offer */}
+                <div className='flex flex-col w-full gap-2 pt-3'>
+                    {canSendOffer && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <SendJobOfferSection data={props_data} />
+                        </div>
+                    )}
+
+                    {/* Resend Job Offer */}
+                    {props_data?.final_status === 'Declined Job Offer' && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <ResendJobOfferSection data={props_data} />
+                        </div>
+                    )}
+
+                    {/* Send Documents */}
+                    {props_data?.final_status === 'Accepted Job Offer' && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <SendDocumentsSection data={props_data} />
+                        </div>
+                    )}
+                    {props_data?.job_offer && (
+                        <div className="w-full hover:bg-black/[0.04] px-3 active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <Button
+                                type="button"
+                                onClick={() =>
+                                    window.open(
+                                        `/accounts/administrator/job_offers/${props_data?.job_offer?.id}`,
+                                        '_blank'
+                                    )
+                                }
+                            >
+                                <div className='text-white'>
+                                    JOB OFFER
+                                </div>
+                            </Button>
+                        </div>
+                    )}
+
+
+                    {/* Contract & Onboarding */}
+                    {props_data?.contract_type && props_data?.final_status === 'Sent Documents' && (
+                        <>
+                            <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] px-3 transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                                <Button
+                                    type="button"
+                                    onClick={() =>
+                                        window.open(
+                                            `/accounts/my_documents/${props_data?.user_id}/contract`,
+                                            '_blank'
+                                        )
+                                    }
+                                >
+                                    CONTRACT
+                                </Button>
+                            </div>
+                            <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] px-3 transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                                <Button
+                                    type="button"
+                                    onClick={() =>
+                                        window.open(
+                                            `/accounts/my_documents/${props_data?.user_id}/onboarding`,
+                                            '_blank'
+                                        )
+                                    }
+                                >
+                                    ONBOARDING
+                                </Button>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Create ECF */}
+                    {props_data?.final_status === 'Passed' && currentEmployeeId && (
+                        <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] px-3 transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                            <Button
+                                type="button"
+                                onClick={() =>
+                                    router.visit(
+                                        `/accounts/administrator/human_resources/employee_movements/promotions?employee_id=${currentEmployeeId}&location_id=${data?.user?.account_employee?.location_id}`
+                                    )
+                                }
+                            >
+                                CREATE ECF
+                            </Button>
                         </div>
                     )}
                 </div>
 
-                <div className="flex items-center gap-1 text-xs font-semibold text-purple-700 shrink-0">
-                    <span>{open ? 'Hide' : 'Show'}</span>
-                    <motion.div
-                        animate={{ rotate: open ? 180 : 0 }}
-                        transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    >
-                        <LuChevronDown className="w-4 h-4" />
-                    </motion.div>
+                {/* View Job Offer */}
+
+
+
+                {/* Transfer, Details, and Delete Modals / Actions */}
+                <div className="border-t border-gray-100 flex flex-col gap-2 mt-1 pt-1 p-3">
+                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                        <TransferApplicant data={props_data} />
+                    </div>
+                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
+                        <ShowApplicantDetailsSection data={props_data} />
+                    </div>
+                    <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-red-600">
+                        <DeleteApplicantSection data={props_data} />
+                    </div>
                 </div>
-            </button>
-
-            {/* FLOATING OVERLAY DROPDOWN */}
-            <AnimatePresence initial={false}>
-                {open && (
-                    <motion.div
-                        key="main-doc-list"
-                        initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                        transition={{ duration: 0.2, ease: 'easeOut' }}
-                        className="absolute left-0 right-0 top-full mt-2 z-50 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl p-3 shadow-xl max-h-[380px] overflow-y-auto flex flex-col gap-3"
-                    >
-                        {/* 1. Document Acknowledgements List */}
-                        {totalDocs > 0 && (
-                            <div className="flex flex-col gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                                    Assigned Documents
-                                </span>
-                                {props_data?.acknowledgements?.map((ress) => {
-                                    const hasSubItems =
-                                        ress?.items && ress?.items?.length > 0;
-                                    const accordionKey = `${currentEmployeeId}-${ress.id}`;
-                                    const isOpen = !!openItems[accordionKey];
-
-                                    return (
-                                        <div
-                                            key={ress.id}
-                                            className="flex flex-col bg-slate-50/90 border border-slate-200/80 rounded-xl p-2.5 transition-all"
-                                        >
-                                            <div className="flex items-center justify-between w-full gap-2">
-                                                <div className="flex items-center gap-2 min-w-0">
-                                                    <LuFileText className="w-3.5 h-3.5 text-purple-700 shrink-0" />
-                                                    <span className="font-semibold text-gray-800 text-xs truncate">
-                                                        {ress.title}
-                                                    </span>
-                                                </div>
-
-                                                {hasSubItems ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            toggleAccordion(
-                                                                currentEmployeeId,
-                                                                ress.id
-                                                            )
-                                                        }
-                                                        className="flex items-center gap-1 text-[11px] font-semibold text-purple-700 bg-purple-100/70 hover:bg-purple-200/80 px-2 py-0.5 rounded-md transition-all shrink-0 cursor-pointer"
-                                                    >
-                                                        <span>
-                                                            {ress.items.length}{' '}
-                                                            Sub-policies
-                                                        </span>
-                                                        <motion.div
-                                                            animate={{
-                                                                rotate: isOpen
-                                                                    ? 180
-                                                                    : 0,
-                                                            }}
-                                                            transition={{
-                                                                duration: 0.2,
-                                                                ease: 'easeInOut',
-                                                            }}
-                                                        >
-                                                            <LuChevronDown className="w-3 h-3" />
-                                                        </motion.div>
-                                                    </button>
-                                                ) : (
-                                                    <StatusBadge
-                                                        isDone={
-                                                            ress?.is_already_acknowledged
-                                                        }
-                                                        size="sm"
-                                                    />
-                                                )}
-                                            </div>
-
-                                            {/* Inner Sub-items Accordion */}
-                                            <AnimatePresence initial={false}>
-                                                {hasSubItems && isOpen && (
-                                                    <motion.div
-                                                        key="sub-content"
-                                                        initial={{
-                                                            height: 0,
-                                                            opacity: 0,
-                                                        }}
-                                                        animate={{
-                                                            height: 'auto',
-                                                            opacity: 1,
-                                                        }}
-                                                        exit={{
-                                                            height: 0,
-                                                            opacity: 0,
-                                                        }}
-                                                        transition={{
-                                                            duration: 0.2,
-                                                            ease: 'easeInOut',
-                                                        }}
-                                                        className="overflow-hidden"
-                                                    >
-                                                        <div className="mt-2 pt-2 border-t border-slate-200/80 flex flex-col gap-1.5 pl-1">
-                                                            {ress.items.map(
-                                                                (item) => (
-                                                                    <div
-                                                                        key={
-                                                                            item.id
-                                                                        }
-                                                                        className="flex items-center justify-between text-xs py-0.5 hover:bg-slate-100/50 rounded-md px-1 transition-colors"
-                                                                    >
-                                                                        <span className="text-gray-600 font-medium flex items-center gap-1.5 truncate pr-2">
-                                                                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0"></span>
-                                                                            <span className="truncate">
-                                                                                {
-                                                                                    item?.title
-                                                                                }
-                                                                            </span>
-                                                                        </span>
-                                                                        <StatusBadge
-                                                                            isDone={
-                                                                                item?.is_already_acknowledged
-                                                                            }
-                                                                            size="sm"
-                                                                        />
-                                                                    </div>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {/* 2. Workflow Actions Section */}
-                        <div className="pt-2 border-t border-gray-100 flex flex-col gap-2">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                                <LuZap className="w-3 h-3 text-purple-600" />{' '}
-                                Workflow Actions
-                            </span>
-
-                            {/* Workflow Action Buttons */}
-                            <div className="flex flex-col gap-2 w-full">
-                                {/* Send Job Offer */}
-                                {canSendOffer && (
-                                    <SendJobOfferSection data={props_data} />
-                                )}
-
-                                {/* Resend Job Offer */}
-                                {props_data?.final_status ==
-                                    'Declined Job Offer' && (
-                                        <ResendJobOfferSection data={props_data} />
-                                    )}
-
-                                {/* Accepted Job Offer Documents */}
-                                {(props_data?.final_status ==
-                                    'Accepted Job Offer') && (
-                                        <>
-                                            <SendDocumentsSection data={props_data} />
-                                            {
-                                                props_data?.contract_type &&  <Button
-                                                    variant="primary"
-                                                    className="w-full"
-                                                    onClick={() =>
-                                                        window.open(
-                                                            `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type}`,
-                                                            '_blank'
-                                                        )
-                                                    }
-                                                >
-                                                    CONTRACT
-                                                </Button>
-                                            }
-
-                                        </>
-                                    )}
-
-
-                                {
-                                    (props_data?.contract_type && props_data?.job_offer) && <Button
-                                        variant="primary"
-                                        className="w-full"
-                                        onClick={() =>
-                                            window.open(
-                                                `/accounts/administrator/job_offers/${props_data?.job_offer?.id}`,
-                                                '_blank'
-                                            )
-                                        }
-                                    >
-                                        JOB OFFER
-                                    </Button>
-                                }
-                                {/* Sent Documents Actions */}
-                                {(props_data?.contract_type && props_data?.final_status == 'Sent Documents') && (
-                                    <>
-
-                                        <Button
-                                            variant="primary"
-                                            className="w-full"
-                                            onClick={() =>
-                                                window.open(
-                                                    `/accounts/my_documents/${props_data?.user_id}/contract?contract_type=${props_data?.contract_type}`,
-                                                    '_blank'
-                                                )
-                                            }
-                                        >
-                                            CONTRACT
-                                        </Button>
-                                        <Button
-                                            variant="primary"
-                                            className="w-full"
-                                            onClick={() =>
-                                                window.open(
-                                                    `/accounts/my_documents/${props_data?.user_id}/onboarding`,
-                                                    '_blank'
-                                                )
-                                            }
-                                        >
-                                            ONBOARDING
-                                        </Button>
-                                    </>
-                                )}
-
-                                {/* Internal Movement / ECF */}
-                                {props_data?.final_status == 'Passed' &&
-                                    currentEmployeeId && (
-                                        <Button
-                                            variant="primary"
-                                            className="w-full"
-                                            onClick={() =>
-                                                router.visit(
-                                                    `/accounts/administrator/human_resources/employee_movements/promotions?employee_id=${currentEmployeeId}&location_id=${data?.user?.account_employee?.location_id}`
-                                                )
-                                            }
-                                        >
-                                            CREATE ECF
-                                        </Button>
-                                    )}
-                            </div>
-
-                            {/* Common Modals / View / Delete Row */}
-                            <div className="flex items-center flex-col justify-between gap-2 pt-2 border-t border-slate-100 w-full">
-                                <TransferApplicant data={props_data} />
-                                <ShowApplicantDetailsSection data={props_data} />
-                                <DeleteApplicantSection data={props_data} />
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            </div>
         </div>
-    );
-}
-
-// Helper Badge Component
-function StatusBadge({ isDone, size = 'md' }) {
-    if (isDone) {
-        return (
-            <span
-                className={`inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50/90 border border-emerald-200/80 rounded-lg shrink-0 ${size == 'sm'
-                    ? 'px-1.5 py-0.5 text-[10px]'
-                    : 'px-2.5 py-1 text-xs'
-                    }`}
-            >
-                <LuCheckCheck
-                    className={size == 'sm' ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5'}
-                />{' '}
-                Done
-            </span>
-        );
-    }
-
-    return (
-        <span
-            className={`inline-flex items-center gap-1 font-semibold text-amber-700 bg-amber-50/90 border border-amber-200/80 rounded-lg shrink-0 ${size == 'sm'
-                ? 'px-1.5 py-0.5 text-[10px]'
-                : 'px-2.5 py-1 text-xs'
-                }`}
-        >
-            <LuX
-                className={size == 'sm' ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5'}
-            />{' '}
-            Incomplete
-        </span>
     );
 }

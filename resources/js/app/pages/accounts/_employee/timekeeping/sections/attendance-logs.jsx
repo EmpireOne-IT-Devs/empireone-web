@@ -102,6 +102,13 @@ export default function AttendanceLogs({ refreshKey }) {
                     </span>
                 );
 
+            case "On Leave":
+                return (
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-teal-100 text-teal-700">
+                        On Leave
+                    </span>
+                );
+
             default:
                 return (
                     <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
@@ -330,27 +337,22 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {getHolidayBadge(log)}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
+                                    {[
+                                        "regular_overtime_mins",
+                                        "dayoff_overtime_mins",
+                                        "dayoff_overtime_beyond_8hrs_mins",
+                                        "dayoff_overtime_regular_holiday_mins",
+                                        "dayoff_overtime_special_holiday_mins",
+                                        "regular_holiday_overtime_mins",
+                                        "special_holiday_overtime_mins",
+                                    ].map((key) => (
+                                        <td
+                                            key={key}
+                                            className="px-4 py-3 whitespace-nowrap"
+                                        >
+                                            {log[key] ?? 0}
+                                        </td>
+                                    ))}
 
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.regular_holiday_mins ?? 0}
@@ -360,21 +362,20 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {log.special_holiday_mins ?? 0}
                                     </td>
 
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                        -
-                                    </td>
+                                    {[
+                                        "night_diff_mins",
+                                        "regular_holiday_night_diff_mins",
+                                        "special_holiday_night_diff_mins",
+                                        "overtime_night_diff_mins",
+                                        "dayoff_overtime_night_diff_mins",
+                                    ].map((key) => (
+                                        <td
+                                            key={key}
+                                            className="px-4 py-3 whitespace-nowrap"
+                                        >
+                                            {log[key] ?? 0}
+                                        </td>
+                                    ))}
                                     <td className="px-4 py-3 whitespace-nowrap">
                                         {log.is_day_off ? (
                                             "Day Off"
@@ -412,16 +413,16 @@ export default function AttendanceLogs({ refreshKey }) {
                                         {log.is_day_off ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {log.is_on_leave ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {log.is_voluntary_time_off ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {formatTime(log.correction_endorsed_at)}
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap">
-                                        -
+                                        {formatTime(log.correction_granted_at)}
                                     </td>
                                 </tr>
                             ))

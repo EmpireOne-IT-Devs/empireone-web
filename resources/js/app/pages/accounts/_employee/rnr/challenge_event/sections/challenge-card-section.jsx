@@ -111,7 +111,7 @@ function getTimeRemaining(deadline) {
     return `${hours}h remaining`;
 }
 
-function ChallengeCard({ challenge }) {
+function ChallengeCard({ challenge, highlighted = false }) {
     const dispatch = useDispatch();
     const { rewardChallengeLeavingId } = useSelector((state) => state.engagement);
     const [isFlowModalOpen, setIsFlowModalOpen] = useState(false);
@@ -161,6 +161,23 @@ function ChallengeCard({ challenge }) {
                 >
                     <Award className="h-4 w-4" />
                     Approved · +{challenge.points} pts
+                </Button>
+            );
+        }
+
+        // Multi-day challenge in progress — show day progress instead of the
+        // generic single-shot "Pending Review" label.
+        if (challenge.is_daily_challenge && status === "submitted") {
+            return (
+                <Button
+                    type="button"
+                    variant="warning"
+                    className="w-full gap-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white shadow-lg shadow-amber-200 hover:shadow-amber-300"
+                    onClick={() => setIsFlowModalOpen(true)}
+                >
+                    <Clock className="h-4 w-4" />
+                    Day {challenge.completed_days ?? 0}/{challenge.required_days ?? challenge.duration_days}
+                    {challenge.submitted_today ? " · Submitted today" : " · Submit today"}
                 </Button>
             );
         }
@@ -283,8 +300,9 @@ function ChallengeCard({ challenge }) {
     return (
         <>
             <Card
+                id={`challenge-${challenge.id}`}
                 padding="p-0"
-                className={`group flex h-full w-full flex-col overflow-hidden rounded-2xl border ${meta.border} bg-white shadow-lg shadow-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
+                className={`group flex h-full w-full flex-col overflow-hidden rounded-2xl border ${meta.border} bg-white shadow-lg shadow-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${highlighted ? "ring-4 ring-indigo-400 ring-offset-2" : ""}`}
             >
                 {/* Banner with gradient overlay */}
                 <div className="relative">
@@ -389,7 +407,11 @@ function ChallengeCard({ challenge }) {
                     {/* Status badge */}
                     {statusInfo && (
                         <Badge
-                            label={statusInfo.label}
+                            label={
+                                challenge.is_daily_challenge && statusInfo.label === "Pending Review"
+                                    ? `In Progress · Day ${challenge.completed_days ?? 0}/${challenge.required_days ?? challenge.duration_days}`
+                                    : statusInfo.label
+                            }
                             variant={statusInfo.variant}
                             icon={statusInfo.icon}
                             outlined
@@ -415,6 +437,7 @@ export default function ChallengeCardSection({
     challenges = [],
     loading = false,
     archived = false,
+    highlightId = null,
 }) {
     if (loading) {
         return (
@@ -447,7 +470,11 @@ export default function ChallengeCardSection({
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {challenges.map((challenge) => (
-                <ChallengeCard key={challenge.id} challenge={challenge} />
+                <ChallengeCard
+                    key={challenge.id}
+                    challenge={challenge}
+                    highlighted={Boolean(highlightId) && highlightId === challenge.id}
+                />
             ))}
         </div>
     );

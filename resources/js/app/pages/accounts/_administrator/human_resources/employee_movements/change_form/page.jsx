@@ -28,19 +28,17 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 <TabsSection />
-                {loading ? (
-                    <Loading />
-                ) : (
+               
                     <div className="py-3">
                         <div className="flex items-center justify-end">
                             <CreateECFSection />
                         </div>
                         <div className="flex flex-col gap-3">
-                            <ChangeFormTableSection />
+                            <ChangeFormTableSection loading={loading} />
                             <PaginationSection />
                         </div>
                     </div>
-                )}
+             
             </EmployeeRelationLayout>
         </Layout>
     );

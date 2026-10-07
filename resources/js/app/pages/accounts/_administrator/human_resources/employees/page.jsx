@@ -30,9 +30,7 @@ export default function Page() {
     return (
         <Layout>
             <EmployeeRelationLayout>
-                {loading ? (
-                    <Loading/>
-                ) : (
+                
                     <>
                         {/* Changed to flex-col for mobile, and md:flex-row for desktop */}
                         <div className="flex w-full flex-col gap-3 md:flex-row md:items-center">
@@ -48,11 +46,11 @@ export default function Page() {
 
                         {/* Added mt-4 to ensure proper spacing between controls and the card list */}
                         <div className="mt-4 flex flex-col gap-3">
-                            <EmployeesTableSection />
+                            <EmployeesTableSection loading={loading} />
                             <PaginationSection />
                         </div>
                     </>
-                )}
+           
             </EmployeeRelationLayout>
         </Layout>
     );

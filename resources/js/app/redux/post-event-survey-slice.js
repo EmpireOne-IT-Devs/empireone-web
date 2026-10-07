@@ -3,6 +3,7 @@ import {
     get_post_event_surveys_service,
     get_post_event_survey_service,
     create_post_event_survey_service,
+    update_post_event_survey_service,
     submit_post_event_survey_service,
     get_survey_responses_service,
     close_post_event_survey_service,
@@ -39,6 +40,18 @@ export const create_post_event_survey_thunk = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await create_post_event_survey_service(data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const update_post_event_survey_thunk = createAsyncThunk(
+    "postEventSurvey/updateSurvey",
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await update_post_event_survey_service(id, data);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
@@ -120,6 +133,9 @@ const postEventSurveySlice = createSlice({
         creating: false,
         createError: null,
 
+        updating: false,
+        updateError: null,
+
         submitting: false,
         submitError: null,
         submitted: false,
@@ -175,6 +191,21 @@ const postEventSurveySlice = createSlice({
             .addCase(create_post_event_survey_thunk.rejected, (state, action) => {
                 state.creating = false;
                 state.createError = action.payload;
+            })
+            // ── update survey ───────────────────────────────────────────
+            .addCase(update_post_event_survey_thunk.pending, (state) => {
+                state.updating = true;
+                state.updateError = null;
+            })
+            .addCase(update_post_event_survey_thunk.fulfilled, (state, action) => {
+                state.updating = false;
+                const updated = action.payload.data;
+                const idx = state.surveys.findIndex((s) => s.id === updated.id);
+                if (idx !== -1) state.surveys[idx] = updated;
+            })
+            .addCase(update_post_event_survey_thunk.rejected, (state, action) => {
+                state.updating = false;
+                state.updateError = action.payload;
             })
             // ── delete survey ───────────────────────────────────────────
             .addCase(delete_post_event_survey_thunk.pending, (state) => {

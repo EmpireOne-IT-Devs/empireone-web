@@ -3,7 +3,36 @@ import { Check } from "lucide-react";
 
 const STEPS = ["Details", "Start", "Submitted", "Approved"];
 
-export default function ChallengeFlowProgressSection({ currentStep, isDeclined }) {
+export default function ChallengeFlowProgressSection({ currentStep, isDeclined, challenge }) {
+    const showDailyProgress =
+        challenge?.is_daily_challenge && challenge?.is_joined && currentStep > 0;
+
+    if (showDailyProgress) {
+        const required = challenge.required_days ?? 1;
+        const completed = challenge.completed_days ?? 0;
+        const percent = Math.min(100, Math.round((completed / required) * 100));
+        const isComplete = challenge.participation_status === "approved";
+
+        return (
+            <div className="rounded-xl bg-gray-50 px-3 py-2.5">
+                <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-gray-700">
+                        {isComplete ? "Challenge complete!" : `Day ${completed} of ${required} completed`}
+                    </span>
+                    <span className="font-semibold text-indigo-600">{percent}%</span>
+                </div>
+                <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div
+                        className={`h-full rounded-full transition-all ${
+                            isComplete ? "bg-emerald-500" : "bg-indigo-600"
+                        }`}
+                        style={{ width: `${percent}%` }}
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex items-center">
             {STEPS.map((step, index) => {

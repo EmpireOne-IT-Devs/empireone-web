@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reward_challenge_participants', function (Blueprint $table) {
+        if (Schema::hasColumn('engagement_reward_challenge_participants', 'submission_path')) {
+            return;
+        }
+
+        Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
             $table->string('submission_path')->nullable()->after('status');
             $table->text('challenge_description')->nullable()->after('submission_path');
             $table->timestamp('submitted_at')->nullable()->after('submission_path');
@@ -26,7 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reward_challenge_participants', function (Blueprint $table) {
+        Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
             $table->dropConstrainedForeignId('reviewed_by');
             $table->dropColumn(['submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'review_note']);
         });

@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import CardSection from "./sections/card-secrtion";
 import TableSection from "./sections/table-section";
 import Layout from "../../../layout";
 import RnrLayout from "../layout";
-import SearchSection from "./sections/search-section";
+import { get_engagement_reward_challenge_employee_profiles_thunk } from "@/app/redux/engagement-thunk";
 
 export default function Page() {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(get_engagement_reward_challenge_employee_profiles_thunk());
+    }, [dispatch]);
+
     return (
         <Layout>  
             <RnrLayout>

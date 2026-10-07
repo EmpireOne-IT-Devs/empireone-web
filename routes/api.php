@@ -5,6 +5,7 @@ use App\Http\Controllers\AIController;
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
 use App\Http\Controllers\API\Timekeeping\AttendanceController;
+use App\Http\Controllers\API\Timekeeping\AttendanceCorrectionController;
 use App\Http\Controllers\API\Account\AccountDocumentController;
 use App\Http\Controllers\API\Account\AccountEmployeeController;
 use App\Http\Controllers\API\Account\AccountPersonalInformationController;
@@ -48,6 +49,8 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventFileController;
 use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\API\Timekeeping\AttendanceEmployeeSettingsController;
 use App\Http\Controllers\API\Timekeeping\HolidayController;
+use App\Http\Controllers\API\Timekeeping\OvertimeRequestController;
+use App\Http\Controllers\API\Timekeeping\LeaveRequestController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
@@ -169,6 +172,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('upload_avatar',  [AccountPersonalInformationController::class, 'upload_avatar']);
         Route::get('get_user_by_id/{user_id}',  [AccountPersonalInformationController::class, 'get_user_by_id']);
         Route::resource('contract', AccountContractController::class);
+        Route::post('send_contract',  [AccountDocumentController::class, 'send_contract']);
+
         Route::post('agree_onboarding',  [AccountContractController::class, 'agree_onboarding']);
         Route::post('edit_information',  [AccountContractController::class, 'edit_information']);
         Route::post('update_employee_information',  [AccountContractController::class, 'update_employee_information']);
@@ -203,6 +208,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('surveys', [EngagementPostEventSurveyController::class, 'index']);
         Route::post('surveys', [EngagementPostEventSurveyController::class, 'store']);
         Route::get('surveys/{id}', [EngagementPostEventSurveyController::class, 'show']);
+        Route::put('surveys/{id}', [EngagementPostEventSurveyController::class, 'update']);
         Route::post('surveys/{id}/submit', [EngagementPostEventSurveyController::class, 'submit']);
         Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
         Route::get('surveys/{id}/responses/export', [EngagementPostEventSurveyController::class, 'exportResponses']);
@@ -229,18 +235,24 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenges/my', [EngagementRewardChallengesController::class, 'myChallenges']);
         Route::get('reward-challenges/profile-summary', [EngagementRewardChallengesController::class, 'profileSummary']);
         Route::get('reward-challenges/options', [EngagementRewardChallengesController::class, 'options']);
+        Route::get('reward-challenges/report', [EngagementRewardChallengesController::class, 'report']);
+        Route::get('reward-challenges/report/export', [EngagementRewardChallengesController::class, 'exportReport']);
+        Route::get('reward-challenges/employee-profiles', [EngagementRewardChallengesController::class, 'employeeProfiles']);
+        Route::get('reward-challenges/employee-profiles/export', [EngagementRewardChallengesController::class, 'exportEmployeeProfiles']);
         Route::get('reward-challenges/{engagementRewardChallenge}/participants', [EngagementRewardChallengesController::class, 'participants']);
+        Route::get('reward-challenges/{engagementRewardChallenge}/my-daily-logs', [EngagementRewardChallengesController::class, 'myDailyLogs']);
         Route::post('reward-challenges', [EngagementRewardChallengesController::class, 'store']);
         Route::post('reward-challenges/{engagementRewardChallenge}/join', [EngagementRewardChallengesController::class, 'join']);
         Route::delete('reward-challenges/{engagementRewardChallenge}/leave', [EngagementRewardChallengesController::class, 'leave']);
         Route::post('reward-challenges/{engagementRewardChallenge}/submit', [EngagementRewardChallengesController::class, 'submitProof']);
+        Route::post('reward-challenges/{engagementRewardChallenge}/submit-daily', [EngagementRewardChallengesController::class, 'submitDailyProof']);
         Route::put('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'update']);
         Route::delete('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'destroy']);
 
         Route::get('reward-challenge-submissions', [EngagementChallengeSubmissionsController::class, 'index']);
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
-        Route::post('reward-challenge-submissions/{participant}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
-        Route::post('reward-challenge-submissions/{participant}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
+        Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
+        Route::post('reward-challenge-submissions/{id}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);
@@ -287,6 +299,22 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('holidays', [HolidayController::class, 'index']);
         Route::post('holidays', [HolidayController::class, 'store']);
         Route::delete('holidays/{holiday}', [HolidayController::class, 'destroy']);
+
+        Route::get('overtime_requests', [OvertimeRequestController::class, 'index']);
+        Route::post('overtime_requests', [OvertimeRequestController::class, 'store']);
+        Route::post('overtime_requests/{overtimeRequest}/endorse', [OvertimeRequestController::class, 'endorse']);
+        Route::post('overtime_requests/{overtimeRequest}/approve', [OvertimeRequestController::class, 'approve']);
+        Route::post('overtime_requests/{overtimeRequest}/decline', [OvertimeRequestController::class, 'decline']);
+
+        Route::get('leave_requests/credits', [LeaveRequestController::class, 'credits']);
+        Route::get('leave_requests', [LeaveRequestController::class, 'index']);
+        Route::post('leave_requests', [LeaveRequestController::class, 'store']);
+
+        Route::get('attendance_corrections', [AttendanceCorrectionController::class, 'index']);
+        Route::post('attendance_corrections', [AttendanceCorrectionController::class, 'store']);
+        Route::post('attendance_corrections/{attendanceCorrection}/endorse', [AttendanceCorrectionController::class, 'endorse']);
+        Route::post('attendance_corrections/{attendanceCorrection}/grant', [AttendanceCorrectionController::class, 'grant']);
+        Route::post('attendance_corrections/{attendanceCorrection}/decline', [AttendanceCorrectionController::class, 'decline']);
     });
 
 

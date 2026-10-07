@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reward_challenges', function (Blueprint $table) {
+        if (Schema::hasTable('engagement_reward_challenges')) {
+            return;
+        }
+
+        Schema::create('engagement_reward_challenges', function (Blueprint $table) {
             $table->id();
             $table->foreignId('created_by')
                 ->nullable()
@@ -35,24 +39,24 @@ return new class extends Migration
             $table->index(['status', 'start_date', 'deadline']);
         });
 
-        Schema::create('account_reward_challenge', function (Blueprint $table) {
+        Schema::create('engagement_account_reward_challenge', function (Blueprint $table) {
             $table->foreignId('account_id')
                 ->constrained('accounts')
                 ->cascadeOnDelete();
             $table->foreignId('reward_challenge_id')
-                ->constrained('reward_challenges')
+                ->constrained('engagement_reward_challenges', 'id', 'earc_reward_challenge_id_foreign')
                 ->cascadeOnDelete();
             $table->timestamps();
 
             $table->primary(['account_id', 'reward_challenge_id']);
         });
 
-        Schema::create('department_reward_challenge', function (Blueprint $table) {
+        Schema::create('engagement_department_reward_challenge', function (Blueprint $table) {
             $table->foreignId('department_id')
                 ->constrained('departments')
                 ->cascadeOnDelete();
             $table->foreignId('reward_challenge_id')
-                ->constrained('reward_challenges')
+                ->constrained('engagement_reward_challenges', 'id', 'edrc_reward_challenge_id_foreign')
                 ->cascadeOnDelete();
             $table->timestamps();
 
@@ -65,8 +69,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('department_reward_challenge');
-        Schema::dropIfExists('account_reward_challenge');
-        Schema::dropIfExists('reward_challenges');
+        Schema::dropIfExists('engagement_department_reward_challenge');
+        Schema::dropIfExists('engagement_account_reward_challenge');
+        Schema::dropIfExists('engagement_reward_challenges');
     }
 };

@@ -21,3 +21,7 @@ export const break_end_service = (date) =>
 
 export const clock_out_service = (date) =>
     axios.post("/api/timekeeping/attendance/clock_out", { date });
+
+export async function create_attendance_correction_service(data) {
+    return axios.post(`/api/timekeeping/attendance_corrections`, data);
+}

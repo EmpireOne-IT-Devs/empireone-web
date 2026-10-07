@@ -1,1 +1,0 @@
-import{b as o}from"./app-BGxv4atQ.js";const r=[1,11];function d(){const e=o(a=>a.app.data)?.user,t=e?.account_employee,n=t?.department_id!=null?Number(t.department_id):null;return{user:e,employee:t,departmentId:n,isReady:!!e,isContentManager:r.includes(n)}}export{d as u};

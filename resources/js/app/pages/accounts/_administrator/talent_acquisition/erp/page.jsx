@@ -9,7 +9,7 @@ import PaginationSection from "./_sections/pagination-section";
 import SearchSection from "./_sections/search-section";
 import Loading from "@/app/_components/loading-page";
 
-export default function Page() {
+export default function Page( ) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -27,20 +27,18 @@ export default function Page() {
     return (
         <Layout>
             <JobPostingLayout>
-                {loading ? (
-                    <Loading/>
-                ) : (
+               
                     <>
                         <div className="w-full flex items-end justify-end">
                             <ExportERPSection />
                         </div>
                         <div className="flex flex-col gap-3">
                             <SearchSection />
-                            <ERPTableSection />
+                            <ERPTableSection loading={loading} />
                             <PaginationSection />
                         </div>
                     </>
-                )}
+               
             </JobPostingLayout>
         </Layout>
     );

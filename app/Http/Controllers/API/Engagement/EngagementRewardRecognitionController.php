@@ -9,9 +9,9 @@ use App\Models\Department;
 use App\Models\Engagement\EngagementPostEventReact;
 use App\Models\Engagement\EngagementRewardRecognition;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class EngagementRewardRecognitionController extends Controller
@@ -220,7 +220,20 @@ class EngagementRewardRecognitionController extends Controller
         $senderName = trim(($senderInfo->first_name ?? '') . ' ' . ($senderInfo->last_name ?? '')) ?: 'A colleague';
 
         try {
-            Mail::to($workEmail)->send(new RecognitionReceivedMail($recognition, $recipientName, $senderName));
+            $mailable = new RecognitionReceivedMail($recognition, $recipientName, $senderName);
+            $htmlBody = $mailable->render();
+
+            $client = new Client();
+            $client->post(env('SEND_RECOGNITION'), [
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+                'form_params' => [
+                    'email'     => $workEmail,
+                    'subject'   => config('app.name') . " — You've been recognized! 🎉",
+                    'html_body' => $htmlBody,
+                ],
+            ]);
         } catch (\Throwable $e) {
             Log::warning('Failed to send recognition email', [
                 'recognition_id' => $recognition->id,

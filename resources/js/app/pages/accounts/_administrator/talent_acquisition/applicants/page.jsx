@@ -6,8 +6,7 @@ import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-pos
 import PaginationSection from "./_sections/pagination-section";
 import StatusesCardSection from "./_sections/statuses-card-section";
 import ExportApplicantSection from "./_sections/export-applicant-section";
-import CardApplicantSection from "./_sections/card-applicant-section";
-import Loading from "@/app/_components/loading-page";
+import ApplicantTableSection from "./_sections/applicant-table-section";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -15,10 +14,8 @@ export default function Page() {
     useEffect(() => {
         async function get_data() {
             try {
-                await Promise.all([
-                    store.dispatch(get_applicants_thunk()),
-                    store.dispatch(get_job_posting_thunk())
-                ]);
+                await store.dispatch(get_applicants_thunk()),
+                await store.dispatch(get_job_posting_thunk())
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
@@ -30,19 +27,15 @@ export default function Page() {
     return (
         <Layout>
             <JobPostingLayout>
-                {loading ? (
-                    <Loading />
-                ) : (
-                    <div className="flex flex-col gap-3">
-                        <ExportApplicantSection />
-                        <StatusesCardSection />
-                        <div id="results-table" className="scroll-mt-36">
-                            <CardApplicantSection />
-                        </div>
-
-                        <PaginationSection />
+                <div className="flex flex-col gap-3">
+                    <ExportApplicantSection />
+                    <StatusesCardSection />
+                    <div id="results-table" className="scroll-mt-36">
+                        <ApplicantTableSection loading={loading}/>
                     </div>
-                )}
+
+                    <PaginationSection />
+                </div>
             </JobPostingLayout>
         </Layout>
     );

@@ -5,6 +5,7 @@ namespace App\Models\Engagement;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class EngagementRewardChallengeParticipant extends Pivot
@@ -27,6 +28,8 @@ class EngagementRewardChallengeParticipant extends Pivot
         'reviewed_by',
         'review_note',
         'points_awarded',
+        'required_days',
+        'completed_days',
     ];
 
     protected function casts(): array
@@ -36,6 +39,8 @@ class EngagementRewardChallengeParticipant extends Pivot
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
             'points_awarded' => 'integer',
+            'required_days' => 'integer',
+            'completed_days' => 'integer',
         ];
     }
 
@@ -52,5 +57,19 @@ class EngagementRewardChallengeParticipant extends Pivot
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function dailyLogs(): HasMany
+    {
+        return $this->hasMany(EngagementRewardChallengeDailyLog::class, 'reward_challenge_participant_id');
+    }
+
+    /**
+     * True once the employee has logged enough approved days for a
+     * multi-day challenge (or, for single-proof challenges, once approved).
+     */
+    public function isDailyChallengeComplete(): bool
+    {
+        return $this->required_days > 1 && $this->completed_days >= $this->required_days;
     }
 }

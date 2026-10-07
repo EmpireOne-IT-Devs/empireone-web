@@ -30,15 +30,13 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 <TabsSection />
-                {loading ? (
-                    <Loading />
-                ) : (
+              
                     <div className="flex flex-col gap-3">
-                        <ApplicantTableSection />
+                        <ApplicantTableSection loading={loading} />
                         <PaginationSection />
                     </div>
-                )}
-            </EmployeeRelationLayout>
+               
+            </EmployeeRelationLayout >
         </Layout>
     );
 }

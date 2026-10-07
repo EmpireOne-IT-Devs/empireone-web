@@ -31,7 +31,11 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
     if (!challenge) return null;
 
     const statusKey = challenge.is_joined
-        ? (challenge.participation_status ?? "joined")
+        ? challenge.is_daily_challenge
+            ? challenge.participation_status === "approved"
+                ? "approved"
+                : "joined"
+            : (challenge.participation_status ?? "joined")
         : "details";
     const currentStep = STEP_INDEX[statusKey] ?? 0;
     const isDeclined = statusKey === "declined";
@@ -99,6 +103,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                 <ChallengeFlowProgressSection
                     currentStep={currentStep}
                     isDeclined={isDeclined}
+                    challenge={challenge}
                 />
 
                 {currentStep === 0 && preJoinStage === "details" && (

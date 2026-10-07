@@ -26,11 +26,15 @@ import {
     join_engagement_reward_challenge_thunk,
     leave_engagement_reward_challenge_thunk,
     submit_engagement_reward_challenge_proof_thunk,
+    submit_engagement_reward_challenge_daily_proof_thunk,
+    get_engagement_reward_challenge_my_daily_logs_thunk,
     get_engagement_reward_challenge_submissions_thunk,
     get_engagement_reward_challenge_submission_stats_thunk,
     approve_engagement_reward_challenge_submission_thunk,
     decline_engagement_reward_challenge_submission_thunk,
     get_engagement_reward_challenge_profile_summary_thunk,
+    get_engagement_reward_challenge_report_thunk,
+    get_engagement_reward_challenge_employee_profiles_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -60,11 +64,15 @@ export {
     join_engagement_reward_challenge_thunk,
     leave_engagement_reward_challenge_thunk,
     submit_engagement_reward_challenge_proof_thunk,
+    submit_engagement_reward_challenge_daily_proof_thunk,
+    get_engagement_reward_challenge_my_daily_logs_thunk,
     get_engagement_reward_challenge_submissions_thunk,
     get_engagement_reward_challenge_submission_stats_thunk,
     approve_engagement_reward_challenge_submission_thunk,
     decline_engagement_reward_challenge_submission_thunk,
     get_engagement_reward_challenge_profile_summary_thunk,
+    get_engagement_reward_challenge_report_thunk,
+    get_engagement_reward_challenge_employee_profiles_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -141,6 +149,20 @@ const engagementSlice = createSlice({
         rewardChallengeParticipantsLoading: false,
         rewardChallengeParticipantsError: null,
 
+        // Admin challenge report (historical trends) view
+        rewardChallengeReport: { quarters: [], top_challenges: [] },
+        rewardChallengeReportLoading: false,
+        rewardChallengeReportError: null,
+
+        // Admin RnR employee profiles view
+        rewardChallengeEmployeeProfiles: {
+            summary: { total_employees: 0, avg_points: 0, top_engager: null, at_risk_count: 0 },
+            employees: [],
+            departments: [],
+        },
+        rewardChallengeEmployeeProfilesLoading: false,
+        rewardChallengeEmployeeProfilesError: null,
+
         // Employee-facing challenge participation states
         myRewardChallenges: [],
         myRewardChallengesLoading: false,
@@ -148,6 +170,9 @@ const engagementSlice = createSlice({
         rewardChallengeJoiningId: null,
         rewardChallengeLeavingId: null,
         rewardChallengeSubmittingId: null,
+        rewardChallengeDailyLogs: { required_days: null, completed_days: 0, logs: [] },
+        rewardChallengeDailyLogsLoading: false,
+        rewardChallengeDailyLogsError: null,
 
         // Admin-facing submission review states
         challengeSubmissions: [],
@@ -541,6 +566,38 @@ const engagementSlice = createSlice({
             });
 
         builder
+            .addCase(get_engagement_reward_challenge_report_thunk.pending, (state) => {
+                state.rewardChallengeReportLoading = true;
+                state.rewardChallengeReportError = null;
+            })
+            .addCase(get_engagement_reward_challenge_report_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeReportLoading = false;
+                state.rewardChallengeReport = action.payload?.data ?? { quarters: [], top_challenges: [] };
+            })
+            .addCase(get_engagement_reward_challenge_report_thunk.rejected, (state, action) => {
+                state.rewardChallengeReportLoading = false;
+                state.rewardChallengeReportError = action.payload;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenge_employee_profiles_thunk.pending, (state) => {
+                state.rewardChallengeEmployeeProfilesLoading = true;
+                state.rewardChallengeEmployeeProfilesError = null;
+            })
+            .addCase(get_engagement_reward_challenge_employee_profiles_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeEmployeeProfilesLoading = false;
+                state.rewardChallengeEmployeeProfiles = action.payload?.data ?? {
+                    summary: { total_employees: 0, avg_points: 0, top_engager: null, at_risk_count: 0 },
+                    employees: [],
+                    departments: [],
+                };
+            })
+            .addCase(get_engagement_reward_challenge_employee_profiles_thunk.rejected, (state, action) => {
+                state.rewardChallengeEmployeeProfilesLoading = false;
+                state.rewardChallengeEmployeeProfilesError = action.payload;
+            });
+
+        builder
             .addCase(get_engagement_reward_challenge_options_thunk.pending, (state) => {
                 state.rewardChallengeOptionsLoading = true;
             })
@@ -656,6 +713,36 @@ const engagementSlice = createSlice({
             })
             .addCase(submit_engagement_reward_challenge_proof_thunk.rejected, (state) => {
                 state.rewardChallengeSubmittingId = null;
+            });
+
+        builder
+            .addCase(submit_engagement_reward_challenge_daily_proof_thunk.pending, (state, action) => {
+                state.rewardChallengeSubmittingId = action.meta.arg?.id ?? null;
+            })
+            .addCase(submit_engagement_reward_challenge_daily_proof_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeSubmittingId = null;
+                const updated = action.payload?.data;
+                if (updated?.id) {
+                    const idx = state.myRewardChallenges.findIndex((item) => item.id === updated.id);
+                    if (idx !== -1) state.myRewardChallenges[idx] = updated;
+                }
+            })
+            .addCase(submit_engagement_reward_challenge_daily_proof_thunk.rejected, (state) => {
+                state.rewardChallengeSubmittingId = null;
+            });
+
+        builder
+            .addCase(get_engagement_reward_challenge_my_daily_logs_thunk.pending, (state) => {
+                state.rewardChallengeDailyLogsLoading = true;
+                state.rewardChallengeDailyLogsError = null;
+            })
+            .addCase(get_engagement_reward_challenge_my_daily_logs_thunk.fulfilled, (state, action) => {
+                state.rewardChallengeDailyLogsLoading = false;
+                state.rewardChallengeDailyLogs = action.payload?.data ?? { required_days: null, completed_days: 0, logs: [] };
+            })
+            .addCase(get_engagement_reward_challenge_my_daily_logs_thunk.rejected, (state, action) => {
+                state.rewardChallengeDailyLogsLoading = false;
+                state.rewardChallengeDailyLogsError = action.payload;
             });
 
         builder

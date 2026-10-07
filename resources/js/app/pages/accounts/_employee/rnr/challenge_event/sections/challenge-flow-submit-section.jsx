@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, X, Clock3 } from "lucide-react";
 import Button from "@/app/_components/button";
 import TextArea from "@/app/_components/textarea";
 import { setAlert } from "@/app/redux/app-slice";
-import { submit_engagement_reward_challenge_proof_thunk } from "@/app/redux/engagement-thunk";
+import {
+    submit_engagement_reward_challenge_proof_thunk,
+    submit_engagement_reward_challenge_daily_proof_thunk,
+} from "@/app/redux/engagement-thunk";
 
 export default function ChallengeFlowSubmitSection({
     challenge,
@@ -20,6 +23,7 @@ export default function ChallengeFlowSubmitSection({
     const [preview, setPreview] = useState(null);
     const [description, setDescription] = useState("");
     const submitting = rewardChallengeSubmittingId === challenge.id;
+    const isDaily = challenge.is_daily_challenge;
 
     useEffect(() => {
         if (!isOpen) {
@@ -46,19 +50,19 @@ export default function ChallengeFlowSubmitSection({
     const handleSubmit = async () => {
         if (!photo || !description.trim()) return;
 
+        const thunk = isDaily
+            ? submit_engagement_reward_challenge_daily_proof_thunk
+            : submit_engagement_reward_challenge_proof_thunk;
+
         const result = await dispatch(
-            submit_engagement_reward_challenge_proof_thunk({
+            thunk({
                 id: challenge.id,
                 photo,
                 challengeDescription: description.trim(),
             }),
         );
 
-        if (
-            submit_engagement_reward_challenge_proof_thunk.rejected.match(
-                result,
-            )
-        ) {
+        if (thunk.rejected.match(result)) {
             dispatch(
                 setAlert({
                     type: "danger",
@@ -75,12 +79,43 @@ export default function ChallengeFlowSubmitSection({
         dispatch(
             setAlert({
                 type: "success",
-                title: "Proof submitted",
-                message: "Your submission is now pending admin review.",
+                title: isDaily ? "Today's proof submitted" : "Proof submitted",
+                message: isDaily
+                    ? "Nice work! Today's submission is pending review. Come back tomorrow for the next day."
+                    : "Your submission is now pending admin review.",
                 open: true,
             }),
         );
     };
+
+    // A daily challenge already has today's submission in for review — show a
+    // waiting state instead of letting the employee submit a second photo.
+    if (isDaily && challenge.submitted_today) {
+        return (
+            <>
+                <div className="flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                    <Clock3 className="h-4 w-4 shrink-0" />
+                    You already submitted today's proof. It's pending admin review —
+                    come back tomorrow to submit the next day.
+                </div>
+                <div className="rounded-xl bg-gray-50 px-3 py-2.5 text-xs text-gray-500">
+                    Progress: {challenge.completed_days ?? 0} of{" "}
+                    {challenge.required_days ?? 1} days completed
+                </div>
+                <div className="mt-2 flex justify-end">
+                    <Button
+                        type="button"
+                        variant="light"
+                        outlined
+                        onClick={onClose}
+                        className="w-full sm:w-auto"
+                    >
+                        Close
+                    </Button>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
@@ -93,7 +128,9 @@ export default function ChallengeFlowSubmitSection({
 
             <div className="rounded-2xl border border-gray-100 bg-gray-50/80 px-4 py-3">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                    Challenge
+                    {isDaily
+                        ? `Day ${(challenge.completed_days ?? 0) + 1} of ${challenge.required_days ?? 1}`
+                        : "Challenge"}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-gray-600">
                     {challenge.description}
@@ -168,7 +205,7 @@ export default function ChallengeFlowSubmitSection({
                     onClick={handleSubmit}
                     className="w-full sm:w-auto"
                 >
-                    Submit for Review
+                    {isDaily ? "Submit Today's Proof" : "Submit for Review"}
                 </Button>
             </div>
         </>
