@@ -195,6 +195,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::redirect('/', '/accounts/administrator/e_store/rewards_items');
             Route::inertia('/rewards_items', 'accounts/_administrator/e_store/rewards_item/page');
             Route::inertia('/redemption_history', 'accounts/_administrator/e_store/redemption_history/page');
+              Route::inertia('/stock', 'accounts/_administrator/e_store/stock/page');
             Route::inertia('/analytics', 'accounts/_administrator/e_store/analytics/page');
         });
         Route::prefix('rnr')->group(function () {
