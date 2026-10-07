@@ -6,13 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * One row per day a participant submits proof for a multi-day challenge.
-     * The unique index guarantees (at the database level, not just in app
-     * code) that a participant can never have two submissions for the same
-     * calendar day, which is what makes "missed day 2? just move on to day 3"
-     * safe without any race-condition risk.
-     */
+  
     public function up(): void
     {
         if (Schema::hasTable('engagement_reward_challenge_daily_logs')) {

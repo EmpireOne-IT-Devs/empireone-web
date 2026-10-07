@@ -35,6 +35,8 @@ import {
     get_engagement_reward_challenge_profile_summary_thunk,
     get_engagement_reward_challenge_report_thunk,
     get_engagement_reward_challenge_employee_profiles_thunk,
+    create_engagement_e_store_item_thunk,
+    get_engagement_e_store_items_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -73,6 +75,8 @@ export {
     get_engagement_reward_challenge_profile_summary_thunk,
     get_engagement_reward_challenge_report_thunk,
     get_engagement_reward_challenge_employee_profiles_thunk,
+    create_engagement_e_store_item_thunk,
+    get_engagement_e_store_items_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -185,6 +189,13 @@ const engagementSlice = createSlice({
         // Employee "My Profile" summary
         challengeProfileSummary: { total_points: 0, challenge_history: [] },
         challengeProfileSummaryLoading: false,
+
+        // E-Store reward item create state
+        eStoreItems: [],
+        eStoreItemsLoading: false,
+        eStoreItemsError: null,
+        eStoreItemCreating: false,
+        eStoreItemCreateError: null,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -798,6 +809,34 @@ const engagementSlice = createSlice({
             })
             .addCase(get_engagement_reward_challenge_profile_summary_thunk.rejected, (state) => {
                 state.challengeProfileSummaryLoading = false;
+            })
+            .addCase(get_engagement_e_store_items_thunk.pending, (state) => {
+                state.eStoreItemsLoading = true;
+                state.eStoreItemsError = null;
+            })
+            .addCase(get_engagement_e_store_items_thunk.fulfilled, (state, action) => {
+                state.eStoreItemsLoading = false;
+                state.eStoreItems = action.payload?.data ?? [];
+            })
+            .addCase(get_engagement_e_store_items_thunk.rejected, (state, action) => {
+                state.eStoreItemsLoading = false;
+                state.eStoreItemsError = action.payload;
+            })
+
+            .addCase(create_engagement_e_store_item_thunk.pending, (state) => {
+                state.eStoreItemCreating = true;
+                state.eStoreItemCreateError = null;
+            })
+            .addCase(create_engagement_e_store_item_thunk.fulfilled, (state, action) => {
+                state.eStoreItemCreating = false;
+                const createdItem = action.payload?.data;
+                if (createdItem?.id) {
+                    state.eStoreItems = [createdItem, ...state.eStoreItems];
+                }
+            })
+            .addCase(create_engagement_e_store_item_thunk.rejected, (state, action) => {
+                state.eStoreItemCreating = false;
+                state.eStoreItemCreateError = action.payload;
             });
     },
 });
