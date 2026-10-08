@@ -162,7 +162,7 @@ export default function HeroSection() {
 
                     {/* TITLE */}
                     <h1 className="font-syne text-[clamp(32px,8vw,88px)] anim-fade-up delay-200 sm:text-[clamp(40px,7vw,88px)] lg:text-[clamp(48px,6vw,88px)] leading-[1.1] sm:leading-[1.05] lg:leading-[1.02]">
-                        Your Next <br />
+                        Your Nextss <br />
                         <span className="bg-gradient-to-r from-purple-400 to-orange-400 text-transparent bg-clip-text">
                             Dream Career
                         </span>
