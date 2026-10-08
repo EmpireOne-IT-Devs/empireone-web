@@ -58,7 +58,7 @@ const ChallengeCell = ({ challenge }) => {
     );
 };
 
-export default function ChallengeTableSection() {
+export default function ChallengeTableSection({ onSelectChallenge } = {}) {
     const dispatch = useDispatch();
     const { rewardChallenges = [], rewardChallengesLoading } = useSelector(
         (state) => state.engagement,
@@ -105,7 +105,17 @@ export default function ChallengeTableSection() {
                     className="rounded-full px-3 py-1 text-xs font-medium"
                 />
             ),
-            participants: (
+            participants: onSelectChallenge ? (
+                <button
+                    type="button"
+                    onClick={() => onSelectChallenge(challenge.id)}
+                    title="View all participants"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+                >
+                    <Users className="h-3.5 w-3.5" />
+                    {participantsCount}/{maxParticipants}
+                </button>
+            ) : (
                 <Link
                     href={`/accounts/administrator/rnr/challenges_events/manage/participants?id=${challenge.id}`}
                     title="View all participants"

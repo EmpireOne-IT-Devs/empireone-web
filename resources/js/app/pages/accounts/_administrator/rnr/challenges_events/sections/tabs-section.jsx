@@ -12,13 +12,16 @@ import ChallengeEventSection from "@/app/pages/accounts/_employee/rnr/challenge_
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function TabsSection({ children }) {
-    // Only content-manager departments get the admin management view; everyone else gets the employee experience.
-    const { isReady, isContentManager: canManageChallenges } =
-        useCurrentEmployee();
+    const {
+        isReady,
+        isContentManager: canManageChallenges,
+    } = useCurrentEmployee();
+
     const currentPath = window.location.pathname
         .split("/")
         .filter(Boolean)
         .at(-1);
+
     const tabs = [
         {
             label: "Dashboard",
@@ -52,7 +55,7 @@ export default function TabsSection({ children }) {
         },
     ];
 
-    // Skeleton until the user data is loaded, so the view doesn't flip between employee/admin.
+    // Wait until employee data is available.
     if (!isReady) {
         return (
             <div className="mt-6 space-y-4 px-4 sm:px-6 lg:px-8">
@@ -62,7 +65,10 @@ export default function TabsSection({ children }) {
         );
     }
 
-    if (!canManageChallenges) {
+    // Employee / non-content-manager view.
+    // Only show ChallengeEventSection when the user is ready
+    // and is NOT a content manager.
+    if (isReady && !canManageChallenges) {
         return (
             <div className="mt-4">
                 <ChallengeEventSection />
@@ -70,6 +76,8 @@ export default function TabsSection({ children }) {
         );
     }
 
+    // Content manager / administrator view.
+    // ChallengeEventSection is NOT rendered here.
     return (
         <div>
             <div className="mt-6 flex items-center border-b border-gray-200 px-4 sm:px-6 lg:px-8">
@@ -89,6 +97,7 @@ export default function TabsSection({ children }) {
                             >
                                 <Icon className="h-4 w-4" />
                                 <span>{tab.label}</span>
+
                                 {tab.active && (
                                     <span className="absolute -bottom-px left-0 right-0 z-10 mx-auto h-0.5 w-full rounded bg-blue-800" />
                                 )}
@@ -96,6 +105,7 @@ export default function TabsSection({ children }) {
                         );
                     })}
                 </nav>
+
                 <div className="shrink-0 pl-4">
                     {canManageChallenges && <CreateNewChallenge />}
                 </div>

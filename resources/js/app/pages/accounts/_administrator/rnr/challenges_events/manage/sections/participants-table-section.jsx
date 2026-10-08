@@ -28,7 +28,7 @@ const STATUS_LABEL = {
     declined: "Declined",
 };
 
-export default function ParticipantsTableSection({ challengeId }) {
+export default function ParticipantsTableSection({ challengeId, onBack }) {
     const dispatch = useDispatch();
     const {
         rewardChallengeParticipants = [],
@@ -169,13 +169,24 @@ export default function ParticipantsTableSection({ challengeId }) {
         <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                    <Link
-                        href="/accounts/administrator/rnr/challenges_events/manage"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-black"
-                    >
-                        <ArrowLeft className="h-4 w-4" />
-                        Back
-                    </Link>
+                    {onBack ? (
+                        <button
+                            type="button"
+                            onClick={onBack}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-black"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            Back
+                        </button>
+                    ) : (
+                        <Link
+                            href="/accounts/administrator/rnr/challenges_events/manage"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-black"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            Back
+                        </Link>
+                    )}
                     <div>
                         <h2 className="text-base font-bold text-slate-900">
                             {challenge?.title ?? "Challenge Participants"}
