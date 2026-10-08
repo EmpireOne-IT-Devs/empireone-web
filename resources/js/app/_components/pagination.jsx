@@ -4,10 +4,11 @@ import {
 } from "@heroicons/react/20/solid";
 import { Link } from "@inertiajs/react";
 
-export default function Pagination({ data }) {
+export default function Pagination({ data, onPageChange }) {
     const currentPage = data?.current_page;
     const lastPage = data?.last_page;
     const maxVisiblePages = 5; // Maximum number of pages to show
+    const isCustomPager = typeof onPageChange === "function";
 
     // PRO-TIP: This function grabs ALL current URL params and just updates the page.
     // Now you never have to hardcode `search`, `final_status`, etc. again!
@@ -52,50 +53,100 @@ export default function Pagination({ data }) {
         return pages;
     };
 
+    const handlePageClick = (page) => {
+        if (!isCustomPager || typeof page !== "number" || page === currentPage) {
+            return;
+        }
+        onPageChange(page);
+    };
+
     return (
         <nav className="flex items-center justify-between px-4 sm:px-0 w-full">
             <div className="-mt-px flex w-0 flex-1">
                 {currentPage > 1 && (
-                    <Link
-                        href={buildUrl(currentPage - 1)}
-                        className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
-                    >
-                        <ArrowLongLeftIcon
-                            aria-hidden="true"
-                            className="mr-3 h-5 w-5 text-white"
-                        />
-                        Previous
-                    </Link>
+                    isCustomPager ? (
+                        <button
+                            type="button"
+                            onClick={() => handlePageClick(currentPage - 1)}
+                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                        >
+                            <ArrowLongLeftIcon
+                                aria-hidden="true"
+                                className="mr-3 h-5 w-5 text-white"
+                            />
+                            Previous
+                        </button>
+                    ) : (
+                        <Link
+                            href={buildUrl(currentPage - 1)}
+                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                        >
+                            <ArrowLongLeftIcon
+                                aria-hidden="true"
+                                className="mr-3 h-5 w-5 text-white"
+                            />
+                            Previous
+                        </Link>
+                    )
                 )}
             </div>
 
             <div className="hidden md:-mt-px md:flex gap-3">
                 {getPageNumbers().map((page, index) => (
-                    <Link
-                        key={index}
-                        href={typeof page === "number" ? buildUrl(page) : "#"}
-                        className={`inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
-                                ? "text-purple-600 border-purple-600 border-2 text-purple"
-                                : "bg-purple-500 hover:bg-purple-500 text-white"
-                            }`}
-                    >
-                        {page}
-                    </Link>
+                    isCustomPager ? (
+                        <button
+                            key={index}
+                            type="button"
+                            onClick={() => handlePageClick(page)}
+                            disabled={typeof page !== "number"}
+                            className={`inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
+                                    ? "text-purple-600 border-purple-600 border-2 text-purple"
+                                    : "bg-purple-500 hover:bg-purple-500 text-white"
+                                } ${typeof page !== "number" ? "cursor-default opacity-80" : ""}`}
+                        >
+                            {page}
+                        </button>
+                    ) : (
+                        <Link
+                            key={index}
+                            href={typeof page === "number" ? buildUrl(page) : "#"}
+                            className={`inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
+                                    ? "text-purple-600 border-purple-600 border-2 text-purple"
+                                    : "bg-purple-500 hover:bg-purple-500 text-white"
+                                }`}
+                        >
+                            {page}
+                        </Link>
+                    )
                 ))}
             </div>
 
             <div className="-mt-px flex flex-1 justify-end w-full">
                 {currentPage < lastPage && (
-                    <Link
-                        href={buildUrl(currentPage + 1)}
-                        className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
-                    >
-                        Next
-                        <ArrowLongRightIcon
-                            aria-hidden="true"
-                            className="ml-3 h-5 w-5 text-white"
-                        />
-                    </Link>
+                    isCustomPager ? (
+                        <button
+                            type="button"
+                            onClick={() => handlePageClick(currentPage + 1)}
+                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                        >
+                            Next
+                            <ArrowLongRightIcon
+                                aria-hidden="true"
+                                className="ml-3 h-5 w-5 text-white"
+                            />
+                        </button>
+                    ) : (
+                        <Link
+                            href={buildUrl(currentPage + 1)}
+                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                        >
+                            Next
+                            <ArrowLongRightIcon
+                                aria-hidden="true"
+                                className="ml-3 h-5 w-5 text-white"
+                            />
+                        </Link>
+                    )
                 )}
             </div>
         </nav>

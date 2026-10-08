@@ -191,8 +191,6 @@ export default function StockTableSection() {
           </div>
         </div>
       </div>
-
-      {/* Table Component Integration */}
       <div className="p-1">
         <Table columns={columns} data={filteredData} isloading={false} />
       </div>

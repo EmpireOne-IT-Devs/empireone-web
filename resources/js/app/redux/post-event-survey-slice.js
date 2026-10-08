@@ -85,9 +85,17 @@ export const submit_post_event_survey_thunk = createAsyncThunk(
 
 export const get_survey_responses_thunk = createAsyncThunk(
     "postEventSurvey/getResponses",
-    async (id, { rejectWithValue }) => {
+    async (payload, { rejectWithValue }) => {
         try {
-            const response = await get_survey_responses_service(id);
+            const id = typeof payload === "object" ? payload?.id : payload;
+            const params =
+                typeof payload === "object"
+                    ? {
+                          page: payload?.page,
+                          site: payload?.site || undefined,
+                      }
+                    : {};
+            const response = await get_survey_responses_service(id, params);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

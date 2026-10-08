@@ -20,8 +20,10 @@ export async function submit_post_event_survey_service(id, data) {
     return await axios.post(`/api/engagement/surveys/${id}/submit`, data);
 }
 
-export async function get_survey_responses_service(id) {
-    return await axios.get(`/api/engagement/surveys/${id}/responses`);
+export async function get_survey_responses_service(id, params = {}) {
+    return await axios.get(`/api/engagement/surveys/${id}/responses`, {
+        params,
+    });
 }
 
 export async function export_survey_responses_service(id, site = "") {
