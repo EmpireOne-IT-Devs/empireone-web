@@ -315,7 +315,11 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/employee_profiles', 'accounts/_employee/rnr/employee_profiles/page');
             Route::inertia('/my_profile', 'accounts/_employee/rnr/my_profile/page');
         });
-        Route::inertia('/rewards_store', 'accounts/_employee/rewards_store/page');
+        Route::prefix('rewards_store')->group(function () {
+            Route::redirect('/', '/accounts/employee/rewards_store/rewards_items');
+            Route::inertia('/rewards_items', 'accounts/_employee/rewards_store/rewards_items/page');
+            Route::inertia('/redemption_history', 'accounts/_employee/rewards_store/redemption_history/page');
+        });
         Route::inertia('/loan', 'accounts/_employee/loan/page');
         Route::inertia('/payroll', 'accounts/_employee/payroll/page');
         Route::inertia('/timekeeping', 'accounts/_employee/timekeeping/page');

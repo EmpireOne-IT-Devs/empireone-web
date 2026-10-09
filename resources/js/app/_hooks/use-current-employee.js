@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 export const CONTENT_MANAGER_DEPARTMENT_IDS = [1, 11];
 
 
-export default function useCurrentEmployee() {
+export function useCurrentEmployee() {
     const data = useSelector((store) => store.app.data);
 
     const user = data?.user;
@@ -21,3 +21,5 @@ export default function useCurrentEmployee() {
         isContentManager: CONTENT_MANAGER_DEPARTMENT_IDS.includes(departmentId),
     };
 }
+
+export default useCurrentEmployee;

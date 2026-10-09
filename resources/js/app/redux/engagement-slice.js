@@ -37,6 +37,8 @@ import {
     get_engagement_reward_challenge_employee_profiles_thunk,
     create_engagement_e_store_item_thunk,
     get_engagement_e_store_items_thunk,
+    update_engagement_e_store_item_thunk,
+    delete_engagement_reward_item_thunk,
 } from "./engagement-thunk";
 
 export {
@@ -77,6 +79,8 @@ export {
     get_engagement_reward_challenge_employee_profiles_thunk,
     create_engagement_e_store_item_thunk,
     get_engagement_e_store_items_thunk,
+    update_engagement_e_store_item_thunk,
+    delete_engagement_reward_item_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -196,6 +200,10 @@ const engagementSlice = createSlice({
         eStoreItemsError: null,
         eStoreItemCreating: false,
         eStoreItemCreateError: null,
+        eStoreItemUpdatingId: null,
+        eStoreItemUpdateError: null,
+        eStoreItemDeletingId: null,
+        eStoreItemDeleteError: null,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -837,6 +845,39 @@ const engagementSlice = createSlice({
             .addCase(create_engagement_e_store_item_thunk.rejected, (state, action) => {
                 state.eStoreItemCreating = false;
                 state.eStoreItemCreateError = action.payload;
+            })
+            .addCase(update_engagement_e_store_item_thunk.pending, (state, action) => {
+                state.eStoreItemUpdatingId = action.meta.arg?.id ?? null;
+                state.eStoreItemUpdateError = null;
+            })
+            .addCase(update_engagement_e_store_item_thunk.fulfilled, (state, action) => {
+                state.eStoreItemUpdatingId = null;
+                const updatedItem = action.payload?.data;
+                if (updatedItem?.id) {
+                    const index = state.eStoreItems.findIndex((item) => item.id === updatedItem.id);
+                    if (index !== -1) {
+                        state.eStoreItems[index] = updatedItem;
+                    }
+                }
+            })
+            .addCase(update_engagement_e_store_item_thunk.rejected, (state, action) => {
+                state.eStoreItemUpdatingId = null;
+                state.eStoreItemUpdateError = action.payload;
+            })
+            .addCase(delete_engagement_reward_item_thunk.pending, (state, action) => {
+                state.eStoreItemDeletingId = action.meta.arg;
+                state.eStoreItemDeleteError = null;
+            })
+            .addCase(delete_engagement_reward_item_thunk.fulfilled, (state, action) => {
+                state.eStoreItemDeletingId = null;
+                const deletedId = action.payload?.id;
+                if (deletedId !== undefined && deletedId !== null) {
+                    state.eStoreItems = state.eStoreItems.filter((item) => item.id !== deletedId);
+                }
+            })
+            .addCase(delete_engagement_reward_item_thunk.rejected, (state, action) => {
+                state.eStoreItemDeletingId = null;
+                state.eStoreItemDeleteError = action.payload;
             });
     },
 });

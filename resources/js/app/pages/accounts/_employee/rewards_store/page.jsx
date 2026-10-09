@@ -1,8 +1,16 @@
 import React from 'react'
 import Layout from '../../layout'
+import RewardsStoreLayout from './layout'
+
 
 export default function Page() {
   return (
-    <Layout>Coming Soon!</Layout>
+    <Layout>
+      
+      <RewardsStoreLayout>
+      
+
+      </RewardsStoreLayout>
+    </Layout>
   )
 }
