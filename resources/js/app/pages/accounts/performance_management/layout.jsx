@@ -5,7 +5,7 @@ import Layout from './../layout'
 // import TabsSection from "./_sections/tabs-section";
 import SidebarSection from "./_sections/sidebar-section";
 
-export default function REACHLayout({ children }) {
+export default function PerformanceManagementLayout({ children }) {
     return (
         <Layout>
             {/* <div className="flex flex-col gap-3 w-full">

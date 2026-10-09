@@ -100,12 +100,12 @@ export default function SidebarSection() {
                   },
                   { is_label: true, name: "Leader Hub" },
                   {
-                      name: "REACH",
-                      href: `/accounts/${account_role}/reach/dashboard`,
-                      icon: FcConferenceCall,
-                      current: path === "reach",
-                      is_incoming: false,
-                  },
+                    name: "Performance Management",
+                    href: `/accounts/${account_role}/performance_management/dashboard`,
+                    icon: FcConferenceCall,
+                    current: path === "performance_management",
+                    is_incoming: false,
+                },
               ]
             : []),
 

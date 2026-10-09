@@ -153,13 +153,10 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         });
 
 
-          Route::prefix('reach')->group(function () use ($employeeDetailsRoutes) {
-            Route::inertia('dashboard', 'accounts/reach/dashboard/page');
-            Route::inertia('recognation', 'accounts/reach/recognation/page');
-            Route::inertia('evaluation', 'accounts/reach/evaluation/page');
-            Route::inertia('action_plan', 'accounts/reach/action_plan/page');
-            Route::inertia('commitment', 'accounts/reach/commitment/page');
-            Route::inertia('handoff', 'accounts/reach/handoff/page');
+          Route::prefix('performance_management')->group(function () use ($employeeDetailsRoutes) {
+            Route::inertia('dashboard', 'accounts/performance_management/dashboard/page');
+            Route::inertia('reach', 'accounts/performance_management/reach/page');
+            Route::inertia('corrective_action', 'accounts/performance_management/corrective_action/page');
         });
 
         Route::prefix('activities')->group(function () {
