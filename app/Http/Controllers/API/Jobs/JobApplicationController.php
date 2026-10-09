@@ -572,10 +572,12 @@ class JobApplicationController extends Controller
     public function apply_job_application(Request $request)
     {
         // 1. Create or Find User
+        $fullName = trim($request->first_name . ' ' . $request->last_name);
+
         $user = User::firstOrCreate(
             ['email' => $request->email],
             [
-                'name' => $request->first_name,
+                'name' => ucwords(strtolower($fullName)),
                 'password' => Hash::make('Business12'),
                 'role' => 3,
                 'email_verified_at' => now()
