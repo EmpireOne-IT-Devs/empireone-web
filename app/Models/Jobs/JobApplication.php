@@ -26,6 +26,14 @@ class JobApplication extends Model
         'final_status',
         'referral_id',
         'source',
+        'lead_source',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_content',
+        'utm_term',
+        'lead_referrer',
+        'lead_landing_page',
         'interview_type',
         'contract_type'
     ];

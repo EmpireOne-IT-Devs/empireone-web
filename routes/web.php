@@ -25,6 +25,20 @@ Route::get('/', function () {
     return Inertia::render('landing_page/page');
 });
 
+// Short links that redirect home with UTMs applied (slug => utm_source).
+foreach ([
+    'qb' => 'qb-direct',
+    'gy' => 'giovanni-yap',
+    'cc' => 'charmaine-corpuz',
+    'gn' => 'grecar-nilles',
+] as $slug => $utmSource) {
+    Route::get("/{$slug}", fn() => redirect('/?' . http_build_query([
+        'utm_source'   => $utmSource,
+        'utm_medium'   => 'social',
+        'utm_campaign' => 'qb-thoughtleadership',
+    ])));
+}
+
 Route::get('/auth/forgot_password', function () {
     return Inertia::render('auth/forgot_password/verify/page');
 });

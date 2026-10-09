@@ -6,6 +6,7 @@ use App\Http\Controllers\API\Account\AccountContractController;
 use App\Http\Controllers\Controller;
 use App\Mail\ApplicantRejected;
 use App\Mail\JobOfferMail;
+use App\Mail\LeadAttributionNotificationMail;
 use App\Mail\SendEmailAccountCreation;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
@@ -541,6 +542,33 @@ class JobApplicationController extends Controller
     }
 
 
+    private function lead_attribution(Request $request): array
+    {
+        $clean = fn($key) => ($v = trim((string) $request->input($key, ''))) === ''
+            ? null
+            : mb_substr($v, 0, 255);
+
+        $attribution = [
+            'utm_source'        => $clean('utm_source'),
+            'utm_medium'        => $clean('utm_medium'),
+            'utm_campaign'      => $clean('utm_campaign'),
+            'utm_content'       => $clean('utm_content'),
+            'utm_term'          => $clean('utm_term'),
+            'lead_referrer'     => $clean('lead_referrer'),
+            'lead_landing_page' => $clean('lead_landing_page'),
+        ];
+
+        // Rebuilt server-side so a stale or empty client value can't blank the source.
+        $parts = array_filter([
+            $attribution['utm_source'],
+            $attribution['utm_medium'],
+            $attribution['utm_campaign'],
+            $attribution['utm_content'],
+        ]);
+
+        return ['lead_source' => $parts ? implode(' / ', $parts) : 'direct/unknown'] + $attribution;
+    }
+
     public function apply_job_application(Request $request)
     {
         // 1. Create or Find User
@@ -623,6 +651,8 @@ class JobApplicationController extends Controller
         }
 
         // Finally, create the application
+        $attribution = $this->lead_attribution($request);
+
         $application = JobApplication::firstOrCreate(
             // 1. Search conditions: Does this user already have an application for this job?
             [
@@ -634,9 +664,25 @@ class JobApplicationController extends Controller
                 'interviewer_id' => $assigned_interviewer_id,
                 'referral_id'    => $referral_id,
                 'source'         => $request->source ?? null,
-                'interview_type' => $request->interview_type
+                'interview_type' => $request->interview_type,
+                ...$attribution,
             ]
         );
+
+        if ($application->wasRecentlyCreated) {
+            try {
+                Mail::to(config('services.lead_notification.to'))->send(
+                    new LeadAttributionNotificationMail(
+                        trim(($request->first_name ?? '') . ' ' . ($request->last_name ?? '')),
+                        $user->email,
+                        $request->position,
+                        $attribution,
+                    )
+                );
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
 
 
         // 4. Format Times (DB vs Google Calendar)

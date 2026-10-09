@@ -40,4 +40,8 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URL'),
     ],
 
+    'lead_notification' => [
+        'to' => env('LEAD_NOTIFICATION_EMAIL', 'career@empireonegroup.com'),
+    ],
+
 ];
