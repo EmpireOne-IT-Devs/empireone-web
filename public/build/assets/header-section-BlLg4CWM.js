@@ -1,0 +1,1 @@
+import{j as e}from"./app-Dptr1eOQ.js";function a(){return e.jsxs("div",{className:" px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"Rewards Management"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Manage reward items and track redemptions"})]})}export{a as default};

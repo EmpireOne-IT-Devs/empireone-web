@@ -250,14 +250,37 @@ class EngagementPostEventSurveyController extends Controller
     }
 
     // ── Admin: response tracker ──────────────────────────────────────────────
-    public function responses(int $id): JsonResponse
+    public function responses(Request $request, int $id): JsonResponse
     {
+        $validated = $request->validate([
+            'site' => 'nullable|string|max:255',
+        ]);
+
         $survey = EngagementPostEventSurvey::with(['questions'])->findOrFail($id);
 
-        $employees = User::where('role', User::ROLE_EMPLOYEE)
+        $employeeQuery = User::where('role', User::ROLE_EMPLOYEE)
             ->with(['account_employee.account', 'account_employee.department', 'account_employee.location'])
-            ->select('id', 'name', 'email')
-            ->get();
+            ->select('id', 'name', 'email');
+
+        if (!empty($validated['site'])) {
+            $employeeQuery->whereHas('account_employee.location', function ($query) use ($validated) {
+                $query->where('name', $validated['site']);
+            });
+        }
+
+        $sites = User::where('role', User::ROLE_EMPLOYEE)
+            ->whereHas('account_employee.location')
+            ->with(['account_employee.location'])
+            ->get()
+            ->pluck('account_employee.location.name')
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        $employees = $employeeQuery
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
         $responseModels = EngagementPostEventSurveyResponse::with(['answers.question'])
             ->where('engagement_post_event_survey_id', $id)
@@ -272,7 +295,7 @@ class EngagementPostEventSurveyController extends Controller
             'question_type' => $question->type,
         ])->values();
 
-        $tracker = $employees->map(function ($employee) use ($responseMap) {
+        $tracker = collect($employees->items())->map(function ($employee) use ($responseMap) {
             $response = $responseMap->get($employee->id);
 
             $answersByQuestion = [];
@@ -297,8 +320,11 @@ class EngagementPostEventSurveyController extends Controller
             ];
         });
 
-        $totalEmployees = $employees->count();
-        $totalResponses = $responseMap->count();
+        $totalEmployees = $employees->total();
+        $filteredEmployeeIds = (clone $employeeQuery)->pluck('id');
+        $totalResponses = $responseModels
+            ->whereIn('user_id', $filteredEmployeeIds)
+            ->count();
 
         if ($survey->sentiment_overview === null) {
             $survey->refreshSentimentOverview();
@@ -313,6 +339,15 @@ class EngagementPostEventSurveyController extends Controller
                 'participation_rate' => $totalEmployees > 0 ? round(($totalResponses / $totalEmployees) * 100, 2) : 0,
                 'questions'          => $questions,
                 'response_tracker'   => $tracker,
+                'response_tracker_pagination' => [
+                    'current_page' => $employees->currentPage(),
+                    'last_page'    => $employees->lastPage(),
+                    'per_page'     => $employees->perPage(),
+                    'total'        => $employees->total(),
+                    'from'         => $employees->firstItem(),
+                    'to'           => $employees->lastItem(),
+                ],
+                'sites'              => $sites,
                 'sentiment_overview' => $sentimentOverview,
             ],
             'status' => 'success',

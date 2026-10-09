@@ -7,6 +7,7 @@ export default function TabsSection() {
     const isAllowedDepartment = isContentManager;
     const currentPath = window.location.pathname.split("/")[4];
     const role = window.location.pathname.split("/")[2];
+    
     const tabs = [
         {
             label: "Home",

@@ -41,7 +41,6 @@ export default function SidebarSection() {
     const path = window.location.pathname.split("/")[3];
     const account_role = window.location.pathname.split("/")[2];
     console.log("datadata", data?.user?.account_employee);
-    // 1. We split the main navigation items and include labels...
     const mainNavigation = [
         { is_label: true, name: "Main Menu" },
         {
@@ -171,15 +170,15 @@ export default function SidebarSection() {
                                 current: path == "rnr",
                                 is_incoming: false,
                             },
+                            {
+                                name: "E-Store",
+                                href: `/accounts/${account_role}/e_store/rewards_items`,
+                                icon: FcShop,
+                                current: path == "e_store",
+                                is_incoming: false,
+                            },
                         ]
                       : []),
-                  {
-                      name: "E-Store",
-                      href: `/accounts/${account_role}/e_store/rewards_items`,
-                      icon: FcShop,
-                      current: path == "e_store",
-                      is_incoming: false,
-                  },
 
                   {
                       name: "Ticketing",
@@ -230,7 +229,7 @@ export default function SidebarSection() {
                   {
                       name: "RNR",
                       href: `/accounts/${account_role}/rnr`,
-                      icon: FcCloseUpMode,
+                      icon: FcDiploma1,
                       current: path == "rnr",
                       is_incoming: false,
                   },
