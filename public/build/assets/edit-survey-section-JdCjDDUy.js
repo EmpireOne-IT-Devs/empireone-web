@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/edit-survey-section-D5WBgc_f.js
-import{j as t}from"./app-DjHk0QBQ.js";import{P as s}from"./pencil-CmL1JLWl.js";import"./createLucideIcon-TEPY5hIC.js";function m({survey:e,createSurveyRef:r,onAction:n}){const o=()=>{r?.current?.openEdit(e),n?.()};return t.jsxs("button",{type:"button",onClick:o,className:"flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-900",children:[t.jsx(s,{size:16,className:"shrink-0 text-amber-500"}),"Edit"]})}export{m as default};
-========
-import{j as t}from"./app-Cd-JMtLa.js";import{P as s}from"./pencil-AgdT2OFd.js";import"./createLucideIcon-D1wGugn0.js";function m({survey:e,createSurveyRef:r,onAction:n}){const o=()=>{r?.current?.openEdit(e),n?.()};return t.jsxs("button",{type:"button",onClick:o,className:"flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-900",children:[t.jsx(s,{size:16,className:"shrink-0 text-amber-500"}),"Edit"]})}export{m as default};
->>>>>>>> c052da042c4bb49a0bfdf3a5fb7fa155220b9df6:public/build/assets/edit-survey-section-JdCjDDUy.js
