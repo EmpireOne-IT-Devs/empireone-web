@@ -280,6 +280,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('accounts',  AccountController::class);
         Route::resource('departments',  DepartmentController::class);
         Route::resource('leaders', ERLeaderController::class);
+        Route::get('get_my_team',  [ERLeaderController::class, 'get_my_team']);
+        
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);

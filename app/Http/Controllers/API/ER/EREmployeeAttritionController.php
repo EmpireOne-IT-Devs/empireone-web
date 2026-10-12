@@ -37,7 +37,7 @@ class EREmployeeAttritionController extends Controller
         }
 
         // 3. Paginate filtered or unfiltered results
-        $attritions = $query->orderBy('id','desc')->paginate(12);
+        $attritions = $query->orderBy('id', 'desc')->paginate(12);
 
         return response()->json($attritions, 200);
     }
@@ -155,35 +155,38 @@ class EREmployeeAttritionController extends Controller
                 'empireone.hrd@empireonegroup.com'
             ])));
 
-            $this->my_empireone_send_email([
-                'recipient' => 'webdev@empireonegroup.com',
-                'bcc'       => implode(', ', $bccEmails) ?? '',
-                'subject'   => 'Offboarding Request - ' . $fullName . ' (' . ($attrition->employee_id ?? 'N/A') . ')',
-                'body'      => view('emails.human_resources.exit-clearance-interview', [
-                    'id'                      => $attrition->id,
-                    'eid'                     => $attrition->employee_id ?? 'N/A',
-                    'name'                    => $fullName,
-                    'position'                => $attrition->position ?? 'N/A',
-                    'account'                 => $attrition->account ?? 'N/A',
-                    'date_of_joining'         => !empty($attrition->started_at) ? date('d-M-y', strtotime($attrition->started_at)) : 'N/A',
-                    'last_working_date'       => !empty($attrition->last_working_date) ? date('d-M-y', strtotime($attrition->last_working_date)) : 'N/A',
-                    'separation_date'         => !empty($attrition->separation_date) ? date('d-M-y', strtotime($attrition->separation_date)) : 'N/A',
-                    'type_of_separation'      => $attrition->reason_for_separation ?? 'N/A',
-                    'eligibility_for_rehire'  => isset($attrition->is_rehire) ? ($attrition->is_rehire ? 'Yes' : 'No') : 'N/A',
-                    'notice_period'           => isset($attrition->days_of_liquidated) ? ($attrition->days_of_liquidated > 0 ? $attrition->days_of_liquidated . ' Days' : 'No') : 'N/A',
-                    'clawback'                => isset($attrition->is_liquidated) ? ($attrition->is_liquidated ? 'Yes' : 'No') : 'N/A',
-                ])->render(),
-            ]);
+            if ($request->is_send_email) {
+                $this->my_empireone_send_email([
+                    'recipient' => 'webdev@empireonegroup.com',
+                    'bcc'       => implode(', ', $bccEmails) ?? '',
+                    'subject'   => 'Offboarding Request - ' . $fullName . ' (' . ($attrition->employee_id ?? 'N/A') . ')',
+                    'body'      => view('emails.human_resources.exit-clearance-interview', [
+                        'id'                      => $attrition->id,
+                        'eid'                     => $attrition->employee_id ?? 'N/A',
+                        'name'                    => $fullName,
+                        'position'                => $attrition->position ?? 'N/A',
+                        'account'                 => $attrition->account ?? 'N/A',
+                        'date_of_joining'         => !empty($attrition->started_at) ? date('d-M-y', strtotime($attrition->started_at)) : 'N/A',
+                        'last_working_date'       => !empty($attrition->last_working_date) ? date('d-M-y', strtotime($attrition->last_working_date)) : 'N/A',
+                        'separation_date'         => !empty($attrition->separation_date) ? date('d-M-y', strtotime($attrition->separation_date)) : 'N/A',
+                        'type_of_separation'      => $attrition->reason_for_separation ?? 'N/A',
+                        'eligibility_for_rehire'  => isset($attrition->is_rehire) ? ($attrition->is_rehire ? 'Yes' : 'No') : 'N/A',
+                        'notice_period'           => isset($attrition->days_of_liquidated) ? ($attrition->days_of_liquidated > 0 ? $attrition->days_of_liquidated . ' Days' : 'No') : 'N/A',
+                        'clawback'                => isset($attrition->is_liquidated) ? ($attrition->is_liquidated ? 'Yes' : 'No') : 'N/A',
+                    ])->render(),
+                ]);
+                $this->my_empireone_send_email([
+                    'recipient' => $request->eogs_email,
+                    'bcc'       => !empty($bccEmails2) ? implode(', ', $bccEmails2) : '',
+                    'subject'   => 'Required: Employee Exit Survey - ' . $fullName . ' (' . ($attrition->employee_id ?? 'N/A') . ')',
+                    'body'      => view('emails.human_resources.exit-survey', [
+                        'id'   => $attrition->id,
+                        'name' => $fullName,
+                    ])->render(),
+                ]);
+            }
 
-            $this->my_empireone_send_email([
-                'recipient' => $request->eogs_email,
-                'bcc'       => !empty($bccEmails2) ? implode(', ', $bccEmails2) : '',
-                'subject'   => 'Required: Employee Exit Survey - ' . $fullName . ' (' . ($attrition->employee_id ?? 'N/A') . ')',
-                'body'      => view('emails.human_resources.exit-survey', [
-                    'id'   => $attrition->id,
-                    'name' => $fullName,
-                ])->render(),
-            ]);
+
 
             User::where('id', $request->user_id)->update([
                 'role' => '3',

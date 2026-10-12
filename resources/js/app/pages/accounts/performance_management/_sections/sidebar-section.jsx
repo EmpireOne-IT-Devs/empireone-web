@@ -3,6 +3,7 @@ import {
     FcPieChart,
     FcPortraitMode,
     FcLeave,
+    FcConferenceCall,
 } from "react-icons/fc";
 import SubSidebarSection from "./../../__sections/sub-sidebar-section";
 
@@ -16,6 +17,13 @@ export default function SidebarSection({ children }) {
             icon: <FcPieChart className="w-5 h-5 shrink-0" />,
             path: "/accounts/administrator/performance_management/dashboard",
             active: currentPath === "dashboard" || currentPath === "",
+        },
+          {
+            label: "My Team",
+            name: "my_team",
+            icon: <FcConferenceCall className="w-5 h-5 shrink-0" />,
+            path: "/accounts/administrator/performance_management/my_team",
+            active: currentPath === "my_team",
         },
         {
             label: "REACH",
