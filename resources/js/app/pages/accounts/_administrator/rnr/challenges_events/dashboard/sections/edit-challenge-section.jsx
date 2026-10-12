@@ -60,7 +60,9 @@ export default function EditChallengeSection({ challenge }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [bannerFile, setBannerFile] = useState(null);
-    const [bannerPreview, setBannerPreview] = useState(challenge.banner_url ?? null);
+    const [bannerPreview, setBannerPreview] = useState(
+        challenge.banner_url ?? null,
+    );
     const [participantsError, setParticipantsError] = useState("");
     const [bannerPosition, setBannerPosition] = useState({
         x: challenge.banner_position_x ?? 50,
@@ -144,10 +146,19 @@ export default function EditChallengeSection({ challenge }) {
     }, [bannerPreview, bannerFile]);
 
     useEffect(() => {
-        if (isOpen && rewardChallengeDepartments.length === 0 && rewardChallengeAccounts.length === 0) {
+        if (
+            isOpen &&
+            rewardChallengeDepartments.length === 0 &&
+            rewardChallengeAccounts.length === 0
+        ) {
             dispatch(get_engagement_reward_challenge_options_thunk());
         }
-    }, [isOpen, dispatch, rewardChallengeDepartments.length, rewardChallengeAccounts.length]);
+    }, [
+        isOpen,
+        dispatch,
+        rewardChallengeDepartments.length,
+        rewardChallengeAccounts.length,
+    ]);
 
     const handleClose = () => {
         setIsOpen(false);
@@ -216,7 +227,9 @@ export default function EditChallengeSection({ challenge }) {
             data.department_ids.length === 0 &&
             data.account_ids.length === 0
         ) {
-            setParticipantsError("Select at least one department or account, or choose All Employees.");
+            setParticipantsError(
+                "Select at least one department or account, or choose All Employees.",
+            );
             return;
         }
         setParticipantsError("");
@@ -227,11 +240,15 @@ export default function EditChallengeSection({ challenge }) {
             type: data.type,
             category: data.category,
             points: Number(data.points),
-            duration_days: data.duration_days ? Number(data.duration_days) : null,
+            duration_days: data.duration_days
+                ? Number(data.duration_days)
+                : null,
             all_employees: data.all_employees,
             account_ids: data.all_employees ? [] : data.account_ids,
             department_ids: data.all_employees ? [] : data.department_ids,
-            max_participants: data.max_participants ? Number(data.max_participants) : null,
+            max_participants: data.max_participants
+                ? Number(data.max_participants)
+                : null,
             start_date: data.start_date,
             deadline: data.deadline,
             card_color: data.card_color,
@@ -241,7 +258,10 @@ export default function EditChallengeSection({ challenge }) {
         };
 
         const result = await dispatch(
-            update_engagement_reward_challenge_thunk({ id: challenge.id, data: payload }),
+            update_engagement_reward_challenge_thunk({
+                id: challenge.id,
+                data: payload,
+            }),
         );
 
         if (result.error) {
@@ -382,7 +402,8 @@ export default function EditChallengeSection({ challenge }) {
                         control={control}
                         rules={{
                             validate: (value) =>
-                                htmlToPlainText(value) !== "" || "Description is required.",
+                                htmlToPlainText(value) !== "" ||
+                                "Description is required.",
                         }}
                         render={({ field, fieldState }) => (
                             <div>
@@ -390,7 +411,9 @@ export default function EditChallengeSection({ challenge }) {
                                     Description / Challenge Guide
                                 </span>
                                 <p className="mb-2 text-xs text-gray-500">
-                                    Explain the goal, what participants need to do, and what proof to submit. Use headings and bullet lists for a clear guide.
+                                    Explain the goal, what participants need to
+                                    do, and what proof to submit. Use headings
+                                    and bullet lists for a clear guide.
                                 </p>
                                 <Wysiwyg
                                     value={field.value}
@@ -430,20 +453,19 @@ export default function EditChallengeSection({ challenge }) {
                             </div>
                         </div>
 
-                        <Controller
-                            name="category"
-                            control={control}
-                            render={({ field, fieldState }) => (
-                                <Select
-                                    label="Category"
-                                    name={field.name}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    onBlur={field.onBlur}
-                                    error={fieldState.error?.message}
-                                    options={CATEGORY_OPTIONS}
-                                />
-                            )}
+                        <Input
+                            label="Category"
+                            type="text"
+                            maxLength={50}
+                            error={errors.category?.message}
+                            {...register("category", {
+                                required: "Category is required.",
+                                maxLength: {
+                                    value: 50,
+                                    message:
+                                        "Category must not exceed 50 characters.",
+                                },
+                            })}
                         />
                     </div>
 
@@ -476,12 +498,19 @@ export default function EditChallengeSection({ challenge }) {
                                     message: "Duration must be at least 1 day.",
                                 },
                                 validate: (value, formValues) => {
-                                    if (!value || !formValues.start_date || !formValues.deadline) {
+                                    if (
+                                        !value ||
+                                        !formValues.start_date ||
+                                        !formValues.deadline
+                                    ) {
                                         return true;
                                     }
                                     const days =
                                         Math.round(
-                                            (new Date(formValues.deadline) - new Date(formValues.start_date)) /
+                                            (new Date(formValues.deadline) -
+                                                new Date(
+                                                    formValues.start_date,
+                                                )) /
                                                 (1000 * 60 * 60 * 24),
                                         ) + 1;
                                     return (
@@ -492,9 +521,11 @@ export default function EditChallengeSection({ challenge }) {
                             })}
                         />
                         <p className="mt-1 text-xs text-gray-400">
-                            Leave blank for a single one-time proof submission. Set a number of
-                            days (e.g. 7) to let employees submit one proof per day — missed days
-                            are simply skipped. Only affects employees who join after this change.
+                            Leave blank for a single one-time proof submission.
+                            Set a number of days (e.g. 7) to let employees
+                            submit one proof per day — missed days are simply
+                            skipped. Only affects employees who join after this
+                            change.
                         </p>
                     </div>
 
@@ -575,7 +606,9 @@ export default function EditChallengeSection({ challenge }) {
                                 <div className="flex flex-wrap gap-2">
                                     {rewardChallengeAccounts.map((account) => {
                                         const isSelected =
-                                            selectedAccountIds?.includes(account.id);
+                                            selectedAccountIds?.includes(
+                                                account.id,
+                                            );
                                         return (
                                             <button
                                                 key={account.id}
@@ -602,7 +635,9 @@ export default function EditChallengeSection({ challenge }) {
                             </>
                         )}
                         {participantsError && (
-                            <p className="mt-2 text-sm text-red-500">{participantsError}</p>
+                            <p className="mt-2 text-sm text-red-500">
+                                {participantsError}
+                            </p>
                         )}
                         <div className="mt-6 text-xs text-gray-400">
                             <Input

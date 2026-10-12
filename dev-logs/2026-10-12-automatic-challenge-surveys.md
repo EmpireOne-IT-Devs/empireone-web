@@ -1,0 +1,251 @@
+### Phase 1: Automatic challenge survey creation and shared-storage isolation
+
+- **Timestamp:** 2026-10-12 (UTC+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Backend, QA
+- **Files Modified/Created:**
+  - `database/migrations/2026_10_12_081200_link_engagement_surveys_to_reward_challenges.php` - Add nullable unique challenge/participant links, the challenge survey requirement flag, and participant proof approval/separate survey reward fields. Rollback removes only challenge-linked surveys before dropping their discriminator, preserving event surveys.
+  - `app/Services/ChallengeSurveyService.php` - Create a published survey with the exact seven ordered questions, transactionally and idempotently. Lock the challenge row and retain database uniqueness as the concurrent creation guard.
+  - `app/Http/Middleware/EnsurePostEventSurvey.php` - Return 404 for challenge surveys accessed through legacy event-survey routes.
+  - `app/Models/Engagement/EngagementPostEventSurvey.php` - Add challenge linkage and relationship.
+  - `app/Models/Engagement/EngagementPostEventSurveyResponse.php` - Add participant linkage and relationship.
+  - `app/Models/Engagement/EngagementRewardChallenge.php` - Add survey relationship and cast/fillable requirement flag.
+  - `app/Models/Engagement/EngagementRewardChallengeParticipant.php` - Add survey response relationship and proof approval/reward casts and fields.
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` - Atomically create challenge, eligibility links, survey, and questions; remove an uploaded banner on transaction failure, log a failed cleanup, and rethrow the original workflow error.
+  - `app/Http/Controllers/API/Engagement/EngagementPostEventSurveyController.php` - Exclude challenge-linked surveys from the existing event-survey list. Event creation/submission code remains unchanged.
+  - `routes/api.php` - Apply survey-isolation middleware to all ten Engagement survey-by-id routes; preserve route URLs, handlers, and Sanctum authentication.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` - Persistent regression coverage using an explicitly named in-memory SQLite connection and real API routes.
+- **Issues Encountered:**
+  - Repeated application boots redeclared the existing global web-route helper. PHPUnit subprocess mode also failed in the installed runner.
+  - SQLite cannot drop foreign keys by name alone; MySQL needs the custom constraint name rather than Laravel's conventional generated name.
+- **Resolution:**
+  - Test bootstrap retains the real application and middleware, but loads only real API routes. No production web-route or test dependency changes.
+  - Foreign-key rollback commands supply both columns and explicit custom index names. Verified SQLite rollback and compiled the actual migration with MySQL grammar without opening a MySQL connection.
+- **QA Checklist Result:**
+  - JavaScript purity: PASS (not applicable; no frontend files modified or TypeScript introduced).
+  - web.php Inertia rendering: PASS (unchanged; no web routes modified).
+  - api.php JSON endpoints: PASS - Existing JSON handlers retained; no new endpoint.
+  - Form Requests for POST/PUT: Existing inline validation retained; no validation fields or new endpoints added in Phase 1.
+  - Policies for new resources: No externally accessible challenge-survey endpoint introduced. Sanctum and legacy survey isolation preserved; dedicated participant policy planned for Phase 2.
+  - Eloquent API Resources: Existing response shape retained; no new survey API response. Dedicated Resources planned for Phase 2.
+  - Reversible migration: PASS - SQLite up/down tests and MySQL rollback grammar check; preserves event surveys and questions.
+  - Non-trivial business logic in services: PASS - Survey generation is in ChallengeSurveyService.
+  - Axios API isolation: PASS (unchanged).
+  - Thunk orchestration and slice dispatch: PASS (unchanged).
+  - Laravel 422 field error mapping: PASS (unchanged; no new frontend response handling).
+  - Internal Inertia links: PASS (not applicable; none added).
+  - Persistent authenticated layouts: PASS (unchanged).
+  - Reusable primitive Redux/API isolation: PASS (unchanged).
+  - Shared component verification before creating UI: PASS (not applicable; no UI created).
+  - PascalCase React component names: PASS (not applicable; no React changes).
+  - Kebab-case slice/thunk/service filenames: PASS (not applicable; no frontend layer files added).
+  - Snake_case thunk/service functions: PASS (unchanged).
+  - page.jsx route naming: PASS (not applicable; no new page).
+  - Slice store registration: PASS (not applicable; no new slice).
+  - Visible network loading: PASS - Existing create form behavior retained; no second frontend survey request.
+  - Destructive confirmations: PASS (not applicable; no destructive UI action added).
+  - Inline 422 feedback: PASS (unchanged).
+  - Empty list/table feedback: PASS (unchanged).
+  - Keyboard accessibility: No UI changes; requires browser verification of the existing application.
+  - Responsive sm/md/lg layout: No UI changes; requires browser verification of the existing application.
+  - Modal focus trapping: No UI changes; requires browser verification of the existing application.
+  - Sanctum authentication: PASS - Existing auth:sanctum routes retained and exercised with authenticated API tests.
+  - API Resource/raw-array rule: Existing formatting unchanged; no additional raw survey response exposed.
+  - UUID/slug identifiers: Existing route identifiers unchanged; no new route identifiers introduced.
+  - Guarded terminal commands: PASS - No git, build/dev, live migration, seed, or destructive shell commands run.
+  - Focused tests: PASS - 9 tests, 94 assertions. Exact question wording/order/types/required flags; API creation; distinct challenge linkage; service idempotency; database uniqueness; question failure rollback; outer transaction/eligibility/banner rollback; event creation/list/detail/paragraph response and repeat rejection; all ten legacy routes reject challenge surveys; participant relationships and unique responses; legacy defaults and rollback preserving event surveys.
+  - PHP lint: PASS - Modified existing models, controllers, and routes.
+  - Laravel Pint: PASS - New service, middleware, migration, and test file.
+  - Editor diagnostics: PASS - No errors reported for modified source files.
+  - Production MySQL integration/concurrent HTTP/browser checks: NOT RUN. SQLite checks verify persistence and uniqueness but do not simulate concurrent MySQL transactions.
+- **Next Steps:**
+  - Phase 2 requires separate approval: dedicated participant-authorized survey APIs, database completion gate, exactly-once 15-point survey reward, and updated totals/history/reports.
+  - Phase 3 requires separate approval: employee Complete Survey workflow, loading/errors/retry states, and Redux wiring.
+  - Migration file created but NOT applied to the user's database. Ship completed phases together. Phase 1 stores the requirement but does not yet enforce completion or award points.
+
+### Phase 2: Participant survey APIs, completion gate, and separate survey rewards
+
+- **Timestamp:** 2026-10-12 18:05:20 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Backend, QA
+- **Files Modified/Created:**
+  - `app/Services/ChallengeCompletionService.php` - Require approved proof and a matching submitted survey response before finalizing survey-required challenges. Preserve legacy completion and challenge points.
+  - `app/Services/ChallengeSurveyService.php` - Transactionally persist the authenticated participant's answers, record a separate 15-point reward, finalize eligible participation, and refresh sentiment. Lock participation and return existing successful submissions without rewarding again.
+  - `app/Policies/ChallengeSurveyPolicy.php` - Restrict challenge surveys to their own participants.
+  - `app/Providers/AppServiceProvider.php` - Register the dedicated policy.
+  - `app/Http/Requests/SubmitChallengeSurveyRequest.php` - Authorize submission and validate owned question IDs, required 1-5 ratings, and optional paragraphs up to 5000 characters.
+  - `app/Http/Resources/ChallengeSurveyResource.php` - Expose ordered survey questions, readiness, persisted response state, and reward configuration.
+  - `app/Http/Resources/ChallengeSurveySubmissionResource.php` - Expose persisted completion state and separate challenge/survey/combined awarded points.
+  - `app/Http/Controllers/API/Engagement/ChallengeSurveyController.php` - Add dedicated show/submit endpoints and surface missing-question configuration as 409.
+  - `app/Models/Engagement/EngagementRewardChallengeParticipant.php` - Add persisted eligibility/completion helpers and consistent combined-point accessor/SQL.
+  - `app/Models/Engagement/EngagementRewardChallenge.php` - Add authenticated participation lookup and survey/proof/reward pivot fields.
+  - `app/Http/Controllers/API/Engagement/EngagementChallengeSubmissionsController.php` - Lock participant/day-log review transactions, persist proof approval separately, gate finalization, and preserve reviewed-proof filters/counts while participation awaits its survey.
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` - Expose survey state; prevent leave/rejoin reward resets; include separate survey points in balance, history, reports, exports, departments, and employee profiles.
+  - `routes/api.php` - Add authenticated challenge-specific survey GET and POST routes without replacing the event-survey workflow.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` - Expand durable isolated API regression coverage to 24 tests.
+- **Issues Encountered:**
+  - Newly wrapped decline transactions initially returned outside the transaction closures.
+  - A resubmission test updated a stale participant model, so its unchanged in-memory status was not written to the database.
+  - Numeric-key array spreads reindexed question IDs in invalid-answer test data.
+  - Newly created PHP files needed repository line-ending/operator/import formatting.
+- **Resolution:**
+  - Keep decline response construction inside both transactions and consistently indent the review/leave transaction bodies.
+  - Exercise the real proof upload/resubmission API instead of manually changing the participant status.
+  - Use array_replace for answer overrides, preserving question IDs.
+  - Apply Laravel Pint only to focused new survey files/tests; preserve unrelated existing formatting.
+- **QA Checklist Result:**
+  - PASS - 24 tests, 300 assertions on an explicitly named in-memory SQLite connection using the actual authenticated API routes. No live database connection or migration execution.
+  - PASS - All 14 touched PHP files pass php -l; focused eight-file Pint check passes; editor diagnostics report no errors.
+  - PASS - Survey/approval in either order, daily approved-day threshold, repeated review rejection, separate exactly-once reward on sequential retries, decline/resubmission reward retention, blocked leave/rejoin, post-deadline eligibility, and legacy single/daily completion.
+  - PASS - Unauthenticated/nonparticipant denial, authenticated ownership despite spoofed user IDs, upcoming/joined/declined/closed/missing-survey restrictions, required rating bounds, foreign question rejection, optional paragraphs, paragraph length, and explicit missing-question configuration errors.
+  - PASS - Answer insertion and finalization failures roll back answers, responses, reward markers, points, and completion together.
+  - PASS - Balance/history/report/export/profile totals include the separate survey reward; proof-review filters/stats remain distinct from final completion.
+  - PASS - Phase 1 creation/linkage/uniqueness/rollback and existing Post Event Survey isolation/creation/response regressions retained.
+  - JavaScript purity: PASS (no frontend changes).
+  - web.php Inertia rendering: PASS (unchanged; no web routes added).
+  - api.php JSON endpoints: PASS (dedicated endpoints return JSON).
+  - Form Requests: PASS (new POST uses SubmitChallengeSurveyRequest; existing proof/review validation unchanged).
+  - Policy protection: PASS (participant-only challenge-survey access).
+  - Eloquent Resources: PASS (both new endpoint contracts use Resources; existing response shapes preserved).
+  - Migration down: PASS (Phase 1 regression retained; no Phase 2 migration changes).
+  - Non-trivial business logic in services: PASS.
+  - Axios service isolation: PASS (unchanged; survey client added in Phase 3).
+  - Thunk orchestration: PASS (unchanged).
+  - Frontend 422 field-error mapping: PASS (unchanged; new survey mapping deferred to Phase 3).
+  - Internal Inertia links: PASS (none added).
+  - Persistent authenticated layouts: PASS (unchanged).
+  - Shared primitive Redux/API isolation: PASS (unchanged).
+  - Shared component reuse: PASS (no UI components created).
+  - PascalCase React names: PASS (no React components added).
+  - Kebab-case frontend layer files: PASS (none added).
+  - Snake_case thunk/service functions: PASS (none added).
+  - page.jsx naming: PASS (no page added).
+  - Store registration: PASS (existing engagement reducer unchanged).
+  - Visible loading states: PASS (existing UI unchanged; survey loading deferred to Phase 3).
+  - Destructive confirmation UI: PASS (no destructive UI added).
+  - Inline validation feedback: PASS (existing UI unchanged; survey feedback deferred to Phase 3).
+  - Empty-state message/CTA: PASS (existing UI unchanged).
+  - Keyboard accessibility: Code-level PASS; requires browser verification (no UI changes).
+  - Responsive layout: Code-level PASS; requires browser verification (no UI changes).
+  - Modal focus trapping: Code-level PASS; requires browser verification (no UI changes).
+  - Sanctum authentication: PASS (actual auth:sanctum API middleware exercised).
+  - No new raw-array responses: PASS (new endpoints use Resources).
+  - Route identifiers: PASS (reuse existing challenge identifiers; no UUID/slug migration introduced).
+  - Guarded commands: PASS (no git, build/dev, live migrations/seeds, or destructive shell operations).
+  - Live MySQL concurrency and browser integration: NOT RUN. Row locks and database uniqueness are implemented, but SQLite sequential tests are not proof of concurrent MySQL behavior.
+- **Next Steps:**
+  - Phase 3 requires approval: employee "Almost finished" / Complete Survey flow, question rendering, challenge-specific Redux/Axios wiring, loading/errors/retries, persisted completion display, and points refresh.
+  - Phase 2 is backend-only. The employee survey UI is not yet implemented; do not deploy this feature in isolation.
+  - The Phase 1 migration remains unapplied to the user's database. Roll out completed phases together and verify MySQL/browser integration before production deployment.
+
+### Phase 3: Employee survey completion workflow and reward display
+
+- **Timestamp:** 2026-10-12 18:22:18 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Frontend, UI/UX, QA
+- **Files Modified/Created:**
+  - `resources/js/app/services/engagement-service.js` - Add challenge-specific survey GET/POST Axios functions returning response JSON directly.
+  - `resources/js/app/redux/engagement-thunk.js` - Add survey loading/submission orchestration, preserve server validation errors, prevent duplicate in-flight submissions, and refresh points/history after successful submission.
+  - `resources/js/app/redux/engagement-slice.js` - Track survey data/loading/errors per challenge; update persisted completion, participation, and separate awarded-point fields without replacing the challenge list or closing the modal. Expose points-refresh failures and ignore stale survey/profile responses.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-survey-section.jsx` - Render four required 1-5 ratings and three optional paragraphs using existing Radio, TextArea, Button, and Skeleton primitives. Show loading/retry, inline 422 errors, unavailable/already-completed states, submission progress, success feedback, and points-refresh retry. Focus the completion notice after successful submission.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-section.jsx` - Integrate the Almost finished / Complete Survey prompt and survey view inside the existing modal. Handle pending_survey for single/daily challenges, preserve Upcoming restrictions, and add a local Headless UI focus trap with Escape dismissal and focus restoration.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-card-section.jsx` - Add survey-required badge/action, retain post-deadline access for qualifying participants, and disable leave after a survey reward even if proof was declined.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submit-section.jsx` - Explain the mandatory survey after successful single-proof submission.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submitted-section.jsx` - Distinguish approved proof awaiting survey from proof awaiting admin review.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-progress-section.jsx` - Label daily progress as approved days, separately explain the remaining survey requirement, and display Survey required in the single-proof progress indicator.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-approved-section.jsx` - Display survey points separately from challenge points and show the combined earned total.
+  - `resources/js/app/pages/accounts/_employee/rnr/my_profile/sections/points-summary-section.jsx` - Show pending-survey history status and survey rewards before final approval, surface refresh failures, paginate history at ten entries, and provide an Inertia challenge navigation CTA for an empty successful history.
+  - `tests/Frontend/challenge-survey.test.mjs` - Add 21 durable Node tests using installed esbuild, React server rendering, real Redux reducers/thunks, and an isolated Axios adapter. No package additions.
+- **Issues Encountered:**
+  - Replacing the challenge body with the survey removed the previously focused action. Successful submission likewise removed the focused submit button.
+  - Node's native CommonJS/ESM resolution did not match Vite's installed Inertia entrypoint resolution, and the test initially mocked a different Axios module instance.
+  - An older points-summary response could otherwise overwrite newly refreshed survey points.
+- **Resolution:**
+  - Reinitialize the local focus trap on view changes and focus a keyboard-focusable completion notice after successful submission. Browser checks confirm Tab wrapping, Escape dismissal, and focus restoration.
+  - The test harness resolves installed Inertia ESM entrypoints through esbuild and uses the same CommonJS Axios instance as compiled source. Use the automatic JSX runtime, matching project JSX semantics. No dependency or production configuration changes.
+  - Track the latest points-summary request ID and ignore stale responses; add regression coverage.
+- **QA Checklist Result:**
+  - PASS - 21 frontend tests: challenge-specific URLs/response shapes, loading/fetch retry, question rendering/count/types, required ratings/paragraph limits, inline error payload preservation, failed-submission state retention, duplicate-click prevention, completed/unavailable states, separate rewards, balance/history refresh, refresh errors, stale-response rejection, daily completion labels, post-deadline card access, Upcoming gating, leave protection, legacy cards, and bounded history rendering.
+  - PASS - 24 backend tests, 300 assertions retained: survey creation/isolation, persisted authorization and completion gates, separate rewards/retries, rollback, approval ordering, daily thresholds, legacy completion, and totals/report/export regressions.
+  - PASS - Focused source bundling/import resolution via existing esbuild in tests and the browser harness. Editor diagnostics report no errors in all twelve changed source/test files.
+  - PASS - Isolated browser check using actual React components and local mock APIs: seven question groups, four required ratings, three paragraph controls, first-request 422 with inline feedback and retained answers, successful retry, 115 combined points with separate 100/15 breakdown, and completed survey restored after reload without answer controls.
+  - PASS - Browser Tab wrapping, Escape dismissal, opener focus restoration, and focused completion notice. Completion view has no document/dialog horizontal overflow at 375, 768, and 1440 px.
+  - JavaScript purity: PASS (plain JS/JSX/MJS; no TypeScript).
+  - Web routes: PASS (unchanged).
+  - JSON API routes: PASS (unchanged; Phase 2 contracts reused).
+  - Form Requests: PASS (Phase 2 request retained).
+  - Policy protection: PASS (participant-only Phase 2 authorization retained).
+  - Eloquent Resources: PASS (Phase 2 resources reused).
+  - Reversible migrations: PASS (unchanged; regression retained).
+  - Backend service separation: PASS (unchanged).
+  - Axios service isolation: PASS.
+  - Thunk request orchestration and slice updates: PASS.
+  - 422 question-level error mapping: PASS.
+  - Internal Inertia links: PASS.
+  - Authenticated layouts: PASS (existing layouts preserved).
+  - Reusable primitive Redux/API isolation: PASS (primitives unchanged).
+  - Shared component verification/reuse: PASS (Button, Radio, TextArea, Skeleton, Modal, Badge, Pagination).
+  - PascalCase component exports: PASS.
+  - Kebab-case frontend filenames: PASS.
+  - Snake_case thunk/service functions: PASS.
+  - page.jsx naming: PASS (no new page).
+  - Store registration: PASS (existing engagement reducer retained; no new slice).
+  - Visible network loading: PASS.
+  - Destructive confirmation UI: PASS (no destructive action added).
+  - Inline validation feedback: PASS.
+  - Changed history empty state/CTA and pagination: PASS.
+  - Keyboard accessibility: PASS in isolated browser; full portal verification remains.
+  - Responsive layout: Code-level PASS; requires full portal browser verification. Isolated completed view checked at mobile/tablet/desktop widths.
+  - Modal focus: PASS in isolated browser; full portal verification remains.
+  - Sanctum: PASS (existing session-authenticated endpoints retained).
+  - API Resource response rule: PASS (no backend API modifications).
+  - Route identifiers: PASS (existing challenge IDs retained).
+  - Guarded terminal commands: PASS (no git, npm build/dev, live migrations/seeds, or destructive shell commands).
+  - Temporary browser harness was served only on loopback, used mock data without production requests, then stopped and removed.
+- **Next Steps:**
+  - All three approved implementation phases are complete in source. Existing Post Event Survey creation/submission and EnsurePostEventSurvey remain unchanged in Phase 3.
+  - Apply the Phase 1 migration only through an approved deployment workflow; it remains unapplied to the user's database.
+  - Before production rollout, run the production build, live MySQL integration/concurrency checks, and full authenticated portal checks for single/daily challenges, post-deadline surveys, authorization, points history, and event-survey regression. These were not executed against the live environment.
+
+### Phase 4: Surface challenge surveys in Post Event Survey administration
+
+- **Timestamp:** 2026-10-12 (UTC+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Backend, Frontend, UI/UX, QA
+- **Files Modified/Created:**
+  - `app/Http/Middleware/EnsurePostEventSurvey.php` - Add read-only challenge survey access for explicitly marked GET routes while keeping challenge mutations and legacy response submissions blocked.
+  - `routes/api.php` - Separate read-only survey routes from mutations and retain existing authenticated event survey endpoints.
+  - `app/Http/Controllers/API/Engagement/EngagementPostEventSurveyController.php` - Include challenge-linked surveys in the administrator list and detail, expose challenge metadata, and track/export challenge responses by participant while preserving event response handling.
+  - `app/Http/Controllers/API/Engagement/EngagementChallengeSubmissionsController.php` - Include the survey requirement and participant completion state in proof-submission payloads.
+  - `resources/js/app/pages/accounts/_administrator/activities/post_event_survey/sections/table-section.jsx` - Identify challenge surveys by challenge ID/title/category and hide event-only management actions.
+  - `resources/js/app/pages/accounts/_administrator/activities/post_event_survey/sections/open-survey-section.jsx` - Retain survey review while hiding Copy Link for challenge surveys.
+  - `resources/js/app/pages/accounts/_administrator/activities/post_event_survey/id/page.jsx` - Hide the employee-answer tab for challenge surveys.
+  - `resources/js/app/pages/accounts/_administrator/activities/post_event_survey/id/sections/header-section.jsx` - Hide survey close/reopen controls for challenge surveys.
+  - `resources/js/app/pages/accounts/_administrator/activities/post_event_survey/id/sections/survey-info-section.jsx` - Show linked challenge metadata in survey details.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx` - Add Completed/Pending survey status and a not-applicable indicator for legacy challenges.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` - Cover list inclusion, participant response tracking, challenge read-only access, blocked mutations, and submission payload state.
+  - `tests/Frontend/challenge-survey.test.mjs` - Cover event/challenge row compatibility, read-only details, and submission status rendering.
+- **Issues Encountered:**
+  - A frontend test needed a missing browser-global stub; an initial Pint check also found formatting differences in two modified PHP controllers.
+- **Resolution:**
+  - Added the required test environment stubs and a regression assertion for the unchanged event-survey row behavior. Applied Laravel Pint to the two modified controllers, then reran all focused checks.
+- **QA Checklist Result:**
+  - JavaScript purity: ✅ Pass - no TypeScript introduced.
+  - Backend route integrity: ✅ Pass - existing event survey behavior is retained; challenge review routes are GET-only and mutations remain blocked.
+  - Validation, policy, and resource integrity: ✅ Pass - no new write API was added; challenge review access and participant-based response association are exercised by the API tests.
+  - Migration integrity: ✅ Pass - no migration changes in this phase; Phase 1 reversible migration remains unapplied.
+  - Service separation: ✅ Pass - no new business service required; existing participant/survey relationships are reused.
+  - Axios, Redux, and 422 field handling: ✅ Pass - employee API wiring and field handling are unchanged.
+  - Internal links, persistent layouts, and reusable component isolation: ✅ Pass - existing page structure and component boundaries retained.
+  - Component and file naming: ✅ Pass - existing page, section, and component conventions retained.
+  - Loading, empty/error states, and destructive confirmations: ✅ Pass - no employee network or destructive interaction changed; challenge surveys are read-only in administration.
+  - Keyboard accessibility, responsive layout, and modal focus behavior: Code-level ✅ - requires browser verification; no modal behavior changed in this phase.
+  - Sanctum and API response formatting: ✅ Pass - existing authentication retained; challenge survey detail and response tracking follow the existing API contracts.
+  - Focused backend tests: ✅ Pass - 25 tests, 328 assertions.
+  - Focused frontend tests: ✅ Pass - 24 tests.
+  - PHP syntax and Laravel Pint: ✅ Pass - all focused PHP lint and formatting checks.
+  - Editor diagnostics: ✅ Pass - no errors in the touched source/test files.
+  - Production database migration, concurrent MySQL behavior, and full authenticated portal verification: Not run; migration remains unapplied.
+- **Next Steps:**
+  - No further implementation phase is currently planned.
+  - Apply the migration only through the approved deployment workflow, then perform production-build, MySQL concurrency, and full authenticated portal verification before rollout.

@@ -16,6 +16,8 @@ export default function ChallengeFlowDetailsSection({
     onClose,
     onJoinClick,
 }) {
+    const isUpcoming = challenge.status === "Upcoming";
+
     return (
         <>
             <div className="grid grid-cols-2 gap-3">
@@ -69,6 +71,14 @@ export default function ChallengeFlowDetailsSection({
                 Ends {moment(challenge.deadline).format("MMM D, YYYY")}
             </div>
 
+            {isUpcoming && (
+                <div role="status" className="flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5 text-sm text-blue-600">
+                    <Calendar className="h-4 w-4 shrink-0" />
+                    This challenge starts on {moment(challenge.start_date).format("MMM D, YYYY")}.
+                    Joining and proof submissions open on that date.
+                </div>
+            )}
+
             <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-end">
                 <Button
                     type="button"
@@ -82,10 +92,15 @@ export default function ChallengeFlowDetailsSection({
                 <Button
                     type="button"
                     variant="primary"
-                    onClick={onJoinClick}
+                    disabled={isUpcoming}
+                    onClick={isUpcoming ? undefined : onJoinClick}
                     className="w-full sm:w-auto"
                 >
-                    Join Challenge  <ArrowRight className="h-4 w-4 ml-1 mr-1 " />
+                    {isUpcoming ? (
+                        <>Starts {moment(challenge.start_date).format("MMM D, YYYY")}</>
+                    ) : (
+                        <>Join Challenge <ArrowRight className="h-4 w-4 ml-1 mr-1 " /></>
+                    )}
                 </Button>
             </div>
         </>

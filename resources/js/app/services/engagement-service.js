@@ -131,6 +131,14 @@ export async function get_my_reward_challenges_service() {
     return await axios.get("/api/engagement/reward-challenges/my");
 }
 
+export async function get_reward_challenge_survey_service(id) {
+    return (await axios.get(`/api/engagement/reward-challenges/${id}/survey`)).data;
+}
+
+export async function submit_reward_challenge_survey_service(id, answers) {
+    return (await axios.post(`/api/engagement/reward-challenges/${id}/survey/submit`, { answers })).data;
+}
+
 export async function get_reward_challenge_profile_summary_service() {
     return await axios.get("/api/engagement/reward-challenges/profile-summary");
 }

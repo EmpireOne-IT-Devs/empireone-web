@@ -23,6 +23,8 @@ import {
     get_reward_challenges_service,
     get_reward_challenge_participants_service,
     get_my_reward_challenges_service,
+    get_reward_challenge_survey_service,
+    submit_reward_challenge_survey_service,
     get_reward_challenge_profile_summary_service,
     get_reward_challenge_report_service,
     get_reward_challenge_employee_profiles_service,
@@ -452,6 +454,34 @@ export const join_engagement_reward_challenge_thunk = createAsyncThunk(
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
         }
+    },
+);
+
+export const get_engagement_reward_challenge_survey_thunk = createAsyncThunk(
+    "engagement/getRewardChallengeSurvey",
+    async (id, { rejectWithValue }) => {
+        try {
+            return await get_reward_challenge_survey_service(id);
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { message: error.message });
+        }
+    },
+);
+
+export const submit_engagement_reward_challenge_survey_thunk = createAsyncThunk(
+    "engagement/submitRewardChallengeSurvey",
+    async ({ id, answers }, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await submit_reward_challenge_survey_service(id, answers);
+            dispatch(get_engagement_reward_challenge_profile_summary_thunk());
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { message: error.message });
+        }
+    },
+    {
+        condition: ({ id }, { getState }) =>
+            !getState().engagement.rewardChallengeSurveys[id]?.submitting,
     },
 );
 

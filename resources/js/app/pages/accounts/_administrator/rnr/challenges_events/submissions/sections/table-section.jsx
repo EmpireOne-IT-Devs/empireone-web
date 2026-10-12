@@ -115,6 +115,7 @@ export default function TableSection({ filters }) {
                         <th className="px-4 py-3">Email</th>
                         <th className="px-4 py-3">Submitted</th>
                         <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">Survey</th>
 
                         <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
@@ -123,7 +124,7 @@ export default function TableSection({ filters }) {
                     {challengeSubmissions.length === 0 && (
                         <tr>
                             <td
-                                colSpan={10}
+                                colSpan={11}
                                 className="px-4 py-6 text-center text-sm text-gray-500"
                             >
                                 No submissions found for the selected filters.
@@ -190,6 +191,16 @@ export default function TableSection({ filters }) {
                                             <p className="mt-1 text-xs text-gray-400">
                                                 {submission.review_note}
                                             </p>
+                                        )}
+                                </td>
+                                <td className="px-4 py-3">
+                                        {submission.challenge?.survey_required ? (
+                                            <Badge
+                                                label={submission.survey_completed ? "Completed" : "Pending"}
+                                                variant={submission.survey_completed ? "success" : "warning"}
+                                            />
+                                        ) : (
+                                            <span className="text-sm text-gray-400">—</span>
                                         )}
                                 </td>
                                 <td className="px-4 py-3 text-right">

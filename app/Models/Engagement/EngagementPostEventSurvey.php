@@ -3,11 +3,13 @@
 namespace App\Models\Engagement;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EngagementPostEventSurvey extends Model
 {
     protected $fillable = [
         'engagement_post_event_id',
+        'reward_challenge_id',
         'user_id',
         'title',
         'description',
@@ -29,6 +31,11 @@ class EngagementPostEventSurvey extends Model
     public function post()
     {
         return $this->belongsTo(EngagementPostEvent::class, 'engagement_post_event_id');
+    }
+
+    public function challenge(): BelongsTo
+    {
+        return $this->belongsTo(EngagementRewardChallenge::class, 'reward_challenge_id');
     }
 
     public function questions()

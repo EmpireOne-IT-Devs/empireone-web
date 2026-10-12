@@ -53,7 +53,7 @@ export default function HeaderSection({ surveyId }) {
                 </div>
             </div>
 
-            {selectedSurvey &&
+            {selectedSurvey && !selectedSurvey.reward_challenge_id &&
                 (!isReady ? (
                     <div className="h-10 sm:h-9 w-full sm:w-32 animate-pulse rounded-lg bg-gray-200" />
                 ) : (

@@ -23,6 +23,8 @@ import {
     get_engagement_reward_challenges_thunk,
     get_engagement_reward_challenge_participants_thunk,
     get_my_engagement_reward_challenges_thunk,
+    get_engagement_reward_challenge_survey_thunk,
+    submit_engagement_reward_challenge_survey_thunk,
     join_engagement_reward_challenge_thunk,
     leave_engagement_reward_challenge_thunk,
     submit_engagement_reward_challenge_proof_thunk,
@@ -65,6 +67,8 @@ export {
     get_engagement_reward_challenges_thunk,
     get_engagement_reward_challenge_participants_thunk,
     get_my_engagement_reward_challenges_thunk,
+    get_engagement_reward_challenge_survey_thunk,
+    submit_engagement_reward_challenge_survey_thunk,
     join_engagement_reward_challenge_thunk,
     leave_engagement_reward_challenge_thunk,
     submit_engagement_reward_challenge_proof_thunk,
@@ -178,6 +182,7 @@ const engagementSlice = createSlice({
         rewardChallengeJoiningId: null,
         rewardChallengeLeavingId: null,
         rewardChallengeSubmittingId: null,
+        rewardChallengeSurveys: {},
         rewardChallengeDailyLogs: { required_days: null, completed_days: 0, logs: [] },
         rewardChallengeDailyLogsLoading: false,
         rewardChallengeDailyLogsError: null,
@@ -193,6 +198,8 @@ const engagementSlice = createSlice({
         // Employee "My Profile" summary
         challengeProfileSummary: { total_points: 0, challenge_history: [] },
         challengeProfileSummaryLoading: false,
+        challengeProfileSummaryError: null,
+        challengeProfileSummaryRequestId: null,
 
         // E-Store reward item create state
         eStoreItems: [],
@@ -556,6 +563,58 @@ const engagementSlice = createSlice({
             });
 
         builder
+            .addCase(get_engagement_reward_challenge_survey_thunk.pending, (state, action) => {
+                const id = action.meta.arg;
+                state.rewardChallengeSurveys[id] = {
+                    ...state.rewardChallengeSurveys[id],
+                    loading: true,
+                    error: null,
+                    requestId: action.meta.requestId,
+                };
+            })
+            .addCase(get_engagement_reward_challenge_survey_thunk.fulfilled, (state, action) => {
+                const survey = state.rewardChallengeSurveys[action.meta.arg];
+                if (survey.requestId !== action.meta.requestId) return;
+                survey.loading = false;
+                survey.data = action.payload.data;
+            })
+            .addCase(get_engagement_reward_challenge_survey_thunk.rejected, (state, action) => {
+                const survey = state.rewardChallengeSurveys[action.meta.arg];
+                if (survey.requestId !== action.meta.requestId) return;
+                survey.loading = false;
+                survey.error = action.payload || { message: action.error.message };
+            })
+            .addCase(submit_engagement_reward_challenge_survey_thunk.pending, (state, action) => {
+                const id = action.meta.arg.id;
+                state.rewardChallengeSurveys[id] = {
+                    ...state.rewardChallengeSurveys[id],
+                    submitting: true,
+                    submitError: null,
+                };
+            })
+            .addCase(submit_engagement_reward_challenge_survey_thunk.fulfilled, (state, action) => {
+                const id = action.meta.arg.id;
+                const survey = state.rewardChallengeSurveys[id];
+                const completion = action.payload.data;
+                survey.submitting = false;
+                if (survey.data) {
+                    survey.data.user_has_responded = completion.survey_completed;
+                    survey.data.can_submit = false;
+                }
+                for (const challenges of [state.myRewardChallenges, state.rewardChallenges]) {
+                    const challenge = challenges.find((item) => item.id === id);
+                    if (challenge) {
+                        Object.assign(challenge, completion, { can_complete_survey: false });
+                    }
+                }
+            })
+            .addCase(submit_engagement_reward_challenge_survey_thunk.rejected, (state, action) => {
+                const survey = state.rewardChallengeSurveys[action.meta.arg.id];
+                survey.submitting = false;
+                survey.submitError = action.payload || { message: action.error.message };
+            });
+
+        builder
             .addCase(get_engagement_reward_challenges_thunk.pending, (state) => {
                 state.rewardChallengesLoading = true;
                 state.rewardChallengesError = null;
@@ -808,15 +867,20 @@ const engagementSlice = createSlice({
             .addCase(decline_engagement_reward_challenge_submission_thunk.rejected, (state) => {
                 state.challengeSubmissionDecliningId = null;
             })
-            .addCase(get_engagement_reward_challenge_profile_summary_thunk.pending, (state) => {
+            .addCase(get_engagement_reward_challenge_profile_summary_thunk.pending, (state, action) => {
                 state.challengeProfileSummaryLoading = true;
+                state.challengeProfileSummaryError = null;
+                state.challengeProfileSummaryRequestId = action.meta.requestId;
             })
             .addCase(get_engagement_reward_challenge_profile_summary_thunk.fulfilled, (state, action) => {
+                if (state.challengeProfileSummaryRequestId !== action.meta.requestId) return;
                 state.challengeProfileSummaryLoading = false;
                 state.challengeProfileSummary = action.payload?.data ?? { total_points: 0, challenge_history: [] };
             })
-            .addCase(get_engagement_reward_challenge_profile_summary_thunk.rejected, (state) => {
+            .addCase(get_engagement_reward_challenge_profile_summary_thunk.rejected, (state, action) => {
+                if (state.challengeProfileSummaryRequestId !== action.meta.requestId) return;
                 state.challengeProfileSummaryLoading = false;
+                state.challengeProfileSummaryError = action.payload || { message: action.error.message };
             })
             .addCase(get_engagement_e_store_items_thunk.pending, (state) => {
                 state.eStoreItemsLoading = true;
