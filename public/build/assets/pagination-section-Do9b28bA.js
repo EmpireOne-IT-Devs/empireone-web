@@ -1,0 +1,1 @@
+import{j as a}from"./app-DjHk0QBQ.js";import{P as n}from"./pagination-CH_NSoLI.js";function s(){const t={current_page:1,last_page:5};return a.jsx("div",{className:"pagination-section",children:a.jsx(n,{data:t})})}export{s as default};

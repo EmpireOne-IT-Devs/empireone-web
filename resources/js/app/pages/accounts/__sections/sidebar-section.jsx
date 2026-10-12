@@ -238,7 +238,7 @@ export default function SidebarSection() {
                       href: `/accounts/${account_role}/rewards_store`,
                       icon: FcShop,
                       current: path == "rewards_store",
-                      is_incoming: true,
+                      is_incoming: false,
                   },
                   {
                       name: "Loan",

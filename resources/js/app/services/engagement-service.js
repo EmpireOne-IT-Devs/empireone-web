@@ -223,3 +223,16 @@ export async function create_e_store_item_service(data) {
 export async function get_e_store_items_service(params = {}) {
     return await axios.get("/api/engagement/e-store-items", { params });
 }
+
+export async function update_e_store_item_service(id, data) {
+    if (!data.get("_method")) {
+        data.append("_method", "PUT");
+    }
+    return await axios.post(`/api/engagement/e-store-items/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}
+
+export async function delete_e_store_item_service(id) {
+    return await axios.delete(`/api/engagement/e-store-items/${id}`);
+}

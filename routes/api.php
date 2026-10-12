@@ -255,7 +255,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
         Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
         Route::post('reward-challenge-submissions/{id}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
-        Route::apiResource('e-store-items', EngagementEStoreController::class);
+        Route::apiResource('e-store-items', EngagementEStoreController::class)
+            ->parameters(['e-store-items' => 'engagementEStore']);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);
