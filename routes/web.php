@@ -157,6 +157,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('dashboard', 'accounts/performance_management/dashboard/page');
             Route::inertia('reach', 'accounts/performance_management/reach/page');
             Route::inertia('corrective_action', 'accounts/performance_management/corrective_action/page');
+            Route::inertia('my_team', 'accounts/performance_management/my_team/page');
         });
 
         Route::prefix('activities')->group(function () {
