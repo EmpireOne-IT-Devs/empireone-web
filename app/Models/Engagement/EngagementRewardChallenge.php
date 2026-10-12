@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EngagementRewardChallenge extends Model
@@ -34,6 +35,7 @@ class EngagementRewardChallenge extends Model
         'deadline',
         'card_color',
         'status',
+        'survey_required',
     ];
 
     protected function casts(): array
@@ -44,6 +46,7 @@ class EngagementRewardChallenge extends Model
             'banner_position_x' => 'integer',
             'banner_position_y' => 'integer',
             'all_employees' => 'boolean',
+            'survey_required' => 'boolean',
             'max_participants' => 'integer',
             'start_date' => 'date',
             'deadline' => 'date',
@@ -53,6 +56,19 @@ class EngagementRewardChallenge extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function survey(): HasOne
+    {
+        return $this->hasOne(EngagementPostEventSurvey::class, 'reward_challenge_id');
+    }
+
+    public function participationFor(int $userId): EngagementRewardChallengeParticipant
+    {
+        return EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $this->id)
+            ->where('user_id', $userId)
+            ->firstOrFail();
     }
 
     public function accounts(): BelongsToMany
@@ -84,7 +100,7 @@ class EngagementRewardChallenge extends Model
             'user_id',
         )
             ->using(EngagementRewardChallengeParticipant::class)
-            ->withPivot(['id', 'status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note', 'points_awarded', 'required_days', 'completed_days'])
+            ->withPivot(['id', 'status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note', 'points_awarded', 'required_days', 'completed_days', 'proof_approved_at', 'survey_points_awarded', 'survey_rewarded_at'])
             ->withTimestamps();
     }
 

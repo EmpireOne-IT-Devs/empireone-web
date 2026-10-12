@@ -14,7 +14,6 @@ import {
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
-import Select from "@/app/_components/select";
 import Wysiwyg from "@/app/_components/wysiwyg";
 import { htmlToPlainText } from "@/app/lib/rich-text";
 import { setAlert } from "@/app/redux/app-slice";
@@ -24,9 +23,6 @@ import {
 } from "@/app/redux/engagement-thunk";
 
 const CHALLENGE_TYPES = ["Individual", "Team"];
-
-const CATEGORIES = ["Wellness", "Sales", "Learning", "Teamwork", "Innovation"];
-const CATEGORY_OPTIONS = CATEGORIES.map((cat) => ({ value: cat, label: cat }));
 
 const CARD_COLORS = [
     "#F59E0B",
@@ -43,7 +39,7 @@ const DEFAULT_VALUES = {
     title: "",
     description: "",
     type: "Individual",
-    category: CATEGORIES[0],
+    category: "",
     points: "",
     duration_days: "",
     all_employees: true,
@@ -77,6 +73,7 @@ export default function CreateNewChallenge() {
         control,
         watch,
         setValue,
+        setError,
         reset,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: DEFAULT_VALUES });
@@ -280,6 +277,14 @@ export default function CreateNewChallenge() {
         );
 
         if (result.error) {
+            Object.entries(result.payload?.errors || {}).forEach(
+                ([field, messages]) => {
+                    setError(field, {
+                        type: "server",
+                        message: Array.isArray(messages) ? messages[0] : messages,
+                    });
+                },
+            );
             const msg =
                 result.payload?.message ||
                 result.error?.message ||
@@ -324,7 +329,7 @@ export default function CreateNewChallenge() {
             <Modal
                 isOpen={isOpen}
                 onClose={handleClose}
-                width="max-w-xl"
+                width="max-w-3xl"
                 title={
                     <div>
                         <h2 className="text-[15px] font-semibold text-neutral-800 leading-snug">
@@ -478,25 +483,26 @@ export default function CreateNewChallenge() {
                             </div>
                         </div>
 
-                        <Controller
-                            name="category"
-                            control={control}
-                            render={({ field, fieldState }) => (
-                                <Select
-                                    label="Category"
-                                    name={field.name}
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    onBlur={field.onBlur}
-                                    error={fieldState.error?.message}
-                                    options={CATEGORY_OPTIONS}
-                                />
-                            )}
-                        />
+                       
                     </div>
 
+                     <Input
+                            label="Category"
+                            type="text"
+                            maxLength={50}
+                            error={errors.category?.message}
+                            {...register("category", {
+                                required: "Category is required.",
+                                maxLength: {
+                                    value: 50,
+                                    message: "Category must not exceed 50 characters.",
+                                },
+                            })}
+                        />
+
                     {/* Points Reward */}
-                    <Input
+                    <div className="flex gap-2" >
+                         <Input
                         label="Points Reward"
                         type="number"
                         min={1}
@@ -510,10 +516,7 @@ export default function CreateNewChallenge() {
                             },
                         })}
                     />
-
-                    {/* Multi-day challenge support: leave blank for a single proof submission */}
-                    <div>
-                        <Input
+                     <Input
                             label="Duration (days) — optional"
                             type="number"
                             min={1}
@@ -540,6 +543,12 @@ export default function CreateNewChallenge() {
                                 },
                             })}
                         />
+                    </div>
+                   
+
+                    {/* Multi-day challenge support: leave blank for a single proof submission */}
+                    <div>
+                       
                         <p className="mt-1 text-xs text-gray-400">
                             Leave blank for a single one-time proof submission. Set a number of
                             days (e.g. 7) to let employees submit one proof per day — missed days

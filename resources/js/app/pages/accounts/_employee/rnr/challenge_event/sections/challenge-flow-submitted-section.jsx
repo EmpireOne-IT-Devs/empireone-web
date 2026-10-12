@@ -6,9 +6,10 @@ export default function ChallengeFlowSubmittedSection({ challenge, onClose }) {
     return (
         <>
             <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                Your proof was submitted on{" "}
-                {moment(challenge.submitted_at).format("MMM D, YYYY")} and is waiting for admin
-                review.
+                {challenge.proof_approved_at
+                    ? "Your proof is approved. Complete the survey to finalize the challenge and receive your challenge points."
+                    : <>Your proof was submitted on{" "}
+                        {moment(challenge.submitted_at).format("MMM D, YYYY")} and is waiting for admin review.</>}
             </div>
             {challenge.submission_url && (
                 <img

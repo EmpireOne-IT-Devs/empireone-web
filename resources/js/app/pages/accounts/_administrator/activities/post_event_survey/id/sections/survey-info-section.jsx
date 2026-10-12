@@ -53,10 +53,10 @@ export default function SurveyInfoSection({ survey }) {
                     </div>
                     <div className="min-w-0">
                         <p className="text-xs font-medium text-slate-400 uppercase tracking-wider font-mono">
-                            Linked Event
+                            {survey.reward_challenge_id ? "Linked Challenge" : "Linked Event"}
                         </p>
                         <p className="font-semibold text-slate-800 text-sm mt-0.5 line-clamp-2 sm:line-clamp-1 break-words">
-                            {survey.event?.headline ?? "—"}
+                            {survey.challenge?.title ?? survey.event?.headline ?? "—"}
                         </p>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ export default function SurveyInfoSection({ survey }) {
                             Category
                         </p>
                         <p className="font-semibold text-slate-800 text-sm mt-0.5 break-words">
-                            {survey.event?.category ?? "—"}
+                            {survey.challenge?.category ?? survey.event?.category ?? "—"}
                         </p>
                     </div>
                 </div>

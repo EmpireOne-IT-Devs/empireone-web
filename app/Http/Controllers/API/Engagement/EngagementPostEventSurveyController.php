@@ -8,6 +8,7 @@ use App\Models\Engagement\EngagementPostEventQuestion;
 use App\Models\Engagement\EngagementPostEventQuestionOption;
 use App\Models\Engagement\EngagementPostEventSurvey;
 use App\Models\Engagement\EngagementPostEventSurveyResponse;
+use App\Models\Engagement\EngagementRewardChallengeParticipant;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,9 +21,10 @@ class EngagementPostEventSurveyController extends Controller
     public function index(): JsonResponse
     {
         $surveys = EngagementPostEventSurvey::with([
-                'post:id,title,headline,category,published_at',
-                'questions.options',
-            ])
+            'post:id,title,headline,category,published_at',
+            'challenge:id,title,category,start_date,deadline',
+            'questions.options',
+        ])
             ->withCount('responses')
             ->orderByDesc('created_at')
             ->get()
@@ -37,46 +39,46 @@ class EngagementPostEventSurveyController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'engagement_post_event_id'  => 'required|exists:engagement_post_events,id',
-            'title'                     => 'required|string|max:255',
-            'description'               => 'nullable|string',
-            'questions'                 => 'required|array|min:1',
+            'engagement_post_event_id' => 'required|exists:engagement_post_events,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'questions' => 'required|array|min:1',
             'questions.*.question_text' => 'required|string',
             'questions.*.question_type' => 'required|in:short_answer,paragraph,multiple_choice,checkboxes,dropdown,rating',
-            'questions.*.is_required'   => 'boolean',
-            'questions.*.options'       => 'nullable|array',
-            'questions.*.options.*'     => 'nullable|string',
+            'questions.*.is_required' => 'boolean',
+            'questions.*.options' => 'nullable|array',
+            'questions.*.options.*' => 'nullable|string',
         ]);
 
         $survey = DB::transaction(function () use ($validated) {
             $survey = EngagementPostEventSurvey::create([
                 'engagement_post_event_id' => $validated['engagement_post_event_id'],
-                'user_id'                  => Auth::id(),
-                'title'                    => $validated['title'],
-                'description'              => $validated['description'] ?? null,
-                'status'                   => 'published',
-                'published_at'             => now(),
+                'user_id' => Auth::id(),
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'status' => 'published',
+                'published_at' => now(),
             ]);
 
             foreach ($validated['questions'] as $index => $q) {
                 $question = EngagementPostEventQuestion::create([
-                    'engagement_post_event_id'        => $validated['engagement_post_event_id'],
+                    'engagement_post_event_id' => $validated['engagement_post_event_id'],
                     'engagement_post_event_survey_id' => $survey->id,
-                    'user_id'                         => Auth::id(),
-                    'question'                        => $q['question_text'],
-                    'type'                            => $q['question_type'],
-                    'is_required'                     => $q['is_required'] ?? false,
-                    'sort_order'                      => $index,
+                    'user_id' => Auth::id(),
+                    'question' => $q['question_text'],
+                    'type' => $q['question_type'],
+                    'is_required' => $q['is_required'] ?? false,
+                    'sort_order' => $index,
                 ]);
 
                 $hasOptions = in_array($q['question_type'], ['multiple_choice', 'checkboxes', 'dropdown']);
-                if ($hasOptions && !empty($q['options'])) {
+                if ($hasOptions && ! empty($q['options'])) {
                     foreach ($q['options'] as $optIndex => $optText) {
-                        if (!empty($optText)) {
+                        if (! empty($optText)) {
                             EngagementPostEventQuestionOption::create([
                                 'engagement_post_event_question_id' => $question->id,
-                                'option_text'                       => $optText,
-                                'sort_order'                        => $optIndex,
+                                'option_text' => $optText,
+                                'sort_order' => $optIndex,
                             ]);
                         }
                     }
@@ -88,7 +90,7 @@ class EngagementPostEventSurveyController extends Controller
 
         return response()->json([
             'message' => 'Survey published successfully.',
-            'data'    => $this->formatSurvey($survey),
+            'data' => $this->formatSurvey($survey),
         ], 201);
     }
 
@@ -99,22 +101,22 @@ class EngagementPostEventSurveyController extends Controller
         $survey = EngagementPostEventSurvey::with('questions.options')->findOrFail($id);
 
         $validated = $request->validate([
-            'engagement_post_event_id'  => 'required|exists:engagement_post_events,id',
-            'title'                     => 'required|string|max:255',
-            'description'               => 'nullable|string',
-            'questions'                 => 'required|array|min:1',
+            'engagement_post_event_id' => 'required|exists:engagement_post_events,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'questions' => 'required|array|min:1',
             'questions.*.question_text' => 'required|string',
             'questions.*.question_type' => 'required|in:short_answer,paragraph,multiple_choice,checkboxes,dropdown,rating',
-            'questions.*.is_required'   => 'boolean',
-            'questions.*.options'       => 'nullable|array',
-            'questions.*.options.*'     => 'nullable|string',
+            'questions.*.is_required' => 'boolean',
+            'questions.*.options' => 'nullable|array',
+            'questions.*.options.*' => 'nullable|string',
         ]);
 
         $hasResponses = EngagementPostEventSurveyResponse::where('engagement_post_event_survey_id', $id)->exists();
 
         if ($hasResponses) {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'This survey already has responses and can no longer be edited. Duplicate it instead to publish a revised version.',
             ], 422);
         }
@@ -122,8 +124,8 @@ class EngagementPostEventSurveyController extends Controller
         $survey = DB::transaction(function () use ($survey, $validated) {
             $survey->update([
                 'engagement_post_event_id' => $validated['engagement_post_event_id'],
-                'title'                    => $validated['title'],
-                'description'              => $validated['description'] ?? null,
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
             ]);
 
             // Safe to fully replace every question: we already confirmed above
@@ -135,23 +137,23 @@ class EngagementPostEventSurveyController extends Controller
 
             foreach ($validated['questions'] as $index => $q) {
                 $question = EngagementPostEventQuestion::create([
-                    'engagement_post_event_id'        => $validated['engagement_post_event_id'],
+                    'engagement_post_event_id' => $validated['engagement_post_event_id'],
                     'engagement_post_event_survey_id' => $survey->id,
-                    'user_id'                          => Auth::id(),
-                    'question'                         => $q['question_text'],
-                    'type'                             => $q['question_type'],
-                    'is_required'                      => $q['is_required'] ?? false,
-                    'sort_order'                       => $index,
+                    'user_id' => Auth::id(),
+                    'question' => $q['question_text'],
+                    'type' => $q['question_type'],
+                    'is_required' => $q['is_required'] ?? false,
+                    'sort_order' => $index,
                 ]);
 
                 $hasOptions = in_array($q['question_type'], ['multiple_choice', 'checkboxes', 'dropdown']);
-                if ($hasOptions && !empty($q['options'])) {
+                if ($hasOptions && ! empty($q['options'])) {
                     foreach ($q['options'] as $optIndex => $optText) {
-                        if (!empty($optText)) {
+                        if (! empty($optText)) {
                             EngagementPostEventQuestionOption::create([
                                 'engagement_post_event_question_id' => $question->id,
-                                'option_text'                       => $optText,
-                                'sort_order'                        => $optIndex,
+                                'option_text' => $optText,
+                                'sort_order' => $optIndex,
                             ]);
                         }
                     }
@@ -163,7 +165,7 @@ class EngagementPostEventSurveyController extends Controller
 
         return response()->json([
             'message' => 'Survey updated successfully.',
-            'data'    => $this->formatSurvey($survey),
+            'data' => $this->formatSurvey($survey),
         ]);
     }
 
@@ -171,16 +173,17 @@ class EngagementPostEventSurveyController extends Controller
     public function show(int $id): JsonResponse
     {
         $survey = EngagementPostEventSurvey::with([
-                'post:id,title,headline,category,published_at',
-                'questions.options',
-            ])
+            'post:id,title,headline,category,published_at',
+            'challenge:id,title,category,start_date,deadline',
+            'questions.options',
+        ])
             ->findOrFail($id);
 
         $userHasResponded = EngagementPostEventSurveyResponse::where('engagement_post_event_survey_id', $id)
             ->where('user_id', Auth::id())
             ->exists();
 
-        $data                       = $this->formatSurvey($survey);
+        $data = $this->formatSurvey($survey);
         $data['user_has_responded'] = $userHasResponded;
 
         return response()->json([
@@ -195,7 +198,7 @@ class EngagementPostEventSurveyController extends Controller
 
         if ($survey->status === 'closed') {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'This survey is already closed.',
             ], 422);
         }
@@ -206,7 +209,7 @@ class EngagementPostEventSurveyController extends Controller
 
         if ($alreadySubmitted) {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'You have already submitted a response for this survey.',
             ], 422);
         }
@@ -221,8 +224,8 @@ class EngagementPostEventSurveyController extends Controller
         DB::transaction(function () use ($validated, $id) {
             $response = EngagementPostEventSurveyResponse::create([
                 'engagement_post_event_survey_id' => $id,
-                'user_id'                         => Auth::id(),
-                'submitted_at'                    => now(),
+                'user_id' => Auth::id(),
+                'submitted_at' => now(),
             ]);
 
             foreach ($validated['answers'] as $questionId => $answer) {
@@ -232,8 +235,8 @@ class EngagementPostEventSurveyController extends Controller
 
                 EngagementPostEventAnswer::create([
                     'engagement_post_event_survey_response_id' => $response->id,
-                    'engagement_post_event_question_id'        => $questionId,
-                    'user_id'                                  => Auth::id(),
+                    'engagement_post_event_question_id' => $questionId,
+                    'user_id' => Auth::id(),
                     'answer' => is_array($answer) ? json_encode($answer) : (string) $answer,
                 ]);
             }
@@ -243,8 +246,9 @@ class EngagementPostEventSurveyController extends Controller
                 $survey->refreshSentimentOverview();
             }
         });
+
         return response()->json([
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'Survey submitted successfully.',
         ]);
     }
@@ -258,73 +262,123 @@ class EngagementPostEventSurveyController extends Controller
 
         $survey = EngagementPostEventSurvey::with(['questions'])->findOrFail($id);
 
-        $employeeQuery = User::where('role', User::ROLE_EMPLOYEE)
-            ->with(['account_employee.account', 'account_employee.department', 'account_employee.location'])
-            ->select('id', 'name', 'email');
-
-        if (!empty($validated['site'])) {
-            $employeeQuery->whereHas('account_employee.location', function ($query) use ($validated) {
-                $query->where('name', $validated['site']);
-            });
-        }
-
-        $sites = User::where('role', User::ROLE_EMPLOYEE)
-            ->whereHas('account_employee.location')
-            ->with(['account_employee.location'])
-            ->get()
-            ->pluck('account_employee.location.name')
-            ->filter()
-            ->unique()
-            ->sort()
-            ->values();
-
-        $employees = $employeeQuery
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-
         $responseModels = EngagementPostEventSurveyResponse::with(['answers.question'])
             ->where('engagement_post_event_survey_id', $id)
             ->get();
 
-        $responseMap = $responseModels->keyBy('user_id');
-
-        // Each survey question becomes its own response-table column.
+        $isChallengeSurvey = $survey->reward_challenge_id !== null;
         $questions = $survey->questions->map(fn ($question) => [
-            'id'            => $question->id,
+            'id' => $question->id,
             'question_text' => $question->question,
             'question_type' => $question->type,
         ])->values();
 
-        $tracker = collect($employees->items())->map(function ($employee) use ($responseMap) {
-            $response = $responseMap->get($employee->id);
-
-            $answersByQuestion = [];
-            if ($response) {
-                foreach ($response->answers as $answer) {
+        if ($isChallengeSurvey) {
+            $participantQuery = EngagementRewardChallengeParticipant::query()
+                ->where('reward_challenge_id', $survey->reward_challenge_id)
+                ->with(['user.account_employee.account', 'user.account_employee.department', 'user.account_employee.location'])
+                ->when(! empty($validated['site']), fn ($query) => $query->whereHas(
+                    'user.account_employee.location',
+                    fn ($locationQuery) => $locationQuery->where('name', $validated['site']),
+                ));
+            $participants = (clone $participantQuery)->orderByDesc('id')->paginate(10);
+            $responseMap = $responseModels->keyBy('reward_challenge_participant_id');
+            $tracker = collect($participants->items())->map(function ($participant) use ($responseMap) {
+                $employee = $participant->user;
+                $response = $responseMap->get($participant->id);
+                $answersByQuestion = [];
+                foreach ($response?->answers ?? [] as $answer) {
                     $answersByQuestion[$answer->engagement_post_event_question_id] = $answer->answer;
                 }
+
+                return [
+                    'user_id' => $employee?->id,
+                    'employee_id' => $employee?->account_employee?->employee_id ?? 'N/A',
+                    'employee_name' => $employee?->name ?? 'Employee',
+                    'site' => $employee?->account_employee?->location?->name ?? 'N/A',
+                    'program_department' => $employee?->account_employee?->account?->name
+                        ?? $employee?->account_employee?->department?->name
+                        ?? 'N/A',
+                    'email' => $employee?->email ?? '',
+                    'status' => $response ? 'Completed' : 'Pending',
+                    'submitted_at' => $response?->submitted_at?->toDateTimeString(),
+                    'answers' => $answersByQuestion,
+                ];
+            });
+            $totalEmployees = $participants->total();
+            $filteredParticipantIds = (clone $participantQuery)->pluck('id');
+            $totalResponses = $responseModels->whereIn('reward_challenge_participant_id', $filteredParticipantIds)->count();
+            $pagination = [
+                'current_page' => $participants->currentPage(),
+                'last_page' => $participants->lastPage(),
+                'per_page' => $participants->perPage(),
+                'total' => $participants->total(),
+                'from' => $participants->firstItem(),
+                'to' => $participants->lastItem(),
+            ];
+            $sites = EngagementRewardChallengeParticipant::query()
+                ->where('reward_challenge_id', $survey->reward_challenge_id)
+                ->with('user.account_employee.location')
+                ->get()
+                ->pluck('user.account_employee.location.name')
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values();
+        } else {
+            $employeeQuery = User::where('role', User::ROLE_EMPLOYEE)
+                ->with(['account_employee.account', 'account_employee.department', 'account_employee.location'])
+                ->select('id', 'name', 'email');
+
+            if (! empty($validated['site'])) {
+                $employeeQuery->whereHas('account_employee.location', fn ($query) => $query->where('name', $validated['site']));
             }
 
-            return [
-                'user_id'       => $employee->id,
-                'employee_id'   => $employee->account_employee?->employee_id ?? 'N/A',
-                'employee_name' => $employee->name,
-                'site'          => $employee->account_employee?->location?->name ?? 'N/A',
-                'program_department' => $employee->account_employee?->account?->name
-                    ?? $employee->account_employee?->department?->name
-                    ?? 'N/A',
-                'email'         => $employee->email,
-                'status'        => $response ? 'Completed' : 'Pending',
-                'submitted_at'  => $response ? optional($response->submitted_at)->toDateTimeString() : null,
-                'answers'       => $answersByQuestion,
-            ];
-        });
+            $sites = User::where('role', User::ROLE_EMPLOYEE)
+                ->whereHas('account_employee.location')
+                ->with(['account_employee.location'])
+                ->get()
+                ->pluck('account_employee.location.name')
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values();
 
-        $totalEmployees = $employees->total();
-        $filteredEmployeeIds = (clone $employeeQuery)->pluck('id');
-        $totalResponses = $responseModels
-            ->whereIn('user_id', $filteredEmployeeIds)
-            ->count();
+            $employees = $employeeQuery->orderBy('id', 'desc')->paginate(10);
+            $responseMap = $responseModels->keyBy('user_id');
+            $tracker = collect($employees->items())->map(function ($employee) use ($responseMap) {
+                $response = $responseMap->get($employee->id);
+                $answersByQuestion = [];
+                foreach ($response?->answers ?? [] as $answer) {
+                    $answersByQuestion[$answer->engagement_post_event_question_id] = $answer->answer;
+                }
+
+                return [
+                    'user_id' => $employee->id,
+                    'employee_id' => $employee->account_employee?->employee_id ?? 'N/A',
+                    'employee_name' => $employee->name,
+                    'site' => $employee->account_employee?->location?->name ?? 'N/A',
+                    'program_department' => $employee->account_employee?->account?->name
+                        ?? $employee->account_employee?->department?->name
+                        ?? 'N/A',
+                    'email' => $employee->email,
+                    'status' => $response ? 'Completed' : 'Pending',
+                    'submitted_at' => $response?->submitted_at?->toDateTimeString(),
+                    'answers' => $answersByQuestion,
+                ];
+            });
+            $totalEmployees = $employees->total();
+            $filteredEmployeeIds = (clone $employeeQuery)->pluck('id');
+            $totalResponses = $responseModels->whereIn('user_id', $filteredEmployeeIds)->count();
+            $pagination = [
+                'current_page' => $employees->currentPage(),
+                'last_page' => $employees->lastPage(),
+                'per_page' => $employees->perPage(),
+                'total' => $employees->total(),
+                'from' => $employees->firstItem(),
+                'to' => $employees->lastItem(),
+            ];
+        }
 
         if ($survey->sentiment_overview === null) {
             $survey->refreshSentimentOverview();
@@ -334,20 +388,13 @@ class EngagementPostEventSurveyController extends Controller
 
         return response()->json([
             'data' => [
-                'total_employees'    => $totalEmployees,
-                'total_responses'    => $totalResponses,
+                'total_employees' => $totalEmployees,
+                'total_responses' => $totalResponses,
                 'participation_rate' => $totalEmployees > 0 ? round(($totalResponses / $totalEmployees) * 100, 2) : 0,
-                'questions'          => $questions,
-                'response_tracker'   => $tracker,
-                'response_tracker_pagination' => [
-                    'current_page' => $employees->currentPage(),
-                    'last_page'    => $employees->lastPage(),
-                    'per_page'     => $employees->perPage(),
-                    'total'        => $employees->total(),
-                    'from'         => $employees->firstItem(),
-                    'to'           => $employees->lastItem(),
-                ],
-                'sites'              => $sites,
+                'questions' => $questions,
+                'response_tracker' => $tracker,
+                'response_tracker_pagination' => $pagination,
+                'sites' => $sites,
                 'sentiment_overview' => $sentimentOverview,
             ],
             'status' => 'success',
@@ -365,15 +412,15 @@ class EngagementPostEventSurveyController extends Controller
 
         // Only responses actually submitted are included; employees who never answered are skipped.
         $responseQuery = EngagementPostEventSurveyResponse::with([
-                'user.account_employee.account',
-                'user.account_employee.department',
-                'user.account_employee.location',
-                'answers',
-            ])
+            'user.account_employee.account',
+            'user.account_employee.department',
+            'user.account_employee.location',
+            'answers',
+        ])
             ->where('engagement_post_event_survey_id', $id)
             ->orderBy('submitted_at');
 
-        if (!empty($validated['site'])) {
+        if (! empty($validated['site'])) {
             $responseQuery->whereHas('user.account_employee.location', function ($query) use ($validated) {
                 $query->where('name', $validated['site']);
             });
@@ -382,7 +429,7 @@ class EngagementPostEventSurveyController extends Controller
         $responses = $responseQuery->get();
 
         $questions = $survey->questions;
-        $filename  = 'survey_' . $survey->id . '_responses_' . now()->format('Ymd_His') . '.csv';
+        $filename = 'survey_'.$survey->id.'_responses_'.now()->format('Ymd_His').'.csv';
 
         return response()->streamDownload(function () use ($responses, $questions) {
             $handle = fopen('php://output', 'w');
@@ -395,7 +442,7 @@ class EngagementPostEventSurveyController extends Controller
             fputcsv($handle, $header);
 
             foreach ($responses as $response) {
-                $employee        = $response->user;
+                $employee = $response->user;
                 $accountEmployee = $employee?->account_employee;
                 $answersByQuestion = $response->answers->keyBy('engagement_post_event_question_id');
 
@@ -409,7 +456,7 @@ class EngagementPostEventSurveyController extends Controller
 
                 foreach ($questions as $question) {
                     $answer = $answersByQuestion->get($question->id);
-                    $row[]  = $this->formatAnswerForExport($question, $answer?->answer);
+                    $row[] = $this->formatAnswerForExport($question, $answer?->answer);
                 }
 
                 $row[] = optional($response->submitted_at)->toDateTimeString() ?? '';
@@ -431,6 +478,7 @@ class EngagementPostEventSurveyController extends Controller
 
         if ($question->type === 'checkboxes') {
             $decoded = json_decode($rawAnswer, true);
+
             return is_array($decoded) ? implode(', ', $decoded) : $rawAnswer;
         }
 
@@ -472,30 +520,32 @@ class EngagementPostEventSurveyController extends Controller
     public function analytics(int $id): JsonResponse
     {
         $survey = EngagementPostEventSurvey::with([
-                'post:id,title,headline,category,published_at',
-                'questions.options',
-            ])
+            'post:id,title,headline,category,published_at',
+            'questions.options',
+        ])
             ->findOrFail($id);
 
-        $totalEmployees = User::where('role', User::ROLE_EMPLOYEE)->count();
+        $totalEmployees = $survey->reward_challenge_id !== null
+            ? EngagementRewardChallengeParticipant::where('reward_challenge_id', $survey->reward_challenge_id)->count()
+            : User::where('role', User::ROLE_EMPLOYEE)->count();
         $totalResponses = EngagementPostEventSurveyResponse::where('engagement_post_event_survey_id', $id)->count();
 
         $questions = $survey->questions->map(function ($question) {
-            $answers       = EngagementPostEventAnswer::where('engagement_post_event_question_id', $question->id)->get();
+            $answers = EngagementPostEventAnswer::where('engagement_post_event_question_id', $question->id)->get();
             $answeredCount = $answers->count();
-            $breakdown     = [];
+            $breakdown = [];
 
             if (in_array($question->type, ['multiple_choice', 'dropdown'])) {
                 $optionCounts = [];
                 foreach ($answers as $answer) {
-                    $opt                = $answer->answer;
+                    $opt = $answer->answer;
                     $optionCounts[$opt] = ($optionCounts[$opt] ?? 0) + 1;
                 }
                 foreach ($question->options as $option) {
-                    $count       = $optionCounts[$option->option_text] ?? 0;
+                    $count = $optionCounts[$option->option_text] ?? 0;
                     $breakdown[] = [
-                        'label'      => $option->option_text,
-                        'count'      => $count,
+                        'label' => $option->option_text,
+                        'count' => $count,
                         'percentage' => $answeredCount > 0 ? round(($count / $answeredCount) * 100, 2) : 0,
                     ];
                 }
@@ -509,16 +559,16 @@ class EngagementPostEventSurveyController extends Controller
                     }
                 }
                 foreach ($question->options as $option) {
-                    $count       = $optionCounts[$option->option_text] ?? 0;
+                    $count = $optionCounts[$option->option_text] ?? 0;
                     $breakdown[] = [
-                        'label'      => $option->option_text,
-                        'count'      => $count,
+                        'label' => $option->option_text,
+                        'count' => $count,
                         'percentage' => $answeredCount > 0 ? round(($count / $answeredCount) * 100, 2) : 0,
                     ];
                 }
 
             } elseif ($question->type === 'rating') {
-                $totalRating  = 0;
+                $totalRating = 0;
                 $ratingCounts = array_fill(1, 5, 0);
                 foreach ($answers as $answer) {
                     $rating = (int) $answer->answer;
@@ -528,10 +578,10 @@ class EngagementPostEventSurveyController extends Controller
                     }
                 }
                 foreach (range(1, 5) as $n) {
-                    $count       = $ratingCounts[$n];
+                    $count = $ratingCounts[$n];
                     $breakdown[] = [
-                        'label'      => (string) $n,
-                        'count'      => $count,
+                        'label' => (string) $n,
+                        'count' => $count,
                         'percentage' => $answeredCount > 0 ? round(($count / $answeredCount) * 100, 2) : 0,
                     ];
                 }
@@ -542,11 +592,11 @@ class EngagementPostEventSurveyController extends Controller
             }
 
             return [
-                'id'               => $question->id,
-                'question_text'    => $question->question,
-                'question_type'    => $question->type,
-                'is_required'      => $question->is_required,
-                'total_responses'  => $answeredCount,
+                'id' => $question->id,
+                'question_text' => $question->question,
+                'question_type' => $question->type,
+                'is_required' => $question->is_required,
+                'total_responses' => $answeredCount,
                 'answer_breakdown' => $breakdown,
             ];
         });
@@ -554,10 +604,10 @@ class EngagementPostEventSurveyController extends Controller
         return response()->json([
             'data' => [
                 'survey_information' => $this->formatSurvey($survey),
-                'total_employees'    => $totalEmployees,
-                'total_responses'    => $totalResponses,
+                'total_employees' => $totalEmployees,
+                'total_responses' => $totalResponses,
                 'participation_rate' => $totalEmployees > 0 ? round(($totalResponses / $totalEmployees) * 100, 2) : 0,
-                'questions'          => $questions,
+                'questions' => $questions,
             ],
             'status' => 'success',
         ]);
@@ -570,7 +620,7 @@ class EngagementPostEventSurveyController extends Controller
         $survey->update(['status' => 'closed', 'closed_at' => now()]);
 
         return response()->json([
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'Survey closed successfully.',
         ]);
     }
@@ -582,7 +632,7 @@ class EngagementPostEventSurveyController extends Controller
         $survey->update(['status' => 'published', 'closed_at' => null]);
 
         return response()->json([
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'Survey reopened successfully.',
         ]);
     }
@@ -601,12 +651,14 @@ class EngagementPostEventSurveyController extends Controller
     {
         if (is_numeric($answer)) {
             $value = (int) $answer;
+
             return $value >= 1 && $value <= 5 ? $value : null;
         }
 
         if (is_string($answer)) {
             if (preg_match('/(\d+)/', $answer, $matches)) {
                 $value = (int) $matches[1];
+
                 return $value >= 1 && $value <= 5 ? $value : null;
             }
         }
@@ -631,7 +683,7 @@ class EngagementPostEventSurveyController extends Controller
 
         $sentimentCounts = [
             'positive' => 0,
-            'neutral'  => 0,
+            'neutral' => 0,
             'negative' => 0,
         ];
         $ratingSum = 0;
@@ -655,6 +707,7 @@ class EngagementPostEventSurveyController extends Controller
 
             if ($ratings === []) {
                 $sentimentCounts['neutral']++;
+
                 continue;
             }
 
@@ -691,28 +744,36 @@ class EngagementPostEventSurveyController extends Controller
     private function formatSurvey(EngagementPostEventSurvey $survey): array
     {
         return [
-            'id'                       => $survey->id,
+            'id' => $survey->id,
             'engagement_post_event_id' => $survey->engagement_post_event_id,
-            'title'                    => $survey->title,
-            'description'              => $survey->description,
-            'status'                   => $survey->status,
-            'published_at'             => $survey->published_at?->toDateString(),
-            'total_responses'          => $survey->responses_count ?? 0,
-            'event'                    => $survey->post ? [
-                'id'       => $survey->post->id,
+            'reward_challenge_id' => $survey->reward_challenge_id,
+            'title' => $survey->title,
+            'description' => $survey->description,
+            'status' => $survey->status,
+            'published_at' => $survey->published_at?->toDateString(),
+            'total_responses' => $survey->responses_count ?? 0,
+            'event' => $survey->post ? [
+                'id' => $survey->post->id,
                 'headline' => $survey->post->headline ?? $survey->post->title,
                 'category' => $survey->post->category,
             ] : null,
-            'questions'                => $survey->questions->map(fn ($q) => [
-                'id'            => $q->id,
+            'challenge' => $survey->challenge ? [
+                'id' => $survey->challenge->id,
+                'title' => $survey->challenge->title,
+                'category' => $survey->challenge->category,
+                'start_date' => $survey->challenge->start_date?->toDateString(),
+                'deadline' => $survey->challenge->deadline?->toDateString(),
+            ] : null,
+            'questions' => $survey->questions->map(fn ($q) => [
+                'id' => $q->id,
                 'question_text' => $q->question,
                 'question_type' => $q->type,
-                'is_required'   => $q->is_required,
-                'sort_order'    => $q->sort_order,
-                'options'       => $q->options->map(fn ($o) => [
-                    'id'          => $o->id,
+                'is_required' => $q->is_required,
+                'sort_order' => $q->sort_order,
+                'options' => $q->options->map(fn ($o) => [
+                    'id' => $o->id,
                     'option_text' => $o->option_text,
-                    'sort_order'  => $o->sort_order,
+                    'sort_order' => $o->sort_order,
                 ])->values(),
             ])->values(),
         ];

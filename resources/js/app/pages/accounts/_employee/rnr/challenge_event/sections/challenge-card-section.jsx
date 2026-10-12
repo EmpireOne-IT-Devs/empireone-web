@@ -73,6 +73,12 @@ const DEFAULT_CATEGORY_META = {
 
 
 const STATUS_CONFIG = {
+    pending_survey: {
+        label: "Survey Required",
+        icon: Clock,
+        variant: "warning",
+        className: "bg-purple-50 text-purple-700 border-purple-200",
+    },
     approved: {
         label: "Approved",
         icon: CheckCircle,
@@ -123,6 +129,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
 
     const meta = CATEGORY_META[challenge.category] ?? DEFAULT_CATEGORY_META;
     const Icon = meta.icon;
+    const isUpcoming = challenge.status === "Upcoming";
     const isCompleted = challenge.status === "Completed";
     const isFull =
         Boolean(challenge.max_participants) &&
@@ -131,7 +138,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
         ? Math.min(100, Math.round((challenge.participants_count / challenge.max_participants) * 100))
         : 0;
     const leaving = rewardChallengeLeavingId === challenge.id;
-    const canLeave = challenge.is_joined && ["joined", "declined"].includes(challenge.participation_status);
+    const canLeave = challenge.is_joined && !challenge.survey_completed && ["joined", "declined"].includes(challenge.participation_status);
 
     const statusInfo = STATUS_CONFIG[challenge.participation_status] || null;
     const timeRemaining = getTimeRemaining(challenge.deadline);
@@ -154,6 +161,31 @@ function ChallengeCard({ challenge, highlighted = false }) {
 
     const renderActionButton = () => {
         const status = challenge.participation_status;
+
+        if (isUpcoming) {
+            return (
+                <Button
+                    type="button"
+                    variant="light"
+                    disabled={!challenge.is_joined}
+                    onClick={challenge.is_joined ? () => setIsFlowModalOpen(true) : undefined}
+                    className="w-full gap-2 rounded-xl bg-gradient-to-r from-slate-100 to-gray-100 text-slate-500"
+                >
+                    <Calendar className="h-4 w-4" />
+                    Starts {formatDate(challenge.start_date)}
+                </Button>
+            );
+        }
+
+        if (challenge.is_joined && !challenge.survey_completed &&
+            (challenge.can_complete_survey || status === "pending_survey")) {
+            return (
+                <Button variant="secondary" className="w-full gap-2" onClick={() => setIsFlowModalOpen(true)}>
+                    <ArrowRight className="h-4 w-4" />
+                    Complete Survey
+                </Button>
+            );
+        }
 
         // Approved state
         if (status === "approved") {
@@ -221,7 +253,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
                         outlined
                         size="sm"
                         loading={leaving}
-                        disabled={leaving}
+                        disabled={leaving || !canLeave}
                         onClick={handleLeave}
                         className="border-rose-200 text-rose-600 hover:bg-rose-50"
                     >
@@ -338,7 +370,12 @@ function ChallengeCard({ challenge, highlighted = false }) {
                     </div>
 
                     {/* Time remaining - bottom of banner */}
-                    {timeRemaining && !isCompleted && (
+                    {isUpcoming ? (
+                        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                            <Calendar className="h-3.5 w-3.5" />
+                            Upcoming
+                        </div>
+                    ) : timeRemaining && !isCompleted && (
                         <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
                             <Calendar className="h-3.5 w-3.5" />
                             {timeRemaining}
@@ -366,7 +403,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
                                 outlined
                                 className="text-xs font-medium"
                             />
-                            {isUrgent && !isCompleted && (
+                            {isUrgent && !isCompleted && !isUpcoming && (
                                 <Badge
                                     label="Urgent"
                                     variant="danger"

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Sparkles } from "lucide-react";
+import { FocusTrap } from "@headlessui/react";
 import Modal from "@/app/_components/modal";
 import { setAlert } from "@/app/redux/app-slice";
 import { join_engagement_reward_challenge_thunk } from "@/app/redux/engagement-thunk";
@@ -12,12 +13,15 @@ import ChallengeFlowNextStepsSection from "./challenge-flow-next-steps-section";
 import ChallengeFlowSubmitSection from "./challenge-flow-submit-section";
 import ChallengeFlowSubmittedSection from "./challenge-flow-submitted-section";
 import ChallengeFlowApprovedSection from "./challenge-flow-approved-section";
+import ChallengeSurveySection from "./challenge-survey-section";
+import Button from "@/app/_components/button";
 
 const STEP_INDEX = {
     details: 0,
     joined: 1,
     declined: 1,
     submitted: 2,
+    pending_survey: 2,
     approved: 3,
 };
 
@@ -28,13 +32,14 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
     );
     const [preJoinStage, setPreJoinStage] = useState("details");
     const [justJoined, setJustJoined] = useState(false);
+    const [showSurvey, setShowSurvey] = useState(false);
 
     if (!challenge) return null;
 
     const statusKey = challenge.is_joined
         ? challenge.is_daily_challenge
-            ? challenge.participation_status === "approved"
-                ? "approved"
+            ? ["approved", "pending_survey"].includes(challenge.participation_status)
+                ? challenge.participation_status
                 : "joined"
             : (challenge.participation_status ?? "joined")
         : "details";
@@ -45,6 +50,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
     const handleClose = () => {
         setPreJoinStage("details");
         setJustJoined(false);
+        setShowSurvey(false);
         onClose();
     };
 
@@ -80,7 +86,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            width="max-w-lg"
+            width="max-w-3xl"
             title={
                 <div className="flex items-center gap-3">
                     <div
@@ -100,7 +106,26 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                 </div>
             }
         >
-            <div className="mt-2 flex flex-col gap-4 pb-2 p-2">
+            {isOpen && <FocusTrap
+                key={showSurvey ? "survey" : "challenge"}
+                className="mt-2 flex flex-col gap-4 pb-2 p-2"
+                role="dialog"
+                aria-modal="true"
+                aria-label={challenge.title}
+                onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                        event.stopPropagation();
+                        handleClose();
+                    }
+                }}
+            >
+                {showSurvey ? (
+                    <ChallengeSurveySection
+                        key={challenge.id}
+                        challenge={challenge}
+                        onBack={() => setShowSurvey(false)}
+                    />
+                ) : <>
                 <ChallengeFlowProgressSection
                     currentStep={currentStep}
                     isDeclined={isDeclined}
@@ -111,6 +136,30 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                     challenge={challenge}
                     defaultExpanded={currentStep === 0}
                 />
+
+                {challenge.survey_required && challenge.is_joined && challenge.status !== "Upcoming" && (
+                    <div role="status" className="space-y-3 rounded-xl bg-purple-50 p-4 text-sm text-purple-700">
+                        <p className="font-bold">
+                            {challenge.survey_completed ? "Survey completed" : challenge.can_complete_survey || challenge.participation_status === "pending_survey" ? "Almost finished" : "Survey requirement"}
+                        </p>
+                        <p>
+                            {challenge.survey_completed
+                                ? `Your ${challenge.survey_points_awarded} survey points are recorded.${challenge.participation_status !== "approved" ? " Proof approval is still required to finalize the challenge." : ""}`
+                                : challenge.can_complete_survey
+                                  ? "Complete the survey to finalize your challenge requirements. Proof approval is also required."
+                                  : challenge.is_daily_challenge
+                                    ? "The survey unlocks after all required days are approved."
+                                    : "Submit your proof to unlock the survey."}
+                        </p>
+                        <Button
+                            variant="secondary"
+                            onClick={() => setShowSurvey(true)}
+                            className="w-full sm:w-auto"
+                        >
+                            {challenge.survey_completed ? "View survey completion" : challenge.can_complete_survey || challenge.participation_status === "pending_survey" ? "Complete Survey" : "Check survey availability"}
+                        </Button>
+                    </div>
+                )}
 
                 {currentStep === 0 && preJoinStage === "details" && (
                     <ChallengeFlowDetailsSection
@@ -159,8 +208,8 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                         onClose={handleClose}
                     />
                 )}
-            </div>
+                </>}
+            </FocusTrap>}
         </Modal>
     );
 }
-

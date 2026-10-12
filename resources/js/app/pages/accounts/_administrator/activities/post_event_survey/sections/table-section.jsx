@@ -10,6 +10,7 @@ import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 const categoryColors = {
     "Events Calendar": "bg-indigo-100 text-indigo-600",
+    Challenge: "bg-purple-100 text-purple-700",
 };
 
 const isEventSurvey = (survey) => {
@@ -27,18 +28,27 @@ const columns = [
     { header: "Actions", accessor: "actions" },
 ];
 
-const buildRows = (surveys = [], createSurveyRef, canManage) =>
-    surveys.filter(isEventSurvey).map((survey) => ({
+export const buildRows = (surveys = [], createSurveyRef, canManage) =>
+    surveys.filter((survey) => survey?.reward_challenge_id || isEventSurvey(survey)).map((survey) => {
+        const isChallengeSurvey = Boolean(survey.reward_challenge_id);
+        const eventName = isChallengeSurvey
+            ? survey.challenge?.title
+            : survey.event?.headline;
+        const eventCategory = isChallengeSurvey ? "Challenge" : survey.event?.category;
+
+        return ({
         event_id: (
             <span className="text-sm text-gray-600">
-                {`SID-${String(survey.id).padStart(2, "0")}`}
+                {isChallengeSurvey
+                    ? `CH-${String(survey.reward_challenge_id).padStart(2, "0")}`
+                    : `SID-${String(survey.id).padStart(2, "0")}`}
             </span>
         ),
 
         event: (
             <div>
                 <p className="font-semibold text-gray-900">
-                    {survey.event?.headline ?? "—"}
+                    {eventName ?? "—"}
                 </p>
                 <p className="mt-0.5 text-xs text-gray-400">
                     {survey.title ?? "No Title"}
@@ -49,18 +59,18 @@ const buildRows = (surveys = [], createSurveyRef, canManage) =>
         category: (
             <span
                 className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    categoryColors[survey.event?.category] ??
+                    categoryColors[eventCategory] ??
                     "bg-gray-100 text-gray-500"
                 }`}
             >
-                {survey.event?.category ?? "—"}
+                {eventCategory ?? "—"}
             </span>
         ),
 
         date: (
             <span className="text-sm text-gray-600">
-                {survey.published_at
-                    ? moment(survey.published_at).format("MMM DD, YYYY")
+                {(isChallengeSurvey ? survey.challenge?.start_date : survey.published_at)
+                    ? moment(isChallengeSurvey ? survey.challenge.start_date : survey.published_at).format("MMM DD, YYYY")
                     : "—"}
             </span>
         ),
@@ -92,10 +102,11 @@ const buildRows = (surveys = [], createSurveyRef, canManage) =>
 
         // Edit/Duplicate/Delete consolidated into a single dropdown menu
         // instead of crowding the row with separate buttons.
-        actions: canManage ? (
+        actions: canManage && !isChallengeSurvey ? (
             <SurveyActionsSection survey={survey} createSurveyRef={createSurveyRef} />
         ) : null,
-    }));
+    });
+    });
 
 export default function TableSection({ createSurveyRef }) {
     const dispatch = useDispatch();

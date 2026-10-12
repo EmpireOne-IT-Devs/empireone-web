@@ -1,0 +1,81 @@
+### Phase 1: Optimize category text input
+
+- **Timestamp:** 2026-10-12 (UTC+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Frontend, QA
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge.jsx` - Removed the unused Select import and category-option mapping, replaced the undefined CATEGORIES default with an empty string, and capitalized the Category label.
+  - `dev-logs/2026-10-12-create-challenge-category.md` - Recorded implementation and scoped QA.
+- **Issues Encountered:** The Category field was already a text input, but module-level references to undefined CATEGORIES prevented the component from loading.
+- **Resolution:** Removed obsolete select-related dependencies and initialized Category as blank. Retained required validation, the submitted category value, preview binding, and reset behavior.
+- **QA Checklist Result:** All applicable change-scoped code checks pass. Unchanged surfaces are not certified as a repository-wide audit. Browser interaction verification remains outstanding.
+  - JavaScript purity: PASS - Babel JSX parsing and esbuild transformation succeeded; no TypeScript introduced.
+  - Backend routes (web/API), Form Requests, Policies, Resources, migrations, and business services: PASS (not applicable; no backend changes).
+  - Axios service isolation, thunk/slice orchestration, and store registration: PASS (unchanged; no new API or Redux logic).
+  - Laravel 422 field-error mapping: PASS (unchanged; no new response handling; existing behavior not independently audited).
+  - Inertia links and authenticated persistent layout: PASS (unchanged; no navigation or page additions).
+  - Reusable primitive isolation: PASS - Existing Input remains presentation-only.
+  - Component reuse: PASS - Reviewed and retained the shared Input.
+  - PascalCase component identifiers: PASS - CreateNewChallenge retained.
+  - Slice/thunk/service filenames and snake_case functions: PASS (unchanged).
+  - Page route naming: PASS (not applicable; existing section only).
+  - Network loading: PASS (unchanged; existing Publishing state retained).
+  - Destructive confirmations: PASS (not applicable; no destructive action added).
+  - Inline validation: PASS - Category retains required validation and its inline error binding; existing 422 handling unchanged.
+  - Empty list/table states: PASS (not applicable; no list/table changes).
+  - Keyboard access: Code-level PASS - Category uses the shared native text input; requires browser verification.
+  - Responsive layout: Code-level PASS - Existing responsive grid retained; requires browser verification.
+  - Modal focus trapping: Unchanged; requires browser verification.
+  - Sanctum, API Resource responses, and URL identifiers: PASS (unchanged).
+  - Guarded commands: PASS - No git, build, development server, migration, or destructive commands executed.
+  - Targeted regression checks: PASS - No stale category/select references; blank and reset defaults; shared text Input; required validation; arbitrary category preserved in payload; live preview binding retained.
+  - Editor diagnostics: PASS - No errors found in the modified component.
+- **Next Steps:** No further implementation phases planned. Browser-check category entry, required validation, preview, cancel/reset, and publishing in the running application.
+
+### Phase 2: Accept custom categories on the backend
+
+- **Timestamp:** 2026-10-12 (UTC+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Backend, Frontend, QA
+- **Files Modified/Created:**
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` - Replaced fixed category whitelists with string validation limited to 50 characters for creation and update. Updates can omit category but cannot supply an empty category.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge.jsx` - Added the matching input and React Hook Form length limits and mapped returned server field errors through setError while retaining the error alert.
+  - `dev-logs/2026-10-12-create-challenge-category.md` - Recorded the backend compatibility correction and verification.
+- **Issues Encountered:** Phase 1 retained server-side whitelist validation, so custom text categories were rejected.
+- **Resolution:** Accept arbitrary non-empty strings within the existing database column length in both store and update. No schema changes required.
+- **QA Checklist Result:** Applicable targeted code checks PASS; browser and full HTTP/persistence verification were not performed. Unchanged architecture is not certified as a repository-wide pass.
+  - JavaScript purity: PASS - JSX parses and transforms without TypeScript.
+  - Web route rendering: Unchanged; no web routes modified.
+  - API route response separation: Unchanged; existing JSON endpoints retained.
+  - Form Requests for POST/PUT: Existing controller-inline validation retained for this surgical correction; no Form Request introduced.
+  - Resource Policies: Unchanged; no new resource or authorization surface.
+  - Eloquent API Resources: Existing response formatting retained; no resource conversion in this phase.
+  - Migration down methods: Not applicable; no migrations.
+  - Business service extraction: Not applicable; no new business logic.
+  - Axios service isolation: PASS - No API calls added to components.
+  - Thunk orchestration and slice dispatch: PASS - Existing thunk preserves server error payload; no Redux changes required.
+  - Laravel 422 mapping: PASS - Returned field errors map to React Hook Form errors; tested array and string error messages.
+  - Inertia internal links: Not applicable; no links changed.
+  - Persistent authenticated layouts: Not applicable; section only, no page/layout changes.
+  - Stateless reusable primitives: PASS - No shared primitive changes or API/Redux coupling introduced.
+  - Shared component verification/reuse: PASS - Existing Input reused; no duplicate primitive.
+  - PascalCase React component identifiers: PASS - CreateNewChallenge retained.
+  - Kebab-case slice/thunk/service filenames: Not applicable; no new files in these layers.
+  - Snake_case thunk/service functions: Unchanged; existing thunk reused.
+  - page.jsx route filenames: Not applicable; no new pages.
+  - Slice store registration: Not applicable; no new slice.
+  - Network loading states: PASS - Existing Publishing state retained.
+  - Destructive action confirmation: Not applicable; no destructive actions added.
+  - Inline field validation: PASS - Required and maximum-length checks retained/added; server errors assigned to the existing inline error bindings.
+  - Empty list/table feedback: Not applicable; no list/table changes.
+  - Keyboard accessibility: Code-level PASS for native Category text input; requires browser verification of interactions.
+  - Responsive layout: Unchanged, code-level PASS for retained responsive form grid; requires browser verification.
+  - Modal focus trapping: Unchanged; requires browser verification.
+  - Sanctum headers/session authentication: Unchanged; existing service and thunk retained.
+  - API array/resource responses: Unchanged; existing response format not refactored.
+  - UUID/slug route identifiers: Unchanged; no new routes or identifiers.
+  - Guarded terminal commands: PASS - No git, npm build/dev, migration, or destructive command executed.
+  - Backend regression checks: PASS - Exercised actual store/update category rules with Laravel's validation factory against 14 cases each: custom category; all five legacy categories; 50 and 51 characters; empty, whitespace, null, array, and number; omitted category. Accepted values remain unchanged.
+  - Frontend regression checks: PASS - JSX parse/transform, shared text Input, matching 50-character constraints, required validation, inline binding, multi-field server errors, string errors, and absent validation payload.
+  - PHP syntax and editor diagnostics: PASS - Controller lint succeeded; no diagnostics reported for either modified source file.
+- **Next Steps:** Retry publishing with a custom category. Authenticated HTTP submission, database persistence, and browser interactions remain to be verified in the running application.

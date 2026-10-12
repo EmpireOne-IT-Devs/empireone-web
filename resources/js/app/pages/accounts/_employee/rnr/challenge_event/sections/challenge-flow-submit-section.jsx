@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ImagePlus, X, Clock3 } from "lucide-react";
 import Button from "@/app/_components/button";
 import TextArea from "@/app/_components/textarea";
+import moment from "moment/moment";
 import { setAlert } from "@/app/redux/app-slice";
 import {
     submit_engagement_reward_challenge_proof_thunk,
@@ -82,11 +83,36 @@ export default function ChallengeFlowSubmitSection({
                 title: isDaily ? "Today's proof submitted" : "Proof submitted",
                 message: isDaily
                     ? "Nice work! Today's submission is pending review. Come back tomorrow for the next day."
-                    : "Your submission is now pending admin review.",
+                    : challenge.survey_required && !challenge.survey_completed
+                      ? "Almost finished! Your proof is pending admin review. Complete the survey to finalize your challenge requirements."
+                      : "Your submission is now pending admin review.",
                 open: true,
             }),
         );
     };
+
+    if (challenge.status === "Upcoming") {
+        return (
+            <>
+                <div role="status" className="flex items-center gap-2 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-600">
+                    <Clock3 className="h-4 w-4 shrink-0" />
+                    This challenge starts on {moment(challenge.start_date).format("MMM D, YYYY")}.
+                    You can submit proof once it starts.
+                </div>
+                <div className="mt-2 flex justify-end">
+                    <Button
+                        type="button"
+                        variant="light"
+                        outlined
+                        onClick={onClose}
+                        className="w-full sm:w-auto"
+                    >
+                        Close
+                    </Button>
+                </div>
+            </>
+        );
+    }
 
     // A daily challenge already has today's submission in for review — show a
     // waiting state instead of letting the employee submit a second photo.

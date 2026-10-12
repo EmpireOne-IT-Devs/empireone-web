@@ -17,10 +17,15 @@ export default function ChallengeFlowProgressSection({ currentStep, isDeclined, 
             <div className="rounded-xl bg-gray-50 px-3 py-2.5">
                 <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-gray-700">
-                        {isComplete ? "Challenge complete!" : `Day ${completed} of ${required} completed`}
+                        {isComplete ? "Challenge complete!" : `Day ${completed} of ${required} approved`}
                     </span>
                     <span className="font-semibold text-indigo-600">{percent}%</span>
                 </div>
+                {challenge.survey_required && !isComplete && (
+                    <p className="mt-2 text-xs text-purple-700">
+                        {challenge.survey_completed ? "Survey completed; waiting for proof approval." : "Challenge completion also requires the survey."}
+                    </p>
+                )}
                 <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-200">
                     <div
                         className={`h-full rounded-full transition-all ${
@@ -69,7 +74,7 @@ export default function ChallengeFlowProgressSection({ currentStep, isDeclined, 
                                           : "text-gray-400"
                                 }`}
                             >
-                                {step}
+                                {index === 2 && challenge?.participation_status === "pending_survey" ? "Survey required" : step}
                             </span>
                         </div>
                         {index < STEPS.length - 1 && (
