@@ -572,11 +572,7 @@ class JobApplicationController extends Controller
     public function apply_job_application(Request $request)
     {
         // 1. Create or Find User
-<<<<<<< HEAD
-  $fullName = trim($request->first_name . ' ' . $request->last_name);
-=======
         $fullName = trim($request->first_name . ' ' . $request->last_name);
->>>>>>> c052da042c4bb49a0bfdf3a5fb7fa155220b9df6
 
         $user = User::firstOrCreate(
             ['email' => $request->email],
