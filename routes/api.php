@@ -112,6 +112,9 @@ Route::get('get_all_email', [GoogleController::class, 'get_all_email']); // do n
 Route::post('ask_ai', [AIController::class, 'ask_ai'])->middleware(['auth:sanctum']);
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('locations/employee-counts', [LocationController::class, 'employeeCounts']);
+    Route::get('locations/{location}/employees/export', [LocationController::class, 'exportEmployees']);
+
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);

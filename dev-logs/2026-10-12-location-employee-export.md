@@ -1,0 +1,57 @@
+### Phase 1: Location employee counts and selected-location CSV export
+
+- **Timestamp:** 2026-10-12 19:23:10 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Backend, Frontend, UI/UX, QA
+- **Files Modified/Created:**
+  - `app/Http/Controllers/LocationController.php` - Add authenticated employee-count aggregation and a selected-location CSV stream, restricted to authenticated employee/admin accounts. Export employee rows in batches and neutralize spreadsheet formula values.
+  - `app/Http/Resources/LocationEmployeeCountResource.php` - Return the location ID/name and numeric employee count using an API Resource.
+  - `routes/api.php` - Add authenticated GET routes for counts and selected-location CSV export without changing the existing public location resource routes.
+  - `resources/js/app/services/location-employee-service.js` - Add Axios calls for the location counts and binary export.
+  - `resources/js/app/redux/location-employee-thunk.js` - Orchestrate count loading and selected-location export, surfacing API errors.
+  - `resources/js/app/redux/location-employee-slice.js` - Track location data, loading state, and separate count/export errors.
+  - `resources/js/app/store/store.js` - Register the new location employee reducer.
+  - `resources/js/app/pages/accounts/_employee/rnr/my_profile/sections/employee-test.jsx` - Replace the stub with location count cards, selected-location export, loading/error/empty states, retry actions, and responsive layout.
+  - `resources/js/app/pages/accounts/_employee/rnr/my_profile/page.jsx` - Mount the location panel on the employee My Profile page.
+  - `tests/Unit/LocationEmployeeExportTest.php` - Cover count criteria, selected-location scoping, sensitive-role exclusion, formula-injection protection, and authentication/role authorization.
+  - `tests/Frontend/location-employee.test.mjs` - Cover API paths, selected-location presentation, loading/error feedback, and empty state.
+- **Issues Encountered:**
+  - The first backend test fixture omitted model timestamp columns and used an incorrect personal-information table name.
+  - An unrelated unresolved merge-conflict marker in `app/Http/Controllers/API/Jobs/JobApplicationController.php` (around line 575) caused an HTML exception-rendering failure during an early authorization test attempt.
+- **Resolution:**
+  - Corrected the isolated in-memory test schema to match the existing model table names and timestamps.
+  - Tested API authorization with JSON requests, avoiding error-page rendering; no unrelated job-application source was changed. The existing conflict markers remain an unrelated pre-existing issue.
+- **QA Checklist Result:**
+  - JavaScript purity: ✅ Pass - plain JavaScript only.
+  - `web.php` Inertia-only behavior: ✅ Pass - unchanged.
+  - API route behavior: ✅ Pass - counts use JSON Resources; the export endpoint streams CSV.
+  - Form Requests for POST/PUT: ✅ Pass - no new POST/PUT endpoint.
+  - Policy/middleware protection: ✅ Pass - Sanctum plus employee/admin role and employee-account checks.
+  - Eloquent Resource use: ✅ Pass - location/count data uses `LocationEmployeeCountResource`.
+  - Migration reversibility: ✅ Pass - no migration added.
+  - Non-trivial service-layer logic: ✅ Pass - aggregation and CSV export remain in the existing controller; no extra business service was needed.
+  - Axios API isolation: ✅ Pass - requests are in `location-employee-service.js`.
+  - Redux thunk behavior: ✅ Pass - async orchestration and errors are in the new thunk.
+  - Redux slice registration: ✅ Pass - registered in the root store.
+  - 422 field validation: ✅ Pass - not applicable to the read-only endpoints.
+  - Internal Inertia links and persistent layout: ✅ Pass - no raw links added; existing layout retained.
+  - Shared UI component Redux/API isolation: ✅ Pass - the section uses shared `Button` and `Skeleton`; no shared primitive was modified.
+  - Component naming and file structure: ✅ Pass - `EmployeeTest` export and kebab-case service/thunk/slice files.
+  - Loading/error feedback: ✅ Pass - count loading, retry, export loading, and export errors are visible.
+  - Destructive-action confirmation: ✅ Pass - no destructive actions.
+  - Empty state and CTA: ✅ Pass - icon, heading, description, and Refresh locations action.
+  - Keyboard access: Code-level ✅ - requires browser verification.
+  - Responsive layout: Code-level ✅ - `sm`, `md`, and `lg` grid breakpoints; requires browser verification.
+  - Modal focus trapping: ✅ Pass - no modal added.
+  - Sanctum authentication: ✅ Pass - anonymous access is rejected in API tests.
+  - Data exposure: ✅ Pass - CSV is limited to the selected location and work-directory fields; applicant records are excluded, and formula-like cell values are escaped.
+  - Identifier handling: ✅ Pass - existing integer location IDs are used because the location model has no UUID/slug field.
+  - Guarded terminal commands: ✅ Pass - no Git commands, production builds/dev servers, live migration/seed, or destructive commands were run.
+  - Backend tests: ✅ Pass - 3 tests, 21 assertions.
+  - Frontend tests: ✅ Pass - 27 tests total across the new location tests and existing challenge survey regressions.
+  - Existing challenge backend regressions: ✅ Pass - 25 tests, 328 assertions.
+  - PHP syntax/Pint and editor diagnostics: ✅ Pass.
+  - Live production database and full browser verification: Not run.
+- **Next Steps:**
+  - Browser-check the new panel at mobile, tablet, and desktop widths and verify the downloaded CSV against production-like data.
+  - The unrelated merge-conflict markers in `JobApplicationController.php` should be resolved separately before exercising that controller or error-page rendering paths.
