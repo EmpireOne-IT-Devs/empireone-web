@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/header-section-TK-_aLY5.js
 import{b as n,j as e}from"./app-DjHk0QBQ.js";function t(){const{leader:a}=n(s=>s.human_resources);return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsxs("div",{className:"text-2xl font-black",children:["Hi Team ",a?.data?.user?.personal_information?.first_name,"👥"]}),e.jsx("div",{className:"text-gray-600",children:"Manage team concerns, communication, and workplace engagement"})]})}export{t as default};
+========
+import{b as n,j as e}from"./app-Cd-JMtLa.js";function t(){const{leader:a}=n(s=>s.human_resources);return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsxs("div",{className:"text-2xl font-black",children:["Hi Team ",a?.data?.user?.personal_information?.first_name,"👥"]}),e.jsx("div",{className:"text-gray-600",children:"Manage team concerns, communication, and workplace engagement"})]})}export{t as default};
+>>>>>>>> c052da042c4bb49a0bfdf3a5fb7fa155220b9df6:public/build/assets/header-section-BdavBn_m.js

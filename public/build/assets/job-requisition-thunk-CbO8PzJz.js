@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/job-requisition-thunk-DfeITbwA.js
+import{g as o,a as n}from"./job-requisition-service-DEjeYZSw.js";import{ax as e}from"./app-DjHk0QBQ.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
+========
+import{g as o,a as n}from"./job-requisition-service-Ci-wv0_q.js";import{at as e}from"./app-Cd-JMtLa.js";function u(){return async function(t,i){const s=await n();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}function _(){return async function(t,i){const s=await o();t(e.actions.setJobRequisitions(s.data)),t(e.actions.setStats(s.stats)),t(e.actions.setUsers(s.users))}}export{_ as a,u as g};
+>>>>>>>> c052da042c4bb49a0bfdf3a5fb7fa155220b9df6:public/build/assets/job-requisition-thunk-CbO8PzJz.js

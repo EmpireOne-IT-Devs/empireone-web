@@ -17,6 +17,7 @@ import { Link, router } from "@inertiajs/react";
 import { BriefcaseIcon } from "lucide-react";
 import SetScheduleSection from "./set-schedule-section";
 import { checking_applicant_service } from "@/app/services/applicants-service";
+import { getLeadAttributionFields } from "@/lib/leadAttribution";
 
 const TalentApplicationForm = () => {
     // ✅ Load saved step + data
@@ -190,6 +191,7 @@ const TalentApplicationForm = () => {
     const onSubmit = async (data) => {
         const finalData = {
             ...data,
+            ...getLeadAttributionFields(),
             referral_id: referral_id,
             source: data.source || source,
             position: position,
