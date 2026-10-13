@@ -40,7 +40,7 @@ class EngagementRewardChallengeParticipant extends Pivot
             return false;
         }
 
-        return $this->required_days > 1
+        return $this->required_days !== null
             ? $this->isDailyChallengeComplete()
             : ($this->submitted_at !== null
                 && in_array($this->status, ['submitted', 'pending_survey', 'approved'], true));
@@ -111,6 +111,8 @@ class EngagementRewardChallengeParticipant extends Pivot
      */
     public function isDailyChallengeComplete(): bool
     {
-        return $this->required_days > 1 && $this->completed_days >= $this->required_days;
+        return $this->required_days !== null
+            && $this->required_days > 0
+            && $this->completed_days >= $this->required_days;
     }
 }

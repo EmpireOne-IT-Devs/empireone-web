@@ -21,7 +21,7 @@ class ChallengeCompletionService
             return true;
         }
 
-        $proofApproved = $participant->required_days > 1
+        $proofApproved = $participant->required_days !== null
             ? $participant->isDailyChallengeComplete()
             : $participant->proof_approved_at !== null;
 

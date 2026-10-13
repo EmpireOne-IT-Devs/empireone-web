@@ -21,6 +21,7 @@ import ParticipantTableSection from "@/app/pages/accounts/_administrator/rnr/cha
 import CardSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/card-section";
 import SearchSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/search-section";
 import TableSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section";
+import TeamTableSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/team-table-section";
 import ExportChallengeSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/report/sections/export-challenge-section";
 import HistoricalTrendSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/report/sections/historical-trend-section";
 
@@ -170,7 +171,9 @@ function SubmissionsTab() {
         <div className="px-4 sm:px-6 lg:px-8">
             <CardSection />
             <SearchSection filters={filters} setFilters={setFilters} />
+            <h2 className="mt-6 text-lg font-semibold text-gray-900">Individual Submissions</h2>
             <TableSection filters={filters} />
+            <TeamTableSection filters={filters} />
         </div>
     );
 }

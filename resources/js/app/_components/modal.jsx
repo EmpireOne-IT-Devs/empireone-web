@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { createPortal } from "react-dom";
-import { Transition } from "@headlessui/react";
+import { FocusTrap, Transition } from "@headlessui/react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { FaTimes } from "react-icons/fa";
 
@@ -83,12 +83,22 @@ export default function Modal({
                         leaveFrom="translate-y-0 sm:opacity-100 sm:scale-100"
                         leaveTo="translate-y-full sm:translate-y-0 sm:opacity-0 sm:scale-95"
                     >
-                        <motion.div
+                        <FocusTrap
+                            as={motion.div}
                             style={{ y: dragY }}
                             drag="y"
                             dragConstraints={{ top: 0, bottom: 0 }}
                             dragElastic={{ top: 0, bottom: 0.8 }}
                             onDragEnd={handleDragEnd}
+                            onKeyDown={(event) => {
+                                if (event.key === "Escape") {
+                                    event.stopPropagation();
+                                    onClose();
+                                }
+                            }}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label={typeof title === "string" ? title : undefined}
                             className={`relative flex w-full ${width} max-h-[85vh] sm:max-h-[90vh] transform flex-col overflow-hidden 
                 rounded-t-2xl sm:rounded-xl bg-white p-4 sm:p-6 text-left align-middle shadow-2xl transition-all touch-pan-y`}
                             onClick={(e) => e.stopPropagation()}
@@ -122,7 +132,7 @@ export default function Modal({
                             <div className="min-h-0 flex-1 overflow-y-auto pt-3 sm:pt-2 text-sm sm:text-base text-gray-700 overscroll-contain">
                                 {children}
                             </div>
-                        </motion.div>
+                        </FocusTrap>
                     </Transition.Child>
                 </div>
             </div>

@@ -15,6 +15,7 @@ class EngagementRewardChallengeDailyLog extends Model
 
     protected $fillable = [
         'reward_challenge_participant_id',
+        'team_submission_id',
         'log_date',
         'submission_path',
         'challenge_description',
@@ -42,5 +43,10 @@ class EngagementRewardChallengeDailyLog extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function teamSubmission(): BelongsTo
+    {
+        return $this->belongsTo(EngagementRewardChallengeTeamSubmission::class, 'team_submission_id');
     }
 }

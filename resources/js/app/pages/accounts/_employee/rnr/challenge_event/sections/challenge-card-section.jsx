@@ -19,6 +19,7 @@ import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Skeleton from "@/app/_components/skeleton";
+import moment from "moment/moment";
 import { setAlert } from "@/app/redux/app-slice";
 import { htmlToPlainText } from "@/app/lib/rich-text";
 import { leave_engagement_reward_challenge_thunk } from "@/app/redux/engagement-thunk";
@@ -187,6 +188,78 @@ function ChallengeCard({ challenge, highlighted = false }) {
             );
         }
 
+        if (challenge.type === "Team") {
+            if (isCompleted) {
+                return (
+                    <Button type="button" variant="light" disabled className="w-full rounded-xl">
+                        Challenge Ended
+                    </Button>
+                );
+            }
+            if (status === "approved") {
+                return (
+                    <Button
+                        type="button"
+                        variant="success"
+                        className="w-full gap-2"
+                        onClick={() => setIsFlowModalOpen(true)}
+                    >
+                        <Award className="h-4 w-4" />
+                        Approved · +{challenge.points} pts
+                    </Button>
+                );
+            }
+            if (challenge.is_joined && challenge.is_daily_challenge) {
+                return (
+                    <Button
+                        type="button"
+                        variant="warning"
+                        className="w-full gap-2"
+                        onClick={() => setIsFlowModalOpen(true)}
+                    >
+                        <Clock className="h-4 w-4" />
+                        {`Day ${challenge.completed_days ?? 0}/${challenge.required_days ?? challenge.duration_days} · Leader submits proof`}
+                    </Button>
+                );
+            }
+            if (challenge.is_joined && status === "submitted") {
+                return (
+                    <Button
+                        type="button"
+                        variant="warning"
+                        className="w-full gap-2"
+                        onClick={() => setIsFlowModalOpen(true)}
+                    >
+                        <Clock className="h-4 w-4" />
+                        Team proof pending review
+                    </Button>
+                );
+            }
+            if (challenge.is_joined && status === "declined") {
+                return (
+                    <Button
+                        type="button"
+                        variant="warning"
+                        className="w-full gap-2"
+                        onClick={() => setIsFlowModalOpen(true)}
+                    >
+                        <ArrowRight className="h-4 w-4" />
+                        Leader may resubmit proof
+                    </Button>
+                );
+            }
+            return (
+                <Button
+                    type="button"
+                    variant="light"
+                    disabled
+                    className="w-full rounded-xl bg-gradient-to-r from-slate-100 to-gray-100 text-slate-500"
+                >
+                    Team proof submitted by a leader
+                </Button>
+            );
+        }
+
         // Approved state
         if (status === "approved") {
             return (
@@ -213,8 +286,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
                     onClick={() => setIsFlowModalOpen(true)}
                 >
                     <Clock className="h-4 w-4" />
-                    Day {challenge.completed_days ?? 0}/{challenge.required_days ?? challenge.duration_days}
-                    {challenge.submitted_today ? " · Submitted today" : " · Submit today"}
+                    {`Day ${challenge.completed_days ?? 0}/${challenge.required_days ?? challenge.duration_days}${challenge.submitted_today ? " · Submitted today" : " · Submit today"}`}
                 </Button>
             );
         }

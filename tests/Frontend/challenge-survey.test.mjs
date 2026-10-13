@@ -3,8 +3,9 @@ import { test } from "node:test";
 import { createRequire } from "node:module";
 import Module from "node:module";
 import path from "node:path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { build } from "esbuild";
+import { build, transform } from "esbuild";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { configureStore } from "@reduxjs/toolkit";
@@ -49,6 +50,8 @@ const services = await load("resources/js/app/services/engagement-service.js");
 const Survey = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-survey-section.jsx")).default;
 const Submitted = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submitted-section.jsx")).default;
 const Progress = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-progress-section.jsx")).default;
+const SubmitProof = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submit-section.jsx")).default;
+const Details = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-details-section.jsx")).default;
 const Approved = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-approved-section.jsx")).default;
 const Profile = (await load("resources/js/app/pages/accounts/_employee/rnr/my_profile/sections/points-summary-section.jsx")).default;
 const Cards = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-card-section.jsx")).default;
@@ -103,6 +106,66 @@ test("services target the exact challenge and return JSON, not Axios wrappers", 
     assert.equal(requests[0].url, "/api/engagement/reward-challenges/12/survey");
     assert.equal(requests[1].url, "/api/engagement/reward-challenges/12/survey/submit");
     assert.deepEqual(JSON.parse(requests[1].data), { answers: { 1: 5 } });
+});
+
+test("daily proof service uploads the proof without a client-selected date", async () => {
+    const requests = [];
+    adapter((config) => {
+        requests.push(config);
+        return { data: { status: "success" } };
+    });
+    await services.submit_reward_challenge_daily_proof_service(
+        12,
+        new Blob(["proof"], { type: "image/png" }),
+        "Completed the daily activity",
+    );
+    assert.equal(requests[0].url, "/api/engagement/reward-challenges/12/submit-daily");
+    assert.equal(requests[0].data.get("log_date"), null);
+    assert.equal(requests[0].data.get("challenge_description"), "Completed the daily activity");
+});
+
+test("editing a challenge can clear its optional duration", async () => {
+    let request;
+    adapter((config) => {
+        request = config;
+        return { data: { status: "success" } };
+    });
+    await store().dispatch(thunks.update_engagement_reward_challenge_thunk({
+        id: 12,
+        data: { duration_days: null },
+    }));
+    assert.equal(request.data.get("duration_days"), "");
+});
+
+test("duration challenge forms compile and present the duration field", async () => {
+    for (const relativePath of [
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge.jsx",
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/dashboard/sections/edit-challenge-section.jsx",
+    ]) {
+        const filename = path.join(root, relativePath);
+        const source = readFileSync(filename, "utf8");
+        assert.match(source, /Duration \(days\) — optional/);
+        assert.doesNotMatch(source, /submission_weekdays|CHALLENGE_WEEKDAYS/);
+        await transform(source, { loader: "jsx" });
+    }
+});
+
+test("daily proof form explains duration progress and daily submission behavior", () => {
+    const html = render(SubmitProof, {}, {
+        challenge: {
+            ...challenge,
+            is_daily_challenge: true,
+            required_days: 3,
+            completed_days: 0,
+        },
+        isOpen: true,
+    });
+    assert.match(html, /Day 1 of 3/);
+    assert.doesNotMatch(html, /Scheduled proof date/);
+    const details = render(Details, {}, {
+        challenge: { ...challenge, is_daily_challenge: true, duration_days: 3 },
+    });
+    assert.match(details, /3 day\(s\), 1 proof\/day/);
 });
 
 test("fetch errors remain visible and retry clears the error", async () => {

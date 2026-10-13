@@ -90,7 +90,6 @@ export default function CreateNewChallenge() {
         category: previewCategory,
         points: previewPoints,
     } = formValues;
-
     // Clean up object URL when component unmounts or banner changes
     useEffect(() => {
         return () => {
@@ -516,44 +515,6 @@ export default function CreateNewChallenge() {
                             },
                         })}
                     />
-                     <Input
-                            label="Duration (days) — optional"
-                            type="number"
-                            min={1}
-                            placeholder="e.g. 7 for a 1-week challenge"
-                            error={errors.duration_days?.message}
-                            {...register("duration_days", {
-                                min: {
-                                    value: 1,
-                                    message: "Duration must be at least 1 day.",
-                                },
-                                validate: (value, formValues) => {
-                                    if (!value || !formValues.start_date || !formValues.deadline) {
-                                        return true;
-                                    }
-                                    const days =
-                                        Math.round(
-                                            (new Date(formValues.deadline) - new Date(formValues.start_date)) /
-                                                (1000 * 60 * 60 * 24),
-                                        ) + 1;
-                                    return (
-                                        Number(value) <= days ||
-                                        `Duration can't exceed the ${days} day(s) between start date and deadline.`
-                                    );
-                                },
-                            })}
-                        />
-                    </div>
-                   
-
-                    {/* Multi-day challenge support: leave blank for a single proof submission */}
-                    <div>
-                       
-                        <p className="mt-1 text-xs text-gray-400">
-                            Leave blank for a single one-time proof submission. Set a number of
-                            days (e.g. 7) to let employees submit one proof per day — missed days
-                            are simply skipped.
-                        </p>
                     </div>
 
                     {/* Department Selection & Participants */}
@@ -794,6 +755,30 @@ export default function CreateNewChallenge() {
                                     "Deadline must be after the start date.",
                             })}
                         />
+                    </div>
+
+                    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                        <Input
+                            label="Duration (days) — optional"
+                            type="number"
+                            min={1}
+                            max={366}
+                            placeholder="Leave blank for a single submission"
+                            error={errors.duration_days?.message}
+                            {...register("duration_days", {
+                                min: {
+                                    value: 1,
+                                    message: "Duration must be at least 1 day.",
+                                },
+                                max: {
+                                    value: 366,
+                                    message: "Duration cannot exceed 366 days.",
+                                },
+                            })}
+                        />
+                        <p className="mt-2 text-xs text-gray-500">
+                            Multi-day challenges allow one proof submission per day.
+                        </p>
                     </div>
 
                     <div>

@@ -240,7 +240,7 @@ export default function RecognizeSomeoneSections({ onCategoryChange }) {
                             className="shrink-0 rounded-full"
                         >
                             <HeartIcon className="mr-2 h-4 w-4" />
-                            Recognize Someone
+                            Site Recognize
                         </Button>
                     )
                 )}

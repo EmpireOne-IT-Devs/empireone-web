@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Sparkles } from "lucide-react";
-import { FocusTrap } from "@headlessui/react";
 import Modal from "@/app/_components/modal";
 import { setAlert } from "@/app/redux/app-slice";
 import { join_engagement_reward_challenge_thunk } from "@/app/redux/engagement-thunk";
@@ -106,12 +105,9 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                 </div>
             }
         >
-            {isOpen && <FocusTrap
+            {isOpen && <div
                 key={showSurvey ? "survey" : "challenge"}
                 className="mt-2 flex flex-col gap-4 pb-2 p-2"
-                role="dialog"
-                aria-modal="true"
-                aria-label={challenge.title}
                 onKeyDown={(event) => {
                     if (event.key === "Escape") {
                         event.stopPropagation();
@@ -125,91 +121,124 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                         challenge={challenge}
                         onBack={() => setShowSurvey(false)}
                     />
-                ) : <>
-                <ChallengeFlowProgressSection
-                    currentStep={currentStep}
-                    isDeclined={isDeclined}
-                    challenge={challenge}
-                />
+                ) : (
+                    <>
+                        {challenge.survey_required && challenge.is_joined && challenge.status !== "Upcoming" && (
+                            <div role="status" className="space-y-3 rounded-xl bg-purple-50 p-4 text-sm text-purple-700">
+                                <p className="font-bold">
+                                    {challenge.survey_completed ? "Survey completed" : challenge.can_complete_survey || challenge.participation_status === "pending_survey" ? "Almost finished" : "Survey requirement"}
+                                </p>
+                                <p>
+                                    {challenge.survey_completed
+                                        ? `Your ${challenge.survey_points_awarded} survey points are recorded.${challenge.participation_status !== "approved" ? " Proof approval is still required to finalize the challenge." : ""}`
+                                        : challenge.can_complete_survey
+                                          ? "Complete the survey to finalize your challenge requirements. Proof approval is also required."
+                                          : challenge.is_daily_challenge
+                                            ? "The survey unlocks after all required days are approved."
+                                            : "Submit your proof to unlock the survey."}
+                                </p>
+                                <Button
+                                    variant="secondary"
+                                    onClick={() => setShowSurvey(true)}
+                                    className="w-full sm:w-auto"
+                                >
+                                    {challenge.survey_completed ? "View survey completion" : challenge.can_complete_survey || challenge.participation_status === "pending_survey" ? "Complete Survey" : "Check survey availability"}
+                                </Button>
+                            </div>
+                        )}
 
-                <ChallengeGuideSection
-                    challenge={challenge}
-                    defaultExpanded={currentStep === 0}
-                />
+                        {challenge.type === "Team" && challenge.is_joined ? (
+                            <>
+                                <ChallengeFlowProgressSection
+                                    currentStep={currentStep}
+                                    isDeclined={isDeclined}
+                                    challenge={challenge}
+                                />
+                                <div className="rounded-xl bg-indigo-50 p-4 text-sm text-indigo-800">
+                                    <p className="font-semibold">Your team leader submits the shared proof.</p>
+                                    <p className="mt-1">
+                                        {challenge.is_daily_challenge
+                                            ? `${challenge.completed_days ?? 0} of ${challenge.required_days ?? challenge.duration_days} required days have been approved.`
+                                            : challenge.participation_status === "approved"
+                                                ? "The team challenge has been approved."
+                                                : challenge.participation_status === "declined"
+                                                    ? "The previous shared proof was declined. Your leader may resubmit it."
+                                                    : challenge.participation_status === "submitted" || challenge.participation_status === "pending_survey"
+                                                        ? "The shared proof is waiting for review."
+                                                        : "Your leader can submit the team's shared proof when ready."}
+                                    </p>
+                                </div>
+                                <div className="flex justify-end">
+                                    <Button type="button" variant="light" outlined onClick={handleClose}>
+                                        Close
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <ChallengeFlowProgressSection
+                                    currentStep={currentStep}
+                                    isDeclined={isDeclined}
+                                    challenge={challenge}
+                                />
 
-                {challenge.survey_required && challenge.is_joined && challenge.status !== "Upcoming" && (
-                    <div role="status" className="space-y-3 rounded-xl bg-purple-50 p-4 text-sm text-purple-700">
-                        <p className="font-bold">
-                            {challenge.survey_completed ? "Survey completed" : challenge.can_complete_survey || challenge.participation_status === "pending_survey" ? "Almost finished" : "Survey requirement"}
-                        </p>
-                        <p>
-                            {challenge.survey_completed
-                                ? `Your ${challenge.survey_points_awarded} survey points are recorded.${challenge.participation_status !== "approved" ? " Proof approval is still required to finalize the challenge." : ""}`
-                                : challenge.can_complete_survey
-                                  ? "Complete the survey to finalize your challenge requirements. Proof approval is also required."
-                                  : challenge.is_daily_challenge
-                                    ? "The survey unlocks after all required days are approved."
-                                    : "Submit your proof to unlock the survey."}
-                        </p>
-                        <Button
-                            variant="secondary"
-                            onClick={() => setShowSurvey(true)}
-                            className="w-full sm:w-auto"
-                        >
-                            {challenge.survey_completed ? "View survey completion" : challenge.can_complete_survey || challenge.participation_status === "pending_survey" ? "Complete Survey" : "Check survey availability"}
-                        </Button>
-                    </div>
+                                <ChallengeGuideSection
+                                    challenge={challenge}
+                                    defaultExpanded={currentStep === 0}
+                                />
+
+                                {currentStep === 0 && preJoinStage === "details" && (
+                                    <ChallengeFlowDetailsSection
+                                        challenge={challenge}
+                                        onClose={handleClose}
+                                        onJoinClick={() => setPreJoinStage("rules")}
+                                    />
+                                )}
+
+                                {currentStep === 0 && preJoinStage === "rules" && (
+                                    <ChallengeFlowRulesSection
+                                        challenge={challenge}
+                                        joining={joining}
+                                        onBack={() => setPreJoinStage("details")}
+                                        onConfirm={handleJoin}
+                                    />
+                                )}
+
+                                {currentStep === 1 && justJoined && (
+                                    <ChallengeFlowNextStepsSection
+                                        challenge={challenge}
+                                        onBack={handleClose}
+                                        onStart={() => setJustJoined(false)}
+                                    />
+                                )}
+
+                                {currentStep === 1 && !justJoined && (
+                                    <ChallengeFlowSubmitSection
+                                        challenge={challenge}
+                                        isDeclined={isDeclined}
+                                        isOpen={isOpen}
+                                        onClose={handleClose}
+                                    />
+                                )}
+
+                                {currentStep === 2 && (
+                                    <ChallengeFlowSubmittedSection
+                                        challenge={challenge}
+                                        onClose={handleClose}
+                                    />
+                                )}
+
+                                {currentStep === 3 && (
+                                    <ChallengeFlowApprovedSection
+                                        challenge={challenge}
+                                        onClose={handleClose}
+                                    />
+                                )}
+                            </>
+                        )}
+                    </>
                 )}
-
-                {currentStep === 0 && preJoinStage === "details" && (
-                    <ChallengeFlowDetailsSection
-                        challenge={challenge}
-                        onClose={handleClose}
-                        onJoinClick={() => setPreJoinStage("rules")}
-                    />
-                )}
-
-                {currentStep === 0 && preJoinStage === "rules" && (
-                    <ChallengeFlowRulesSection
-                        challenge={challenge}
-                        joining={joining}
-                        onBack={() => setPreJoinStage("details")}
-                        onConfirm={handleJoin}
-                    />
-                )}
-
-                {currentStep === 1 && justJoined && (
-                    <ChallengeFlowNextStepsSection
-                        challenge={challenge}
-                        onBack={handleClose}
-                        onStart={() => setJustJoined(false)}
-                    />
-                )}
-
-                {currentStep === 1 && !justJoined && (
-                    <ChallengeFlowSubmitSection
-                        challenge={challenge}
-                        isDeclined={isDeclined}
-                        isOpen={isOpen}
-                        onClose={handleClose}
-                    />
-                )}
-
-                {currentStep === 2 && (
-                    <ChallengeFlowSubmittedSection
-                        challenge={challenge}
-                        onClose={handleClose}
-                    />
-                )}
-
-                {currentStep === 3 && (
-                    <ChallengeFlowApprovedSection
-                        challenge={challenge}
-                        onClose={handleClose}
-                    />
-                )}
-                </>}
-            </FocusTrap>}
+            </div>}
         </Modal>
     );
 }

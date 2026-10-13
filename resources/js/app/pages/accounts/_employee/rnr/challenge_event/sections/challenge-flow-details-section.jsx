@@ -57,7 +57,8 @@ export default function ChallengeFlowDetailsSection({
                 {challenge.is_daily_challenge && (
                     <div className="rounded-xl bg-gray-50 px-3 py-2.5">
                         <p className="flex items-center gap-1.5 text-xs text-gray-400">
-                            <CalendarDays className="h-3.5 w-3.5" /> Duration
+                            <CalendarDays className="h-3.5 w-3.5" />
+                            Daily proof
                         </p>
                         <p className="mt-0.5 text-sm font-semibold text-gray-800">
                             {challenge.duration_days} day(s), 1 proof/day

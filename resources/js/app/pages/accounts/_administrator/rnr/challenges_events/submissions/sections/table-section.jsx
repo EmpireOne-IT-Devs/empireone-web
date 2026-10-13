@@ -145,11 +145,6 @@ export default function TableSection({ filters }) {
                                         {submission.employee.eoid ?? "-"}
                                     </p>
                                 </td>
-                                  <td className="px-4 py-3">
-                                    <p className="text-xs text-gray-400">
-                                        {submission.employee.email}
-                                    </p>
-                                </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
                                         {submission.employee.name}
@@ -174,6 +169,9 @@ export default function TableSection({ filters }) {
                                     <p className="font-medium text-yellow-500">
                                         +{submission.challenge.points}
                                     </p>
+                                </td>
+                                <td className="px-4 py-3 text-xs text-gray-400">
+                                    {submission.employee.email}
                                 </td>
                               
                                 <td className="px-4 py-3 text-xs text-gray-500">

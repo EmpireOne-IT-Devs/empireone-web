@@ -17,7 +17,9 @@ export default function ChallengeFlowProgressSection({ currentStep, isDeclined, 
             <div className="rounded-xl bg-gray-50 px-3 py-2.5">
                 <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-gray-700">
-                        {isComplete ? "Challenge complete!" : `Day ${completed} of ${required} approved`}
+                        {isComplete
+                            ? "Challenge complete!"
+                            : `Day ${completed} of ${required} approved`}
                     </span>
                     <span className="font-semibold text-indigo-600">{percent}%</span>
                 </div>

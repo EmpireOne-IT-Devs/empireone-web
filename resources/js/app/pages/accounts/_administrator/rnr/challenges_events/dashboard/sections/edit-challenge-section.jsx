@@ -121,6 +121,7 @@ export default function EditChallengeSection({ challenge }) {
         control,
         watch,
         setValue,
+        setError,
         reset,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: buildDefaultValues(challenge) });
@@ -136,7 +137,6 @@ export default function EditChallengeSection({ challenge }) {
         category: previewCategory,
         points: previewPoints,
     } = formValues;
-
     useEffect(() => {
         return () => {
             if (bannerPreview && bannerFile) {
@@ -240,9 +240,7 @@ export default function EditChallengeSection({ challenge }) {
             type: data.type,
             category: data.category,
             points: Number(data.points),
-            duration_days: data.duration_days
-                ? Number(data.duration_days)
-                : null,
+            duration_days: data.duration_days ? Number(data.duration_days) : null,
             all_employees: data.all_employees,
             account_ids: data.all_employees ? [] : data.account_ids,
             department_ids: data.all_employees ? [] : data.department_ids,
@@ -484,48 +482,27 @@ export default function EditChallengeSection({ challenge }) {
                         })}
                     />
 
-                    {/* Multi-day challenge support: leave blank for a single proof submission */}
-                    <div>
+                    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                         <Input
                             label="Duration (days) — optional"
                             type="number"
                             min={1}
-                            placeholder="e.g. 7 for a 1-week challenge"
+                            max={366}
+                            placeholder="Leave blank for a single submission"
                             error={errors.duration_days?.message}
                             {...register("duration_days", {
                                 min: {
                                     value: 1,
                                     message: "Duration must be at least 1 day.",
                                 },
-                                validate: (value, formValues) => {
-                                    if (
-                                        !value ||
-                                        !formValues.start_date ||
-                                        !formValues.deadline
-                                    ) {
-                                        return true;
-                                    }
-                                    const days =
-                                        Math.round(
-                                            (new Date(formValues.deadline) -
-                                                new Date(
-                                                    formValues.start_date,
-                                                )) /
-                                                (1000 * 60 * 60 * 24),
-                                        ) + 1;
-                                    return (
-                                        Number(value) <= days ||
-                                        `Duration can't exceed the ${days} day(s) between start date and deadline.`
-                                    );
+                                max: {
+                                    value: 366,
+                                    message: "Duration cannot exceed 366 days.",
                                 },
                             })}
                         />
-                        <p className="mt-1 text-xs text-gray-400">
-                            Leave blank for a single one-time proof submission.
-                            Set a number of days (e.g. 7) to let employees
-                            submit one proof per day — missed days are simply
-                            skipped. Only affects employees who join after this
-                            change.
+                        <p className="mt-2 text-xs text-gray-500">
+                            Multi-day challenges allow one proof submission per day.
                         </p>
                     </div>
 

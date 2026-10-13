@@ -1,0 +1,36 @@
+### Phase 1: Leader Individual and Team Challenge Submissions
+
+- **Timestamp:** 2026-10-12 23:52 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, ⚙️ Backend, 🖥️ Frontend, 🎨 UI/UX, 🧪 QA
+- **Files Modified/Created:**
+  - `database/migrations/2026_10_12_232600_create_engagement_reward_challenge_team_submissions_tables.php` — Store shared team proofs, member snapshots, and shared daily-log links.
+  - `app/Models/Engagement/EngagementRewardChallengeTeamSubmission.php` — Model shared team proof submissions.
+  - `app/Models/Engagement/EngagementRewardChallengeTeamSubmissionMember.php` — Snapshot each direct report associated with a shared proof.
+  - `app/Http/Requests/Engagement/SubmitTeamChallengeRequest.php` — Validate uploaded proof and submission details.
+  - `app/Policies/Engagement/EngagementRewardChallengeTeamSubmissionPolicy.php` — Restrict team upload, listing, and review permissions.
+  - `app/Http/Resources/Engagement/EngagementRewardChallengeTeamSubmissionResource.php` — Format team submission response fields.
+  - `app/Services/ChallengeTeamSubmissionService.php` — Handle leader scope, eligibility, duplicate checks, shared daily proofs, and group review/rewards.
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` — Expose leader status and team upload while preventing direct reports from joining or submitting Team challenges individually.
+  - `app/Http/Controllers/API/Engagement/EngagementChallengeSubmissionsController.php` — Separate Team listings and group approve/decline handling; keep Team proofs out of Individual submissions.
+  - `app/Models/Engagement/EngagementRewardChallengeDailyLog.php` — Associate member daily-log entries with their shared team submission.
+  - `routes/api.php` — Add authenticated Team submission API routes.
+  - `resources/js/app/_components/modal.jsx` — Add focus trapping, dialog semantics, and Escape dismissal to the shared modal.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/page.jsx` — Mount the leader-only upload section.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/team-challenge-upload-section.jsx` — Add the leader-facing shared proof form.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-event-section.jsx` — Integrate Team challenge employee experience.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-card-section.jsx` — Keep Team participation and progress clearly identified.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-section.jsx` — Show team-member progress and survey access without individual Team proof upload.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/manager-view-section.jsx` — Integrate separate Team Submissions view.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/page.jsx` — Render the separate Team submissions table.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx` — Preserve Individual-only listing behavior.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/team-table-section.jsx` — Add member-level Team rows, filters, actions, and pagination.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/decline-section.jsx` — Reuse decline review for Team submissions.
+  - `resources/js/app/services/engagement-service.js` — Add Team submission API calls.
+  - `resources/js/app/redux/engagement-thunk.js` — Orchestrate Team upload/list requests and review actions.
+  - `resources/js/app/redux/engagement-slice.js` — Store Team submission/loading state in the existing registered engagement slice.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` — Cover leader authorization, team scoping, shared daily proofs, points, duplicate submission, approve/decline/resubmission, and separate listing access.
+- **Issues Encountered:** Initial backend tests exposed a missing captured value and use of an unavailable controller authorization helper.
+- **Resolution:** Captured the service inputs explicitly and used Laravel `Gate::authorize()` with a submission policy. Added a dedicated listing authorization check and regression test.
+- **QA Checklist Result:** ✅ Focused backend tests: 31 passed, 385 assertions. ✅ Frontend challenge tests: 28 passed. ✅ Frontend diagnostics: no errors in touched JSX files. ✅ Backend policy/API logic is covered by tests; remaining PHP language-server notices concern Laravel's dynamic Eloquent properties and methods. ✅ Individual and Team submission lists are separated. ✅ The existing `engagement` reducer remains registered in the root store. ✅ JavaScript remains plain JavaScript. ✅ Upload has loading, inline validation, and visible error/success feedback. ✅ Team table has loading, error, and CTA-equipped empty states, filters, actions, and pagination. ✅ Modals are focus-trapped and dismissible with Escape at code level; browser verification remains required for focus behavior and responsive interaction. ✅ New backend routes are API-only and use a Form Request, Resource, Service, Policy, and reversible migration. ✅ Team listing/review is restricted to administrators or authorized manager departments; team upload uses persisted leader/subordinate relationships. ✅ Existing duration and survey behavior passed the focused regression suites.
+- **Next Steps:** Browser-only keyboard, responsive-layout, and modal-focus verification remains outstanding; no additional implementation phase is planned.
