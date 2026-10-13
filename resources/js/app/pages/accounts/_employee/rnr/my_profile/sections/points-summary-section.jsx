@@ -95,7 +95,7 @@ export default function PointsSummarySection() {
                                             {item.challenge_title}
                                         </p>
                                         <p className="mt-0.5 text-xs text-gray-400">
-                                            {item.category} · Joined {formatDate(item.joined_at)}
+                                            {item.category} · {item.submission_type === "team" ? "Team submission" : `Joined ${formatDate(item.joined_at)}`}
                                         </p>
                                     </div>
                                     <div className="flex flex-shrink-0 items-center gap-2">

@@ -19,6 +19,7 @@ export function useCurrentEmployee() {
         departmentId,
         isReady: Boolean(user),
         isContentManager: CONTENT_MANAGER_DEPARTMENT_IDS.includes(departmentId),
+        isERLeader: user?.is_er_leader === true,
     };
 }
 

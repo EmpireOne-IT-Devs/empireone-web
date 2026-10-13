@@ -19,12 +19,28 @@ class ChallengeSurveyService
                 ->where('user_id', $userId)
                 ->lockForUpdate()
                 ->firstOrFail();
-            $challenge = $challenge->fresh();
-            abort_unless($challenge?->survey_required, 409, 'This challenge does not require a survey.');
+            $challenge = EngagementRewardChallenge::query()
+                ->lockForUpdate()
+                ->findOrFail($challenge->id);
+            abort_unless($challenge->survey_required, 409, 'This challenge does not require a survey.');
             $survey = $challenge->survey()->with('questions')->firstOrFail();
 
-            if ($participant->hasCompletedSurvey($challenge)) {
-                return $participant;
+            $existingResponse = $survey->responses()
+                ->where('user_id', $userId)
+                ->whereNotNull('submitted_at')
+                ->lockForUpdate()
+                ->first();
+
+            if ($existingResponse) {
+                if ($participant->survey_rewarded_at === null) {
+                    $participant->update([
+                        'survey_points_awarded' => self::REWARD_POINTS,
+                        'survey_rewarded_at' => $existingResponse->submitted_at,
+                    ]);
+                    app(ChallengeCompletionService::class)->finalizeLocked($participant);
+                }
+
+                return $participant->load('surveyResponse');
             }
 
             abort_unless($participant->canAnswerSurvey($challenge), 422, 'Complete the challenge proof requirements before answering its survey.');
@@ -55,7 +71,7 @@ class ChallengeSurveyService
             app(ChallengeCompletionService::class)->finalizeLocked($participant);
             $survey->refreshSentimentOverview();
 
-            return $participant;
+            return $participant->load('surveyResponse');
         });
     }
 

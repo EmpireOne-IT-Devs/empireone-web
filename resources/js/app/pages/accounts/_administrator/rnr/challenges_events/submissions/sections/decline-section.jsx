@@ -57,7 +57,9 @@ export default function DeclineSection({ submission, onClose }) {
             setAlert({
                 type: "success",
                 title: "Submission declined",
-                message: `${activeSubmission.employee?.name ?? "Employee"}'s submission was declined.`,
+                message: activeSubmission.employees?.length
+                    ? `Team proof was declined for ${activeSubmission.employees.length} members.`
+                    : `${activeSubmission.employee?.name ?? "Employee"}'s submission was declined.`,
                 open: true,
             }),
         );

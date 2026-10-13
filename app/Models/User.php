@@ -14,6 +14,7 @@ use App\Models\Account\AccountWorkingExperience;
 use App\Models\ER\ERLeader;
 use App\Models\ER\ERPerformanceEvaluationForm;
 use App\Models\ER\ERSubordinate;
+use App\Models\Engagement\EngagementRewardChallengeParticipant;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -110,6 +111,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function skills(): HasMany
     {
         return $this->hasMany(AccountSkills::class);
+    }
+
+    public function challengeParticipations(): HasMany
+    {
+        return $this->hasMany(EngagementRewardChallengeParticipant::class, 'user_id', 'id');
     }
 
     public function cover_letter(): HasOne

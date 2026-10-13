@@ -1,0 +1,22 @@
+### Phase 3: Separate team review and award points to leaders
+
+- **Timestamp:** 2026-10-13 20:19 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead + ⚙️ Backend + 🖥️ Frontend + 🎨 UI/UX + 🧪 QA
+- **Files Modified/Created:**
+  - `database/migrations/2026_10_13_000001_add_team_points_awarded_to_team_submissions.php` — Added reversible storage for challenge points credited to the submitting leader.
+  - `app/Models/Engagement/EngagementRewardChallengeTeamSubmission.php` — Added the team award field and integer cast.
+  - `app/Models/Engagement/EngagementRewardChallengeParticipant.php` — Added the team membership relation used to prevent member challenge-point awards.
+  - `app/Services/ChallengeCompletionService.php` — Completes team-member participation without awarding challenge points to members.
+  - `app/Services/ChallengeTeamSubmissionService.php` — Awards the challenge points to the submitting leader once; daily teams receive them only after all members complete the required days.
+  - `app/Http/Resources/Engagement/EngagementRewardChallengeTeamSubmissionResource.php` — Exposes awarded points and daily-challenge metadata for review.
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` — Returns team-proof status for leaders and includes team awards in point history, totals, profiles, reports, and exports.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx` — Added separate Individual and Team review filters and leader-only point labeling.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/proof-section.jsx` — Clarified that team challenge rewards go to the leader only.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/team-submission-section.jsx` — Shows pending/approved/declined team-proof notices and prevents duplicate submissions while locked.
+  - `resources/js/app/pages/accounts/_employee/rnr/my_profile/sections/points-summary-section.jsx` — Labels team award history entries as team submissions.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` — Covers leader-only point awards, pending submission status, daily completion awards, and migration rollback.
+- **Issues Encountered:** Team points were previously awarded through each member’s participant record, and the UI lacked the leader’s team-proof status.
+- **Resolution:** Stored team awards separately against the team submission and added them to leader aggregates while keeping member challenge points at zero. Added server-backed submission status and separate review filters.
+- **QA Checklist Result:** ✅ Focused challenge suite passes (33 tests). ✅ PHP syntax checks pass for all changed backend files. ✅ Babel parser accepts all changed JSX files. ✅ Regression assertions confirm members receive zero challenge points, the leader receives the award, pending team submissions are reported as locked, and daily team awards occur only after completion. ✅ No migration, build, or destructive command was run. ✅ Keyboard and responsive behavior are code-level checked; browser verification remains outstanding.
+- **Next Steps:** Run the additive migration through the normal deployment process, then verify the modal and review filters in a browser.

@@ -29,6 +29,7 @@ import {
     leave_engagement_reward_challenge_thunk,
     submit_engagement_reward_challenge_proof_thunk,
     submit_engagement_reward_challenge_daily_proof_thunk,
+    submit_engagement_reward_challenge_team_proof_thunk,
     get_engagement_reward_challenge_my_daily_logs_thunk,
     get_engagement_reward_challenge_submissions_thunk,
     get_engagement_reward_challenge_submission_stats_thunk,
@@ -73,6 +74,7 @@ export {
     leave_engagement_reward_challenge_thunk,
     submit_engagement_reward_challenge_proof_thunk,
     submit_engagement_reward_challenge_daily_proof_thunk,
+    submit_engagement_reward_challenge_team_proof_thunk,
     get_engagement_reward_challenge_my_daily_logs_thunk,
     get_engagement_reward_challenge_submissions_thunk,
     get_engagement_reward_challenge_submission_stats_thunk,
@@ -182,6 +184,7 @@ const engagementSlice = createSlice({
         rewardChallengeJoiningId: null,
         rewardChallengeLeavingId: null,
         rewardChallengeSubmittingId: null,
+        rewardChallengeTeamSubmittingId: null,
         rewardChallengeSurveys: {},
         rewardChallengeDailyLogs: { required_days: null, completed_days: 0, logs: [] },
         rewardChallengeDailyLogsLoading: false,
@@ -807,6 +810,17 @@ const engagementSlice = createSlice({
             })
             .addCase(submit_engagement_reward_challenge_daily_proof_thunk.rejected, (state) => {
                 state.rewardChallengeSubmittingId = null;
+            });
+
+        builder
+            .addCase(submit_engagement_reward_challenge_team_proof_thunk.pending, (state, action) => {
+                state.rewardChallengeTeamSubmittingId = action.meta.arg?.id ?? null;
+            })
+            .addCase(submit_engagement_reward_challenge_team_proof_thunk.fulfilled, (state) => {
+                state.rewardChallengeTeamSubmittingId = null;
+            })
+            .addCase(submit_engagement_reward_challenge_team_proof_thunk.rejected, (state) => {
+                state.rewardChallengeTeamSubmittingId = null;
             });
 
         builder
