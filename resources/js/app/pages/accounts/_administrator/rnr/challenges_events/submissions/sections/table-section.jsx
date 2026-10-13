@@ -73,7 +73,7 @@ export default function TableSection({ filters }) {
             setAlert({
                 type: "success",
                 title: "Submission approved",
-                message: `+${submission.challenge.points} pts awarded to ${submission.employee.name}.`,
+                message: `+${submission.challenge?.points ?? 0} pts awarded to ${submission.employee?.name ?? "the employee"}.`,
                 open: true,
             }),
         );
@@ -132,6 +132,8 @@ export default function TableSection({ filters }) {
                         </tr>
                     )}
                     {challengeSubmissions.map((submission) => {
+                        const employee = submission.employee ?? {};
+                        const challenge = submission.challenge ?? {};
                         const badge =
                             STATUS_BADGE[submission.status] ??
                             STATUS_BADGE.submitted;
@@ -142,36 +144,36 @@ export default function TableSection({ filters }) {
                             <tr key={submission.id}>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
-                                        {submission.employee.eoid ?? "-"}
+                                        {employee.eoid ?? "-"}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
-                                        {submission.employee.name}
+                                        {employee.name ?? "Unknown employee"}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
-                                        {submission.challenge.title}
+                                        {challenge.title ?? "Challenge unavailable"}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="text-sm text-gray-700">
-                                        {submission.employee.department_name ?? "-"}
+                                        {employee.department_name ?? "-"}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="text-sm text-gray-700">
-                                        {submission.employee.account_name ?? "-"}
+                                        {employee.account_name ?? "-"}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-yellow-500">
-                                        +{submission.challenge.points}
+                                        +{challenge.points ?? 0}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-400">
-                                    {submission.employee.email}
+                                    {employee.email ?? "-"}
                                 </td>
                               
                                 <td className="px-4 py-3 text-xs text-gray-500">

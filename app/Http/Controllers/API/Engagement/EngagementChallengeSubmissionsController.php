@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Engagement\EngagementRewardChallengeTeamSubmissionResource;
 use App\Models\Engagement\EngagementRewardChallengeDailyLog;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
-use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
 use App\Services\ChallengeCompletionService;
-use App\Services\ChallengeTeamSubmissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class EngagementChallengeSubmissionsController extends Controller
@@ -42,36 +38,6 @@ class EngagementChallengeSubmissionsController extends Controller
             'status' => 'success',
             'data' => $this->buildSubmissionsCollection($validated),
         ]);
-    }
-
-    public function teamIndex(Request $request)
-    {
-        Gate::authorize('viewAny', EngagementRewardChallengeTeamSubmission::class);
-
-        $validated = $request->validate([
-            'status' => ['nullable', 'string', 'in:submitted,approved,declined'],
-            'challenge_id' => ['nullable', 'integer', 'exists:engagement_reward_challenges,id'],
-            'location_id' => ['nullable', 'integer', 'exists:locations,id'],
-            'search' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        $search = trim((string) ($validated['search'] ?? ''));
-        $submissions = EngagementRewardChallengeTeamSubmission::query()
-            ->whereHas('challenge', fn ($query) => $query->withTrashed()->where('type', 'Team'))
-            ->with([
-                'challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'survey_required']),
-                'members.participant',
-            ])
-            ->when($validated['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
-            ->when($validated['challenge_id'] ?? null, fn ($query, $challengeId) => $query->where('reward_challenge_id', $challengeId))
-            ->when($validated['location_id'] ?? null, fn ($query, $locationId) => $query->whereHas('members', fn ($memberQuery) => $memberQuery->where('location_id', $locationId)))
-            ->when($search !== '', fn ($query) => $query->whereHas('members', fn ($memberQuery) => $memberQuery
-                ->where('full_name', 'like', "%{$search}%")
-                ->orWhere('eoid', 'like', "%{$search}%")))
-            ->latest('submitted_at')
-            ->get();
-
-        return EngagementRewardChallengeTeamSubmissionResource::collection($submissions);
     }
 
     public function export(Request $request)
@@ -113,19 +79,12 @@ class EngagementChallengeSubmissionsController extends Controller
     public function stats(): JsonResponse
     {
         $participantCounts = EngagementRewardChallengeParticipant::query()
-            ->whereHas('challenge', fn ($query) => $query->withTrashed()->where('type', 'Individual'))
             ->whereNotNull('submitted_at')
             ->selectRaw("CASE WHEN proof_approved_at IS NOT NULL THEN 'approved' ELSE status END as review_status, count(*) as total")
             ->groupBy('review_status')
             ->pluck('total', 'review_status');
 
         $dailyLogCounts = EngagementRewardChallengeDailyLog::query()
-            ->whereNull('team_submission_id')
-            ->whereHas('participant.challenge', fn ($query) => $query->withTrashed()->where('type', 'Individual'))
-            ->selectRaw('status, count(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
-        $teamCounts = EngagementRewardChallengeTeamSubmission::query()
             ->selectRaw('status, count(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -133,9 +92,9 @@ class EngagementChallengeSubmissionsController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                'pending' => $participantCounts->get('submitted', 0) + $dailyLogCounts->get('submitted', 0) + $teamCounts->get('submitted', 0),
-                'approved' => $participantCounts->get('approved', 0) + $dailyLogCounts->get('approved', 0) + $teamCounts->get('approved', 0),
-                'rejected' => $participantCounts->get('declined', 0) + $dailyLogCounts->get('declined', 0) + $teamCounts->get('declined', 0),
+                'pending' => $participantCounts->get('submitted', 0) + $dailyLogCounts->get('submitted', 0),
+                'approved' => $participantCounts->get('approved', 0) + $dailyLogCounts->get('approved', 0),
+                'rejected' => $participantCounts->get('declined', 0) + $dailyLogCounts->get('declined', 0),
             ],
         ]);
     }
@@ -144,20 +103,8 @@ class EngagementChallengeSubmissionsController extends Controller
      * Approve a submission (single-proof participant or one daily log) and
      * award points once the challenge requirement is actually met.
      */
-    public function approve(string $id, ChallengeTeamSubmissionService $teamSubmissionService): JsonResponse
+    public function approve(string $id): JsonResponse
     {
-        if (str_starts_with($id, 'team-')) {
-            $submission = EngagementRewardChallengeTeamSubmission::query()->findOrFail((int) substr($id, 5));
-            Gate::authorize('review', $submission);
-            $submission = $teamSubmissionService->approve($submission, auth()->user());
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Team submission approved for all included team members.',
-                'data' => (new EngagementRewardChallengeTeamSubmissionResource($submission))->resolve(request()),
-            ]);
-        }
-
         if (str_starts_with($id, 'daily-')) {
             return $this->approveDailyLog((int) substr($id, 6));
         }
@@ -200,7 +147,7 @@ class EngagementChallengeSubmissionsController extends Controller
     /**
      * Decline a submission (single-proof participant or one daily log) with an optional reason.
      */
-    public function decline(Request $request, string $id, ChallengeTeamSubmissionService $teamSubmissionService): JsonResponse
+    public function decline(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
             'review_note' => ['nullable', 'string', 'max:1000'],
@@ -208,18 +155,6 @@ class EngagementChallengeSubmissionsController extends Controller
 
         if (str_starts_with($id, 'daily-')) {
             return $this->declineDailyLog((int) substr($id, 6), $validated['review_note'] ?? null);
-        }
-
-        if (str_starts_with($id, 'team-')) {
-            $submission = EngagementRewardChallengeTeamSubmission::query()->findOrFail((int) substr($id, 5));
-            Gate::authorize('review', $submission);
-            $submission = $teamSubmissionService->decline($submission, $request->user(), $validated['review_note'] ?? null);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Team submission declined.',
-                'data' => (new EngagementRewardChallengeTeamSubmissionResource($submission))->resolve($request),
-            ]);
         }
 
         return DB::transaction(function () use ($id, $validated) {
@@ -360,7 +295,6 @@ class EngagementChallengeSubmissionsController extends Controller
                             ->with(['location:id,name', 'department:id,name', 'account:id,name']),
                     ]),
             ])
-            ->whereHas('challenge', fn ($query) => $query->withTrashed()->where('type', 'Individual'))
             ->whereNotNull('submitted_at')
             ->when($status, fn ($query, $value) => $value === 'approved'
                 ? $query->where(fn ($q) => $q->where('status', 'approved')->orWhereNotNull('proof_approved_at'))
@@ -385,8 +319,6 @@ class EngagementChallengeSubmissionsController extends Controller
                             ->with(['location:id,name', 'department:id,name', 'account:id,name']),
                     ]),
             ])
-            ->whereNull('team_submission_id')
-            ->whereHas('participant.challenge', fn ($query) => $query->withTrashed()->where('type', 'Individual'))
             ->when($status, fn ($query, $value) => $query->where('status', $value))
             ->when($challengeId, fn ($query, $value) => $query->whereHas('participant', fn ($participantQuery) => $participantQuery->where('reward_challenge_id', $value)))
             ->when($locationId, fn ($query, $value) => $query->whereHas('participant.user.account_employee', fn ($locationQuery) => $locationQuery->where('location_id', $value)))

@@ -203,22 +203,6 @@ export async function get_reward_challenge_submissions_service(params = {}) {
     });
 }
 
-export async function get_reward_challenge_team_submissions_service(params = {}) {
-    return await axios.get("/api/engagement/reward-challenge-team-submissions", {
-        params,
-    });
-}
-
-export async function submit_reward_challenge_team_proof_service(id, photo, challengeDescription) {
-    const formData = new FormData();
-    formData.append("photo", photo);
-    formData.append("challenge_description", challengeDescription);
-
-    return await axios.post(`/api/engagement/reward-challenges/${id}/submit-team`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
-}
-
 export async function get_reward_challenge_submission_stats_service() {
     return await axios.get("/api/engagement/reward-challenge-submissions/stats");
 }

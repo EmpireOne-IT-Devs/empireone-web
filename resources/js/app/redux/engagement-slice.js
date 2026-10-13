@@ -31,8 +31,6 @@ import {
     submit_engagement_reward_challenge_daily_proof_thunk,
     get_engagement_reward_challenge_my_daily_logs_thunk,
     get_engagement_reward_challenge_submissions_thunk,
-    get_engagement_reward_challenge_team_submissions_thunk,
-    submit_engagement_reward_challenge_team_proof_thunk,
     get_engagement_reward_challenge_submission_stats_thunk,
     approve_engagement_reward_challenge_submission_thunk,
     decline_engagement_reward_challenge_submission_thunk,
@@ -77,8 +75,6 @@ export {
     submit_engagement_reward_challenge_daily_proof_thunk,
     get_engagement_reward_challenge_my_daily_logs_thunk,
     get_engagement_reward_challenge_submissions_thunk,
-    get_engagement_reward_challenge_team_submissions_thunk,
-    submit_engagement_reward_challenge_team_proof_thunk,
     get_engagement_reward_challenge_submission_stats_thunk,
     approve_engagement_reward_challenge_submission_thunk,
     decline_engagement_reward_challenge_submission_thunk,
@@ -183,7 +179,6 @@ const engagementSlice = createSlice({
         myRewardChallenges: [],
         myRewardChallengesLoading: false,
         myRewardChallengesError: null,
-        isChallengeLeader: false,
         rewardChallengeJoiningId: null,
         rewardChallengeLeavingId: null,
         rewardChallengeSubmittingId: null,
@@ -196,10 +191,6 @@ const engagementSlice = createSlice({
         challengeSubmissions: [],
         challengeSubmissionsLoading: false,
         challengeSubmissionsError: null,
-        challengeTeamSubmissions: [],
-        challengeTeamSubmissionsLoading: false,
-        challengeTeamSubmissionsError: null,
-        challengeTeamSubmissionUploading: false,
         challengeSubmissionStats: { pending: 0, approved: 0, rejected: 0 },
         challengeSubmissionApprovingId: null,
         challengeSubmissionDecliningId: null,
@@ -754,12 +745,10 @@ const engagementSlice = createSlice({
             .addCase(get_my_engagement_reward_challenges_thunk.fulfilled, (state, action) => {
                 state.myRewardChallengesLoading = false;
                 state.myRewardChallenges = action.payload?.data ?? [];
-                state.isChallengeLeader = Boolean(action.payload?.is_leader);
             })
             .addCase(get_my_engagement_reward_challenges_thunk.rejected, (state, action) => {
                 state.myRewardChallengesLoading = false;
                 state.myRewardChallengesError = action.payload;
-                state.isChallengeLeader = false;
             })
             .addCase(join_engagement_reward_challenge_thunk.pending, (state, action) => {
                 state.rewardChallengeJoiningId = action.meta.arg;
@@ -846,27 +835,6 @@ const engagementSlice = createSlice({
             .addCase(get_engagement_reward_challenge_submissions_thunk.rejected, (state, action) => {
                 state.challengeSubmissionsLoading = false;
                 state.challengeSubmissionsError = action.payload;
-            })
-            .addCase(get_engagement_reward_challenge_team_submissions_thunk.pending, (state) => {
-                state.challengeTeamSubmissionsLoading = true;
-                state.challengeTeamSubmissionsError = null;
-            })
-            .addCase(get_engagement_reward_challenge_team_submissions_thunk.fulfilled, (state, action) => {
-                state.challengeTeamSubmissionsLoading = false;
-                state.challengeTeamSubmissions = action.payload?.data ?? [];
-            })
-            .addCase(get_engagement_reward_challenge_team_submissions_thunk.rejected, (state, action) => {
-                state.challengeTeamSubmissionsLoading = false;
-                state.challengeTeamSubmissionsError = action.payload;
-            })
-            .addCase(submit_engagement_reward_challenge_team_proof_thunk.pending, (state) => {
-                state.challengeTeamSubmissionUploading = true;
-            })
-            .addCase(submit_engagement_reward_challenge_team_proof_thunk.fulfilled, (state) => {
-                state.challengeTeamSubmissionUploading = false;
-            })
-            .addCase(submit_engagement_reward_challenge_team_proof_thunk.rejected, (state) => {
-                state.challengeTeamSubmissionUploading = false;
             })
             .addCase(get_engagement_reward_challenge_submission_stats_thunk.fulfilled, (state, action) => {
                 state.challengeSubmissionStats = action.payload?.data ?? { pending: 0, approved: 0, rejected: 0 };

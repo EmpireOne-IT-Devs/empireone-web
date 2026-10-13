@@ -201,12 +201,15 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/peer_recognition', 'accounts/_administrator/rnr/peer_recognition/page');
             Route::prefix('challenges_events')->group(function () {
                 Route::redirect('/', '/accounts/administrator/rnr/challenges_events/dashboard');
-                Route::inertia('/dashboard', 'accounts/_administrator/rnr/challenges_events/dashboard/page');
-                Route::inertia('/manage', 'accounts/_administrator/rnr/challenges_events/manage/page');
-                Route::inertia('/manage/participants', 'accounts/_administrator/rnr/challenges_events/manage/participants/page');
-                Route::inertia('/leaderboard', 'accounts/_administrator/rnr/challenges_events/leaderboard/page');
-                Route::inertia('/submissions', 'accounts/_administrator/rnr/challenges_events/submissions/page');
-                Route::inertia('/report', 'accounts/_administrator/rnr/challenges_events/report/page');
+                Route::inertia('/join', 'accounts/_administrator/rnr/challenges_events/join/page');
+                Route::middleware('challenge.management')->group(function () {
+                    Route::inertia('/dashboard', 'accounts/_administrator/rnr/challenges_events/dashboard/page');
+                    Route::inertia('/manage', 'accounts/_administrator/rnr/challenges_events/manage/page');
+                    Route::inertia('/manage/participants', 'accounts/_administrator/rnr/challenges_events/manage/participants/page');
+                    Route::inertia('/leaderboard', 'accounts/_administrator/rnr/challenges_events/leaderboard/page');
+                    Route::inertia('/submissions', 'accounts/_administrator/rnr/challenges_events/submissions/page');
+                    Route::inertia('/report', 'accounts/_administrator/rnr/challenges_events/report/page');
+                });
             });
             Route::inertia('/employee_profiles', 'accounts/_administrator/rnr/employee_profiles/page');
             Route::inertia('/my_profile', 'accounts/_administrator/rnr/my_profile/page');

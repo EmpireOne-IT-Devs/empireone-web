@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
         $middleware->alias([
+            'challenge.management' => \App\Http\Middleware\EnsureChallengeManagementAccess::class,
             'info.complete' => \App\Http\Middleware\EnsureAccountEmployeeComplete::class,
             'role.redirect' => \App\Http\Middleware\RedirectByRole::class,
         ]);

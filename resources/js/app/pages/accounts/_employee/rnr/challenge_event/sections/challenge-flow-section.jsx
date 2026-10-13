@@ -147,94 +147,63 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                             </div>
                         )}
 
-                        {challenge.type === "Team" && challenge.is_joined ? (
-                            <>
-                                <ChallengeFlowProgressSection
-                                    currentStep={currentStep}
-                                    isDeclined={isDeclined}
-                                    challenge={challenge}
-                                />
-                                <div className="rounded-xl bg-indigo-50 p-4 text-sm text-indigo-800">
-                                    <p className="font-semibold">Your team leader submits the shared proof.</p>
-                                    <p className="mt-1">
-                                        {challenge.is_daily_challenge
-                                            ? `${challenge.completed_days ?? 0} of ${challenge.required_days ?? challenge.duration_days} required days have been approved.`
-                                            : challenge.participation_status === "approved"
-                                                ? "The team challenge has been approved."
-                                                : challenge.participation_status === "declined"
-                                                    ? "The previous shared proof was declined. Your leader may resubmit it."
-                                                    : challenge.participation_status === "submitted" || challenge.participation_status === "pending_survey"
-                                                        ? "The shared proof is waiting for review."
-                                                        : "Your leader can submit the team's shared proof when ready."}
-                                    </p>
-                                </div>
-                                <div className="flex justify-end">
-                                    <Button type="button" variant="light" outlined onClick={handleClose}>
-                                        Close
-                                    </Button>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <ChallengeFlowProgressSection
-                                    currentStep={currentStep}
-                                    isDeclined={isDeclined}
-                                    challenge={challenge}
-                                />
+                        <ChallengeFlowProgressSection
+                            currentStep={currentStep}
+                            isDeclined={isDeclined}
+                            challenge={challenge}
+                        />
 
-                                <ChallengeGuideSection
-                                    challenge={challenge}
-                                    defaultExpanded={currentStep === 0}
-                                />
+                        <ChallengeGuideSection
+                            challenge={challenge}
+                            defaultExpanded={currentStep === 0}
+                        />
 
-                                {currentStep === 0 && preJoinStage === "details" && (
-                                    <ChallengeFlowDetailsSection
-                                        challenge={challenge}
-                                        onClose={handleClose}
-                                        onJoinClick={() => setPreJoinStage("rules")}
-                                    />
-                                )}
+                        {currentStep === 0 && preJoinStage === "details" && (
+                            <ChallengeFlowDetailsSection
+                                challenge={challenge}
+                                onClose={handleClose}
+                                onJoinClick={() => setPreJoinStage("rules")}
+                            />
+                        )}
 
-                                {currentStep === 0 && preJoinStage === "rules" && (
-                                    <ChallengeFlowRulesSection
-                                        challenge={challenge}
-                                        joining={joining}
-                                        onBack={() => setPreJoinStage("details")}
-                                        onConfirm={handleJoin}
-                                    />
-                                )}
+                        {currentStep === 0 && preJoinStage === "rules" && (
+                            <ChallengeFlowRulesSection
+                                challenge={challenge}
+                                joining={joining}
+                                onBack={() => setPreJoinStage("details")}
+                                onConfirm={handleJoin}
+                            />
+                        )}
 
-                                {currentStep === 1 && justJoined && (
-                                    <ChallengeFlowNextStepsSection
-                                        challenge={challenge}
-                                        onBack={handleClose}
-                                        onStart={() => setJustJoined(false)}
-                                    />
-                                )}
+                        {currentStep === 1 && justJoined && (
+                            <ChallengeFlowNextStepsSection
+                                challenge={challenge}
+                                onBack={handleClose}
+                                onStart={() => setJustJoined(false)}
+                            />
+                        )}
 
-                                {currentStep === 1 && !justJoined && (
-                                    <ChallengeFlowSubmitSection
-                                        challenge={challenge}
-                                        isDeclined={isDeclined}
-                                        isOpen={isOpen}
-                                        onClose={handleClose}
-                                    />
-                                )}
+                        {currentStep === 1 && !justJoined && (
+                            <ChallengeFlowSubmitSection
+                                challenge={challenge}
+                                isDeclined={isDeclined}
+                                isOpen={isOpen}
+                                onClose={handleClose}
+                            />
+                        )}
 
-                                {currentStep === 2 && (
-                                    <ChallengeFlowSubmittedSection
-                                        challenge={challenge}
-                                        onClose={handleClose}
-                                    />
-                                )}
+                        {currentStep === 2 && (
+                            <ChallengeFlowSubmittedSection
+                                challenge={challenge}
+                                onClose={handleClose}
+                            />
+                        )}
 
-                                {currentStep === 3 && (
-                                    <ChallengeFlowApprovedSection
-                                        challenge={challenge}
-                                        onClose={handleClose}
-                                    />
-                                )}
-                            </>
+                        {currentStep === 3 && (
+                            <ChallengeFlowApprovedSection
+                                challenge={challenge}
+                                onClose={handleClose}
+                            />
                         )}
                     </>
                 )}
