@@ -258,9 +258,13 @@ class ChallengeTeamSubmissionService
         }
     }
 
-    public function approve(EngagementRewardChallengeTeamSubmission $submission, User $reviewer): EngagementRewardChallengeTeamSubmission
+    public function approve(
+        EngagementRewardChallengeTeamSubmission $submission,
+        User $reviewer,
+        int $bonusPoints = 0,
+    ): EngagementRewardChallengeTeamSubmission
     {
-        return DB::transaction(function () use ($submission, $reviewer) {
+        return DB::transaction(function () use ($submission, $reviewer, $bonusPoints) {
             $submission = EngagementRewardChallengeTeamSubmission::query()
                 ->lockForUpdate()
                 ->findOrFail($submission->id);
@@ -331,16 +335,19 @@ class ChallengeTeamSubmissionService
             $alreadyAwarded = EngagementRewardChallengeTeamSubmission::query()
                 ->where('reward_challenge_id', $submission->reward_challenge_id)
                 ->where('leader_id', $submission->leader_id)
-                ->where('team_points_awarded', '>', 0)
+                ->where('base_points_awarded', '>', 0)
                 ->exists();
+            $basePointsAwarded = (
+                ! $submission->challenge->isDailyChallenge() || $allDailyProofsComplete
+            ) && ! $alreadyAwarded
+                ? (int) $submission->challenge->points
+                : 0;
 
             $submission->update([
                 'status' => 'approved',
-                'team_points_awarded' => (
-                    ! $submission->challenge->isDailyChallenge() || $allDailyProofsComplete
-                ) && ! $alreadyAwarded
-                    ? $submission->challenge->points
-                    : 0,
+                'base_points_awarded' => $basePointsAwarded,
+                'bonus_points_awarded' => $bonusPoints,
+                'team_points_awarded' => $basePointsAwarded + $bonusPoints,
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'review_note' => null,

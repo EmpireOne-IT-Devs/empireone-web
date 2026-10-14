@@ -20,6 +20,54 @@ const STATUS_BADGE = {
     declined: { label: "Rejected", variant: "danger" },
 };
 
+function SubmissionPoints({ submission, challenge }) {
+    const isTeam = submission.employees?.length > 0;
+    let amount;
+    let breakdown;
+
+    if (submission.individual_daily_log && submission.status === "approved") {
+        const bonusPoints = Number(submission.bonus_points) || 0;
+        amount = `+${bonusPoints}`;
+        breakdown = `${bonusPoints} bonus approved · base points on completion`;
+    } else if (
+        !isTeam &&
+        submission.participation_status === "pending_survey"
+    ) {
+        const basePoints = Number(challenge.points) || 0;
+        const bonusPoints = Number(submission.bonus_points) || 0;
+        amount = `+${basePoints + bonusPoints}`;
+        breakdown = `${basePoints} base + ${bonusPoints} bonus · pending survey`;
+    } else if (submission.status === "approved") {
+        const basePoints = Number(
+            submission.challenge_points_awarded ??
+                submission.base_points_awarded ??
+                0,
+        ) || 0;
+        const bonusPoints = Number(
+            submission.bonus_points_awarded ?? submission.bonus_points ?? 0,
+        ) || 0;
+        const totalPoints = Number(
+            isTeam ? submission.team_points_awarded : submission.points_awarded,
+        );
+        amount = `+${Number.isFinite(totalPoints) ? totalPoints : basePoints + bonusPoints}`;
+        breakdown = `${basePoints} base + ${bonusPoints} bonus`;
+    } else {
+        const basePoints = Number(challenge.points) || 0;
+        amount = `+${basePoints}`;
+        breakdown = `${basePoints} base + bonus on approval`;
+    }
+
+    return (
+        <div>
+            <p className="text-sm font-semibold text-green-600">{amount}</p>
+            <p className="text-xs text-gray-400">{breakdown}</p>
+            {isTeam && (
+                <p className="text-xs text-gray-500">Awarded to leader only</p>
+            )}
+        </div>
+    );
+}
+
 export default function TableSection({ filters }) {
     const dispatch = useDispatch();
     const {
@@ -71,9 +119,12 @@ export default function TableSection({ filters }) {
         return () => clearTimeout(debounceId);
     }, [dispatch, requestParams]);
 
-    const handleApprove = async (submission) => {
+    const handleApprove = async (submission, bonusPoints) => {
         const result = await dispatch(
-            approve_engagement_reward_challenge_submission_thunk(submission.id),
+            approve_engagement_reward_challenge_submission_thunk({
+                id: submission.id,
+                bonus_points: bonusPoints,
+            }),
         );
 
         if (
@@ -89,7 +140,7 @@ export default function TableSection({ filters }) {
                     open: true,
                 }),
             );
-            return;
+            return false;
         }
 
         dispatch(get_engagement_reward_challenge_submission_stats_thunk());
@@ -99,13 +150,14 @@ export default function TableSection({ filters }) {
                 type: "success",
                 title: "Submission approved",
                 message: submission.employees?.length
-                    ? result.payload?.data?.team_points_awarded > 0
-                        ? `Team proof approved for ${submission.employees.length} members. +${result.payload.data.team_points_awarded} challenge points awarded to the leader only.`
-                        : `Team proof approved for ${submission.employees.length} members. Challenge points will be awarded to the leader when the full team challenge is complete.`
-                    : `+${submission.challenge?.points ?? 0} pts awarded to ${submission.employee?.name ?? "the employee"}.`,
+                    ? `Team proof approved for ${submission.employees.length} members. +${result.payload?.data?.team_points_awarded ?? 0} total challenge points (including bonus) awarded to the leader only.`
+                    : result.payload?.data?.participation_status === "pending_survey"
+                      ? `Proof approved. Challenge points will be awarded after the required survey is complete.`
+                      : `+${result.payload?.data?.points_awarded ?? 0} total points awarded to ${submission.employee?.name ?? "the employee"}.`,
                 open: true,
             }),
         );
+        return true;
     };
 
     const handleDeclineClose = () => {
@@ -192,9 +244,6 @@ export default function TableSection({ filters }) {
                         const badge =
                             STATUS_BADGE[submission.status] ??
                             STATUS_BADGE.submitted;
-                        const approving =
-                            challengeSubmissionApprovingId === submission.id;
-
                         return (
                             <tr key={submission.id}>
                                 <td className="px-4 py-3">
@@ -228,16 +277,10 @@ export default function TableSection({ filters }) {
                                     </p>
                                 </td>
                                 <td className="px-4 py-3">
-                                    <p className="font-medium text-yellow-500">
-                                        {submission.employees?.length > 0 && (
-                                            submission.team_points_awarded > 0
-                                                ? `+${submission.team_points_awarded} to leader`
-                                                : challenge.is_daily_challenge
-                                                  ? `${challenge.points ?? 0} on completion`
-                                                  : `+${challenge.points ?? 0} to leader`
-                                        )}
-                                        {!submission.employees?.length && `+${challenge.points ?? 0}`}
-                                    </p>
+                                    <SubmissionPoints
+                                        submission={submission}
+                                        challenge={challenge}
+                                    />
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-400">
                                     {employee.email ?? "-"}
@@ -307,7 +350,7 @@ export default function TableSection({ filters }) {
                                             <Eye className="mr-1 h-3.5 w-3.5" />{" "}
                                             View
                                         </Button>
-                                        {submission.status === "submitted" && (
+                                        {/* {submission.status === "submitted" && (
                                             <>
                                                 <Button
                                                     type="button"
@@ -327,19 +370,15 @@ export default function TableSection({ filters }) {
                                                     type="button"
                                                     variant="success"
                                                     size="sm"
-                                                    loading={approving}
-                                                    disabled={approving}
                                                     onClick={() =>
-                                                        handleApprove(
-                                                            submission,
-                                                        )
+                                                        setProofTarget(submission)
                                                     }
                                                 >
                                                     <Check className="mr-1 h-3.5 w-3.5" />{" "}
                                                     Approve
                                                 </Button>
                                             </>
-                                        )}
+                                        )} */}
                                     </div>
                                 </td>
                             </tr>

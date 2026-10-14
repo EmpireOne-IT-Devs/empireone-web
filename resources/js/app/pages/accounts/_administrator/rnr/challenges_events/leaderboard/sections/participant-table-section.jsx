@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
 import moment from "moment";
 import Table from "@/app/_components/table";
 import Skeleton from "@/app/_components/skeleton";
+import Badge from "@/app/_components/badge";
 import { CheckCircle2, Medal, Trophy, Circle } from "lucide-react";
 
-import { get_engagement_reward_challenge_participants_thunk } from "@/app/redux/engagement-thunk";
 
 const AVATAR_COLORS = [
     "bg-orange-500",
@@ -35,7 +35,9 @@ function getAvatarColor(seed = "") {
     return AVATAR_COLORS[index % AVATAR_COLORS.length];
 }
 
-function formatDuration(ms) {
+function formatDuration(joinedAt, submittedAt) {
+    if (!joinedAt || !submittedAt) return "—";
+    const ms = new Date(submittedAt).getTime() - new Date(joinedAt).getTime();
     if (!Number.isFinite(ms) || ms < 0) return "—";
 
     const minutes = Math.round(ms / 60000);
@@ -48,50 +50,9 @@ function formatDuration(ms) {
     return `${days}d ${hours % 24}h`;
 }
 
-/**
- * Ranks approved participants by how fast they finished (submitted_at - joined_at),
- * fastest first. Participants who haven't completed yet are appended afterwards,
- * most recently active first.
- */
-function rankParticipants(participants) {
-    const withDuration = participants.map((participant) => {
-        const joinedAt = participant.joined_at
-            ? new Date(participant.joined_at)
-            : null;
-        const submittedAt = participant.submitted_at
-            ? new Date(participant.submitted_at)
-            : null;
-        const durationMs =
-            participant.status === "approved" && joinedAt && submittedAt
-                ? submittedAt.getTime() - joinedAt.getTime()
-                : null;
-
-        return { ...participant, durationMs };
-    });
-
-    const completed = withDuration
-        .filter((p) => p.durationMs !== null)
-        .sort((a, b) => a.durationMs - b.durationMs);
-
-    const inProgress = withDuration
-        .filter((p) => p.durationMs === null)
-        .sort((a, b) => {
-            const aTime = new Date(
-                a.submitted_at ?? a.joined_at ?? 0,
-            ).getTime();
-            const bTime = new Date(
-                b.submitted_at ?? b.joined_at ?? 0,
-            ).getTime();
-            return bTime - aTime;
-        });
-
-    return [...completed, ...inProgress].map((participant, index) => ({
-        ...participant,
-        rank: index + 1,
-    }));
-}
-
 function RankCell({ rank }) {
+    if (!rank) return <span className="text-sm text-gray-400">—</span>;
+
     if (rank <= 3) {
         const medalColor =
             rank === 1
@@ -113,7 +74,7 @@ function RankCell({ rank }) {
     return <span className="text-lg font-bold text-black">#{rank}</span>;
 }
 
-function ParticipantCell({ name, email }) {
+function ParticipantCell({ name, email, isWinner, winnerCount }) {
     return (
         <div className="flex items-center gap-3 min-w-0">
             <div
@@ -126,6 +87,14 @@ function ParticipantCell({ name, email }) {
                     {name}
                 </div>
                 <div className="truncate text-xs text-gray-400">{email}</div>
+                {isWinner && (
+                    <Badge
+                        label={winnerCount > 1 ? "Co-winner" : "Winner"}
+                        variant="warning"
+                        outlined
+                        className="mt-1"
+                    />
+                )}
             </div>
         </div>
     );
@@ -167,30 +136,33 @@ function VerifiedCell({ verified }) {
     );
 }
 
-export default function ParticipantTableSection({ challengeId, limit = 10 }) {
-    const dispatch = useDispatch();
+export default function ParticipantTableSection({
+    submissionType = "individual",
+    limit = 10,
+}) {
     const {
-        rewardChallengeParticipants = [],
-        rewardChallengeParticipantsChallenge: challenge,
+        rewardChallengeIndividualParticipants = [],
+        rewardChallengeTeamSubmissions = [],
         rewardChallengeParticipantsLoading,
         rewardChallengeParticipantsError,
     } = useSelector((state) => state.engagement);
 
-    useEffect(() => {
-        if (!challengeId) return;
-        dispatch(
-            get_engagement_reward_challenge_participants_thunk(challengeId),
-        );
-    }, [dispatch, challengeId]);
+    const participants =
+        submissionType === "team"
+            ? rewardChallengeTeamSubmissions
+            : rewardChallengeIndividualParticipants;
 
     const ranked = useMemo(
-        () => rankParticipants(rewardChallengeParticipants).slice(0, limit),
-        [rewardChallengeParticipants, limit],
+        () => participants.slice(0, limit),
+        [participants, limit],
     );
 
     const columns = [
         { header: "RANK", accessor: "rank" },
-        { header: "PARTICIPANT", accessor: "participant" },
+        {
+            header: submissionType === "team" ? "TEAM" : "PARTICIPANT",
+            accessor: "participant",
+        },
         { header: "DEPARTMENT", accessor: "department" },
         { header: "POINTS", accessor: "points" },
         { header: "COMPLETED", accessor: "completed" },
@@ -204,12 +176,11 @@ export default function ParticipantTableSection({ challengeId, limit = 10 }) {
     const data = ranked.map((participant) => {
         const isApproved = participant.status === "approved";
         const isSubmitted = participant.status === "submitted";
-        const points =
-            participant.points_awarded ??
-            (isApproved ? (challenge?.points ?? 0) : 0);
+        const isDeclined = participant.status === "declined";
+        const points = isApproved ? Number(participant.points_awarded) || 0 : 0;
         const progress = isApproved ? 100 : isSubmitted ? 90 : 0;
         const badge =
-            participant.rank <= 3 && isApproved
+            participant.rank && participant.rank <= 3 && isApproved
                 ? "🏅"
                 : isApproved
                   ? "💪"
@@ -222,6 +193,8 @@ export default function ParticipantTableSection({ challengeId, limit = 10 }) {
                 <ParticipantCell
                     name={participant.name}
                     email={participant.email}
+                    isWinner={participant.is_winner}
+                    winnerCount={participant.winner_count}
                 />
             ),
             department: (
@@ -230,9 +203,18 @@ export default function ParticipantTableSection({ challengeId, limit = 10 }) {
                 </span>
             ),
             points: (
-                <span className="text-sm font-semibold text-green-600">
-                    {points}
-                </span>
+                <div>
+                    <span className="text-sm font-semibold text-green-600">
+                        {points}
+                    </span>
+                    {isApproved && (
+                        <p className="text-xs text-gray-400">
+                            {participant.challenge_points_awarded ?? points} base
+                            {" + "}
+                            {participant.bonus_points_awarded ?? 0} bonus
+                        </p>
+                    )}
+                </div>
             ),
             completed: (
                 <span
@@ -244,13 +226,18 @@ export default function ParticipantTableSection({ challengeId, limit = 10 }) {
                           )
                         : isSubmitted
                           ? "Pending Review"
-                          : "In Progress"}
+                          : isDeclined
+                            ? "Declined"
+                            : "In Progress"}
                 </span>
             ),
             duration: (
                 <span className="text-sm text-gray-600">
                     {isApproved
-                        ? formatDuration(participant.durationMs)
+                        ? formatDuration(
+                              participant.joined_at,
+                              participant.submitted_at,
+                          )
                         : "—"}
                 </span>
             ),
@@ -274,10 +261,14 @@ export default function ParticipantTableSection({ challengeId, limit = 10 }) {
                     </div>
                     <div>
                         <h2 className="text-base font-bold text-gray-900">
-                            Challenge Leaderboard
+                            {submissionType === "team"
+                                ? "Team Submission Leaderboard"
+                                : "Individual Submission Leaderboard"}
                         </h2>
                         <p className="text-sm text-gray-500">
-                            Participants ranked by fastest completion time
+                            {submissionType === "team"
+                                ? "Teams ranked by approved challenge points, including bonuses"
+                                : "Participants ranked by approved challenge points, including bonuses"}
                         </p>
                     </div>
                 </div>
@@ -293,7 +284,9 @@ export default function ParticipantTableSection({ challengeId, limit = 10 }) {
                 </div>
             ) : ranked.length === 0 ? (
                 <div className="p-5 text-sm text-gray-500">
-                    No participants have joined this challenge yet.
+                    {submissionType === "team"
+                        ? "No team submissions have been recorded for this challenge."
+                        : "No individual participants have joined this challenge."}
                 </div>
             ) : (
                 <Table columns={columns} data={data} />

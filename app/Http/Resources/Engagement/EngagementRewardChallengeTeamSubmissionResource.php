@@ -27,7 +27,10 @@ class EngagementRewardChallengeTeamSubmissionResource extends JsonResource
             'reviewed_at' => $this->reviewed_at?->toDateTimeString(),
             'review_note' => $this->review_note,
             'points_submitted' => $challenge?->points,
+            'base_points_awarded' => (int) $this->base_points_awarded,
+            'bonus_points_awarded' => (int) $this->bonus_points_awarded,
             'team_points_awarded' => (int) $this->team_points_awarded,
+            'total_points_awarded' => (int) $this->team_points_awarded,
             'employee' => $leader ? [
                 'id' => $leader->id,
                 'name' => $leader->name,

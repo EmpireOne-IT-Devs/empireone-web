@@ -1,0 +1,31 @@
+### Phase 1: Bonus points for challenge submissions
+
+- **Timestamp:** 2026-10-14
+- **Mode:** Agent
+- **Persona(s) Active:** ⚙️ Backend + 🖥️ Frontend + 🎨 UI/UX + 🧪 QA
+- **Files Modified/Created:**
+  - `database/migrations/2026_10_14_180000_add_bonus_points_to_challenge_awards.php` — Persist bonus awards and backfill historical team base awards.
+  - `app/Http/Requests/Engagement/ApproveChallengeSubmissionRequest.php` — Validate submitted bonus points as non-negative integers.
+  - `app/Models/Engagement/EngagementRewardChallengeParticipant.php` — Store participant bonus points.
+  - `app/Models/Engagement/EngagementRewardChallengeDailyLog.php` — Store daily proof bonus points.
+  - `app/Models/Engagement/EngagementRewardChallengeTeamSubmission.php` — Store team base, bonus, and total award amounts.
+  - `app/Models/Engagement/EngagementRewardChallenge.php` — Include bonus-point data in challenge participation fields.
+  - `app/Http/Controllers/API/Engagement/EngagementChallengeSubmissionsController.php` — Accept approval bonuses and expose individual/daily award breakdowns.
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` — Include award breakdowns in profile and participant data.
+  - `app/Services/ChallengeCompletionService.php` — Award individual challenge base points plus bonus only when existing completion requirements are met.
+  - `app/Services/ChallengeTeamSubmissionService.php` — Award team base and bonus points to the leader only, with repeat-approval protection.
+  - `app/Http/Resources/Engagement/EngagementRewardChallengeTeamSubmissionResource.php` — Expose team base, bonus, and total awards.
+  - `app/Http/Resources/ChallengeSurveySubmissionResource.php` — Expose individual base, bonus, survey, and total points.
+  - `resources/js/app/services/engagement-service.js` — Send bonus points with approval requests.
+  - `resources/js/app/redux/engagement-thunk.js` — Pass bonus points through the approval thunk.
+  - `resources/js/app/redux/engagement-slice.js` — Track the approval submission identifier.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/proof-section.jsx` — Add validated bonus entry, base/bonus/total preview, and reset bonus state when the modal closes.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx` — Route approval actions through the bonus-aware review modal.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/manage/sections/participants-table-section.jsx` — Use the same bonus-aware review and approval flow.
+  - `resources/js/app/pages/accounts/_employee/rnr/my_profile/sections/points-summary-section.jsx` — Display bonus points separately in the points history.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` — Cover bonus validation, individual/team awards, leader-only team points, repeat approval, and history totals.
+  - `tests/Frontend/challenge-survey.test.mjs` — Cover bonus review UI source behavior and regression cases.
+- **Issues Encountered:** The frontend review-modal test used server-side rendering, but the shared modal intentionally renders through a portal only after mounting in the browser.
+- **Resolution:** Replaced that invalid SSR assertion with focused source assertions for non-negative integer validation, award preview, and resetting bonus state after closing. Backend tests exercise persisted award values and approval behavior.
+- **QA Checklist Result:** ✅ All applicable checks pass. 36 frontend tests pass; 40 backend tests pass (490 assertions); PHP syntax checks and editor diagnostics report no errors. Browser-only modal accessibility/responsive behavior still requires browser verification. The winner-ranking/display work remains Phase 2.
+- **Next Steps:** Phase 2 will implement challenge-specific winner ranking and leaderboard display — awaiting your approval.

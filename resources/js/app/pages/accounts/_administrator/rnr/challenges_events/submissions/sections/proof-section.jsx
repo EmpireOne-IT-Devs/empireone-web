@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Check, X, Award, Clock, FileImage, User, Maximize2, ExternalLink } from "lucide-react";
 import Button from "@/app/_components/button";
+import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import moment from "moment/moment";
 
@@ -15,25 +16,46 @@ export default function ProofSection({
     const [activeSubmission, setActiveSubmission] = useState(submission);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [bonusPoints, setBonusPoints] = useState("0");
+    const [bonusError, setBonusError] = useState("");
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
     useEffect(() => {
-        if (submission) {
-            setActiveSubmission(submission);
+        if (!submission) {
+            setBonusPoints("0");
+            setBonusError("");
+            return;
         }
+
+        if (submission.id !== activeSubmission?.id) {
+            setBonusPoints("0");
+            setBonusError("");
+        }
+        setActiveSubmission(submission);
     }, [submission]);
 
     if (!activeSubmission) return null;
 
     const canReview = activeSubmission.status === "submitted";
     const approving = approvingId === activeSubmission.id;
+    const basePoints = Number(activeSubmission.challenge?.points) || 0;
+    const parsedBonusPoints = Number(bonusPoints);
+    const validBonusPoints =
+        bonusPoints.trim() !== "" &&
+        Number.isInteger(parsedBonusPoints) &&
+        parsedBonusPoints >= 0;
 
     const handleApprove = async () => {
-        await onApprove(activeSubmission);
-        onClose();
+        if (!validBonusPoints) {
+            setBonusError("Enter a whole number of 0 or more.");
+            return;
+        }
+
+        const approved = await onApprove(activeSubmission, parsedBonusPoints);
+        if (approved) onClose();
     };
 
     return (
@@ -170,6 +192,52 @@ export default function ProofSection({
                             </div>
                         </div>
                     </div>
+
+                    {canReview && (
+                        <div className="space-y-4 rounded-lg border border-amber-100 bg-amber-50/50 p-4">
+                            <Input
+                                label="Bonus Points"
+                                name="bonus_points"
+                                type="number"
+                                min="0"
+                                step="1"
+                                value={bonusPoints}
+                                onChange={(event) => {
+                                    setBonusPoints(event.target.value);
+                                    setBonusError("");
+                                }}
+                                error={bonusError}
+                            />
+                            <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                                <div>
+                                    <p className="text-xs text-gray-500">Challenge Points</p>
+                                    <p className="font-semibold text-gray-800">{basePoints}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Bonus Points</p>
+                                    <p className="font-semibold text-amber-700">
+                                        {validBonusPoints ? parsedBonusPoints : "—"}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Total</p>
+                                    <p className="font-bold text-gray-900">
+                                        {validBonusPoints ? basePoints + parsedBonusPoints : "—"}
+                                    </p>
+                                </div>
+                            </div>
+                            {activeSubmission.employees?.length > 0 && (
+                                <p className="text-xs text-gray-500">
+                                    Team challenge and bonus points are awarded to the leader only.
+                                </p>
+                            )}
+                            {activeSubmission.challenge?.is_daily_challenge && (
+                                <p className="text-xs text-gray-500">
+                                    The challenge points are awarded when the required approved days are complete.
+                                </p>
+                            )}
+                        </div>
+                    )}
 
                     {/* Description Section */}
                     <div className="rounded-lg border border-neutral-100 bg-neutral-50 p-3.5">

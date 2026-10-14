@@ -58,6 +58,8 @@ const Profile = (await load("resources/js/app/pages/accounts/_employee/rnr/my_pr
 const Cards = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-card-section.jsx")).default;
 const SurveyTable = await load("resources/js/app/pages/accounts/_administrator/activities/post_event_survey/sections/table-section.jsx");
 const SubmissionTable = (await load("resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx")).default;
+const TopLeaderboard = (await load("resources/js/app/pages/accounts/_administrator/rnr/challenges_events/leaderboard/sections/top-participant-section.jsx")).default;
+const ParticipantLeaderboard = (await load("resources/js/app/pages/accounts/_administrator/rnr/challenges_events/leaderboard/sections/participant-table-section.jsx")).default;
 
 const challenge = {
     id: 12, title: "Wellness", survey_required: true, is_joined: true,
@@ -117,9 +119,12 @@ test("services target the exact challenge and return JSON, not Axios wrappers", 
     adapter((config) => { requests.push(config); return { data: survey }; });
     assert.deepEqual(await services.get_reward_challenge_survey_service(12), { data: survey });
     await services.submit_reward_challenge_survey_service(12, { 1: 5 });
+    await services.approve_reward_challenge_submission_service("team-9", 15);
     assert.equal(requests[0].url, "/api/engagement/reward-challenges/12/survey");
     assert.equal(requests[1].url, "/api/engagement/reward-challenges/12/survey/submit");
     assert.deepEqual(JSON.parse(requests[1].data), { answers: { 1: 5 } });
+    assert.equal(requests[2].url, "/api/engagement/reward-challenge-submissions/team-9/approve");
+    assert.deepEqual(JSON.parse(requests[2].data), { bonus_points: 15 });
 });
 
 test("eligible leaders retain both submission tabs after individual proof is submitted", () => {
@@ -409,7 +414,7 @@ test("points history shows survey reward before final approval and bounds render
 
 test("points history labels team points and identifies the challenge", () => {
     const html = render(Profile, { challengeProfileSummary: {
-        total_points: 100,
+        total_points: 125,
         challenge_history: [{
             id: "team-1",
             challenge_title: "Quarterly Team Challenge",
@@ -417,35 +422,166 @@ test("points history labels team points and identifies the challenge", () => {
             submission_type: "team",
             status: "approved",
             challenge_points_awarded: 100,
-            team_points_awarded: 100,
+            bonus_points_awarded: 25,
+            team_points_awarded: 125,
             survey_points_awarded: 0,
-            total_points_awarded: 100,
+            total_points_awarded: 125,
         }],
     } });
     assert.match(html, /Quarterly Team Challenge/);
     assert.match(html, /Team Submission/);
     assert.match(html, /\+100 Team pts/);
+    assert.match(html, /\+25 Bonus pts/);
     assert.doesNotMatch(html, /challenge pts/);
     assert.match(html, /lucide-users/);
 });
 
 test("points history separates individual challenge and survey rewards", () => {
     const html = render(Profile, { challengeProfileSummary: {
-        total_points: 115,
+        total_points: 140,
         challenge_history: [{
             id: 1,
             challenge_title: "Individual Wellness Challenge",
             category: "Wellness",
             status: "approved",
             challenge_points_awarded: 100,
+            bonus_points_awarded: 25,
             survey_points_awarded: 15,
-            total_points_awarded: 115,
+            total_points_awarded: 140,
         }],
     } });
     assert.match(html, /Individual Wellness Challenge/);
     assert.match(html, /\+100 Challenge pts/);
+    assert.match(html, /\+25 Bonus pts/);
     assert.match(html, /\+15 Survey pts/);
-    assert.doesNotMatch(html, /\+115 pts/);
+    assert.doesNotMatch(html, /\+140 pts/);
+});
+
+test("leaderboard separates team submissions and labels each team by its leader", () => {
+    const leaderboardState = {
+        rewardChallengeParticipantsChallenge: {
+            ...challenge,
+            participants_count: 2,
+        },
+        rewardChallengeIndividualParticipants: [{
+            id: 1,
+            participant_id: 1,
+            name: "Individual Entry",
+            email: "individual@example.test",
+            status: "approved",
+            joined_at: "2026-10-10 09:00:00",
+            submitted_at: "2026-10-11 09:00:00",
+            points_awarded: 125,
+            challenge_points_awarded: 100,
+            bonus_points_awarded: 25,
+            rank: 1,
+            is_winner: true,
+            winner_count: 2,
+        }, {
+            id: 2,
+            participant_id: 2,
+            name: "Second Individual Winner",
+            email: "second@example.test",
+            status: "approved",
+            joined_at: "2026-10-10 09:00:00",
+            submitted_at: "2026-10-11 09:00:00",
+            points_awarded: 125,
+            challenge_points_awarded: 100,
+            bonus_points_awarded: 25,
+            rank: 1,
+            is_winner: true,
+            winner_count: 2,
+        }],
+        rewardChallengeTeamSubmissions: [{
+            id: "team-1",
+            name: "Team: Team Leader",
+            email: "leader@example.test",
+            department: "Engineering",
+            status: "approved",
+            joined_at: "2026-10-10 09:00:00",
+            submitted_at: "2026-10-10 10:00:00",
+            points_awarded: 125,
+            challenge_points_awarded: 100,
+            bonus_points_awarded: 25,
+            member_count: 2,
+            rank: 1,
+            is_winner: true,
+            winner_count: 1,
+        }],
+    };
+    const teamHtml = render(ParticipantLeaderboard, leaderboardState, {
+        submissionType: "team",
+    });
+    assert.match(teamHtml, /Team Submission Leaderboard/);
+    assert.match(teamHtml, /Team: Team Leader/);
+    assert.doesNotMatch(teamHtml, /Individual Entry/);
+
+    const individualHtml = render(ParticipantLeaderboard, leaderboardState, {
+        submissionType: "individual",
+    });
+    assert.match(individualHtml, /Individual Submission Leaderboard/);
+    assert.match(individualHtml, /Individual Entry/);
+    assert.doesNotMatch(individualHtml, /Team: Team Leader/);
+    assert.match(individualHtml, /Co-winner/);
+
+    const topWinnersHtml = render(TopLeaderboard, leaderboardState, {
+        submissionType: "individual",
+    });
+    assert.match(topWinnersHtml, /Individual Entry/);
+    assert.match(topWinnersHtml, /Second Individual Winner/);
+    assert.match(topWinnersHtml, /Co-winner/);
+
+    const topTeamWinnerHtml = render(TopLeaderboard, leaderboardState, {
+        submissionType: "team",
+    });
+    assert.match(topTeamWinnerHtml, /Team: Team Leader/);
+    assert.match(topTeamWinnerHtml, /125 pts/);
+    assert.match(topTeamWinnerHtml, />Winner</);
+});
+
+test("challenge participants slice prefers the pre-ranked response for each submission type", () => {
+    const action = thunks.get_engagement_reward_challenge_participants_thunk.fulfilled(
+        {
+            data: {
+                participants: [{ name: "Legacy Entry" }],
+                individual_participants: [{ name: "Legacy Individual" }],
+                team_submissions: [{ name: "Legacy Team" }],
+                individual_leaderboard: [{ name: "Ranked Individual" }],
+                team_leaderboard: [{ name: "Ranked Team" }],
+            },
+        },
+        "request-id",
+        12,
+    );
+    const state = slice.default(undefined, action);
+
+    assert.deepEqual(state.rewardChallengeIndividualParticipants, [
+        { name: "Ranked Individual" },
+    ]);
+    assert.deepEqual(state.rewardChallengeTeamSubmissions, [
+        { name: "Ranked Team" },
+    ]);
+    assert.deepEqual(state.rewardChallengeParticipants, [
+        { name: "Legacy Entry" },
+    ]);
+});
+
+test("proof review defines non-negative bonus validation and previews base, bonus, and total points", () => {
+    const source = readFileSync(path.join(
+        root,
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/proof-section.jsx",
+    ), "utf8");
+
+    assert.match(source, /label="Bonus Points"/);
+    assert.match(source, /min="0"/);
+    assert.match(source, /if \(!submission\)[\s\S]*setBonusPoints\("0"\)/);
+    assert.match(source, /if \(!submission\)[\s\S]*setBonusError\(""\)/);
+    assert.match(source, /Number\.isInteger\(parsedBonusPoints\)/);
+    assert.match(source, /parsedBonusPoints >= 0/);
+    assert.match(source, /onApprove\(activeSubmission, parsedBonusPoints\)/);
+    assert.match(source, /Challenge Points/);
+    assert.match(source, /basePoints \+ parsedBonusPoints/);
+    assert.match(source, /Team challenge and bonus points are awarded to the leader only/);
 });
 
 test("pending survey card remains actionable even after the deadline", () => {
@@ -548,4 +684,61 @@ test("Submissions table renders survey completed/pending and legacy not-applicab
     assert.match(html, />Completed</);
     assert.match(html, />Pending</);
     assert.match(html, /—/);
+});
+
+test("Submissions table points use the leaderboard total and base-plus-bonus hierarchy", () => {
+    const html = render(SubmissionTable, {
+        challengeSubmissionsLoading: false,
+        challengeSubmissions: [
+            {
+                id: "approved",
+                status: "approved",
+                points_awarded: 125,
+                challenge_points_awarded: 100,
+                bonus_points_awarded: 25,
+                submitted_at: "2026-10-12",
+                challenge: { title: "Approved Challenge", points: 100 },
+                employee: { name: "Approved Employee", email: "approved@example.test" },
+            },
+            {
+                id: "pending-survey",
+                status: "approved",
+                participation_status: "pending_survey",
+                bonus_points: 25,
+                submitted_at: "2026-10-12",
+                challenge: { title: "Survey Challenge", points: 100 },
+                employee: { name: "Survey Employee", email: "survey@example.test" },
+            },
+            {
+                id: "pending",
+                status: "submitted",
+                submitted_at: "2026-10-12",
+                challenge: { title: "Pending Challenge", points: 100 },
+                employee: { name: "Pending Employee", email: "pending@example.test" },
+            },
+            {
+                id: "daily",
+                status: "approved",
+                individual_daily_log: true,
+                bonus_points: 10,
+                submitted_at: "2026-10-12",
+                challenge: { title: "Daily Challenge", points: 100 },
+                employee: { name: "Daily Employee", email: "daily@example.test" },
+            },
+        ],
+    }, { filters: {} });
+
+    assert.match(html, /text-sm font-semibold text-green-600[^>]*>\+125</);
+    assert.match(html, /100 base \+ 25 bonus/);
+    assert.match(html, /pending survey/);
+    assert.match(html, /100 base \+ bonus on approval/);
+    assert.match(html, /10 bonus approved/);
+    assert.match(html, /base points on completion/);
+
+    const source = readFileSync(path.join(
+        root,
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx",
+    ), "utf8");
+    assert.match(source, /const isTeam = submission\.employees\?\.length > 0/);
+    assert.match(source, /Awarded to leader only/);
 });

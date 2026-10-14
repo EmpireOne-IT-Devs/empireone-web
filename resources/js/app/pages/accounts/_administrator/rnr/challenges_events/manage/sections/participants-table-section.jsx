@@ -68,9 +68,12 @@ export default function ParticipantsTableSection({ challengeId, onBack }) {
             : null,
     });
 
-    const handleApprove = async (submission) => {
+    const handleApprove = async (submission, bonusPoints) => {
         const result = await dispatch(
-            approve_engagement_reward_challenge_submission_thunk(submission.id),
+            approve_engagement_reward_challenge_submission_thunk({
+                id: submission.id,
+                bonus_points: bonusPoints,
+            }),
         );
 
         if (
@@ -86,18 +89,20 @@ export default function ParticipantsTableSection({ challengeId, onBack }) {
                     open: true,
                 }),
             );
-            return;
+            return false;
         }
 
-        fetchParticipants();
         dispatch(
             setAlert({
                 type: "success",
                 title: "Submission approved",
-                message: `+${submission.challenge?.points ?? 0} pts awarded to ${submission.employee.name}.`,
+                message: result.payload?.data?.participation_status === "pending_survey"
+                    ? "Proof approved. Challenge points will be awarded after the required survey is complete."
+                    : `+${result.payload?.data?.points_awarded ?? 0} total points awarded to ${submission.employee.name}.`,
                 open: true,
             }),
         );
+        return true;
     };
 
     const handleDeclineClose = () => {

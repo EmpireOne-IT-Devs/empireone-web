@@ -15,7 +15,11 @@ class ChallengeSurveySubmissionResource extends JsonResource
             'survey_completed_at' => $this->surveyResponse?->submitted_at?->toDateTimeString(),
             'participation_status' => $this->status,
             'proof_approved_at' => $this->proof_approved_at?->toDateTimeString(),
-            'challenge_points_awarded' => (int) $this->points_awarded,
+            'challenge_points_awarded' => max(
+                0,
+                (int) $this->points_awarded - (int) $this->bonus_points,
+            ),
+            'bonus_points_awarded' => (int) $this->bonus_points,
             'survey_points_awarded' => (int) $this->survey_points_awarded,
             'total_points_awarded' => $this->total_points_awarded,
         ];

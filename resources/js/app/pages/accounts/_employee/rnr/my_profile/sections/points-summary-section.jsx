@@ -57,13 +57,13 @@ function getChallengePoints(item, isTeamSubmission) {
 function PointsBreakdown({ item }) {
     const isTeamSubmission = item.submission_type === "team";
 
-    const teamPoints = Number(
-        item.team_points_awarded ??
-            (isTeamSubmission
-                ? item.challenge_points_awarded ?? item.points
-                : 0) ??
-            0
-    );
+    const bonusPoints = Number(item.bonus_points_awarded ?? 0);
+    const teamPoints = isTeamSubmission
+        ? Number(
+              item.challenge_points_awarded ??
+                  Math.max(0, (Number(item.team_points_awarded) || 0) - bonusPoints)
+          )
+        : 0;
 
     const challengePoints = getChallengePoints(item, isTeamSubmission);
     const surveyPoints = Number(item.survey_points_awarded ?? 0);
@@ -71,6 +71,7 @@ function PointsBreakdown({ item }) {
     const breakdown = [
         { label: "Team", points: teamPoints, icon: Users, color: "text-blue-700 bg-blue-50" },
         { label: "Challenge", points: challengePoints, icon: Target, color: "text-emerald-700 bg-emerald-50" },
+        { label: "Bonus", points: bonusPoints, icon: Sparkles, color: "text-amber-700 bg-amber-50" },
         { label: "Survey", points: surveyPoints, icon: ClipboardCheck, color: "text-purple-700 bg-purple-50" },
     ].filter((item) => item.points > 0);
 
@@ -218,7 +219,6 @@ export default function PointsSummarySection() {
                 </div>
             )}
 
-            {/* Points hero */}
             <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div>

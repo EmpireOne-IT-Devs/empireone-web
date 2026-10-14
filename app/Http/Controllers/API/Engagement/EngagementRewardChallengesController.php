@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ChallengeLeaderboardEntryResource;
 use App\Models\Account;
 use App\Models\Account\AccountEmployee;
 use App\Models\Department;
@@ -10,9 +11,11 @@ use App\Models\Engagement\EngagementRewardChallenge;
 use App\Models\Engagement\EngagementRewardChallengeDailyLog;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
 use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
+use App\Models\Engagement\EngagementRewardChallengeTeamSubmissionMember;
 use App\Models\User;
 use App\Http\Requests\Engagement\SubmitTeamChallengeRequest;
 use App\Http\Resources\Engagement\EngagementRewardChallengeTeamSubmissionResource;
+use App\Services\ChallengeLeaderboardService;
 use App\Services\ChallengeTeamSubmissionService;
 use App\Services\ChallengeSurveyService;
 use Illuminate\Http\JsonResponse;
@@ -45,12 +48,16 @@ class EngagementRewardChallengesController extends Controller
     /**
      * List every participant of a specific challenge for the admin manage view.
      */
-    public function participants(EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    public function participants(
+        EngagementRewardChallenge $engagementRewardChallenge,
+        ChallengeLeaderboardService $leaderboardService,
+    ): JsonResponse
     {
-        $participants = $engagementRewardChallenge->participants()
+        $participantRecords = $engagementRewardChallenge->participants()
             ->with('department:id,name')
             ->orderByDesc('engagement_reward_challenge_participants.joined_at')
-            ->get()
+            ->get();
+        $participants = $participantRecords
             ->map(fn (User $user) => [
                 'id' => $user->id,
                 'participant_id' => $user->pivot->id,
@@ -60,6 +67,13 @@ class EngagementRewardChallengesController extends Controller
                 'status' => $user->pivot->status,
                 'challenge_description' => $user->pivot->challenge_description,
                 'points_awarded' => $user->pivot->points_awarded,
+                'challenge_points_awarded' => $user->pivot->points_awarded !== null
+                    ? max(0, (int) $user->pivot->points_awarded - (int) $user->pivot->bonus_points)
+                    : 0,
+                'bonus_points' => (int) $user->pivot->bonus_points,
+                'bonus_points_awarded' => $user->pivot->points_awarded !== null
+                    ? (int) $user->pivot->bonus_points
+                    : 0,
                 'survey_points_awarded' => (int) $user->pivot->survey_points_awarded,
                 'total_points_awarded' => $user->pivot->total_points_awarded,
                 'proof_approved_at' => $user->pivot->proof_approved_at?->toDateTimeString(),
@@ -70,13 +84,79 @@ class EngagementRewardChallengesController extends Controller
                 'submission_url' => $user->pivot->submission_path
                     ? Storage::disk('s3')->url($user->pivot->submission_path)
                     : null,
-            ]);
+            ])
+            ->values();
+
+        $teamSubmissionRecords = EngagementRewardChallengeTeamSubmission::query()
+            ->where('reward_challenge_id', $engagementRewardChallenge->id)
+            ->with([
+                'leader:id,name,email',
+                'members.participant:id,joined_at',
+            ])
+            ->orderByDesc('submitted_at')
+            ->get();
+        $teamSubmissions = $teamSubmissionRecords
+            ->map(function (EngagementRewardChallengeTeamSubmission $submission) {
+                $members = $submission->members;
+                $leaderName = $submission->leader?->name ?? 'Unknown leader';
+                $joinedAt = $members
+                    ->pluck('participant.joined_at')
+                    ->filter()
+                    ->min();
+
+                return [
+                    'id' => "team-{$submission->id}",
+                    'team_submission_id' => $submission->id,
+                    'name' => "Team: {$leaderName}",
+                    'email' => $submission->leader?->email,
+                    'department' => $members
+                        ->pluck('department_name')
+                        ->filter()
+                        ->unique()
+                        ->implode(', ') ?: null,
+                    'status' => $submission->status,
+                    'points_awarded' => (int) $submission->team_points_awarded,
+                    'joined_at' => $joinedAt?->toDateTimeString(),
+                    'submitted_at' => $submission->submitted_at?->toDateTimeString(),
+                    'member_count' => $members->count(),
+                    'members' => $members->pluck('full_name')->values(),
+                ];
+            })
+            ->values();
+
+        $teamParticipantIds = EngagementRewardChallengeTeamSubmissionMember::query()
+            ->whereHas('submission', fn ($query) => $query
+                ->where('reward_challenge_id', $engagementRewardChallenge->id))
+            ->pluck('participant_id')
+            ->map(fn ($participantId) => (int) $participantId)
+            ->all();
+        $leaderboards = $leaderboardService->build(
+            $participantRecords,
+            $teamSubmissionRecords,
+            $teamParticipantIds,
+        );
+
+        $individualParticipants = $participants
+            ->reject(fn (array $participant) => in_array(
+                (int) $participant['participant_id'],
+                $teamParticipantIds,
+                true,
+            ))
+            ->values();
 
         return response()->json([
             'status' => 'success',
             'data' => [
                 'challenge' => $this->formatChallenge($engagementRewardChallenge),
                 'participants' => $participants,
+                'individual_participants' => $individualParticipants,
+                'team_submissions' => $teamSubmissions,
+                'individual_leaderboard' => collect($leaderboards['individual'])
+                    ->map(fn (array $entry) => (new ChallengeLeaderboardEntryResource($entry))->resolve(request()))
+                    ->values(),
+                'team_leaderboard' => collect($leaderboards['team'])
+                    ->map(fn (array $entry) => (new ChallengeLeaderboardEntryResource($entry))->resolve(request()))
+                    ->values(),
             ],
         ]);
     }
@@ -275,7 +355,12 @@ class EngagementRewardChallengesController extends Controller
                 'challenge_title' => $participant->challenge?->title ?? 'Challenge removed',
                 'category' => $participant->challenge?->category ?? 'N/A',
                 'points' => $participant->points_awarded ?? $participant->challenge?->points ?? 0,
-                'challenge_points_awarded' => (int) $participant->points_awarded,
+                'challenge_points_awarded' => $participant->points_awarded !== null
+                    ? max(0, (int) $participant->points_awarded - (int) $participant->bonus_points)
+                    : 0,
+                'bonus_points_awarded' => $participant->points_awarded !== null
+                    ? (int) $participant->bonus_points
+                    : 0,
                 'team_points_awarded' => 0,
                 'survey_points_awarded' => (int) $participant->survey_points_awarded,
                 'total_points_awarded' => $participant->total_points_awarded,
@@ -297,7 +382,8 @@ class EngagementRewardChallengesController extends Controller
                 'challenge_title' => $submission->challenge?->title ?? 'Challenge removed',
                 'category' => $submission->challenge?->category ?? 'N/A',
                 'points' => $submission->team_points_awarded,
-                'challenge_points_awarded' => $submission->team_points_awarded,
+                'challenge_points_awarded' => (int) $submission->base_points_awarded,
+                'bonus_points_awarded' => (int) $submission->bonus_points_awarded,
                 'team_points_awarded' => $submission->team_points_awarded,
                 'survey_points_awarded' => 0,
                 'total_points_awarded' => $submission->team_points_awarded,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Engagement\ApproveChallengeSubmissionRequest;
 use App\Http\Resources\Engagement\EngagementRewardChallengeTeamSubmissionResource;
 use App\Models\Engagement\EngagementRewardChallengeDailyLog;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
@@ -159,12 +160,14 @@ class EngagementChallengeSubmissionsController extends Controller
      * Approve a submission (single-proof participant or one daily log) and
      * award points once the challenge requirement is actually met.
      */
-    public function approve(string $id): JsonResponse
+    public function approve(ApproveChallengeSubmissionRequest $request, string $id): JsonResponse
     {
+        $bonusPoints = (int) ($request->validated('bonus_points') ?? 0);
+
         if (str_starts_with($id, 'team-')) {
             $submission = EngagementRewardChallengeTeamSubmission::query()->findOrFail((int) substr($id, 5));
             Gate::authorize('review', $submission);
-            $approved = $this->teamSubmissionService->approve($submission, auth()->user());
+            $approved = $this->teamSubmissionService->approve($submission, auth()->user(), $bonusPoints);
 
             return response()->json([
                 'status' => 'success',
@@ -176,10 +179,10 @@ class EngagementChallengeSubmissionsController extends Controller
         }
 
         if (str_starts_with($id, 'daily-')) {
-            return $this->approveDailyLog((int) substr($id, 6));
+            return $this->approveDailyLog((int) substr($id, 6), $bonusPoints);
         }
 
-        return DB::transaction(function () use ($id) {
+        return DB::transaction(function () use ($id, $bonusPoints) {
             $participant = EngagementRewardChallengeParticipant::lockForUpdate()->findOrFail((int) $id);
 
             if ($participant->status !== 'submitted' || $participant->proof_approved_at !== null) {
@@ -203,6 +206,7 @@ class EngagementChallengeSubmissionsController extends Controller
                 'reviewed_at' => now(),
                 'reviewed_by' => auth()->id(),
                 'review_note' => null,
+                'bonus_points' => $bonusPoints,
             ]);
             $completed = $this->completionService->finalizeLocked($participant);
 
@@ -275,9 +279,9 @@ class EngagementChallengeSubmissionsController extends Controller
      * is simply "enough approved days", checked with a single integer
      * comparison rather than recomputing anything from the logs table.
      */
-    private function approveDailyLog(int $logId): JsonResponse
+    private function approveDailyLog(int $logId, int $bonusPoints): JsonResponse
     {
-        return DB::transaction(function () use ($logId) {
+        return DB::transaction(function () use ($logId, $bonusPoints) {
             $participantId = EngagementRewardChallengeDailyLog::findOrFail($logId)->reward_challenge_participant_id;
             $participant = EngagementRewardChallengeParticipant::lockForUpdate()->findOrFail($participantId);
             $participant->load(['challenge' => fn ($query) => $query->withTrashed(), 'user:id,name,email']);
@@ -305,8 +309,11 @@ class EngagementChallengeSubmissionsController extends Controller
                 'reviewed_at' => now(),
                 'reviewed_by' => auth()->id(),
                 'review_note' => null,
+                'bonus_points' => $bonusPoints,
             ]);
 
+            $participant->increment('bonus_points', $bonusPoints);
+            $participant->refresh();
             $participant->increment('completed_days');
             $participant->refresh();
 
@@ -463,6 +470,13 @@ class EngagementChallengeSubmissionsController extends Controller
             'reviewed_at' => $participant->reviewed_at?->toDateTimeString(),
             'review_note' => $participant->review_note,
             'points_awarded' => $participant->points_awarded,
+            'challenge_points_awarded' => $participant->points_awarded !== null
+                ? max(0, (int) $participant->points_awarded - (int) $participant->bonus_points)
+                : 0,
+            'bonus_points' => (int) $participant->bonus_points,
+            'bonus_points_awarded' => $participant->points_awarded !== null
+                ? (int) $participant->bonus_points
+                : 0,
             'challenge' => $participant->challenge ? [
                 'id' => $participant->challenge->id,
                 'title' => $participant->challenge->title,
@@ -525,6 +539,7 @@ class EngagementChallengeSubmissionsController extends Controller
 
         return [
             'id' => "daily-{$log->id}",
+            'individual_daily_log' => true,
             'log_date' => $log->log_date->toDateString(),
             'status' => $log->status,
             'submission_url' => Storage::disk('s3')->url($log->submission_path),
@@ -533,6 +548,7 @@ class EngagementChallengeSubmissionsController extends Controller
             'reviewed_at' => $log->reviewed_at?->toDateTimeString(),
             'review_note' => $log->review_note,
             'points_awarded' => null,
+            'bonus_points' => (int) $log->bonus_points,
             'survey_required' => (bool) $participant?->challenge?->survey_required,
             'survey_completed' => $participant?->survey_rewarded_at !== null,
             'challenge' => $challenge ? [
@@ -542,6 +558,7 @@ class EngagementChallengeSubmissionsController extends Controller
                 'category' => $challenge->category,
                 'type' => $challenge->type,
                 'card_color' => $challenge->card_color,
+                'is_daily_challenge' => $challenge->isDailyChallenge(),
                 'survey_required' => (bool) $challenge->survey_required,
             ] : null,
             'employee' => $participant?->user ? [
