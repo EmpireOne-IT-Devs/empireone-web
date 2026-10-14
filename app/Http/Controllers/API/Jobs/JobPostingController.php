@@ -260,7 +260,7 @@ class JobPostingController extends Controller
         });
 
         // Manual Pagination
-        $perPage = (int) $request->input('per_page', 10);
+        $perPage = (int) $request->input('per_page', $request->where == 'applicants' ? 30 : 10);
         $currentPage = Paginator::resolveCurrentPage() ?: 1;
         $items = $jobPostings->forPage($currentPage, $perPage)->values();
 
