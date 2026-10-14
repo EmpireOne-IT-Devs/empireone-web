@@ -1,28 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
-    UserCheck,
-    UserX,
-    Award,
-    XOctagon,
-    Files,
-    X,
-    Search,
-    Users,
-    Clock,
-    CalendarClock,
-    Layers,
-    UserMinus,
-    Mail,
-    ThumbsUp,
-    ThumbsDown,
-    Briefcase,
-    Ban,
-    ClipboardCheck
-} from 'lucide-react';
+    FcConferenceCall,
+    FcClock,
+    FcCalendar,
+    FcApproval,
+    FcFolder,
+    FcCheckmark,
+    FcLike,
+    FcBriefcase,
+    FcDislike,
+    FcCancel,
+    FcSearch,
+    FcDocument
+} from 'react-icons/fc';
 import { useSelector } from 'react-redux';
 import Input from "@/app/_components/input";
 import { router } from '@inertiajs/react';
-import Select from '@/app/_components/select';
 
 // Upgraded Reusable Card Component 
 const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
@@ -74,7 +67,7 @@ const StatCard = ({ title, count, type, icon: Icon, onClick }) => {
                 </div>
 
                 <div className={`p-3 rounded-xl transition-colors duration-300 ${theme.icon}`}>
-                    <Icon size={24} strokeWidth={2.5} />
+                    <Icon size={24} />
                 </div>
             </div>
         </div>
@@ -89,9 +82,8 @@ export default function StatusesCardSection() {
 
     // Parse URL Search Parameters safely
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    const currentLocationId = searchParams.get('location_id') || app_data?.user?.account_employee?.location_id;
 
-    // NEW: Extract current date param to bind it to the controlled date input
+    // Extract current date param to bind it to the controlled date input
     const currentSearchDate = searchParams.get('search_date') || '';
 
     useEffect(() => {
@@ -163,7 +155,6 @@ export default function StatusesCardSection() {
         if (search) {
             currentParams.set('search', search);
             currentParams.delete('statuses');
-
         } else {
             currentParams.delete('search');
         }
@@ -201,7 +192,6 @@ export default function StatusesCardSection() {
         });
     };
 
-    // NEW: Handle dynamic date queries securely preserving existing active parameters
     const handleDateChange = (dateValue) => {
         const currentParams = new URLSearchParams(window.location.search);
 
@@ -232,115 +222,107 @@ export default function StatusesCardSection() {
                     title="Total Applicant"
                     count={data.total_applicant}
                     type="info"
-                    icon={Users}
+                    icon={FcConferenceCall}
                     onClick={() => handleCardClick('', '')}
                 />
                 <StatCard
                     title="For Initial Interview"
                     count={data.for_initial}
                     type="pending"
-                    icon={Clock}
+                    icon={FcClock}
                     onClick={() => handleCardClick('statuses', 'For Initial Interview')}
                 />
                 <StatCard
                     title="For Final Interview"
                     count={data.for_final}
                     type="pending"
-                    icon={CalendarClock}
+                    icon={FcCalendar}
                     onClick={() => handleCardClick('statuses', 'For Final Interview')}
                 />
                 <StatCard
                     title="Final Passed"
                     count={data.final_passed}
                     type="success"
-                    icon={Award}
+                    icon={FcApproval}
                     onClick={() => handleCardClick('final_status', 'Passed')}
                 />
                 <StatCard
                     title="Pool"
                     count={data.final_pooled}
                     type="info"
-                    icon={Layers}
+                    icon={FcFolder}
                     onClick={() => handleCardClick('final_status', 'Pooled')}
                 />
                 <StatCard
                     title="Passed w/ Condition"
                     count={data.final_passed_with_condition}
                     type="pending"
-                    icon={ClipboardCheck}
+                    icon={FcCheckmark}
                     onClick={() => handleCardClick('final_status', 'Passed with Condition')}
                 />
                 <StatCard
                     title="Accepted Job Offer"
                     count={data.final_accepted_job_offer}
                     type="success"
-                    icon={ThumbsUp}
+                    icon={FcLike}
                     onClick={() => handleCardClick('final_status', 'Accepted Job Offer')}
                 />
                 <StatCard
                     title="Hired"
                     count={data.final_hired}
                     type="success"
-                    icon={Briefcase}
+                    icon={FcBriefcase}
                     onClick={() => handleCardClick('final_status', 'Hired')}
                 />
                 <StatCard
                     title="Sent Job Offer"
                     count={data.final_sent_job_offer}
                     type="info"
-                    icon={Mail}
+                    icon={FcDocument}
                     onClick={() => handleCardClick('final_status', 'Sent Job Offer')}
                 />
                 <StatCard
                     title="Sent Documents/Contract"
                     count={data.sent_documents}
                     type="success"
-                    icon={Files}
+                    icon={FcDocument}
                     onClick={() => handleCardClick('final_status', 'Sent Documents')}
                 />
                 <StatCard
                     title="No Shows"
                     count={data.no_shows}
                     type="danger"
-                    icon={UserMinus}
+                    icon={FcDislike}
                     onClick={() => handleCardClick('final_status', 'No Show')}
                 />
                 <StatCard
                     title="Initial Failed"
                     count={data.initial_failed}
                     type="danger"
-                    icon={UserX}
+                    icon={FcCancel}
                     onClick={() => handleCardClick('interview_status', 'Failed')}
                 />
                 <StatCard
                     title="Final Failed"
                     count={data.final_failed}
                     type="danger"
-                    icon={UserX}
+                    icon={FcCancel}
                     onClick={() => handleCardClick('final_status', 'Failed')}
                 />
                 <StatCard
                     title="Declined Job Offer"
                     count={data.final_declined_job_offer}
                     type="danger"
-                    icon={ThumbsDown}
+                    icon={FcDislike}
                     onClick={() => handleCardClick('final_status', 'Declined Job Offer')}
                 />
-
                 <StatCard
                     title="Withdrawn"
                     count={data.final_withdrawn}
                     type="danger"
-                    icon={Ban}
+                    icon={FcCancel}
                     onClick={() => handleCardClick('final_status', 'Withdrawn')}
                 />
-                {/* <StatCard
-                    title="Rejected"
-                    count={data.final_rejected}
-                    type="danger"
-                    icon={XOctagon}
-                    onClick={() => handleCardClick('final_status', 'Rejected')}
-                /> */}
             </div>
 
             {/* Title & Filtering Row */}
@@ -354,28 +336,6 @@ export default function StatusesCardSection() {
 
                     {/* Mobile-Responsive Inputs Container */}
                     <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end w-full lg:justify-end">
-                        {/* Location Select */}
-                        {/* <div className="w-full md:w-64">
-                            <Select
-                                label="Location"
-                                name="location_id"
-                                className="w-full"
-                                value={Number(currentLocationId)}
-                                options={app_data?.locations?.map(res => ({
-                                    label: res.name,
-                                    value: res.id
-                                }))}
-                                onChange={(val) => {
-                                    const currentParams = new URLSearchParams(window.location.search);
-                                    currentParams.set('location_id', val);
-                                    router.visit(`?${currentParams.toString()}`, {
-                                        preserveState: true,
-                                        preserveScroll: true
-                                    });
-                                }}
-                            />
-                        </div> */}
-
                         {/* Search Date Input */}
                         <div className="w-full md:w-64">
                             <Input
@@ -393,7 +353,7 @@ export default function StatusesCardSection() {
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                iconLeft={<Search size={18} strokeWidth={2.5} />}
+                                iconLeft={<FcSearch size={18} />}
                                 label="Search applicants by name..."
                                 className="w-full"
                             />
@@ -403,7 +363,7 @@ export default function StatusesCardSection() {
                                     onClick={clearSearch}
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-rose-500 transition-colors duration-200"
                                 >
-                                    <X size={18} strokeWidth={2.5} />
+                                    <FcCancel size={18} />
                                 </button>
                             )}
                         </form>
