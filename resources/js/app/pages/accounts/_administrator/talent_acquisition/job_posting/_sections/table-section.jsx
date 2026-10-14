@@ -182,7 +182,7 @@ export default function TableSection({ loading }) {
             width: 'w-12',
             header: '',
             render: (row) => {
-                return <JobPostingActionSection  props_data={row}/>
+                return <JobPostingActionSection props_data={row} />
             }
         }
     ];
@@ -201,13 +201,18 @@ export default function TableSection({ loading }) {
                         <button
 
                             onClick={() => router.visit(`?location_id=${currentLocationId}`)}
-                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status != 'closed'?'border-purple-600 text-purple-600':""}  font-medium`}>
-                            <FiBriefcase className="w-4 h-4" /> Active jobs 
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${!status ? 'border-purple-600 text-purple-600' : ""}  font-medium`}>
+                            <FiBriefcase className="w-4 h-4" /> Active jobs
                         </button>
                         <button
-                            onClick={() => router.visit(`?location_id=${currentLocationId}&status=closed`)}
-                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == 'closed'?'border-purple-600 text-purple-600':""} font-medium`}>
+                            onClick={() => router.visit(`?location_id=${currentLocationId}&status=Closed`)}
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == 'Closed' ? 'border-purple-600 text-purple-600' : ""} font-medium`}>
                             <FiBriefcase className="w-4 h-4" /> Closed jobs
+                        </button>
+                        <button
+                            onClick={() => router.visit(`?location_id=${currentLocationId}&status=On Hold`)}
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == 'On Hold' ? 'border-purple-600 text-purple-600' : ""} font-medium`}>
+                            <FiBriefcase className="w-4 h-4" /> On Hold
                         </button>
                     </div>
 

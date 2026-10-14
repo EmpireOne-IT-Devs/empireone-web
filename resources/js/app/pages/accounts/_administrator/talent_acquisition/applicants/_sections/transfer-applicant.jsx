@@ -27,10 +27,11 @@ export default function TransferApplicant({ data }) {
         (state) => state.job_postings,
     );
 
+    console.log('groupedJobPostings', job_postings)
     // Group job postings by location
     const groupedJobPostings = useMemo(() => {
         if (!job_postings) return {};
-        return job_postings.reduce((acc, job) => {
+        return job_postings?.data?.reduce((acc, job) => {
             const locationName = job?.job_requisition?.location?.name || "Other Locations";
             if (!acc[locationName]) {
                 acc[locationName] = [];
@@ -40,10 +41,9 @@ export default function TransferApplicant({ data }) {
         }, {});
     }, [job_postings]);
 
-    console.log('groupedJobPostings',job_postings)
     // Automatically set the first available job posting as the default value when the modal opens
     useEffect(() => {
-        if (open && job_postings?.length > 0) {
+        if (open && job_postings?.data?.length > 0) {
             setValue("job_posting_id", data?.job_posting_id);
         } else if (!open) {
             reset(); // Clear the form when closed
@@ -129,8 +129,8 @@ export default function TransferApplicant({ data }) {
                                                             key={res.id}
                                                             onClick={() => field.onChange(res.id)}
                                                             className={`relative flex cursor-pointer flex-col rounded-xl border p-4 transition-all ${isSelected
-                                                                    ? "border-purple-600 bg-purple-50 ring-1 ring-purple-600 shadow-md"
-                                                                    : "border-slate-200 bg-white hover:border-purple-300 hover:bg-slate-50 hover:shadow-sm"
+                                                                ? "border-purple-600 bg-purple-50 ring-1 ring-purple-600 shadow-md"
+                                                                : "border-slate-200 bg-white hover:border-purple-300 hover:bg-slate-50 hover:shadow-sm"
                                                                 }`}
                                                         >
                                                             <div className="flex items-start justify-between mb-3">

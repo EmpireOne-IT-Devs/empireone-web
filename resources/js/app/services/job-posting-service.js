@@ -3,6 +3,12 @@ export async function create_job_posting_service(data) {
     return await axios.post("/api/job/postings", data);
 }
 
+export async function change_status_service(data) {
+    return await axios.post("/api/job/change_status", data);
+}
+
+
+
 export async function get_erps_service() {
     return (await axios.get(`/api/job/get_erps${window.location.search}`)).data;
 }

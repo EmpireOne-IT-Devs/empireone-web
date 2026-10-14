@@ -132,6 +132,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::get('dashboard_stats', [JobPostingController::class, 'dashboard_stats']);
         Route::get('recent_activity', [JobPostingController::class, 'recent_activity']);
+        Route::post('change_status', [JobPostingController::class, 'change_status']);
         Route::get('top_performing_jobs', [JobPostingController::class, 'top_performing_jobs']);
         Route::get('get_erps', [JobPostingController::class, 'get_erps']);
         Route::resource('application', JobApplicationController::class);
