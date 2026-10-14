@@ -349,6 +349,106 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonPath('data.total_points', 0);
     }
 
+    public function test_submission_exports_follow_the_selected_type_and_export_team_leader_once(): void
+    {
+        Storage::fake('s3');
+        $individualChallenge = $this->createChallenge();
+        $individual = User::create([
+            'name' => 'Individual Export Employee',
+            'email' => 'individual-export-'.uniqid().'@example.test',
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+        EngagementRewardChallengeParticipant::create([
+            'reward_challenge_id' => $individualChallenge->id,
+            'user_id' => $individual->id,
+            'status' => 'submitted',
+            'submitted_at' => now(),
+        ]);
+        $individualParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $individualChallenge->id)
+            ->where('user_id', $individual->id)
+            ->firstOrFail();
+        $pendingIndividual = User::create([
+            'name' => 'Pending Export Employee',
+            'email' => 'pending-export-'.uniqid().'@example.test',
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+        EngagementRewardChallengeParticipant::create([
+            'reward_challenge_id' => $individualChallenge->id,
+            'user_id' => $pendingIndividual->id,
+            'status' => 'pending_survey',
+            'proof_approved_at' => now(),
+            'submitted_at' => now(),
+            'bonus_points' => 15,
+        ]);
+
+        $teamChallenge = $this->createTeamChallenge();
+        [$leader] = $this->createTeamLeaderWithReports(2);
+        $this->actingAs($leader)->post(
+            "/api/engagement/reward-challenges/{$teamChallenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('team-export-proof.png'),
+                'challenge_description' => 'Team export proof.',
+            ],
+        )->assertCreated();
+
+        $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
+        $this->actingAs($admin)
+            ->postJson("/api/engagement/reward-challenge-submissions/{$individualParticipant->id}/approve", [
+                'bonus_points' => 25,
+            ])
+            ->assertOk();
+        $teamSubmission = EngagementRewardChallengeTeamSubmission::query()
+            ->where('reward_challenge_id', $teamChallenge->id)
+            ->firstOrFail();
+        $this->actingAs($admin)
+            ->postJson("/api/engagement/reward-challenge-submissions/team-{$teamSubmission->id}/approve", [
+                'bonus_points' => 40,
+            ])
+            ->assertOk();
+
+        $individualExport = $this->actingAs($admin)
+            ->get('/api/engagement/reward-challenge-submissions/export?submission_type=individual')
+            ->assertOk();
+        $individualRows = array_map(
+            fn (string $row) => str_getcsv($row, "\t"),
+            explode("\n", trim($individualExport->streamedContent())),
+        );
+        $this->assertSame(
+            ['EOID', 'Fullname', 'Email', 'Challenge Title', 'Department', 'Account', 'Base Points', 'Bonus Points', 'Total Points'],
+            $individualRows[0],
+        );
+        $this->assertCount(3, $individualRows);
+        $approvedIndividualRow = collect($individualRows)->firstWhere(1, 'Individual Export Employee');
+        $this->assertSame($individual->email, $approvedIndividualRow[2]);
+        $this->assertSame($individualChallenge->title, $approvedIndividualRow[3]);
+        $this->assertSame('100', $approvedIndividualRow[6]);
+        $this->assertSame('25', $approvedIndividualRow[7]);
+        $this->assertSame('125', $approvedIndividualRow[8]);
+        $pendingIndividualRow = collect($individualRows)->firstWhere(1, 'Pending Export Employee');
+        $this->assertSame('0', $pendingIndividualRow[6]);
+        $this->assertSame('0', $pendingIndividualRow[7]);
+        $this->assertSame('0', $pendingIndividualRow[8]);
+
+        $teamExport = $this->actingAs($admin)
+            ->get('/api/engagement/reward-challenge-submissions/export?submission_type=team')
+            ->assertOk();
+        $teamRows = array_map(
+            fn (string $row) => str_getcsv($row, "\t"),
+            explode("\n", trim($teamExport->streamedContent())),
+        );
+        $this->assertCount(2, $teamRows);
+        $this->assertSame($leader->name, $teamRows[1][1]);
+        $this->assertSame($leader->email, $teamRows[1][2]);
+        $this->assertSame($teamChallenge->title, $teamRows[1][3]);
+        $this->assertSame('100', $teamRows[1][6]);
+        $this->assertSame('40', $teamRows[1][7]);
+        $this->assertSame('140', $teamRows[1][8]);
+
+        $this->getJson('/api/engagement/reward-challenge-submissions/export?submission_type=unknown')
+            ->assertUnprocessable();
+    }
+
     public function test_challenge_leaderboards_rank_approved_points_separately_and_mark_tied_winners(): void
     {
         $challenge = $this->createTeamChallenge(2);

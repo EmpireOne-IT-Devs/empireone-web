@@ -68,7 +68,11 @@ function SubmissionPoints({ submission, challenge }) {
     );
 }
 
-export default function TableSection({ filters }) {
+export default function TableSection({
+    filters,
+    submissionType,
+    setSubmissionType,
+}) {
     const dispatch = useDispatch();
     const {
         challengeSubmissions,
@@ -77,7 +81,6 @@ export default function TableSection({ filters }) {
     } = useSelector((state) => state.engagement);
     const [declineTarget, setDeclineTarget] = useState(null);
     const [proofTarget, setProofTarget] = useState(null);
-    const [submissionType, setSubmissionType] = useState("individual");
     const requestParams = useMemo(() => {
         const params = {};
         if (filters?.status) params.status = filters.status;

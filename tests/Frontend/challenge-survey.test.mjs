@@ -127,6 +127,44 @@ test("services target the exact challenge and return JSON, not Axios wrappers", 
     assert.deepEqual(JSON.parse(requests[2].data), { bonus_points: 15 });
 });
 
+test("the selected submissions tab is shared with export and team rows use the leader", () => {
+    const html = render(SubmissionTable, {
+        challengeSubmissions: [
+            {
+                id: "individual-1",
+                challenge: { title: "Individual Challenge", points: 100 },
+                employee: { name: "Individual Export Row" },
+            },
+            {
+                id: "team-1",
+                challenge: { title: "Team Challenge", points: 100 },
+                employee: { name: "Team Export Leader" },
+                employees: [{ id: 3, name: "Team Member" }],
+            },
+        ],
+    }, {
+        filters: {},
+        submissionType: "team",
+        setSubmissionType() {},
+    });
+    assert.match(html, /aria-pressed="true"[^>]*>Team \(1\)/);
+    assert.match(html, /Team Export Leader/);
+    assert.doesNotMatch(html, /Individual Export Row/);
+
+    const searchSource = readFileSync(path.join(
+        root,
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/search-section.jsx",
+    ), "utf8");
+    assert.match(searchSource, /params\.submission_type = submissionType/);
+    assert.match(searchSource, /export_reward_challenge_submissions_service\(params\)/);
+    const pageSource = readFileSync(path.join(
+        root,
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/page.jsx",
+    ), "utf8");
+    assert.match(pageSource, /submissionType=\{submissionType\}/);
+    assert.match(pageSource, /setSubmissionType=\{setSubmissionType\}/);
+});
+
 test("eligible leaders retain both submission tabs after individual proof is submitted", () => {
     const html = render(SubmitProof, {}, {
         challenge: {

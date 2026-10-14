@@ -94,28 +94,50 @@ class EngagementChallengeSubmissionsController extends Controller
             'challenge_id' => ['nullable', 'integer', 'exists:engagement_reward_challenges,id'],
             'location_id' => ['nullable', 'integer', 'exists:locations,id'],
             'search' => ['nullable', 'string', 'max:255'],
+            'submission_type' => ['nullable', 'string', 'in:individual,team'],
         ]);
 
-        $submissions = $this->buildSubmissionsCollection($validated);
+        $submissions = $this->buildSubmissionsCollection($validated)
+            ->when(
+                ($validated['submission_type'] ?? null) === 'team',
+                fn (Collection $submissions) => $submissions
+                    ->filter(fn (array $submission) => ! empty($submission['employees'])),
+                fn (Collection $submissions) => ($validated['submission_type'] ?? null) === 'individual'
+                    ? $submissions->filter(fn (array $submission) => empty($submission['employees']))
+                    : $submissions,
+            )
+            ->values();
 
         return response()->streamDownload(function () use ($submissions) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['EOID', 'Fullname', 'Challenge Title', 'Department', 'Account', 'Points', 'Email'], "\t");
+            fputcsv($handle, ['EOID', 'Fullname', 'Email', 'Challenge Title', 'Department', 'Account', 'Base Points', 'Bonus Points', 'Total Points'], "\t");
 
             foreach ($submissions as $submission) {
-                $employees = $submission['employees'] ?? [$submission['employee'] ?? []];
-
-                foreach ($employees as $employee) {
-                    fputcsv($handle, [
-                        $employee['eoid'] ?? '',
-                        $employee['name'] ?? '',
-                        $submission['challenge']['title'] ?? '',
-                        $employee['department_name'] ?? '',
-                        $employee['account_name'] ?? '',
-                        $submission['challenge']['points'] ?? '',
-                        $employee['email'] ?? '',
-                    ], "\t");
+                $employee = $submission['employee'] ?? [];
+                $isApproved = ($submission['status'] ?? null) === 'approved';
+                $bonusPoints = $isApproved
+                    ? (int) ($submission['bonus_points_awarded'] ?? 0)
+                    : 0;
+                $totalPoints = 0;
+                if ($isApproved) {
+                    $totalPoints = ! empty($submission['employees'])
+                        ? (int) ($submission['team_points_awarded'] ?? $submission['total_points_awarded'] ?? 0)
+                        : (int) ($submission['points_awarded']
+                            ?? (! empty($submission['individual_daily_log']) ? $submission['bonus_points'] : 0));
                 }
+                $basePoints = max(0, $totalPoints - $bonusPoints);
+
+                fputcsv($handle, [
+                    $employee['eoid'] ?? '',
+                    $employee['name'] ?? '',
+                    $employee['email'] ?? '',
+                    $submission['challenge']['title'] ?? '',
+                    $employee['department_name'] ?? '',
+                    $employee['account_name'] ?? '',
+                    $basePoints,
+                    $bonusPoints,
+                    $basePoints + $bonusPoints,
+                ], "\t");
             }
 
             fclose($handle);
@@ -549,6 +571,7 @@ class EngagementChallengeSubmissionsController extends Controller
             'review_note' => $log->review_note,
             'points_awarded' => null,
             'bonus_points' => (int) $log->bonus_points,
+            'bonus_points_awarded' => $log->status === 'approved' ? (int) $log->bonus_points : 0,
             'survey_required' => (bool) $participant?->challenge?->survey_required,
             'survey_completed' => $participant?->survey_rewarded_at !== null,
             'challenge' => $challenge ? [
