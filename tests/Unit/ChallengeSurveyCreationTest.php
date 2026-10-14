@@ -304,7 +304,10 @@ class ChallengeSurveyCreationTest extends TestCase
             ->getJson('/api/engagement/reward-challenges/profile-summary')
             ->assertOk()
             ->assertJsonPath('data.total_points', 100)
-            ->assertJsonPath('data.challenge_history.0.submission_type', 'team');
+            ->assertJsonPath('data.challenge_history.0.submission_type', 'team')
+            ->assertJsonPath('data.challenge_history.0.challenge_title', $challenge->title)
+            ->assertJsonPath('data.challenge_history.0.team_points_awarded', 100)
+            ->assertJsonPath('data.challenge_history.0.challenge_points_awarded', 100);
         $this->actingAs($reports[0])
             ->getJson('/api/engagement/reward-challenges/profile-summary')
             ->assertOk()
@@ -542,6 +545,32 @@ class ChallengeSurveyCreationTest extends TestCase
             'team_submission_id' => $submissionId,
             'user_id' => $reports[1]->id,
         ]);
+    }
+
+    public function test_individual_then_team_proof_keeps_one_survey_and_question_set(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createTeamChallenge();
+        (new ChallengeSurveyService)->createForChallenge($challenge);
+        [$leader] = $this->createTeamLeaderWithReports();
+
+        $this->actingAs($leader)
+            ->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")
+            ->assertOk();
+        $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit", [
+            'photo' => UploadedFile::fake()->image('individual-proof.png'),
+            'challenge_description' => 'The leader completed the activity individually.',
+        ])->assertOk();
+        $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit-team", [
+            'photo' => UploadedFile::fake()->image('team-proof.png'),
+            'challenge_description' => 'The team completed the activity together.',
+        ])->assertCreated();
+
+        $this->assertDatabaseCount('engagement_post_event_surveys', 1);
+        $this->assertDatabaseCount('engagement_post_event_questions', 7);
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/survey")
+            ->assertOk()
+            ->assertJsonCount(7, 'data.questions');
     }
 
     public function test_team_submission_migration_can_be_reversed(): void
@@ -1033,6 +1062,80 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->assertSame($second->id, $other->reward_challenge_id);
         $this->assertSame(2, EngagementPostEventSurvey::count());
         $this->assertSame(14, EngagementPostEventQuestion::count());
+    }
+
+    public function test_survey_endpoint_removes_existing_duplicate_challenge_questions(): void
+    {
+        $participant = $this->surveyParticipant();
+        $survey = $participant->challenge->survey;
+
+        foreach ($survey->questions as $question) {
+            $duplicate = $question->replicate();
+            $duplicate->sort_order += 7;
+            $duplicate->save();
+        }
+
+        $this->getJson("/api/engagement/reward-challenges/{$participant->reward_challenge_id}/survey")
+            ->assertOk()
+            ->assertJsonCount(7, 'data.questions');
+
+        $this->assertSame(7, $survey->questions()->count());
+    }
+
+    public function test_duplicate_question_migration_preserves_answers_and_ignores_event_surveys(): void
+    {
+        $challenge = $this->createChallenge();
+        $survey = (new ChallengeSurveyService)->createForChallenge($challenge);
+        $participant = EngagementRewardChallengeParticipant::create([
+            'reward_challenge_id' => $challenge->id,
+            'user_id' => auth()->id(),
+            'status' => 'submitted',
+            'submitted_at' => now(),
+        ]);
+        $response = EngagementPostEventSurveyResponse::create([
+            'engagement_post_event_survey_id' => $survey->id,
+            'reward_challenge_participant_id' => $participant->id,
+            'user_id' => auth()->id(),
+            'submitted_at' => now(),
+        ]);
+
+        $firstQuestion = $survey->questions()->orderBy('id')->firstOrFail();
+        $duplicateQuestion = $firstQuestion->replicate();
+        $duplicateQuestion->sort_order = 7;
+        $duplicateQuestion->save();
+        EngagementPostEventAnswer::create([
+            'engagement_post_event_survey_response_id' => $response->id,
+            'engagement_post_event_question_id' => $duplicateQuestion->id,
+            'user_id' => auth()->id(),
+            'answer' => '5',
+        ]);
+
+        $eventSurvey = EngagementPostEventSurvey::create([
+            'user_id' => auth()->id(),
+            'title' => 'Event survey',
+            'status' => 'published',
+        ]);
+        $eventQuestion = EngagementPostEventQuestion::create([
+            'engagement_post_event_survey_id' => $eventSurvey->id,
+            'user_id' => auth()->id(),
+            'question' => 'Event question',
+            'type' => 'paragraph',
+            'sort_order' => 0,
+        ]);
+        $eventQuestionCopy = $eventQuestion->replicate();
+        $eventQuestionCopy->sort_order = 1;
+        $eventQuestionCopy->save();
+
+        $migration = require database_path('migrations/2026_10_14_000001_deduplicate_reward_challenge_survey_questions.php');
+        $migration->up();
+
+        $this->assertSame(7, $survey->questions()->count());
+        $this->assertDatabaseHas('engagement_post_event_answers', [
+            'engagement_post_event_survey_response_id' => $response->id,
+            'engagement_post_event_question_id' => $firstQuestion->id,
+            'answer' => '5',
+        ]);
+        $this->assertSame(2, $eventSurvey->questions()->count());
     }
 
     public function test_database_prevents_duplicate_surveys_even_outside_the_service(): void

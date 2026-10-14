@@ -75,6 +75,54 @@ class ChallengeSurveyService
         });
     }
 
+    public function removeDuplicateQuestions(EngagementPostEventSurvey $survey): void
+    {
+        if ($survey->reward_challenge_id === null) {
+            return;
+        }
+
+        DB::transaction(function () use ($survey) {
+            $lockedSurvey = EngagementPostEventSurvey::query()
+                ->lockForUpdate()
+                ->findOrFail($survey->getKey());
+
+            if ($lockedSurvey->reward_challenge_id === null) {
+                return;
+            }
+
+            $this->deduplicateQuestions($lockedSurvey);
+        });
+    }
+
+    private function deduplicateQuestions(EngagementPostEventSurvey $survey): void
+    {
+        $canonicalQuestions = [];
+
+        foreach ($survey->questions()->orderBy('id')->get() as $question) {
+            $normalizedText = preg_replace('/\s+/u', ' ', trim((string) $question->question));
+            if ($normalizedText === null || $normalizedText === '') {
+                continue;
+            }
+
+            $key = mb_strtolower($normalizedText).'|'.mb_strtolower(trim((string) $question->type));
+            $canonicalQuestion = $canonicalQuestions[$key] ?? null;
+
+            if ($canonicalQuestion === null) {
+                $canonicalQuestions[$key] = $question;
+                continue;
+            }
+
+            DB::table('engagement_post_event_answers')
+                ->where('engagement_post_event_question_id', $question->id)
+                ->update(['engagement_post_event_question_id' => $canonicalQuestion->id]);
+            DB::table('engagement_post_event_question_options')
+                ->where('engagement_post_event_question_id', $question->id)
+                ->update(['engagement_post_event_question_id' => $canonicalQuestion->id]);
+
+            $question->delete();
+        }
+    }
+
     private const QUESTIONS = [
         ['How satisfied were you with the event?', 'rating', true],
         ['How satisfied were you with the activities? (Schedule)', 'rating', true],
@@ -113,6 +161,7 @@ class ChallengeSurveyService
                 }
             }
 
+            $this->deduplicateQuestions($survey);
             $lockedChallenge->update(['survey_required' => true]);
             $challenge->setAttribute('survey_required', true);
             $challenge->setRelation('survey', $survey);

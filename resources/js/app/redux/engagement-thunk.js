@@ -467,6 +467,10 @@ export const get_engagement_reward_challenge_survey_thunk = createAsyncThunk(
             return rejectWithValue(error.response?.data || { message: error.message });
         }
     },
+    {
+        condition: (id, { getState }) =>
+            !getState().engagement.rewardChallengeSurveys[id]?.loading,
+    },
 );
 
 export const submit_engagement_reward_challenge_survey_thunk = createAsyncThunk(

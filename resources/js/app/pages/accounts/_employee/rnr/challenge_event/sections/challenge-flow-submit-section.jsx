@@ -9,7 +9,6 @@ import {
     submit_engagement_reward_challenge_proof_thunk,
     submit_engagement_reward_challenge_daily_proof_thunk,
 } from "@/app/redux/engagement-thunk";
-import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 import TeamSubmissionSection from "./team-submission-section";
 
 export default function ChallengeFlowSubmitSection({
@@ -17,9 +16,10 @@ export default function ChallengeFlowSubmitSection({
     isDeclined,
     isOpen,
     onClose,
+    canSubmitTeam,
+    individualSubmitted = false,
 }) {
     const dispatch = useDispatch();
-    const { isERLeader } = useCurrentEmployee();
     const { rewardChallengeSubmittingId } = useSelector(
         (state) => state.engagement,
     );
@@ -29,7 +29,6 @@ export default function ChallengeFlowSubmitSection({
     const [submissionMode, setSubmissionMode] = useState("individual");
     const submitting = rewardChallengeSubmittingId === challenge.id;
     const isDaily = challenge.is_daily_challenge;
-    const canSubmitTeam = isERLeader && challenge.type === "Team";
 
     useEffect(() => {
         if (!isOpen) {
@@ -181,6 +180,17 @@ export default function ChallengeFlowSubmitSection({
             <>
                 {modeSelector}
                 <TeamSubmissionSection challenge={challenge} onClose={onClose} />
+            </>
+        );
+    }
+
+    if (individualSubmitted) {
+        return (
+            <>
+                {modeSelector}
+                <div role="status" className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                    Your individual proof has already been recorded. Select Team submission to submit proof for your eligible direct reports.
+                </div>
             </>
         );
     }

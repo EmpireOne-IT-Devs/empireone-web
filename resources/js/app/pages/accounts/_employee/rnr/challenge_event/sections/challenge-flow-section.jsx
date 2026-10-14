@@ -14,6 +14,7 @@ import ChallengeFlowSubmittedSection from "./challenge-flow-submitted-section";
 import ChallengeFlowApprovedSection from "./challenge-flow-approved-section";
 import ChallengeSurveySection from "./challenge-survey-section";
 import Button from "@/app/_components/button";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 const STEP_INDEX = {
     details: 0,
@@ -26,6 +27,7 @@ const STEP_INDEX = {
 
 export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
     const dispatch = useDispatch();
+    const { isERLeader } = useCurrentEmployee();
     const { rewardChallengeJoiningId } = useSelector(
         (state) => state.engagement,
     );
@@ -35,6 +37,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
 
     if (!challenge) return null;
 
+    const canSubmitTeam = isERLeader && challenge.type === "Team";
     const statusKey = challenge.is_joined
         ? challenge.is_daily_challenge
             ? ["approved", "pending_survey"].includes(challenge.participation_status)
@@ -189,21 +192,46 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                 isDeclined={isDeclined}
                                 isOpen={isOpen}
                                 onClose={handleClose}
+                                canSubmitTeam={canSubmitTeam}
                             />
                         )}
 
                         {currentStep === 2 && (
-                            <ChallengeFlowSubmittedSection
-                                challenge={challenge}
-                                onClose={handleClose}
-                            />
+                            <>
+                                <ChallengeFlowSubmittedSection
+                                    challenge={challenge}
+                                    onClose={handleClose}
+                                />
+                                {canSubmitTeam && (
+                                    <ChallengeFlowSubmitSection
+                                        challenge={challenge}
+                                        isDeclined={isDeclined}
+                                        isOpen={isOpen}
+                                        onClose={handleClose}
+                                        canSubmitTeam
+                                        individualSubmitted
+                                    />
+                                )}
+                            </>
                         )}
 
                         {currentStep === 3 && (
-                            <ChallengeFlowApprovedSection
-                                challenge={challenge}
-                                onClose={handleClose}
-                            />
+                            <>
+                                <ChallengeFlowApprovedSection
+                                    challenge={challenge}
+                                    onClose={handleClose}
+                                />
+                                {canSubmitTeam && (
+                                    <ChallengeFlowSubmitSection
+                                        challenge={challenge}
+                                        isDeclined={isDeclined}
+                                        isOpen={isOpen}
+                                        onClose={handleClose}
+                                        canSubmitTeam
+                                        individualSubmitted
+                                    />
+                                )}
+                            </>
                         )}
                     </>
                 )}
