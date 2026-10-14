@@ -9,12 +9,15 @@ import {
     submit_engagement_reward_challenge_proof_thunk,
     submit_engagement_reward_challenge_daily_proof_thunk,
 } from "@/app/redux/engagement-thunk";
+import TeamSubmissionSection from "./team-submission-section";
 
 export default function ChallengeFlowSubmitSection({
     challenge,
     isDeclined,
     isOpen,
     onClose,
+    canSubmitTeam,
+    individualSubmitted = false,
 }) {
     const dispatch = useDispatch();
     const { rewardChallengeSubmittingId } = useSelector(
@@ -23,6 +26,7 @@ export default function ChallengeFlowSubmitSection({
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState(null);
     const [description, setDescription] = useState("");
+    const [submissionMode, setSubmissionMode] = useState("individual");
     const submitting = rewardChallengeSubmittingId === challenge.id;
     const isDaily = challenge.is_daily_challenge;
 
@@ -30,6 +34,7 @@ export default function ChallengeFlowSubmitSection({
         if (!isOpen) {
             removePhoto();
             setDescription("");
+            setSubmissionMode("individual");
         }
     }, [isOpen]);
 
@@ -114,11 +119,38 @@ export default function ChallengeFlowSubmitSection({
         );
     }
 
+    const modeSelector = canSubmitTeam ? (
+        <fieldset className="space-y-2">
+            <legend className="text-sm font-medium text-gray-700">
+                How would you like to submit?
+            </legend>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {[
+                    { value: "individual", label: "Individual submission" },
+                    { value: "team", label: "Team submission" },
+                ].map((mode) => (
+                    <Button
+                        key={mode.value}
+                        type="button"
+                        variant={submissionMode === mode.value ? "primary" : "light"}
+                        outlined={submissionMode !== mode.value}
+                        aria-pressed={submissionMode === mode.value}
+                        onClick={() => setSubmissionMode(mode.value)}
+                        className="w-full"
+                    >
+                        {mode.label}
+                    </Button>
+                ))}
+            </div>
+        </fieldset>
+    ) : null;
+
     // A daily challenge already has today's submission in for review — show a
     // waiting state instead of letting the employee submit a second photo.
-    if (isDaily && challenge.submitted_today) {
+    if (isDaily && challenge.submitted_today && submissionMode === "individual") {
         return (
             <>
+                {modeSelector}
                 <div className="flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
                     <Clock3 className="h-4 w-4 shrink-0" />
                     You already submitted today's proof. It's pending admin review —
@@ -143,8 +175,29 @@ export default function ChallengeFlowSubmitSection({
         );
     }
 
+    if (submissionMode === "team" && canSubmitTeam) {
+        return (
+            <>
+                {modeSelector}
+                <TeamSubmissionSection challenge={challenge} onClose={onClose} />
+            </>
+        );
+    }
+
+    if (individualSubmitted) {
+        return (
+            <>
+                {modeSelector}
+                <div role="status" className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                    Your individual proof has already been recorded. Select Team submission to submit proof for your eligible direct reports.
+                </div>
+            </>
+        );
+    }
+
     return (
         <>
+            {modeSelector}
             {isDeclined && challenge.review_note && (
                 <div className="rounded-xl bg-red-50 px-3 py-2.5 text-sm text-red-600">
                     <span className="font-semibold">Previous feedback:</span>{" "}

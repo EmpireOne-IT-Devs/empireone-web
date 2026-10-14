@@ -200,7 +200,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::redirect('/', '/accounts/administrator/rnr/peer_recognition');
             Route::inertia('/peer_recognition', 'accounts/_administrator/rnr/peer_recognition/page');
             Route::prefix('challenges_events')->group(function () {
-                Route::redirect('/', '/accounts/administrator/rnr/challenges_events/dashboard');
+                Route::redirect('/', '/accounts/administrator/rnr/challenges_events/join');
                 Route::inertia('/join', 'accounts/_administrator/rnr/challenges_events/join/page');
                 Route::middleware('challenge.management')->group(function () {
                     Route::inertia('/dashboard', 'accounts/_administrator/rnr/challenges_events/dashboard/page');

@@ -11,6 +11,10 @@ class EngagementRewardChallengeTeamSubmissionResource extends JsonResource
     public function toArray(Request $request): array
     {
         $challenge = $this->challenge;
+        $leader = $this->leader;
+        $leaderProfile = $leader?->account_employee;
+        $leaderParticipant = $leader?->challengeParticipations
+            ?->firstWhere('reward_challenge_id', $challenge?->id);
 
         return [
             'id' => 'team-'.$this->id,
@@ -23,12 +27,24 @@ class EngagementRewardChallengeTeamSubmissionResource extends JsonResource
             'reviewed_at' => $this->reviewed_at?->toDateTimeString(),
             'review_note' => $this->review_note,
             'points_submitted' => $challenge?->points,
+            'team_points_awarded' => (int) $this->team_points_awarded,
+            'employee' => $leader ? [
+                'id' => $leader->id,
+                'name' => $leader->name,
+                'email' => $leader->email,
+                'eoid' => $leaderProfile?->employee_id,
+                'department_name' => $leaderProfile?->department?->name,
+                'account_name' => $leaderProfile?->account?->name,
+                'survey_completed' => $leaderParticipant?->survey_rewarded_at !== null,
+            ] : null,
+            'leader_survey_completed' => $leaderParticipant?->survey_rewarded_at !== null,
             'challenge' => $challenge ? [
                 'id' => $challenge->id,
                 'title' => $challenge->title,
                 'points' => $challenge->points,
                 'category' => $challenge->category,
                 'type' => $challenge->type,
+                'is_daily_challenge' => $challenge->isDailyChallenge(),
                 'survey_required' => (bool) $challenge->survey_required,
             ] : null,
             'employees' => $this->members->map(fn ($member) => [

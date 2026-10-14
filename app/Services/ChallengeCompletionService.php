@@ -37,7 +37,9 @@ class ChallengeCompletionService
 
         $participant->update([
             'status' => 'approved',
-            'points_awarded' => $challenge->points,
+            'points_awarded' => $participant->teamSubmissionMembers()->exists()
+                ? 0
+                : $challenge->points,
         ]);
 
         return true;

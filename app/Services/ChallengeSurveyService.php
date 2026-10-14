@@ -19,12 +19,28 @@ class ChallengeSurveyService
                 ->where('user_id', $userId)
                 ->lockForUpdate()
                 ->firstOrFail();
-            $challenge = $challenge->fresh();
-            abort_unless($challenge?->survey_required, 409, 'This challenge does not require a survey.');
+            $challenge = EngagementRewardChallenge::query()
+                ->lockForUpdate()
+                ->findOrFail($challenge->id);
+            abort_unless($challenge->survey_required, 409, 'This challenge does not require a survey.');
             $survey = $challenge->survey()->with('questions')->firstOrFail();
 
-            if ($participant->hasCompletedSurvey($challenge)) {
-                return $participant;
+            $existingResponse = $survey->responses()
+                ->where('user_id', $userId)
+                ->whereNotNull('submitted_at')
+                ->lockForUpdate()
+                ->first();
+
+            if ($existingResponse) {
+                if ($participant->survey_rewarded_at === null) {
+                    $participant->update([
+                        'survey_points_awarded' => self::REWARD_POINTS,
+                        'survey_rewarded_at' => $existingResponse->submitted_at,
+                    ]);
+                    app(ChallengeCompletionService::class)->finalizeLocked($participant);
+                }
+
+                return $participant->load('surveyResponse');
             }
 
             abort_unless($participant->canAnswerSurvey($challenge), 422, 'Complete the challenge proof requirements before answering its survey.');
@@ -55,8 +71,56 @@ class ChallengeSurveyService
             app(ChallengeCompletionService::class)->finalizeLocked($participant);
             $survey->refreshSentimentOverview();
 
-            return $participant;
+            return $participant->load('surveyResponse');
         });
+    }
+
+    public function removeDuplicateQuestions(EngagementPostEventSurvey $survey): void
+    {
+        if ($survey->reward_challenge_id === null) {
+            return;
+        }
+
+        DB::transaction(function () use ($survey) {
+            $lockedSurvey = EngagementPostEventSurvey::query()
+                ->lockForUpdate()
+                ->findOrFail($survey->getKey());
+
+            if ($lockedSurvey->reward_challenge_id === null) {
+                return;
+            }
+
+            $this->deduplicateQuestions($lockedSurvey);
+        });
+    }
+
+    private function deduplicateQuestions(EngagementPostEventSurvey $survey): void
+    {
+        $canonicalQuestions = [];
+
+        foreach ($survey->questions()->orderBy('id')->get() as $question) {
+            $normalizedText = preg_replace('/\s+/u', ' ', trim((string) $question->question));
+            if ($normalizedText === null || $normalizedText === '') {
+                continue;
+            }
+
+            $key = mb_strtolower($normalizedText).'|'.mb_strtolower(trim((string) $question->type));
+            $canonicalQuestion = $canonicalQuestions[$key] ?? null;
+
+            if ($canonicalQuestion === null) {
+                $canonicalQuestions[$key] = $question;
+                continue;
+            }
+
+            DB::table('engagement_post_event_answers')
+                ->where('engagement_post_event_question_id', $question->id)
+                ->update(['engagement_post_event_question_id' => $canonicalQuestion->id]);
+            DB::table('engagement_post_event_question_options')
+                ->where('engagement_post_event_question_id', $question->id)
+                ->update(['engagement_post_event_question_id' => $canonicalQuestion->id]);
+
+            $question->delete();
+        }
     }
 
     private const QUESTIONS = [
@@ -97,6 +161,7 @@ class ChallengeSurveyService
                 }
             }
 
+            $this->deduplicateQuestions($survey);
             $lockedChallenge->update(['survey_required' => true]);
             $challenge->setAttribute('survey_required', true);
             $challenge->setRelation('survey', $survey);

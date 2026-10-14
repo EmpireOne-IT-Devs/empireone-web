@@ -12,10 +12,15 @@ use Illuminate\Support\Facades\Gate;
 
 class ChallengeSurveyController extends Controller
 {
-    public function show(EngagementRewardChallenge $engagementRewardChallenge): ChallengeSurveyResource
+    public function show(
+        EngagementRewardChallenge $engagementRewardChallenge,
+        ChallengeSurveyService $service,
+    ): ChallengeSurveyResource
     {
         $survey = $engagementRewardChallenge->survey()->with(['questions', 'challenge'])->firstOrFail();
         Gate::authorize('view', $survey);
+        $service->removeDuplicateQuestions($survey);
+        $survey->load('questions');
         abort_if($survey->questions->isEmpty(), 409, 'This challenge survey has no questions. Please contact an administrator.');
 
         return new ChallengeSurveyResource($survey);

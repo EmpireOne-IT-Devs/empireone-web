@@ -32,6 +32,7 @@ import {
     leave_reward_challenge_service,
     submit_reward_challenge_proof_service,
     submit_reward_challenge_daily_proof_service,
+    submit_reward_challenge_team_proof_service,
     get_reward_challenge_my_daily_logs_service,
     get_reward_challenge_submissions_service,
     get_reward_challenge_submission_stats_service,
@@ -466,6 +467,10 @@ export const get_engagement_reward_challenge_survey_thunk = createAsyncThunk(
             return rejectWithValue(error.response?.data || { message: error.message });
         }
     },
+    {
+        condition: (id, { getState }) =>
+            !getState().engagement.rewardChallengeSurveys[id]?.loading,
+    },
 );
 
 export const submit_engagement_reward_challenge_survey_thunk = createAsyncThunk(
@@ -518,6 +523,23 @@ export const submit_engagement_reward_challenge_daily_proof_thunk = createAsyncT
                 photo,
                 challengeDescription,
             );
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const submit_engagement_reward_challenge_team_proof_thunk = createAsyncThunk(
+    "engagement/submitRewardChallengeTeamProof",
+    async ({ id, photo, challengeDescription }, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await submit_reward_challenge_team_proof_service(
+                id,
+                photo,
+                challengeDescription,
+            );
+            dispatch(get_my_engagement_reward_challenges_thunk());
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

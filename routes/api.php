@@ -258,10 +258,12 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::delete('reward-challenges/{engagementRewardChallenge}/leave', [EngagementRewardChallengesController::class, 'leave']);
         Route::post('reward-challenges/{engagementRewardChallenge}/submit', [EngagementRewardChallengesController::class, 'submitProof']);
         Route::post('reward-challenges/{engagementRewardChallenge}/submit-daily', [EngagementRewardChallengesController::class, 'submitDailyProof']);
+        Route::post('reward-challenges/{engagementRewardChallenge}/submit-team', [EngagementRewardChallengesController::class, 'submitTeamProof']);
         Route::put('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'update']);
         Route::delete('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'destroy']);
 
         Route::get('reward-challenge-submissions', [EngagementChallengeSubmissionsController::class, 'index']);
+        Route::get('reward-challenge-team-submissions', [EngagementChallengeSubmissionsController::class, 'teamIndex']);
         Route::get('reward-challenge-submissions/export', [EngagementChallengeSubmissionsController::class, 'export']);
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
         Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);

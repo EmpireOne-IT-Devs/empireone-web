@@ -29,6 +29,7 @@ export default function TableSection({ filters }) {
     } = useSelector((state) => state.engagement);
     const [declineTarget, setDeclineTarget] = useState(null);
     const [proofTarget, setProofTarget] = useState(null);
+    const [submissionType, setSubmissionType] = useState("individual");
     const requestParams = useMemo(() => {
         const params = {};
         if (filters?.status) params.status = filters.status;
@@ -37,6 +38,30 @@ export default function TableSection({ filters }) {
         if (filters?.search?.trim()) params.search = filters.search.trim();
         return params;
     }, [filters]);
+    const individualSubmissions = challengeSubmissions.filter(
+        (submission) => !submission.employees?.length,
+    );
+    const teamSubmissions = challengeSubmissions.filter(
+        (submission) => submission.employees?.length > 0,
+    );
+    const visibleSubmissions =
+        submissionType === "team" ? teamSubmissions : individualSubmissions;
+
+    useEffect(() => {
+        if (
+            submissionType === "individual" &&
+            individualSubmissions.length === 0 &&
+            teamSubmissions.length > 0
+        ) {
+            setSubmissionType("team");
+        } else if (
+            submissionType === "team" &&
+            teamSubmissions.length === 0 &&
+            individualSubmissions.length > 0
+        ) {
+            setSubmissionType("individual");
+        }
+    }, [individualSubmissions.length, submissionType, teamSubmissions.length]);
 
     useEffect(() => {
         const debounceId = setTimeout(() => {
@@ -73,7 +98,11 @@ export default function TableSection({ filters }) {
             setAlert({
                 type: "success",
                 title: "Submission approved",
-                message: `+${submission.challenge?.points ?? 0} pts awarded to ${submission.employee?.name ?? "the employee"}.`,
+                message: submission.employees?.length
+                    ? result.payload?.data?.team_points_awarded > 0
+                        ? `Team proof approved for ${submission.employees.length} members. +${result.payload.data.team_points_awarded} challenge points awarded to the leader only.`
+                        : `Team proof approved for ${submission.employees.length} members. Challenge points will be awarded to the leader when the full team challenge is complete.`
+                    : `+${submission.challenge?.points ?? 0} pts awarded to ${submission.employee?.name ?? "the employee"}.`,
                 open: true,
             }),
         );
@@ -103,6 +132,32 @@ export default function TableSection({ filters }) {
 
     return (
         <div className="mt-6 overflow-visible rounded-2xl bg-white shadow-sm">
+            <div
+                className="flex flex-wrap gap-2 border-b border-gray-100 px-4 py-3"
+                aria-label="Submission type"
+            >
+                {[
+                    { id: "individual", label: "Individual", count: individualSubmissions.length },
+                    { id: "team", label: "Team", count: teamSubmissions.length },
+                ].map((tab) => (
+                    <button
+                        key={tab.id}
+                        type="button"
+                        aria-pressed={submissionType === tab.id}
+                        disabled={tab.count === 0}
+                        onClick={() => setSubmissionType(tab.id)}
+                        className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+                            submissionType === tab.id
+                                ? "bg-indigo-600 text-white shadow-sm"
+                                : tab.count === 0
+                                  ? "cursor-not-allowed bg-gray-50 text-gray-300"
+                                  : "bg-gray-50 text-gray-600 hover:bg-indigo-50 hover:text-indigo-700"
+                        }`}
+                    >
+                        {tab.label} ({tab.count})
+                    </button>
+                ))}
+            </div>
             <table className="w-full text-left text-sm">
                 <thead className="border-b border-gray-100 text-xs uppercase text-gray-400">
                     <tr>
@@ -121,17 +176,17 @@ export default function TableSection({ filters }) {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                    {challengeSubmissions.length === 0 && (
+                    {visibleSubmissions.length === 0 && (
                         <tr>
                             <td
                                 colSpan={11}
                                 className="px-4 py-6 text-center text-sm text-gray-500"
                             >
-                                No submissions found for the selected filters.
+                                No {submissionType} submissions found for the selected filters.
                             </td>
                         </tr>
                     )}
-                    {challengeSubmissions.map((submission) => {
+                    {visibleSubmissions.map((submission) => {
                         const employee = submission.employee ?? {};
                         const challenge = submission.challenge ?? {};
                         const badge =
@@ -151,6 +206,11 @@ export default function TableSection({ filters }) {
                                     <p className="font-medium text-gray-800">
                                         {employee.name ?? "Unknown employee"}
                                     </p>
+                                    {submission.employees?.length > 0 && (
+                                        <p className="text-xs text-gray-500">
+                                            Team proof · {submission.employees.length} members
+                                        </p>
+                                    )}
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-gray-800">
@@ -169,7 +229,14 @@ export default function TableSection({ filters }) {
                                 </td>
                                 <td className="px-4 py-3">
                                     <p className="font-medium text-yellow-500">
-                                        +{challenge.points ?? 0}
+                                        {submission.employees?.length > 0 && (
+                                            submission.team_points_awarded > 0
+                                                ? `+${submission.team_points_awarded} to leader`
+                                                : challenge.is_daily_challenge
+                                                  ? `${challenge.points ?? 0} on completion`
+                                                  : `+${challenge.points ?? 0} to leader`
+                                        )}
+                                        {!submission.employees?.length && `+${challenge.points ?? 0}`}
                                     </p>
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-400">
@@ -196,10 +263,33 @@ export default function TableSection({ filters }) {
                                 <td className="px-4 py-3">
                                         {submission.challenge?.survey_required ? (
                                             <Badge
-                                                label={submission.survey_completed ? "Completed" : "Pending"}
-                                                variant={submission.survey_completed ? "success" : "warning"}
-                                            />
-                                        ) : (
+                                                    label={
+                                                        submission.employees?.length
+                                                            ? submission.employees.every((member) => member.survey_completed)
+                                                                ? "Team completed"
+                                                                : "Team pending"
+                                                            : submission.survey_completed
+                                                              ? "Completed"
+                                                              : "Pending"
+                                                    }
+                                                    variant={
+                                                        submission.employees?.length
+                                                            ? submission.employees.every((member) => member.survey_completed)
+                                                                ? "success"
+                                                                : "warning"
+                                                            : submission.survey_completed
+                                                              ? "success"
+                                                              : "warning"
+                                                    }
+                                                />
+                                        ) : null}
+                                        {submission.challenge?.survey_required &&
+                                            submission.employees?.length > 0 && (
+                                            <p className="mt-1 text-xs text-gray-500">
+                                                Leader: {submission.employee?.survey_completed ? "Completed" : "Pending"}
+                                            </p>
+                                        )}
+                                        {!submission.challenge?.survey_required && (
                                             <span className="text-sm text-gray-400">—</span>
                                         )}
                                 </td>

@@ -3,18 +3,26 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Engagement\EngagementRewardChallengeTeamSubmissionResource;
 use App\Models\Engagement\EngagementRewardChallengeDailyLog;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
+use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
+use App\Models\Engagement\EngagementRewardChallengeTeamSubmissionMember;
 use App\Services\ChallengeCompletionService;
+use App\Services\ChallengeTeamSubmissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class EngagementChallengeSubmissionsController extends Controller
 {
-    public function __construct(private ChallengeCompletionService $completionService) {}
+    public function __construct(
+        private ChallengeCompletionService $completionService,
+        private ChallengeTeamSubmissionService $teamSubmissionService,
+    ) {}
 
     /**
      * List challenge proof submissions (excludes participants who haven't submitted yet).
@@ -40,6 +48,44 @@ class EngagementChallengeSubmissionsController extends Controller
         ]);
     }
 
+    public function teamIndex(Request $request): JsonResponse
+    {
+        Gate::authorize('viewAny', EngagementRewardChallengeTeamSubmission::class);
+
+        $validated = $request->validate([
+            'status' => ['nullable', 'string', 'in:submitted,approved,declined'],
+            'challenge_id' => ['nullable', 'integer', 'exists:engagement_reward_challenges,id'],
+            'location_id' => ['nullable', 'integer', 'exists:locations,id'],
+            'search' => ['nullable', 'string', 'max:255'],
+        ]);
+        $search = trim((string) ($validated['search'] ?? ''));
+
+        $submissions = EngagementRewardChallengeTeamSubmission::query()
+            ->with([
+                'challenge' => fn ($query) => $query->withTrashed(),
+                'leader.account_employee.department',
+                'leader.account_employee.account',
+                'leader.challengeParticipations',
+                'members.participant',
+            ])
+            ->when($validated['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+            ->when($validated['challenge_id'] ?? null, fn ($query, $id) => $query->where('reward_challenge_id', $id))
+            ->when($validated['location_id'] ?? null, fn ($query, $id) => $query->whereHas('members', fn ($members) => $members->where('location_id', $id)))
+            ->when($search !== '', fn ($query) => $query->where(function ($searchQuery) use ($search) {
+                $searchQuery->whereHas('leader', fn ($leader) => $leader->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('members', fn ($members) => $members->where('full_name', 'like', "%{$search}%"));
+            }))
+            ->latest('submitted_at')
+            ->get()
+            ->map(fn ($submission) => (new EngagementRewardChallengeTeamSubmissionResource($submission))->resolve($request))
+            ->values();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $submissions,
+        ]);
+    }
+
     public function export(Request $request)
     {
         $validated = $request->validate([
@@ -56,15 +102,19 @@ class EngagementChallengeSubmissionsController extends Controller
             fputcsv($handle, ['EOID', 'Fullname', 'Challenge Title', 'Department', 'Account', 'Points', 'Email'], "\t");
 
             foreach ($submissions as $submission) {
-                fputcsv($handle, [
-                    $submission['employee']['eoid'] ?? '',
-                    $submission['employee']['name'] ?? '',
-                    $submission['challenge']['title'] ?? '',
-                    $submission['employee']['department_name'] ?? '',
-                    $submission['employee']['account_name'] ?? '',
-                    $submission['challenge']['points'] ?? '',
-                    $submission['employee']['email'] ?? '',
-                ], "\t");
+                $employees = $submission['employees'] ?? [$submission['employee'] ?? []];
+
+                foreach ($employees as $employee) {
+                    fputcsv($handle, [
+                        $employee['eoid'] ?? '',
+                        $employee['name'] ?? '',
+                        $submission['challenge']['title'] ?? '',
+                        $employee['department_name'] ?? '',
+                        $employee['account_name'] ?? '',
+                        $submission['challenge']['points'] ?? '',
+                        $employee['email'] ?? '',
+                    ], "\t");
+                }
             }
 
             fclose($handle);
@@ -79,12 +129,18 @@ class EngagementChallengeSubmissionsController extends Controller
     public function stats(): JsonResponse
     {
         $participantCounts = EngagementRewardChallengeParticipant::query()
+            ->whereNotIn('id', $this->teamSubmissionParticipantIds())
             ->whereNotNull('submitted_at')
             ->selectRaw("CASE WHEN proof_approved_at IS NOT NULL THEN 'approved' ELSE status END as review_status, count(*) as total")
             ->groupBy('review_status')
             ->pluck('total', 'review_status');
 
         $dailyLogCounts = EngagementRewardChallengeDailyLog::query()
+            ->whereNull('team_submission_id')
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+        $teamSubmissionCounts = EngagementRewardChallengeTeamSubmission::query()
             ->selectRaw('status, count(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -92,9 +148,9 @@ class EngagementChallengeSubmissionsController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                'pending' => $participantCounts->get('submitted', 0) + $dailyLogCounts->get('submitted', 0),
-                'approved' => $participantCounts->get('approved', 0) + $dailyLogCounts->get('approved', 0),
-                'rejected' => $participantCounts->get('declined', 0) + $dailyLogCounts->get('declined', 0),
+                'pending' => $participantCounts->get('submitted', 0) + $dailyLogCounts->get('submitted', 0) + $teamSubmissionCounts->get('submitted', 0),
+                'approved' => $participantCounts->get('approved', 0) + $dailyLogCounts->get('approved', 0) + $teamSubmissionCounts->get('approved', 0),
+                'rejected' => $participantCounts->get('declined', 0) + $dailyLogCounts->get('declined', 0) + $teamSubmissionCounts->get('declined', 0),
             ],
         ]);
     }
@@ -105,6 +161,20 @@ class EngagementChallengeSubmissionsController extends Controller
      */
     public function approve(string $id): JsonResponse
     {
+        if (str_starts_with($id, 'team-')) {
+            $submission = EngagementRewardChallengeTeamSubmission::query()->findOrFail((int) substr($id, 5));
+            Gate::authorize('review', $submission);
+            $approved = $this->teamSubmissionService->approve($submission, auth()->user());
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Team submission approved.',
+                'data' => (new EngagementRewardChallengeTeamSubmissionResource(
+                    $approved->load(['leader.account_employee', 'leader.challengeParticipations']),
+                ))->resolve(request()),
+            ]);
+        }
+
         if (str_starts_with($id, 'daily-')) {
             return $this->approveDailyLog((int) substr($id, 6));
         }
@@ -155,6 +225,24 @@ class EngagementChallengeSubmissionsController extends Controller
 
         if (str_starts_with($id, 'daily-')) {
             return $this->declineDailyLog((int) substr($id, 6), $validated['review_note'] ?? null);
+        }
+
+        if (str_starts_with($id, 'team-')) {
+            $submission = EngagementRewardChallengeTeamSubmission::query()->findOrFail((int) substr($id, 5));
+            Gate::authorize('review', $submission);
+            $declined = $this->teamSubmissionService->decline(
+                $submission,
+                $request->user(),
+                $validated['review_note'] ?? null,
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Team submission declined.',
+                'data' => (new EngagementRewardChallengeTeamSubmissionResource(
+                    $declined->load(['leader.account_employee', 'leader.challengeParticipations']),
+                ))->resolve($request),
+            ]);
         }
 
         return DB::transaction(function () use ($id, $validated) {
@@ -285,6 +373,7 @@ class EngagementChallengeSubmissionsController extends Controller
         $search = trim((string) ($filters['search'] ?? ''));
 
         $singleSubmissions = EngagementRewardChallengeParticipant::query()
+            ->whereNotIn('id', $this->teamSubmissionParticipantIds())
             ->with([
                 'challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'card_color', 'survey_required']),
                 'user' => fn ($query) => $query
@@ -309,6 +398,7 @@ class EngagementChallengeSubmissionsController extends Controller
             ->map(fn (EngagementRewardChallengeParticipant $participant) => $this->formatSubmission($participant));
 
         $dailySubmissions = EngagementRewardChallengeDailyLog::query()
+            ->whereNull('team_submission_id')
             ->with([
                 'participant.challenge' => fn ($query) => $query->withTrashed()->select(['id', 'title', 'points', 'category', 'type', 'card_color', 'start_date', 'survey_required']),
                 'participant.user' => fn ($query) => $query
@@ -329,7 +419,26 @@ class EngagementChallengeSubmissionsController extends Controller
             ->get()
             ->map(fn (EngagementRewardChallengeDailyLog $log) => $this->formatDailyLog($log));
 
+        $teamSubmissions = EngagementRewardChallengeTeamSubmission::query()
+            ->with([
+                'challenge' => fn ($query) => $query->withTrashed(),
+                'leader.account_employee.department',
+                'leader.account_employee.account',
+                'leader.challengeParticipations',
+                'members.participant',
+            ])
+            ->when($status, fn ($query, $value) => $query->where('status', $value))
+            ->when($challengeId, fn ($query, $value) => $query->where('reward_challenge_id', $value))
+            ->when($locationId, fn ($query, $value) => $query->whereHas('members', fn ($members) => $members->where('location_id', $value)))
+            ->when($search !== '', fn ($query) => $query->where(function ($searchQuery) use ($search) {
+                $searchQuery->whereHas('leader', fn ($leader) => $leader->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('members', fn ($members) => $members->where('full_name', 'like', "%{$search}%"));
+            }))
+            ->get()
+            ->map(fn ($submission) => (new EngagementRewardChallengeTeamSubmissionResource($submission))->resolve(request()));
+
         return $singleSubmissions->concat($dailySubmissions)
+            ->concat($teamSubmissions)
             ->sortByDesc('submitted_at')
             ->values();
     }
@@ -374,6 +483,29 @@ class EngagementChallengeSubmissionsController extends Controller
                 'account_name' => $accountEmployee?->account?->name,
             ] : null,
         ];
+    }
+
+    private function teamSubmissionParticipantIds()
+    {
+        return EngagementRewardChallengeTeamSubmissionMember::query()
+            ->join(
+                'engagement_reward_challenge_team_submissions as team_submissions',
+                'team_submissions.id',
+                '=',
+                'engagement_reward_challenge_team_submission_members.team_submission_id',
+            )
+            ->where(function ($query) {
+                $query->where(function ($statusQuery) {
+                    $statusQuery
+                        ->whereColumn('team_submissions.status', 'engagement_reward_challenge_participants.status')
+                        ->whereIn('engagement_reward_challenge_participants.status', ['submitted', 'declined']);
+                })->orWhere(function ($approvedQuery) {
+                    $approvedQuery
+                        ->where('team_submissions.status', 'approved')
+                        ->whereNotNull('engagement_reward_challenge_participants.proof_approved_at');
+                });
+            })
+            ->select('engagement_reward_challenge_team_submission_members.participant_id');
     }
 
     private function formatDailyLog(EngagementRewardChallengeDailyLog $log): array

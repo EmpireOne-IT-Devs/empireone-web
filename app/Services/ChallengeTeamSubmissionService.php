@@ -276,6 +276,8 @@ class ChallengeTeamSubmissionService
                 'members.participant',
             ]);
 
+            $allDailyProofsComplete = true;
+
             foreach ($submission->members as $member) {
                 $participant = EngagementRewardChallengeParticipant::query()
                     ->lockForUpdate()
@@ -312,6 +314,8 @@ class ChallengeTeamSubmissionService
                     }
 
                     $this->completionService->finalizeLocked($participant);
+                    $allDailyProofsComplete = $allDailyProofsComplete
+                        && $participant->isDailyChallengeComplete();
                     continue;
                 }
 
@@ -324,8 +328,19 @@ class ChallengeTeamSubmissionService
                 $this->completionService->finalizeLocked($participant);
             }
 
+            $alreadyAwarded = EngagementRewardChallengeTeamSubmission::query()
+                ->where('reward_challenge_id', $submission->reward_challenge_id)
+                ->where('leader_id', $submission->leader_id)
+                ->where('team_points_awarded', '>', 0)
+                ->exists();
+
             $submission->update([
                 'status' => 'approved',
+                'team_points_awarded' => (
+                    ! $submission->challenge->isDailyChallenge() || $allDailyProofsComplete
+                ) && ! $alreadyAwarded
+                    ? $submission->challenge->points
+                    : 0,
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'review_note' => null,

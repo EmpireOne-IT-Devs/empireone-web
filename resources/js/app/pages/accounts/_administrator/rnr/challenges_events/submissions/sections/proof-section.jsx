@@ -117,6 +117,24 @@ export default function ProofSection({
                                     </div>
                                 </div>
 
+                                {activeSubmission.employees?.length > 0 && (
+                                    <div className="rounded-lg border border-neutral-100 bg-neutral-50/50 p-3">
+                                        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                                            Team members ({activeSubmission.employees.length})
+                                        </p>
+                                        <ul className="max-h-40 space-y-1 overflow-y-auto text-xs text-neutral-600">
+                                            {activeSubmission.employees.map((employee) => (
+                                                <li key={employee.id} className="flex justify-between gap-3">
+                                                    <span className="truncate">{employee.name}</span>
+                                                    <span className="shrink-0 text-neutral-400">
+                                                        {employee.eoid || "No EOID"}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
                                 {/* Challenge Details */}
                                 <div className="space-y-1">
                                     <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
@@ -129,7 +147,12 @@ export default function ProofSection({
                                         {activeSubmission.challenge?.points && (
                                             <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-600/20">
                                                 <Award className="h-3 w-3 text-amber-600" />
-                                                +{activeSubmission.challenge.points} pts
+                                                {activeSubmission.employees?.length > 0
+                                                    ? activeSubmission.challenge.is_daily_challenge &&
+                                                      !activeSubmission.team_points_awarded
+                                                        ? `+${activeSubmission.challenge.points} pts to leader on completion`
+                                                        : `+${activeSubmission.team_points_awarded || activeSubmission.challenge.points} pts to leader only`
+                                                    : `+${activeSubmission.challenge.points} pts`}
                                             </span>
                                         )}
                                     </div>

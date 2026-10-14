@@ -51,6 +51,7 @@ const Survey = (await load("resources/js/app/pages/accounts/_employee/rnr/challe
 const Submitted = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submitted-section.jsx")).default;
 const Progress = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-progress-section.jsx")).default;
 const SubmitProof = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submit-section.jsx")).default;
+const ChallengeFlow = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-section.jsx")).default;
 const Details = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-details-section.jsx")).default;
 const Approved = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-approved-section.jsx")).default;
 const Profile = (await load("resources/js/app/pages/accounts/_employee/rnr/my_profile/sections/points-summary-section.jsx")).default;
@@ -78,18 +79,31 @@ const completion = {
     challenge_points_awarded: 100, survey_points_awarded: 15, total_points_awarded: 115,
 };
 
-function store(overrides = {}) {
+function store(overrides = {}, appData = { user: { is_er_leader: false } }) {
     return configureStore({
-        reducer: { engagement: slice.default },
+        reducer: {
+            engagement: slice.default,
+            app: (state = { data: appData }) => state,
+        },
         preloadedState: { engagement: {
             ...slice.default(undefined, { type: "@@init" }),
             myRewardChallenges: [challenge],
             ...overrides,
-        } },
+        }, app: { data: appData } },
     });
 }
-function render(Component, state = {}, props = {}) {
-    return renderToStaticMarkup(React.createElement(Provider, { store: store(state) },
+function render(Component, state = {}, props = {}, appData) {
+    globalThis.window = {
+        location: {
+            pathname: "/accounts/employee/rnr/my_profile",
+            search: "",
+            href: "http://localhost/accounts/employee/rnr/my_profile",
+            toString() {
+                return this.href;
+            },
+        },
+    };
+    return renderToStaticMarkup(React.createElement(Provider, { store: store(state, appData) },
         React.createElement(Component, { challenge, onBack() {}, onClose() {}, ...props })));
 }
 function adapter(handler) {
@@ -106,6 +120,47 @@ test("services target the exact challenge and return JSON, not Axios wrappers", 
     assert.equal(requests[0].url, "/api/engagement/reward-challenges/12/survey");
     assert.equal(requests[1].url, "/api/engagement/reward-challenges/12/survey/submit");
     assert.deepEqual(JSON.parse(requests[1].data), { answers: { 1: 5 } });
+});
+
+test("eligible leaders retain both submission tabs after individual proof is submitted", () => {
+    const html = render(SubmitProof, {}, {
+        challenge: {
+            ...challenge,
+            type: "Team",
+            participation_status: "submitted",
+        },
+        canSubmitTeam: true,
+        individualSubmitted: true,
+        isOpen: true,
+    });
+    assert.match(html, /Individual submission/);
+    assert.match(html, /Team submission/);
+    assert.match(html, /Your individual proof has already been recorded/);
+    assert.doesNotMatch(html, /Submit for Review/);
+});
+
+test("an earlier team submission does not hide the individual submission option", () => {
+    const html = render(SubmitProof, {}, {
+        challenge: {
+            ...challenge,
+            type: "Team",
+            team_submission_status: "submitted",
+            team_submission_locked: true,
+        },
+        canSubmitTeam: true,
+        isOpen: true,
+    });
+    assert.match(html, /Individual submission/);
+    assert.match(html, /Team submission/);
+    assert.match(html, /Upload a photo as proof/);
+});
+
+test("team submission tabs remain role-gated and unavailable to non-leaders", () => {
+    const html = render(SubmitProof, {}, {
+        challenge: { ...challenge, type: "Team" },
+        isOpen: true,
+    });
+    assert.doesNotMatch(html, /Team submission/);
 });
 
 test("daily proof service uploads the proof without a client-selected date", async () => {
@@ -176,6 +231,29 @@ test("fetch errors remain visible and retry clears the error", async () => {
     adapter(() => ({ data: survey }));
     await state.dispatch(thunks.get_engagement_reward_challenge_survey_thunk(12));
     assert.equal(state.getState().engagement.rewardChallengeSurveys[12].error, null);
+    assert.equal(state.getState().engagement.rewardChallengeSurveys[12].data.questions.length, 7);
+});
+
+test("concurrent survey loads issue one request and keep one question set", async () => {
+    let resolve;
+    let requestCount = 0;
+    axios.defaults.adapter = async (config) => {
+        requestCount++;
+        return await new Promise((done) => {
+            resolve = () => done({
+                config, status: 200, headers: {}, data: { data: survey },
+            });
+        });
+    };
+
+    const state = store();
+    const first = state.dispatch(thunks.get_engagement_reward_challenge_survey_thunk(12));
+    const second = await state.dispatch(thunks.get_engagement_reward_challenge_survey_thunk(12));
+    assert.equal(second.meta.condition, true);
+    assert.equal(requestCount, 1);
+
+    resolve();
+    await first;
     assert.equal(state.getState().engagement.rewardChallengeSurveys[12].data.questions.length, 7);
 });
 
@@ -322,11 +400,52 @@ test("points history shows survey reward before final approval and bounds render
             points: 100, survey_points_awarded: 15, total_points_awarded: 15,
         })),
     } });
-    assert.match(html, /Survey required/);
-    assert.match(html, /15 survey pts/);
+    assert.match(html, /Survey Required/);
+    assert.match(html, /\+15 Survey pts/);
     assert.doesNotMatch(html, /100 pts/);
-    assert.equal((html.match(/<li/g) || []).length, 10);
+    assert.equal((html.match(/class="border-b border-gray-100 hover:bg-gray-50\/80 transition-colors group"/g) || []).length, 10);
     assert.match(html, /Next/);
+});
+
+test("points history labels team points and identifies the challenge", () => {
+    const html = render(Profile, { challengeProfileSummary: {
+        total_points: 100,
+        challenge_history: [{
+            id: "team-1",
+            challenge_title: "Quarterly Team Challenge",
+            category: "Teamwork",
+            submission_type: "team",
+            status: "approved",
+            challenge_points_awarded: 100,
+            team_points_awarded: 100,
+            survey_points_awarded: 0,
+            total_points_awarded: 100,
+        }],
+    } });
+    assert.match(html, /Quarterly Team Challenge/);
+    assert.match(html, /Team Submission/);
+    assert.match(html, /\+100 Team pts/);
+    assert.doesNotMatch(html, /challenge pts/);
+    assert.match(html, /lucide-users/);
+});
+
+test("points history separates individual challenge and survey rewards", () => {
+    const html = render(Profile, { challengeProfileSummary: {
+        total_points: 115,
+        challenge_history: [{
+            id: 1,
+            challenge_title: "Individual Wellness Challenge",
+            category: "Wellness",
+            status: "approved",
+            challenge_points_awarded: 100,
+            survey_points_awarded: 15,
+            total_points_awarded: 115,
+        }],
+    } });
+    assert.match(html, /Individual Wellness Challenge/);
+    assert.match(html, /\+100 Challenge pts/);
+    assert.match(html, /\+15 Survey pts/);
+    assert.doesNotMatch(html, /\+115 pts/);
 });
 
 test("pending survey card remains actionable even after the deadline", () => {
@@ -357,8 +476,8 @@ test("legacy challenges retain pending review without a survey action", () => {
 test("profile load failures are not presented as an empty successful history", () => {
     const html = render(Profile, { challengeProfileSummaryError: { message: "Network unavailable" } });
     assert.match(html, /Network unavailable/);
-    assert.match(html, /history could not be loaded/);
-    assert.doesNotMatch(html, /No challenges joined yet/);
+    assert.match(html, /Challenge history could not be loaded/);
+    assert.doesNotMatch(html, /No challenge history found/);
 });
 
 test("Post Event Survey rows identify challenge ID, title and category without mutation or copy actions", () => {

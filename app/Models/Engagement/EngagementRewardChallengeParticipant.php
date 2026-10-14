@@ -27,10 +27,11 @@ class EngagementRewardChallengeParticipant extends Pivot
 
     public function hasCompletedSurvey(EngagementRewardChallenge $challenge): bool
     {
-        return $this->surveyResponse()
+        return EngagementPostEventSurveyResponse::query()
             ->where('user_id', $this->user_id)
             ->whereNotNull('submitted_at')
-            ->whereHas('survey', fn ($query) => $query->where('reward_challenge_id', $challenge->id))
+            ->whereHas('survey', fn ($query) => $query
+                ->where('reward_challenge_id', $challenge->id))
             ->exists();
     }
 
@@ -98,6 +99,11 @@ class EngagementRewardChallengeParticipant extends Pivot
     public function dailyLogs(): HasMany
     {
         return $this->hasMany(EngagementRewardChallengeDailyLog::class, 'reward_challenge_participant_id');
+    }
+
+    public function teamSubmissionMembers(): HasMany
+    {
+        return $this->hasMany(EngagementRewardChallengeTeamSubmissionMember::class, 'participant_id');
     }
 
     public function surveyResponse(): HasOne
