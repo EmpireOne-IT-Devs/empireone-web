@@ -14,7 +14,7 @@ export async function get_erps_service() {
 }
 
 export async function get_job_postings_service() {
-    return await axios.get(`/api/job/postings${window.location.search}`);
+    return await axios.get(`/api/job/postings${window.location.search}&where=${window.location.pathname.split('/')[4]}`);
 }
 
 export async function get_job_posting_by_id_service(id) {

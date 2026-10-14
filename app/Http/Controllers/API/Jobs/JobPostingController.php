@@ -232,8 +232,16 @@ class JobPostingController extends Controller
     {
         $user = Auth::user()?->load('personal_information', 'account_employee');
         $status = $request->status ?? 'Active';
+
         $query = JobPosting::where('status', $status)
             ->with(['job_requisition', 'applications', 'applicant', 'erps']);
+
+        // Filter by location_id from the job_requisition relationship
+        if ($request->filled('location_id') && $request->where != 'applicants') {
+            $query->whereHas('job_requisition', function ($q) use ($request) {
+                $q->where('location_id', $request->location_id);
+            });
+        }
 
         if ($user && in_array($user->account_employee?->department_id, [1, 2])) {
             $query->whereIn('target_audience', ['Internal', 'Both', 'External']);
@@ -251,7 +259,7 @@ class JobPostingController extends Controller
             return $job;
         });
 
-        // 4. Manual Pagination
+        // Manual Pagination
         $perPage = (int) $request->input('per_page', 10);
         $currentPage = Paginator::resolveCurrentPage() ?: 1;
         $items = $jobPostings->forPage($currentPage, $perPage)->values();

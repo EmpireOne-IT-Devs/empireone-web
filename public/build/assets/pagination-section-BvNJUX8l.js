@@ -1,1 +1,0 @@
-import{j as t}from"./app-Dx_DzGIG.js";import{P as i}from"./pagination-C6Q__88C.js";function a({data:n,onPageChange:r}){return!n?.last_page||n.last_page<=1?null:t.jsx(t.Fragment,{children:t.jsx(i,{data:n,onPageChange:r})})}export{a as default};

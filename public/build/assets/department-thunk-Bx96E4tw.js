@@ -1,1 +1,0 @@
-import{g as s}from"./account-service-DUVn_mo3.js";import{a as r,aN as e}from"./app-Dx_DzGIG.js";async function i(){return await r.get("/api/departments")}function m(){return async function(t,n){const a=await i();t(e.actions.setDepartments(a.data))}}function u(){return async function(t,n){const a=await s();t(e.actions.setTeams(a.data))}}export{m as a,u as g};
