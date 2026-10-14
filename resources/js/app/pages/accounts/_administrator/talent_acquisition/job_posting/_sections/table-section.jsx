@@ -193,7 +193,7 @@ export default function TableSection({ loading }) {
             {/* ADDED: min-w-0 to prevent flex blowout if the table scales too large */}
             <div className="flex-1 flex flex-col gap-4 min-w-0">
                 {/* Jobs Table Card */}
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
 
                     {/* Tabs */}
                     {/* ADDED: overflow-x-auto whitespace-nowrap to allow tabs to scroll horizontally on small screens */}
