@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
-import { Briefcase, CheckCircle2 } from "lucide-react";
 
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
@@ -10,6 +9,8 @@ import store from "@/app/store/store";
 import { get_applicants_thunk, get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import { setAlert } from "@/app/redux/app-slice";
 import { TbTransfer } from "react-icons/tb";
+import { FaBriefcase } from "react-icons/fa";
+import { FaCircleCheck } from "react-icons/fa6";
 
 export default function TransferApplicant({ data }) {
     const [open, setOpen] = useState(false);
@@ -135,10 +136,10 @@ export default function TransferApplicant({ data }) {
                                                         >
                                                             <div className="flex items-start justify-between mb-3">
                                                                 <div className={`p-2.5 rounded-lg ${isSelected ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}`}>
-                                                                    <Briefcase className="w-5 h-5" />
+                                                                    <FaBriefcase className="w-5 h-5" />
                                                                 </div>
                                                                 {isSelected && (
-                                                                    <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0" />
+                                                                    <FaCircleCheck className="w-5 h-5 text-purple-600 shrink-0" />
                                                                 )}
                                                             </div>
                                                             <span className={`font-semibold text-sm ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
