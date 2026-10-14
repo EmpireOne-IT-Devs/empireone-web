@@ -8,6 +8,7 @@ import store from "@/app/store/store";
 import TableSection from "./_sections/table-section";
 import ExportJobPosting from "./_sections/export-job-posting";
 import Loading from "@/app/_components/loading-page";
+import PaginationSection from "./_sections/pagination-section";
 
 export default function Page() {
 
@@ -34,6 +35,7 @@ export default function Page() {
                             <ExportJobPosting />
                         </div>
                         <TableSection loading={loading}/>
+                        <PaginationSection />
                     </div>
                 }
             </JobPostingLayout>

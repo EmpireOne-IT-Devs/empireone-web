@@ -1,1 +1,0 @@
-import{b as r}from"./app-CdtWn6Jb.js";const o=[1,11];function d(){const e=r(a=>a.app.data)?.user,t=e?.account_employee,n=t?.department_id!=null?Number(t.department_id):null;return{user:e,employee:t,departmentId:n,isReady:!!e,isContentManager:o.includes(n),isERLeader:e?.is_er_leader===!0}}export{d as u};

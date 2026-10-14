@@ -1,0 +1,1 @@
+import{j as a}from"./app-Bu_08r8m.js";import{P as n}from"./pagination-BKF-RTHp.js";function s(){const t={current_page:1,last_page:5};return a.jsx("div",{className:"pagination-section",children:a.jsx(n,{data:t})})}export{s as default};

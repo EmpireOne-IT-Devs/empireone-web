@@ -12,7 +12,9 @@ use App\Models\Jobs\JobRequisition;
 use App\Models\Jobs\JobRequisitionLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\Paginator;
 
 class JobPostingController extends Controller
 {
@@ -234,63 +236,59 @@ class JobPostingController extends Controller
         $query = JobPosting::where('status', 'Active')
             ->with(['job_requisition', 'applications', 'applicant', 'erps']);
 
-        // Determine the location ID: either from the request, or fallback to the user's profile
-        $locationId = $request->location_id ?? $user?->account_employee?->location_id;
-        // Apply the filter if we have a location ID from EITHER source
-        // if ($locationId != "0" && $request->location_type != 'all') {
-        //     $query->whereHas('job_requisition', function ($q) use ($locationId) {
-        //         $q->where('location_id', $locationId);
-        //     });
-        // }
-
-        // CORRECTED IF STATEMENT:
-        // Checks if user exists, if their department is NOT 1 or 2, and if their role is 1 or 2
         if ($user && in_array($user->account_employee?->department_id, [1, 2])) {
             $query->whereIn('target_audience', ['Internal', 'Both', 'External']);
         } else if ($user && in_array($user->role, [1, 2])) {
             // Standard Employees and Admins (Roles 1 & 2) see Internal and Both
             $query->whereIn('target_audience', ['Internal', 'Both']);
         } else {
-            // Guests, External Applicants (Role 3), OR specific departments (1 & 2) see External and Both
             $query->whereIn('target_audience', ['External', 'Both']);
         }
 
         $jobPostings = $query->orderBy('created_at', 'desc')->get();
 
-        // 2. Filter out expired job postings
-        $activeJobPostings = $jobPostings->reject(function ($job) {
-            if (!$job->created_at) {
-                return false;
-            }
+        if ($request->status != 'closed') {
+            $jobPostings = $jobPostings->reject(function ($job) {
+                if (!$job->created_at) {
+                    return false;
+                }
 
-            $level = strtolower($job->job_requisition->position_level ?? $job->position_level ?? '');
-            $createdDate = Carbon::parse($job->created_at);
+                $level = strtolower($job->job_requisition->position_level ?? $job->position_level ?? '');
+                $createdDate = Carbon::parse($job->created_at);
 
-            $expiryDate = match ($level) {
-                'agent', 'rank and file' => $createdDate->copy()->addWeeks(3),
-                'supervisor'            => $createdDate->copy()->addWeeks(5),
-                'manager'               => $createdDate->copy()->addMonths(2),
-                'director', 'executive' => $createdDate->copy()->addMonths(3),
-                default                 => null,
-            };
+                $expiryDate = match ($level) {
+                    'agent', 'rank and file' => $createdDate->copy()->addWeeks(3),
+                    'supervisor'            => $createdDate->copy()->addWeeks(5),
+                    'manager'               => $createdDate->copy()->addMonths(2),
+                    'director', 'executive' => $createdDate->copy()->addMonths(3),
+                    default                 => null,
+                };
 
-            // Reject if current time is greater than the calculated expiry date
-            return $expiryDate ? Carbon::now()->greaterThan($expiryDate) : false;
-        });
+                // Reject if current time is greater than the calculated expiry date
+                return $expiryDate ? Carbon::now()->greaterThan($expiryDate) : false;
+            });
+        }
 
-        // 3. Map through non-expired results to append 'is_applied'
-        $activeJobPostings->transform(function ($job) use ($user) {
-            if ($user) {
-                // Uses eager-loaded relation to avoid N+1 query issue
-                $job->is_applied = $job->applications->contains('user_id', $user->id);
-            } else {
-                $job->is_applied = false;
-            }
-
+        // 3. Map through results to append 'is_applied'
+        $jobPostings->transform(function ($job) use ($user) {
+            $job->is_applied = $user ? $job->applications->contains('user_id', $user->id) : false;
             return $job;
         });
 
-        return response()->json($activeJobPostings->values());
+        // 4. Manual Pagination
+        $perPage = (int) $request->input('per_page', 10);
+        $currentPage = Paginator::resolveCurrentPage() ?: 1;
+        $items = $jobPostings->forPage($currentPage, $perPage)->values();
+
+        $paginatedResults = new LengthAwarePaginator(
+            $items,
+            $jobPostings->count(),
+            $perPage,
+            $currentPage,
+            ['path' => Paginator::resolveCurrentPath(), 'query' => $request->query()]
+        );
+
+        return response()->json($paginatedResults);
     }
     public function store(Request $request)
     {

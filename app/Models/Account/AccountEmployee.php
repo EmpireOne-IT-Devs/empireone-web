@@ -87,7 +87,7 @@ class AccountEmployee extends Model
     }
     public function site(): HasOne
     {
-        return $this->hasOne(Site::class, 'id', 'site_id')->with(['location']);
+        return $this->hasOne(Site::class, 'id', 'site_id');
     }
     public function location(): HasOne
     {

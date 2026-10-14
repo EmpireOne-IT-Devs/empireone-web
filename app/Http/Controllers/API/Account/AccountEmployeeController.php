@@ -165,6 +165,7 @@ class AccountEmployeeController extends Controller
             'department_manager',
             'department',
             'account',
+            'location',
             'site',
             'reporting_to',
             'files'
