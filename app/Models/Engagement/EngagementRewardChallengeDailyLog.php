@@ -24,6 +24,7 @@ class EngagementRewardChallengeDailyLog extends Model
         'reviewed_at',
         'reviewed_by',
         'review_note',
+        'bonus_points',
     ];
 
     protected function casts(): array
@@ -32,6 +33,7 @@ class EngagementRewardChallengeDailyLog extends Model
             'log_date' => 'date',
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
+            'bonus_points' => 'integer',
         ];
     }
 

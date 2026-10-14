@@ -585,9 +585,22 @@ export const get_engagement_reward_challenge_submission_stats_thunk = createAsyn
 
 export const approve_engagement_reward_challenge_submission_thunk = createAsyncThunk(
     "engagement/approveRewardChallengeSubmission",
-    async (id, { rejectWithValue }) => {
+    async ({ id, bonus_points = 0 }, { dispatch, getState, rejectWithValue }) => {
         try {
-            const response = await approve_reward_challenge_submission_service(id);
+            const response = await approve_reward_challenge_submission_service(id, bonus_points);
+            const challengeId = response.data?.data?.challenge?.id;
+            const loadedChallengeId =
+                getState().engagement?.rewardChallengeParticipantsChallenge?.id;
+            if (
+                challengeId &&
+                String(challengeId) === String(loadedChallengeId)
+            ) {
+                dispatch(
+                    get_engagement_reward_challenge_participants_thunk(
+                        challengeId,
+                    ),
+                );
+            }
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

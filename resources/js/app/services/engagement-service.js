@@ -224,8 +224,11 @@ export async function export_reward_challenge_submissions_service(params = {}) {
     });
 }
 
-export async function approve_reward_challenge_submission_service(id) {
-    return await axios.post(`/api/engagement/reward-challenge-submissions/${id}/approve`);
+export async function approve_reward_challenge_submission_service(id, bonus_points = 0) {
+    return await axios.post(
+        `/api/engagement/reward-challenge-submissions/${id}/approve`,
+        { bonus_points },
+    );
 }
 
 export async function decline_reward_challenge_submission_service(id, review_note) {

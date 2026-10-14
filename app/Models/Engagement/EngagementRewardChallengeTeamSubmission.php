@@ -19,6 +19,8 @@ class EngagementRewardChallengeTeamSubmission extends Model
         'challenge_description',
         'status',
         'team_points_awarded',
+        'base_points_awarded',
+        'bonus_points_awarded',
         'submitted_at',
         'reviewed_at',
         'reviewed_by',
@@ -30,6 +32,8 @@ class EngagementRewardChallengeTeamSubmission extends Model
         return [
             'log_date' => 'date',
             'team_points_awarded' => 'integer',
+            'base_points_awarded' => 'integer',
+            'bonus_points_awarded' => 'integer',
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
         ];

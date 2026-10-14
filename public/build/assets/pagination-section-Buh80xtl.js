@@ -1,1 +1,0 @@
-import{b as o,j as t}from"./app-Bu_08r8m.js";import{P as r}from"./pagination-BKF-RTHp.js";function i(){const{applicants:a}=o(n=>n.human_resources);return t.jsx(t.Fragment,{children:t.jsx(r,{data:a})})}export{i as default};

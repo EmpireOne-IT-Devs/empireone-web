@@ -159,6 +159,8 @@ const engagementSlice = createSlice({
 
         // Admin challenge participants view
         rewardChallengeParticipants: [],
+        rewardChallengeIndividualParticipants: [],
+        rewardChallengeTeamSubmissions: [],
         rewardChallengeParticipantsChallenge: null,
         rewardChallengeParticipantsLoading: false,
         rewardChallengeParticipantsError: null,
@@ -635,10 +637,23 @@ const engagementSlice = createSlice({
             .addCase(get_engagement_reward_challenge_participants_thunk.pending, (state) => {
                 state.rewardChallengeParticipantsLoading = true;
                 state.rewardChallengeParticipantsError = null;
+                state.rewardChallengeParticipants = [];
+                state.rewardChallengeIndividualParticipants = [];
+                state.rewardChallengeTeamSubmissions = [];
+                state.rewardChallengeParticipantsChallenge = null;
             })
             .addCase(get_engagement_reward_challenge_participants_thunk.fulfilled, (state, action) => {
                 state.rewardChallengeParticipantsLoading = false;
                 state.rewardChallengeParticipants = action.payload?.data?.participants ?? [];
+                state.rewardChallengeIndividualParticipants =
+                    action.payload?.data?.individual_leaderboard ??
+                    action.payload?.data?.individual_participants ??
+                    action.payload?.data?.participants ??
+                    [];
+                state.rewardChallengeTeamSubmissions =
+                    action.payload?.data?.team_leaderboard ??
+                    action.payload?.data?.team_submissions ??
+                    [];
                 state.rewardChallengeParticipantsChallenge = action.payload?.data?.challenge ?? null;
             })
             .addCase(get_engagement_reward_challenge_participants_thunk.rejected, (state, action) => {
@@ -854,7 +869,7 @@ const engagementSlice = createSlice({
                 state.challengeSubmissionStats = action.payload?.data ?? { pending: 0, approved: 0, rejected: 0 };
             })
             .addCase(approve_engagement_reward_challenge_submission_thunk.pending, (state, action) => {
-                state.challengeSubmissionApprovingId = action.meta.arg;
+                state.challengeSubmissionApprovingId = action.meta.arg?.id ?? null;
             })
             .addCase(approve_engagement_reward_challenge_submission_thunk.fulfilled, (state, action) => {
                 state.challengeSubmissionApprovingId = null;
