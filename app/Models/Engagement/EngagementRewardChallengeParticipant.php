@@ -53,6 +53,7 @@ class EngagementRewardChallengeParticipant extends Pivot
         'status',
         'joined_at',
         'submission_path',
+        'submission_media',
         'challenge_description',
         'submitted_at',
         'reviewed_at',
@@ -80,6 +81,7 @@ class EngagementRewardChallengeParticipant extends Pivot
             'proof_approved_at' => 'datetime',
             'survey_points_awarded' => 'integer',
             'survey_rewarded_at' => 'datetime',
+            'submission_media' => 'array',
         ];
     }
 

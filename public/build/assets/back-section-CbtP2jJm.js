@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/back-section-CaIgjd0n.js
+import{j as e,i as r}from"./app-BUmQaGPx.js";function o(){const n=()=>{r.visit("/accounts/administrator/human_resources/leads")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
+========
 import{j as e,i as r}from"./app-CDoUotCs.js";function o(){const n=()=>{r.visit("/accounts/administrator/human_resources/leads")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
+>>>>>>>> afe97491a5affef4eb8879a21788dc464d5fa3b6:public/build/assets/back-section-CbtP2jJm.js
           group flex items-center gap-2 px-4 py-2 
           text-[15px] font-semibold text-blue-600 
           bg-transparent border  rounded-lg 

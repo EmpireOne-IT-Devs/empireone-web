@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/edit-survey-section-DMXaA_s7.js
+import{j as t}from"./app-BUmQaGPx.js";import{P as s}from"./pencil-DKceHFs4.js";import"./createLucideIcon-CCpSGZqI.js";function m({survey:e,createSurveyRef:r,onAction:n}){const o=()=>{r?.current?.openEdit(e),n?.()};return t.jsxs("button",{type:"button",onClick:o,className:"flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-900",children:[t.jsx(s,{size:16,className:"shrink-0 text-amber-500"}),"Edit"]})}export{m as default};
+========
 import{j as t}from"./app-CDoUotCs.js";import{P as s}from"./pencil-lulGKSU4.js";import"./createLucideIcon-D88ujnkV.js";function m({survey:e,createSurveyRef:r,onAction:n}){const o=()=>{r?.current?.openEdit(e),n?.()};return t.jsxs("button",{type:"button",onClick:o,className:"flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-900",children:[t.jsx(s,{size:16,className:"shrink-0 text-amber-500"}),"Edit"]})}export{m as default};
+>>>>>>>> afe97491a5affef4eb8879a21788dc464d5fa3b6:public/build/assets/edit-survey-section-CM0rbOKO.js

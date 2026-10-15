@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/header-section-FMxgjZCu.js
+import{j as e}from"./app-BUmQaGPx.js";function i(){return e.jsxs("div",{className:"flex ",children:[e.jsxs("div",{className:"flex-1 flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Job Requisition"}),e.jsx("div",{className:"text-gray-600",children:"Manage all job requisitions"})]}),e.jsx("div",{})]})}export{i as default};
+========
+import{j as e}from"./app-CDoUotCs.js";function i(){return e.jsxs("div",{className:"flex ",children:[e.jsxs("div",{className:"flex-1 flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Job Requisition"}),e.jsx("div",{className:"text-gray-600",children:"Manage all job requisitions"})]}),e.jsx("div",{})]})}export{i as default};
+>>>>>>>> afe97491a5affef4eb8879a21788dc464d5fa3b6:public/build/assets/header-section-Zt5yDq_D.js

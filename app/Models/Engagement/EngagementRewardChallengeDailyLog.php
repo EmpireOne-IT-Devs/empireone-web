@@ -18,6 +18,7 @@ class EngagementRewardChallengeDailyLog extends Model
         'team_submission_id',
         'log_date',
         'submission_path',
+        'submission_media',
         'challenge_description',
         'status',
         'submitted_at',
@@ -34,6 +35,7 @@ class EngagementRewardChallengeDailyLog extends Model
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
             'bonus_points' => 'integer',
+            'submission_media' => 'array',
         ];
     }
 

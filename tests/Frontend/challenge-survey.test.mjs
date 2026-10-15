@@ -130,12 +130,9 @@ test("services target the exact challenge and return JSON, not Axios wrappers", 
 
 test("the selected submissions tab is shared with export and team rows use the leader", () => {
     const html = render(SubmissionTable, {
+        challengeSubmissionCounts: { individual: 1, team: 1 },
+        challengeSubmissionsMeta: { current_page: 1, last_page: 1 },
         challengeSubmissions: [
-            {
-                id: "individual-1",
-                challenge: { title: "Individual Challenge", points: 100 },
-                employee: { name: "Individual Export Row" },
-            },
             {
                 id: "team-1",
                 challenge: { title: "Team Challenge", points: 100 },
@@ -149,6 +146,7 @@ test("the selected submissions tab is shared with export and team rows use the l
         setSubmissionType() {},
     });
     assert.match(html, /aria-pressed="true"[^>]*>Team \(1\)/);
+    assert.match(html, />Individual \(1\)/);
     assert.match(html, /Team Export Leader/);
     assert.doesNotMatch(html, /Individual Export Row/);
 
@@ -196,7 +194,7 @@ test("an earlier team submission does not hide the individual submission option"
     });
     assert.match(html, /Individual submission/);
     assert.match(html, /Team submission/);
-    assert.match(html, /Upload a photo as proof/);
+    assert.match(html, /Upload proof images/);
 });
 
 test("team submission tabs remain role-gated and unavailable to non-leaders", () => {
@@ -215,12 +213,68 @@ test("daily proof service uploads the proof without a client-selected date", asy
     });
     await services.submit_reward_challenge_daily_proof_service(
         12,
-        new Blob(["proof"], { type: "image/png" }),
+        [{ file: new Blob(["proof"], { type: "image/png" }), type: "image" }],
         "Completed the daily activity",
     );
     assert.equal(requests[0].url, "/api/engagement/reward-challenges/12/submit-daily");
     assert.equal(requests[0].data.get("log_date"), null);
     assert.equal(requests[0].data.get("challenge_description"), "Completed the daily activity");
+    assert.equal(requests[0].data.getAll("photos[]").length, 1);
+});
+
+test("challenge proof service sends three images or one video as separate proof types", async () => {
+    const requests = [];
+    adapter((config) => {
+        requests.push(config);
+        return { data: { status: "success" } };
+    });
+    const images = Array.from({ length: 3 }, (_, index) => ({
+        file: new Blob([`proof-${index}`], { type: "image/png" }),
+        type: "image",
+    }));
+    await services.submit_reward_challenge_proof_service(12, images, "Three images");
+    assert.equal(requests[0].data.getAll("photos[]").length, 3);
+    assert.equal(requests[0].data.get("video"), null);
+
+    await services.submit_reward_challenge_team_proof_service(12, [{
+        file: new Blob(["video"], { type: "video/mp4" }),
+        type: "video",
+    }], "One video");
+    assert.equal(requests[1].data.getAll("photos[]").length, 0);
+    assert.equal(requests[1].data.get("video").type, "video/mp4");
+});
+
+test("proof thunks post files to the server, report progress and explain oversized uploads", async () => {
+    const progress = [];
+    adapter((config) => {
+        config.onUploadProgress?.({ loaded: 50, total: 100 });
+        config.onUploadProgress?.({ loaded: 100, total: 100 });
+        return { status: "success", data: { id: 12 } };
+    });
+    const testStore = store();
+    testStore.subscribe(() => progress.push(testStore.getState().engagement.rewardChallengeUploadProgress));
+    const result = await testStore.dispatch(thunks.submit_engagement_reward_challenge_proof_thunk({
+        id: 12,
+        media: [{ file: new Blob(["a"], { type: "image/png" }), type: "image" }],
+        challengeDescription: "One image",
+    }));
+    assert.equal(result.type.endsWith("/fulfilled"), true);
+    assert.ok(progress.includes(50) && progress.includes(100));
+    assert.equal(testStore.getState().engagement.rewardChallengeUploadProgress, 0);
+
+    axios.defaults.adapter = async (config) => {
+        const error = new Error("Request failed with status code 413");
+        error.response = { status: 413, data: { message: "The POST data is too large." }, config };
+        throw error;
+    };
+    const rejected = await testStore.dispatch(thunks.submit_engagement_reward_challenge_team_proof_thunk({
+        id: 12,
+        media: [{ file: new Blob(["v"], { type: "video/mp4" }), type: "video" }],
+        challengeDescription: "Video",
+    }));
+    assert.equal(rejected.type.endsWith("/rejected"), true);
+    assert.match(rejected.payload.message, /too large for the server/);
+    assert.equal(testStore.getState().engagement.rewardChallengeTeamSubmittingId, null);
 });
 
 test("editing a challenge can clear its optional duration", async () => {
@@ -231,20 +285,48 @@ test("editing a challenge can clear its optional duration", async () => {
     });
     await store().dispatch(thunks.update_engagement_reward_challenge_thunk({
         id: 12,
-        data: { duration_days: null },
+        data: { duration_days: null, proof_type: "photo_or_video" },
     }));
     assert.equal(request.data.get("duration_days"), "");
+    assert.equal(request.data.get("proof_type"), "photo_or_video");
 });
 
 test("duration challenge forms compile and present the duration field", async () => {
+    const createPath = "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge.jsx";
+    const createSource = readFileSync(path.join(root, createPath), "utf8");
+    const formStart = createSource.indexOf("<form");
+    const proofTypeSection = createSource.indexOf("Permitted Proof Type");
+    const formEnd = createSource.indexOf("</form>", formStart);
+    assert.ok(formStart >= 0 && proofTypeSection > formStart && proofTypeSection < formEnd);
+    assert.match(createSource, /proof_type:\s*"photo_only"/);
+    assert.match(createSource, /proof_type:\s*data\.proof_type/);
+    await transform(createSource, { loader: "jsx" });
+
     for (const relativePath of [
-        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge.jsx",
         "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/dashboard/sections/edit-challenge-section.jsx",
     ]) {
         const filename = path.join(root, relativePath);
         const source = readFileSync(filename, "utf8");
         assert.match(source, /Duration \(days\) — optional/);
+        assert.match(source, /Photo Only/);
+        assert.match(source, /Photo or Video/);
         assert.doesNotMatch(source, /submission_weekdays|CHALLENGE_WEEKDAYS/);
+        await transform(source, { loader: "jsx" });
+    }
+});
+
+test("individual and team proof forms display the three-image limit and configured media type", async () => {
+    const files = [
+        "resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submit-section.jsx",
+        "resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/team-submission-section.jsx",
+    ];
+    for (const relativePath of files) {
+        const source = readFileSync(path.join(root, relativePath), "utf8");
+        assert.match(source, /You can upload a maximum of 3 images per submission\. Please remove the extra images to continue\./);
+        assert.ok(source.includes('{media.filter((item) => item.type === "image").length}/{MAX_IMAGES} images selected'));
+        assert.match(source, /MAX_VIDEO_SIZE = 1024 \* 1024 \* 1024/);
+        assert.match(source, /max 1 GB/);
+        assert.ok(source.includes("video/quicktime"));
         await transform(source, { loader: "jsx" });
     }
 });
@@ -750,7 +832,12 @@ test("Submissions table renders survey completed/pending and legacy not-applicab
     state.dispatch({ type: "replaceSubmissions", payload: rows });
     state.replaceReducer((root) => ({
         ...root,
-        engagement: { ...root.engagement, challengeSubmissions: rows, challengeSubmissionsLoading: false },
+        engagement: {
+            ...root.engagement,
+            challengeSubmissions: rows,
+            challengeSubmissionCounts: { individual: rows.length, team: 0 },
+            challengeSubmissionsLoading: false,
+        },
     }));
     const html = renderToStaticMarkup(React.createElement(Provider, { store: state },
         React.createElement(SubmissionTable, { filters: {} })));
@@ -760,8 +847,8 @@ test("Submissions table renders survey completed/pending and legacy not-applicab
     assert.match(html, /—/);
 });
 
-test("submissions table limits each active type to ten rows and renders its pager", () => {
-    const submissions = Array.from({ length: 12 }, (_, index) => ({
+test("submissions table renders one server page of the active type and its pager", () => {
+    const submissions = Array.from({ length: 10 }, (_, index) => ({
         id: `individual-${index + 1}`,
         status: "submitted",
         submitted_at: "2026-10-12",
@@ -774,6 +861,8 @@ test("submissions table limits each active type to ten rows and renders its page
     }));
     const html = render(SubmissionTable, {
         challengeSubmissions: submissions,
+        challengeSubmissionsMeta: { current_page: 1, last_page: 2, per_page: 10, total: 12 },
+        challengeSubmissionCounts: { individual: 12, team: 0 },
         challengeSubmissionsLoading: false,
     }, {
         filters: {},
@@ -785,7 +874,16 @@ test("submissions table limits each active type to ten rows and renders its page
         assert.match(html, new RegExp(`Export Employee ${index}`));
     }
     assert.doesNotMatch(html, /Export Employee 11/);
+    assert.match(html, />Individual \(12\)/);
     assert.match(html, /Next/);
+
+    const source = readFileSync(path.join(
+        root,
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx",
+    ), "utf8");
+    assert.match(source, /type: submissionType/);
+    assert.match(source, /page: currentPage/);
+    assert.doesNotMatch(source, /\.slice\(/);
 
     const paginationHtml = render(SubmissionPagination, {}, {
         data: { current_page: 2, last_page: 2 },
@@ -807,6 +905,7 @@ test("submissions table limits each active type to ten rows and renders its page
 test("Submissions table points use the leaderboard total and base-plus-bonus hierarchy", () => {
     const html = render(SubmissionTable, {
         challengeSubmissionsLoading: false,
+        challengeSubmissionCounts: { individual: 4, team: 0 },
         challengeSubmissions: [
             {
                 id: "approved",

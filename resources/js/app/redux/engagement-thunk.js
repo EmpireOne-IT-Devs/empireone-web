@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import {
     create_post_event_service,
     get_post_event_service,
@@ -43,6 +43,10 @@ import {
     update_e_store_item_service,
     delete_e_store_item_service,
 } from "../services/engagement-service";
+
+export const set_reward_challenge_upload_progress = createAction(
+    "engagement/setRewardChallengeUploadProgress",
+);
 
 export const get_engagement_posts_thunk = createAsyncThunk(
     "engagement/getPosts",
@@ -357,6 +361,7 @@ function build_reward_challenge_form_data(data) {
     formData.append("title", data.title);
     formData.append("description", data.description);
     formData.append("type", data.type);
+    formData.append("proof_type", data.proof_type ?? "photo_only");
     formData.append("category", data.category);
     formData.append("points", data.points);
     formData.append("all_employees", data.all_employees ? "1" : "0");
@@ -502,47 +507,66 @@ export const leave_engagement_reward_challenge_thunk = createAsyncThunk(
     },
 );
 
+// 100% means the file reached the server; the UI then shows "Saving submission…"
+// while the server stores it in S3.
+function proof_upload_progress(dispatch) {
+    let lastPercent = -1;
+    return (event) => {
+        const percent = event.total ? Math.min(100, Math.round((event.loaded / event.total) * 100)) : 0;
+        if (percent !== lastPercent) {
+            lastPercent = percent;
+            dispatch(set_reward_challenge_upload_progress(percent));
+        }
+    };
+}
+
+function proof_error_payload(error) {
+    if (error.response?.status === 413) {
+        return { message: "Your file is too large for the server to accept. Please upload a smaller file." };
+    }
+    if (!error.response) {
+        return { message: "Upload failed. Please check your internet connection and try again." };
+    }
+    return error.response.data || { message: error.message };
+}
+
+async function submit_challenge_proof(service, { id, media, challengeDescription }, dispatch) {
+    return await service(id, media, challengeDescription, proof_upload_progress(dispatch));
+}
+
 export const submit_engagement_reward_challenge_proof_thunk = createAsyncThunk(
     "engagement/submitRewardChallengeProof",
-    async ({ id, photo, challengeDescription }, { rejectWithValue }) => {
+    async (args, { dispatch, rejectWithValue }) => {
         try {
-            const response = await submit_reward_challenge_proof_service(id, photo, challengeDescription);
+            const response = await submit_challenge_proof(submit_reward_challenge_proof_service, args, dispatch);
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response?.data || error.message);
+            return rejectWithValue(proof_error_payload(error));
         }
     },
 );
 
 export const submit_engagement_reward_challenge_daily_proof_thunk = createAsyncThunk(
     "engagement/submitRewardChallengeDailyProof",
-    async ({ id, photo, challengeDescription }, { rejectWithValue }) => {
+    async (args, { dispatch, rejectWithValue }) => {
         try {
-            const response = await submit_reward_challenge_daily_proof_service(
-                id,
-                photo,
-                challengeDescription,
-            );
+            const response = await submit_challenge_proof(submit_reward_challenge_daily_proof_service, args, dispatch);
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response?.data || error.message);
+            return rejectWithValue(proof_error_payload(error));
         }
     },
 );
 
 export const submit_engagement_reward_challenge_team_proof_thunk = createAsyncThunk(
     "engagement/submitRewardChallengeTeamProof",
-    async ({ id, photo, challengeDescription }, { dispatch, rejectWithValue }) => {
+    async (args, { dispatch, rejectWithValue }) => {
         try {
-            const response = await submit_reward_challenge_team_proof_service(
-                id,
-                photo,
-                challengeDescription,
-            );
+            const response = await submit_challenge_proof(submit_reward_challenge_team_proof_service, args, dispatch);
             dispatch(get_my_engagement_reward_challenges_thunk());
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response?.data || error.message);
+            return rejectWithValue(proof_error_payload(error));
         }
     },
 );

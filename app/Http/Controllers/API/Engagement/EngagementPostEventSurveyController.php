@@ -641,7 +641,23 @@ class EngagementPostEventSurveyController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $survey = EngagementPostEventSurvey::findOrFail($id);
-        $survey->delete();
+
+        // The survey tables do not enforce cascading foreign keys, so child rows are
+        // removed explicitly; otherwise a reused survey id would inherit them.
+        DB::transaction(function () use ($survey) {
+            $questionIds = $survey->questions()->pluck('id');
+            $responseIds = $survey->responses()->pluck('id');
+
+            EngagementPostEventQuestionOption::query()
+                ->whereIn('engagement_post_event_question_id', $questionIds)
+                ->delete();
+            EngagementPostEventAnswer::query()
+                ->whereIn('engagement_post_event_survey_response_id', $responseIds)
+                ->delete();
+            EngagementPostEventSurveyResponse::query()->whereIn('id', $responseIds)->delete();
+            EngagementPostEventQuestion::query()->whereIn('id', $questionIds)->delete();
+            $survey->delete();
+        });
 
         return response()->json(['message' => 'Survey deleted successfully.']);
     }

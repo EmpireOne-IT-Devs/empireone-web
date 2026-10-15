@@ -13,6 +13,7 @@ use App\Models\ER\ERLeader;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -24,7 +25,8 @@ class ChallengeTeamSubmissionService
     public function submit(
         EngagementRewardChallenge $challenge,
         User $leader,
-        UploadedFile $photo,
+        array $photos,
+        ?UploadedFile $video,
         string $description,
     ): EngagementRewardChallengeTeamSubmission {
         $challenge->load(['departments:id,name', 'accounts:id,name']);
@@ -97,10 +99,29 @@ class ChallengeTeamSubmissionService
             ]);
         }
 
-        $path = $photo->store('unified/engagement/reward_challenges/submissions', 's3');
+        $files = array_filter($video ? [$video] : $photos);
+        $media = [];
 
         try {
-            return DB::transaction(function () use ($challenge, $leader, $employees, $profiles, $departmentNames, $accountNames, $logDate, $path, $description) {
+            foreach ($files as $file) {
+                $path = $file->store('unified/engagement/reward_challenges/submissions', 's3');
+                if (! $path) {
+                    throw new \RuntimeException('Unable to store challenge proof media in Amazon S3.');
+                }
+                $media[] = [
+                    'path' => $path,
+                    'type' => $video ? 'video' : 'image',
+                ];
+            }
+        } catch (Throwable $exception) {
+            $this->deleteProofMedia($media);
+            throw $exception;
+        }
+
+        $path = $media[0]['path'];
+
+        try {
+            return DB::transaction(function () use ($challenge, $leader, $employees, $profiles, $departmentNames, $accountNames, $logDate, $path, $media, $description) {
                 $challenge = EngagementRewardChallenge::query()->lockForUpdate()->findOrFail($challenge->id);
                 $userIds = $employees->keys()->all();
                 $participants = EngagementRewardChallengeParticipant::query()
@@ -180,6 +201,7 @@ class ChallengeTeamSubmissionService
                     'leader_id' => $leader->id,
                     'log_date' => $logDate,
                     'submission_path' => $path,
+                    'submission_media' => $media,
                     'challenge_description' => $description,
                     'status' => 'submitted',
                     'submitted_at' => now(),
@@ -226,6 +248,7 @@ class ChallengeTeamSubmissionService
                             'team_submission_id' => $submission->id,
                             'log_date' => $logDate,
                             'submission_path' => $path,
+                            'submission_media' => $media,
                             'challenge_description' => $description,
                             'status' => 'submitted',
                             'submitted_at' => now(),
@@ -238,6 +261,7 @@ class ChallengeTeamSubmissionService
                         $participant->update([
                             'status' => 'submitted',
                             'submission_path' => $path,
+                            'submission_media' => $media,
                             'challenge_description' => $description,
                             'submitted_at' => now(),
                             'reviewed_at' => null,
@@ -253,8 +277,16 @@ class ChallengeTeamSubmissionService
                 ]);
             });
         } catch (Throwable $exception) {
-            Storage::disk('s3')->delete($path);
+            $this->deleteProofMedia($media);
             throw $exception;
+        }
+    }
+
+    private function deleteProofMedia(array $media): void
+    {
+        $paths = collect($media)->pluck('path')->filter()->values()->all();
+        if ($paths && ! Storage::disk('s3')->delete($paths)) {
+            Log::warning('Failed to remove challenge proof media from Amazon S3.', ['paths' => $paths]);
         }
     }
 

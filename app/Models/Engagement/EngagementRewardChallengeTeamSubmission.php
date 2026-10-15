@@ -16,6 +16,7 @@ class EngagementRewardChallengeTeamSubmission extends Model
         'leader_id',
         'log_date',
         'submission_path',
+        'submission_media',
         'challenge_description',
         'status',
         'team_points_awarded',
@@ -36,6 +37,7 @@ class EngagementRewardChallengeTeamSubmission extends Model
             'bonus_points_awarded' => 'integer',
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
+            'submission_media' => 'array',
         ];
     }
 

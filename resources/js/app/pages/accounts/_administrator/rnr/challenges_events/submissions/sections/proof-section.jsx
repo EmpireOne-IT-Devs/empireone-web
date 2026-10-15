@@ -15,6 +15,7 @@ export default function ProofSection({
 }) {
     const [activeSubmission, setActiveSubmission] = useState(submission);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [previewMedia, setPreviewMedia] = useState(null);
     const [mounted, setMounted] = useState(false);
     const [bonusPoints, setBonusPoints] = useState("0");
     const [bonusError, setBonusError] = useState("");
@@ -33,12 +34,19 @@ export default function ProofSection({
         if (submission.id !== activeSubmission?.id) {
             setBonusPoints("0");
             setBonusError("");
+            setIsPreviewOpen(false);
+            setPreviewMedia(null);
         }
         setActiveSubmission(submission);
     }, [submission]);
 
     if (!activeSubmission) return null;
 
+    const proofMedia = activeSubmission.submission_media?.length
+        ? activeSubmission.submission_media
+        : activeSubmission.submission_url
+          ? [{ type: "image", url: activeSubmission.submission_url }]
+          : [];
     const canReview = activeSubmission.status === "submitted";
     const approving = approvingId === activeSubmission.id;
     const basePoints = Number(activeSubmission.challenge?.points) || 0;
@@ -82,34 +90,50 @@ export default function ProofSection({
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
                         {/* Media Preview Column */}
                         <div className="md:col-span-7">
-                            <div className="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-900/5 ring-1 ring-inset ring-neutral-900/10 dark:bg-neutral-800">
-                                {activeSubmission.submission_url ? (
-                                    <>
-                                        <img
-                                            src={activeSubmission.submission_url}
-                                            alt="Submission proof"
-                                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
-                                            onClick={() => setIsPreviewOpen(true)}
-                                        />
-                                        {/* Hover Overlay with Preview Trigger */}
-                                        <button
-                                            type="button"
-                                            className="absolute inset-0 flex items-center justify-center bg-neutral-900/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100 cursor-pointer w-full text-left"
-                                            onClick={() => setIsPreviewOpen(true)}
-                                        >
-                                            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-xs font-medium text-neutral-900 shadow-sm backdrop-blur-sm">
-                                                <Maximize2 className="h-3.5 w-3.5" />
-                                                Click to preview
-                                            </span>
-                                        </button>
-                                    </>
-                                ) : (
+                            {proofMedia.length > 0 ? (
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    {proofMedia.map((item, index) => (
+                                        <div key={item.url} className="group relative flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-neutral-900/5 ring-1 ring-inset ring-neutral-900/10 dark:bg-neutral-800">
+                                            {item.type === "video" ? (
+                                                <video src={item.url} controls className="h-full w-full bg-black object-contain" aria-label={`Submission video proof ${index + 1}`} />
+                                            ) : (
+                                                <>
+                                                    <img
+                                                        src={item.url}
+                                                        alt={`Submission proof ${index + 1}`}
+                                                        className="h-full w-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
+                                                        onClick={() => {
+                                                            setPreviewMedia(item);
+                                                            setIsPreviewOpen(true);
+                                                        }}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        className="absolute inset-0 flex w-full cursor-pointer items-center justify-center bg-neutral-900/40 text-left opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                                                        onClick={() => {
+                                                            setPreviewMedia(item);
+                                                            setIsPreviewOpen(true);
+                                                        }}
+                                                        aria-label={`Preview submission image ${index + 1}`}
+                                                    >
+                                                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 text-xs font-medium text-neutral-900 shadow-sm backdrop-blur-sm">
+                                                            <Maximize2 className="h-3.5 w-3.5" />
+                                                            Click to preview
+                                                        </span>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-neutral-900/5 ring-1 ring-inset ring-neutral-900/10 dark:bg-neutral-800">
                                     <div className="flex flex-col items-center gap-2 p-6 text-center text-neutral-400">
                                         <FileImage className="h-8 w-8 stroke-1" />
-                                        <p className="text-xs font-medium">No photo proof attached</p>
+                                        <p className="text-xs font-medium">No proof attached</p>
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Metadata Column */}
@@ -284,7 +308,7 @@ export default function ProofSection({
 
             {/* Portal Lightbox Preview Overlay */}
             {/* z-index must exceed Modal's z-[9999] since both portal directly to document.body */}
-            {mounted && isPreviewOpen && activeSubmission.submission_url &&
+            {mounted && isPreviewOpen && previewMedia &&
                
                     <div 
                         className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-150"
@@ -309,7 +333,7 @@ export default function ProofSection({
 
                             {/* Image */}
                             <img
-                                src={activeSubmission.submission_url}
+                                src={previewMedia.url}
                                 alt="Submission proof enlarged preview"
                                 className="max-h-[85vh] w-auto max-w-[85vw] object-contain"
                             />

@@ -5,13 +5,18 @@ namespace App\Services;
 use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ChallengeLeaderboardService
 {
+    private const CACHE_TTL_SECONDS = 60;
+
     public function build(
         Collection $participants,
         Collection $teamSubmissions,
         array $teamParticipantIds,
+        Collection $departmentNames,
     ): array {
         $individualEntries = $participants
             ->reject(fn (User $user) => in_array(
@@ -19,7 +24,10 @@ class ChallengeLeaderboardService
                 $teamParticipantIds,
                 true,
             ))
-            ->map(fn (User $user) => $this->individualEntry($user));
+            ->map(fn (User $user) => $this->individualEntry(
+                $user,
+                $departmentNames->get($user->id),
+            ));
 
         $teamEntries = $teamSubmissions
             ->groupBy('leader_id')
@@ -31,7 +39,36 @@ class ChallengeLeaderboardService
         ];
     }
 
-    private function individualEntry(User $user): array
+    public function buildCached(
+        int $challengeId,
+        Collection $participants,
+        Collection $teamSubmissions,
+        array $teamParticipantIds,
+        Collection $departmentNames,
+    ): array {
+        return Cache::remember(
+            $this->cacheKey($challengeId),
+            now()->addSeconds(self::CACHE_TTL_SECONDS),
+            fn () => $this->build($participants, $teamSubmissions, $teamParticipantIds, $departmentNames),
+        );
+    }
+
+    public function forgetCached(int $challengeId): void
+    {
+        Cache::forget($this->cacheKey($challengeId));
+    }
+
+    public function forgetAfterCommit(int $challengeId): void
+    {
+        DB::afterCommit(fn () => $this->forgetCached($challengeId));
+    }
+
+    private function cacheKey(int $challengeId): string
+    {
+        return "engagement.reward-challenges.{$challengeId}.leaderboards";
+    }
+
+    private function individualEntry(User $user, ?string $departmentName): array
     {
         $participant = $user->pivot;
         $approved = $participant->status === 'approved';
@@ -43,7 +80,7 @@ class ChallengeLeaderboardService
             'participant_id' => (int) $participant->id,
             'name' => $user->name,
             'email' => $user->email,
-            'department' => $user->department?->name,
+            'department' => $departmentName,
             'status' => $participant->status,
             'points_awarded' => $points,
             'challenge_points_awarded' => max(0, $points - $bonusPoints),

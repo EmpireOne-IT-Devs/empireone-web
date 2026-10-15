@@ -42,6 +42,7 @@ import {
     get_engagement_e_store_items_thunk,
     update_engagement_e_store_item_thunk,
     delete_engagement_reward_item_thunk,
+    set_reward_challenge_upload_progress,
 } from "./engagement-thunk";
 
 export {
@@ -187,6 +188,7 @@ const engagementSlice = createSlice({
         rewardChallengeLeavingId: null,
         rewardChallengeSubmittingId: null,
         rewardChallengeTeamSubmittingId: null,
+        rewardChallengeUploadProgress: 0,
         rewardChallengeSurveys: {},
         rewardChallengeDailyLogs: { required_days: null, completed_days: 0, logs: [] },
         rewardChallengeDailyLogsLoading: false,
@@ -194,6 +196,9 @@ const engagementSlice = createSlice({
 
         // Admin-facing submission review states
         challengeSubmissions: [],
+        challengeSubmissionsMeta: null,
+        challengeSubmissionCounts: { individual: 0, team: 0 },
+        challengeSubmissionFilterOptions: { challenges: [], locations: [] },
         challengeSubmissionsLoading: false,
         challengeSubmissionsError: null,
         challengeSubmissionStats: { pending: 0, approved: 0, rejected: 0 },
@@ -261,6 +266,9 @@ const engagementSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(set_reward_challenge_upload_progress, (state, action) => {
+            state.rewardChallengeUploadProgress = action.payload;
+        });
         // ── Get Engagement Posts ──────────────────────────────────────────────
         builder
             .addCase(get_engagement_posts_thunk.pending, (state) => {
@@ -798,9 +806,11 @@ const engagementSlice = createSlice({
             })
             .addCase(submit_engagement_reward_challenge_proof_thunk.pending, (state, action) => {
                 state.rewardChallengeSubmittingId = action.meta.arg?.id ?? null;
+                state.rewardChallengeUploadProgress = 0;
             })
             .addCase(submit_engagement_reward_challenge_proof_thunk.fulfilled, (state, action) => {
                 state.rewardChallengeSubmittingId = null;
+                state.rewardChallengeUploadProgress = 0;
                 const updated = action.payload?.data;
                 if (updated?.id) {
                     const idx = state.myRewardChallenges.findIndex((item) => item.id === updated.id);
@@ -809,14 +819,17 @@ const engagementSlice = createSlice({
             })
             .addCase(submit_engagement_reward_challenge_proof_thunk.rejected, (state) => {
                 state.rewardChallengeSubmittingId = null;
+                state.rewardChallengeUploadProgress = 0;
             });
 
         builder
             .addCase(submit_engagement_reward_challenge_daily_proof_thunk.pending, (state, action) => {
                 state.rewardChallengeSubmittingId = action.meta.arg?.id ?? null;
+                state.rewardChallengeUploadProgress = 0;
             })
             .addCase(submit_engagement_reward_challenge_daily_proof_thunk.fulfilled, (state, action) => {
                 state.rewardChallengeSubmittingId = null;
+                state.rewardChallengeUploadProgress = 0;
                 const updated = action.payload?.data;
                 if (updated?.id) {
                     const idx = state.myRewardChallenges.findIndex((item) => item.id === updated.id);
@@ -825,17 +838,21 @@ const engagementSlice = createSlice({
             })
             .addCase(submit_engagement_reward_challenge_daily_proof_thunk.rejected, (state) => {
                 state.rewardChallengeSubmittingId = null;
+                state.rewardChallengeUploadProgress = 0;
             });
 
         builder
             .addCase(submit_engagement_reward_challenge_team_proof_thunk.pending, (state, action) => {
                 state.rewardChallengeTeamSubmittingId = action.meta.arg?.id ?? null;
+                state.rewardChallengeUploadProgress = 0;
             })
             .addCase(submit_engagement_reward_challenge_team_proof_thunk.fulfilled, (state) => {
                 state.rewardChallengeTeamSubmittingId = null;
+                state.rewardChallengeUploadProgress = 0;
             })
             .addCase(submit_engagement_reward_challenge_team_proof_thunk.rejected, (state) => {
                 state.rewardChallengeTeamSubmittingId = null;
+                state.rewardChallengeUploadProgress = 0;
             });
 
         builder
@@ -860,6 +877,9 @@ const engagementSlice = createSlice({
             .addCase(get_engagement_reward_challenge_submissions_thunk.fulfilled, (state, action) => {
                 state.challengeSubmissionsLoading = false;
                 state.challengeSubmissions = action.payload?.data ?? [];
+                state.challengeSubmissionsMeta = action.payload?.meta ?? null;
+                if (action.payload?.counts) state.challengeSubmissionCounts = action.payload.counts;
+                if (action.payload?.filter_options) state.challengeSubmissionFilterOptions = action.payload.filter_options;
             })
             .addCase(get_engagement_reward_challenge_submissions_thunk.rejected, (state, action) => {
                 state.challengeSubmissionsLoading = false;

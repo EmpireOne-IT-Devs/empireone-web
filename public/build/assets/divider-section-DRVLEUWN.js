@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/divider-section-CxGdBLcf.js
+import{j as e}from"./app-BUmQaGPx.js";function r(){return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
+========
 import{j as e}from"./app-CDoUotCs.js";function r(){return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
+>>>>>>>> afe97491a5affef4eb8879a21788dc464d5fa3b6:public/build/assets/divider-section-DRVLEUWN.js
                 @keyframes gradientSlide {
                     0%   { background-position: 0% 50%; }
                     100% { background-position: 200% 50%; }
