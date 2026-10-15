@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/layout-MOYMglrc.js
 import{j as e}from"./app-BUmQaGPx.js";import r from"./application-footer-section-6z8eQM28.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
+========
+import{j as e}from"./app-CDoUotCs.js";import r from"./application-footer-section-DaiNPdzK.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
+>>>>>>>> afe97491a5affef4eb8879a21788dc464d5fa3b6:public/build/assets/layout-C41EQbyN.js
                     linear-gradient(135deg, rgba(13,5,32,0.55) 0%, rgba(19,8,48,0.50) 50%, rgba(10,15,31,0.55) 100%),
                     radial-gradient(ellipse 60% 40% at 10% 80%, rgba(168,85,247,0.12) 0%, transparent 70%),
                     radial-gradient(ellipse 40% 50% at 90% 20%, rgba(59,130,246,0.09) 0%, transparent 70%),

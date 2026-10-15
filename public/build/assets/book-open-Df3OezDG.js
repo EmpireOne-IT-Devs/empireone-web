@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/book-open-Df3OezDG.js
 import{c as o}from"./createLucideIcon-CCpSGZqI.js";const a=[["path",{d:"M12 7v14",key:"1akyts"}],["path",{d:"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",key:"ruj8y"}]],t=o("book-open",a);export{t as B};
+========
+import{c as o}from"./createLucideIcon-D88ujnkV.js";const a=[["path",{d:"M12 7v14",key:"1akyts"}],["path",{d:"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",key:"ruj8y"}]],t=o("book-open",a);export{t as B};
+>>>>>>>> afe97491a5affef4eb8879a21788dc464d5fa3b6:public/build/assets/book-open-DsbEkoFo.js

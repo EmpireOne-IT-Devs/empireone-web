@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 
 class JobApplicationController extends Controller
 {
@@ -40,6 +41,42 @@ class JobApplicationController extends Controller
 
         // Decode Base64
         return base64_decode($data);
+    }
+
+    public function add_notes_application(Request $request)
+    {
+        $validated = $request->validate([
+            'id'    => ['required', 'exists:job_applications,id'],
+            'stage' => ['required', 'string', 'max:255'],
+            'text'  => ['required', 'string', 'max:5000'],
+        ]);
+
+        $application = JobApplication::findOrFail($validated['id']);
+
+        // Retrieve existing notes array or initialize an empty array
+        $existingNotes = $application->notes ?? [];
+
+        $newNote = [
+            'id'         => (string) Str::uuid(),
+            'stage'      => $validated['stage'],
+            'text'       => $validated['text'],
+            'author'     => Auth::user()?->personal_information?->first_name
+                ? Auth::user()->personal_information->first_name . ' ' . Auth::user()->personal_information->last_name
+                : (Auth::user()?->name ?? 'Recruiter'),
+            'created_at' => now()->toISOString(),
+        ];
+
+        // Prepend the new note so the newest entries appear first
+        array_unshift($existingNotes, $newNote);
+
+        $application->update([
+            'notes' => $existingNotes,
+        ]);
+
+        return response()->json([
+            'message' => 'Note added successfully.',
+            'notes'   => $application->notes,
+        ], 200);
     }
     public function delete_applicant($id)
     {
@@ -572,7 +609,7 @@ class JobApplicationController extends Controller
     public function apply_job_application(Request $request)
     {
         // 1. Create or Find User
-  $fullName = trim($request->first_name . ' ' . $request->last_name);
+        $fullName = trim($request->first_name . ' ' . $request->last_name);
 
         $user = User::firstOrCreate(
             ['email' => $request->email],
