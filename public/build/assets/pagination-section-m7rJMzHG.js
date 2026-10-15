@@ -1,0 +1,1 @@
+import{j as i}from"./app-CDoUotCs.js";import{P as o}from"./pagination-B_Q5Crij.js";function e({data:t,onPageChange:n}){return!t?.last_page||t.last_page<1?null:i.jsx(o,{data:t,onPageChange:n})}export{e as default};
