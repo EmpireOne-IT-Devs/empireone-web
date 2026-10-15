@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Flame, Medal } from "lucide-react";
-
-import { get_engagement_reward_challenge_participants_thunk } from "@/app/redux/engagement-thunk";
+import React, { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { Flame, Medal, Trophy } from "lucide-react";
+import Badge from "@/app/_components/badge";
 
 const AVATAR_COLORS = [
     "bg-orange-500",
@@ -32,48 +31,34 @@ function getAvatarColor(seed = "") {
     return AVATAR_COLORS[index % AVATAR_COLORS.length];
 }
 
-/**
- * Ranks approved participants by fastest completion time (submitted_at - joined_at).
- */
-function fastestCompleted(participants) {
-    return participants
-        .filter((p) => p.status === "approved" && p.joined_at && p.submitted_at)
-        .map((p) => ({
-            ...p,
-            durationMs:
-                new Date(p.submitted_at).getTime() -
-                new Date(p.joined_at).getTime(),
-        }))
-        .sort((a, b) => a.durationMs - b.durationMs);
+function formatOrdinal(rank) {
+    if (rank % 100 >= 11 && rank % 100 <= 13) {
+        return `${rank}th`;
+    }
+
+    const suffix = { 1: "st", 2: "nd", 3: "rd" }[rank % 10] ?? "th";
+    return `${rank}${suffix}`;
 }
 
-export default function TopParticipantSection({ challengeId }) {
-    const dispatch = useDispatch();
+export default function TopParticipantSection({ submissionType = "individual" }) {
     const {
-        rewardChallengeParticipants = [],
+        rewardChallengeIndividualParticipants = [],
+        rewardChallengeTeamSubmissions = [],
         rewardChallengeParticipantsChallenge: challenge,
     } = useSelector((state) => state.engagement);
 
-    useEffect(() => {
-        if (!challengeId) return;
-        dispatch(
-            get_engagement_reward_challenge_participants_thunk(challengeId),
-        );
-    }, [dispatch, challengeId]);
+    const participants =
+        submissionType === "team"
+            ? rewardChallengeTeamSubmissions
+            : rewardChallengeIndividualParticipants;
 
-    const topThree = useMemo(
-        () => fastestCompleted(rewardChallengeParticipants).slice(0, 3),
-        [rewardChallengeParticipants],
+    const winners = useMemo(
+        () => participants
+            .filter((participant) => participant.is_winner)
+            .sort((first, second) => (first.rank ?? Infinity) - (second.rank ?? Infinity))
+            .slice(0, 3),
+        [participants],
     );
-
-    const podium = useMemo(() => {
-        const [first, second, third] = topThree;
-        return [
-            second && { ...second, rank: 2, position: "left" },
-            first && { ...first, rank: 1, position: "center" },
-            third && { ...third, rank: 3, position: "right" },
-        ].filter(Boolean);
-    }, [topThree]);
 
     if (!challenge) return null;
 
@@ -109,73 +94,83 @@ export default function TopParticipantSection({ challengeId }) {
 
                 <div className="text-right">
                     <div className="text-2xl font-bold text-green-600">
-                        {challenge.participants_count ?? 0}
+                        {participants.length}
                     </div>
-                    <div className="text-xs text-gray-400">participants</div>
+                    <div className="text-xs text-gray-400">
+                        {submissionType === "team" ? "teams" : "participants"}
+                    </div>
                 </div>
             </div>
 
-            {/* Podium */}
-            {podium.length === 0 ? (
+            {winners.length === 0 ? (
                 <div className="px-6 py-10 text-center text-sm text-gray-500">
-                    No participants have completed this challenge yet.
+                    {submissionType === "team"
+                        ? "No team has earned approved challenge points yet."
+                        : "No participant has earned approved challenge points yet."}
                 </div>
             ) : (
-                <div className="relative flex min-h-[300px] items-end justify-center gap-4 px-6 pt-16">
-                    {podium.map((participant) => {
-                        const isFirst = participant.rank === 1;
+                <div className="flex min-h-64 items-end justify-center gap-3 bg-gradient-to-b from-slate-50/70 to-white px-4 pb-6 pt-10 sm:gap-6">
+                    {winners.map((participant) => {
+                        const rank = participant.rank;
+                        const rankStyle =
+                            rank === 1
+                                ? {
+                                      avatar: "h-14 w-14 text-base",
+                                      podium: "h-24",
+                                      medal: "text-amber-500",
+                                      order: "order-2",
+                                  }
+                                : rank === 2
+                                  ? {
+                                        avatar: "h-12 w-12 text-sm",
+                                        podium: "h-16",
+                                        medal: "text-slate-400",
+                                        order: "order-1",
+                                    }
+                                  : {
+                                        avatar: "h-12 w-12 text-sm",
+                                        podium: "h-12",
+                                        medal: "text-orange-500",
+                                        order: "order-3",
+                                    };
 
                         return (
-                            <div
-                                key={participant.rank}
-                                className={`flex w-28 flex-col items-center ${
-                                    isFirst ? "z-10" : ""
-                                }`}
+                            <article
+                                key={participant.id}
+                                className={`flex w-28 flex-col items-center text-center sm:w-36 ${rankStyle.order}`}
                             >
-                                {/* Medal */}
-                                <div className="mb-2 flex h-8 items-center justify-center">
-                                    <Medal
-                                        className={`h-7 w-7 ${
-                                            participant.rank === 1
-                                                ? "text-yellow-500"
-                                                : participant.rank === 2
-                                                  ? "text-gray-400"
-                                                  : "text-orange-400"
-                                        }`}
-                                    />
-                                </div>
-
-                                {/* Avatar */}
+                                <Medal className={`mb-2 h-5 w-5 ${rankStyle.medal}`} />
+                                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    {formatOrdinal(rank)} Place
+                                </p>
                                 <div
-                                    className={`mb-2 flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white ring-4 ring-white ${getAvatarColor(participant.name)}`}
+                                    className={`mb-2 flex shrink-0 items-center justify-center rounded-full font-bold text-white ring-4 ring-white shadow-sm ${rankStyle.avatar} ${getAvatarColor(participant.name)}`}
                                 >
                                     {getInitials(participant.name)}
                                 </div>
-
-                                {/* Name */}
-                                <h3 className="text-sm font-semibold text-gray-900">
+                                <h3 className="max-w-full truncate text-xs font-semibold text-gray-900 sm:text-sm">
                                     {participant.name}
                                 </h3>
-
-                                {/* Points */}
-                                <p className="mt-1 text-sm font-semibold text-green-600">
-                                    {(participant.points_awarded ??
-                                        challenge.points ??
-                                        0)}{" "}
-                                    pts
+                                <p className="mt-1 text-xs font-semibold text-green-700 sm:text-sm">
+                                    {Number(participant.points_awarded) || 0} pts
                                 </p>
-
-                                {/* Podium */}
+                                <Badge
+                                    label={
+                                        participant.winner_count > 1
+                                            ? "Co-winner"
+                                            : "Winner"
+                                    }
+                                    variant="warning"
+                                    outlined
+                                    className="mt-1"
+                                />
                                 <div
-                                    className={`mt-2 flex w-full items-end justify-center rounded-t-xl bg-green-100/80 ${
-                                        isFirst ? "h-28" : "h-20"
-                                    }`}
+                                    className={`mt-2 flex w-full items-end justify-center rounded-t-2xl bg-green-100/90 pb-2 text-sm font-bold text-gray-700 ${rankStyle.podium}`}
+                                    aria-label={`Rank ${rank}`}
                                 >
-                                    <span className="mb-3 text-sm font-bold text-gray-700">
-                                        #{participant.rank}
-                                    </span>
+                                    #{rank}
                                 </div>
-                            </div>
+                            </article>
                         );
                     })}
                 </div>

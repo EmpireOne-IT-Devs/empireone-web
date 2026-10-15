@@ -26,10 +26,22 @@ class JobApplication extends Model
         'final_status',
         'referral_id',
         'source',
+        'lead_source',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_content',
+        'utm_term',
+        'lead_referrer',
+        'lead_landing_page',
         'interview_type',
-        'contract_type'
+        'contract_type',
+        'notes',
     ];
 
+    protected $casts = [
+        'notes' => 'array',
+    ];
     public function referral(): HasOne
     {
         return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'referral_id');

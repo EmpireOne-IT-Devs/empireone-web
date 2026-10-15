@@ -18,7 +18,6 @@ export async function edit_information_service(data) {
     return await axios.post(`/api/accounts/edit_information`, data);
 }
 
-
 export async function update_employee_information_service(data) {
     return await axios.post(`/api/accounts/update_employee_information`, data);
 }
@@ -29,4 +28,8 @@ export async function update_personal_information_service(data) {
 
 export async function add_employee_service(data) {
     return await axios.post(`/api/accounts/add_employee`, data);
+}
+
+export async function get_my_team_service() {
+    return await axios.get(`/api/er/get_my_team`);
 }

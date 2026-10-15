@@ -7,8 +7,10 @@ import {
     FileText,
     LayoutGrid,
     Archive,
+    UserRound,
 } from "lucide-react";
 
+import ChallengeEventSection from "./challenge-event-section";
 import CreateNewChallenge from "@/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge";
 import HeaderSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/dashboard/sections/header-section";
 import AllChallengesSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/dashboard/sections/all-challenges-section";
@@ -29,6 +31,7 @@ import HistoricalTrendSection from "@/app/pages/accounts/_administrator/rnr/chal
 // /accounts/administrator/* pages (those are locked to real admin accounts and
 // would bounce department 1/11 employees back, which looked like a glitch).
 const TABS = [
+    { key: "join", label: "Join Challenges", icon: UserRound },
     { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { key: "manage", label: "Manage", icon: Settings },
     { key: "leaderboard", label: "Leaderboard", icon: Trophy },
@@ -83,6 +86,8 @@ export default function ManagerViewSection() {
             </div>
 
             <div className="mt-6 space-y-4">
+                {activeTab === "join" && <ChallengeEventSection />}
+
                 {activeTab === "dashboard" && (
                     <div>
                         <HeaderSection />

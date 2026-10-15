@@ -8,6 +8,7 @@ import {
 } from 'react-icons/fi';
 import { LuArrowUpDown } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
+import JobPostingActionSection from './employee-action-section';
 
 
 
@@ -23,8 +24,8 @@ export default function TableSection({ loading }) {
     // Extract the current location_id from the URL query string
     const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     const currentLocationId = searchParams.get('location_id') ?? data?.user?.account_employee?.location_id;
-
-    console.log('job_postings', job_postings)
+    const status = searchParams.get('status')
+    console.log('job_postings?.data', job_postings?.data)
     const tableColumns = [
         {
             key: 'id',
@@ -169,7 +170,7 @@ export default function TableSection({ loading }) {
         {
             key: 'start_date',
             header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Start Date <LuArrowUpDown className="w-3 h-3" /></div>,
-            render: (row) => <span className="text-gray-500">{moment(job_postings?.job_requisition?.target_start_date).format('LL')}</span>
+            render: (row) => <span className="text-gray-500">{moment(job_postings?.data?.job_requisition?.target_start_date).format('LL')}</span>
         },
         // {
         //     key: 'status',
@@ -180,11 +181,9 @@ export default function TableSection({ loading }) {
             key: 'actions',
             width: 'w-12',
             header: '',
-            render: () => (
-                <button className="p-1 rounded hover:bg-gray-200 text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <FiMoreHorizontal className="w-4 h-4" />
-                </button>
-            )
+            render: (row) => {
+                return <JobPostingActionSection props_data={row} />
+            }
         }
     ];
 
@@ -194,19 +193,33 @@ export default function TableSection({ loading }) {
             {/* ADDED: min-w-0 to prevent flex blowout if the table scales too large */}
             <div className="flex-1 flex flex-col gap-4 min-w-0">
                 {/* Jobs Table Card */}
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
 
                     {/* Tabs */}
                     {/* ADDED: overflow-x-auto whitespace-nowrap to allow tabs to scroll horizontally on small screens */}
                     <div className="flex border-b border-gray-200 px-2 text-sm overflow-x-auto whitespace-nowrap">
-                        <button className="flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 border-purple-600 text-purple-600 font-medium">
-                            <FiBriefcase className="w-4 h-4" /> All jobs <span className="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded text-xs">{job_postings.length}</span>
+                        <button
+
+                            onClick={() => router.visit(`?location_id=${currentLocationId}`)}
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${!status ? 'border-purple-600 text-purple-600' : ""}  font-medium`}>
+                            <FiBriefcase className="w-4 h-4" /> Active jobs
+                        </button>
+                        <button
+                            onClick={() => router.visit(`?location_id=${currentLocationId}&status=Closed`)}
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == 'Closed' ? 'border-purple-600 text-purple-600' : ""} font-medium`}>
+                            <FiBriefcase className="w-4 h-4" /> Closed jobs
+                        </button>
+                        <button
+                            onClick={() => router.visit(`?location_id=${currentLocationId}&status=On Hold`)}
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == 'On Hold' ? 'border-purple-600 text-purple-600' : ""} font-medium`}>
+                            <FiBriefcase className="w-4 h-4" /> On Hold
                         </button>
                     </div>
 
+
                     {/* Dynamic Table Component injected here */}
                     {/* (Assuming your `<Table />` component still has the mobile card view built-in from the earlier steps) */}
-                    <Table columns={tableColumns} data={job_postings} isloading={loading} />
+                    <Table columns={tableColumns} data={job_postings?.data} isloading={loading} />
 
                 </div>
             </div>

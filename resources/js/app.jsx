@@ -8,6 +8,7 @@ import { Provider, useSelector } from "react-redux";
 
 import store from "./app/store/store";
 import Alert from "./app/_components/alert";
+import LeadAttributionTracker from "./app/_components/lead_attribution_tracker";
 
 const appName = import.meta.env.VITE_APP_NAME || "EmpireOneCX | Customer Experience & Global Outsourcing Services";
 
@@ -19,6 +20,7 @@ function AppShell({ App, props }) {
 
     return (
         <>
+            <LeadAttributionTracker />
             <Alert
                 type={alert.type}
                 title={alert.title}

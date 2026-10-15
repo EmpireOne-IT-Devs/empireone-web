@@ -11,6 +11,7 @@ import talentAcquisitionSlice from "../redux/talent-acquisition-slice";
 import activitiesSlice from "../redux/activities-slice";
 import postEventSurveySlice from "../redux/post-event-survey-slice";
 import engagementSlice from "../redux/engagement-slice";
+import locationEmployeeSlice from "../redux/location-employee-slice";
 
 const store = configureStore({
     reducer: {
@@ -26,6 +27,7 @@ const store = configureStore({
         activities: activitiesSlice,
         post_event_surveys: postEventSurveySlice,
         engagement: engagementSlice,
+        location_employees: locationEmployeeSlice,
     },
 });
 

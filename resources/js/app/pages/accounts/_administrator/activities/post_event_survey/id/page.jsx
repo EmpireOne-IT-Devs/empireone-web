@@ -72,9 +72,10 @@ export default function Page() {
     };
 
     // Only departments 1 & 11 get full management access (Questions preview + Responses analytics).
+    const isChallengeSurvey = Boolean(selectedSurvey?.reward_challenge_id);
     const TABS = canManage
-        ? ["Questions", "Responses", "Answer Survey"]
-        : ["Answer Survey"];
+        ? (isChallengeSurvey ? ["Questions", "Responses"] : ["Questions", "Responses", "Answer Survey"])
+        : (isChallengeSurvey ? [] : ["Answer Survey"]);
 
     // Wait for the user data too, so the tab set doesn't flicker between roles.
     if (selectedSurveyLoading || !selectedSurvey || !isReady) {
@@ -170,7 +171,7 @@ export default function Page() {
                             </>
                         )}
                         {/* "Answer Survey" tab: index 2 for managers, index 0 for everyone else */}
-                        {activeTab === (canManage ? 2 : 0) && (
+                        {!isChallengeSurvey && activeTab === (canManage ? 2 : 0) && (
                             <SurveyFormSection surveyId={id} />
                         )}
                     </div>

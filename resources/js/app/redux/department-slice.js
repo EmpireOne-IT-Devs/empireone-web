@@ -5,13 +5,17 @@ export const departmentsSlice = createSlice({
     name: "departments",
     initialState: {
         departments: [],
+        teams: [],
     },
     reducers: {
         setDepartments: (state, action) => {
             state.departments = action.payload;
         },
+        setTeams: (state, action) => {
+            state.teams = action.payload;
+        },
     },
 });
-export const { setDepartments } = departmentsSlice.actions;
+export const { setTeams, setDepartments } = departmentsSlice.actions;
 
 export default departmentsSlice.reducer;

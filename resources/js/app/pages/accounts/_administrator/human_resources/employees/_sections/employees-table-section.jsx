@@ -32,7 +32,7 @@ const calculateCompletion = (res) => {
 
 export default function EmployeesTableSection({ loading }) {
     const { employees } = useSelector((store) => store.human_resources);
-
+console.log('employees',employees)
     const columns = [
         {
             header: "ID",
@@ -105,7 +105,7 @@ export default function EmployeesTableSection({ loading }) {
         },
         {
             header: "Site",
-            render: (row) => row?.site?.location?.name || row?.site?.name,
+            render: (row) => row?.location?.name ,
         },
         {
             header: "Actions",

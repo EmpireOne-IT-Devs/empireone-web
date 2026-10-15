@@ -1,0 +1,51 @@
+### Phase 3: Block upcoming challenge participation
+
+- **Timestamp:** 2026-10-12 (UTC+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** Tech Lead, Backend, Frontend, UI/UX, QA
+- **Files Modified/Created:**
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` - Reject joining and single-proof submission before the start date with an explicit 422 error and opening date.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-card-section.jsx` - Show Upcoming and Starts date instead of join/submit actions. Nonparticipants cannot open the flow from this action; existing participants retain view access. Suppress deadline urgency/countdown for upcoming challenges.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-details-section.jsx` - Disable joining and explain the opening date for upcoming challenges.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submit-section.jsx` - Replace the proof form with an opening-date notice and Close action for upcoming challenges, including legacy participants.
+  - `dev-logs/2026-10-12-upcoming-challenge-participation.md` - Record implementation and scoped verification.
+- **Issues Encountered:** Upcoming was a display-only status. Joining checked only the deadline, single-proof submissions had no start-date guard, and employee actions did not handle Upcoming. Initial verification harnesses needed a contract-compatible auth mock, correct CommonJS exports, complete icon mocks, and real Eloquent date casts.
+- **Resolution:** Enforce the same application-timezone calendar-day comparison used by the status badge. Waiting states take precedence over participation actions. Corrected verification-only stubs and reran successfully. Daily submission logic and ended/full behavior remain unchanged.
+- **QA Checklist Result:** Applicable targeted checks PASS. Browser interactions and full authenticated HTTP/database persistence remain unverified. Existing architectural deviations were not expanded or refactored.
+  - JavaScript purity: PASS - All three modified JSX modules transformed successfully.
+  - web.php rendering: Not applicable; unchanged.
+  - api.php JSON routes: Unchanged; no routes added; new guard responses are JSON.
+  - Form Requests: Existing controller-inline validation retained; no new endpoints or validation fields.
+  - Resource Policies: Unchanged; no new resource; existing eligibility check retained.
+  - Eloquent Resources: Existing response formatting retained; no resource refactor.
+  - Migration down methods: Not applicable; no migration.
+  - Business services: Not applicable; only date guards added.
+  - Axios service isolation: PASS - No API calls added to components.
+  - Thunk execution and slice dispatch: Unchanged; existing thunks and error alerts retained.
+  - Laravel 422 field-error mapping: Not applicable to the new date-state errors; explicit endpoint-level messages use existing alert handling.
+  - Inertia internal links: Not applicable; no navigation links added.
+  - Authenticated persistent layouts: Unchanged; section changes only.
+  - Shared primitive Redux/API isolation: PASS - No shared primitive changes.
+  - Shared component verification: PASS - Existing Button reviewed and reused; native disabled state preserved.
+  - PascalCase component identifiers: PASS - Existing identifiers retained.
+  - Kebab-case slice/thunk/service filenames: Not applicable; no new Redux/service files.
+  - Snake_case thunk/service functions: Unchanged.
+  - page.jsx route filenames: Not applicable; no page created.
+  - Slice store registration: Not applicable; no new slice.
+  - Network loading feedback: Unchanged; existing active-path loading behavior retained.
+  - Destructive confirmations: Not applicable; no destructive action added.
+  - Inline validation fields: Unchanged; upcoming submission form is replaced with a visible notice.
+  - Empty list/table states: Unchanged; no list or table added.
+  - Keyboard accessibility: Code-level PASS for new native disabled buttons and accessible waiting notice; requires browser verification.
+  - Responsive layout: Code-level PASS for retained responsive containers and full-width waiting actions; requires browser verification.
+  - Modal focus trapping: Unchanged; requires browser verification.
+  - Sanctum headers/session authentication: Unchanged.
+  - Raw-array/API Resource responses: Existing response format unchanged.
+  - UUID/slug route identifiers: Unchanged; no route changes.
+  - Guarded terminal commands: PASS - No git, build/dev, migration, or destructive commands executed.
+  - PHP syntax/editor diagnostics: PASS - PHP lint and diagnostics for all four modified source files.
+  - Controller boundary checks: PASS - 12 real-controller cases across day-before midnight, day-before 23:59:59, and start-date midnight for single/multi-day challenges. Upcoming join/proof returns 422 with the opening date; start-date calls reach existing active paths; ended joining and daily endpoint routing retained.
+  - Daily window regression: PASS - Actual submitDailyProof rejects before start and after its duration window, and reaches its active path at start-date midnight.
+  - Frontend regression: PASS - Executed components with mocked hooks/dependencies across 10 Upcoming participation/daily combinations, upcoming/active details, and seven existing active/full/ended/participation action states. Upcoming proof form absent; legacy view access retained.
+  - Verification scope: Controller dependencies were stubbed before database/storage writes. No production data changed. Active persistence and authenticated HTTP middleware were not exercised.
+- **Next Steps:** In the running application, confirm tomorrow's challenge displays Upcoming with a disabled Starts button; previously joined employees see a waiting notice; refresh on the start date to obtain Active status and enabled participation actions.

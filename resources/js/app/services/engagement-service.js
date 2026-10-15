@@ -131,6 +131,14 @@ export async function get_my_reward_challenges_service() {
     return await axios.get("/api/engagement/reward-challenges/my");
 }
 
+export async function get_reward_challenge_survey_service(id) {
+    return (await axios.get(`/api/engagement/reward-challenges/${id}/survey`)).data;
+}
+
+export async function submit_reward_challenge_survey_service(id, answers) {
+    return (await axios.post(`/api/engagement/reward-challenges/${id}/survey/submit`, { answers })).data;
+}
+
 export async function get_reward_challenge_profile_summary_service() {
     return await axios.get("/api/engagement/reward-challenges/profile-summary");
 }
@@ -159,6 +167,16 @@ export async function submit_reward_challenge_daily_proof_service(id, photo, cha
     formData.append("challenge_description", challengeDescription);
 
     return await axios.post(`/api/engagement/reward-challenges/${id}/submit-daily`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+}
+
+export async function submit_reward_challenge_team_proof_service(id, photo, challengeDescription) {
+    const formData = new FormData();
+    formData.append("photo", photo);
+    formData.append("challenge_description", challengeDescription);
+
+    return await axios.post(`/api/engagement/reward-challenges/${id}/submit-team`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
     });
 }
@@ -206,8 +224,11 @@ export async function export_reward_challenge_submissions_service(params = {}) {
     });
 }
 
-export async function approve_reward_challenge_submission_service(id) {
-    return await axios.post(`/api/engagement/reward-challenge-submissions/${id}/approve`);
+export async function approve_reward_challenge_submission_service(id, bonus_points = 0) {
+    return await axios.post(
+        `/api/engagement/reward-challenge-submissions/${id}/approve`,
+        { bonus_points },
+    );
 }
 
 export async function decline_reward_challenge_submission_service(id, review_note) {

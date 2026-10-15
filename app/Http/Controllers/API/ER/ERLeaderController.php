@@ -9,12 +9,19 @@ use App\Models\Account\AccountEmployee;
 use App\Models\ER\ERSubordinate;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ERLeaderController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    public function get_my_team()
+    {
+        $teams = AccountEmployee::where('e_r_leader_id', Auth::id())->with(['personal_information','account','er_leader','department_manager'])->get();
+        return response()->json($teams, 200);
+    }
     public function index(Request $request)
     {
         // 1. Get location_id filter from query parameters (?location_id=1)

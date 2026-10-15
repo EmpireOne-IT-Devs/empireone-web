@@ -157,6 +157,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('dashboard', 'accounts/performance_management/dashboard/page');
             Route::inertia('reach', 'accounts/performance_management/reach/page');
             Route::inertia('corrective_action', 'accounts/performance_management/corrective_action/page');
+            Route::inertia('my_team', 'accounts/performance_management/my_team/page');
         });
 
         Route::prefix('activities')->group(function () {
@@ -199,13 +200,16 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::redirect('/', '/accounts/administrator/rnr/peer_recognition');
             Route::inertia('/peer_recognition', 'accounts/_administrator/rnr/peer_recognition/page');
             Route::prefix('challenges_events')->group(function () {
-                Route::redirect('/', '/accounts/administrator/rnr/challenges_events/dashboard');
-                Route::inertia('/dashboard', 'accounts/_administrator/rnr/challenges_events/dashboard/page');
-                Route::inertia('/manage', 'accounts/_administrator/rnr/challenges_events/manage/page');
-                Route::inertia('/manage/participants', 'accounts/_administrator/rnr/challenges_events/manage/participants/page');
-                Route::inertia('/leaderboard', 'accounts/_administrator/rnr/challenges_events/leaderboard/page');
-                Route::inertia('/submissions', 'accounts/_administrator/rnr/challenges_events/submissions/page');
-                Route::inertia('/report', 'accounts/_administrator/rnr/challenges_events/report/page');
+                Route::redirect('/', '/accounts/administrator/rnr/challenges_events/join');
+                Route::inertia('/join', 'accounts/_administrator/rnr/challenges_events/join/page');
+                Route::middleware('challenge.management')->group(function () {
+                    Route::inertia('/dashboard', 'accounts/_administrator/rnr/challenges_events/dashboard/page');
+                    Route::inertia('/manage', 'accounts/_administrator/rnr/challenges_events/manage/page');
+                    Route::inertia('/manage/participants', 'accounts/_administrator/rnr/challenges_events/manage/participants/page');
+                    Route::inertia('/leaderboard', 'accounts/_administrator/rnr/challenges_events/leaderboard/page');
+                    Route::inertia('/submissions', 'accounts/_administrator/rnr/challenges_events/submissions/page');
+                    Route::inertia('/report', 'accounts/_administrator/rnr/challenges_events/report/page');
+                });
             });
             Route::inertia('/employee_profiles', 'accounts/_administrator/rnr/employee_profiles/page');
             Route::inertia('/my_profile', 'accounts/_administrator/rnr/my_profile/page');

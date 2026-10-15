@@ -108,6 +108,9 @@ class AppController extends Controller
         $profilePic = $user->personal_information?->profile_picture;
         $userArray = $user->toArray();
         $userArray['profile_picture'] = $profilePic ? asset('storage/' . $profilePic) : null;
+        $userArray['is_er_leader'] = ERLeader::query()
+            ->where('user_id', $user->id)
+            ->exists();
 
         $total_job_opening = JobPosting::whereIn('target_audience', ['Internal', 'Both'])->count();
         $total_application_submitted = JobApplication::where('user_id', $user->id)->count();

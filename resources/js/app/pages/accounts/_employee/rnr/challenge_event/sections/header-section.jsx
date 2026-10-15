@@ -18,7 +18,7 @@ export default function HeaderSection({
                 joined
             </p>
 
-            <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-white p-1">
+            {/* <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-white p-1">
                 {FILTERS.map((option) => (
                     <button
                         key={option}
@@ -33,7 +33,7 @@ export default function HeaderSection({
                         {option}
                     </button>
                 ))}
-            </div>
+            </div> */}
         </div>
     );
 }

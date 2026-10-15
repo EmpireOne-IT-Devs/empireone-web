@@ -8,6 +8,7 @@ import moment from 'moment';
 import Button from '@/app/_components/button';
 import Modal from '@/app/_components/modal';
 import Radio from '@/app/_components/radio';
+import Checkbox from '../../../../../../_components/checkbox';
 
 import { setAlert } from '@/app/redux/app-slice';
 import { add_attrition_service } from '@/app/services/employee-relation-service';
@@ -62,7 +63,8 @@ export default function AddAttritionSection({ props_data, onAction }) {
             clearance_departments: [],
             last_working_date: '',
             is_liquidated: '',
-            days_of_liquidated: ''
+            days_of_liquidated: '',
+            is_send_email: false
         }
     });
 
@@ -104,7 +106,8 @@ export default function AddAttritionSection({ props_data, onAction }) {
             clearance_departments: [],
             last_working_date: '',
             is_liquidated: '',
-            days_of_liquidated: ''
+            days_of_liquidated: '',
+            is_send_email: false
         });
     };
 
@@ -147,6 +150,7 @@ export default function AddAttritionSection({ props_data, onAction }) {
             await add_attrition_service({
                 ...props_data,
                 ...formData,
+                is_send_email: Boolean(formData.is_send_email),
                 clearance_departments: enrichedClearanceDepartments,
                 department_leaders: enrichedClearanceDepartments
             });
@@ -465,8 +469,8 @@ export default function AddAttritionSection({ props_data, onAction }) {
                         <button
                             type="button"
                             onClick={handleAddDepartment}
-                            disabled={availableDepartmentOptions.length === 0}
-                            className={`flex items-center gap-1.5 px-3 py-1 font-bold rounded border transition-colors shrink-0 ml-2 ${availableDepartmentOptions.length === 0
+                            disabled={availableDepartmentOptions.length === 0 || isSubmitting}
+                            className={`flex items-center gap-1.5 px-3 py-1 font-bold rounded border transition-colors shrink-0 ml-2 ${availableDepartmentOptions.length === 0 || isSubmitting
                                 ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                                 : 'bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-200 cursor-pointer'
                                 }`}
@@ -482,7 +486,7 @@ export default function AddAttritionSection({ props_data, onAction }) {
                             <thead>
                                 <tr className="border-b border-gray-900 bg-gray-50 text-center font-bold text-gray-800">
                                     <th className="p-2 border-r border-gray-900 w-1/2">Department</th>
-                                    <th className="p-2 border-r border-gray-900 w-1/2">Assigned</th>
+                                    <th className="p-2 border-r border-gray-900 w-1/2">Assigned Leader</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-900">
@@ -497,7 +501,6 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                         const currentDeptId = watchedClearanceDepts?.[index]?.department_id;
                                         const selectedDept = (data?.departments || []).find((d) => String(d.id) === String(currentDeptId));
 
-                                        // Parse available leaders specifically belonging to the selected department
                                         const departmentLeadersOptions = selectedDept?.department_leaders?.map((leader) => {
                                             const personalInfo = leader?.employee?.personal_information;
                                             const fullName = personalInfo
@@ -514,37 +517,45 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                             <tr key={row.id} className="hover:bg-gray-50/50 transition-colors">
                                                 {/* Department Select Cell */}
                                                 <td className="p-2 border-r border-gray-900 text-gray-800">
-                                                    <div className="flex items-center gap-1">
-                                                        <Controller
-                                                            name={`clearance_departments.${index}.department_id`}
-                                                            control={control}
-                                                            rules={{ required: "Select a department" }}
-                                                            render={({ field }) => (
-                                                                <select
-                                                                    {...field}
-                                                                    onChange={(e) => {
-                                                                        field.onChange(e);
-                                                                        // Reset assigned leader when department changes
-                                                                        setValue(`clearance_departments.${index}.assigned_leader_id`, '');
-                                                                    }}
-                                                                    className="w-full py-0.5 px-1 bg-transparent border border-gray-300 rounded focus:border-purple-600 focus:outline-none text-xs font-semibold cursor-pointer"
-                                                                >
-                                                                    <option value="">Select Department...</option>
-                                                                    {selectedDept && (
-                                                                        <option value={selectedDept.id}>{selectedDept.name}</option>
-                                                                    )}
-                                                                    {availableDepartmentOptions.map((dept) => (
-                                                                        <option key={dept.id} value={dept.id}>
-                                                                            {dept.name}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="flex-1">
+                                                            <Controller
+                                                                name={`clearance_departments.${index}.department_id`}
+                                                                control={control}
+                                                                rules={{ required: "Select department" }}
+                                                                render={({ field }) => (
+                                                                    <select
+                                                                        {...field}
+                                                                        disabled={isSubmitting}
+                                                                        onChange={(e) => {
+                                                                            field.onChange(e);
+                                                                            setValue(`clearance_departments.${index}.assigned_leader_id`, '');
+                                                                        }}
+                                                                        className="w-full py-1 px-1.5 bg-transparent border border-gray-300 rounded focus:border-purple-600 focus:outline-none text-xs font-semibold cursor-pointer"
+                                                                    >
+                                                                        <option value="">Select Department...</option>
+                                                                        {selectedDept && (
+                                                                            <option value={selectedDept.id}>{selectedDept.name}</option>
+                                                                        )}
+                                                                        {availableDepartmentOptions.map((dept) => (
+                                                                            <option key={dept.id} value={dept.id}>
+                                                                                {dept.name}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                )}
+                                                            />
+                                                            {errors?.clearance_departments?.[index]?.department_id && (
+                                                                <span className="text-[10px] text-red-500 block mt-0.5">
+                                                                    {errors.clearance_departments[index].department_id.message}
+                                                                </span>
                                                             )}
-                                                        />
+                                                        </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => remove(index)}
-                                                            className="text-red-500 hover:text-red-700 p-1 rounded shrink-0"
+                                                            disabled={isSubmitting}
+                                                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
                                                             title="Remove Department"
                                                         >
                                                             <FiTrash2 size={14} />
@@ -552,24 +563,24 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                                     </div>
                                                 </td>
 
-                                                {/* Assigned Department Leader Cell */}
-                                                <td className="p-2 text-gray-800">
+                                                {/* Assigned Leader Cell */}
+                                                <td className="p-2 border-r border-gray-900 text-gray-800">
                                                     <Controller
                                                         name={`clearance_departments.${index}.assigned_leader_id`}
                                                         control={control}
-                                                        rules={{ required: "Select an assigned leader" }}
+                                                        rules={{ required: "Select assigned leader" }}
                                                         render={({ field }) => (
                                                             <select
                                                                 {...field}
-                                                                disabled={!currentDeptId}
-                                                                className="w-full py-0.5 px-1 bg-transparent border border-gray-300 rounded focus:border-purple-600 focus:outline-none text-xs font-semibold cursor-pointer disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                                                disabled={!currentDeptId || isSubmitting}
+                                                                className="w-full py-1 px-1.5 bg-transparent border border-gray-300 rounded focus:border-purple-600 focus:outline-none text-xs font-semibold cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed"
                                                             >
                                                                 <option value="">
-                                                                    {currentDeptId
-                                                                        ? departmentLeadersOptions.length > 0
-                                                                            ? "Select Leader..."
-                                                                            : "No leaders found for this department"
-                                                                        : "Select a department first..."}
+                                                                    {!currentDeptId
+                                                                        ? "Select department first..."
+                                                                        : departmentLeadersOptions.length === 0
+                                                                            ? "No leaders assigned to department"
+                                                                            : "Select Leader..."}
                                                                 </option>
                                                                 {departmentLeadersOptions.map((leader) => (
                                                                     <option key={leader.id} value={leader.id}>
@@ -579,6 +590,11 @@ export default function AddAttritionSection({ props_data, onAction }) {
                                                             </select>
                                                         )}
                                                     />
+                                                    {errors?.clearance_departments?.[index]?.assigned_leader_id && (
+                                                        <span className="text-[10px] text-red-500 block mt-0.5">
+                                                            {errors.clearance_departments[index].assigned_leader_id.message}
+                                                        </span>
+                                                    )}
                                                 </td>
                                             </tr>
                                         );
@@ -588,13 +604,42 @@ export default function AddAttritionSection({ props_data, onAction }) {
                         </table>
                     </div>
 
-                    <Button
-                        type="submit"
-                        className="w-full py-2.5 bg-purple-700 hover:bg-purple-800 text-white font-bold tracking-wide rounded"
-                        loading={isSubmitting}
-                    >
-                        CONFIRM & SUBMIT ATTRITION
-                    </Button>
+                    {/* Send Notification Email Checkbox */}
+                    <div className="my-3 p-2.5 border border-red-200 rounded bg-red-50 flex items-center gap-2 mb-12">
+                        <Controller
+                            name="is_send_email"
+                            control={control}
+                            render={({ field }) => (
+                                <Checkbox
+                                    id="is_send_email"
+                                    label=" Send exit clearance notification email to assigned leaders and employee"
+                                    checked={Boolean(field.value)}
+                                    onChange={(e) => field.onChange(e.target.checked)}
+                                    disabled={isSubmitting}
+                                />
+                            )}
+                        />
+                    </div>
+
+                    {/* Submit & Cancel Form Actions */}
+                    <div className="flex justify-end gap-3 pt-3 border-t border-gray-200">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={handleCloseModal}
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            loading={isSubmitting}
+                            disabled={isSubmitting}
+                        >
+                            Submit Attrition
+                        </Button>
+                    </div>
                 </form>
             </Modal>
         </>

@@ -6,6 +6,7 @@ import {
     Trophy,
     BarChart3,
     FileText,
+    UserRound,
 } from "lucide-react";
 import CreateNewChallenge from "./create-new-challenge";
 import ChallengeEventSection from "@/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-event-section";
@@ -21,39 +22,55 @@ export default function TabsSection({ children }) {
         .split("/")
         .filter(Boolean)
         .at(-1);
+    const isAdministratorRoute =
+        window.location.pathname.split("/")[2] === "administrator";
 
     const tabs = [
         {
+            label: "Join Challenges",
+            icon: UserRound,
+            path: "/accounts/administrator/rnr/challenges_events/join",
+            active: currentPath === "join",
+        },
+        {
             label: "Dashboard",
             icon: LayoutDashboard,
+            managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/dashboard",
             active: currentPath === "dashboard",
         },
         {
             label: "Manage",
             icon: Settings,
+            managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/manage",
             active: ["manage", "participants"].includes(currentPath),
         },
+       
         {
+            label: "Submissions",
+            icon: BarChart3,
+            managementOnly: true,
+            path: "/accounts/administrator/rnr/challenges_events/submissions",
+            active: currentPath === "submissions",
+        },
+         {
             label: "Leaderboard",
             icon: Trophy,
+            managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/leaderboard",
             active: currentPath === "leaderboard",
         },
         {
-            label: "Submissions",
-            icon: BarChart3,
-            path: "/accounts/administrator/rnr/challenges_events/submissions",
-            active: currentPath === "submissions",
-        },
-        {
             label: "Reports",
             icon: FileText,
+            managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/report",
             active: currentPath === "report",
         },
-    ];
+    ].filter(
+        (tab) => !tab.managementOnly || canManageChallenges,
+    );
 
     // Wait until employee data is available.
     if (!isReady) {
@@ -68,7 +85,7 @@ export default function TabsSection({ children }) {
     // Employee / non-content-manager view.
     // Only show ChallengeEventSection when the user is ready
     // and is NOT a content manager.
-    if (isReady && !canManageChallenges) {
+    if (isReady && !canManageChallenges && !isAdministratorRoute) {
         return (
             <div className="mt-4">
                 <ChallengeEventSection />
@@ -76,8 +93,8 @@ export default function TabsSection({ children }) {
         );
     }
 
-    // Content manager / administrator view.
-    // ChallengeEventSection is NOT rendered here.
+    // Administrators keep their dashboard and join view; only departments
+    // 1 and 11 receive the management navigation.
     return (
         <div>
             <div className="mt-6 flex items-center border-b border-gray-200 px-4 sm:px-6 lg:px-8">

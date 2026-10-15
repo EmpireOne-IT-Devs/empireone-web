@@ -103,7 +103,7 @@ export default function ShowEmployeeDetailsSection({ props_data }) {
         basicPay: props_data?.basic_pay,
         allowance: props_data?.allowance,
         siteName: props_data?.site?.name,
-        siteLocation: props_data?.site?.location?.name,
+        siteLocation: props_data?.location?.name,
         firstName: props_data?.personal_information?.first_name,
         middleName: props_data?.personal_information?.middle_name,
         lastName: props_data?.personal_information?.last_name,

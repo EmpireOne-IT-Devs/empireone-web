@@ -3,12 +3,18 @@ export async function create_job_posting_service(data) {
     return await axios.post("/api/job/postings", data);
 }
 
+export async function change_status_service(data) {
+    return await axios.post("/api/job/change_status", data);
+}
+
 export async function get_erps_service() {
     return (await axios.get(`/api/job/get_erps${window.location.search}`)).data;
 }
 
 export async function get_job_postings_service() {
-    return await axios.get(`/api/job/postings${window.location.search}`);
+    return await axios.get(
+        `/api/job/postings${window.location.search}&where=${window.location.pathname.split("/")[4]}`,
+    );
 }
 
 export async function get_job_posting_by_id_service(id) {

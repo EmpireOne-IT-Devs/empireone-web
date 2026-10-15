@@ -24,9 +24,11 @@ use App\Http\Controllers\API\Engagement\EngagementPostEventSurveyController;
 use App\Http\Controllers\API\Engagement\EngagementPollController;
 use App\Http\Controllers\API\Engagement\EngagementBirthdayController;
 use App\Http\Controllers\API\Engagement\EngagementChallengeSubmissionsController;
+use App\Http\Controllers\API\Engagement\ChallengeSurveyController;
 use App\Http\Controllers\API\Engagement\EngagementEStoreController;
 use App\Http\Controllers\API\Engagement\EngagementRewardChallengesController;
 use App\Http\Controllers\API\Engagement\EngagementRewardRecognitionController;
+use App\Http\Middleware\EnsurePostEventSurvey;
 use App\Http\Controllers\API\Jobs\JobAIInterviewController;
 use App\Http\Controllers\API\Jobs\JobApplicantScheduleController;
 use App\Http\Controllers\API\Jobs\JobApplicationController;
@@ -110,6 +112,9 @@ Route::get('get_all_email', [GoogleController::class, 'get_all_email']); // do n
 Route::post('ask_ai', [AIController::class, 'ask_ai'])->middleware(['auth:sanctum']);
 
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('locations/employee-counts', [LocationController::class, 'employeeCounts']);
+    Route::get('locations/{location}/employees/export', [LocationController::class, 'exportEmployees']);
+
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
     Route::resource('get_app_data', AppController::class);
@@ -127,9 +132,11 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::get('dashboard_stats', [JobPostingController::class, 'dashboard_stats']);
         Route::get('recent_activity', [JobPostingController::class, 'recent_activity']);
+        Route::post('change_status', [JobPostingController::class, 'change_status']);
         Route::get('top_performing_jobs', [JobPostingController::class, 'top_performing_jobs']);
         Route::get('get_erps', [JobPostingController::class, 'get_erps']);
         Route::resource('application', JobApplicationController::class);
+        Route::post('add_notes_application', [JobApplicationController::class, 'add_notes_application']);
         Route::resource('offers', JobOfferController::class);
         Route::resource('job_interview', JobAIInterviewController::class);
         Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
@@ -179,7 +186,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('edit_information',  [AccountContractController::class, 'edit_information']);
         Route::post('update_employee_information',  [AccountContractController::class, 'update_employee_information']);
         Route::post('update_personal_information',  [AccountContractController::class, 'update_personal_information']);
-        
+
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);
@@ -208,16 +215,20 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
         Route::get('surveys', [EngagementPostEventSurveyController::class, 'index']);
         Route::post('surveys', [EngagementPostEventSurveyController::class, 'store']);
-        Route::get('surveys/{id}', [EngagementPostEventSurveyController::class, 'show']);
-        Route::put('surveys/{id}', [EngagementPostEventSurveyController::class, 'update']);
-        Route::post('surveys/{id}/submit', [EngagementPostEventSurveyController::class, 'submit']);
-        Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
-        Route::get('surveys/{id}/responses/export', [EngagementPostEventSurveyController::class, 'exportResponses']);
-        Route::get('surveys/{id}/responses/{userId}', [EngagementPostEventSurveyController::class, 'employeeResponse']);
-        Route::get('surveys/{id}/analytics', [EngagementPostEventSurveyController::class, 'analytics']);
-        Route::post('surveys/{id}/close', [EngagementPostEventSurveyController::class, 'close']);
-        Route::post('surveys/{id}/reopen', [EngagementPostEventSurveyController::class, 'reopen']);
-        Route::delete('surveys/{id}', [EngagementPostEventSurveyController::class, 'destroy']);
+        Route::middleware(EnsurePostEventSurvey::class . ':view')->group(function () {
+            Route::get('surveys/{id}', [EngagementPostEventSurveyController::class, 'show']);
+            Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
+            Route::get('surveys/{id}/responses/export', [EngagementPostEventSurveyController::class, 'exportResponses']);
+            Route::get('surveys/{id}/responses/{userId}', [EngagementPostEventSurveyController::class, 'employeeResponse']);
+            Route::get('surveys/{id}/analytics', [EngagementPostEventSurveyController::class, 'analytics']);
+        });
+        Route::middleware(EnsurePostEventSurvey::class)->group(function () {
+            Route::put('surveys/{id}', [EngagementPostEventSurveyController::class, 'update']);
+            Route::post('surveys/{id}/submit', [EngagementPostEventSurveyController::class, 'submit']);
+            Route::post('surveys/{id}/close', [EngagementPostEventSurveyController::class, 'close']);
+            Route::post('surveys/{id}/reopen', [EngagementPostEventSurveyController::class, 'reopen']);
+            Route::delete('surveys/{id}', [EngagementPostEventSurveyController::class, 'destroy']);
+        });
 
         Route::get('upcoming_birthdays', [EngagementBirthdayController::class, 'upcoming_birthdays']);
         Route::get('upcoming_work_anniversaries', [EngagementBirthdayController::class, 'upcoming_work_anniversaries']);
@@ -242,15 +253,19 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenges/employee-profiles/export', [EngagementRewardChallengesController::class, 'exportEmployeeProfiles']);
         Route::get('reward-challenges/{engagementRewardChallenge}/participants', [EngagementRewardChallengesController::class, 'participants']);
         Route::get('reward-challenges/{engagementRewardChallenge}/my-daily-logs', [EngagementRewardChallengesController::class, 'myDailyLogs']);
+        Route::get('reward-challenges/{engagementRewardChallenge}/survey', [ChallengeSurveyController::class, 'show']);
+        Route::post('reward-challenges/{engagementRewardChallenge}/survey/submit', [ChallengeSurveyController::class, 'submit']);
         Route::post('reward-challenges', [EngagementRewardChallengesController::class, 'store']);
         Route::post('reward-challenges/{engagementRewardChallenge}/join', [EngagementRewardChallengesController::class, 'join']);
         Route::delete('reward-challenges/{engagementRewardChallenge}/leave', [EngagementRewardChallengesController::class, 'leave']);
         Route::post('reward-challenges/{engagementRewardChallenge}/submit', [EngagementRewardChallengesController::class, 'submitProof']);
         Route::post('reward-challenges/{engagementRewardChallenge}/submit-daily', [EngagementRewardChallengesController::class, 'submitDailyProof']);
+        Route::post('reward-challenges/{engagementRewardChallenge}/submit-team', [EngagementRewardChallengesController::class, 'submitTeamProof']);
         Route::put('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'update']);
         Route::delete('reward-challenges/{engagementRewardChallenge}', [EngagementRewardChallengesController::class, 'destroy']);
 
         Route::get('reward-challenge-submissions', [EngagementChallengeSubmissionsController::class, 'index']);
+        Route::get('reward-challenge-team-submissions', [EngagementChallengeSubmissionsController::class, 'teamIndex']);
         Route::get('reward-challenge-submissions/export', [EngagementChallengeSubmissionsController::class, 'export']);
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
         Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
@@ -272,6 +287,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('accounts',  AccountController::class);
         Route::resource('departments',  DepartmentController::class);
         Route::resource('leaders', ERLeaderController::class);
+        Route::get('get_my_team',  [ERLeaderController::class, 'get_my_team']);
+
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);

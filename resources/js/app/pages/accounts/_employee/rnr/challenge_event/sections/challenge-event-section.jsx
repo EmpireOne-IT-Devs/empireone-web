@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LayoutGrid, Archive } from "lucide-react";
+import Button from "@/app/_components/button";
 import { get_my_engagement_reward_challenges_thunk } from "@/app/redux/engagement-thunk";
 import HeaderSection from "./header-section";
 import ChallengeCardSection from "./challenge-card-section";
 
 export default function ChallengeEventSection() {
     const dispatch = useDispatch();
-    const { myRewardChallenges, myRewardChallengesLoading } = useSelector(
+    const { myRewardChallenges, myRewardChallengesLoading, myRewardChallengesError } = useSelector(
         (state) => state.engagement,
     );
     const [filter, setFilter] = useState("All");
@@ -16,10 +17,6 @@ export default function ChallengeEventSection() {
         Number(new URLSearchParams(window.location.search).get("challenge")) || null,
     );
     const [highlightId, setHighlightId] = useState(null);
-
-    useEffect(() => {
-        dispatch(get_my_engagement_reward_challenges_thunk());
-    }, [dispatch]);
 
     // Shared link (?challenge=ID): show the right tab, then scroll to and highlight the card once.
     useEffect(() => {
@@ -101,12 +98,27 @@ export default function ChallengeEventSection() {
                     );
                 })}
             </div>
-            <ChallengeCardSection
-                challenges={filteredChallenges}
-                loading={myRewardChallengesLoading}
-                archived={showArchived}
-                highlightId={highlightId}
-            />
+            {myRewardChallengesError ? (
+                <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-center text-sm text-red-700">
+                    <p>Unable to load challenges. Please try again.</p>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        outlined
+                        className="mt-3"
+                        onClick={() => dispatch(get_my_engagement_reward_challenges_thunk())}
+                    >
+                        Retry
+                    </Button>
+                </div>
+            ) : (
+                <ChallengeCardSection
+                    challenges={filteredChallenges}
+                    loading={myRewardChallengesLoading}
+                    archived={showArchived}
+                    highlightId={highlightId}
+                />
+            )}
         </div>
     );
 }

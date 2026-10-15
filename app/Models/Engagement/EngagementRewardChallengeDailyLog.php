@@ -15,6 +15,7 @@ class EngagementRewardChallengeDailyLog extends Model
 
     protected $fillable = [
         'reward_challenge_participant_id',
+        'team_submission_id',
         'log_date',
         'submission_path',
         'challenge_description',
@@ -23,6 +24,7 @@ class EngagementRewardChallengeDailyLog extends Model
         'reviewed_at',
         'reviewed_by',
         'review_note',
+        'bonus_points',
     ];
 
     protected function casts(): array
@@ -31,6 +33,7 @@ class EngagementRewardChallengeDailyLog extends Model
             'log_date' => 'date',
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',
+            'bonus_points' => 'integer',
         ];
     }
 
@@ -42,5 +45,10 @@ class EngagementRewardChallengeDailyLog extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function teamSubmission(): BelongsTo
+    {
+        return $this->belongsTo(EngagementRewardChallengeTeamSubmission::class, 'team_submission_id');
     }
 }
