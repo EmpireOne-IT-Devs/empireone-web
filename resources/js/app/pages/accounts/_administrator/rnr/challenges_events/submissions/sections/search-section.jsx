@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
 import { export_reward_challenge_submissions_service } from "@/app/services/engagement-service";
 
-export default function SearchSection({ filters, setFilters }) {
+export default function SearchSection({ filters, setFilters, submissionType }) {
     const dispatch = useDispatch();
     const { challengeSubmissions } = useSelector((state) => state.engagement);
     const [exporting, setExporting] = useState(false);
@@ -69,6 +69,7 @@ export default function SearchSection({ filters, setFilters }) {
         setExporting(true);
         try {
             const params = {};
+            if (submissionType) params.submission_type = submissionType;
             if (safeFilters.status) params.status = safeFilters.status;
             if (safeFilters.challenge_id) {
                 params.challenge_id = safeFilters.challenge_id;
