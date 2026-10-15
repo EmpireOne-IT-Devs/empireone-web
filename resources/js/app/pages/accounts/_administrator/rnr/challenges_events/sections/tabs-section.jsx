@@ -46,19 +46,20 @@ export default function TabsSection({ children }) {
             path: "/accounts/administrator/rnr/challenges_events/manage",
             active: ["manage", "participants"].includes(currentPath),
         },
-        {
-            label: "Leaderboard",
-            icon: Trophy,
-            managementOnly: true,
-            path: "/accounts/administrator/rnr/challenges_events/leaderboard",
-            active: currentPath === "leaderboard",
-        },
+       
         {
             label: "Submissions",
             icon: BarChart3,
             managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/submissions",
             active: currentPath === "submissions",
+        },
+         {
+            label: "Leaderboard",
+            icon: Trophy,
+            managementOnly: true,
+            path: "/accounts/administrator/rnr/challenges_events/leaderboard",
+            active: currentPath === "leaderboard",
         },
         {
             label: "Reports",

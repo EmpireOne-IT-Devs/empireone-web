@@ -58,6 +58,7 @@ const Profile = (await load("resources/js/app/pages/accounts/_employee/rnr/my_pr
 const Cards = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-card-section.jsx")).default;
 const SurveyTable = await load("resources/js/app/pages/accounts/_administrator/activities/post_event_survey/sections/table-section.jsx");
 const SubmissionTable = (await load("resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx")).default;
+const SubmissionPagination = (await load("resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/pagination-section.jsx")).default;
 const TopLeaderboard = (await load("resources/js/app/pages/accounts/_administrator/rnr/challenges_events/leaderboard/sections/top-participant-section.jsx")).default;
 const ParticipantLeaderboard = (await load("resources/js/app/pages/accounts/_administrator/rnr/challenges_events/leaderboard/sections/participant-table-section.jsx")).default;
 
@@ -568,6 +569,9 @@ test("leaderboard separates team submissions and labels each team by its leader"
     assert.match(topWinnersHtml, /Individual Entry/);
     assert.match(topWinnersHtml, /Second Individual Winner/);
     assert.match(topWinnersHtml, /Co-winner/);
+    assert.match(topWinnersHtml, /#1/);
+    assert.match(topWinnersHtml, /1st Place/);
+    assert.match(topWinnersHtml, /aria-label="Rank 1"/);
 
     const topTeamWinnerHtml = render(TopLeaderboard, leaderboardState, {
         submissionType: "team",
@@ -575,6 +579,38 @@ test("leaderboard separates team submissions and labels each team by its leader"
     assert.match(topTeamWinnerHtml, /Team: Team Leader/);
     assert.match(topTeamWinnerHtml, /125 pts/);
     assert.match(topTeamWinnerHtml, />Winner</);
+    assert.match(topTeamWinnerHtml, /1st Place/);
+    assert.match(topTeamWinnerHtml, /aria-label="Rank 1"/);
+
+    const podiumHtml = render(TopLeaderboard, {
+        ...leaderboardState,
+        rewardChallengeIndividualParticipants: [
+            {
+                ...leaderboardState.rewardChallengeIndividualParticipants[0],
+                id: 1,
+                name: "First Place",
+                rank: 1,
+                winner_count: 1,
+            },
+            {
+                ...leaderboardState.rewardChallengeIndividualParticipants[0],
+                id: 2,
+                name: "Second Place",
+                rank: 2,
+                winner_count: 1,
+            },
+            {
+                ...leaderboardState.rewardChallengeIndividualParticipants[0],
+                id: 3,
+                name: "Third Place",
+                rank: 3,
+                winner_count: 1,
+            },
+        ],
+    });
+    assert.match(podiumHtml, /1st Place/);
+    assert.match(podiumHtml, /2nd Place/);
+    assert.match(podiumHtml, /3rd Place/);
 });
 
 test("challenge participants slice prefers the pre-ranked response for each submission type", () => {
@@ -722,6 +758,50 @@ test("Submissions table renders survey completed/pending and legacy not-applicab
     assert.match(html, />Completed</);
     assert.match(html, />Pending</);
     assert.match(html, /—/);
+});
+
+test("submissions table limits each active type to ten rows and renders its pager", () => {
+    const submissions = Array.from({ length: 12 }, (_, index) => ({
+        id: `individual-${index + 1}`,
+        status: "submitted",
+        submitted_at: "2026-10-12",
+        challenge: { title: "Wellness", points: 100, survey_required: false },
+        employee: {
+            id: index + 1,
+            name: `Export Employee ${index + 1}`,
+            email: `employee-${index + 1}@example.test`,
+        },
+    }));
+    const html = render(SubmissionTable, {
+        challengeSubmissions: submissions,
+        challengeSubmissionsLoading: false,
+    }, {
+        filters: {},
+        submissionType: "individual",
+        setSubmissionType() {},
+    });
+
+    for (let index = 1; index <= 10; index++) {
+        assert.match(html, new RegExp(`Export Employee ${index}`));
+    }
+    assert.doesNotMatch(html, /Export Employee 11/);
+    assert.match(html, /Next/);
+
+    const paginationHtml = render(SubmissionPagination, {}, {
+        data: { current_page: 2, last_page: 2 },
+        onPageChange() {},
+    });
+    assert.match(paginationHtml, /Previous/);
+    assert.doesNotMatch(paginationHtml, /Next/);
+    assert.match(paginationHtml, />2</);
+
+    const singlePageHtml = render(SubmissionPagination, {}, {
+        data: { current_page: 1, last_page: 1 },
+        onPageChange() {},
+    });
+    assert.match(singlePageHtml, /<nav/);
+    assert.match(singlePageHtml, />1</);
+    assert.doesNotMatch(singlePageHtml, /Previous|Next/);
 });
 
 test("Submissions table points use the leaderboard total and base-plus-bonus hierarchy", () => {
