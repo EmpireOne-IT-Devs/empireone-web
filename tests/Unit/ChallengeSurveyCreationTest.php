@@ -25,6 +25,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -71,7 +72,6 @@ class ChallengeSurveyCreationTest extends TestCase
             $table->string('name');
             $table->string('email');
             $table->unsignedInteger('role')->default(1);
-            $table->unsignedBigInteger('department_id')->nullable();
             $table->timestamps();
         });
         foreach (['accounts', 'departments'] as $name) {
@@ -177,6 +177,11 @@ class ChallengeSurveyCreationTest extends TestCase
         ]);
     }
 
+    private function leaderboardCacheKey(EngagementRewardChallenge $challenge): string
+    {
+        return "engagement.reward-challenges.{$challenge->id}.leaderboards";
+    }
+
     private function createTeamLeaderWithReports(int $reportCount = 1): array
     {
         $leader = User::create([
@@ -249,9 +254,12 @@ class ChallengeSurveyCreationTest extends TestCase
         $challenge = $this->createChallenge();
         $challenge->update(['duration_days' => 3]);
 
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
         $response = $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join");
 
         $response->assertOk()->assertJsonPath('data.required_days', 3);
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
         $participant = EngagementRewardChallengeParticipant::query()->firstOrFail();
         $this->assertSame(3, $participant->required_days);
     }
@@ -263,6 +271,8 @@ class ChallengeSurveyCreationTest extends TestCase
         [$leader, $reports] = $this->createTeamLeaderWithReports(2);
         $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
 
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
         $response = $this->actingAs($leader)->post(
             "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
             [
@@ -272,6 +282,7 @@ class ChallengeSurveyCreationTest extends TestCase
         );
 
         $response->assertCreated()->assertJsonPath('data.challenge.type', 'Team');
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->assertDatabaseCount('engagement_reward_challenge_team_submissions', 1);
         $this->assertDatabaseCount('engagement_reward_challenge_team_submission_members', 2);
         $individual = User::create([
@@ -294,6 +305,7 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonCount(1, 'data.team_submissions')
             ->assertJsonPath('data.team_submissions.0.name', "Team: {$leader->name}")
             ->assertJsonPath('data.team_submissions.0.member_count', 2);
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->assertDatabaseMissing('engagement_reward_challenge_participants', [
             'reward_challenge_id' => $challenge->id,
             'user_id' => $leader->id,
@@ -316,6 +328,7 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonPath('data.base_points_awarded', 100)
             ->assertJsonPath('data.bonus_points_awarded', 25)
             ->assertJsonPath('data.team_points_awarded', 125);
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->actingAs($admin)
             ->postJson("/api/engagement/reward-challenge-submissions/team-{$submissionId}/approve", [
                 'bonus_points' => 25,
@@ -536,11 +549,33 @@ class ChallengeSurveyCreationTest extends TestCase
         $createTeamSubmission($leader, 'submitted', 1000, 1000, now()->addDays(2)->toDateString());
         $createTeamSubmission($lowerScoringLeader, 'approved', 100, 20, now()->toDateString());
 
+        $departmentId = DB::table('departments')->insertGetId([
+            'name' => 'Leaderboard Department',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        AccountEmployee::create([
+            'user_id' => $firstWinner->id,
+            'department_id' => $departmentId,
+        ]);
+
         $response = $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")
             ->assertOk();
 
         $individualEntries = collect($response->json('data.individual_leaderboard'));
         $this->assertCount(4, $individualEntries);
+        $this->assertSame(
+            'Leaderboard Department',
+            $individualEntries->firstWhere('name', 'A Individual Winner')['department'],
+        );
+        $this->assertSame(
+            'Leaderboard Department',
+            collect($response->json('data.participants'))
+                ->firstWhere('name', 'A Individual Winner')['department'],
+        );
+        $departmentReport = $this->getJson('/api/engagement/reward-challenges/report/export?type=department_analytics')
+            ->assertOk();
+        $this->assertStringContainsString('Leaderboard Department', $departmentReport->streamedContent());
         $this->assertSame(
             [1, 1],
             $individualEntries
@@ -588,6 +623,8 @@ class ChallengeSurveyCreationTest extends TestCase
         ]);
         $approvalUrl = "/api/engagement/reward-challenge-submissions/{$participant->id}/approve";
 
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->postJson($approvalUrl, ['bonus_points' => -1])->assertUnprocessable();
         $this->postJson($approvalUrl, ['bonus_points' => 1.5])->assertUnprocessable();
         $this->assertSame('submitted', $participant->fresh()->status);
@@ -597,6 +634,7 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonPath('data.challenge_points_awarded', 100)
             ->assertJsonPath('data.bonus_points_awarded', 25)
             ->assertJsonPath('data.points_awarded', 125);
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
 
         $this->postJson($approvalUrl, ['bonus_points' => 25])->assertUnprocessable();
         $this->assertSame(125, $participant->fresh()->points_awarded);
@@ -700,11 +738,16 @@ class ChallengeSurveyCreationTest extends TestCase
 
         $submissionId = $response->json('data.team_submission_id');
         $this->actingAs($admin)
+            ->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")
+            ->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
+        $this->actingAs($admin)
             ->postJson("/api/engagement/reward-challenge-submissions/team-{$submissionId}/decline", [
                 'review_note' => 'Please provide clearer proof.',
             ])
             ->assertOk()
             ->assertJsonPath('data.status', 'declined');
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
 
         foreach ($reports as $report) {
             $participant = EngagementRewardChallengeParticipant::query()
@@ -938,10 +981,13 @@ class ChallengeSurveyCreationTest extends TestCase
         $url = "/api/engagement/reward-challenges/{$challenge->id}/submit-daily";
         $headers = ['Accept' => 'application/json'];
 
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->post($url, [
             'photo' => UploadedFile::fake()->image('proof.png'),
             'challenge_description' => 'Completed the daily activity.',
         ], $headers)->assertOk();
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/my-daily-logs")
             ->assertOk()
             ->assertJsonPath('data.required_days', 3)
@@ -1098,7 +1144,10 @@ class ChallengeSurveyCreationTest extends TestCase
                 'status' => 'submitted',
             ]);
         }
+        $this->getJson("/api/engagement/reward-challenges/{$participant->reward_challenge_id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($participant->challenge)));
         $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$logs[0]->id}/approve")->assertOk();
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($participant->challenge)));
         $this->assertSame(1, $participant->fresh()->completed_days);
         $this->submitSurvey($participant)->assertUnprocessable();
         $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$logs[0]->id}/approve")->assertUnprocessable();
@@ -1107,7 +1156,10 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->assertSame('pending_survey', $participant->fresh()->status);
         $this->assertSame(2, $participant->fresh()->completed_days);
         $this->assertNull($participant->fresh()->points_awarded);
+        $this->getJson("/api/engagement/reward-challenges/{$participant->reward_challenge_id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($participant->challenge)));
         $this->submitSurvey($participant)->assertOk()->assertJsonPath('data.total_points_awarded', 115);
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($participant->challenge)));
         $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$logs[1]->id}/approve")->assertUnprocessable();
         $this->assertSame(2, $participant->fresh()->completed_days);
     }
@@ -1205,14 +1257,21 @@ class ChallengeSurveyCreationTest extends TestCase
     {
         $participant = $this->surveyParticipant();
         $this->submitSurvey($participant)->assertOk();
+        $challenge = $participant->challenge;
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->postJson("/api/engagement/reward-challenge-submissions/{$participant->id}/decline")->assertOk();
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->assertSame('declined', $participant->fresh()->status);
         $this->deleteJson("/api/engagement/reward-challenges/{$participant->reward_challenge_id}/leave")->assertUnprocessable();
         Storage::fake('s3');
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/participants")->assertOk();
+        $this->assertTrue(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->post("/api/engagement/reward-challenges/{$participant->reward_challenge_id}/submit", [
             'photo' => UploadedFile::fake()->image('proof.png'),
             'challenge_description' => 'Updated proof.',
         ], ['Accept' => 'application/json'])->assertOk();
+        $this->assertFalse(Cache::has($this->leaderboardCacheKey($challenge)));
         $this->submitSurvey($participant)->assertOk()->assertJsonPath('data.survey_points_awarded', 15);
         $this->postJson("/api/engagement/reward-challenge-submissions/{$participant->id}/approve")->assertOk();
         $this->assertSame(115, $participant->fresh()->total_points_awarded);
@@ -1388,6 +1447,245 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->assertCount(7, Storage::disk('s3')->allFiles());
     }
 
+    public function test_my_challenges_query_count_does_not_grow_with_the_number_of_challenges(): void
+    {
+        $countQueries = function (): int {
+            DB::flushQueryLog();
+            DB::enableQueryLog();
+            $this->getJson('/api/engagement/reward-challenges/my')->assertOk();
+            $count = count(DB::getQueryLog());
+            DB::disableQueryLog();
+
+            return $count;
+        };
+
+        $joinAndSurvey = function (): void {
+            $participant = $this->surveyParticipant();
+            $this->submitSurvey($participant)->assertOk();
+            $daily = $this->createChallenge();
+            $daily->update(['duration_days' => 3]);
+            $this->postJson("/api/engagement/reward-challenges/{$daily->id}/join")->assertOk();
+        };
+
+        $joinAndSurvey();
+        $baseline = $countQueries();
+
+        for ($index = 0; $index < 5; $index++) {
+            $joinAndSurvey();
+        }
+
+        $this->assertSame($baseline, $countQueries());
+    }
+
+    public function test_my_challenges_batch_loading_keeps_the_same_per_user_payload(): void
+    {
+        Storage::fake('s3');
+        $participant = $this->surveyParticipant();
+        $this->submitSurvey($participant)->assertOk();
+        $daily = $this->createChallenge();
+        $daily->update(['duration_days' => 3]);
+        $this->postJson("/api/engagement/reward-challenges/{$daily->id}/join")->assertOk();
+        $this->post("/api/engagement/reward-challenges/{$daily->id}/submit-daily", [
+            'photos' => [UploadedFile::fake()->image('day-1.png')],
+            'challenge_description' => 'Day one.',
+        ], ['Accept' => 'application/json'])->assertOk();
+        $notJoined = $this->createChallenge();
+
+        $cards = collect($this->getJson('/api/engagement/reward-challenges/my')->assertOk()->json('data'))
+            ->keyBy('id');
+
+        $this->assertTrue($cards[$participant->reward_challenge_id]['is_joined']);
+        $this->assertTrue($cards[$participant->reward_challenge_id]['survey_completed']);
+        $this->assertTrue($cards[$daily->id]['is_joined']);
+        $this->assertTrue($cards[$daily->id]['submitted_today']);
+        $this->assertCount(1, $cards[$daily->id]['submission_media']);
+        $this->assertFalse($cards[$daily->id]['survey_completed']);
+        $this->assertFalse($cards[$notJoined->id]['is_joined']);
+        $this->assertNull($cards[$notJoined->id]['participation_status']);
+        $this->assertSame(1, $cards[$daily->id]['participants_count']);
+    }
+
+    public function test_join_enforces_the_participant_limit_and_rejects_double_joins_cleanly(): void
+    {
+        $challenge = $this->createChallenge();
+        $challenge->update(['max_participants' => 1]);
+
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'You already joined this challenge.');
+
+        $this->actingAs(User::create(['name' => 'Late Joiner', 'email' => 'late@example.test', 'role' => User::ROLE_EMPLOYEE]));
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'This challenge has reached its participant limit.');
+
+        $this->assertSame(1, EngagementRewardChallengeParticipant::query()->count());
+    }
+
+    public function test_repeated_individual_submit_is_rejected_and_leaves_no_orphaned_files(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createChallenge();
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $submit = fn () => $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit", [
+            'photos' => [UploadedFile::fake()->image('proof.png')],
+            'challenge_description' => 'Completed the activity.',
+        ], ['Accept' => 'application/json']);
+
+        $submit()->assertOk();
+        $submit()->assertUnprocessable()
+            ->assertJsonPath('message', 'A submission is already pending or approved for this challenge.');
+
+        $this->assertCount(1, Storage::disk('s3')->allFiles());
+        $this->assertSame('submitted', EngagementRewardChallengeParticipant::query()->firstOrFail()->status);
+    }
+
+    public function test_rnr_performance_index_migration_is_reversible(): void
+    {
+        $migration = require database_path('migrations/2026_10_16_000001_add_rnr_performance_indexes.php');
+
+        $migration->up();
+        $migration->up();
+        $this->assertTrue(Schema::hasIndex('engagement_reward_challenge_participants', 'erc_participants_status_submitted_idx'));
+        $this->assertTrue(Schema::hasIndex('engagement_reward_challenge_daily_logs', 'erc_daily_logs_status_date_idx'));
+        $this->assertTrue(Schema::hasIndex('engagement_reward_challenge_team_submissions', 'erc_team_sub_status_submitted_idx'));
+
+        $migration->down();
+        $this->assertFalse(Schema::hasIndex('engagement_reward_challenge_participants', 'erc_participants_status_submitted_idx'));
+        $this->assertFalse(Schema::hasIndex('engagement_reward_challenge_daily_logs', 'erc_daily_logs_status_date_idx'));
+        $this->assertFalse(Schema::hasIndex('engagement_reward_challenge_team_submissions', 'erc_team_sub_status_submitted_idx'));
+    }
+
+    private function seedIndividualSubmissions(int $singleCount, int $dailyCount): EngagementRewardChallenge
+    {
+        $challenge = $this->createChallenge();
+        // User::account_employee() always eager-loads site; the in-memory schema lacks it.
+        if (! Schema::hasTable('sites')) {
+            Schema::create('sites', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('location_id')->nullable();
+                $table->string('name')->nullable();
+                $table->timestamps();
+            });
+        }
+        $location = DB::table('locations')->insertGetId(['name' => 'Manila Site']);
+
+        for ($index = 1; $index <= $singleCount; $index++) {
+            $user = User::create([
+                'name' => "Single Employee {$index}",
+                'email' => "single-{$index}@example.test",
+                'role' => User::ROLE_EMPLOYEE,
+            ]);
+            AccountEmployee::create(['user_id' => $user->id, 'location_id' => $location]);
+            EngagementRewardChallengeParticipant::create([
+                'reward_challenge_id' => $challenge->id,
+                'user_id' => $user->id,
+                'status' => 'submitted',
+                'joined_at' => now(),
+                'submitted_at' => now()->subMinutes($index * 2),
+            ]);
+        }
+
+        for ($index = 1; $index <= $dailyCount; $index++) {
+            $user = User::create([
+                'name' => "Daily Employee {$index}",
+                'email' => "daily-{$index}@example.test",
+                'role' => User::ROLE_EMPLOYEE,
+            ]);
+            $participant = EngagementRewardChallengeParticipant::create([
+                'reward_challenge_id' => $challenge->id,
+                'user_id' => $user->id,
+                'status' => 'joined',
+                'joined_at' => now(),
+                'required_days' => 2,
+                'completed_days' => 0,
+            ]);
+            EngagementRewardChallengeDailyLog::create([
+                'reward_challenge_participant_id' => $participant->id,
+                'log_date' => now()->toDateString(),
+                'submission_path' => "proof/daily-{$index}.png",
+                'status' => 'submitted',
+                'submitted_at' => now()->subMinutes(($index * 2) - 1),
+            ]);
+        }
+
+        return $challenge;
+    }
+
+    public function test_paginated_individual_submissions_merge_single_and_daily_rows_by_date(): void
+    {
+        $challenge = $this->seedIndividualSubmissions(12, 3);
+
+        $first = $this->getJson('/api/engagement/reward-challenge-submissions?type=individual&per_page=10')
+            ->assertOk()
+            ->assertJsonCount(10, 'data')
+            ->assertJsonPath('meta.current_page', 1)
+            ->assertJsonPath('meta.last_page', 2)
+            ->assertJsonPath('meta.total', 15)
+            ->assertJsonPath('counts.individual', 15)
+            ->assertJsonPath('counts.team', 0)
+            ->assertJsonPath('filter_options.challenges.0.value', $challenge->id)
+            ->assertJsonPath('filter_options.locations.0.label', 'Manila Site');
+
+        // Daily logs interleave with single proofs strictly by submitted_at.
+        $this->assertSame('daily-', substr((string) $first->json('data.0.id'), 0, 6));
+        $dates = collect($first->json('data'))->pluck('submitted_at')->all();
+        $sorted = $dates;
+        rsort($sorted);
+        $this->assertSame($sorted, $dates);
+
+        $second = $this->getJson('/api/engagement/reward-challenge-submissions?type=individual&per_page=10&page=2')
+            ->assertOk()
+            ->assertJsonCount(5, 'data')
+            ->assertJsonPath('meta.current_page', 2);
+
+        $ids = collect($first->json('data'))->pluck('id')->merge(collect($second->json('data'))->pluck('id'));
+        $this->assertCount(15, $ids->unique());
+    }
+
+    public function test_paginated_submissions_respect_filters_and_team_type(): void
+    {
+        $this->seedIndividualSubmissions(4, 1);
+        Storage::fake('s3');
+        $teamChallenge = $this->createTeamChallenge();
+        [$leader] = $this->createTeamLeaderWithReports(2);
+        $admin = auth()->user();
+        $this->actingAs($leader)->post("/api/engagement/reward-challenges/{$teamChallenge->id}/submit-team", [
+            'photo' => UploadedFile::fake()->image('team-proof.png'),
+            'challenge_description' => 'Team proof.',
+        ])->assertCreated();
+        $this->actingAs($admin);
+
+        $this->getJson('/api/engagement/reward-challenge-submissions?type=team')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('counts.individual', 5)
+            ->assertJsonPath('counts.team', 1)
+            ->assertJsonCount(2, 'data.0.employees');
+
+        $this->getJson('/api/engagement/reward-challenge-submissions?type=individual&search=Single Employee 3')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('meta.total', 1)
+            ->assertJsonPath('data.0.employee.name', 'Single Employee 3');
+
+        $this->getJson('/api/engagement/reward-challenge-submissions?type=individual&challenge_id='.$teamChallenge->id)
+            ->assertOk()
+            ->assertJsonCount(0, 'data')
+            ->assertJsonPath('counts.individual', 0)
+            ->assertJsonPath('counts.team', 1);
+
+        $this->getJson('/api/engagement/reward-challenge-submissions?type=individual&per_page=51')
+            ->assertUnprocessable();
+
+        // Without a type the legacy full list (used by older callers) is unchanged.
+        $legacy = $this->getJson('/api/engagement/reward-challenge-submissions')
+            ->assertOk()
+            ->assertJsonCount(6, 'data');
+        $this->assertNull($legacy->json('meta'));
+    }
+
     public function test_reused_survey_ids_do_not_inherit_stale_event_questions(): void
     {
         $participant = $this->surveyParticipant();
@@ -1531,8 +1829,11 @@ class ChallengeSurveyCreationTest extends TestCase
                 'status' => 'submitted',
             ]);
             if ($day === 0) {
+                $this->getJson("/api/engagement/reward-challenges/{$participant->reward_challenge_id}/participants")->assertOk();
+                $this->assertTrue(Cache::has($this->leaderboardCacheKey($participant->challenge)));
                 $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$log->id}/decline", ['review_note' => 'Insufficient proof'])
                     ->assertOk()->assertJsonPath('data.status', 'declined');
+                $this->assertFalse(Cache::has($this->leaderboardCacheKey($participant->challenge)));
                 $this->assertSame(0, $participant->fresh()->completed_days);
             } else {
                 $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$log->id}/approve", [

@@ -10,39 +10,25 @@ import { export_reward_challenge_submissions_service } from "@/app/services/enga
 
 export default function SearchSection({ filters, setFilters, submissionType }) {
     const dispatch = useDispatch();
-    const { challengeSubmissions } = useSelector((state) => state.engagement);
+    const { challengeSubmissionFilterOptions } = useSelector(
+        (state) => state.engagement,
+    );
     const [exporting, setExporting] = useState(false);
 
-    const challengeOptions = useMemo(() => {
-        const map = new Map();
-        challengeSubmissions.forEach((submission) => {
-            if (submission.challenge?.id && !map.has(submission.challenge.id)) {
-                map.set(submission.challenge.id, submission.challenge.title);
-            }
-        });
-        return Array.from(map, ([value, label]) => ({ value, label }));
-    }, [challengeSubmissions]);
+    // The table is paginated server-side, so both option lists come from the
+    // API (built from every submission) rather than the rows on this page.
+    const challengeOptions = useMemo(
+        () => challengeSubmissionFilterOptions?.challenges ?? [],
+        [challengeSubmissionFilterOptions],
+    );
 
-    // Derive the location list from the actual employees who submitted proof
-    // (same approach as the post_event_survey export) instead of the
-    // generic Site master list, which can contain unrelated/duplicate entries.
-    const locationOptions = useMemo(() => {
-        const map = new Map();
-        challengeSubmissions.forEach((submission) => {
-            const locationId = submission.employee?.location_id;
-            const locationName = submission.employee?.location_name;
-            if (locationId && locationName && !map.has(locationId)) {
-                map.set(locationId, locationName);
-            }
-        });
-
-        return [
+    const locationOptions = useMemo(
+        () => [
             { value: "", label: "All Locations" },
-            ...Array.from(map, ([value, label]) => ({ value, label })).sort(
-                (a, b) => a.label.localeCompare(b.label),
-            ),
-        ];
-    }, [challengeSubmissions]);
+            ...(challengeSubmissionFilterOptions?.locations ?? []),
+        ],
+        [challengeSubmissionFilterOptions],
+    );
 
     const statusOptions = [
         { value: "", label: "All Status" },

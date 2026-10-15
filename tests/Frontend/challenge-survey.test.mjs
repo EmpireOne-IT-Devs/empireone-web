@@ -130,12 +130,9 @@ test("services target the exact challenge and return JSON, not Axios wrappers", 
 
 test("the selected submissions tab is shared with export and team rows use the leader", () => {
     const html = render(SubmissionTable, {
+        challengeSubmissionCounts: { individual: 1, team: 1 },
+        challengeSubmissionsMeta: { current_page: 1, last_page: 1 },
         challengeSubmissions: [
-            {
-                id: "individual-1",
-                challenge: { title: "Individual Challenge", points: 100 },
-                employee: { name: "Individual Export Row" },
-            },
             {
                 id: "team-1",
                 challenge: { title: "Team Challenge", points: 100 },
@@ -149,6 +146,7 @@ test("the selected submissions tab is shared with export and team rows use the l
         setSubmissionType() {},
     });
     assert.match(html, /aria-pressed="true"[^>]*>Team \(1\)/);
+    assert.match(html, />Individual \(1\)/);
     assert.match(html, /Team Export Leader/);
     assert.doesNotMatch(html, /Individual Export Row/);
 
@@ -834,7 +832,12 @@ test("Submissions table renders survey completed/pending and legacy not-applicab
     state.dispatch({ type: "replaceSubmissions", payload: rows });
     state.replaceReducer((root) => ({
         ...root,
-        engagement: { ...root.engagement, challengeSubmissions: rows, challengeSubmissionsLoading: false },
+        engagement: {
+            ...root.engagement,
+            challengeSubmissions: rows,
+            challengeSubmissionCounts: { individual: rows.length, team: 0 },
+            challengeSubmissionsLoading: false,
+        },
     }));
     const html = renderToStaticMarkup(React.createElement(Provider, { store: state },
         React.createElement(SubmissionTable, { filters: {} })));
@@ -844,8 +847,8 @@ test("Submissions table renders survey completed/pending and legacy not-applicab
     assert.match(html, /—/);
 });
 
-test("submissions table limits each active type to ten rows and renders its pager", () => {
-    const submissions = Array.from({ length: 12 }, (_, index) => ({
+test("submissions table renders one server page of the active type and its pager", () => {
+    const submissions = Array.from({ length: 10 }, (_, index) => ({
         id: `individual-${index + 1}`,
         status: "submitted",
         submitted_at: "2026-10-12",
@@ -858,6 +861,8 @@ test("submissions table limits each active type to ten rows and renders its page
     }));
     const html = render(SubmissionTable, {
         challengeSubmissions: submissions,
+        challengeSubmissionsMeta: { current_page: 1, last_page: 2, per_page: 10, total: 12 },
+        challengeSubmissionCounts: { individual: 12, team: 0 },
         challengeSubmissionsLoading: false,
     }, {
         filters: {},
@@ -869,7 +874,16 @@ test("submissions table limits each active type to ten rows and renders its page
         assert.match(html, new RegExp(`Export Employee ${index}`));
     }
     assert.doesNotMatch(html, /Export Employee 11/);
+    assert.match(html, />Individual \(12\)/);
     assert.match(html, /Next/);
+
+    const source = readFileSync(path.join(
+        root,
+        "resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx",
+    ), "utf8");
+    assert.match(source, /type: submissionType/);
+    assert.match(source, /page: currentPage/);
+    assert.doesNotMatch(source, /\.slice\(/);
 
     const paginationHtml = render(SubmissionPagination, {}, {
         data: { current_page: 2, last_page: 2 },
@@ -891,6 +905,7 @@ test("submissions table limits each active type to ten rows and renders its page
 test("Submissions table points use the leaderboard total and base-plus-bonus hierarchy", () => {
     const html = render(SubmissionTable, {
         challengeSubmissionsLoading: false,
+        challengeSubmissionCounts: { individual: 4, team: 0 },
         challengeSubmissions: [
             {
                 id: "approved",

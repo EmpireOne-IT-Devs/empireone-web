@@ -7,6 +7,7 @@ use App\Http\Requests\SubmitChallengeSurveyRequest;
 use App\Http\Resources\ChallengeSurveyResource;
 use App\Http\Resources\ChallengeSurveySubmissionResource;
 use App\Models\Engagement\EngagementRewardChallenge;
+use App\Services\ChallengeLeaderboardService;
 use App\Services\ChallengeSurveyService;
 use Illuminate\Support\Facades\Gate;
 
@@ -26,9 +27,14 @@ class ChallengeSurveyController extends Controller
         return new ChallengeSurveyResource($survey);
     }
 
-    public function submit(SubmitChallengeSurveyRequest $request, EngagementRewardChallenge $engagementRewardChallenge, ChallengeSurveyService $service): ChallengeSurveySubmissionResource
-    {
+    public function submit(
+        SubmitChallengeSurveyRequest $request,
+        EngagementRewardChallenge $engagementRewardChallenge,
+        ChallengeSurveyService $service,
+        ChallengeLeaderboardService $leaderboardService,
+    ): ChallengeSurveySubmissionResource {
         $participant = $service->submit($engagementRewardChallenge, $request->user()->id, $request->validated('answers'));
+        $leaderboardService->forgetCached((int) $engagementRewardChallenge->id);
 
         return (new ChallengeSurveySubmissionResource($participant->load(['challenge', 'surveyResponse'])))
             ->additional(['message' => 'Survey completed. Its reward has been recorded.']);

@@ -196,6 +196,9 @@ const engagementSlice = createSlice({
 
         // Admin-facing submission review states
         challengeSubmissions: [],
+        challengeSubmissionsMeta: null,
+        challengeSubmissionCounts: { individual: 0, team: 0 },
+        challengeSubmissionFilterOptions: { challenges: [], locations: [] },
         challengeSubmissionsLoading: false,
         challengeSubmissionsError: null,
         challengeSubmissionStats: { pending: 0, approved: 0, rejected: 0 },
@@ -874,6 +877,9 @@ const engagementSlice = createSlice({
             .addCase(get_engagement_reward_challenge_submissions_thunk.fulfilled, (state, action) => {
                 state.challengeSubmissionsLoading = false;
                 state.challengeSubmissions = action.payload?.data ?? [];
+                state.challengeSubmissionsMeta = action.payload?.meta ?? null;
+                if (action.payload?.counts) state.challengeSubmissionCounts = action.payload.counts;
+                if (action.payload?.filter_options) state.challengeSubmissionFilterOptions = action.payload.filter_options;
             })
             .addCase(get_engagement_reward_challenge_submissions_thunk.rejected, (state, action) => {
                 state.challengeSubmissionsLoading = false;

@@ -81,13 +81,15 @@ export default function TableSection({
     const dispatch = useDispatch();
     const {
         challengeSubmissions,
+        challengeSubmissionsMeta,
+        challengeSubmissionCounts,
         challengeSubmissionsLoading,
         challengeSubmissionApprovingId,
     } = useSelector((state) => state.engagement);
     const [declineTarget, setDeclineTarget] = useState(null);
     const [proofTarget, setProofTarget] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const requestParams = useMemo(() => {
+    const filterParams = useMemo(() => {
         const params = {};
         if (filters?.status) params.status = filters.status;
         if (filters?.challenge_id) params.challenge_id = filters.challenge_id;
@@ -95,49 +97,50 @@ export default function TableSection({
         if (filters?.search?.trim()) params.search = filters.search.trim();
         return params;
     }, [filters]);
-    const individualSubmissions = challengeSubmissions.filter(
-        (submission) => !submission.employees?.length,
+    const requestParams = useMemo(
+        () => ({
+            ...filterParams,
+            type: submissionType,
+            page: currentPage,
+            per_page: SUBMISSIONS_PER_PAGE,
+        }),
+        [filterParams, submissionType, currentPage],
     );
-    const teamSubmissions = challengeSubmissions.filter(
-        (submission) => submission.employees?.length > 0,
-    );
-    const visibleSubmissions =
-        submissionType === "team" ? teamSubmissions : individualSubmissions;
-    const lastPage = Math.max(
-        1,
-        Math.ceil(visibleSubmissions.length / SUBMISSIONS_PER_PAGE),
-    );
-    const activePage = Math.min(currentPage, lastPage);
-    const paginatedSubmissions = visibleSubmissions.slice(
-        (activePage - 1) * SUBMISSIONS_PER_PAGE,
-        activePage * SUBMISSIONS_PER_PAGE,
+    const individualCount = challengeSubmissionCounts?.individual ?? 0;
+    const teamCount = challengeSubmissionCounts?.team ?? 0;
+    const visibleSubmissions = challengeSubmissions;
+    const lastPage = Math.max(1, challengeSubmissionsMeta?.last_page ?? 1);
+    const activePage = Math.min(
+        challengeSubmissionsMeta?.current_page ?? currentPage,
+        lastPage,
     );
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [filters, submissionType]);
+    }, [filterParams, submissionType]);
 
     useEffect(() => {
-        if (currentPage > lastPage) {
+        if (!challengeSubmissionsLoading && currentPage > lastPage) {
             setCurrentPage(lastPage);
         }
-    }, [currentPage, lastPage]);
+    }, [challengeSubmissionsLoading, currentPage, lastPage]);
 
     useEffect(() => {
+        if (challengeSubmissionsLoading) return;
         if (
             submissionType === "individual" &&
-            individualSubmissions.length === 0 &&
-            teamSubmissions.length > 0
+            individualCount === 0 &&
+            teamCount > 0
         ) {
             setSubmissionType("team");
         } else if (
             submissionType === "team" &&
-            teamSubmissions.length === 0 &&
-            individualSubmissions.length > 0
+            teamCount === 0 &&
+            individualCount > 0
         ) {
             setSubmissionType("individual");
         }
-    }, [individualSubmissions.length, submissionType, teamSubmissions.length]);
+    }, [challengeSubmissionsLoading, individualCount, submissionType, teamCount]);
 
     useEffect(() => {
         const debounceId = setTimeout(() => {
@@ -211,7 +214,7 @@ export default function TableSection({
         );
     }
 
-    if (challengeSubmissions.length === 0) {
+    if (individualCount === 0 && teamCount === 0) {
         return (
             <p className="mt-6 rounded-2xl bg-white p-6 text-center text-sm text-gray-500 shadow-sm">
                 No challenge submissions yet.
@@ -230,12 +233,12 @@ export default function TableSection({
                         {
                             id: "individual",
                             label: "Individual",
-                            count: individualSubmissions.length,
+                            count: individualCount,
                         },
                         {
                             id: "team",
                             label: "Team",
-                            count: teamSubmissions.length,
+                            count: teamCount,
                         },
                     ].map((tab) => (
                         <button
@@ -285,7 +288,7 @@ export default function TableSection({
                                 </td>
                             </tr>
                         )}
-                        {paginatedSubmissions.map((submission) => {
+                        {visibleSubmissions.map((submission) => {
                             const employee = submission.employee ?? {};
                             const challenge = submission.challenge ?? {};
                             const badge =
