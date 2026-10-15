@@ -136,6 +136,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('top_performing_jobs', [JobPostingController::class, 'top_performing_jobs']);
         Route::get('get_erps', [JobPostingController::class, 'get_erps']);
         Route::resource('application', JobApplicationController::class);
+        Route::post('add_notes_application', [JobApplicationController::class, 'add_notes_application']);
         Route::resource('offers', JobOfferController::class);
         Route::resource('job_interview', JobAIInterviewController::class);
         Route::get('get_job_offers_by_job_posting/{id}',  [JobOfferController::class, 'get_job_offers_by_job_posting']);
@@ -185,7 +186,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('edit_information',  [AccountContractController::class, 'edit_information']);
         Route::post('update_employee_information',  [AccountContractController::class, 'update_employee_information']);
         Route::post('update_personal_information',  [AccountContractController::class, 'update_personal_information']);
-        
+
         Route::resource('work_experience', AccountWorkingExperienceController::class);
         Route::resource('skills', AccountSkillsController::class);
         Route::resource('documents', AccountDocumentController::class);
@@ -214,7 +215,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
         Route::get('surveys', [EngagementPostEventSurveyController::class, 'index']);
         Route::post('surveys', [EngagementPostEventSurveyController::class, 'store']);
-        Route::middleware(EnsurePostEventSurvey::class.':view')->group(function () {
+        Route::middleware(EnsurePostEventSurvey::class . ':view')->group(function () {
             Route::get('surveys/{id}', [EngagementPostEventSurveyController::class, 'show']);
             Route::get('surveys/{id}/responses', [EngagementPostEventSurveyController::class, 'responses']);
             Route::get('surveys/{id}/responses/export', [EngagementPostEventSurveyController::class, 'exportResponses']);
@@ -287,7 +288,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('departments',  DepartmentController::class);
         Route::resource('leaders', ERLeaderController::class);
         Route::get('get_my_team',  [ERLeaderController::class, 'get_my_team']);
-        
+
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);

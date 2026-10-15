@@ -29,6 +29,11 @@ export async function add_acknowledgement_service(data) {
     return (await axios.post(`/api/er/acknowledgement`, data)).data;
 }
 
+export async function add_notes_application_service(data) {
+    return (await axios.post(`/api/job/add_notes_application`, data)).data;
+}
+
+
 export async function add_sub_acknowledgement_service(data) {
     return (await axios.post(`/api/er/add_sub_acknowledgement`, data)).data;
 }
