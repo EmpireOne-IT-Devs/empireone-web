@@ -1178,6 +1178,7 @@ class JobApplicationController extends Controller
                 $query->where('interview_status', 'Passed')
                     ->whereNull('final_status');
             })
+            ->orderBy('id', 'desc')
             ->paginate(12)
             ->withQueryString();
         // 3. Count today's statuses using the UNFILTERED base query
