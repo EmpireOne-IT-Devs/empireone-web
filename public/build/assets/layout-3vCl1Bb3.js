@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/layout-BOcpQIuh.js
-import{r as s,v as r,j as t}from"./app-BUmQaGPx.js";import o from"./header-section-C2OrcLum.js";import{b as a}from"./app-thunk-h21QvL9w.js";import"./user-service-D-S-zf-Q.js";function c({children:e}){return s.useEffect(()=>{r.dispatch(a(window.location.pathname.split("/")[4]))},[]),t.jsx(t.Fragment,{children:t.jsxs("div",{className:"min-h-screen  text-slate-700 font-sans p-3",children:[t.jsx(o,{}),e]})})}export{c as default};
-========
-import{r as s,v as r,j as t}from"./app-CDoUotCs.js";import o from"./header-section-DVNlpQGb.js";import{b as a}from"./app-thunk-DpQEqZbT.js";import"./user-service-C-uhwt9q.js";function c({children:e}){return s.useEffect(()=>{r.dispatch(a(window.location.pathname.split("/")[4]))},[]),t.jsx(t.Fragment,{children:t.jsxs("div",{className:"min-h-screen  text-slate-700 font-sans p-3",children:[t.jsx(o,{}),e]})})}export{c as default};
->>>>>>>> afe97491a5affef4eb8879a21788dc464d5fa3b6:public/build/assets/layout-3vCl1Bb3.js

@@ -83,7 +83,7 @@ export default function Modal({
                         leaveFrom="translate-y-0 sm:opacity-100 sm:scale-100"
                         leaveTo="translate-y-full sm:translate-y-0 sm:opacity-0 sm:scale-95"
                     >
-                        <FocusTrap
+                        <div
                             as={motion.div}
                             style={{ y: dragY }}
                             drag="y"
@@ -132,7 +132,7 @@ export default function Modal({
                             <div className="min-h-0 flex-1 overflow-y-auto pt-3 sm:pt-2 text-sm sm:text-base text-gray-700 overscroll-contain">
                                 {children}
                             </div>
-                        </FocusTrap>
+                        </div>
                     </Transition.Child>
                 </div>
             </div>
