@@ -14,13 +14,15 @@ use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
 use App\Models\Engagement\EngagementRewardChallengeTeamSubmissionMember;
 use App\Models\User;
 use App\Http\Requests\Engagement\SubmitTeamChallengeRequest;
+use App\Http\Requests\Engagement\SubmitChallengeProofRequest;
+use App\Http\Requests\Engagement\StoreEngagementRewardChallengeRequest;
+use App\Http\Requests\Engagement\UpdateEngagementRewardChallengeRequest;
 use App\Http\Resources\Engagement\EngagementRewardChallengeTeamSubmissionResource;
 use App\Services\ChallengeLeaderboardService;
 use App\Services\ChallengeTeamSubmissionService;
 use App\Services\ChallengeSurveyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -84,6 +86,10 @@ class EngagementRewardChallengesController extends Controller
                 'submission_url' => $user->pivot->submission_path
                     ? Storage::disk('s3')->url($user->pivot->submission_path)
                     : null,
+                'submission_media' => $this->proofMediaUrls(
+                    $user->pivot->submission_media,
+                    $user->pivot->submission_path,
+                ),
             ])
             ->values();
 
@@ -161,23 +167,69 @@ class EngagementRewardChallengesController extends Controller
         ]);
     }
 
-    /**
-     * Validation closure ensuring a challenge's day count never exceeds the
-     * number of calendar days actually available between start and deadline.
-     */
-    private function durationDaysRule(?string $startDate, ?string $deadline): \Closure
+    private function storeProofMedia(Request $request): array
     {
-        return function (string $attribute, mixed $value, \Closure $fail) use ($startDate, $deadline) {
-            if (! $value || ! $startDate || ! $deadline) {
-                return;
-            }
+        $files = $request->file('video')
+            ? [$request->file('video')]
+            : ($request->file('photos') ?: [$request->file('photo')]);
+        $files = array_filter($files);
+        $media = [];
 
-            $maxDays = Carbon::parse($startDate)->diffInDays(Carbon::parse($deadline)) + 1;
-
-            if ($value > $maxDays) {
-                $fail("Duration days cannot exceed the {$maxDays} day(s) available between the start date and deadline.");
+        try {
+            foreach ($files as $file) {
+                $path = $file->store('unified/engagement/reward_challenges/submissions', 's3');
+                if (! $path) {
+                    throw new \RuntimeException('Unable to store challenge proof media in Amazon S3.');
+                }
+                $media[] = [
+                    'path' => $path,
+                    'type' => $request->hasFile('video') ? 'video' : 'image',
+                ];
             }
-        };
+        } catch (\Throwable $exception) {
+            $this->deleteProofMedia($media);
+            throw $exception;
+        }
+
+        return $media;
+    }
+
+    private function rejectProof(string $message): JsonResponse
+    {
+        return response()->json([
+            'status' => 'error',
+            'message' => $message,
+        ], 422);
+    }
+
+    private function deleteProofMedia(?array $media, ?string $legacyPath = null): void
+    {
+        $paths = collect($media ?? [])->pluck('path')->filter()->all();
+        if ($legacyPath) {
+            $paths[] = $legacyPath;
+        }
+        if ($paths) {
+            $paths = array_values(array_unique($paths));
+            if (! Storage::disk('s3')->delete($paths)) {
+                Log::warning('Failed to remove challenge proof media from Amazon S3.', ['paths' => $paths]);
+            }
+        }
+    }
+
+    private function proofMediaUrls(?array $media, ?string $legacyPath = null): array
+    {
+        if (empty($media) && $legacyPath) {
+            $media = [['path' => $legacyPath, 'type' => 'image']];
+        }
+
+        return collect($media ?? [])
+            ->filter(fn (array $item) => ! empty($item['path']))
+            ->map(fn (array $item) => [
+                'type' => $item['type'] ?? 'image',
+                'url' => Storage::disk('s3')->url($item['path']),
+            ])
+            ->values()
+            ->all();
     }
 
     /**
@@ -216,12 +268,19 @@ class EngagementRewardChallengesController extends Controller
         $todayLog = ($isDailyChallenge && $pivot && ! $pivot->isDailyChallengeComplete())
             ? $pivot->dailyLogs()->whereDate('log_date', $today)->first()
             : null;
+        $submissionMedia = $isDailyChallenge
+            ? $todayLog?->submission_media
+            : $pivot?->submission_media;
+        $submissionPath = $isDailyChallenge
+            ? $todayLog?->submission_path
+            : $pivot?->submission_path;
 
         return [
             'id' => $challenge->id,
             'title' => $challenge->title,
             'description' => $challenge->description,
             'type' => $challenge->type,
+            'proof_type' => $challenge->proof_type ?? 'photo_only',
             'category' => $challenge->category,
             'points' => $challenge->points,
             'duration_days' => $challenge->duration_days,
@@ -263,9 +322,13 @@ class EngagementRewardChallengesController extends Controller
             'completed_days' => $pivot?->completed_days,
             'submitted_today' => (bool) $todayLog,
             'daily_window_ends_at' => $isDailyChallenge ? $challenge->dailyWindowEndDate()->toDateString() : null,
-            'submission_url' => $pivot?->submission_path
-                ? Storage::disk('s3')->url($pivot->submission_path)
+            'submission_url' => $submissionPath
+                ? Storage::disk('s3')->url($submissionPath)
                 : null,
+            'submission_media' => $this->proofMediaUrls(
+                $submissionMedia,
+                $submissionPath,
+            ),
             'submitted_at' => $pivot?->submitted_at?->toDateTimeString(),
             'reviewed_at' => $pivot?->reviewed_at?->toDateTimeString(),
             'review_note' => $pivot?->review_note,
@@ -524,60 +587,51 @@ class EngagementRewardChallengesController extends Controller
     /**
      * Submit a proof photo for review on a joined challenge.
      */
-    public function submitProof(Request $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    public function submitProof(SubmitChallengeProofRequest $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
     {
         $userId = auth()->id();
 
         if ($engagementRewardChallenge->start_date->gt(now()->startOfDay())) {
-            return response()->json([
-                'status' => 'error',
-                'message' => "This challenge hasn't started yet. It opens on ".$engagementRewardChallenge->start_date->format('M j, Y').'.',
-            ], 422);
+            return $this->rejectProof("This challenge hasn't started yet. It opens on ".$engagementRewardChallenge->start_date->format('M j, Y').'.');
         }
 
         if ($engagementRewardChallenge->isDailyChallenge()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'This is a multi-day challenge. Use the daily submission endpoint instead.',
-            ], 422);
+            return $this->rejectProof('This is a multi-day challenge. Use the daily submission endpoint instead.');
         }
 
-        $request->validate([
-            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'challenge_description' => ['required', 'string', 'max:1000'],
-        ]);
+        $validated = $request->validated();
 
         $participant = $engagementRewardChallenge->participants()->where('user_id', $userId)->first();
 
         if (! $participant) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Join this challenge before submitting proof.',
-            ], 422);
+            return $this->rejectProof('Join this challenge before submitting proof.');
         }
 
         if (! in_array($participant->pivot->status, ['joined', 'declined'], true)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'A submission is already pending or approved for this challenge.',
-            ], 422);
+            return $this->rejectProof('A submission is already pending or approved for this challenge.');
         }
 
-        if ($participant->pivot->submission_path) {
-            Storage::disk('s3')->delete($participant->pivot->submission_path);
+        $media = $this->storeProofMedia($request);
+        $previousMedia = $participant->pivot->submission_media;
+        $previousPath = $participant->pivot->submission_path;
+
+        try {
+            $engagementRewardChallenge->participants()->updateExistingPivot($userId, [
+                'status' => 'submitted',
+                'submission_path' => $media[0]['path'],
+                'submission_media' => $media,
+                'challenge_description' => $validated['challenge_description'],
+                'submitted_at' => now(),
+                'reviewed_at' => null,
+                'reviewed_by' => null,
+                'review_note' => null,
+            ]);
+        } catch (\Throwable $exception) {
+            $this->deleteProofMedia($media);
+            throw $exception;
         }
 
-        $path = $request->file('photo')->store('unified/engagement/reward_challenges/submissions', 's3');
-
-        $engagementRewardChallenge->participants()->updateExistingPivot($userId, [
-            'status' => 'submitted',
-            'submission_path' => $path,
-            'challenge_description' => $request->string('challenge_description')->toString(),
-            'submitted_at' => now(),
-            'reviewed_at' => null,
-            'reviewed_by' => null,
-            'review_note' => null,
-        ]);
+        $this->deleteProofMedia($previousMedia, $previousPath);
 
         $engagementRewardChallenge->load(['departments:id,name', 'accounts:id,name']);
 
@@ -591,73 +645,57 @@ class EngagementRewardChallengesController extends Controller
     /**
      * Submit one proof per calendar day for a multi-day challenge.
      */
-    public function submitDailyProof(Request $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    public function submitDailyProof(SubmitChallengeProofRequest $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
     {
         $userId = auth()->id();
 
         if (! $engagementRewardChallenge->isDailyChallenge()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'This challenge does not use daily submissions.',
-            ], 422);
+            return $this->rejectProof('This challenge does not use daily submissions.');
         }
 
-        $validated = $request->validate([
-            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'challenge_description' => ['required', 'string', 'max:1000'],
-        ]);
+        $validated = $request->validated();
 
         $participant = $engagementRewardChallenge->participants()->where('user_id', $userId)->first();
 
         if (! $participant) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Join this challenge before submitting proof.',
-            ], 422);
+            return $this->rejectProof('Join this challenge before submitting proof.');
         }
 
         $pivot = $participant->pivot;
 
         if ($pivot->isDailyChallengeComplete()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You already completed this challenge.',
-            ], 422);
+            return $this->rejectProof('You already completed this challenge.');
         }
 
         $today = now()->startOfDay();
         $windowEnd = $engagementRewardChallenge->dailyWindowEndDate();
 
         if ($today->lt($engagementRewardChallenge->start_date) || $today->gt($windowEnd)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Today is outside this challenge\'s submission window.',
-            ], 422);
+            return $this->rejectProof('Today is outside this challenge\'s submission window.');
         }
 
         $logDate = $today->toDateString();
 
         if ($pivot->dailyLogs()->whereDate('log_date', $logDate)->exists()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => "You already submitted today's proof. Come back tomorrow!",
-            ], 422);
+            return $this->rejectProof("You already submitted today's proof. Come back tomorrow!");
         }
 
-        $path = $request->file('photo')->store('unified/engagement/reward_challenges/submissions', 's3');
+        $media = $this->storeProofMedia($request);
+        $path = $media[0]['path'];
 
         try {
             $pivot->dailyLogs()->create([
                 'log_date' => $logDate,
                 'submission_path' => $path,
-                'challenge_description' => $request->string('challenge_description')->toString(),
+                'submission_media' => $media,
+                'challenge_description' => $validated['challenge_description'],
                 'status' => 'submitted',
                 'submitted_at' => now(),
             ]);
         } catch (\Illuminate\Database\QueryException $e) {
             // Two near-simultaneous submissions both passed the exists() check
             // above; the unique index is the real guard against double-logging.
-            Storage::disk('s3')->delete($path);
+            $this->deleteProofMedia($media);
 
             if ($e->getCode() === '23000') {
                 return response()->json([
@@ -667,6 +705,9 @@ class EngagementRewardChallengesController extends Controller
             }
 
             throw $e;
+        } catch (\Throwable $exception) {
+            $this->deleteProofMedia($media);
+            throw $exception;
         }
 
         // First-ever submission flips the display status away from the bare
@@ -692,7 +733,8 @@ class EngagementRewardChallengesController extends Controller
         $submission = $service->submit(
             $engagementRewardChallenge,
             $request->user(),
-            $request->file('photo'),
+            $request->file('photos') ?: array_filter([$request->file('photo')]),
+            $request->file('video'),
             $request->string('challenge_description')->toString(),
         );
 
@@ -729,6 +771,7 @@ class EngagementRewardChallengesController extends Controller
                 'log_date' => $log->log_date->toDateString(),
                 'status' => $log->status,
                 'submission_url' => Storage::disk('s3')->url($log->submission_path),
+                'submission_media' => $this->proofMediaUrls($log->submission_media, $log->submission_path),
                 'challenge_description' => $log->challenge_description,
                 'review_note' => $log->review_note,
                 'reviewed_at' => $log->reviewed_at?->toDateTimeString(),
@@ -780,34 +823,12 @@ class EngagementRewardChallengesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, ChallengeSurveyService $surveyService): JsonResponse
+    public function store(
+        StoreEngagementRewardChallengeRequest $request,
+        ChallengeSurveyService $surveyService,
+    ): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:5000'],
-            'type' => ['required', 'string', 'in:Individual,Team'],
-            'category' => ['required', 'string', 'max:50'],
-            'points' => ['required', 'integer', 'min:1'],
-            'duration_days' => [
-                'nullable',
-                'integer',
-                'min:1',
-                'max:366',
-                $this->durationDaysRule($request->input('start_date'), $request->input('deadline')),
-            ],
-            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'banner_position_x' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'banner_position_y' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'all_employees' => ['required', 'boolean'],
-            'account_ids' => ['nullable', 'array'],
-            'account_ids.*' => ['integer', 'distinct', 'exists:accounts,id'],
-            'department_ids' => ['nullable', 'array'],
-            'department_ids.*' => ['integer', 'distinct', 'exists:departments,id'],
-            'max_participants' => ['nullable', 'integer', 'min:1'],
-            'start_date' => ['required', 'date'],
-            'deadline' => ['required', 'date', 'after_or_equal:start_date'],
-            'card_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-        ]);
+        $validated = $request->validated();
 
         if (
             ! $validated['all_employees']
@@ -835,6 +856,7 @@ class EngagementRewardChallengesController extends Controller
                     'category' => $validated['category'],
                     'points' => $validated['points'],
                     'duration_days' => $validated['duration_days'] ?? null,
+                    'proof_type' => $validated['proof_type'] ?? 'photo_only',
                     'banner_path' => $bannerPath,
                     'banner_position_x' => $validated['banner_position_x'] ?? 50,
                     'banner_position_y' => $validated['banner_position_y'] ?? 50,
@@ -892,39 +914,12 @@ class EngagementRewardChallengesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, EngagementRewardChallenge $engagementRewardChallenge): JsonResponse
+    public function update(
+        UpdateEngagementRewardChallengeRequest $request,
+        EngagementRewardChallenge $engagementRewardChallenge,
+    ): JsonResponse
     {
-        $startDate = $request->input('start_date', $engagementRewardChallenge->start_date->toDateString());
-        $deadline = $request->input('deadline', $engagementRewardChallenge->deadline->toDateString());
-        $validated = $request->validate([
-            'title' => ['sometimes', 'string', 'max:255'],
-            'description' => ['sometimes', 'string', 'max:5000'],
-            'type' => ['sometimes', 'string', 'in:Individual,Team'],
-            'category' => ['sometimes', 'required', 'string', 'max:50'],
-            'points' => ['sometimes', 'integer', 'min:1'],
-            'duration_days' => [
-                'nullable',
-                'integer',
-                'min:1',
-                'max:366',
-                $this->durationDaysRule(
-                    $startDate,
-                    $deadline,
-                ),
-            ],
-            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'banner_position_x' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'banner_position_y' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'all_employees' => ['sometimes', 'boolean'],
-            'account_ids' => ['nullable', 'array'],
-            'account_ids.*' => ['integer', 'distinct', 'exists:accounts,id'],
-            'department_ids' => ['nullable', 'array'],
-            'department_ids.*' => ['integer', 'distinct', 'exists:departments,id'],
-            'max_participants' => ['nullable', 'integer', 'min:1'],
-            'start_date' => ['sometimes', 'date'],
-            'deadline' => ['sometimes', 'date', 'after_or_equal:start_date'],
-            'card_color' => ['sometimes', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-        ]);
+        $validated = $request->validated();
 
         $allEmployees = $validated['all_employees'] ?? $engagementRewardChallenge->all_employees;
 

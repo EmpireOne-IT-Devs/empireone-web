@@ -151,34 +151,35 @@ export async function leave_reward_challenge_service(id) {
     return await axios.delete(`/api/engagement/reward-challenges/${id}/leave`);
 }
 
-export async function submit_reward_challenge_proof_service(id, photo, challengeDescription) {
+function build_challenge_proof_form_data(media, challengeDescription) {
     const formData = new FormData();
-    formData.append("photo", photo);
+    const video = media.find((item) => item.type === "video");
+    if (video) {
+        formData.append("video", video.file);
+    } else {
+        media.forEach((item) => formData.append("photos[]", item.file));
+    }
     formData.append("challenge_description", challengeDescription);
+    return formData;
+}
 
-    return await axios.post(`/api/engagement/reward-challenges/${id}/submit`, formData, {
+function post_challenge_proof(url, media, challengeDescription, onUploadProgress) {
+    return axios.post(url, build_challenge_proof_form_data(media, challengeDescription), {
         headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress,
     });
 }
 
-export async function submit_reward_challenge_daily_proof_service(id, photo, challengeDescription) {
-    const formData = new FormData();
-    formData.append("photo", photo);
-    formData.append("challenge_description", challengeDescription);
-
-    return await axios.post(`/api/engagement/reward-challenges/${id}/submit-daily`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
+export async function submit_reward_challenge_proof_service(id, media, challengeDescription, onUploadProgress) {
+    return await post_challenge_proof(`/api/engagement/reward-challenges/${id}/submit`, media, challengeDescription, onUploadProgress);
 }
 
-export async function submit_reward_challenge_team_proof_service(id, photo, challengeDescription) {
-    const formData = new FormData();
-    formData.append("photo", photo);
-    formData.append("challenge_description", challengeDescription);
+export async function submit_reward_challenge_daily_proof_service(id, media, challengeDescription, onUploadProgress) {
+    return await post_challenge_proof(`/api/engagement/reward-challenges/${id}/submit-daily`, media, challengeDescription, onUploadProgress);
+}
 
-    return await axios.post(`/api/engagement/reward-challenges/${id}/submit-team`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
+export async function submit_reward_challenge_team_proof_service(id, media, challengeDescription, onUploadProgress) {
+    return await post_challenge_proof(`/api/engagement/reward-challenges/${id}/submit-team`, media, challengeDescription, onUploadProgress);
 }
 
 export async function get_reward_challenge_my_daily_logs_service(id) {

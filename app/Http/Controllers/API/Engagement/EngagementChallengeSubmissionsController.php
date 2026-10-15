@@ -487,6 +487,10 @@ class EngagementChallengeSubmissionsController extends Controller
             'submission_url' => $participant->submission_path
                 ? Storage::disk('s3')->url($participant->submission_path)
                 : null,
+            'submission_media' => $this->submissionMediaUrls(
+                $participant->submission_media,
+                $participant->submission_path,
+            ),
             'challenge_description' => $participant->challenge_description,
             'submitted_at' => $participant->submitted_at?->toDateTimeString(),
             'reviewed_at' => $participant->reviewed_at?->toDateTimeString(),
@@ -506,6 +510,7 @@ class EngagementChallengeSubmissionsController extends Controller
                 'category' => $participant->challenge->category,
                 'type' => $participant->challenge->type,
                 'card_color' => $participant->challenge->card_color,
+                'proof_type' => $participant->challenge->proof_type ?? 'photo_only',
                 'survey_required' => (bool) $participant->challenge->survey_required,
             ] : null,
             'employee' => $participant->user ? [
@@ -565,6 +570,7 @@ class EngagementChallengeSubmissionsController extends Controller
             'log_date' => $log->log_date->toDateString(),
             'status' => $log->status,
             'submission_url' => Storage::disk('s3')->url($log->submission_path),
+            'submission_media' => $this->submissionMediaUrls($log->submission_media, $log->submission_path),
             'challenge_description' => $dayLabel.$log->challenge_description,
             'submitted_at' => $log->submitted_at?->toDateTimeString(),
             'reviewed_at' => $log->reviewed_at?->toDateTimeString(),
@@ -581,6 +587,7 @@ class EngagementChallengeSubmissionsController extends Controller
                 'category' => $challenge->category,
                 'type' => $challenge->type,
                 'card_color' => $challenge->card_color,
+                'proof_type' => $challenge->proof_type ?? 'photo_only',
                 'is_daily_challenge' => $challenge->isDailyChallenge(),
                 'survey_required' => (bool) $challenge->survey_required,
             ] : null,
@@ -595,5 +602,21 @@ class EngagementChallengeSubmissionsController extends Controller
                 'account_name' => $accountEmployee?->account?->name,
             ] : null,
         ];
+    }
+
+    private function submissionMediaUrls(?array $media, ?string $legacyPath): array
+    {
+        if (empty($media) && $legacyPath) {
+            $media = [['path' => $legacyPath, 'type' => 'image']];
+        }
+
+        return collect($media ?? [])
+            ->filter(fn (array $item) => ! empty($item['path']))
+            ->map(fn (array $item) => [
+                'type' => $item['type'] ?? 'image',
+                'url' => Storage::disk('s3')->url($item['path']),
+            ])
+            ->values()
+            ->all();
     }
 }

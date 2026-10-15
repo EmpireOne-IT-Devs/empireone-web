@@ -22,6 +22,16 @@ class EngagementRewardChallengeTeamSubmissionResource extends JsonResource
             'log_date' => $this->log_date?->toDateString(),
             'status' => $this->status,
             'submission_url' => Storage::disk('s3')->url($this->submission_path),
+            'submission_media' => collect($this->submission_media ?: [[
+                'path' => $this->submission_path,
+                'type' => 'image',
+            ]])
+                ->filter(fn (array $item) => ! empty($item['path']))
+                ->map(fn (array $item) => [
+                    'type' => $item['type'] ?? 'image',
+                    'url' => Storage::disk('s3')->url($item['path']),
+                ])
+                ->values(),
             'challenge_description' => $this->challenge_description,
             'submitted_at' => $this->submitted_at?->toDateTimeString(),
             'reviewed_at' => $this->reviewed_at?->toDateTimeString(),
@@ -47,6 +57,7 @@ class EngagementRewardChallengeTeamSubmissionResource extends JsonResource
                 'points' => $challenge->points,
                 'category' => $challenge->category,
                 'type' => $challenge->type,
+                'proof_type' => $challenge->proof_type ?? 'photo_only',
                 'is_daily_challenge' => $challenge->isDailyChallenge(),
                 'survey_required' => (bool) $challenge->survey_required,
             ] : null,

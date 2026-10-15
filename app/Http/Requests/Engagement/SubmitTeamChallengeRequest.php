@@ -2,11 +2,15 @@
 
 namespace App\Http\Requests\Engagement;
 
+use App\Http\Requests\Engagement\Concerns\ValidatesChallengeProofMedia;
 use App\Models\ER\ERLeader;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class SubmitTeamChallengeRequest extends FormRequest
 {
+    use ValidatesChallengeProofMedia;
+
     public function authorize(): bool
     {
         return $this->user() !== null
@@ -15,9 +19,16 @@ class SubmitTeamChallengeRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'challenge_description' => ['required', 'string', 'max:1000'],
-        ];
+        return $this->proofMediaRules();
+    }
+
+    public function messages(): array
+    {
+        return $this->proofMediaMessages();
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $this->validateProofMedia($validator);
     }
 }

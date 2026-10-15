@@ -26,6 +26,7 @@ class EngagementRewardChallenge extends Model
         'category',
         'points',
         'duration_days',
+        'proof_type',
         'banner_path',
         'banner_position_x',
         'banner_position_y',
@@ -100,7 +101,7 @@ class EngagementRewardChallenge extends Model
             'user_id',
         )
             ->using(EngagementRewardChallengeParticipant::class)
-            ->withPivot(['id', 'status', 'joined_at', 'submission_path', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note', 'points_awarded', 'bonus_points', 'required_days', 'completed_days', 'proof_approved_at', 'survey_points_awarded', 'survey_rewarded_at'])
+            ->withPivot(['id', 'status', 'joined_at', 'submission_path', 'submission_media', 'challenge_description', 'submitted_at', 'reviewed_at', 'reviewed_by', 'review_note', 'points_awarded', 'bonus_points', 'required_days', 'completed_days', 'proof_approved_at', 'survey_points_awarded', 'survey_rewarded_at'])
             ->withTimestamps();
     }
 

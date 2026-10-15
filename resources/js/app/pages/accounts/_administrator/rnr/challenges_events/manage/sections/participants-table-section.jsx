@@ -56,6 +56,7 @@ export default function ParticipantsTableSection({ challengeId, onBack }) {
         id: participant.participant_id,
         status: participant.status,
         submission_url: participant.submission_url,
+        submission_media: participant.submission_media,
         submitted_at: participant.submitted_at,
         challenge_description: participant.challenge_description,
         employee: { name: participant.name, email: participant.email },
@@ -64,6 +65,7 @@ export default function ParticipantsTableSection({ challengeId, onBack }) {
                   id: challenge.id,
                   title: challenge.title,
                   points: challenge.points,
+                  proof_type: challenge.proof_type ?? "photo_only",
               }
             : null,
     });

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Engagement\EngagementPostEventQuestion;
 use App\Models\Engagement\EngagementPostEventSurvey;
 use App\Models\Engagement\EngagementRewardChallenge;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
@@ -90,8 +91,29 @@ class ChallengeSurveyService
                 return;
             }
 
+            $this->detachForeignQuestions($lockedSurvey);
             $this->deduplicateQuestions($lockedSurvey);
         });
+    }
+
+    /**
+     * Challenge questions never belong to a Post Event. Rows that do were left
+     * behind by a deleted Post Event survey whose id was later reused (the
+     * MyISAM survey tables do not enforce cascading foreign keys), so they are
+     * unlinked from the challenge survey instead of being shown as extra questions.
+     */
+    private function detachForeignQuestions(EngagementPostEventSurvey $survey): void
+    {
+        EngagementPostEventQuestion::query()
+            ->where('engagement_post_event_survey_id', $survey->getKey())
+            ->where(function ($query) use ($survey) {
+                $query->whereNotNull('engagement_post_event_id');
+                if ($survey->created_at) {
+                    $query->orWhere('created_at', '<', $survey->created_at);
+                }
+            })
+            ->whereDoesntHave('answers')
+            ->update(['engagement_post_event_survey_id' => null]);
     }
 
     private function deduplicateQuestions(EngagementPostEventSurvey $survey): void
@@ -150,6 +172,11 @@ class ChallengeSurveyService
                     'published_at' => now(),
                 ]);
 
+                // A reused survey id must start without another survey's questions.
+                EngagementPostEventQuestion::query()
+                    ->where('engagement_post_event_survey_id', $survey->getKey())
+                    ->update(['engagement_post_event_survey_id' => null]);
+
                 foreach (self::QUESTIONS as $index => [$text, $type, $required]) {
                     $survey->questions()->create([
                         'user_id' => $lockedChallenge->created_by,
@@ -161,6 +188,7 @@ class ChallengeSurveyService
                 }
             }
 
+            $this->detachForeignQuestions($survey);
             $this->deduplicateQuestions($survey);
             $lockedChallenge->update(['survey_required' => true]);
             $challenge->setAttribute('survey_required', true);

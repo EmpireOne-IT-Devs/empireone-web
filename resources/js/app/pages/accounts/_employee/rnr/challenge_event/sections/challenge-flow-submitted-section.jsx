@@ -3,6 +3,12 @@ import Button from "@/app/_components/button";
 import moment from "moment/moment";
 
 export default function ChallengeFlowSubmittedSection({ challenge, onClose }) {
+    const media = challenge.submission_media?.length
+        ? challenge.submission_media
+        : challenge.submission_url
+          ? [{ type: "image", url: challenge.submission_url }]
+          : [];
+
     return (
         <>
             <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
@@ -11,12 +17,25 @@ export default function ChallengeFlowSubmittedSection({ challenge, onClose }) {
                     : <>Your proof was submitted on{" "}
                         {moment(challenge.submitted_at).format("MMM D, YYYY")} and is waiting for admin review.</>}
             </div>
-            {challenge.submission_url && (
-                <img
-                    src={challenge.submission_url}
-                    alt="Submitted proof"
-                    className="h-48 w-full rounded-2xl object-cover"
-                />
+            {media.length > 0 && (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {media.map((item, index) => item.type === "video" ? (
+                        <video
+                            key={item.url}
+                            src={item.url}
+                            controls
+                            className="h-48 w-full rounded-2xl bg-black object-contain"
+                            aria-label="Submitted video proof"
+                        />
+                    ) : (
+                        <img
+                            key={item.url}
+                            src={item.url}
+                            alt={`Submitted proof ${index + 1}`}
+                            className="h-48 w-full rounded-2xl object-cover"
+                        />
+                    ))}
+                </div>
             )}
             <div className="mt-2 flex justify-end">
                 <Button

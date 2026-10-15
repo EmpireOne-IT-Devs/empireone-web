@@ -39,6 +39,7 @@ const DEFAULT_VALUES = {
     title: "",
     description: "",
     type: "Individual",
+    proof_type: "photo_only",
     category: "",
     points: "",
     duration_days: "",
@@ -82,6 +83,7 @@ export default function CreateNewChallenge() {
     const formValues = watch();
     const {
         type: selectedType,
+        proof_type: selectedProofType,
         department_ids: selectedDepartmentIds,
         account_ids: selectedAccountIds,
         all_employees: allEmployees,
@@ -254,6 +256,7 @@ export default function CreateNewChallenge() {
             title: data.title,
             description: data.description,
             type: data.type,
+            proof_type: data.proof_type,
             category: data.category,
             points: Number(data.points),
             duration_days: data.duration_days ? Number(data.duration_days) : null,
@@ -451,6 +454,32 @@ export default function CreateNewChallenge() {
                             </div>
                         )}
                     />
+
+                    <div>
+                        <span className="mb-1 block text-sm font-semibold text-gray-900">
+                            Permitted Proof Type
+                        </span>
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            {[
+                                { value: "photo_only", label: "Photo Only" },
+                                { value: "photo_or_video", label: "Photo or Video" },
+                            ].map((option) => (
+                                <button
+                                    key={option.value}
+                                    type="button"
+                                    aria-pressed={selectedProofType === option.value}
+                                    onClick={() => setValue("proof_type", option.value)}
+                                    className={`rounded-xl border px-4 py-3 text-left text-sm font-medium transition ${
+                                        selectedProofType === option.value
+                                            ? "border-orange-500 bg-orange-50 text-orange-700"
+                                            : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                                    }`}
+                                >
+                                    {option.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
                     {/* Type & Category Options */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
