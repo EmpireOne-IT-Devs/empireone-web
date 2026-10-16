@@ -33,7 +33,7 @@
         );
     }
 
-    export default function NewsSection() {
+    export default function NewsSection({ limit = null }) {
         const dispatch = useDispatch();
         const { posts, postsLoading } = useSelector((s) => s.engagement);
         const [selectedItem, setSelectedItem] = useState(null);
@@ -88,7 +88,7 @@
 
         const postArray = Array.isArray(posts) ? posts : [];
 
-        const newsItems = postArray
+        const allNewsItems = postArray
             .filter((p) => p.category === "News")
             .map((p) => {
                 const rawMessage = p.message || p.content || "";
@@ -107,6 +107,10 @@
                     user_has_reacted: p.user_has_reacted ?? false,
                 };
             });
+        const newsItems =
+            Number.isInteger(limit) && limit >= 0
+                ? allNewsItems.slice(0, limit)
+                : allNewsItems;
 
         return (
             <div className="w-full bg-[#f4f6f9] p-6 rounded-2xl min-h-full">

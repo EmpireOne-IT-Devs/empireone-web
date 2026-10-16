@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useState, useRef } from "react";
+import { Link } from "@inertiajs/react";
 import {
     Megaphone,
     CalendarDays,
@@ -9,6 +10,7 @@ import {
     PartyPopper,
     FileText,
     Clock,
+    Trophy,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
@@ -16,8 +18,10 @@ import PostActionMenu from "./post-action-menu";
 import PostInteractionPanel from "@/app/pages/accounts/_administrator/activities/_components/post-interaction-panel";
 import ActivityPollCard from "@/app/pages/accounts/_administrator/activities/_components/activity-poll-card";
 import { setAlert } from "@/app/redux/app-slice";
+import { htmlToPlainText } from "@/app/lib/rich-text";
 import {
     get_engagement_posts_thunk,
+    get_my_engagement_reward_challenges_thunk,
     delete_engagement_post_thunk,
     syncInteraction,
     cast_poll_vote_thunk,
@@ -32,6 +36,7 @@ import PostCardModalSection from "./post-card-modal-section";
 import EditPostModal from "./edit-post-modal";
 
 const REFRESH_INTERVAL_MS = 30_000;
+const MAX_CHALLENGE_ANNOUNCEMENTS = 3;
 
 // Engagement-specific services passed to PostInteractionPanel
 const engagementServices = {
@@ -478,11 +483,145 @@ function EngagementPostCard({
     );
 }
 
+function ChallengeAnnouncements({ challenges, loading, error, onRetry }) {
+    const activeChallenges = challenges
+        .filter((challenge) => ["Active", "Upcoming"].includes(challenge.status))
+        .slice(0, MAX_CHALLENGE_ANNOUNCEMENTS);
+
+    if (loading && challenges.length === 0) {
+        return (
+            <section aria-label="New challenges" className="space-y-3">
+                <div className="h-6 w-40 animate-pulse rounded bg-gray-200" />
+                <div className="h-40 animate-pulse rounded-xl bg-gray-200" />
+            </section>
+        );
+    }
+
+    if (error && activeChallenges.length === 0) {
+        return (
+            <section
+                aria-label="New challenges"
+                role="alert"
+                className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+            >
+                <p>Unable to load new challenges.</p>
+                <button
+                    type="button"
+                    onClick={onRetry}
+                    className="mt-2 font-semibold underline underline-offset-2"
+                >
+                    Retry
+                </button>
+            </section>
+        );
+    }
+
+    if (activeChallenges.length === 0) return null;
+
+    const challengePath = "/accounts/administrator/rnr/challenges_events/join";
+    const gridColumns =
+        activeChallenges.length === 1
+            ? "grid-cols-1"
+            : activeChallenges.length === 2
+              ? "grid-cols-1 sm:grid-cols-2"
+              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+    const isSingleChallenge = activeChallenges.length === 1;
+
+    return (
+        <section aria-labelledby="new-challenges-heading" className="space-y-3">
+            <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-amber-500" aria-hidden="true" />
+                <h2
+                    id="new-challenges-heading"
+                    className="text-base font-semibold text-gray-900"
+                >
+                    New Challenges
+                </h2>
+            </div>
+            <div className={`grid ${gridColumns} gap-3`}>
+                {activeChallenges.map((challenge) => (
+                    <Link
+                        key={challenge.id}
+                        href={`${challengePath}?challenge=${challenge.id}`}
+                        className={`group block overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 ${
+                            isSingleChallenge ? "md:flex md:items-stretch" : ""
+                        }`}
+                        aria-label={`View challenge: ${challenge.title}`}
+                    >
+                        <div
+                            className={`relative w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 ${
+                                isSingleChallenge
+                                    ? "aspect-[16/7] md:aspect-auto md:h-72 md:w-2/5 md:shrink-0"
+                                    : "h-32"
+                            }`}
+                        >
+                            {challenge.banner_url ? (
+                                <img
+                                    src={challenge.banner_url}
+                                    alt={challenge.title}
+                                    className={`absolute inset-0 block h-full w-full object-cover ${
+                                        isSingleChallenge ? "md:object-contain" : ""
+                                    }`}
+                                    style={{
+                                        objectPosition: `${challenge.banner_position_x ?? 50}% ${challenge.banner_position_y ?? 50}%`,
+                                    }}
+                                    onError={(event) => {
+                                        event.currentTarget.style.display = "none";
+                                    }}
+                                />
+                            ) : (
+                                <span className="sr-only">Challenge image unavailable</span>
+                            )}
+                        </div>
+                        <div
+                            className={`p-4 ${
+                                isSingleChallenge
+                                    ? "flex flex-1 flex-col justify-center gap-2.5 p-5 md:p-8"
+                                    : ""
+                            }`}
+                        >
+                            <div className="flex items-start justify-between gap-3">
+                                <h3
+                                    className={`font-semibold text-gray-900 group-hover:text-purple-700 ${
+                                        isSingleChallenge
+                                            ? "text-lg leading-tight md:text-2xl"
+                                            : "line-clamp-1"
+                                    }`}
+                                >
+                                    {challenge.title}
+                                </h3>
+                                <span className="shrink-0 rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                                    {challenge.status}
+                                </span>
+                            </div>
+                            <p
+                                className={`mt-2 text-sm leading-relaxed text-gray-600 ${
+                                    isSingleChallenge ? "line-clamp-4 md:text-base" : "line-clamp-2"
+                                }`}
+                            >
+                                {htmlToPlainText(challenge.description) ||
+                                    "Open the challenge to learn more."}
+                            </p>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </section>
+    );
+}
+
 export default function PostCardSection() {
     const dispatch = useDispatch();
-    const { posts, postsLoading, postsError, deleting, pollVotingPostId } = useSelector(
-        (state) => state.engagement,
-    );
+    const {
+        posts,
+        postsLoading,
+        postsError,
+        deleting,
+        pollVotingPostId,
+        myRewardChallenges,
+        myRewardChallengesLoading,
+        myRewardChallengesError,
+    } = useSelector((state) => state.engagement);
     const user = useSelector((state) => state.auth?.user || state.app?.user);
     // Scheduled posts (not yet due) are only meant for the admin who manages them — never render
     // them for employees even if they somehow end up in state (e.g. stale cache, backend change).
@@ -500,11 +639,24 @@ export default function PostCardSection() {
 
     useEffect(() => {
         dispatch(get_engagement_posts_thunk());
+        dispatch(get_my_engagement_reward_challenges_thunk());
         const interval = setInterval(() => {
-            if (!document.hidden) dispatch(get_engagement_posts_thunk());
+            if (!document.hidden) {
+                dispatch(get_engagement_posts_thunk());
+                dispatch(get_my_engagement_reward_challenges_thunk());
+            }
         }, REFRESH_INTERVAL_MS);
         return () => clearInterval(interval);
     }, [dispatch]);
+
+    const challengeAnnouncements = (
+        <ChallengeAnnouncements
+            challenges={myRewardChallenges}
+            loading={myRewardChallengesLoading}
+            error={myRewardChallengesError}
+            onRetry={() => dispatch(get_my_engagement_reward_challenges_thunk())}
+        />
+    );
 
     async function handleDelete(id) {
         const result = await dispatch(delete_engagement_post_thunk(id));
@@ -530,6 +682,7 @@ export default function PostCardSection() {
     if (postsLoading && visiblePosts.length === 0) {
         return (
             <div className="flex flex-col gap-3 sm:gap-4 px-2 sm:px-0">
+                {challengeAnnouncements}
                 {Array.from({ length: 3 }).map((_, i) => (
                     <div
                         key={i}
@@ -542,16 +695,22 @@ export default function PostCardSection() {
 
     if (postsError && visiblePosts.length === 0) {
         return (
-            <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-red-400">
-                Failed to load posts. Please refresh and try again.
+            <div className="flex flex-col gap-3 sm:gap-4">
+                {challengeAnnouncements}
+                <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-red-400">
+                    Failed to load posts. Please refresh and try again.
+                </div>
             </div>
         );
     }
 
     if (visiblePosts.length === 0 && !postsLoading) {
         return (
-            <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-gray-400">
-                No posts yet.
+            <div className="flex flex-col gap-3 sm:gap-4">
+                {challengeAnnouncements}
+                <div className="flex items-center justify-center py-12 text-xs sm:text-sm text-gray-400">
+                    No posts yet.
+                </div>
             </div>
         );
     }
@@ -559,6 +718,7 @@ export default function PostCardSection() {
     return (
         <>
             <div className="w-full flex flex-col gap-2.5 sm:gap-4">
+                {challengeAnnouncements}
                 {visiblePosts.map((post) => (
                     <EngagementPostCard
                         key={post.id}

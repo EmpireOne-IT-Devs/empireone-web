@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { usePage } from "@inertiajs/react";
 import { Mail, PartyPopper } from "lucide-react";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
@@ -13,6 +14,7 @@ const DEFAULT_MESSAGE =
 
 export default function SendAnniversaryEmailSection() {
     const dispatch = useDispatch();
+    const currentUser = usePage().props.auth?.user;
     const {
         workAnniversaries = [],
         workAnniversaryFilters,
@@ -23,12 +25,31 @@ export default function SendAnniversaryEmailSection() {
     const [selectedIds, setSelectedIds] = useState([]);
     const [message, setMessage] = useState(DEFAULT_MESSAGE);
 
+    const isWackyHojilla =
+        String(currentUser?.name ?? "").trim().toLowerCase() === "wacky hojilla";
+    const testRecipient =
+        isWackyHojilla && currentUser?.id
+            ? {
+                  user_id: currentUser.id,
+                  name: currentUser.name,
+                  anniversary_label: "Test recipient",
+                  department: null,
+              }
+            : null;
+    const recipients =
+        testRecipient &&
+        !workAnniversaries.some(
+            (employee) => Number(employee.user_id) === Number(testRecipient.user_id),
+        )
+            ? [...workAnniversaries, testRecipient]
+            : workAnniversaries;
+
     const allSelected =
-        workAnniversaries.length > 0 &&
-        selectedIds.length === workAnniversaries.length;
+        recipients.length > 0 &&
+        recipients.every((employee) => selectedIds.includes(employee.user_id));
 
     const handleOpen = () => {
-        setSelectedIds(workAnniversaries.map((employee) => employee.user_id));
+        setSelectedIds(recipients.map((employee) => employee.user_id));
         setMessage(DEFAULT_MESSAGE);
         setIsOpen(true);
     };
@@ -50,7 +71,7 @@ export default function SendAnniversaryEmailSection() {
         setSelectedIds(
             allSelected
                 ? []
-                : workAnniversaries.map((employee) => employee.user_id),
+                : recipients.map((employee) => employee.user_id),
         );
     };
 
@@ -97,7 +118,7 @@ export default function SendAnniversaryEmailSection() {
         setIsOpen(false);
     };
 
-    const disabled = workAnniversaries.length === 0;
+    const disabled = recipients.length === 0;
 
     return (
         <div>
@@ -131,7 +152,7 @@ export default function SendAnniversaryEmailSection() {
                         <div className="mb-2 flex items-center justify-between">
                             <span className="text-sm font-semibold text-gray-700">
                                 Recipients ({selectedIds.length}/
-                                {workAnniversaries.length})
+                                {recipients.length})
                             </span>
                             <button
                                 type="button"
@@ -143,12 +164,12 @@ export default function SendAnniversaryEmailSection() {
                         </div>
 
                         <div className="max-h-56 overflow-y-auto rounded-lg border border-gray-200 divide-y divide-gray-100">
-                            {workAnniversaries.length === 0 ? (
+                            {recipients.length === 0 ? (
                                 <div className="p-3 text-sm text-gray-500">
                                     No employees found for this period.
                                 </div>
                             ) : (
-                                workAnniversaries.map((employee) => (
+                                recipients.map((employee) => (
                                     <div
                                         key={employee.user_id}
                                         className="flex items-center justify-between px-3 py-2"

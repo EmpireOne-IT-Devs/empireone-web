@@ -1,5 +1,5 @@
 import React from "react";
-import { router } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import Layout from "../layout";
 import CardSection from "./_sections/card-section";
 import HeaderSection from "./_sections/header-section";
@@ -32,15 +32,17 @@ export default function Page() {
                                         Recent and upcoming events across the company
                                     </p>
                                 </div>
-                                <a
+                               
+                                <Link
                                     href={activitiesPath}
                                     className="text-sm font-medium text-indigo-600 hover:text-indigo-700 whitespace-nowrap"
                                 >
                                     View all
-                                </a>
+                                </Link>
+                              
                             </div>
                             <div className="p-6">
-                                <EventCardSection />
+                                <EventCardSection limit={6} />
                             </div>
                         </section>
 
@@ -49,15 +51,15 @@ export default function Page() {
                                 <h2 className="text-base font-semibold text-gray-900">
                                     Company News
                                 </h2>
-                                <a
+                                <Link
                                     href={announcementsPath}
                                     className="text-sm font-medium text-indigo-600 hover:text-indigo-700 whitespace-nowrap"
                                 >
                                     View all
-                                </a>
+                                </Link>
                             </div>
                             <div className="p-6">
-                                <NewsSection />
+                                <NewsSection limit={6} />
                             </div>
                         </section>
                     </div>
@@ -69,12 +71,12 @@ export default function Page() {
                             <h2 className="text-base font-semibold text-gray-900">
                                 Announcements
                             </h2>
-                            <a
+                            <Link
                                 href={announcementsPath}
                                 className="text-sm font-medium text-indigo-600 hover:text-indigo-700 whitespace-nowrap"
                             >
                                 View all
-                            </a>
+                            </Link>
                         </div>
                         <div className="p-6">
                             <AnnouncementsSection onCardClick={openActivities} />

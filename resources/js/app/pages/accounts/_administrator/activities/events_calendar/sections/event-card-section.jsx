@@ -139,7 +139,7 @@ function PollCard({ post, onClick }) {
     );
 }
 
-export default function EngagementCardSection({ onCardClick }) {
+export default function EngagementCardSection({ onCardClick, limit = null }) {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [selectedPost, setSelectedPost] = useState(null);
@@ -148,9 +148,13 @@ export default function EngagementCardSection({ onCardClick }) {
         dispatch(get_engagement_posts_thunk()); 
     }, [dispatch]);
 
-    const items = posts.filter(
+    const allItems = posts.filter(
         (p) => p.category === "Event" || p.type === "poll",
     );
+    const items =
+        Number.isInteger(limit) && limit >= 0
+            ? allItems.slice(0, limit)
+            : allItems;
 
     return (
         <div className="w-full bg-[#f4f6f9] p-6 rounded-2xl font-sans antialiased">
