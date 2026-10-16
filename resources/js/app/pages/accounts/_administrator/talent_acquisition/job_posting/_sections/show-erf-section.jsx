@@ -30,7 +30,7 @@ export default function ShowErfSection({ props_data }) {
             {/* Trigger Button */}
             <button
                 onClick={() => setOpen(true)}
-                className="group flex items-center gap-2 font-semibold text-blue-600 hover:text-blue-800 transition-colors underline decoration-blue-300 underline-offset-4 hover:decoration-blue-600"
+                className="group text-left flex items-center gap-2 font-semibold text-blue-600 hover:text-blue-800 transition-colors underline decoration-blue-300 underline-offset-4 hover:decoration-blue-600"
             >
                 <span>
                     {requisition?.title || 'Untitled Position'}
