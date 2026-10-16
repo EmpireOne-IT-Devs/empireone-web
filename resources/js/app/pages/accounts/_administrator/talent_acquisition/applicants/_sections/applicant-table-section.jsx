@@ -12,7 +12,7 @@ import Tooltip from '@/app/_components/tooltip';
 import EditStatusSection from './edit-status-section';
 import ActionListSection from './action-list-section';
 
-export default function ApplicantTableSection({ loading=false }) {
+export default function ApplicantTableSection({ loading = false }) {
     const { applicants, search_applicant_status } = useSelector(
         (store) => store.job_postings
     );
@@ -38,6 +38,14 @@ export default function ApplicantTableSection({ loading=false }) {
     }, [applicants?.data, search_applicant_status]);
 
     const columns = [
+         {
+            header: "ID",
+            render: (row) => (
+                <span className="font-mono text-xs font-semibold text-gray-600">
+                   {row.id}
+                </span>
+            ),
+        },
         {
             header: "Applied Date",
             render: (row) => (
@@ -94,14 +102,13 @@ export default function ApplicantTableSection({ loading=false }) {
                     scheduledDate &&
                     moment(scheduledDate).isSame(moment(), 'day');
 
-                if (!scheduledDate) {
+                if (!row?.schedule?.google_calendar_event_id || !row?.schedule?.meeting_link) {
                     return (
                         <span className="text-xs text-gray-400 italic">
                             Not Scheduled
                         </span>
                     );
                 }
-
                 return (
                     <button
                         type="button"

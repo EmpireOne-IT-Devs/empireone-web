@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/copy--NkXPr4-.js
 import{c}from"./createLucideIcon-D0rI88KC.js";const e=[["rect",{width:"14",height:"14",x:"8",y:"8",rx:"2",ry:"2",key:"17jyea"}],["path",{d:"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2",key:"zix9uf"}]],t=c("copy",e);export{t as C};
+========
+import{c}from"./createLucideIcon-YGWCgl9N.js";const e=[["rect",{width:"14",height:"14",x:"8",y:"8",rx:"2",ry:"2",key:"17jyea"}],["path",{d:"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2",key:"zix9uf"}]],t=c("copy",e);export{t as C};
+>>>>>>>> 41d3a4d94e971dfbe695501735be79583fef9fee:public/build/assets/copy-BLHIo88r.js

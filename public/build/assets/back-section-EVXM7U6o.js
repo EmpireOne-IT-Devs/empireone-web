@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/back-section-EVXM7U6o.js
 import{j as e,k as t}from"./app-CtzpzuhN.js";function s({onBack:o}){const n=()=>{t.visit("/accounts/administrator/talent_acquisition/job_posting")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
+========
+import{j as e,i as t}from"./app-_EEMgArQ.js";function s({onBack:o}){const n=()=>{t.visit("/accounts/administrator/talent_acquisition/job_posting")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
+>>>>>>>> 41d3a4d94e971dfbe695501735be79583fef9fee:public/build/assets/back-section-7idEoyU2.js
           group flex items-center gap-2 px-4 py-2 
           text-[15px] font-semibold text-blue-600 
           bg-transparent border  rounded-lg 

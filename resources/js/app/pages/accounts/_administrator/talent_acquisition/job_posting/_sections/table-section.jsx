@@ -9,6 +9,7 @@ import {
 import { LuArrowUpDown } from 'react-icons/lu';
 import { useSelector } from 'react-redux';
 import JobPostingActionSection from './employee-action-section';
+import ShowErfSection from './show-erf-section';
 
 
 
@@ -52,12 +53,7 @@ export default function TableSection({ loading }) {
             key: 'title',
             header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Job <LuArrowUpDown className="w-3 h-3 text-purple-500" /></div>,
             render: (row) => (
-                <button
-
-                    className="font-medium text-left"
-                >
-                    {row?.job_requisition?.title + ' - ' + row?.job_requisition?.account?.name}
-                </button>
+                <ShowErfSection props_data={row} />
             )
         },
         {

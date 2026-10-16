@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/layout-C55j_5R_.js
 import{j as e}from"./app-CtzpzuhN.js";import r from"./application-footer-section-XfxyKyhf.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
+========
+import{j as e}from"./app-_EEMgArQ.js";import r from"./application-footer-section-CfC3eVki.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
+>>>>>>>> 41d3a4d94e971dfbe695501735be79583fef9fee:public/build/assets/layout-LW_ooVXl.js
                     linear-gradient(135deg, rgba(13,5,32,0.55) 0%, rgba(19,8,48,0.50) 50%, rgba(10,15,31,0.55) 100%),
                     radial-gradient(ellipse 60% 40% at 10% 80%, rgba(168,85,247,0.12) 0%, transparent 70%),
                     radial-gradient(ellipse 40% 50% at 90% 20%, rgba(59,130,246,0.09) 0%, transparent 70%),

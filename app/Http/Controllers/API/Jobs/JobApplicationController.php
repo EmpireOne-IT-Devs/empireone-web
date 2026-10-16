@@ -760,7 +760,8 @@ class JobApplicationController extends Controller
             //     'current_step' => 0,
             // ]);
 
-            if ($request->interview_type == 'Virtual') {
+            $interview_type = ($request->interview_type ?? 'Virtual');
+            if ($interview_type == 'Virtual') {
                 $result =  $this->send_interview_schedule([
                     // 'job_interview_id' => url("/accounts/talent/{$ji->id}/ai_interview"),
                     'applicant_email' => $user->email,

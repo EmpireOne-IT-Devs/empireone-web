@@ -16,6 +16,7 @@ class JobApplicantScheduleController extends Controller
     public function index(Request $request)
     {
         $schedules = JobApplicantSchedule::with(['application.job_posting.job_requisition', 'interviewer'])
+            ->whereNotNull('google_calendar_event_id')
             ->when($request->filled('location_id') && $request->location_id !== '0', function ($query) use ($request) {
                 $query->whereHas('application.job_posting.job_requisition', function ($q) use ($request) {
                     $q->where('location_id', $request->location_id);

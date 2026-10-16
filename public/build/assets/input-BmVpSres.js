@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:public/build/assets/input-BmVpSres.js
 import{r as c,j as e}from"./app-CtzpzuhN.js";const h=c.forwardRef(({label:p,name:s,type:a="text",disabled:o=!1,required:d=!1,iconLeft:l,iconRight:r,error:t,readOnly:n=!1,className:x="",...u},i)=>e.jsxs("div",{className:"w-full",children:[e.jsxs("div",{className:"relative",children:[l&&e.jsx("div",{className:"absolute left-3 top-1/2 -translate-y-1/2 text-gray-500",children:l}),e.jsx("input",{autoComplete:"off",ref:i,id:s,name:s,type:a,disabled:o,required:d,readOnly:n,step:a==="number"?"any":void 0,placeholder:" ",...u,className:`
+========
+import{r as c,j as e}from"./app-_EEMgArQ.js";const h=c.forwardRef(({label:p,name:s,type:a="text",disabled:o=!1,required:d=!1,iconLeft:l,iconRight:r,error:t,readOnly:n=!1,className:x="",...u},i)=>e.jsxs("div",{className:"w-full",children:[e.jsxs("div",{className:"relative",children:[l&&e.jsx("div",{className:"absolute left-3 top-1/2 -translate-y-1/2 text-gray-500",children:l}),e.jsx("input",{autoComplete:"off",ref:i,id:s,name:s,type:a,disabled:o,required:d,readOnly:n,step:a==="number"?"any":void 0,placeholder:" ",...u,className:`
+>>>>>>>> 41d3a4d94e971dfbe695501735be79583fef9fee:public/build/assets/input-BDLRdMG5.js
               peer w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black transition-colors
               focus:outline-none focus:ring-2 focus:ring-purple-500 
              

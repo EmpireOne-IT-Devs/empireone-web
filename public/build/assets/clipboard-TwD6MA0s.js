@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/clipboard-BncEVG0s.js
+import{c as a}from"./createLucideIcon-D0rI88KC.js";const o=[["rect",{width:"8",height:"4",x:"8",y:"2",rx:"1",ry:"1",key:"tgr4d6"}],["path",{d:"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",key:"116196"}]],t=a("clipboard",o);export{t as C};
+========
+import{c as a}from"./createLucideIcon-YGWCgl9N.js";const o=[["rect",{width:"8",height:"4",x:"8",y:"2",rx:"1",ry:"1",key:"tgr4d6"}],["path",{d:"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",key:"116196"}]],t=a("clipboard",o);export{t as C};
+>>>>>>>> 41d3a4d94e971dfbe695501735be79583fef9fee:public/build/assets/clipboard-TwD6MA0s.js

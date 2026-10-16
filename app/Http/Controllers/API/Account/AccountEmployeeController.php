@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\ER\ERAcknowledgement;
@@ -22,31 +22,14 @@ class AccountEmployeeController extends Controller
         $search = $request->filled('search') ? trim($request->search) : null;
         $location_id = $request->filled('location_id') ? $request->location_id : null;
 
-        $users = User::query()
-            ->whereIn('role', [1, 2])
-
-            // Only apply location filter if location_id is non-empty
-            ->when(!is_null($location_id) && $location_id !== '', function ($q) use ($location_id) {
-                $q->whereHas('account_employee', function ($empQuery) use ($location_id) {
-                    $empQuery->where('location_id', $location_id);
+        $users = AccountDocument::where('status', 'Pending')
+            ->where('type', '201 File')
+            ->when($location_id, function ($query) use ($location_id) {
+                $query->whereHas('account', function ($q) use ($location_id) {
+                    $q->where('location_id', $location_id);
                 });
             })
-
-            // Only apply search filter if search term is provided
-            ->when(!is_null($search) && $search !== '', function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('email', 'like', "%{$search}%")
-                        ->orWhereHas('account_employee', function ($empQuery) use ($search) {
-                            $empQuery->where('employee_id', 'like', "%{$search}%");
-                        })
-                        ->orWhereHas('personal_information', function ($piQuery) use ($search) {
-                            $piQuery->where('first_name', 'like', "%{$search}%")
-                                ->orWhere('last_name', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->with(['personal_information', 'files', 'account_employee'])
-            ->orderBy('id', 'desc')
+            ->with(['account'])
             ->paginate();
 
         return response()->json($users, 200);
@@ -192,12 +175,12 @@ class AccountEmployeeController extends Controller
                         });
                 });
             })
-            ->orderBy('id', 'asc');
+            ->orderBy('id', 'desc');
 
         // Allow callers (e.g. dropdown selectors) to request the full list, unpaginated
         $employees = $isAll
             ? $employees->get()
-            : $employees->paginate(10);
+            : $employees->paginate(8);
 
         // 4. Transform the paginated/collection items safely without losing pagination metadata
         $employeeCollection = $employees instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator

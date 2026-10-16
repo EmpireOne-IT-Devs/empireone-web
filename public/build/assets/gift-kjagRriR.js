@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/gift-sFYdWdyQ.js
+import{c as t}from"./createLucideIcon-D0rI88KC.js";const e=[["rect",{x:"3",y:"8",width:"18",height:"4",rx:"1",key:"bkv52"}],["path",{d:"M12 8v13",key:"1c76mn"}],["path",{d:"M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7",key:"6wjy6b"}],["path",{d:"M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5",key:"1ihvrl"}]],c=t("gift",e);export{c as G};
+========
+import{c as t}from"./createLucideIcon-YGWCgl9N.js";const e=[["rect",{x:"3",y:"8",width:"18",height:"4",rx:"1",key:"bkv52"}],["path",{d:"M12 8v13",key:"1c76mn"}],["path",{d:"M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7",key:"6wjy6b"}],["path",{d:"M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5",key:"1ihvrl"}]],c=t("gift",e);export{c as G};
+>>>>>>>> 41d3a4d94e971dfbe695501735be79583fef9fee:public/build/assets/gift-kjagRriR.js

@@ -216,7 +216,10 @@ export default function SidebarSection() {
                       name: "Timekeeping",
                       href: `/accounts/${account_role}/timekeeping`,
                       icon: FcOvertime,
-                      current: path == "timekeeping",
+                      current:
+                          path == "timekeeping" ||
+                          (account_role == "employee" &&
+                              path == "time_keeping"),
                       is_incoming: false,
                   },
                   {
