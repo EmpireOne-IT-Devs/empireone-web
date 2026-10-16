@@ -323,7 +323,14 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         });
         Route::inertia('/loan', 'accounts/_employee/loan/page');
         Route::inertia('/payroll', 'accounts/_employee/payroll/page');
-        Route::inertia('/timekeeping', 'accounts/_employee/timekeeping/page');
+        Route::redirect('/timekeeping', '/accounts/employee/time_keeping/dashboard');
+        Route::prefix('time_keeping')->group(function () {
+            Route::redirect('/', '/accounts/employee/time_keeping/dashboard');
+            Route::inertia('/dashboard', 'accounts/_employee/timekeeping/dashboard/page');
+            Route::inertia('/attendance', 'accounts/_employee/timekeeping/page');
+            Route::inertia('/employee_calendar', 'accounts/_employee/timekeeping/employee_calendar/page');
+            Route::inertia('/time_sheets', 'accounts/_employee/timekeeping/time_sheets/page');
+        });
     });
 
     // 5. GLOBAL "Accounts" level routes

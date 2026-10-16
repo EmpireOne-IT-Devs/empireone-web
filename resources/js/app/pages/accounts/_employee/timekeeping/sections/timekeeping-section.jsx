@@ -12,7 +12,7 @@ import {
     break_end_service,
     clock_out_service,
 } from "@/app/services/attendance-service";
-import AttendanceLogs from "./attendance-logs";
+import AttendanceLogs from "../../../_administrator/time_keeping/attendance/sections/attendance-logs";
 
 export default function TimekeepingSection() {
     const dispatch = useDispatch();
