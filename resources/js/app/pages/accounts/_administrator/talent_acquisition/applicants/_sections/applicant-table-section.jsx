@@ -94,7 +94,7 @@ export default function ApplicantTableSection({ loading=false }) {
                     scheduledDate &&
                     moment(scheduledDate).isSame(moment(), 'day');
 
-                if (!scheduledDate) {
+                if (row?.schedule?.google_calendar_event_id) {
                     return (
                         <span className="text-xs text-gray-400 italic">
                             Not Scheduled

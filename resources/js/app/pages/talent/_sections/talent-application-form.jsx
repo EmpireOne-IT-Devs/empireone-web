@@ -56,7 +56,7 @@ const TalentApplicationForm = () => {
         defaultValues: {
             position: "",
             file_name: "",
-            interview_type: "",
+            interview_type: "Virtual",
             is_previous_employee: false,
             gender: "",
             experiences: [],
