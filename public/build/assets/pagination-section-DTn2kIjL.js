@@ -1,0 +1,1 @@
+import{j as t}from"./app-D8il9w2a.js";import{P as i}from"./pagination-CJemzR89.js";function a({data:n,onPageChange:r}){return!n?.last_page||n.last_page<=1?null:t.jsx(t.Fragment,{children:t.jsx(i,{data:n,onPageChange:r})})}export{a as default};
