@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/er-leaders-service-jPI4FwxK.js
-import{a}from"./app-CtzpzuhN.js";async function s(e){return await a.post("/api/er/leaders",e)}async function i(e){return(await a.get(`/api/er/leaders${window.location.search}`,e)).data}async function t(e){return await a.get(`/api/er/leaders/${e}`)}async function n(e){return await a.post("/api/er/subordinates",e)}async function c(e){return await a.put(`/api/er/leaders/${e.user_id}`,e)}export{i as a,s as b,n as c,t as g,c as u};
-========
-import{a}from"./app-_EEMgArQ.js";async function s(e){return await a.post("/api/er/leaders",e)}async function i(e){return(await a.get(`/api/er/leaders${window.location.search}`,e)).data}async function t(e){return await a.get(`/api/er/leaders/${e}`)}async function n(e){return await a.post("/api/er/subordinates",e)}async function c(e){return await a.put(`/api/er/leaders/${e.user_id}`,e)}export{i as a,s as b,n as c,t as g,c as u};
->>>>>>>> 41d3a4d94e971dfbe695501735be79583fef9fee:public/build/assets/er-leaders-service-C5jOxxDP.js
