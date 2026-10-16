@@ -27,7 +27,8 @@ class AccountDocumentController extends Controller
         $file = AccountDocument::where('id', $request->id)->first();
         if ($file) {
             $file->update([
-                'status' => $request->status
+                'status' => $request->status,
+                'reason' => $request->reason ?? null    
             ]);
         }
         return response()->json([
