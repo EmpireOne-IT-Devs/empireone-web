@@ -135,7 +135,7 @@ class ERLeaderController extends Controller
                 $lead =   ERLeader::where('id', $request->department_manager_id)->first();
                 if ($lead) {
                     ERSubordinate::updateOrCreate(
-                        ['subordinate_id' => $leader->id],
+                        ['subordinate_id' => $leader->user_id],
                         ['er_leader_id' => $lead->id]
                     );
                 }
