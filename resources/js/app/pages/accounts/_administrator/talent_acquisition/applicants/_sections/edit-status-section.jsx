@@ -68,13 +68,11 @@ export default function EditStatusSection({ data, table_status }) {
                 return "warning";
 
             case "Screened Passed":
-            case "Screened Passed":
             case "Passed":
             case "Accepted Job Offer":
             case "Hired":
                 return "success";
 
-            case "Screened Failed":
             case "Screened Failed":
             case "Failed":
             case "Declined Job Offer":
