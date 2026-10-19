@@ -15,8 +15,14 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
-            $table->unsignedInteger('points_awarded')->nullable()->after('review_note');
+        $hasReviewNote = Schema::hasColumn('engagement_reward_challenge_participants', 'review_note');
+
+        Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) use ($hasReviewNote) {
+            $column = $table->unsignedInteger('points_awarded')->nullable();
+
+            if ($hasReviewNote) {
+                $column->after('review_note');
+            }
         });
     }
 

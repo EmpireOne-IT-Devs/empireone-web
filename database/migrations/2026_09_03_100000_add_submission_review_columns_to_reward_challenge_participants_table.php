@@ -11,17 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasColumn('engagement_reward_challenge_participants', 'submission_path')) {
-            return;
-        }
+        $tableName = 'engagement_reward_challenge_participants';
+        $missing = fn (string $column) => ! Schema::hasColumn($tableName, $column);
 
-        Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
-            $table->string('submission_path')->nullable()->after('status');
-            $table->text('challenge_description')->nullable()->after('submission_path');
-            $table->timestamp('submitted_at')->nullable()->after('submission_path');
-            $table->timestamp('reviewed_at')->nullable()->after('submitted_at');
-            $table->foreignId('reviewed_by')->nullable()->after('reviewed_at')->constrained('users')->nullOnDelete();
-            $table->text('review_note')->nullable()->after('reviewed_by');
+        Schema::table($tableName, function (Blueprint $table) use ($missing) {
+            if ($missing('submission_path')) {
+                $table->string('submission_path')->nullable()->after('status');
+            }
+            if ($missing('challenge_description')) {
+                $table->text('challenge_description')->nullable();
+            }
+            if ($missing('submitted_at')) {
+                $table->timestamp('submitted_at')->nullable();
+            }
+            if ($missing('reviewed_at')) {
+                $table->timestamp('reviewed_at')->nullable();
+            }
+            if ($missing('reviewed_by')) {
+                $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();
+            }
+            if ($missing('review_note')) {
+                $table->text('review_note')->nullable();
+            }
         });
     }
 

@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('engagement_e_stores')) {
+            return;
+        }
+
         Schema::create('engagement_e_stores', function (Blueprint $table) {
             $table->id();
             $table->string('product_image', 2048)->nullable();

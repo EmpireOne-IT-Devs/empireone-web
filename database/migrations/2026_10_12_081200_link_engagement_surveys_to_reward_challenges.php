@@ -9,29 +9,41 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('engagement_reward_challenges', function (Blueprint $table) {
-            $table->boolean('survey_required')->default(false);
-        });
+        if (! Schema::hasColumn('engagement_reward_challenges', 'survey_required')) {
+            Schema::table('engagement_reward_challenges', function (Blueprint $table) {
+                $table->boolean('survey_required')->default(false);
+            });
+        }
 
-        Schema::table('engagement_post_event_surveys', function (Blueprint $table) {
-            $table->foreignId('reward_challenge_id')->nullable()
-                ->constrained('engagement_reward_challenges', indexName: 'epe_survey_challenge_fk')
-                ->cascadeOnDelete();
-            $table->unique('reward_challenge_id', 'epe_survey_challenge_unique');
-        });
+        if (! Schema::hasColumn('engagement_post_event_surveys', 'reward_challenge_id')) {
+            Schema::table('engagement_post_event_surveys', function (Blueprint $table) {
+                $table->foreignId('reward_challenge_id')->nullable()
+                    ->constrained('engagement_reward_challenges', indexName: 'epe_survey_challenge_fk')
+                    ->cascadeOnDelete();
+                $table->unique('reward_challenge_id', 'epe_survey_challenge_unique');
+            });
+        }
 
         Schema::table('engagement_reward_challenge_participants', function (Blueprint $table) {
-            $table->timestamp('proof_approved_at')->nullable();
-            $table->unsignedInteger('survey_points_awarded')->default(0);
-            $table->timestamp('survey_rewarded_at')->nullable();
+            if (! Schema::hasColumn('engagement_reward_challenge_participants', 'proof_approved_at')) {
+                $table->timestamp('proof_approved_at')->nullable();
+            }
+            if (! Schema::hasColumn('engagement_reward_challenge_participants', 'survey_points_awarded')) {
+                $table->unsignedInteger('survey_points_awarded')->default(0);
+            }
+            if (! Schema::hasColumn('engagement_reward_challenge_participants', 'survey_rewarded_at')) {
+                $table->timestamp('survey_rewarded_at')->nullable();
+            }
         });
 
-        Schema::table('engagement_post_event_survey_responses', function (Blueprint $table) {
-            $table->foreignId('reward_challenge_participant_id')->nullable()
-                ->constrained('engagement_reward_challenge_participants', indexName: 'epe_response_participant_fk')
-                ->cascadeOnDelete();
-            $table->unique('reward_challenge_participant_id', 'epe_response_participant_unique');
-        });
+        if (! Schema::hasColumn('engagement_post_event_survey_responses', 'reward_challenge_participant_id')) {
+            Schema::table('engagement_post_event_survey_responses', function (Blueprint $table) {
+                $table->foreignId('reward_challenge_participant_id')->nullable()
+                    ->constrained('engagement_reward_challenge_participants', indexName: 'epe_response_participant_fk')
+                    ->cascadeOnDelete();
+                $table->unique('reward_challenge_participant_id', 'epe_response_participant_unique');
+            });
+        }
     }
 
     public function down(): void
