@@ -38,7 +38,7 @@ const CARD_COLORS = [
 const DEFAULT_VALUES = {
     title: "",
     description: "",
-    type: "Individual",
+    type: "Team",
     proof_type: "photo_only",
     category: "",
     points: "",
@@ -483,7 +483,7 @@ export default function CreateNewChallenge() {
 
                     {/* Type & Category Options */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
+                        {/* <div>
                             <span className="mb-1 block text-sm font-semibold text-gray-900">
                                 Type
                             </span>
@@ -509,7 +509,7 @@ export default function CreateNewChallenge() {
                                     );
                                 })}
                             </div>
-                        </div>
+                        </div> */}
 
                        
                     </div>

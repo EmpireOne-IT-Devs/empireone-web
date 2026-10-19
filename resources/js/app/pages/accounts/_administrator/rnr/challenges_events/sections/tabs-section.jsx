@@ -61,13 +61,13 @@ export default function TabsSection({ children }) {
             path: "/accounts/administrator/rnr/challenges_events/leaderboard",
             active: currentPath === "leaderboard",
         },
-        {
-            label: "Reports",
-            icon: FileText,
-            managementOnly: true,
-            path: "/accounts/administrator/rnr/challenges_events/report",
-            active: currentPath === "report",
-        },
+        // {
+        //     label: "Reports",
+        //     icon: FileText,
+        //     managementOnly: true,
+        //     path: "/accounts/administrator/rnr/challenges_events/report",
+        //     active: currentPath === "report",
+        // },
     ].filter(
         (tab) => !tab.managementOnly || canManageChallenges,
     );
