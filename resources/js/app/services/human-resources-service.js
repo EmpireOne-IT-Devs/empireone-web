@@ -8,6 +8,14 @@ export async function add_exit_clearance_service(data) {
     return await axios.post(`/api/er/exit_clearance`, data);
 }
 
+export async function create_reach_service(data) {
+    return await axios.post(`/api/er/reach`, data);
+}
+
+export async function get_reach_specific_leader_service() {
+    return await axios.get(`/api/er/get_reach_specific_leader${window.location.search}`, );
+}
+
 export async function add_exit_interview_service(data) {
     return await axios.post(`/api/er/exit_interview`, data);
 }

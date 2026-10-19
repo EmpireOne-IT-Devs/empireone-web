@@ -3,17 +3,21 @@
 import React, { useState, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { FcCustomerSupport } from 'react-icons/fc'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Button from '@/app/_components/button'
 import Input from '@/app/_components/input'
 import Modal from '@/app/_components/modal'
 import Select from '@/app/_components/select'
 import TextArea from '@/app/_components/textarea'
+import { create_reach_service } from '@/app/services/human-resources-service'
+import { setAlert } from '@/app/redux/app-slice'
+import store from '@/app/store/store'
+import { get_my_team_thunk } from '@/app/redux/department-thunk'
 
 export default function CreateREACHSection({ props_data }) {
     const [open, setOpen] = useState(false)
-
+    const dispatch = useDispatch()
     // Select options from Redux
     const accountsData = useSelector((store) => store.app?.data?.accounts)
 
@@ -50,6 +54,7 @@ export default function CreateREACHSection({ props_data }) {
         handleSubmit,
         setValue,
         control,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
@@ -67,9 +72,30 @@ export default function CreateREACHSection({ props_data }) {
         },
     })
     const watchedAccount = useWatch({ control, name: 'account_id' })
-
-    const onSubmit = (formData) => {
+    const onSubmit = async (formData) => {
         console.log('Submitted Data:', formData)
+        try {
+
+
+            await create_reach_service({
+                ...formData,
+                user_id: props_data?.user_id,
+            })
+            await store.dispatch(get_my_team_thunk())
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Job REACH Created Successfully!",
+                    message:
+                        "The job rEACH has been created and is ready for review.",
+                    open: true,
+                }),
+            );
+            setOpen(false)
+            reset()
+        } catch (error) {
+
+        }
     }
 
     return (
@@ -205,6 +231,7 @@ export default function CreateREACHSection({ props_data }) {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.recognition_statement_1?.message ?? ''}
+                            onChange={(e) => setValue("recognition_statement_1", e.target.value, { shouldValidate: true })}
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -214,6 +241,7 @@ export default function CreateREACHSection({ props_data }) {
                                 {...register('recognition_statement_2')}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.recognition_statement_2?.message ?? ''}
+                                onChange={(e) => setValue("recognition_statement_2", e.target.value, { shouldValidate: true })}
                             />
 
                             <TextArea
@@ -222,6 +250,7 @@ export default function CreateREACHSection({ props_data }) {
                                 {...register('recognition_statement_3')}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.recognition_statement_3?.message ?? ''}
+                                onChange={(e) => setValue("recognition_statement_3", e.target.value, { shouldValidate: true })}
                             />
                         </div>
 
@@ -233,6 +262,7 @@ export default function CreateREACHSection({ props_data }) {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.area_of_opportunity?.message ?? ''}
+                            onChange={(e) => setValue("area_of_opportunity", e.target.value, { shouldValidate: true })}
                         />
                     </div>
 
@@ -276,6 +306,7 @@ export default function CreateREACHSection({ props_data }) {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.biggest_rock?.message ?? ''}
+                            onChange={(e) => setValue("biggest_rock", e.target.value, { shouldValidate: true })}
                         />
 
                         <TextArea
@@ -286,6 +317,7 @@ export default function CreateREACHSection({ props_data }) {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.behavioral_root_cause?.message ?? ''}
+                            onChange={(e) => setValue("behavioral_root_cause", e.target.value, { shouldValidate: true })}
                         />
                     </div>
 
@@ -322,6 +354,7 @@ export default function CreateREACHSection({ props_data }) {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.task_description?.message ?? ''}
+                            onChange={(e) => setValue("task_description", e.target.value, { shouldValidate: true })}
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -360,6 +393,7 @@ export default function CreateREACHSection({ props_data }) {
                                 })}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.employee_commitment?.message ?? ''}
+                                onChange={(e) => setValue("employee_commitment", e.target.value, { shouldValidate: true })}
                             />
 
                             <TextArea
@@ -370,6 +404,7 @@ export default function CreateREACHSection({ props_data }) {
                                 })}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.leader_commitment?.message ?? ''}
+                                onChange={(e) => setValue("leader_commitment", e.target.value, { shouldValidate: true })}
                             />
                         </div>
                     </div>
@@ -400,13 +435,14 @@ export default function CreateREACHSection({ props_data }) {
                             {...register('follow_up_notes')}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.follow_up_notes?.message ?? ''}
+                            onChange={(e) => setValue("follow_up_notes", e.target.value, { shouldValidate: true })}
                         />
                     </div>
 
                     <div className="flex justify-center pt-6">
                         <Button
                             type="submit"
-                            disabled={isSubmitting}
+                            loading={isSubmitting}
                             variant="secondary"
                         >
                             <span>▷</span> Submit Coaching Session

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             // Employee Information
             $table->bigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();

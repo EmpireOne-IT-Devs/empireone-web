@@ -55,7 +55,7 @@ export default function TableSection() {
         : [];
 
     return (
-        <div className="w-full overflow-x-auto">
+        <div className="w-full">
             <Table columns={columns} data={formattedTeams} />
         </div>
     );

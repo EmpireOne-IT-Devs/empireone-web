@@ -19,7 +19,9 @@ class ERLeaderController extends Controller
 
     public function get_my_team()
     {
-        $teams = AccountEmployee::where('e_r_leader_id', Auth::id())->with(['personal_information','account','er_leader','department_manager'])->get();
+        $user = Auth::id();
+        $el = ERLeader::where('user_id', $user)->first();
+        $teams = AccountEmployee::where('e_r_leader_id', $el->id)->with(['personal_information', 'account', 'er_leader', 'department_manager'])->get();
         return response()->json($teams, 200);
     }
     public function index(Request $request)

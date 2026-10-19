@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-                
+
 function route_page()
 {
     $user = Auth::user();
@@ -62,6 +63,16 @@ Route::get('/dashboard', function () {
 Route::get('/privacy-policy', function () {
     return Inertia::render('accounts/privacy_policy/page');
 })->name('privacy-policy');
+
+
+
+Route::get('/pm-reaches/{pmReach}/acknowledge', [PMReachController::class, 'acknowledge'])
+    ->name('pm-reaches.acknowledge');
+
+Route::get('/human-resources/reach', function () {
+    return Inertia::render('acknowledgment/reach/page');
+});
+
 
 Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function () {
     Route::get('/talent/{job_interview_id}/ai_interview', function () {
@@ -153,7 +164,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         });
 
 
-          Route::prefix('performance_management')->group(function () use ($employeeDetailsRoutes) {
+        Route::prefix('performance_management')->group(function () use ($employeeDetailsRoutes) {
             Route::inertia('dashboard', 'accounts/performance_management/dashboard/page');
             Route::inertia('reach', 'accounts/performance_management/reach/page');
             Route::inertia('corrective_action', 'accounts/performance_management/corrective_action/page');
@@ -193,7 +204,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::redirect('/', '/accounts/administrator/e_store/rewards_items');
             Route::inertia('/rewards_items', 'accounts/_administrator/e_store/rewards_item/page');
             Route::inertia('/redemption_history', 'accounts/_administrator/e_store/redemption_history/page');
-              Route::inertia('/stock', 'accounts/_administrator/e_store/stock/page');
+            Route::inertia('/stock', 'accounts/_administrator/e_store/stock/page');
             Route::inertia('/analytics', 'accounts/_administrator/e_store/analytics/page');
         });
         Route::prefix('rnr')->group(function () {
@@ -213,7 +224,6 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             });
             Route::inertia('/employee_profiles', 'accounts/_administrator/rnr/employee_profiles/page');
             Route::inertia('/my_profile', 'accounts/_administrator/rnr/my_profile/page');
-            
         });
         Route::prefix('ticketing')->group(function () {
             Route::inertia('/', 'accounts/_administrator/ticketing/dashboard/page');

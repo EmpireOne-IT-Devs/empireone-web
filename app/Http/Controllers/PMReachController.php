@@ -2,35 +2,124 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PMReachSummary;
 use App\Models\PM\PMReach;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class PMReachController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+
+    public function acknowledge(Request $request, PMReach $pmReach)
     {
-        //
+        // Check signature validity directly in code
+        if (! $request->hasValidSignature()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid or expired signature link.',
+            ], 403);
+        }
+
+        // Update status to ACKNOWLEDGED
+        if ($pmReach->status !== 'ACKNOWLEDGED') {
+            $pmReach->update([
+                'status' => 'ACKNOWLEDGED',
+            ]);
+        }
+
+        // Redirect to frontend app page
+        $frontendUrl = config('app.frontend_url', config('app.url')) . '/human-resources/reach?acknowledged=true&id=' . $pmReach->id;
+
+        return redirect()->away($frontendUrl);
+    }
+    protected function validateReach(Request $request): array
+    {
+        return $request->validate([
+            // Employee Information
+            'employee_id' => ['nullable', 'integer'],
+            'user_id' => ['required', 'integer'],
+            'first_name' => ['nullable', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
+            'employee_email' => ['nullable', 'email', 'max:255'],
+
+            // Supervisor Information
+            'supervisor_id' => ['nullable', 'integer'],
+            'supervisor_first_name' => ['nullable', 'string', 'max:255'],
+            'supervisor_last_name' => ['nullable', 'string', 'max:255'],
+            'supervisor_email' => ['nullable', 'email', 'max:255'],
+
+            // Session General Details
+            'account_id' => ['required', 'integer', 'exists:accounts,id'],
+            'date_of_session' => ['nullable', 'date'],
+
+            // Recognition & Opportunity
+            'recognition_statement_1' => ['nullable', 'string'],
+            'recognition_statement_2' => ['nullable', 'string'],
+            'recognition_statement_3' => ['nullable', 'string'],
+            'area_of_opportunity' => ['nullable', 'string'],
+
+            // Performance Evaluation
+            'kpi' => ['nullable', 'string', 'max:255'],
+            'actual_metric' => ['nullable', 'string', 'max:255'],
+            'goal_target' => ['nullable', 'string', 'max:255'],
+            'biggest_rock' => ['nullable', 'string'],
+            'behavioral_root_cause' => ['nullable', 'string'],
+
+            // Action Plan
+            'smart_goal' => ['nullable', 'string'],
+            'task_name' => ['nullable', 'string', 'max:255'],
+            'task_description' => ['nullable', 'string'],
+            'due_date' => ['nullable', 'date'],
+            'frequency' => ['nullable', 'string', 'max:255'],
+
+            // Commitment
+            'employee_commitment' => ['nullable', 'string'],
+            'leader_commitment' => ['nullable', 'string'],
+
+            // Handoff & Follow-up
+            'next_follow_up_date' => ['nullable', 'date'],
+            'follow_up_notes' => ['nullable', 'string'],
+
+            // Status tracking
+            'status' => ['nullable', Rule::in(['PENDING', 'ACKNOWLEDGED'])],
+        ]);
     }
 
+    public function get_reach_specific_leader()
+    {
+        $reaches = PMReach::where('created_by', Auth::id())->paginate();
+        return response()->json($reaches, 200);
+    }
+    public function store(Request $request)
+    {
+        $validated = $this->validateReach($request);
+
+        $validated['created_by'] = Auth::id();
+
+        $reach = PMReach::create($validated);
+
+        // Eager load relations before sending the email to ensure all fields are accessible in the Blade view
+        $reach->load(['account', 'employee', 'supervisor', 'creator']);
+
+        // Send email to employee (and optionally supervisor) if an email exists
+        if ($reach->employee_email) {
+            Mail::to($reach->employee_email)
+                // ->when($reach->supervisor_email, fn($mail) => $mail->cc($reach->supervisor_email))
+                ->send(new PMReachSummary($reach));
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'PM Reach session created successfully and email notification sent.',
+            'data' => $reach,
+        ], 200); // Standard HTTP status code for resource creation
+    }
     /**
      * Display the specified resource.
      */
