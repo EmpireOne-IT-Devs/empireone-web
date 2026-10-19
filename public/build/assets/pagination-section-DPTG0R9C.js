@@ -1,1 +1,0 @@
-import{j as i}from"./app-BDe9QJiL.js";import{P as o}from"./pagination-CT50iLHT.js";function e({data:t,onPageChange:n}){return!t?.last_page||t.last_page<1?null:i.jsx(o,{data:t,onPageChange:n})}export{e as default};
