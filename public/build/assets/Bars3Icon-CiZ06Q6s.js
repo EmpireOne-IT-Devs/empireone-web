@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/Bars3Icon-C_3ZdfKL.js
+import{r as e}from"./app-DD6LxuVe.js";function a({title:r,titleId:t,...o},n){return e.createElement("svg",Object.assign({xmlns:"http://www.w3.org/2000/svg",fill:"none",viewBox:"0 0 24 24",strokeWidth:1.5,stroke:"currentColor","aria-hidden":"true","data-slot":"icon",ref:n,"aria-labelledby":t},o),r?e.createElement("title",{id:t},r):null,e.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",d:"M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"}))}const i=e.forwardRef(a);export{i as F};
+========
+import{r as e}from"./app-Ba1GQEEK.js";function a({title:r,titleId:t,...o},n){return e.createElement("svg",Object.assign({xmlns:"http://www.w3.org/2000/svg",fill:"none",viewBox:"0 0 24 24",strokeWidth:1.5,stroke:"currentColor","aria-hidden":"true","data-slot":"icon",ref:n,"aria-labelledby":t},o),r?e.createElement("title",{id:t},r):null,e.createElement("path",{strokeLinecap:"round",strokeLinejoin:"round",d:"M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"}))}const i=e.forwardRef(a);export{i as F};
+>>>>>>>> a1e009dd321865c0311202ceb2303e5f99d58901:public/build/assets/Bars3Icon-CiZ06Q6s.js

@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/header-section-D-AMqDig.js
+import{j as e}from"./app-DD6LxuVe.js";function n(){return e.jsxs("div",{className:"px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-extrabold text-orange-500",children:"The Engagement Floor"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Stay connected with company news, events, announcements, and department activities"})]})}export{n as default};
+========
+import{j as e}from"./app-Ba1GQEEK.js";function n(){return e.jsxs("div",{className:"px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-extrabold text-orange-500",children:"The Engagement Floor"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Stay connected with company news, events, announcements, and department activities"})]})}export{n as default};
+>>>>>>>> a1e009dd321865c0311202ceb2303e5f99d58901:public/build/assets/header-section-yYdgjTeX.js

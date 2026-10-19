@@ -107,7 +107,7 @@ export default function AddMemberSection() {
         leader?.employees?.filter(
             (user) => !existingLeaderIds.includes(user.id),
         ) || [];
-
+console.log('availableUsers',availableUsers)
     return (
         <>
             <Button onClick={() => setOpen(true)}>ADD MEMBER</Button>
@@ -168,7 +168,7 @@ export default function AddMemberSection() {
                                                 })
                                                 .map((res) => ({
                                                     ...res,
-                                                    label: res.name,
+                                                    label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
                                                     value: res.id,
                                                 }))}
                                             value={

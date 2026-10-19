@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/inbox-DnRCr3Tn.js
 import{c as o}from"./createLucideIcon-CXZHJl59.js";const t=[["polyline",{points:"22 12 16 12 14 15 10 15 8 12 2 12",key:"o97t9d"}],["path",{d:"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z",key:"oot6mr"}]],n=o("inbox",t);export{n as I};
+========
+import{c as o}from"./createLucideIcon-MzX8OQrd.js";const t=[["polyline",{points:"22 12 16 12 14 15 10 15 8 12 2 12",key:"o97t9d"}],["path",{d:"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z",key:"oot6mr"}]],n=o("inbox",t);export{n as I};
+>>>>>>>> a1e009dd321865c0311202ceb2303e5f99d58901:public/build/assets/inbox-DFI3kmKT.js

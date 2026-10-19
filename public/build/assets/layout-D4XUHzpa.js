@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/layout-C64-0_F5.js
+import{r as s,v as r,j as t}from"./app-DD6LxuVe.js";import o from"./header-section-HU7CcEjC.js";import{b as a}from"./app-thunk-CHpeyJ_d.js";import"./user-service-BU3hIls1.js";function c({children:e}){return s.useEffect(()=>{r.dispatch(a(window.location.pathname.split("/")[4]))},[]),t.jsx(t.Fragment,{children:t.jsxs("div",{className:"min-h-screen  text-slate-700 font-sans p-3",children:[t.jsx(o,{}),e]})})}export{c as default};
+========
+import{r as s,v as r,j as t}from"./app-Ba1GQEEK.js";import o from"./header-section-CytxFc2v.js";import{b as a}from"./app-thunk-BeIwQUu2.js";import"./user-service-BtYxUigg.js";function c({children:e}){return s.useEffect(()=>{r.dispatch(a(window.location.pathname.split("/")[4]))},[]),t.jsx(t.Fragment,{children:t.jsxs("div",{className:"min-h-screen  text-slate-700 font-sans p-3",children:[t.jsx(o,{}),e]})})}export{c as default};
+>>>>>>>> a1e009dd321865c0311202ceb2303e5f99d58901:public/build/assets/layout-D4XUHzpa.js
