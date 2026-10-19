@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/calendar-x-2-BnAayEO5.js
-import{c as a}from"./createLucideIcon-CXZHJl59.js";const e=[["path",{d:"M8 2v4",key:"1cmpym"}],["path",{d:"M16 2v4",key:"4m81vk"}],["path",{d:"M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8",key:"3spt84"}],["path",{d:"M3 10h18",key:"8toen8"}],["path",{d:"m17 22 5-5",key:"1k6ppv"}],["path",{d:"m17 17 5 5",key:"p7ous7"}]],t=a("calendar-x-2",e);export{t as C};
-========
-import{c as a}from"./createLucideIcon-MzX8OQrd.js";const e=[["path",{d:"M8 2v4",key:"1cmpym"}],["path",{d:"M16 2v4",key:"4m81vk"}],["path",{d:"M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8",key:"3spt84"}],["path",{d:"M3 10h18",key:"8toen8"}],["path",{d:"m17 22 5-5",key:"1k6ppv"}],["path",{d:"m17 17 5 5",key:"p7ous7"}]],t=a("calendar-x-2",e);export{t as C};
->>>>>>>> a1e009dd321865c0311202ceb2303e5f99d58901:public/build/assets/calendar-x-2-D7L2gg4k.js
