@@ -26,8 +26,8 @@ export default function EditStatusSection({ data, table_status }) {
     const screening_status = [
         "New",
         "Conducted",
-        "Screen Passed",
-        "Screen Failed",
+        "Screened Passed",
+        "Screened Failed",
         "Not Interested",
         "No Response",
     ];
@@ -67,14 +67,14 @@ export default function EditStatusSection({ data, table_status }) {
             case "Passed with Condition":
                 return "warning";
 
-            case "Screen Passed":
+            case "Screened Passed":
             case "Screened Passed":
             case "Passed":
             case "Accepted Job Offer":
             case "Hired":
                 return "success";
 
-            case "Screen Failed":
+            case "Screened Failed":
             case "Screened Failed":
             case "Failed":
             case "Declined Job Offer":

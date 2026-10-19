@@ -20,6 +20,7 @@ import {
 import {
     get_201_files_service,
     get_attrition_by_id_service,
+    get_reach_specific_leader_service,
     search_employee_service,
 } from "../services/human-resources-service";
 import {
@@ -41,6 +42,13 @@ export function get_attritions_thunk() {
     return async function (dispatch, getState) {
         const result = await get_attritions_service();
         dispatch(employeeRelationSlice.actions.setAttritions(result.data));
+    };
+}
+
+export function get_reach_specific_leader_thunk() {
+    return async function (dispatch, getState) {
+        const result = await get_reach_specific_leader_service();
+        dispatch(employeeRelationSlice.actions.setReaches(result.data));
     };
 }
 export function search_employee_thunk(value) {

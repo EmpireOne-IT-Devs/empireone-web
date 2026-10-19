@@ -3,13 +3,17 @@
 namespace App\Models\PM;
 
 use App\Models\Account;
+use App\Models\Account\AccountEmployee;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PMReach extends Model
 {
     protected $fillable = [
         'created_by',
+        'user_id',
         'employee_id',
         'first_name',
         'last_name',
@@ -50,5 +54,19 @@ class PMReach extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public function employee(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id');
+    }
+
+    public function supervisor(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'employee_id', 'employee_id');
+    }
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

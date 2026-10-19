@@ -21,7 +21,8 @@ export const employeeRelationSlice = createSlice({
         attritions: [],
         attrition: {},
         change_forms:[],
-        files:[]
+        files:[],
+        reaches:[]
     },
     reducers: {
         setEmployees: (state, action) => {
@@ -81,11 +82,16 @@ export const employeeRelationSlice = createSlice({
         setFiles: (state, action) => {
             state.files = action.payload;
         },
+         setReaches: (state, action) => {
+            state.reaches = action.payload;
+        },
+        
     },
 });
 
 export const {
     setFiles,
+    setReaches,
     setChangeForms,
     setEmployee,
     setEmployees,

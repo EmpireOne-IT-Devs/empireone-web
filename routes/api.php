@@ -60,6 +60,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ERAcknowledgementController;
 use App\Http\Controllers\ERAcknowledgementEmployeeController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\SiteController;
 use App\Models\Account\AccountDocument;
 use Illuminate\Http\Request;
@@ -288,6 +289,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('departments',  DepartmentController::class);
         Route::resource('leaders', ERLeaderController::class);
         Route::get('get_my_team',  [ERLeaderController::class, 'get_my_team']);
+        Route::resource('reach', PMReachController::class);
+        Route::get('get_reach_specific_leader',  [PMReachController::class, 'get_reach_specific_leader']);
 
         Route::resource('subordinates', ERSubordinateController::class);
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
