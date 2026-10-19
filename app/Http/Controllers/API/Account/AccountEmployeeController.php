@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API\Account;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Account\AccountPendingResource;
+use App\Models\Account\AccountPending;
 use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
@@ -14,6 +16,39 @@ use Illuminate\Support\Facades\Hash;
 
 class AccountEmployeeController extends Controller
 {
+    public function get_account_pendings(Request $request)
+    {
+        abort_unless($request->user()?->role === User::ROLE_ADMIN, 403);
+
+        $pendingAccounts = AccountPending::query()
+            ->where('status', 'pending')
+            ->with('location')
+            ->when($request->filled('location_id'), function ($query) use ($request) {
+                $query->where('location_id', $request->input('location_id'));
+            })
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return AccountPendingResource::collection($pendingAccounts);
+    }
+
+    public function get_account_pending_history(Request $request)
+    {
+        abort_unless($request->user()?->role === User::ROLE_ADMIN, 403);
+
+        $reviewedAccounts = AccountPending::query()
+            ->whereIn('status', ['approved', 'declined'])
+            ->with('location')
+            ->when($request->filled('location_id'), function ($query) use ($request) {
+                $query->where('location_id', $request->input('location_id'));
+            })
+            ->orderByRaw('COALESCE(approved_at, declined_at) DESC')
+            ->orderByDesc('id')
+            ->paginate(10);
+
+        return AccountPendingResource::collection($reviewedAccounts);
+    }
+
     /**
      * Display a listing of the resource.
      */

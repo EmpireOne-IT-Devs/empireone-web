@@ -6,6 +6,10 @@ export const employeeRelationSlice = createSlice({
         employee: {},
         employees: [],
         employeesLoading: false,
+        accountPendings: { data: [], meta: null },
+        accountPendingsLoading: true,
+        accountPendingHistory: { data: [], meta: null },
+        accountPendingHistoryLoading: false,
         pools: [],
         probationaries: [],
         leaders: [],
@@ -36,6 +40,18 @@ export const employeeRelationSlice = createSlice({
         },
         setEmployeesLoading: (state, action) => {
             state.employeesLoading = action.payload;
+        },
+        setAccountPendings: (state, action) => {
+            state.accountPendings = action.payload;
+        },
+        setAccountPendingsLoading: (state, action) => {
+            state.accountPendingsLoading = action.payload;
+        },
+        setAccountPendingHistory: (state, action) => {
+            state.accountPendingHistory = action.payload;
+        },
+        setAccountPendingHistoryLoading: (state, action) => {
+            state.accountPendingHistoryLoading = action.payload;
         },
         setPools: (state, action) => {
             state.pools = action.payload;
@@ -98,6 +114,10 @@ export const {
     setAttrition,
     setAttritions,
     setEmployeesLoading,
+    setAccountPendings,
+    setAccountPendingsLoading,
+    setAccountPendingHistory,
+    setAccountPendingHistoryLoading,
     setPools,
     setProbationaries,
     setLeaders,

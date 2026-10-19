@@ -1,0 +1,29 @@
+### Phase 1: Approving pending employee accounts
+
+- **Timestamp:** 2026-10-19 21:52:19 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, ⚙️ Backend, 🖥️ Frontend, 🎨 UI/UX, 🧪 QA
+- **Files Modified/Created:**
+  - `database/migrations/2026_10_19_220000_add_approval_tracking_to_account_pendings_table.php` — Added UUID route keys and reversible approval/audit metadata.
+  - `app/Models/Account/AccountPending.php` — Added approval relations, status default, and UUID route binding.
+  - `app/Services/Account/ApproveAccountPendingService.php` — Transactionally creates employee user/profile records and retains approval history.
+  - `app/Http/Requests/ApproveAccountPendingRequest.php` — Restricts approvals to administrators.
+  - `app/Http/Controllers/API/Account/AccountPendingApprovalController.php` — Exposes the protected approval action with a resource response.
+  - `app/Http/Controllers/API/Account/AccountEmployeeController.php` — Filters the list to pending registrations.
+  - `app/Http/Resources/Account/AccountPendingResource.php` — Exposes UUID and approval state.
+  - `routes/api.php` — Registered the Sanctum-protected approval endpoint.
+  - `config/accounts.php` — Loads the initial password from environment configuration.
+  - `.env.example` — Documents the required configuration key without a credential value.
+  - `resources/js/app/services/account-pending-service.js` — Added the Axios approval call.
+  - `resources/js/app/redux/account-pending-thunk.js` — Added approval orchestration and error handling.
+  - `resources/js/app/redux/account-pending-slice.js` — Tracks approval loading and errors; its reducer was already registered in the store.
+  - `resources/js/app/pages/accounts/_administrator/human_resources/account_pendings/page.jsx` — Added approval feedback and pending-list refresh.
+  - `resources/js/app/pages/accounts/_administrator/human_resources/account_pendings/sections/table-section.jsx` — Added the row action and confirmation flow.
+  - `resources/js/app/_components/confirmation.jsx` — Fixed the close icon and added Escape handling and focus trapping for the reused dialog.
+  - `resources/js/app/_components/button.jsx` — Added accessible `ariaLabel` support for the row action.
+  - `tests/Feature/AccountPendingApprovalTest.php` — Added approval, authorization, duplicate, configuration, audit, list-filter, and setup-redirect coverage.
+  - `tests/Feature/AccountPendingRegistrationTest.php` — Updated the registration schema fixture and asserted the pending status.
+- **Issues Encountered:** The shared initial password must not be embedded in application or test source. Running multiple feature tests together also triggers a pre-existing `route_page()` redeclaration in `routes/web.php`.
+- **Resolution:** Initial password now comes from `ACCOUNT_PENDING_INITIAL_PASSWORD`; approval returns an explicit service-unavailable error if it is unset. Each focused feature test passes when run individually.
+- **QA Checklist Result:** ✅ Scoped PHP syntax, JavaScript/JSX parsing, route registration/middleware, approval/authorization/duplicate/configuration tests, registration tests, and setup1/setup2 redirect checks passed. Code-level ✅ — keyboard/focus and responsive behavior require browser verification. The combined test-class invocation remains blocked by the pre-existing route helper redeclaration.
+- **Next Steps:** Set `ACCOUNT_PENDING_INITIAL_PASSWORD` privately in the application environment before approving accounts. Apply the new migration and verify the UI in a browser when the environment is ready.
