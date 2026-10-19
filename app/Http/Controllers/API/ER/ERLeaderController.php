@@ -132,6 +132,10 @@ class ERLeaderController extends Controller
                 $account->update([
                     'department_manager_id' => $request->department_manager_id
                 ]);
+                ERSubordinate::updateOrCreate(
+                    ['subordinate_id' => $leader->user_id],
+                    ['er_leader_id' => $leader->id]
+                );
             }
             foreach ($leader->subordinates as $key => $value) {
                 $employee =  AccountEmployee::where('user_id', $value['employee']['id'])->first();
