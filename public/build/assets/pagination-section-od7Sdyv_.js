@@ -1,1 +1,0 @@
-import{b as n,j as o}from"./app-CWVEAzuF.js";import{P as e}from"./pagination-CyOhh4dr.js";function i(){const{erps:t}=n(s=>s.job_postings);return console.log("erps",t),o.jsx(o.Fragment,{children:o.jsx(e,{data:t})})}export{i as default};
