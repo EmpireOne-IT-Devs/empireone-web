@@ -8,11 +8,9 @@ import {
     FcOpenedFolder,
     FcNightPortrait,
     FcServices,
+    FcPodiumWithSpeaker 
 } from "react-icons/fc";
 import SubSidebarSection from "./../../../__sections/sub-sidebar-section";
-import {
-    FaClipboardUser,
-} from "react-icons/fa6";
 
 export default function HRTabsSection({ children }) {
     const { data } = useSelector((store) => store.app);
@@ -119,7 +117,7 @@ export default function HRTabsSection({ children }) {
         {
             label: "Account Pendings",
             icon: (
-                <FaClipboardUser className="w-5 h-5 shrink-0 text-green-400" />
+                <FcPodiumWithSpeaker  className="w-5 h-5 shrink-0 text-green-400" />
             ),
             active: currentPath === "account_pendings",
             children: data?.locations?.map((res) => ({

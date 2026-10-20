@@ -1,1 +1,0 @@
-import{j as e}from"./app-B5pWp5q9.js";function a(){return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsx("div",{className:"text-2xl font-black",children:"Perfomance Mangement"}),e.jsx("div",{className:"text-gray-600",children:"Source, attract, and hire top talent to grow your organization."})]})}export{a as default};
