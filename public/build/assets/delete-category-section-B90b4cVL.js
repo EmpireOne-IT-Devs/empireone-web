@@ -1,0 +1,1 @@
+import{j as t}from"./app-DN_Xha-7.js";import{q as r}from"./index-ZBB4cH4S.js";import"./iconBase-CAjoJOJr.js";function i(){return t.jsx("div",{children:t.jsx(r,{className:"text-2xl cursor-pointer text-red-600"})})}export{i as default};

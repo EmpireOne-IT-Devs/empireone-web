@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FcMenu } from "react-icons/fc";
+import { FcMenu,FcOpenedFolder } from "react-icons/fc";
 import AddAttritionSection from './add-attrition-section';
 import UpdateEmployee from './update-employee';
-import { FcOpenedFolder } from 'react-icons/fc';
 
 export default function EmployeeActionSection({ props_data }) {
     const [isOpen, setIsOpen] = useState(false);

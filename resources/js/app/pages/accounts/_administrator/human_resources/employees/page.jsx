@@ -6,7 +6,6 @@ import EmployeeRelationLayout from "../layout";
 import SearchSection from "./_sections/search-section";
 import PaginationSection from "./_sections/pagination-section";
 import AddEmployeeSection from "./_sections/add-employee-section";
-import Loading from "@/app/_components/loading-page";
 import EmployeesTableSection from "./_sections/employees-table-section";
 
 export default function Page() {

@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LuFolder } from 'react-icons/lu';
-import { CheckCircle2, ChevronDown, FileText, XCircle } from 'lucide-react';
+import {
+    LuFolder,
+    LuCheckCheck,
+    LuChevronDown,
+    LuFileText,
+    LuCircleX 
+} from 'react-icons/lu';
 
 export default function AcknowledgementsListSection({ props_data, empId }) {
     const [open, setOpen] = useState(true);
@@ -77,10 +82,10 @@ export default function AcknowledgementsListSection({ props_data, empId }) {
                     {totalItemsCount > 0 && (
                         <div className="flex items-center gap-1 ml-1">
                             <span className="bg-emerald-50 text-emerald-700 font-semibold text-[10px] px-1.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-0.5">
-                                <CheckCircle2 className="w-2.5 h-2.5" /> {doneCount}
+                                <LuCheckCheck className="w-2.5 h-2.5" /> {doneCount}
                             </span>
                             <span className="bg-amber-50 text-amber-700 font-semibold text-[10px] px-1.5 py-0.5 rounded-full border border-amber-200 flex items-center gap-0.5">
-                                <XCircle className="w-2.5 h-2.5" /> {incompleteCount}
+                                <LuCircleX  className="w-2.5 h-2.5" /> {incompleteCount}
                             </span>
                         </div>
                     )}
@@ -92,7 +97,7 @@ export default function AcknowledgementsListSection({ props_data, empId }) {
                         animate={{ rotate: open ? 180 : 0 }}
                         transition={{ duration: 0.2, ease: 'easeInOut' }}
                     >
-                        <ChevronDown className="w-3.5 h-3.5" />
+                        <LuChevronDown className="w-3.5 h-3.5" />
                     </motion.div>
                 </div>
             </button>
@@ -122,7 +127,7 @@ export default function AcknowledgementsListSection({ props_data, empId }) {
                                             <div className="flex items-center justify-between w-full gap-2">
                                                 <div className="flex items-center gap-2 min-w-0">
                                                     <div className="p-1 rounded bg-purple-50 text-purple-700 border border-purple-100 shrink-0">
-                                                        <FileText className="w-3.5 h-3.5" />
+                                                        <LuFileText className="w-3.5 h-3.5" />
                                                     </div>
                                                     <span className="font-semibold text-gray-800 text-xs truncate">
                                                         {ress.title}
@@ -140,7 +145,7 @@ export default function AcknowledgementsListSection({ props_data, empId }) {
                                                             animate={{ rotate: isOpen ? 180 : 0 }}
                                                             transition={{ duration: 0.2, ease: 'easeInOut' }}
                                                         >
-                                                            <ChevronDown className="w-3 h-3" />
+                                                            <LuChevronDown className="w-3 h-3" />
                                                         </motion.div>
                                                     </button>
                                                 ) : (
@@ -195,14 +200,14 @@ function StatusBadge({ isDone, size = 'md' }) {
     if (isDone) {
         return (
             <span className={`inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded shrink-0 ${size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'}`}>
-                <CheckCircle2 className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} /> Done
+                <LuCheckCheck className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} /> Done
             </span>
         );
     }
 
     return (
         <span className={`inline-flex items-center gap-1 font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded shrink-0 ${size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'}`}>
-            <XCircle className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} /> Incomplete
+            <LuCircleX  className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} /> Incomplete
         </span>
     );
 }

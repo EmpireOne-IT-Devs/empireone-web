@@ -3,7 +3,6 @@ import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "@inertiajs/react";
 import moment from "moment";
-import { Calendar, User } from "lucide-react";
 
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
@@ -228,7 +227,6 @@ export default function PersonalInformationForm({ props_data, open, setOpen }) {
                     name="first_name"
                     {...register("first_name", { required: "First Name is required" })}
                     error={errors.first_name}
-                    iconLeft={<User size={14} />}
                 />
 
                 <Input
@@ -236,7 +234,6 @@ export default function PersonalInformationForm({ props_data, open, setOpen }) {
                     name="middle_name"
                     {...register("middle_name", { required: "Middle Name is required" })}
                     error={errors.middle_name}
-                    iconLeft={<User size={14} />}
                 />
 
                 <Input
@@ -244,14 +241,12 @@ export default function PersonalInformationForm({ props_data, open, setOpen }) {
                     name="last_name"
                     {...register("last_name", { required: "Last Name is required" })}
                     error={errors.last_name}
-                    iconLeft={<User size={14} />}
                 />
 
                 <Input
                     label="Suffix"
                     name="suffix"
                     {...register("suffix")}
-                    iconLeft={<User size={14} />}
                 />
 
                 <Input
@@ -260,7 +255,6 @@ export default function PersonalInformationForm({ props_data, open, setOpen }) {
                     type="date"
                     {...register("date_of_birth", { required: "Date of Birth is required" })}
                     error={errors.date_of_birth}
-                    iconLeft={<Calendar size={14} />}
                 />
 
                 <Input
@@ -274,7 +268,6 @@ export default function PersonalInformationForm({ props_data, open, setOpen }) {
                     label="Contact #"
                     name="contact"
                     {...register("contact")}
-                    iconLeft={<User size={14} />}
                 />
 
                 <Input
