@@ -4,19 +4,14 @@ import {
     FcConferenceCall,
     FcBriefcase,
     FcVoicePresentation,
-    FcFolder,
     FcDocument,
     FcOpenedFolder,
     FcNightPortrait,
     FcServices,
-    FcList,
 } from "react-icons/fc";
 import SubSidebarSection from "./../../../__sections/sub-sidebar-section";
 import {
-    FaCircleUser,
-    FaClipboardList,
     FaClipboardUser,
-    FaList,
 } from "react-icons/fa6";
 
 export default function HRTabsSection({ children }) {

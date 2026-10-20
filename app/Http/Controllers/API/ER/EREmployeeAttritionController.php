@@ -7,6 +7,7 @@ use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\ER\EREmployeeAttrition;
 use App\Models\ER\ERLeader;
+use App\Models\ER\ERSubordinate;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -196,6 +197,10 @@ class EREmployeeAttritionController extends Controller
                 $leader->update([
                     'user_id' => null,
                 ]);
+                $er = ERSubordinate::where('subordinate_id', $request->user_id)->first();
+                if ($er) {
+                    $er->delete();
+                }
             }
         }
 

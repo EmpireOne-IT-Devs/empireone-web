@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Models\PM\PMReach as PMPMReach;
-use App\Models\PMReach;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -14,7 +13,10 @@ class PMReachSummary extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public PMPMReach $reach) {}
+    public function __construct(
+        public PMPMReach $reach,
+        public ?string $supervisorEmail = null
+    ) {}
 
     public function envelope(): Envelope
     {
@@ -27,6 +29,9 @@ class PMReachSummary extends Mailable
     {
         return new Content(
             view: 'emails.performance_management.pm-reach-session',
+            with: [
+                'isCc' => !empty($this->supervisorEmail),
+            ],
         );
     }
 }

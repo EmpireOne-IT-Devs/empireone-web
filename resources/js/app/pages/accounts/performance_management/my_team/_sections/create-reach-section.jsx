@@ -48,7 +48,7 @@ export default function CreateREACHSection({ props_data }) {
     const supervisorEmail = leaderEmp?.eogs_email ?? 'N/A'
 
     const todayDate = useMemo(() => new Date().toISOString().split('T')[0], [])
-
+console.log('waaa',props_data?.er_leader?.user_id)
     const {
         register,
         handleSubmit,
@@ -58,6 +58,7 @@ export default function CreateREACHSection({ props_data }) {
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
+            supervisor_user_id:props_data?.er_leader?.user_id,
             employee_id: employeeId,
             first_name: firstName,
             last_name: lastName,
@@ -71,6 +72,7 @@ export default function CreateREACHSection({ props_data }) {
             account: accountId,
         },
     })
+    
     const watchedAccount = useWatch({ control, name: 'account_id' })
     const onSubmit = async (formData) => {
         console.log('Submitted Data:', formData)
@@ -193,6 +195,7 @@ export default function CreateREACHSection({ props_data }) {
                                 name="account"
                                 options={accountOptions}
                                 value={watchedAccount}
+                                disabled
                                 onChange={(val) => {
                                     setValue('account', val, { shouldValidate: true })
                                     setValue('account_id', val)

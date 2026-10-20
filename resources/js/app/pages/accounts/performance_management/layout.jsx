@@ -4,6 +4,7 @@ import Layout from './../layout'
 // import AddMemberSection from "./_sections/add-member-section";
 // import TabsSection from "./_sections/tabs-section";
 import SidebarSection from "./_sections/sidebar-section";
+import HeaderSection from "./_sections/header-section";
 
 export default function PerformanceManagementLayout({ children }) {
     return (
@@ -21,6 +22,7 @@ export default function PerformanceManagementLayout({ children }) {
             <div className="flex flex-col md:flex-row h-[87vh] bg-gray-50 overflow-hidden w-full">
                 <SidebarSection />
                 <div className="p-3 overflow-auto w-full">
+                    <HeaderSection />
                     {children}
                 </div>
             </div>

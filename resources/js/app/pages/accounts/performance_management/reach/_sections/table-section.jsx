@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import Table from "@/app/_components/table";
 import MenuSection from "./menu-section";
 
-export default function TableSection() {
+export default function TableSection({ isloading }) {
     const { reaches } = useSelector((store) => store.human_resources);
 
     // Get search params from URL
@@ -26,10 +26,10 @@ export default function TableSection() {
     const rawData = Array.isArray(reaches?.data)
         ? reaches.data
         : Array.isArray(reaches?.data?.data)
-        ? reaches.data.data
-        : Array.isArray(reaches)
-        ? reaches
-        : [];
+            ? reaches.data.data
+            : Array.isArray(reaches)
+                ? reaches
+                : [];
 
     // Filter & Format Data
     const formattedReaches = rawData
@@ -80,7 +80,7 @@ export default function TableSection() {
                     <div className="text-xs space-y-0.5">
                         <span className="font-bold text-sky-700">{item?.kpi || "N/A"}</span>
                         <div>
-                            Actual: <span className="font-semibold text-slate-700">{item?.actual_metric || "N/A"}</span> | 
+                            Actual: <span className="font-semibold text-slate-700">{item?.actual_metric || "N/A"}</span> |
                             Target: <span className="font-semibold text-slate-700">{item?.goal_target || "N/A"}</span>
                         </div>
                     </div>
@@ -96,11 +96,10 @@ export default function TableSection() {
                 ),
                 status: (
                     <span
-                        className={`inline-block px-2.5 py-1 text-xs font-bold rounded-full ${
-                            item?.status === "ACKNOWLEDGED"
+                        className={`inline-block px-2.5 py-1 text-xs font-bold rounded-full ${item?.status === "ACKNOWLEDGED"
                                 ? "bg-emerald-100 text-emerald-800"
                                 : "bg-amber-100 text-amber-800"
-                        }`}
+                            }`}
                     >
                         {item?.status || "PENDING"}
                     </span>
@@ -113,7 +112,9 @@ export default function TableSection() {
 
     return (
         <div className="w-full">
-            <Table columns={columns} data={formattedReaches} />
+            <Table
+                isloading={isloading}
+                columns={columns} data={formattedReaches} />
         </div>
     );
 }

@@ -49,6 +49,7 @@ class PMReachController extends Controller
             'employee_email' => ['nullable', 'email', 'max:255'],
 
             // Supervisor Information
+            'supervisor_user_id' => ['nullable'],
             'supervisor_id' => ['nullable', 'integer'],
             'supervisor_first_name' => ['nullable', 'string', 'max:255'],
             'supervisor_last_name' => ['nullable', 'string', 'max:255'],
@@ -107,13 +108,21 @@ class PMReachController extends Controller
         // Eager load relations before sending the email to ensure all fields are accessible in the Blade view
         $reach->load(['account', 'employee', 'supervisor', 'creator']);
 
-        // Send email to employee (and optionally supervisor) if an email exists
+
+        // if ($reach->employee_email) {
+        //     Mail::to($reach->employee_email)
+        //         ->when($reach->supervisor_email, fn($mail) => $mail->cc($reach->supervisor_email))
+        //         ->send(new PMReachSummary($reach, $reach->supervisor_email));
+        // }
+
         if ($reach->employee_email) {
             Mail::to($reach->employee_email)
-                // ->when($reach->supervisor_email, fn($mail) => $mail->cc($reach->supervisor_email))
                 ->send(new PMReachSummary($reach));
+            if ($reach->supervisor_email) {
+                Mail::to($reach->supervisor_email)
+                    ->send(new PMReachSummary($reach, $reach->supervisor_email));
+            }
         }
-
         return response()->json([
             'status' => 'success',
             'message' => 'PM Reach session created successfully and email notification sent.',

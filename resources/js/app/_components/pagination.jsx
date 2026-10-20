@@ -1,7 +1,4 @@
-import {
-    ArrowLongLeftIcon,
-    ArrowLongRightIcon,
-} from "@heroicons/react/20/solid";
+import { HiOutlineArrowLongLeft, HiOutlineArrowLongRight } from "react-icons/hi2";
 import { Link } from "@inertiajs/react";
 
 export default function Pagination({ data, onPageChange }) {
@@ -70,7 +67,7 @@ export default function Pagination({ data, onPageChange }) {
                             onClick={() => handlePageClick(currentPage - 1)}
                             className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
                         >
-                            <ArrowLongLeftIcon
+                            <HiOutlineArrowLongLeft
                                 aria-hidden="true"
                                 className="mr-3 h-5 w-5 text-white"
                             />
@@ -81,7 +78,7 @@ export default function Pagination({ data, onPageChange }) {
                             href={buildUrl(currentPage - 1)}
                             className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
                         >
-                            <ArrowLongLeftIcon
+                            <HiOutlineArrowLongLeft
                                 aria-hidden="true"
                                 className="mr-3 h-5 w-5 text-white"
                             />
@@ -100,8 +97,8 @@ export default function Pagination({ data, onPageChange }) {
                             onClick={() => handlePageClick(page)}
                             disabled={typeof page !== "number"}
                             className={`inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
-                                    ? "text-purple-600 border-purple-600 border-2 text-purple"
-                                    : "bg-purple-500 hover:bg-purple-500 text-white"
+                                ? "text-purple-600 border-purple-600 border-2 text-purple"
+                                : "bg-purple-500 hover:bg-purple-500 text-white"
                                 } ${typeof page !== "number" ? "cursor-default opacity-80" : ""}`}
                         >
                             {page}
@@ -111,8 +108,8 @@ export default function Pagination({ data, onPageChange }) {
                             key={index}
                             href={typeof page === "number" ? buildUrl(page) : "#"}
                             className={`inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
-                                    ? "text-purple-600 border-purple-600 border-2 text-purple"
-                                    : "bg-purple-500 hover:bg-purple-500 text-white"
+                                ? "text-purple-600 border-purple-600 border-2 text-purple"
+                                : "bg-purple-500 hover:bg-purple-500 text-white"
                                 }`}
                         >
                             {page}
@@ -130,7 +127,7 @@ export default function Pagination({ data, onPageChange }) {
                             className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
                         >
                             Next
-                            <ArrowLongRightIcon
+                            <HiOutlineArrowLongRight
                                 aria-hidden="true"
                                 className="ml-3 h-5 w-5 text-white"
                             />
@@ -141,7 +138,7 @@ export default function Pagination({ data, onPageChange }) {
                             className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
                         >
                             Next
-                            <ArrowLongRightIcon
+                            <HiOutlineArrowLongRight
                                 aria-hidden="true"
                                 className="ml-3 h-5 w-5 text-white"
                             />

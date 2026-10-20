@@ -214,11 +214,13 @@
                             </table>
 
                             <!-- Interactive Call-To-Action Button -->
+                            @if(!$isCc)
                             <div style="text-align: center; margin-top: 32px; margin-bottom: 16px;">
                                 <a href="{{ URL::signedRoute('pm-reaches.acknowledge', ['pmReach' => $reach->id]) }}" class="btn-action">
                                     ACKNOWLEDGE COACHING SESSION &rarr;
                                 </a>
                             </div>
+                            @endif
 
                         </td>
                     </tr>

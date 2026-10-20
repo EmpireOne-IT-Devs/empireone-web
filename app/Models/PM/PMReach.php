@@ -14,6 +14,7 @@ class PMReach extends Model
     protected $fillable = [
         'created_by',
         'user_id',
+        'supervisor_user_id',
         'employee_id',
         'first_name',
         'last_name',

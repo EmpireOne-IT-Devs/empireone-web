@@ -18,6 +18,7 @@ return new class extends Migration
         Schema::create('p_m_reaches', function (Blueprint $table) {
             $table->id();
             // Employee Information
+            $table->unsignedBigInteger('supervisor_user_id')->nullable();
             $table->bigInteger('created_by')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable();
