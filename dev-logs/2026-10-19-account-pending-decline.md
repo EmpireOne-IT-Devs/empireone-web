@@ -1,0 +1,26 @@
+### Phase 2: Showing pending status and declining registrations
+
+- **Timestamp:** 2026-10-19 22:03:29 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, ⚙️ Backend, 🖥️ Frontend, 🎨 UI/UX, 🧪 QA
+- **Files Modified/Created:**
+  - `database/migrations/2026_10_19_220100_add_decline_tracking_to_account_pendings_table.php` — Added nullable decline actor/time fields with a reversible migration.
+  - `app/Models/Account/AccountPending.php` — Added decline audit fields, datetime cast, and declining-user relationship.
+  - `app/Services/Account/DeclineAccountPendingService.php` — Added a transactional pending-to-declined transition with duplicate-review protection.
+  - `app/Http/Requests/DeclineAccountPendingRequest.php` — Restricted decline requests to administrators.
+  - `app/Http/Controllers/API/Account/AccountPendingDeclineController.php` — Added the decline endpoint response using the existing resource.
+  - `app/Http/Resources/Account/AccountPendingResource.php` — Included decline audit metadata.
+  - `routes/api.php` — Registered the authenticated decline route.
+  - `resources/js/app/services/account-pending-service.js` — Added the Axios decline call.
+  - `resources/js/app/redux/account-pending-thunk.js` — Added decline request orchestration.
+  - `resources/js/app/redux/account-pending-slice.js` — Tracks decline loading/errors by pending UUID.
+  - `resources/js/app/pages/accounts/_administrator/human_resources/account_pendings/sections/approve-section.jsx` — Added confirmed Decline and Approve actions.
+  - `resources/js/app/pages/accounts/_administrator/human_resources/account_pendings/sections/table-section.jsx` — Added the Pending badge and action controls.
+  - `resources/js/app/pages/accounts/_administrator/human_resources/account_pendings/page.jsx` — Refreshes the pending list and shows review feedback.
+  - `tests/Feature/AccountPendingDeclineTest.php` — Added decline, authorization, audit-retention, pending-filter, and duplicate-action coverage.
+  - `tests/Feature/AccountPendingApprovalTest.php` — Updated the schema fixture for decline audit fields.
+  - `tests/Feature/AccountPendingRegistrationTest.php` — Updated the schema fixture for decline audit fields.
+- **Issues Encountered:** None in the decline flow. The project has a pre-existing `route_page()` redeclaration when running multiple feature tests together.
+- **Resolution:** Focused test methods were run individually; all passed.
+- **QA Checklist Result:** ✅ Scoped PHP syntax, frontend parsing, route/middleware, decline/approval/registration tests, authorization, duplicate-action handling, and list filtering passed. Code-level ✅ — keyboard/focus and responsive behavior require browser verification.
+- **Next Steps:** Set the initial-password environment variable before approving accounts. Apply the pending-account migrations and verify the UI in a browser when the environment is ready.

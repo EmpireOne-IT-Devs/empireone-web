@@ -9,6 +9,20 @@ export async function get_employees_service(data, all = false) {
     ).data;
 }
 
+export async function get_account_pendings_service() {
+    return (
+        await axios.get(`/api/accounts/get_account_pendings${window.location.search}`)
+    ).data;
+}
+
+export async function get_account_pending_history_service() {
+    return (
+        await axios.get(
+            `/api/accounts/get_account_pending_history${window.location.search}`,
+        )
+    ).data;
+}
+
 export async function get_probationary_service() {
     return (await axios.get(`/api/accounts/get_probationary`)).data;
 }

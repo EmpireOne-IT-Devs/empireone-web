@@ -8,6 +8,8 @@ import {
 } from "../services/employee-change-form-service";
 import {
     get_acknowledgement_service,
+    get_account_pending_history_service,
+    get_account_pendings_service,
     get_attritions_service,
     get_employees_service,
     get_probationary_service,
@@ -35,6 +37,38 @@ export function get_employees_thunk(all = false) {
         const result = await get_employees_service(undefined, all);
         dispatch(employeeRelationSlice.actions.setEmployees(result));
         dispatch(employeeRelationSlice.actions.setEmployeesLoading(false));
+    };
+}
+
+export function get_account_pendings_thunk() {
+    return async function (dispatch) {
+        dispatch(employeeRelationSlice.actions.setAccountPendingsLoading(true));
+        try {
+            const result = await get_account_pendings_service();
+            dispatch(employeeRelationSlice.actions.setAccountPendings(result));
+        } finally {
+            dispatch(employeeRelationSlice.actions.setAccountPendingsLoading(false));
+        }
+    };
+}
+
+export function get_account_pending_history_thunk() {
+    return async function (dispatch) {
+        dispatch(
+            employeeRelationSlice.actions.setAccountPendingHistoryLoading(true),
+        );
+        try {
+            const result = await get_account_pending_history_service();
+            dispatch(
+                employeeRelationSlice.actions.setAccountPendingHistory(result),
+            );
+        } finally {
+            dispatch(
+                employeeRelationSlice.actions.setAccountPendingHistoryLoading(
+                    false,
+                ),
+            );
+        }
     };
 }
 

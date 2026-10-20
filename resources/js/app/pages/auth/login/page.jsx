@@ -173,22 +173,12 @@ const Page = ({ flash }) => {
                         </div>
 
                         <div className="flex items-center justify-between py-1">
-                            <label className="flex items-center cursor-pointer group">
-                                <input
-                                    type="checkbox"
-                                    checked={data.remember}
-                                    onChange={(e) => setData("remember", e.target.checked)}
-                                    className="hidden"
-                                />
-                                <div
-                                    className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${data.remember ? "bg-[#e85c0d] border-[#e85c0d]" : "border-white/20 bg-white/5"}`}
-                                >
-                                    {data.remember && <div className="w-2 h-2 bg-white rounded-full" />}
-                                </div>
-                                <span className="ml-3 text-xs text-slate-400 group-hover:text-slate-200 transition-colors uppercase tracking-widest font-medium">
-                                    Remember Me
-                                </span>
-                            </label>
+                            <Link
+                                href={route("register")}
+                                className="text-xs text-slate-400 hover:text-[#e85c0d] transition-colors uppercase tracking-widest font-medium"
+                            >
+                                Create an account
+                            </Link>
                             <button
                                 type="button"
                                 onClick={() => router.visit("/auth/forgot_password")}

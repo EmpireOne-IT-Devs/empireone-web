@@ -54,6 +54,7 @@ export default function Button({
     className = "",
     loading = false,
     outlined = false, // NEW: boolean to control solid/outlined
+    ariaLabel,
 }) {
     const baseStyle =
         "inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outlined-none disabled:opacity-50 disabled:cursor-not-allowed";
@@ -72,6 +73,7 @@ export default function Button({
             className={finalClass}
             disabled={disabled || loading}
             onClick={onClick}
+            aria-label={ariaLabel}
         >
             {loading ? (
                 <>

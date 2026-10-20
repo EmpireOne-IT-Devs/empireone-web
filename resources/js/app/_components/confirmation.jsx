@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { createPortal } from "react-dom";
-import { Transition } from "@headlessui/react";
-import { FaRegWindowClose } from "react-icons/fa";
+import { FocusTrap, Transition } from "@headlessui/react";
+import { FaTimes } from "react-icons/fa";
 
 export default function Confirmation({
     isOpen,
@@ -65,26 +65,34 @@ export default function Confirmation({
                         leaveFrom="opacity-100 scale-100 translate-y-0"
                         leaveTo="opacity-0 scale-95 translate-y-2"
                     >
-                        <div
-                            className={`relative flex w-full ${width} max-h-[90vh] transform flex-col overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-2xl transition-all`}
-                            // Stops clicks INSIDE the white panel from triggering the wrapper's onClick
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <FocusTrap>
+                            <div
+                                tabIndex={-1}
+                                role="dialog"
+                                aria-modal="true"
+                                aria-label={typeof title === "string" ? title : "Confirmation"}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Escape") {
+                                        event.stopPropagation();
+                                        onClose();
+                                    }
+                                }}
+                                className={`relative flex w-full ${width} max-h-[90vh] transform flex-col overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-2xl transition-all`}
+                                onClick={(e) => e.stopPropagation()}
+                            >
                             {/* Title Section */}
                             <div className="flex flex-none items-center justify-between py-3">
                                 {title && (
-                                    <div
-                                        as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900 w-full"
-                                    >
+                                    <h2 className="text-lg font-medium leading-6 text-gray-900 w-full">
                                         {title}
-                                    </div>
+                                    </h2>
                                 )}
                                 <div className="flex w-full items-end justify-end">
                                     <button
                                         type="button"
                                         onClick={() => onClose()}
                                         className="text-slate-500 hover:text-slate-700 transition-colors p-1"
+                                        aria-label="Close confirmation dialog"
                                     >
                                         <FaTimes size={25} />
                                     </button>
@@ -95,7 +103,8 @@ export default function Confirmation({
                             <div className="min-h-0 flex-1 overflow-y-auto">
                                 {children}
                             </div>
-                        </div>
+                            </div>
+                        </FocusTrap>
                     </Transition.Child>
                 </div>
             </div>

@@ -248,6 +248,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
 
         Route::prefix('human_resources')->group(function () use ($employeeDetailsRoutes) {
             Route::inertia('employees', 'accounts/_administrator/human_resources/employees/page');
+            Route::inertia('account_pendings', 'accounts/_administrator/human_resources/account_pendings/page');
             Route::inertia('pooling', 'accounts/_administrator/human_resources/pooling/page');
             Route::inertia('disciplinary_records', 'accounts/_administrator/human_resources/disciplinary_records/page');
             Route::inertia('separation', 'accounts/_administrator/human_resources/separation/page');

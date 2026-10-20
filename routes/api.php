@@ -4,6 +4,9 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
+use App\Http\Controllers\API\Account\AccountPendingController;
+use App\Http\Controllers\API\Account\AccountPendingApprovalController;
+use App\Http\Controllers\API\Account\AccountPendingDeclineController;
 use App\Http\Controllers\API\Timekeeping\AttendanceController;
 use App\Http\Controllers\API\Timekeeping\AttendanceCorrectionController;
 use App\Http\Controllers\API\Account\AccountDocumentController;
@@ -80,6 +83,8 @@ Route::post('auth/job_seeker_verify_otp', [EmailOtpController::class, 'job_seeke
 Route::post('auth/forgot_password_send_otp', [EmailOtpController::class, 'forgot_password_send_otp']);
 Route::post('auth/forgot_password_verify_otp', [EmailOtpController::class, 'forgot_password_verify_otp']);
 Route::post('auth/change_password', [EmailOtpController::class, 'change_password']);
+Route::post('account-pendings', [AccountPendingController::class, 'store'])
+    ->middleware('throttle:5,1');
 
 
 
@@ -171,6 +176,16 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_all_employees',  [AccountEmployeeController::class, 'get_all_employees']);
         Route::post('add_employee',  [AccountEmployeeController::class, 'add_employee']);
         Route::get('get_regular',  [AccountEmployeeController::class, 'get_regular']);
+        Route::get('get_account_pendings', [AccountEmployeeController::class, 'get_account_pendings']);
+        Route::get('get_account_pending_history', [AccountEmployeeController::class, 'get_account_pending_history']);
+        Route::post(
+            'account-pendings/{accountPending:uuid}/approve',
+            AccountPendingApprovalController::class,
+        );
+        Route::post(
+            'account-pendings/{accountPending:uuid}/decline',
+            AccountPendingDeclineController::class,
+        );
         Route::get('user',  [AccountPersonalInformationController::class, 'accounts_user']);
         Route::post('personal_information',  [AccountPersonalInformationController::class, 'accounts_personal_information']);
         Route::post('address_information',  [AccountPersonalInformationController::class, 'accounts_address_information']);
