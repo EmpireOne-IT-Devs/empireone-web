@@ -14,6 +14,7 @@ export default function Page() {
     useEffect(() => {
         async function get_data() {
             try {
+                setLoading(true);
                 await Promise.all([
                     store.dispatch(get_employees_thunk()),
                     store.dispatch(get_leader_thunk())

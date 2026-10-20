@@ -237,7 +237,7 @@ class JobPostingController extends Controller
             ->with(['job_requisition', 'applications', 'applicant', 'erps']);
 
         // Filter by location_id from the job_requisition relationship
-        if ($request->filled('location_id') && $request->where != 'applicants') {
+        if ($request->filled('location_id') && ($request->where ?? '') != 'applicants') {
             $query->whereHas('job_requisition', function ($q) use ($request) {
                 $q->where('location_id', $request->location_id);
             });
