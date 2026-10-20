@@ -171,9 +171,9 @@ class EREmployeeAttritionController extends Controller
                         'last_working_date'       => !empty($attrition->last_working_date) ? date('d-M-y', strtotime($attrition->last_working_date)) : 'N/A',
                         'separation_date'         => !empty($attrition->separation_date) ? date('d-M-y', strtotime($attrition->separation_date)) : 'N/A',
                         'type_of_separation'      => $attrition->reason_for_separation ?? 'N/A',
-                        'eligibility_for_rehire'  => isset($attrition->is_rehire) ? ($attrition->is_rehire ? 'Yes' : 'No') : 'N/A',
+                        'eligibility_for_rehire'  => $attrition->is_rehire ?? '',
                         'notice_period'           => isset($attrition->days_of_liquidated) ? ($attrition->days_of_liquidated > 0 ? $attrition->days_of_liquidated . ' Days' : 'No') : 'N/A',
-                        'clawback'                => isset($attrition->is_liquidated) ? ($attrition->is_liquidated ? 'Yes' : 'No') : 'N/A',
+                        'clawback'                => $attrition->is_liquidated ?? '',
                     ])->render(),
                 ]);
                 $this->my_empireone_send_email([
