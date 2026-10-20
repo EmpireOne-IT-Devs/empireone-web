@@ -13,7 +13,7 @@ export async function get_erps_service() {
 
 export async function get_job_postings_service() {
     return await axios.get(
-        `/api/job/postings${window.location.search}&where=${window.location.pathname.split("/")[4]}`,
+        `/api/job/postings${window.location.search ? window.location.search : "?"}&where=${window.location.pathname.split("/")[4] ?? ""}`,
     );
 }
 

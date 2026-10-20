@@ -103,7 +103,9 @@ Route::post('job/apply_job_application',  [JobApplicationController::class, 'app
 Route::post('job/checking_applicant',  [JobApplicationController::class, 'checking_applicant']);
 Route::get('job/employee_applicants',  [JobApplicationController::class, 'employee_applicants']);
 Route::post('job/get_job_application_from_email',  [JobApplicationController::class, 'get_job_application_from_email']);
+
 Route::get('job/postings',  [JobPostingController::class, 'index']);
+
 Route::get('get_job_posting_by_location/{location_id}',  [JobPostingController::class, 'get_job_posting_by_location']);
 Route::resource('job/job_interviewer_schedules', JobInterviewerScheduleController::class);
 Route::get('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);

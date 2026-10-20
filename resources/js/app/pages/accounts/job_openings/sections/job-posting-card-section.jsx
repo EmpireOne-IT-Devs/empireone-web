@@ -12,7 +12,7 @@ export default function JobPostingCardSection() {
         (state) => state.job_postings,
     );
     const user_role = window.location.pathname.split("/")[2];
-    console.log("job_postings", job_postings);
+    console.log("job_postings", job_postings?.data);
 
     // Get filter parameters from URL
     const params = new URLSearchParams(window.location.search);
@@ -21,9 +21,9 @@ export default function JobPostingCardSection() {
 
     // Filter job postings based on search term and status
     const filteredJobPostings = useMemo(() => {
-        if (!job_postings) return [];
+        if (!job_postings?.data) return [];
 
-        return job_postings.filter((job) => {
+        return job_postings?.data?.filter((job) => {
             // Filter by status
             const statusMatch =
                 statusFilter === "all" ||
@@ -40,7 +40,7 @@ export default function JobPostingCardSection() {
 
             return statusMatch && searchMatch;
         });
-    }, [job_postings, searchTerm, statusFilter]);
+    }, [job_postings?.data, searchTerm, statusFilter]);
 
     if (loading) {
         return (
@@ -50,7 +50,7 @@ export default function JobPostingCardSection() {
         );
     }
 
-    if (!job_postings || job_postings.length === 0) {
+    if (!job_postings?.data || job_postings?.data?.length === 0) {
         return (
             <div className="flex justify-center items-center py-12">
                 <div className="text-gray-500">No job requisitions found</div>
