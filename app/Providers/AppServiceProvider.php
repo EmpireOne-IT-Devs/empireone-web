@@ -4,8 +4,12 @@ namespace App\Providers;
 
 use App\Models\Engagement\EngagementPostEventSurvey;
 use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
+use App\Models\Timekeeping\AttendanceCorrection;
+use App\Models\Timekeeping\LeaveRequest;
+use App\Models\Timekeeping\OvertimeRequest;
 use App\Policies\ChallengeSurveyPolicy;
 use App\Policies\Engagement\EngagementRewardChallengeTeamSubmissionPolicy;
+use App\Policies\TeamRequestPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
@@ -28,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(EngagementPostEventSurvey::class, ChallengeSurveyPolicy::class);
         Gate::policy(EngagementRewardChallengeTeamSubmission::class, EngagementRewardChallengeTeamSubmissionPolicy::class);
+        Gate::policy(OvertimeRequest::class, TeamRequestPolicy::class);
+        Gate::policy(AttendanceCorrection::class, TeamRequestPolicy::class);
+        Gate::policy(LeaveRequest::class, TeamRequestPolicy::class);
         Vite::prefetch(concurrency: 3);
         Schema::defaultStringLength(191);
     }
