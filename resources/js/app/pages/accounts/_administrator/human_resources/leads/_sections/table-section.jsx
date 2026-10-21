@@ -13,7 +13,8 @@ export default function TableSection({ loading }) {
         { header: "Fullname", accessor: "name" },
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
-        { header: "Department Manager", accessor: "department_manager" },
+        { header: "Immediate Supervisor", accessor: "immediate_supervisor" },
+        { header: "Second Level Manager", accessor: "second_level_manager" },
         { header: "Account", accessor: "account" },
         { header: "Member handled", accessor: "subordinates_count" },
         { header: "Action", accessor: "action" },
@@ -42,7 +43,8 @@ export default function TableSection({ loading }) {
                         position: `${res?.user?.account_employee?.position} `,
                         department:
                             res?.user?.account_employee?.department?.name,
-                        department_manager: `${res?.employee?.department_manager?.personal_information?.first_name ?? ""} ${res?.employee?.department_manager?.personal_information?.last_name ?? ""}`,
+                        immediate_supervisor: `${res?.user?.account_employee?.er_leader?.employee?.personal_information?.first_name ?? ""} ${res?.user?.account_employee?.er_leader?.employee?.personal_information?.last_name ?? ""}`,
+                        second_level_manager: `${res?.employee?.department_manager?.personal_information?.first_name ?? ""} ${res?.employee?.department_manager?.personal_information?.last_name ?? ""}`,
                         account:
                             res?.user?.account_employee?.account?.name ?? "N/A",
                         subordinates_count: res?.subordinates_count,

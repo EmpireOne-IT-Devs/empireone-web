@@ -12,7 +12,8 @@ export default function TableSection() {
         { header: "Fullname", accessor: "name" },
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
-        { header: "Department Manager", accessor: "department_manager" },
+        { header: "Immediate Supervisor", accessor: "immediate_supervisor" },
+        { header: "Second Level Manager", accessor: "second_level_manager" },
         { header: "Account", accessor: "account" },
         // { header: "Action", accessor: "action" },
     ];
@@ -41,7 +42,9 @@ export default function TableSection() {
                         account:
                             res?.employee?.account_employee?.account?.name ??
                             "N/A",
-                        department_manager:
+                        immediate_supervisor:
+                            `${res?.leader?.user?.personal_information?.first_name ?? ''} ${res?.leader?.user?.personal_information?.last_name ?? ''}`,
+                        second_level_manager:
                             `${res?.employee?.account_employee?.department_manager?.personal_information?.first_name ?? ''} ${res?.employee?.account_employee?.department_manager?.personal_information?.last_name ?? ''}`,
                         // action: "button",
                     })) ?? []
