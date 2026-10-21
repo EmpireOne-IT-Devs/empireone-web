@@ -38,10 +38,15 @@ export default function TimeKeepingLayout({ children }) {
             active: path === "calendar_settings",
         },
         {
-            label: "Reports",
-            path: "/accounts/administrator/time_keeping/reports",
-            active: path === "reports",
+            label: "Agents",
+            path: "/accounts/administrator/time_keeping/agents",
+            active: path === "agents",  
         },
+        // {
+        //     label: "Reports",
+        //     path: "/accounts/administrator/time_keeping/reports",
+        //     active: path === "reports",
+        // },.we
     ];
     return (
         <div>

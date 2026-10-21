@@ -13,6 +13,7 @@ import postEventSurveySlice from "../redux/post-event-survey-slice";
 import engagementSlice from "../redux/engagement-slice";
 import locationEmployeeSlice from "../redux/location-employee-slice";
 import accountPendingSlice from "../redux/account-pending-slice";
+import teamRequestSlice from "../redux/team-request-slice";
 
 const store = configureStore({
     reducer: {
@@ -30,6 +31,7 @@ const store = configureStore({
         engagement: engagementSlice,
         location_employees: locationEmployeeSlice,
         account_pendings: accountPendingSlice,
+        team_requests: teamRequestSlice,
     },
 });
 

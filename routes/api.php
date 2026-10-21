@@ -57,6 +57,7 @@ use App\Http\Controllers\API\Timekeeping\AttendanceEmployeeSettingsController;
 use App\Http\Controllers\API\Timekeeping\HolidayController;
 use App\Http\Controllers\API\Timekeeping\OvertimeRequestController;
 use App\Http\Controllers\API\Timekeeping\LeaveRequestController;
+use App\Http\Controllers\API\Timekeeping\TeamRequestController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
@@ -359,6 +360,10 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('attendance_corrections/{attendanceCorrection}/endorse', [AttendanceCorrectionController::class, 'endorse']);
         Route::post('attendance_corrections/{attendanceCorrection}/grant', [AttendanceCorrectionController::class, 'grant']);
         Route::post('attendance_corrections/{attendanceCorrection}/decline', [AttendanceCorrectionController::class, 'decline']);
+
+        Route::get('team_requests', [TeamRequestController::class, 'index']);
+        Route::post('team_requests/{type}/{id}/approve', [TeamRequestController::class, 'approve'])->whereIn('type', ['overtime', 'schedule', 'leave'])->whereNumber('id');
+        Route::post('team_requests/{type}/{id}/decline', [TeamRequestController::class, 'decline'])->whereIn('type', ['overtime', 'schedule', 'leave'])->whereNumber('id');
     });
 
 

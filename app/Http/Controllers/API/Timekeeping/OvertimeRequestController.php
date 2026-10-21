@@ -4,9 +4,11 @@ namespace App\Http\Controllers\API\Timekeeping;
 
 use App\Http\Controllers\Controller;
 use App\Models\Timekeeping\OvertimeRequest;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class OvertimeRequestController extends Controller
 {
@@ -60,6 +62,8 @@ class OvertimeRequestController extends Controller
      */
     public function endorse(OvertimeRequest $overtimeRequest)
     {
+        $this->authorizeLeaderStage($overtimeRequest);
+
         if ($overtimeRequest->status !== 'pending') {
             return response()->json([
                 'message' => 'Only pending requests can be endorsed.',
@@ -110,6 +114,10 @@ class OvertimeRequestController extends Controller
             ], 422);
         }
 
+        if ($overtimeRequest->status === 'pending') {
+            $this->authorizeLeaderStage($overtimeRequest);
+        }
+
         $isAccountingStage = $overtimeRequest->status === 'endorsed';
 
         $overtimeRequest->update([
@@ -121,5 +129,13 @@ class OvertimeRequestController extends Controller
         ]);
 
         return response()->json($overtimeRequest->fresh(['endorser', 'approver', 'decliner']), 200);
+    }
+
+    // The leader stage belongs to the owner's leader; admins keep full access.
+    private function authorizeLeaderStage(OvertimeRequest $overtimeRequest): void
+    {
+        if (Auth::user()->role !== User::ROLE_ADMIN) {
+            Gate::authorize('review', $overtimeRequest);
+        }
     }
 }

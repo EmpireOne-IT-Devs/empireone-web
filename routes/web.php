@@ -294,6 +294,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/reports', 'accounts/_administrator/time_keeping/reports/page');
             Route::inertia('/attendance_settings', 'accounts/_administrator/time_keeping/attendance_settings/page');
             Route::inertia('/calendar_settings', 'accounts/_administrator/time_keeping/calendar_settings/page');
+            Route::inertia('/agents', 'accounts/_administrator/time_keeping/agents/page');
         });
 
         // Route::prefix('rnr')->group(function () { ... });
@@ -341,6 +342,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/attendance', 'accounts/_employee/timekeeping/page');
             Route::inertia('/employee_calendar', 'accounts/_employee/timekeeping/employee_calendar/page');
             Route::inertia('/time_sheets', 'accounts/_employee/timekeeping/time_sheets/page');
+            Route::inertia('/agents', 'accounts/_employee/timekeeping/agents/page');
         });
     });
 

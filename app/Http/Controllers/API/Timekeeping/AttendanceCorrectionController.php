@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Timekeeping\Attendance;
 use App\Models\Timekeeping\AttendanceCorrection;
 use App\Models\Timekeeping\AttendanceEmployeeSettings;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class AttendanceCorrectionController extends Controller
 {
@@ -80,6 +82,8 @@ class AttendanceCorrectionController extends Controller
      */
     public function endorse(AttendanceCorrection $attendanceCorrection)
     {
+        $this->authorizeLeaderStage($attendanceCorrection);
+
         if ($attendanceCorrection->status !== 'pending') {
             return response()->json([
                 'message' => 'Only pending requests can be endorsed.',
@@ -134,6 +138,10 @@ class AttendanceCorrectionController extends Controller
             ], 422);
         }
 
+        if ($attendanceCorrection->status === 'pending') {
+            $this->authorizeLeaderStage($attendanceCorrection);
+        }
+
         $isAdminStage = $attendanceCorrection->status === 'endorsed';
 
         $attendanceCorrection->update([
@@ -145,6 +153,14 @@ class AttendanceCorrectionController extends Controller
         ]);
 
         return response()->json($attendanceCorrection->fresh(['endorser', 'granter', 'decliner']), 200);
+    }
+
+    // The leader stage belongs to the owner's leader; admins keep full access.
+    private function authorizeLeaderStage(AttendanceCorrection $attendanceCorrection): void
+    {
+        if (Auth::user()->role !== User::ROLE_ADMIN) {
+            Gate::authorize('review', $attendanceCorrection);
+        }
     }
 
     /**
