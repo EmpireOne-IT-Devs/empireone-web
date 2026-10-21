@@ -25,9 +25,14 @@ class ERLeader extends Model
     }
     public function employee(): HasOne
     {
-        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information','department','department_manager']);
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information', 'department', 'department_manager']);
     }
-     public function personal_information(): HasOne
+
+    public function second_level_manager()
+    {
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information']);
+    }
+    public function personal_information(): HasOne
     {
         return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'user_id');
     }
@@ -35,7 +40,7 @@ class ERLeader extends Model
     {
         return $this->hasMany(ERSubordinate::class, 'er_leader_id', 'id')->count();
     }
-     public function leader(): int
+    public function leader(): int
     {
         return $this->hasMany(AccountEmployee::class, 'user_id', 'user_id')->count();
     }

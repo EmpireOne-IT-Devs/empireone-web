@@ -71,13 +71,15 @@ class ERLeaderController extends Controller
             // 2. Values to update: Leave empty because there are no other fields to update
             []
         );
-        $employee = AccountEmployee::where('id', $request->user_id)->first();
-        $er_leader = ERLeader::where('user_id', $request->department_manager_id)->first();
-        if ($employee) {
-            $employee->update([
-                'department_manager_id' => $er_leader->id
-            ]);
-        }
+        // $employee = AccountEmployee::where('id', $request->user_id)->first();
+        // // $er_leader = ERLeader::where('user_id', $request->department_manager_id)->first();
+        // $e_r_leader = ERLeader::where('user_id', $request->e_r_leader_id)->first();
+        // if ($employee) {
+        //     $employee->update([
+        //         // 'department_manager_id' => $er_leader->id,
+        //         'e_r_leader_id' => $e_r_leader->id
+        //     ]);
+        // }
         $user = User::where('id', $request->user_id)->first();
         if ($user) {
             $user->update([
@@ -124,6 +126,9 @@ class ERLeaderController extends Controller
     public function update(Request $request, $user_id)
     {
         $leader =  ERLeader::where('id', $request->e_r_leader_id)->with(['subordinates'])->first();
+
+
+        $immediate_supervisor =  ERLeader::where('user_id', $request->immediate_supervisor)->first();
         if ($leader) {
             $leader->update([
                 'user_id' => $request->user_id
@@ -131,7 +136,8 @@ class ERLeaderController extends Controller
             $account = AccountEmployee::where('user_id', $leader->user_id)->first();
             if ($account) {
                 $account->update([
-                    'department_manager_id' => $request->department_manager_id
+                    'department_manager_id' => $request->department_manager_id,
+                    'e_r_leader_id' => $immediate_supervisor->id ?? null
                 ]);
             }
             foreach ($leader->subordinates as $key => $value) {

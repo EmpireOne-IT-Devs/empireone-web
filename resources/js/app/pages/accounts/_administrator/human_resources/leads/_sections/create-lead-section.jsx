@@ -28,6 +28,7 @@ export default function CreateLeadSection() {
     } = useForm({
         defaultValues: {
             user_id: "",
+            e_r_leader_id:"",
             department_manager_id: ""
         },
     });
@@ -106,7 +107,7 @@ export default function CreateLeadSection() {
                     className="p-3 flex h-full flex-col items-start gap-3 justify-between w-full"
                 >
                     <Select
-                        label="Leader"
+                        label="Name of Employee"
                         required
                         name="user_id"
                         // Pass the filtered availableUsers instead of the full users array
@@ -123,8 +124,27 @@ export default function CreateLeadSection() {
                         className="w-full"
                     />
 
-                    <Select
-                        label="Department Manager"
+                       {/* <Select
+                        label="Immediate Supervisor"
+                        required
+                        name="e_r_leader_id"
+                        // Pass the filtered availableUsers instead of the full users array
+                        options={availableUsers.map((res) => ({
+                            ...res,
+                            label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
+                            value: res.id,
+                        }))}
+                        value={watchedValues.e_r_leader_id}
+                        onChange={(val) =>
+                            setValue("e_r_leader_id", val, { shouldValidate: true })
+                        }
+                        error={errors.e_r_leader_id?.message}
+                        className="w-full"
+                    /> */}
+
+
+                    {/* <Select
+                        label="Second Level Manager"
                         required
                         name="department_manager_id"
                         // Pass the filtered availableUsers instead of the full users array
@@ -139,7 +159,7 @@ export default function CreateLeadSection() {
                         }
                         error={errors.department_manager_id?.message}
                         className="w-full"
-                    />
+                    /> */}
 
 
                     <div className="w-full mt-auto pt-4">

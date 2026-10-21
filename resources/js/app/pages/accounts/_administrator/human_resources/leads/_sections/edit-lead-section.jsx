@@ -38,11 +38,12 @@ export default function EditLeadSection({ props_data }) {
             reset({
                 user_id: props_data?.user?.id ?? "",
                 department_manager_id: props_data?.employee?.department_manager_id ?? "",
-                e_r_leader_id: props_data?.id
+                e_r_leader_id: props_data?.id,
+                immediate_supervisor: props_data?.employee?.e_r_leader_id
             });
+            console.log('props_data', props_data?.employee?.e_r_leader_id)
         }
     }, [open, props_data, reset]);
-
     // useEffect(() => {
     //     if (open) {
 
@@ -87,7 +88,9 @@ export default function EditLeadSection({ props_data }) {
         setOpen(false);
         reset();
     };
-    
+
+
+
 
     return (
         <>
@@ -137,10 +140,30 @@ export default function EditLeadSection({ props_data }) {
                     />
 
                     <Select
-                        label="Department Manager"
+                        label="Immediate Supervisor"
+                        required
+                        name="immediate_supervisor"
+                        options={users.map((res) => ({
+                            ...res,
+                            label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
+                            value: res.id,
+                        }))}
+                        value={watchedValues.immediate_supervisor}
+                        onChange={(val) =>
+                            setValue("immediate_supervisor", val, { shouldValidate: true })
+                        }
+                        error={errors.immediate_supervisor?.message}
+                        className="w-full"
+                    />
+                    <Select
+                        label="Second Level Manager"
                         required
                         name="department_manager_id"
-                        options={leaderOptions}
+                        options={leaders?.map((res) => ({
+                            ...res,
+                            label: `${res?.employee?.personal_information?.first_name ?? ""} ${res?.employee?.personal_information?.last_name ?? ""}`.trim(),
+                            value: res.id,
+                        }))}
                         value={watchedValues.department_manager_id}
                         onChange={(val) =>
                             setValue("department_manager_id", val, { shouldValidate: true })

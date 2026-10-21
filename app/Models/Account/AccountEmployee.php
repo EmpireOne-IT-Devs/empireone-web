@@ -63,7 +63,7 @@ class AccountEmployee extends Model
     }
     public function department_manager()
     {
-        return $this->hasOne(ERLeader::class, 'id', 'department_manager_id')->with(['personal_information']);
+        return $this->hasOne(ERLeader::class, 'id', 'department_manager_id')->with(['personal_information','second_level_manager']);
     }
     public function acknowledgements()
     {
