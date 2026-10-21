@@ -49,7 +49,7 @@ class ERLeaderController extends Controller
         }
 
         // 5. Execute queries simultaneously
-        $leaders = $leadersQuery->get();
+        $leaders = $leadersQuery->orderBy('id', 'desc')->get();
         $users = $usersQuery->get();
 
         return response()->json([
@@ -71,10 +71,11 @@ class ERLeaderController extends Controller
             // 2. Values to update: Leave empty because there are no other fields to update
             []
         );
-        $employee = AccountEmployee::where('department_manager_id', $request->department_manager_id)->first();
+        $employee = AccountEmployee::where('id', $request->user_id)->first();
+        $er_leader = ERLeader::where('user_id', $request->department_manager_id)->first();
         if ($employee) {
             $employee->update([
-                'department_manager_id' => $request->department_manager_id
+                'department_manager_id' => $er_leader->id
             ]);
         }
         $user = User::where('id', $request->user_id)->first();

@@ -16,6 +16,17 @@ use Illuminate\Support\Facades\Hash;
 
 class AccountEmployeeController extends Controller
 {
+
+    public function get_inactive_employee()
+    {
+        $users = AccountEmployee::whereNull('e_r_leader_id')
+            ->whereNull('department_manager_id')
+            ->whereNotNull('employee_id')
+            ->where('location_id', 1)
+            ->with('personal_information')
+            ->get();
+        return response()->json(count($users), 200);
+    }
     public function get_account_pendings(Request $request)
     {
         abort_unless($request->user()?->role === User::ROLE_ADMIN, 403);

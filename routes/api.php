@@ -99,6 +99,9 @@ Route::post('add_booking',  [BookingController::class, 'add_booking']);
 Route::post('add_appointment',  [BookingController::class, 'add_appointment']);
 Route::post('add_consultation',  [BookingController::class, 'add_consultation']);
 
+
+Route::get('get_inactive_employee',  [AccountEmployeeController::class, 'get_inactive_employee']);
+
 Route::post('job/apply_job_application',  [JobApplicationController::class, 'apply_job_application']);
 Route::post('job/checking_applicant',  [JobApplicationController::class, 'checking_applicant']);
 Route::get('job/employee_applicants',  [JobApplicationController::class, 'employee_applicants']);
