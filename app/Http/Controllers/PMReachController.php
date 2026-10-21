@@ -33,8 +33,15 @@ class PMReachController extends Controller
             ]);
         }
 
-        // Redirect to frontend app page
-        $frontendUrl = config('app.frontend_url', config('app.url')) . '/human-resources/reach?acknowledged=true&id=' . $pmReach->id;
+        // Determine base URL with fallback to explicit domain
+        $baseUrl = rtrim(config('app.frontend_url', config('app.url', 'https://careers.empireonecx.com')), '/');
+
+        // Ensure localhost is overridden in production
+        if (app()->environment('production') && str_contains($baseUrl, 'localhost')) {
+            $baseUrl = 'https://careers.empireonecx.com';
+        }
+
+        $frontendUrl = $baseUrl . '/human-resources/reach?acknowledged=true&id=' . $pmReach->id;
 
         return redirect()->away($frontendUrl);
     }

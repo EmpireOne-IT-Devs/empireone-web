@@ -215,12 +215,8 @@
 
                             <!-- Interactive Call-To-Action Button -->
                             @if(!$isCc)
-                            @php
-                            $signedUrl = URL::signedRoute('pm-reaches.acknowledge', ['pmReach' => $reach->id]);
-                            $publicUrl = str_replace(url('/'), config('app.url'), $signedUrl);
-                            @endphp
                             <div style="text-align: center; margin-top: 32px; margin-bottom: 16px;">
-                                <a href="{{ $publicUrl }}" class="btn-action">
+                                <a href="{{ URL::signedRoute('pm-reaches.acknowledge', ['pmReach' => $reach->id]) }}" class="btn-action">
                                     ACKNOWLEDGE COACHING SESSION &rarr;
                                 </a>
                             </div>
