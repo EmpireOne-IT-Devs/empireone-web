@@ -1,11 +1,15 @@
 import Checkbox from '@/app/_components/checkbox'
 import Input from '@/app/_components/input'
 import { router } from '@inertiajs/react'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 
 export default function SearchSection() {
-    const [search, setSearch] = useState('')
-    const [isChecked, setIsChecked] = useState(false)
+    const queryParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+    const [search, setSearch] = useState(queryParams.get('search') || '')
+    const [isChecked, setIsChecked] = useState(queryParams.get('all') === 'true')
+
+    // Track component mount to prevent search on initial page load
+    const isMounted = useRef(false)
 
     const updateQueryParams = useCallback((key, value) => {
         const currentParams = new URLSearchParams(window.location.search)
@@ -27,8 +31,13 @@ export default function SearchSection() {
         )
     }, [])
 
-    // Debounce search routing by 2 seconds (2000 ms)
+    // Debounce search input by 1.5 seconds, skipping the initial mount/reload
     useEffect(() => {
+        if (!isMounted.current) {
+            isMounted.current = true
+            return
+        }
+
         const timer = setTimeout(() => {
             updateQueryParams('search', search)
         }, 1500)
