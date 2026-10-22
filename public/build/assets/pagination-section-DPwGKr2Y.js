@@ -1,1 +1,0 @@
-import{b as r,j as o}from"./app-lj_X0E39.js";import{P as s}from"./pagination-B3CtXxI-.js";import"./iconBase-0uuikald.js";function m(){const{job_offers:t}=r(n=>n.job_postings);return o.jsx(o.Fragment,{children:o.jsx(s,{data:t})})}export{m as default};

@@ -71,6 +71,7 @@ export default function UpdateEmployee({ props_data }) {
                         </nav>
                     </div>
 
+
                     {/* Interactive Tab Content Panels */}
                     <div className="bg-white rounded-b-xl py-4 shadow-sm min-h-[220px]">
                         {activeTab === 'employee' && (

@@ -4,7 +4,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import MenuSection from "./menu-section";
 
-export default function TableSection() {
+export default function TableSection({ isloading }) {
     const { teams } = useSelector((store) => store.departments);
     const { data } = useSelector((store) => store.app);
 
@@ -48,7 +48,7 @@ export default function TableSection() {
                         ? new Date(item.created_at).toLocaleDateString()
                         : "N/A",
                     action: (
-                       <MenuSection props_data={item}/>
+                        <MenuSection props_data={item} />
                     ),
                 };
             })
@@ -56,7 +56,9 @@ export default function TableSection() {
 
     return (
         <div className="w-full">
-            <Table columns={columns} data={formattedTeams} />
+            <Table
+                isloading={isloading}
+                columns={columns} data={formattedTeams} />
         </div>
     );
 }

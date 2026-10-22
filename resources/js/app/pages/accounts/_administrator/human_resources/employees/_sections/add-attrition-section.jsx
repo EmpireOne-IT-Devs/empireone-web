@@ -42,9 +42,9 @@ const TERMINATION_REASONS = [
 export default function AddAttritionSection({ props_data, onAction }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
-    const { leaders } = useSelector((store) => store.human_resources);
     const { data } = useSelector((store) => store.app);
 
+    
     const {
         register,
         handleSubmit,
@@ -78,11 +78,11 @@ export default function AddAttritionSection({ props_data, onAction }) {
 
     // Leader options for upper modal form controls
     const leaderOptions = useMemo(() => {
-        return leaders?.map((res) => ({
+        return data?.leaders?.map((res) => ({
             label: `${res?.employee?.personal_information?.first_name || ''} ${res?.employee?.personal_information?.last_name || ''}`.trim() || res?.user?.name,
             value: res.id,
         })) || [];
-    }, [leaders]);
+    }, [data?.leaders]);
 
     // Filter out departments that are already added to the clearance table
     const availableDepartmentOptions = useMemo(() => {
