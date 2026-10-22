@@ -99,9 +99,28 @@ class PMReachController extends Controller
         ]);
     }
 
-    public function get_reach_specific_leader()
+    public function get_reach_specific_leader(Request $request)
     {
-        $reaches = PMReach::where('created_by', Auth::id())->paginate();
+        // Initialize the query builder using ::query() instead of ::get()
+        $query = PMReach::query();
+
+        // If 'all' is not true, filter by the logged-in user
+        if (!$request->boolean('all')) {
+            $query->where('created_by', Auth::id());
+        }
+
+        // Filter by search term across first_name and last_name
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Eager load relationships before running paginate()
+        $reaches = $query->paginate($request->input('per_page', 10));
+
         return response()->json($reaches, 200);
     }
     public function store(Request $request)
