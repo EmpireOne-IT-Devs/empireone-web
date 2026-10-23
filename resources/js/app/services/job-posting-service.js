@@ -7,6 +7,13 @@ export async function change_status_service(data) {
     return await axios.post("/api/job/change_status", data);
 }
 
+export async function export_job_requisition_service(data) {
+    return await axios.post(
+        `/api/job/export_job_requisition${window.location.search}`,
+        data,
+    );
+}
+
 export async function get_erps_service() {
     return (await axios.get(`/api/job/get_erps${window.location.search}`)).data;
 }
