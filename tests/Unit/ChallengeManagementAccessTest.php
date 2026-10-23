@@ -20,6 +20,7 @@ it('allows challenge management only for departments 1 and 11', function () {
         ['user_id' => 101, 'department_id' => 1],
         ['user_id' => 111, 'department_id' => 11],
         ['user_id' => 102, 'department_id' => 2],
+        ['user_id' => 112, 'department_id' => 2],
     ]);
 
     $middleware = new EnsureChallengeManagementAccess();
@@ -27,14 +28,14 @@ it('allows challenge management only for departments 1 and 11', function () {
 
     foreach ([101, 111] as $userId) {
         $request = Request::create('/');
-        $request->setUserResolver(fn () => (object) ['id' => $userId]);
+        $request->setUserResolver(fn () => (object) ['id' => $userId, 'role' => 2]);
 
         expect($middleware->handle($request, $next)->getContent())->toBe('allowed');
     }
 
-    foreach ([102, 103] as $userId) {
+    foreach ([102, 103, 112] as $userId) {
         $request = Request::create('/');
-        $request->setUserResolver(fn () => (object) ['id' => $userId]);
+        $request->setUserResolver(fn () => (object) ['id' => $userId, 'role' => 2]);
 
         try {
             $middleware->handle($request, $next);
@@ -43,6 +44,11 @@ it('allows challenge management only for departments 1 and 11', function () {
             expect($exception->getStatusCode())->toBe(403);
         }
     }
+
+    $administratorRequest = Request::create('/');
+    $administratorRequest->setUserResolver(fn () => (object) ['id' => 112, 'role' => 1]);
+    expect($middleware->handle($administratorRequest, $next, 'administrator')->getContent())
+        ->toBe('allowed');
 
     Schema::drop('account_employees');
 });

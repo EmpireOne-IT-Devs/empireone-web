@@ -1,0 +1,1 @@
+import{b as n,j as t}from"./app-DBZnmsfX.js";import{P as i}from"./pagination-DH-uLlIX.js";import"./iconBase-BAVYhoPf.js";function p(){const{applicants:o}=n(a=>a.job_postings);return t.jsx(t.Fragment,{children:t.jsx(i,{data:o})})}export{p as default};

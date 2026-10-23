@@ -11,8 +11,12 @@ class EnsureChallengeManagementAccess
 {
     private const ALLOWED_DEPARTMENT_IDS = [1, 11];
 
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $access = 'department'): Response
     {
+        if ($access === 'administrator' && (int) $request->user()->role === 1) {
+            return $next($request);
+        }
+
         $departmentId = AccountEmployee::query()
             ->where('user_id', $request->user()->id)
             ->value('department_id');
