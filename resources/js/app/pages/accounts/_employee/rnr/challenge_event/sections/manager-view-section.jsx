@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import {
-    LayoutDashboard,
-    Settings,
-    Trophy,
-    BarChart3,
-    FileText,
-    LayoutGrid,
-    Archive,
-    UserRound,
-} from "lucide-react";
+    FiGrid as LayoutDashboard,
+    FiSettings as Settings,
+    FiBarChart2 as BarChart3,
+    FiFileText as FileText,
+    FiGrid as LayoutGrid,
+    FiArchive as Archive,
+    FiUser as UserRound,
+} from "react-icons/fi";
+import { FaTrophy as Trophy } from "react-icons/fa";
 
 import ChallengeEventSection from "./challenge-event-section";
 import CreateNewChallenge from "@/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge";

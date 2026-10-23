@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ArrowRight, CheckCircle2, Gift, Lock, Sparkles } from "lucide-react";
+import {
+    FiArrowRight as ArrowRight,
+    FiCheckCircle as CheckCircle2,
+    FiGift as Gift,
+    FiLock as Lock,
+    FiStar as Sparkles,
+} from "react-icons/fi";
 import Modal from "@/app/_components/modal";
 import { setAlert } from "@/app/redux/app-slice";
 import { join_engagement_reward_challenge_thunk } from "@/app/redux/engagement-thunk";

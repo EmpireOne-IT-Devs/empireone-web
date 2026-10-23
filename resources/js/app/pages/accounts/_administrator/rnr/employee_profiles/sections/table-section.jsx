@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Table from "@/app/_components/table";
 import Skeleton from "@/app/_components/skeleton";
-import { Star } from "lucide-react";
+import { FiStar as Star } from "react-icons/fi";
 import SearchSection from "./search-section";
 import { export_reward_challenge_employee_profiles_service } from "@/app/services/engagement-service";
 import { setAlert } from "@/app/redux/app-slice";

@@ -1,14 +1,12 @@
 import React from "react";
 import {
-  Flame,
-  Lightbulb,
-  Brain,
-  Sprout,
-  BookOpen,
-  Users,
-  Star,
-  Calendar,
-} from "lucide-react";
+  FiBookOpen,
+  FiCalendar,
+  FiStar,
+  FiUsers,
+  FiZap,
+} from "react-icons/fi";
+import { FaBrain, FaLightbulb, FaSeedling } from "react-icons/fa";
 import Card from "@/app/_components/card";
 import Skeleton from "@/app/_components/skeleton";
 import EditChallengeSection from "./edit-challenge-section";
@@ -18,31 +16,31 @@ import { htmlToPlainText } from "@/app/lib/rich-text";
 
 const CATEGORY_META = {
   Wellness: {
-    icon: Flame,
+    icon: FiZap,
     iconBg: "bg-emerald-50 text-orange-500",
     topBorderColor: "border-t-emerald-600",
     progressBg: "bg-emerald-500",
   },
   Innovation: {
-    icon: Lightbulb,
+    icon: FaLightbulb,
     iconBg: "bg-slate-100 text-yellow-500",
     topBorderColor: "border-t-indigo-600",
     progressBg: "bg-indigo-600",
   },
   Learning: {
-    icon: BookOpen,
+    icon: FiBookOpen,
     iconBg: "bg-purple-50 text-purple-600",
     topBorderColor: "border-t-purple-600",
     progressBg: "bg-purple-600",
   },
   Teamwork: {
-    icon: Brain,
+    icon: FaBrain,
     iconBg: "bg-red-50 text-pink-400",
     topBorderColor: "border-t-amber-500",
     progressBg: "bg-amber-500",
   },
   Sales: {
-    icon: Sprout,
+    icon: FaSeedling,
     iconBg: "bg-teal-50 text-teal-600",
     topBorderColor: "border-t-teal-600",
     progressBg: "bg-teal-600",
@@ -50,7 +48,7 @@ const CATEGORY_META = {
 };
 
 const DEFAULT_CATEGORY_META = {
-  icon: Star,
+  icon: FiStar,
   iconBg: "bg-slate-100 text-slate-500",
   topBorderColor: "border-t-slate-400",
   progressBg: "bg-slate-500",
@@ -154,17 +152,17 @@ export default function ChallengesGridSection({
                     {/* Stats */}
                     <div className="flex items-center gap-4 text-xs font-medium text-slate-400 mb-4">
                       <div className="flex items-center gap-1">
-                        <Users className="w-3.5 h-3.5 text-slate-400" />
+                        <FiUsers className="w-3.5 h-3.5 text-slate-400" />
                         <span>
                           {participantsCount}/{capacity ?? "∞"}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                        <FiStar className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                         <span>{challenge.points} pts</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                        <FiCalendar className="w-3.5 h-3.5 text-slate-400" />
                         <span>{formatDate(challenge.deadline)}</span>
                       </div>
                     </div>

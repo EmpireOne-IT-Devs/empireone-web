@@ -1,7 +1,7 @@
 import React from "react";
 import { TbSearch } from "react-icons/tb";
 import Input from "@/app/_components/input";
-import { Download } from "lucide-react";
+import { FiDownload as Download } from "react-icons/fi";
 import Button from "@/app/_components/button";
 
 export default function SearchSection({ search, onSearchChange, exporting, onExport }) {

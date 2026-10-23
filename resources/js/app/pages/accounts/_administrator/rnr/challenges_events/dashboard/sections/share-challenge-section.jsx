@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link2, Check } from "lucide-react";
+import { FiCheck, FiLink2 } from "react-icons/fi";
 
 export default function ShareChallengeSection({ challenge }) {
     const [copied, setCopied] = useState(false);
@@ -31,7 +31,7 @@ export default function ShareChallengeSection({ challenge }) {
             aria-label="Copy challenge link"
             title={copied ? "Link copied!" : "Copy challenge link"}
         >
-            {copied ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+            {copied ? <FiCheck className="w-3.5 h-3.5" /> : <FiLink2 className="w-3.5 h-3.5" />}
         </button>
     );
 }

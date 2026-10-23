@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Check, Eye, X } from "lucide-react";
+import {
+    FiCheck as Check,
+    FiEye as Eye,
+    FiX as X,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Badge from "@/app/_components/badge";
 import Skeleton from "@/app/_components/skeleton";

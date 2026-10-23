@@ -1,6 +1,18 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { TrendingUp, Users, Star, Flame, Lightbulb, Brain, Sprout, BookOpen, Trophy } from "lucide-react";
+import {
+    FiTrendingUp as TrendingUp,
+    FiUsers as Users,
+    FiStar as Star,
+    FiBookOpen as BookOpen,
+} from "react-icons/fi";
+import {
+    FaFire as Flame,
+    FaLightbulb as Lightbulb,
+    FaBrain as Brain,
+    FaSeedling as Sprout,
+    FaTrophy as Trophy,
+} from "react-icons/fa";
 import { get_engagement_reward_challenge_report_thunk } from "@/app/redux/engagement-thunk";
 import Skeleton from "@/app/_components/skeleton";
 

@@ -2,7 +2,11 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import TextArea from "@/app/_components/textarea";
-import { HeartIcon, SparklesIcon, Star } from "lucide-react";
+import {
+    FiHeart as HeartIcon,
+    FiStar as SparklesIcon,
+    FiStar as Star,
+} from "react-icons/fi";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { FaPaperPlane } from "react-icons/fa6";

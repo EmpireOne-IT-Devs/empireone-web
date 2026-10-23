@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { ArrowLeftIcon,  CheckIcon, Flag } from "lucide-react";
+import {
+    FiArrowLeft as ArrowLeftIcon,
+    FiCheck as CheckIcon,
+    FiFlag as Flag,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Checkbox from "@/app/_components/checkbox";
 import moment from "moment/moment";

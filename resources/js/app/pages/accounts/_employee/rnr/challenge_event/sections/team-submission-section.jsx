@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ImagePlus, Users, X } from "lucide-react";
+import {
+    FiImage as ImagePlus,
+    FiUsers as Users,
+    FiX as X,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import TextArea from "@/app/_components/textarea";
 import { setAlert } from "@/app/redux/app-slice";

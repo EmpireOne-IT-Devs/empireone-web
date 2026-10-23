@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "@inertiajs/react";
-import { ArrowLeft, Eye, Users } from "lucide-react";
+import {
+    FiArrowLeft as ArrowLeft,
+    FiEye as Eye,
+    FiUsers as Users,
+} from "react-icons/fi";
 import moment from "moment";
 import Table from "@/app/_components/table";
 import Badge from "@/app/_components/badge";

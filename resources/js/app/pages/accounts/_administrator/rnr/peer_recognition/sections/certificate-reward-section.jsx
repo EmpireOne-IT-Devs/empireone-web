@@ -1,13 +1,13 @@
 import React, { useState, useRef, useMemo } from "react";
 import moment from "moment";
 import {
-    Award,
-    Printer,
-    Download,
-    ShieldCheck,
-    Search,
-    Loader2,
-} from "lucide-react";
+    FiAward as Award,
+    FiPrinter as Printer,
+    FiDownload as Download,
+    FiShield as ShieldCheck,
+    FiSearch as Search,
+    FiLoader as Loader2,
+} from "react-icons/fi";
 
 export const AWARD_MESSAGES = {
     // ── VALUES AWARDS ──

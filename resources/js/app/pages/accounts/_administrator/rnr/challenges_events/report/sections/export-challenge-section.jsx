@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import {
-    Download,
-    FileText,
-    BarChart3,
-} from "lucide-react";
+    FiDownload as Download,
+    FiFileText as FileText,
+    FiBarChart2 as BarChart3,
+} from "react-icons/fi";
 import { export_reward_challenge_report_service } from "@/app/services/engagement-service";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";

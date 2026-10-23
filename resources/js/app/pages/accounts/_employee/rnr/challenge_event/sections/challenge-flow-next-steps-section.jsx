@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@/app/_components/button";
-import { ArrowLeft } from "lucide-react";
+import { FiArrowLeft as ArrowLeft } from "react-icons/fi";
 import moment from "moment/moment";
 
 const NEXT_STEPS = (challenge) =>

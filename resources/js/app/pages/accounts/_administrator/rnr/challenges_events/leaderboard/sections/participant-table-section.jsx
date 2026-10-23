@@ -4,7 +4,11 @@ import moment from "moment";
 import Table from "@/app/_components/table";
 import Skeleton from "@/app/_components/skeleton";
 import Badge from "@/app/_components/badge";
-import { CheckCircle2, Medal, Trophy, Circle } from "lucide-react";
+import {
+    FiCheckCircle as CheckCircle2,
+    FiCircle as Circle,
+} from "react-icons/fi";
+import { FaMedal as Medal, FaTrophy as Trophy } from "react-icons/fa";
 
 
 const AVATAR_COLORS = [
