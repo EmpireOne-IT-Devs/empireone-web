@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Sparkles, Send } from 'lucide-react';
+import {
+    FiMessageCircle as MessageCircle,
+    FiX as X,
+    FiSend as Send,
+} from "react-icons/fi";
+import {
+    IoSparkles as Sparkles,
+} from "react-icons/io5";
 // import axios from 'axios'; // Make sure this is imported if using it in this file
 import { ask_ai_service } from '@/app/services/ai-service';
 

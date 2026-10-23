@@ -1,7 +1,12 @@
 import React from "react";
 import Card from "@/app/_components/card";
 import { motion } from "framer-motion";
-import { Quote, Star } from "lucide-react";
+import {
+    BsQuote as Quote,
+} from "react-icons/bs";
+import {
+    FiStar as Star,
+} from "react-icons/fi";
 
 /* =========================
    ANIMATION

@@ -12,7 +12,9 @@ import Wysiwyg from "@/app/_components/wysiwyg";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import Radio from "@/app/_components/radio";
 import { peso_format } from "@/app/lib/peso-format";
-import { BriefcaseIcon } from "lucide-react";
+import {
+    FiBriefcase as BriefcaseIcon,
+} from "react-icons/fi";
 import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
 

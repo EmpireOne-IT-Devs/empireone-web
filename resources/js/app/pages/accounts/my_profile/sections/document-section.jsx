@@ -1,4 +1,11 @@
-import { FileBadge, FileCheck, User, Calendar } from "lucide-react";
+import {
+    FiAward as FileBadge,
+    FiUser as User,
+    FiCalendar as Calendar,
+} from "react-icons/fi";
+import {
+    BsFileCheck as FileCheck,
+} from "react-icons/bs";
 import React from "react";
 import Input from "@/app/_components/input";
 import ImageUpload from "@/app/_components/image-upload";

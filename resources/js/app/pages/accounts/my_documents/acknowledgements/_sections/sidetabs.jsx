@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, FileText, Menu, X, CheckCircle2 } from 'lucide-react'; // Added CheckCircle2
+import {
+    FiChevronDown as ChevronDown,
+    FiFileText as FileText,
+    FiMenu as Menu,
+    FiX as X,
+    FiCheckCircle as CheckCircle2,
+} from "react-icons/fi"; // Added CheckCircle2
 import AcceptAcknowledgementSection from './accept-acknowledgement-section';
 
 const SidebarItem = ({

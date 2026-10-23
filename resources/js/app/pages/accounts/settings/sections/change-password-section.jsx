@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import {
+    FiEye as Eye,
+    FiEyeOff as EyeOff,
+    FiLock as Lock,
+} from "react-icons/fi";
 import Input from "@/app/_components/input";
 import Button from "@/app/_components/button";
 

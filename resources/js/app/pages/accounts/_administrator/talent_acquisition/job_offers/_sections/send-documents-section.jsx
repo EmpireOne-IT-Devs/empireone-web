@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa6";
-import { InfoIcon, MailIcon, SendIcon } from "lucide-react";
+import {
+    FiInfo as InfoIcon,
+    FiMail as MailIcon,
+    FiSend as SendIcon,
+} from "react-icons/fi";
 
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";

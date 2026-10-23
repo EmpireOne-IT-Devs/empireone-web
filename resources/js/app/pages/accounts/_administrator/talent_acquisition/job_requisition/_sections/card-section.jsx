@@ -1,5 +1,9 @@
 import Card from "@/app/_components/card";
-import { CheckCircle, Clipboard, XCircleIcon } from "lucide-react";
+import {
+    FiCheckCircle as CheckCircle,
+    FiClipboard as Clipboard,
+    FiXCircle as XCircleIcon,
+} from "react-icons/fi";
 import React, { useEffect } from "react";
 import { TbClock, TbRefresh } from "react-icons/tb";
 import { useSelector } from "react-redux";

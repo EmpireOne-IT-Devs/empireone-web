@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
-import { CalendarX2 } from "lucide-react";
+import {
+    FiCalendar as CalendarX2,
+} from "react-icons/fi";
 import Skeleton from "@/app/_components/skeleton";
 import { get_attendance_logs_service } from "@/app/services/attendance-service";
 import FilterLogDate from "./filter-log-date";

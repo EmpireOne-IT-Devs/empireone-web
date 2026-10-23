@@ -4,7 +4,12 @@ import store from "@/app/store/store";
 import { get_location_thunk } from "@/app/redux/app-thunk";
 import { useSelector } from "react-redux";
 import { router } from "@inertiajs/react";
-import { MapPin, ChevronRight, ChevronLeft, LifeBuoy } from "lucide-react";
+import {
+    FiMapPin as MapPin,
+    FiChevronRight as ChevronRight,
+    FiChevronLeft as ChevronLeft,
+    FiLifeBuoy as LifeBuoy,
+} from "react-icons/fi";
 
 export default function LocationPage() {
     const { locations = [] } = useSelector((store) => store.app);

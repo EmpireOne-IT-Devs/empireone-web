@@ -5,7 +5,11 @@ import { router } from "@inertiajs/react";
 import store from "@/app/store/store";
 import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
 import { setJobPostingId } from "@/app/redux/app-slice";
-import { ChevronDown, Eye, EyeOff } from "lucide-react";
+import {
+    FiChevronDown as ChevronDown,
+    FiEye as Eye,
+    FiEyeOff as EyeOff,
+} from "react-icons/fi";
 /* =========================
    HELPERS
 ========================= */

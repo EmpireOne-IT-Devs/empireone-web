@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
-import { Heart, MessageSquare } from "lucide-react";
+import {
+    FiHeart as Heart,
+    FiMessageSquare as MessageSquare,
+} from "react-icons/fi";
 import { LuSparkles } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
 

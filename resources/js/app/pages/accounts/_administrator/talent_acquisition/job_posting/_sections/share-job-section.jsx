@@ -13,7 +13,9 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Gmail } from "@thesvg/react";
-import { MailIcon } from "lucide-react";
+import {
+    FiMail as MailIcon,
+} from "react-icons/fi";
 
 export default function ShareJobSection({ data }) {
     const [open, setOpen] = useState(false);

@@ -1,5 +1,10 @@
 import React from "react";
-import { ArrowLeft, ClipboardList } from "lucide-react";
+import {
+    FiArrowLeft as ArrowLeft,
+} from "react-icons/fi";
+import {
+    FaClipboardList as ClipboardList,
+} from "react-icons/fa";
 import { router } from "@inertiajs/react";
 import { useDispatch, useSelector } from "react-redux";
 import {

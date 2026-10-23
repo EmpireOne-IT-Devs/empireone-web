@@ -1,5 +1,9 @@
 import React, { useState, useRef, forwardRef } from "react";
-import { Upload, X, FileWarning } from "lucide-react";
+import {
+    FiUpload as Upload,
+    FiX as X,
+    FiAlertTriangle as FileWarning,
+} from "react-icons/fi";
 
 const ImageUpload = forwardRef(
   ({ label, name, error, onChange, onBlur, ...props }, ref) => {

@@ -1,4 +1,6 @@
-import { Search } from "lucide-react";
+import {
+    FiSearch as Search,
+} from "react-icons/fi";
 import React, { useState } from "react";
 import { router } from "@inertiajs/react";
 

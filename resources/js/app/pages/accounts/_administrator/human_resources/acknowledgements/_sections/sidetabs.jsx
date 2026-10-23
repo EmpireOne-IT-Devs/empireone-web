@@ -1,5 +1,10 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { ChevronDown, FileText, Menu, X } from "lucide-react";
+import {
+    FiChevronDown as ChevronDown,
+    FiFileText as FileText,
+    FiMenu as Menu,
+    FiX as X,
+} from "react-icons/fi";
 import { Transition } from "@headlessui/react";
 import { FaRegWindowClose } from "react-icons/fa";
 import AddSubAknowledgementSection from "./add-sub-acknowledgement-section";

@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { ClipboardCheckIcon } from "lucide-react";
+import {
+    FiCheckSquare as ClipboardCheckIcon,
+} from "react-icons/fi";
 import { FaPencil } from "react-icons/fa6";
 
 import Button from "@/app/_components/button";

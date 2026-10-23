@@ -16,7 +16,9 @@ import TableSection from "./sections/table-section";
 import HistorySection from "./sections/history-section";
 import Pagination from "@/app/_components/pagination";
 import Button from "@/app/_components/button";
-import { ClipboardList } from "lucide-react";
+import {
+    FaClipboardList as ClipboardList,
+} from "react-icons/fa";
 import Tabs from "@/app/_components/tabs";
 
 export default function Page() {

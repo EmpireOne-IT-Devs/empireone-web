@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Loader2 } from 'lucide-react';
+import {
+    FiCheckCircle as CheckCircle2,
+    FiLoader as Loader2,
+} from "react-icons/fi";
 import Button from '@/app/_components/button'
 import Modal from '@/app/_components/modal';
 import store from '@/app/store/store';

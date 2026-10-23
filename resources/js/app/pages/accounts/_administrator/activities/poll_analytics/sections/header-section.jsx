@@ -1,5 +1,7 @@
 import React from "react";
-import { BarChart3 } from "lucide-react";
+import {
+    FiBarChart2 as BarChart3,
+} from "react-icons/fi";
 
 export default function HeaderSection() {
     return (

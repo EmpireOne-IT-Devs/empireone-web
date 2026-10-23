@@ -1,5 +1,7 @@
 import React from 'react';
-import { Download } from 'lucide-react';
+import {
+    FiDownload as Download,
+} from "react-icons/fi";
 
 export default function ExportApplicantSection() {
     return (

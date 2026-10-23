@@ -1,5 +1,10 @@
 import React from "react";
-import { Briefcase, Clipboard, InboxIcon, Mail } from "lucide-react";
+import {
+    FiBriefcase as Briefcase,
+    FiClipboard as Clipboard,
+    FiInbox as InboxIcon,
+    FiMail as Mail,
+} from "react-icons/fi";
 import Card from "@/app/_components/card";
 import { useSelector } from "react-redux";
 

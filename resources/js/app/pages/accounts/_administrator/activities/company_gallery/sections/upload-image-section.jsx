@@ -6,7 +6,14 @@ import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import { create_company_gallery } from "@/app/services/engagement-gallery-service";
 import { setAlert } from "@/app/redux/app-slice";
-import { Download, Images, UploadCloud, X } from "lucide-react";
+import {
+    FiDownload as Download,
+    FiUploadCloud as UploadCloud,
+    FiX as X,
+} from "react-icons/fi";
+import {
+    FaImages as Images,
+} from "react-icons/fa";
 
 const ALLOWED_TYPES = new Set([
   "image/jpeg",

@@ -5,7 +5,9 @@ import { useSelector } from "react-redux";
 import ShowApplicantDetailsSection from "./show-applicant-details-section";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
-import { Calendar } from "lucide-react";
+import {
+    FiCalendar as Calendar,
+} from "react-icons/fi";
 
 export default function TableSection() {
     const { applications } = useSelector((store) => store.applicants);

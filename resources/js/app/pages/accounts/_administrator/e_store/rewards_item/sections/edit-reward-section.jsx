@@ -1,7 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
-import { Pencil, Store, UploadCloud, X } from "lucide-react";
+import {
+    BsPencil as Pencil,
+} from "react-icons/bs";
+import {
+    FaStore as Store,
+} from "react-icons/fa";
+import {
+    FiUploadCloud as UploadCloud,
+    FiX as X,
+} from "react-icons/fi";
 import Modal from "@/app/_components/modal";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";

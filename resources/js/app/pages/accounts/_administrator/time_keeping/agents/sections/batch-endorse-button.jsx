@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { CheckCheck } from "lucide-react";
+import {
+    FiCheckSquare as CheckCheck,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 
 export default function BatchEndorseButton({ selectedCount, onClick, loading }) {

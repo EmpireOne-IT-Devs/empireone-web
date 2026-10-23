@@ -1,7 +1,13 @@
 import Table from "@/app/_components/table";
 import Skeleton from "@/app/_components/skeleton";
 import React, { useEffect } from "react";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import {
+    FiEye as Eye,
+    FiTrash2 as Trash2,
+} from "react-icons/fi";
+import {
+    BsPencil as Pencil,
+} from "react-icons/bs";
 import { Link } from "@inertiajs/react";
 import { useDispatch, useSelector } from "react-redux";
 import {

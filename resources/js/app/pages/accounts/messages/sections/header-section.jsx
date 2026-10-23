@@ -1,5 +1,7 @@
 import React from "react";
-import { MessageCircle } from "lucide-react";
+import {
+    FiMessageCircle as MessageCircle,
+} from "react-icons/fi";
 
 export default function HeaderSection() {
     return (

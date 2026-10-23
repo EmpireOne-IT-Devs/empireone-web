@@ -1,5 +1,9 @@
 import React from "react";
-import { Clock, MapPin, Users } from "lucide-react";
+import {
+    FiClock as Clock,
+    FiMapPin as MapPin,
+    FiUsers as Users,
+} from "react-icons/fi";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
 

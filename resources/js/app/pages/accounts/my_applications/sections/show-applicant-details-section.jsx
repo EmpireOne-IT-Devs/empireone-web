@@ -1,6 +1,8 @@
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
-import { Clipboard } from "lucide-react";
+import {
+    FiClipboard as Clipboard,
+} from "react-icons/fi";
 import moment from "moment";
 import React, { useState } from "react";
 

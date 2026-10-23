@@ -1,5 +1,7 @@
 import React from "react";
-import { Pencil } from "lucide-react";
+import {
+    BsPencil as Pencil,
+} from "react-icons/bs";
 
 /**
  * Dropdown menu item that opens the shared survey form modal pre-filled with

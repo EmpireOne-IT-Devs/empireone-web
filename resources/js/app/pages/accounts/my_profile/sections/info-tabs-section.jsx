@@ -1,5 +1,7 @@
 import Tabs from "@/app/_components/tabs";
-import { Sparkles } from "lucide-react";
+import {
+    IoSparkles as Sparkles,
+} from "react-icons/io5";
 import React, { useEffect, useState } from "react";
 import PersonalInfoSection from "./personal-info-section";
 import ProfessionalSection from "./professional-section";

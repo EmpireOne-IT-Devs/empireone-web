@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Download, MapPin, Users } from "lucide-react";
+import {
+    FiDownload as Download,
+    FiMapPin as MapPin,
+    FiUsers as Users,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Skeleton from "@/app/_components/skeleton";
 import {

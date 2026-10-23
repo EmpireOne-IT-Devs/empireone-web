@@ -1,4 +1,6 @@
-import { Calendar } from "lucide-react"; // Using standard Calendar matching the exact icon shape
+import {
+    FiCalendar as Calendar,
+} from "react-icons/fi"; // Using standard Calendar matching the exact icon shape
 import React from "react";
 
 export default function HeaderSection() {

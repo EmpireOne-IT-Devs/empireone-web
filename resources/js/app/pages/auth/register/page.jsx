@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-    ArrowLeft,
-    ArrowRight,
-    BriefcaseBusiness,
-    IdCard,
-    Mail,
-    UserRound,
-} from "lucide-react";
+    FiArrowLeft as ArrowLeft,
+    FiArrowRight as ArrowRight,
+    FiBriefcase as BriefcaseBusiness,
+    FiMail as Mail,
+    FiUser as UserRound,
+} from "react-icons/fi";
+import {
+    FaIdCard as IdCard,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";

@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
-import { Cake, Edit2, Send } from "lucide-react";
+import {
+    MdCake as Cake,
+} from "react-icons/md";
+import {
+    FiEdit2 as Edit2,
+    FiSend as Send,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux"; // Added useDispatch
 import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";

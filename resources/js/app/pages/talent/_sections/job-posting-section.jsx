@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { setJobPostingId } from "@/app/redux/app-slice";
 import {
-    ArrowDown,
-    Briefcase,
-    Clock,
-    DollarSign,
-    MapPin,
-    Send,
-} from "lucide-react";
+    FiArrowDown as ArrowDown,
+    FiBriefcase as Briefcase,
+    FiClock as Clock,
+    FiDollarSign as DollarSign,
+    FiMapPin as MapPin,
+    FiSend as Send,
+} from "react-icons/fi";
 import { TbUsers } from "react-icons/tb";
 
 const SectionCard = ({ label, icon, children }) => (

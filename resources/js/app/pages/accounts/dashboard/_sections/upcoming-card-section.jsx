@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { CalendarDays, MapPin, Clock, ChevronRight } from "lucide-react";
+import {
+    FiCalendar as CalendarDays,
+    FiMapPin as MapPin,
+    FiClock as Clock,
+    FiChevronRight as ChevronRight,
+} from "react-icons/fi";
 
 const events = [
     {

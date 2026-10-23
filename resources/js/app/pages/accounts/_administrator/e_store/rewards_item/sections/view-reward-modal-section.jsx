@@ -1,11 +1,13 @@
 import React from "react";
 import {
-    Image as ImageIcon,
-    Star,
-    Sparkles,
-    Package,
-    ShieldAlert,
-} from "lucide-react";
+    FiImage as ImageIcon,
+    FiStar as Star,
+    FiPackage as Package,
+    FiShield as ShieldAlert,
+} from "react-icons/fi";
+import {
+    IoSparkles as Sparkles,
+} from "react-icons/io5";
 import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
 

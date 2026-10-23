@@ -1,6 +1,8 @@
 import { Link } from "@inertiajs/react";
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import {
+    FiChevronDown as ChevronDown,
+} from "react-icons/fi";
 
 export default function Tabs({ tabs, children }) {
     const [openDropdown, setOpenDropdown] = useState(null);

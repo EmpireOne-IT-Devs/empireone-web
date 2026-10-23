@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Skeleton from "@/app/_components/skeleton";
-import { X, Star, UserCircle2 } from "lucide-react";
+import {
+    FiX as X,
+    FiStar as Star,
+    FiUser as UserCircle2,
+} from "react-icons/fi";
 
 export default function EmployeeAnswerViewer({ surveyId, userId, onClose }) {
     const [data, setData] = useState(null);

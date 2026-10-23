@@ -1,5 +1,11 @@
 import Card from "@/app/_components/card";
-import { CheckCircle, Clock, Ticket } from "lucide-react";
+import {
+    FiCheckCircle as CheckCircle,
+    FiClock as Clock,
+} from "react-icons/fi";
+import {
+    BsTicket as Ticket,
+} from "react-icons/bs";
 import React from "react";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { FiUsers } from "react-icons/fi";

@@ -27,7 +27,9 @@ import Tooltip from "@/app/_components/tooltip";
 import { Link, router } from "@inertiajs/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
-import { PackageIcon } from "lucide-react";
+import {
+    FiPackage as PackageIcon,
+} from "react-icons/fi";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");

@@ -1,4 +1,6 @@
-import { UploadCloud } from "lucide-react";
+import {
+    FiUploadCloud as UploadCloud,
+} from "react-icons/fi";
 import React from "react";
 import AddDocumentSection from "./add-document-section";
 

@@ -1,19 +1,23 @@
 ﻿import React, { useRef, useState, useEffect } from "react";
 import {
-    Send,
-    CalendarDays,
-    Newspaper,
-    Megaphone,
-    User,
-    ImagePlus,
-    X,
-    Tag,
-    BarChart2,
-    Plus,
-    Trash2,
-    ChevronDown,
-    Clock,
-} from "lucide-react";
+    FiSend as Send,
+    FiCalendar as CalendarDays,
+    FiUser as User,
+    FiImage as ImagePlus,
+    FiX as X,
+    FiTag as Tag,
+    FiBarChart2 as BarChart2,
+    FiPlus as Plus,
+    FiTrash2 as Trash2,
+    FiChevronDown as ChevronDown,
+    FiClock as Clock,
+} from "react-icons/fi";
+import {
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
+import {
+    BsMegaphone as Megaphone,
+} from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { setAlert } from "@/app/redux/app-slice";

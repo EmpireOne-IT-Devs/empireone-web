@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { BarChart2 } from "lucide-react";
+import {
+    FiChevronLeft as ChevronLeft,
+    FiChevronRight as ChevronRight,
+} from "react-icons/fi";
+import {
+    FiBarChart2 as BarChart2,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Skeleton from "@/app/_components/skeleton";

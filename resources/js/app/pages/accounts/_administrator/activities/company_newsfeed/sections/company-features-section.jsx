@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Award,
-    Heart,
-    MessageCircle,
-    Share2,
-    ChevronLeft,
-    ChevronRight,
-    X,
-} from "lucide-react";
+    FiAward as Award,
+    FiHeart as Heart,
+    FiMessageCircle as MessageCircle,
+    FiShare2 as Share2,
+    FiChevronLeft as ChevronLeft,
+    FiChevronRight as ChevronRight,
+    FiX as X,
+} from "react-icons/fi";
 import Badge from "@/app/_components/badge";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";

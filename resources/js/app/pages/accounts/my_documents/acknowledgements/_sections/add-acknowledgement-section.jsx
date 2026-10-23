@@ -4,7 +4,10 @@ import { setAlert } from '@/app/redux/app-slice'
 import { get_acknowledgement_thunk } from '@/app/redux/employee-relation-thunk'
 import { add_acknowledgement_service } from '@/app/services/employee-relation-service'
 import store from '@/app/store/store'
-import { Plus, Trash2 } from 'lucide-react'
+import {
+    FiPlus as Plus,
+    FiTrash2 as Trash2,
+} from "react-icons/fi";
 import React, { useState } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useDispatch } from 'react-redux'

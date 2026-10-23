@@ -1,5 +1,7 @@
 import React from "react";
-import { Settings } from "lucide-react";
+import {
+    FiSettings as Settings,
+} from "react-icons/fi";
 
 export default function HeaderSection() {
     return (

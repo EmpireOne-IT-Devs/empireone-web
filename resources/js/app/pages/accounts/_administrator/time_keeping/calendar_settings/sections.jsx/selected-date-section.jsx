@@ -2,7 +2,10 @@ import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";
-import { Calendar, Trash2 } from "lucide-react";
+import {
+    FiCalendar as Calendar,
+    FiTrash2 as Trash2,
+} from "react-icons/fi";
 import moment from "moment";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";

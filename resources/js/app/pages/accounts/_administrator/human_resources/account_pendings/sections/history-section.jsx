@@ -2,7 +2,9 @@ import Badge from "@/app/_components/badge";
 import Table from "@/app/_components/table";
 import { Link } from "@inertiajs/react";
 import moment from "moment";
-import { History } from "lucide-react";
+import {
+    FaHistory as History,
+} from "react-icons/fa";
 
 export default function HistorySection({ data, loading, pendingUrl }) {
   const columns = [

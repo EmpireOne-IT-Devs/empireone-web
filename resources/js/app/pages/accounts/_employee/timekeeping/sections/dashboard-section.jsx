@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { useSelector } from "react-redux";
-import { Building2, Briefcase, User, CalendarX2 } from "lucide-react";
+import {
+    FiHome as Building2,
+    FiBriefcase as Briefcase,
+    FiUser as User,
+    FiCalendar as CalendarX2,
+} from "react-icons/fi";
 import Skeleton from "@/app/_components/skeleton";
 import { get_attendance_logs_service } from "@/app/services/attendance-service";
 

@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import {
-    Megaphone,
-    Heart,
-    AlertTriangle,
-    ChevronRight,
-    Sparkles,
-} from "lucide-react";
+    BsMegaphone as Megaphone,
+} from "react-icons/bs";
+import {
+    FiHeart as Heart,
+    FiAlertTriangle as AlertTriangle,
+    FiChevronRight as ChevronRight,
+} from "react-icons/fi";
+import {
+    IoSparkles as Sparkles,
+} from "react-icons/io5";
 
 const announcements = [
     {

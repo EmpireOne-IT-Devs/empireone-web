@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Clock, LogIn, LogOut, TriangleAlert } from "lucide-react";
+import {
+    FiClock as Clock,
+    FiLogIn as LogIn,
+    FiLogOut as LogOut,
+    FiAlertTriangle as TriangleAlert,
+} from "react-icons/fi";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";

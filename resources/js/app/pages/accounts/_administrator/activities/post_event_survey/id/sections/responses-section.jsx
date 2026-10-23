@@ -6,7 +6,10 @@ import moment from "moment";
 import EmployeeAnswerViewer from "./employee-answer-viewer";
 import PaginationSection from "./pagination-section";
 import Button from "@/app/_components/button";
-import { Star, Download } from "lucide-react";
+import {
+    FiStar as Star,
+    FiDownload as Download,
+} from "react-icons/fi";
 
 const STATUS_STYLES = {
     Completed: "bg-green-100 text-green-600",

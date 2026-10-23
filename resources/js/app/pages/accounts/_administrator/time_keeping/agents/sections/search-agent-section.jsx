@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Select as AntSelect } from "antd";
-import { Search } from "lucide-react";
+import {
+    FiSearch as Search,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import FilterAttendanceDate from "./filter-attendance-date";

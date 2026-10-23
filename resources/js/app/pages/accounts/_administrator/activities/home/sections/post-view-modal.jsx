@@ -1,5 +1,15 @@
 import React from "react";
-import { Megaphone, CalendarDays, Newspaper, Send, Tag } from "lucide-react";
+import {
+    BsMegaphone as Megaphone,
+} from "react-icons/bs";
+import {
+    FiCalendar as CalendarDays,
+    FiSend as Send,
+    FiTag as Tag,
+} from "react-icons/fi";
+import {
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
 import Modal from "@/app/_components/modal";
 import Badge from "@/app/_components/badge";
 import PostInteractionPanel from "../../_components/post-interaction-panel";

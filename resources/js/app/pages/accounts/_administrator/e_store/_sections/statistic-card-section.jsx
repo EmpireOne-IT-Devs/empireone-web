@@ -1,6 +1,9 @@
 import React from "react";
 import { CubeIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
-import { ShoppingBag, DollarSign } from "lucide-react";
+import {
+    FiShoppingBag as ShoppingBag,
+    FiDollarSign as DollarSign,
+} from "react-icons/fi";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import Card from "@/app/_components/card";
 

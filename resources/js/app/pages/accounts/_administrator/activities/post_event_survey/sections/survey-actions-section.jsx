@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Menu } from "lucide-react";
+import {
+    FiMenu as Menu,
+} from "react-icons/fi";
 import EditSurveySection from "./edit-survey-section";
 import DuplicateSurveySection from "./duplicate-survey-section";
 import DeleteSurveySection from "./delete-survey-section";

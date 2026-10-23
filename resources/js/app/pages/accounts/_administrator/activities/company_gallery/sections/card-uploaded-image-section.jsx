@@ -1,15 +1,15 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import Card from "@/app/_components/card";
 import {
-    Calendar,
-    Folder,
-    Image as ImageIcon,
-    ChevronLeft,
-    ChevronRight,
-    X,
-    Maximize2,
-    Download,
-} from "lucide-react";
+    FiCalendar as Calendar,
+    FiFolder as Folder,
+    FiImage as ImageIcon,
+    FiChevronLeft as ChevronLeft,
+    FiChevronRight as ChevronRight,
+    FiX as X,
+    FiMaximize2 as Maximize2,
+    FiDownload as Download,
+} from "react-icons/fi";
 import Skeleton from "@/app/_components/skeleton";
 import { get_company_galleries } from "@/app/services/engagement-gallery-service";
 const getImageUrl = (item) => {

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { Search, Filter } from "lucide-react";
+import {
+    FiSearch as Search,
+    FiFilter as Filter,
+} from "react-icons/fi";
 import SearchSection from "./search-section";
 
 export default function TableSection() {

@@ -1,10 +1,12 @@
 import {
-    UserCircle,
-    MapPin,
-    User,
-    Calendar,
-    GraduationCap,
-} from "lucide-react";
+    FaUserCircle as UserCircle,
+    FaGraduationCap as GraduationCap,
+} from "react-icons/fa";
+import {
+    FiMapPin as MapPin,
+    FiUser as User,
+    FiCalendar as Calendar,
+} from "react-icons/fi";
 import React from "react";
 import Input from "@/app/_components/input";
 import Select from "@/app/_components/select";

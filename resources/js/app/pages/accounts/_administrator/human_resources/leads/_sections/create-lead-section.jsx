@@ -5,7 +5,9 @@ import { setAlert } from "@/app/redux/app-slice";
 import { get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 import { add_leader_service } from "@/app/services/er-leaders-service";
 import store from "@/app/store/store";
-import { ClipboardCheckIcon } from "lucide-react";
+import {
+    FiCheckSquare as ClipboardCheckIcon,
+} from "react-icons/fi";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";

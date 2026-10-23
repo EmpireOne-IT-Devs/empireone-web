@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Bell, CheckCircle, X, Info } from "lucide-react";
+import {
+    FiBell as Bell,
+    FiCheckCircle as CheckCircle,
+    FiX as X,
+    FiInfo as Info,
+} from "react-icons/fi";
 import { Link } from "@inertiajs/react";
 
 export default function VerifySection() {

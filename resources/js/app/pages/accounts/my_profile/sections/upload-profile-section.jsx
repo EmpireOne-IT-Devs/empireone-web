@@ -1,5 +1,8 @@
 import React, { useRef, useState } from "react";
-import { User, Camera } from "lucide-react";
+import {
+    FiUser as User,
+    FiCamera as Camera,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { upload_avatar_service } from "@/app/services/account-service";
 import { get_app_data_thunk } from "@/app/redux/app-thunk";

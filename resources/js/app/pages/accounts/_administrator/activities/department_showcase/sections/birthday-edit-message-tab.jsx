@@ -1,5 +1,7 @@
 import React from "react";
-import { Send } from "lucide-react";
+import {
+    FiSend as Send,
+} from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Button from "@/app/_components/button";
 import Wysiwyg from "@/app/_components/wysiwyg";

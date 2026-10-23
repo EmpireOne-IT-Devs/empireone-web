@@ -1,12 +1,14 @@
 import React from "react";
 import {
-    User,
-    BadgeCheck,
-    Building2,
-    Briefcase,
-    Calendar,
-    Clock3,
-} from "lucide-react";
+    FiUser as User,
+    FiHome as Building2,
+    FiBriefcase as Briefcase,
+    FiCalendar as Calendar,
+    FiClock as Clock3,
+} from "react-icons/fi";
+import {
+    FaCheckCircle as BadgeCheck,
+} from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 export default function EmployeeDetailsSection() {

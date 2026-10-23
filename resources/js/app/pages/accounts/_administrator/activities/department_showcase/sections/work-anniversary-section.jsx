@@ -1,5 +1,12 @@
 import React, { memo, useEffect, useMemo, useRef } from "react";
-import { Award, Medal, Calendar, Building2 } from "lucide-react";
+import {
+    FiAward as Award,
+    FiCalendar as Calendar,
+    FiHome as Building2,
+} from "react-icons/fi";
+import {
+    FaMedal as Medal,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Skeleton from "@/app/_components/skeleton";

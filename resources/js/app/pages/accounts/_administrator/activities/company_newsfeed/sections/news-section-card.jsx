@@ -1,5 +1,12 @@
     import React, { useEffect, useRef, useState } from "react";
-    import { Newspaper, Heart, MessageSquare, Share2 } from "lucide-react";
+    import {
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
+import {
+    FiHeart as Heart,
+    FiMessageSquare as MessageSquare,
+    FiShare2 as Share2,
+} from "react-icons/fi";
     import { useDispatch, useSelector } from "react-redux";
     import Card from "@/app/_components/card";
     import Badge from "@/app/_components/badge";

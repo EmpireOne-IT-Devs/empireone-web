@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Circle, Clock } from "lucide-react";
+import {
+    FiCheckCircle as CheckCircle,
+    FiCircle as Circle,
+    FiClock as Clock,
+} from "react-icons/fi";
 import Wysiwyg from "@/app/_components/wysiwyg";
 import Button from "@/app/_components/button";
 import { useForm } from "react-hook-form";

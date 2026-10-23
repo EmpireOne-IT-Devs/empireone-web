@@ -3,13 +3,15 @@ import Button from "@/app/_components/button";
 import React, { useState } from "react";
 import { TbEye } from "react-icons/tb";
 import {
-    Building,
-    Calendar,
-    CheckCircle,
-    Clock,
-    DollarSign,
-    MapPin,
-} from "lucide-react";
+    FaBuilding as Building,
+} from "react-icons/fa";
+import {
+    FiCalendar as Calendar,
+    FiCheckCircle as CheckCircle,
+    FiClock as Clock,
+    FiDollarSign as DollarSign,
+    FiMapPin as MapPin,
+} from "react-icons/fi";
 import { LuGraduationCap, LuBriefcase } from "react-icons/lu";
 import Badge from "@/app/_components/badge";
 import moment from "moment";

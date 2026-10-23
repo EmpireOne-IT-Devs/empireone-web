@@ -1,6 +1,9 @@
 import Card from "@/app/_components/card";
 import React from "react";
-import { AlertCircle, ExternalLink } from "lucide-react";
+import {
+    FiAlertCircle as AlertCircle,
+    FiExternalLink as ExternalLink,
+} from "react-icons/fi";
 
 const DUMMY_PENDING = [
     {

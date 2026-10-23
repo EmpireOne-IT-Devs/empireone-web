@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  ChevronDown, 
-  Eye, 
-  FileText, 
-  User, 
-  Mail, 
-  Building, 
-  Briefcase, 
-  MapPin 
-} from 'lucide-react';
+import {
+    FiCheckCircle as CheckCircle2,
+    FiXCircle as XCircle,
+    FiChevronDown as ChevronDown,
+    FiEye as Eye,
+    FiFileText as FileText,
+    FiUser as User,
+    FiMail as Mail,
+    FiBriefcase as Briefcase,
+    FiMapPin as MapPin,
+} from "react-icons/fi";
+import {
+    FaBuilding as Building,
+} from "react-icons/fa";
 
 export default function CardAcknowledgementSection() {
   const { employees } = useSelector((store) => store.human_resources);

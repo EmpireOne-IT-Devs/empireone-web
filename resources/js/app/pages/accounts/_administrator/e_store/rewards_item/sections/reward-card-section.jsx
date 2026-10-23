@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Image as ImageIcon, Star } from "lucide-react";
+import {
+    FiImage as ImageIcon,
+    FiStar as Star,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 
 import DeleteRewardSection from "./delete-reward-section";

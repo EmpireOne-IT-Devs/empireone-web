@@ -1,8 +1,8 @@
 import Sidetabs from './sidetabs'
 import React from 'react'
 import {
-    Book,
-} from 'lucide-react';
+    FiBook as Book,
+} from "react-icons/fi";
 import AddAcknowledgementSection from './add-acknowledgement-section';
 import { useSelector } from 'react-redux';
 

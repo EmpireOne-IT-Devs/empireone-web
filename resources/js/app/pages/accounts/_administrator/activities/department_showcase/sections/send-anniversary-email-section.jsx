@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePage } from "@inertiajs/react";
-import { Mail, PartyPopper } from "lucide-react";
+import {
+    FiMail as Mail,
+    FiGift as PartyPopper,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import Checkbox from "@/app/_components/checkbox";

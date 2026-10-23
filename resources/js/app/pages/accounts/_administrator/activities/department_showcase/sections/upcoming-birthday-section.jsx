@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { Cake } from "lucide-react";
+import {
+    MdCake as Cake,
+} from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import { get_upcoming_birthdays_thunk } from "@/app/redux/engagement-slice";

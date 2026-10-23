@@ -1,6 +1,12 @@
 ﻿import React, { useState, useEffect, useRef, useCallback } from "react";
 // Added Share2 import
-import { Heart, MessageSquare, Send, Share2, Trash2 } from "lucide-react";
+import {
+    FiHeart as Heart,
+    FiMessageSquare as MessageSquare,
+    FiSend as Send,
+    FiShare2 as Share2,
+    FiTrash2 as Trash2,
+} from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { usePage } from "@inertiajs/react";
 import { sync_post_interaction } from "@/app/redux/activities-slice";

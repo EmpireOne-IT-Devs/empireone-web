@@ -2,7 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import { Check, Inbox, UserX, X } from "lucide-react";
+import {
+    FiCheck as Check,
+    FiInbox as Inbox,
+    FiUserX as UserX,
+    FiX as X,
+} from "react-icons/fi";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Checkbox from "@/app/_components/checkbox";

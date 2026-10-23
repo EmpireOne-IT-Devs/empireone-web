@@ -8,7 +8,9 @@ import { setAlert } from "@/app/redux/app-slice";
 import { get_my_tickets_thunk } from "@/app/redux/tickets-thunk";
 import { create_tickets_service } from "@/app/services/tickets-service";
 import store from "@/app/store/store";
-import { Ticket } from "lucide-react";
+import {
+    BsTicket as Ticket,
+} from "react-icons/bs";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";

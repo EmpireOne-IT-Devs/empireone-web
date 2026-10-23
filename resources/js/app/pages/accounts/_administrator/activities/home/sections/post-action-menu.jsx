@@ -1,5 +1,11 @@
 import React, { useRef, useEffect } from "react";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import {
+    FiMoreHorizontal as MoreHorizontal,
+    FiTrash2 as Trash2,
+} from "react-icons/fi";
+import {
+    BsPencil as Pencil,
+} from "react-icons/bs";
 
 export default function PostActionMenu({
     open,
