@@ -1,24 +1,125 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import moment from "moment";
 import {
+    FiCalendar as CalendarIcon,
     FiDownload as Download,
     FiFilter as Filter,
 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "@/app/_components/select";
+import Alert from "@/app/_components/alert";
+import Badge from "@/app/_components/badge";
+import Button from "@/app/_components/button";
+import Pagination from "@/app/_components/pagination";
+import Skeleton from "@/app/_components/skeleton";
+import Table from "@/app/_components/table";
+import {
+    export_time_sheets_thunk,
+    get_time_sheets_thunk,
+} from "@/app/redux/time-sheet-thunk";
+
+const PER_PAGE = 20;
+
+const STATUS_OPTIONS = [
+    "Present",
+    "Late",
+    "Undertime",
+    "Absent",
+    "Day Off",
+    "On Leave",
+    "Clocked In",
+    "On Break",
+    "Holiday",
+];
+
+const NO_RECORD_STATUSES = ["Absent", "Day Off", "On Leave"];
+
+const STATUS_BADGE_VARIANTS = {
+    Present: "success",
+    Late: "warning",
+    Undertime: "info",
+    Absent: "danger",
+    "Day Off": "purple",
+    "On Leave": "secondary",
+    "Clocked In": "primary",
+    "On Break": "warning",
+};
+
+const EMPTY_FILTERS = {
+    employee_id: "",
+    start_date: "",
+    end_date: "",
+    status: "",
+};
+
+const formatMinutes = (minutes) => (minutes > 0 ? `${minutes} min` : "-");
 
 export default function TimeSheetSection() {
-    const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
-    const [dateRange, setDateRange] = useState({
-        startDate: "",
-        endDate: "",
-    });
-    const [status, setStatus] = useState("");
+    // `filters` is the editable draft; `applied` is what was last sent to the API.
+    const [filters, setFilters] = useState(EMPTY_FILTERS);
+    const [applied, setApplied] = useState(EMPTY_FILTERS);
+    const [page, setPage] = useState(1);
 
     const dispatch = useDispatch();
 
     const { employees, employeesLoading } = useSelector(
         (store) => store.human_resources,
     );
+    const {
+        items: rows,
+        meta,
+        summary: summaryData,
+        isLoading,
+        error,
+        isExporting,
+        exportError,
+    } = useSelector((store) => store.time_sheets);
+
+    const selectedEmployeeId = applied.employee_id;
+
+    useEffect(() => {
+        const params = { page, per_page: PER_PAGE };
+        Object.entries(applied).forEach(([key, value]) => {
+            if (value) params[key] = value;
+        });
+
+        dispatch(get_time_sheets_thunk(params));
+    }, [applied, page, dispatch]);
+
+    const updateFilter = (key, value) =>
+        setFilters((current) => ({ ...current, [key]: value }));
+
+    const applyFilters = (next = filters) => {
+        setApplied(next);
+        setPage(1);
+    };
+
+    const clearFilters = () => {
+        setFilters(EMPTY_FILTERS);
+        applyFilters(EMPTY_FILTERS);
+    };
+
+    const hasActiveFilters = Object.values(applied).some(Boolean);
+
+    // Exports the applied filters, not unapplied draft edits.
+    const handleExport = async () => {
+        const params = {};
+        Object.entries(applied).forEach(([key, value]) => {
+            if (value) params[key] = value;
+        });
+
+        const result = await dispatch(export_time_sheets_thunk(params));
+        if (!export_time_sheets_thunk.fulfilled.match(result)) return;
+
+        const url = window.URL.createObjectURL(result.payload.blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = result.payload.filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
+    };
 
     // Make sure employees is always an array
     const employeeList = Array.isArray(employees)
@@ -67,47 +168,59 @@ export default function TimeSheetSection() {
     );
 
     const summary = [
-        { title: "Working Days", value: 22 },
-        { title: "Present", value: 20 },
-        { title: "Late", value: 2 },
-        { title: "Overtime", value: "14.5 hrs" },
+        { title: "Working Days", value: summaryData.working_days },
+        { title: "Present", value: summaryData.present },
+        { title: "Late", value: summaryData.late },
+        { title: "Overtime", value: `${summaryData.overtime_hours} hrs` },
     ];
 
-    const data = [
+    const columns = [
         {
-            employee_id: "EMP001",
-            employee: "Juan Dela Cruz",
-            date: "July 20, 2026",
-            in: "8:01 AM",
-            breakOut: "12:00 PM",
-            breakIn: "1:00 PM",
-            out: "5:03 PM",
-            hours: "8.0",
-            status: "Present",
+            header: "Employee",
+            render: (row) => (
+                <div className="flex flex-col">
+                    <span className="font-medium text-gray-900">
+                        {row.employee_name || "-"}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                        {row.employee_id}
+                    </span>
+                </div>
+            ),
         },
         {
-            employee_id: "EMP002",
-            employee: "Maria Santos",
-            date: "July 20, 2026",
-            in: "8:15 AM",
-            breakOut: "12:03 PM",
-            breakIn: "1:02 PM",
-            out: "5:00 PM",
-            hours: "7.7",
-            status: "Late",
+            header: "Date",
+            render: (row) => moment(row.date).format("LL"),
+        },
+        { header: "Time In", render: (row) => row.clock_in || "-" },
+        { header: "Break Out", render: (row) => row.break_start || "-" },
+        { header: "Break In", render: (row) => row.break_end || "-" },
+        { header: "Time Out", render: (row) => row.clock_out || "-" },
+        {
+            header: "Hours",
+            render: (row) =>
+                row.worked_hours === null ? "-" : row.worked_hours.toFixed(2),
+        },
+        { header: "Late", render: (row) => formatMinutes(row.late_minutes) },
+        {
+            header: "Overtime",
+            render: (row) => formatMinutes(row.overtime_minutes),
+        },
+        {
+            header: "Status",
+            render: (row) => (
+                <Badge
+                    label={row.status}
+                    variant={STATUS_BADGE_VARIANTS[row.status] ?? "secondary"}
+                    outlined
+                />
+            ),
         },
     ];
 
-    // Filter timesheet data based on selected employee
-    const filteredData = data.filter((row) => {
-        const employeeMatch =
-            !selectedEmployeeId ||
-            String(row.employee_id) === String(selectedEmployeeId);
-
-        const statusMatch = !status || row.status === status;
-
-        return employeeMatch && statusMatch;
-    });
+    const isEmpty = !isLoading && !error && rows.length === 0;
+    const statusNeedsEmployee =
+        !selectedEmployeeId && NO_RECORD_STATUSES.includes(applied.status);
 
     return (
         <div className="space-y-6">
@@ -129,9 +242,11 @@ export default function TimeSheetSection() {
                             label="Select Employee"
                             name="employee_id"
                             options={sortedEmployeeOptions}
-                            value={selectedEmployeeId}
+                            value={filters.employee_id}
                             onChange={(value) => {
-                                setSelectedEmployeeId(value);
+                                const next = { ...filters, employee_id: value };
+                                setFilters(next);
+                                applyFilters(next);
                             }}
                             disabled={employeesLoading}
                         />
@@ -141,12 +256,11 @@ export default function TimeSheetSection() {
                     <div className="flex items-center gap-2">
                         <input
                             type="date"
-                            value={dateRange.startDate}
+                            aria-label="Start date"
+                            value={filters.start_date}
+                            max={filters.end_date || undefined}
                             onChange={(e) =>
-                                setDateRange({
-                                    ...dateRange,
-                                    startDate: e.target.value,
-                                })
+                                updateFilter("start_date", e.target.value)
                             }
                             className="h-11 px-3 border rounded-lg"
                         />
@@ -155,13 +269,11 @@ export default function TimeSheetSection() {
 
                         <input
                             type="date"
-                            value={dateRange.endDate}
-                            min={dateRange.startDate}
+                            aria-label="End date"
+                            value={filters.end_date}
+                            min={filters.start_date || undefined}
                             onChange={(e) =>
-                                setDateRange({
-                                    ...dateRange,
-                                    endDate: e.target.value,
-                                })
+                                updateFilter("end_date", e.target.value)
                             }
                             className="h-11 px-3 border rounded-lg"
                         />
@@ -169,42 +281,51 @@ export default function TimeSheetSection() {
 
                     {/* Status */}
                     <select
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value)}
+                        aria-label="Status"
+                        value={filters.status}
+                        onChange={(e) => updateFilter("status", e.target.value)}
                         className="h-11 min-w-[170px] px-3 border rounded-lg"
                     >
                         <option value="">All Status</option>
-                        <option value="Present">Present</option>
-                        <option value="Late">Late</option>
-                        <option value="Absent">Absent</option>
+                        {STATUS_OPTIONS.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
                     </select>
 
                     {/* Filter */}
-                    <button
-                        type="button"
-                        className="h-11 px-6 border rounded-lg flex items-center gap-2"
+                    <Button
+                        variant="secondary"
+                        onClick={() => applyFilters()}
+                        disabled={isLoading}
+                        className="h-11 px-6 gap-2"
                     >
                         <Filter size={18} />
                         Filter
-                    </button>
+                    </Button>
 
                     {/* Export */}
-                    <button
-                        type="button"
-                        className="h-11 px-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center gap-2"
+                    <Button
+                        variant="outlined"
+                        outlined
+                        onClick={handleExport}
+                        loading={isExporting}
+                        disabled={isLoading || rows.length === 0}
+                        className="h-11 px-8 gap-2"
                     >
                         <Download size={18} />
                         Export
-                    </button>
+                    </Button>
                 </div>
             </div>
 
             {/* Selected Employee */}
             {selectedEmployee && (
-                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+                <div className="bg-purple-50 border border-purple-100 rounded-xl p-4">
                     <p className="text-sm text-gray-500">Selected Employee</p>
 
-                    <p className="font-semibold text-indigo-700">
+                    <p className="font-semibold text-purple-700">
                         {selectedEmployee.personal_information?.last_name},{" "}
                         {selectedEmployee.personal_information?.first_name}
                     </p>
@@ -216,105 +337,86 @@ export default function TimeSheetSection() {
             )}
 
             {/* Summary */}
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {summary.map((item) => (
                     <div
                         key={item.title}
-                        className="bg-white border rounded-xl p-5"
+                        className="bg-white border rounded-xl p-5 shadow-sm"
                     >
                         <p className="text-sm text-gray-500">{item.title}</p>
 
-                        <h2 className="text-3xl font-bold mt-2">
-                            {item.value}
-                        </h2>
+                        {isLoading ? (
+                            <Skeleton
+                                variant="text"
+                                lines={1}
+                                className="mt-3 w-20"
+                            />
+                        ) : (
+                            <h2 className="text-3xl font-bold mt-2">
+                                {item.value}
+                            </h2>
+                        )}
                     </div>
                 ))}
             </div>
 
             {/* Table */}
-            <div className="bg-white border rounded-xl overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-5 py-3 text-left">
-                                    Employee
-                                </th>
-                                <th className="px-5 py-3 text-left">Date</th>
-                                <th className="px-5 py-3 text-left">Time In</th>
-                                <th className="px-5 py-3 text-left">
-                                    Break Out
-                                </th>
-                                <th className="px-5 py-3 text-left">
-                                    Break In
-                                </th>
-                                <th className="px-5 py-3 text-left">
-                                    Time Out
-                                </th>
-                                <th className="px-5 py-3 text-left">Hours</th>
-                                <th className="px-5 py-3 text-left">Status</th>
-                            </tr>
-                        </thead>
+            <div className="bg-white border rounded-xl shadow-sm overflow-hidden p-2 sm:p-4 space-y-4">
+                {error && (
+                    <Alert
+                        open
+                        type="error"
+                        title="Unable to load time sheets"
+                        message={error}
+                        duration={4000}
+                    />
+                )}
 
-                        <tbody>
-                            {filteredData.length > 0 ? (
-                                filteredData.map((row, index) => (
-                                    <tr
-                                        key={index}
-                                        className="border-t hover:bg-gray-50"
-                                    >
-                                        <td className="px-5 py-4">
-                                            {row.employee}
-                                        </td>
+                {exportError && (
+                    <Alert
+                        open
+                        type="error"
+                        title="Unable to export time sheets"
+                        message={exportError}
+                        duration={4000}
+                    />
+                )}
 
-                                        <td className="px-5 py-4">
-                                            {row.date}
-                                        </td>
+                {isEmpty ? (
+                    <div className="flex flex-col items-center gap-2 py-12 text-center">
+                        <CalendarIcon size={32} className="text-gray-400" />
+                        <h3 className="text-base font-medium text-gray-900">
+                            No attendance records found
+                        </h3>
+                        <p className="max-w-md text-sm text-gray-500">
+                            {statusNeedsEmployee
+                                ? `${applied.status} is only available when a specific employee is selected.`
+                                : "Try a different employee, date range, or status."}
+                        </p>
+                        {hasActiveFilters && (
+                            <Button
+                                variant="secondary"
+                                outlined
+                                size="sm"
+                                onClick={clearFilters}
+                                className="mt-2"
+                            >
+                                Clear filters
+                            </Button>
+                        )}
+                    </div>
+                ) : (
+                    <Table
+                        columns={columns}
+                        data={rows}
+                        isloading={isLoading}
+                        skeletonRows={8}
+                    />
+                )}
 
-                                        <td className="px-5 py-4">{row.in}</td>
-
-                                        <td className="px-5 py-4">
-                                            {row.breakOut}
-                                        </td>
-
-                                        <td className="px-5 py-4">
-                                            {row.breakIn}
-                                        </td>
-
-                                        <td className="px-5 py-4">{row.out}</td>
-
-                                        <td className="px-5 py-4">
-                                            {row.hours}
-                                        </td>
-
-                                        <td className="px-5 py-4">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                    row.status === "Present"
-                                                        ? "bg-green-100 text-green-700"
-                                                        : row.status === "Late"
-                                                          ? "bg-yellow-100 text-yellow-700"
-                                                          : "bg-red-100 text-red-700"
-                                                }`}
-                                            >
-                                                {row.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td
-                                        colSpan="8"
-                                        className="px-5 py-10 text-center text-gray-500"
-                                    >
-                                        No attendance records found.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                {meta?.last_page > 1 && (
+                    <Pagination data={meta} onPageChange={setPage} />
+                )}
             </div>
         </div>
     );

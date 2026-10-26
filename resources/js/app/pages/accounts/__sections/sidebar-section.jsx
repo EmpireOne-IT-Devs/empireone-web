@@ -27,9 +27,7 @@ import Tooltip from "@/app/_components/tooltip";
 import { Link, router } from "@inertiajs/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
-import {
-    FiPackage as PackageIcon,
-} from "react-icons/fi";
+import { FiPackage as PackageIcon } from "react-icons/fi";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -102,12 +100,12 @@ export default function SidebarSection() {
                   },
                   { is_label: true, name: "Leader Hub" },
                   {
-                    name: "Performance Management",
-                    href: `/accounts/${account_role}/performance_management/dashboard`,
-                    icon: FcConferenceCall,
-                    current: path === "performance_management",
-                    is_incoming: false,
-                },
+                      name: "Performance Management",
+                      href: `/accounts/${account_role}/performance_management/dashboard`,
+                      icon: FcConferenceCall,
+                      current: path === "performance_management",
+                      is_incoming: false,
+                  },
               ]
             : []),
 
@@ -139,7 +137,7 @@ export default function SidebarSection() {
                             },
                             {
                                 name: "Timekeeping",
-                                href: `/accounts/${account_role}/time_keeping/dashboard`,
+                                href: `/accounts/${account_role}/time_keeping/attendance`,
                                 icon: FcOvertime,
                                 current: path == "time_keeping",
                                 is_incoming: false,
@@ -216,10 +214,10 @@ export default function SidebarSection() {
                   },
                   {
                       name: "Timekeeping",
-                      href: `/accounts/${account_role}/timekeeping`,
+                      href: `/accounts/${account_role}/time_keeping/attendance`,
                       icon: FcOvertime,
                       current:
-                          path == "timekeeping" ||
+                          path == "time_keeping" ||
                           (account_role == "employee" &&
                               path == "time_keeping"),
                       is_incoming: false,
