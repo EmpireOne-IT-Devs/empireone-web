@@ -151,7 +151,7 @@ export default function CreateCorrectiveActionSection() {
                                 onSelect={(val) => {
                                     setSelected(val)
                                     if (val) {
-                                        console.log('vallll',val)
+                                        console.log('vallll', val)
                                         setValue('name', val.name)
                                         setValue('employee_id', val.employee_id || '')
                                         setValue('department_id', val.department_id || '')
@@ -176,8 +176,8 @@ export default function CreateCorrectiveActionSection() {
 
                         {/* Read-only Employee Info Card */}
                         <div className={`p-4 rounded-xl space-y-4 transition-all duration-200 border ${isEmployeeSelected
-                                ? 'bg-indigo-50/30 border-indigo-200/80'
-                                : 'bg-slate-50 border-slate-200/80 border-dashed'
+                            ? 'bg-indigo-50/30 border-indigo-200/80'
+                            : 'bg-slate-50 border-slate-200/80 border-dashed'
                             }`}>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
@@ -231,8 +231,8 @@ export default function CreateCorrectiveActionSection() {
 
                         {/* Immediate Supervisor Card */}
                         <div className={`p-4 rounded-xl space-y-3 transition-all duration-200 border ${isEmployeeSelected
-                                ? 'bg-indigo-50/30 border-indigo-200/80'
-                                : 'bg-slate-50 border-slate-200/80 border-dashed'
+                            ? 'bg-indigo-50/30 border-indigo-200/80'
+                            : 'bg-slate-50 border-slate-200/80 border-dashed'
                             }`}>
                             <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b border-slate-200/60 pb-2">
                                 IMMEDIATE SUPERVISOR
@@ -281,8 +281,8 @@ export default function CreateCorrectiveActionSection() {
 
                         {/* Next Level Manager Card */}
                         <div className={`p-4 rounded-xl space-y-3 transition-all duration-200 border ${isEmployeeSelected
-                                ? 'bg-indigo-50/30 border-indigo-200/80'
-                                : 'bg-slate-50 border-slate-200/80 border-dashed'
+                            ? 'bg-indigo-50/30 border-indigo-200/80'
+                            : 'bg-slate-50 border-slate-200/80 border-dashed'
                             }`}>
                             <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b border-slate-200/60 pb-2">
                                 NEXT LEVEL MANAGER
@@ -352,9 +352,10 @@ export default function CreateCorrectiveActionSection() {
                                 >
                                     <option value="">Select Category</option>
                                     <option value="Attendance">Attendance</option>
-                                    <option value="Performance">Performance</option>
-                                    <option value="Behavior/Conduct">Behavior/Conduct</option>
-                                    <option value="Security Policy">Security Policy</option>
+                                    <option value="Performance of Duties">Performance of Duties</option>
+                                    <option value="Quality">Quality</option>
+                                    <option value="Conduct">Conduct</option>
+                                    <option value="Technology, safety, Security, Health & Order">Technology, safety, Security, Health & Order</option>
                                 </select>
                             </div>
 

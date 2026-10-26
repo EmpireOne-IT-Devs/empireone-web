@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { FcCustomerSupport } from 'react-icons/fc'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,62 +10,68 @@ import Input from '@/app/_components/input'
 import Modal from '@/app/_components/modal'
 import Select from '@/app/_components/select'
 import TextArea from '@/app/_components/textarea'
+import InputSearch from '@/app/_components/input-search'
 import { create_reach_service } from '@/app/services/human-resources-service'
 import { setAlert } from '@/app/redux/app-slice'
 import store from '@/app/store/store'
-import { get_my_team_thunk } from '@/app/redux/department-thunk'
-import { get_reach_specific_leader_thunk } from '@/app/redux/employee-relation-thunk'
+import { get_reach_specific_leader_thunk, search_employee_thunk } from '@/app/redux/employee-relation-thunk'
 
 export default function CreateREACHSection() {
     const [open, setOpen] = useState(false)
     const [selectedUser, setSelectedUser] = useState(null)
     const dispatch = useDispatch()
-    const { users } = useSelector((store) => store.human_resources)
-    const accountsData = useSelector((store) => store.app?.data?.accounts)
 
-    const currentData = selectedUser;
+    const searchTimeoutRef = useRef(null)
+    const { employee } = useSelector((state) => state.human_resources)
+    const accountsData = useSelector((state) => state.app?.data?.accounts)
 
-    const personalInfo = currentData?.personal_information
-    const accountEmployee = currentData?.account_employee
-
-    const employeeId = accountEmployee?.employee_id ?? ''
+    // Match exact shape from API log
+    const personalInfo = selectedUser?.personal_information
+    const employeeId = selectedUser?.employee_id ?? ''
     const firstName = personalInfo?.first_name ?? ''
     const lastName = personalInfo?.last_name ?? ''
-    const employeeEmail = accountEmployee?.eogs_email || currentData?.email || personalInfo?.contact || ''
+    const employeeEmail = selectedUser?.eogs_email || personalInfo?.contact || ''
 
     // Account Details
-    const accountId = accountEmployee?.account_id ?? currentData?.account_id ?? ''
-    const accountName = accountEmployee?.account?.name ?? currentData?.account?.name ?? ''
+    const accountId = selectedUser?.account_id ?? selectedUser?.account?.id ?? ''
+    const accountName = selectedUser?.account?.name ?? ''
 
-    // Supervisor details
-    const leaderEmp = accountEmployee?.er_leader?.employee
-    const supervisorInfo = leaderEmp?.personal_information
-    const supervisorId = leaderEmp?.employee_id ?? ''
-    const supervisorName = supervisorInfo ? `${supervisorInfo.first_name} ${supervisorInfo.last_name}` : ''
-    const supervisorEmail = leaderEmp?.eogs_email ?? ''
+    // Supervisor / ER Leader Details
+    // In your payload er_leader contains personal_information directly or through leader object
+    const leader = selectedUser?.er_leader?.employee ?? selectedUser?.er_leader
+    const supervisorInfo = leader?.personal_information
+    const supervisorId = leader?.employee_id ?? leader?.id ?? ''
+    const supervisorName = supervisorInfo
+        ? `${supervisorInfo.first_name ?? ''} ${supervisorInfo.last_name ?? ''}`.trim()
+        : leader?.name ?? ''
+    const supervisorEmail = leader?.eogs_email ?? leader?.email ?? ''
 
     const todayDate = useMemo(() => new Date().toISOString().split('T')[0], [])
 
     const accountOptions = useMemo(() => {
-        return accountsData?.map((res) => ({
-            label: res.name,
-            value: res.id,
-        })) || []
+        return (
+            accountsData?.map((res) => ({
+                label: res.name,
+                value: res.id,
+            })) || []
+        )
     }, [accountsData])
 
-    // Format employee list for search dropdown
-    const userSearchOptions = useMemo(() => {
-        return users?.map((u) => {
-            const fname = u?.personal_information?.first_name || ''
-            const lname = u?.personal_information?.last_name || ''
-            const nameLabel = fname || lname ? `${fname} ${lname}` : u?.name || u?.email || `User #${u?.id}`
-            return {
-                label: nameLabel,
-                value: u?.id,
-                rawData: u
-            }
-        }) || []
-    }, [users])
+    const employeeOptions = useMemo(() => {
+        return (
+            employee?.data?.map((emp) => {
+                const name = emp.name ||
+                    (emp.personal_information
+                        ? `${emp.personal_information.first_name} ${emp.personal_information.last_name}`
+                        : `Employee #${emp.employee_id || emp.id}`)
+                return {
+                    label: `${name} (${emp.employee_id || 'N/A'})`,
+                    value: emp.id,
+                    data: emp, // Attach the full employee record
+                }
+            }) || []
+        )
+    }, [employee?.data])
 
     const {
         register,
@@ -76,35 +82,51 @@ export default function CreateREACHSection() {
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
-            supervisor_user_id:leaderEmp?.user_id,
-            employee_id: employeeId,
-            first_name: firstName,
-            last_name: lastName,
-            employee_email: employeeEmail,
-            supervisor_id: supervisorId,
-            supervisor_first_name: supervisorInfo?.first_name ?? '',
-            supervisor_last_name: supervisorInfo?.last_name ?? '',
-            supervisor_email: supervisorEmail,
+            supervisor_user_id: '',
+            employee_id: '',
+            first_name: '',
+            last_name: '',
+            employee_email: '',
+            supervisor_id: '',
+            supervisor_first_name: '',
+            supervisor_last_name: '',
+            supervisor_email: '',
             date_of_session: todayDate,
-            account_id: accountId,
-            account: accountId,
+            account_id: '',
+            account: '',
         },
     })
-    console.log('waaa',leaderEmp?.user_id)
 
-    // Synchronize form values whenever selected user changes
+    // Sync form values whenever a user is selected
     useEffect(() => {
+        if (!selectedUser) return
+
         setValue('employee_id', employeeId)
         setValue('first_name', firstName)
         setValue('last_name', lastName)
         setValue('employee_email', employeeEmail)
+        setValue('supervisor_user_id', leader?.user_id ?? leader?.id ?? '')
         setValue('supervisor_id', supervisorId)
         setValue('supervisor_first_name', supervisorInfo?.first_name ?? '')
         setValue('supervisor_last_name', supervisorInfo?.last_name ?? '')
         setValue('supervisor_email', supervisorEmail)
         setValue('account_id', accountId)
-        setValue('account', accountId)
-    }, [selectedUser, setValue, employeeId, firstName, lastName, employeeEmail, supervisorId, supervisorInfo, supervisorEmail, accountId])
+        setValue('account', accountName)
+    }, [
+        selectedUser,
+        setValue,
+        employeeId,
+        firstName,
+        lastName,
+        employeeEmail,
+        leader,
+        supervisorId,
+        supervisorInfo,
+        supervisorEmail,
+        accountId,
+    ])
+
+    console.log('accountName',selectedUser)
 
     const watchedAccount = useWatch({ control, name: 'account_id' })
 
@@ -112,9 +134,9 @@ export default function CreateREACHSection() {
         try {
             await create_reach_service({
                 ...formData,
-                user_id: currentData?.id || currentData?.user_id,
+                user_id: selectedUser?.user_id,
             })
-            await  store.dispatch(get_reach_specific_leader_thunk())
+            await store.dispatch(get_reach_specific_leader_thunk())
             dispatch(
                 setAlert({
                     type: 'success',
@@ -131,6 +153,29 @@ export default function CreateREACHSection() {
         }
     }
 
+    const handleSearchEmployee = useCallback(
+        (query) => {
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current)
+            }
+            searchTimeoutRef.current = setTimeout(() => {
+                dispatch(search_employee_thunk(query))
+            }, 400)
+        },
+        [dispatch]
+    )
+
+    // Handles selecting employee from dropdown or typed search
+    const handleSelectEmployee = (selectedVal) => {
+        // Find matching employee by id or selected item
+        const matched = employee?.data?.find(
+            (e) => e.id === selectedVal || e.id === selectedVal?.value || e === selectedVal
+        )
+        if (matched) {
+            setSelectedUser(matched)
+        }
+    }
+
     return (
         <div>
             <Button
@@ -138,7 +183,7 @@ export default function CreateREACHSection() {
                 variant="secondary"
                 onClick={() => setOpen(true)}
             >
-                <FcCustomerSupport size={20} /> REACH FORM
+                <FcCustomerSupport size={20} /> COACHING FORM
             </Button>
 
             <Modal
@@ -147,11 +192,13 @@ export default function CreateREACHSection() {
                 onClose={() => {
                     setOpen(false)
                     setSelectedUser(null)
+                    reset()
                 }}
-                title="Create REACH Coaching Session"
+                title="Create Coaching Session"
             >
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4 text-slate-800">
-                    {/* Hidden inputs to preserve form submission payload */}
+                    {/* Hidden inputs to guarantee payload completion */}
+                    <input type="hidden" {...register('supervisor_user_id')} />
                     <input type="hidden" {...register('employee_id')} />
                     <input type="hidden" {...register('first_name')} />
                     <input type="hidden" {...register('last_name')} />
@@ -164,18 +211,17 @@ export default function CreateREACHSection() {
 
                     {/* Employee Search Field */}
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <Select
+                        <InputSearch
                             label="SEARCH EMPLOYEE"
-                            name="search_employee"
-                            options={userSearchOptions}
-                            value={selectedUser?.id ?? ''}
-                            onChange={(val) => {
-                                const selectedOption = userSearchOptions.find((opt) => opt.value === val)
-                                if (selectedOption) {
-                                    setSelectedUser(selectedOption.rawData)
-                                }
-                            }}
+                            name="name"
                             className="w-full"
+                            options={employeeOptions}
+                            onSearch={handleSearchEmployee}
+                            onChange={(val) => {
+                                handleSearchEmployee(val)
+                                handleSelectEmployee(val)
+                            }}
+                            onSelect={(item) => handleSelectEmployee(item)}
                         />
                     </div>
 
@@ -199,20 +245,20 @@ export default function CreateREACHSection() {
                                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                                     <div>
                                         <p className="text-xs font-semibold text-slate-400 uppercase">Employee ID</p>
-                                        <p className="font-medium text-slate-800">{employeeId}</p>
+                                        <p className="font-medium text-slate-800">{employeeId || '—'}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-semibold text-slate-400 uppercase">Name</p>
-                                        <p className="font-medium text-slate-800">{firstName} {lastName}</p>
+                                        <p className="font-medium text-slate-800">{firstName} {lastName || '—'}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-semibold text-slate-400 uppercase">Email</p>
-                                        <p className="font-medium text-slate-800">{employeeEmail}</p>
+                                        <p className="font-medium text-slate-800">{employeeEmail || '—'}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-semibold text-slate-400 uppercase">Account</p>
                                         <p className="font-medium text-slate-800">
-                                            {accountName} {accountId ? `(ID: ${accountId})` : ''}
+                                            {accountName || '—'} {accountId ? `(ID: ${accountId})` : ''}
                                         </p>
                                     </div>
                                 </div>
@@ -226,15 +272,15 @@ export default function CreateREACHSection() {
                                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                                     <div>
                                         <p className="text-xs font-semibold text-slate-400 uppercase">Supervisor ID</p>
-                                        <p className="font-medium text-slate-800">{supervisorId}</p>
+                                        <p className="font-medium text-slate-800">{supervisorId || '—'}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-semibold text-slate-400 uppercase">Name</p>
-                                        <p className="font-medium text-slate-800">{supervisorName}</p>
+                                        <p className="font-medium text-slate-800">{supervisorName || '—'}</p>
                                     </div>
                                     <div className="col-span-2">
                                         <p className="text-xs font-semibold text-slate-400 uppercase">Email</p>
-                                        <p className="font-medium text-slate-800">{supervisorEmail}</p>
+                                        <p className="font-medium text-slate-800">{supervisorEmail || '—'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -286,7 +332,6 @@ export default function CreateREACHSection() {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.recognition_statement_1?.message ?? ''}
-                            onChange={(e) => setValue('recognition_statement_1', e.target.value, { shouldValidate: true })}
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -296,7 +341,6 @@ export default function CreateREACHSection() {
                                 {...register('recognition_statement_2')}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.recognition_statement_2?.message ?? ''}
-                                onChange={(e) => setValue('recognition_statement_2', e.target.value, { shouldValidate: true })}
                             />
 
                             <TextArea
@@ -305,7 +349,6 @@ export default function CreateREACHSection() {
                                 {...register('recognition_statement_3')}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.recognition_statement_3?.message ?? ''}
-                                onChange={(e) => setValue('recognition_statement_3', e.target.value, { shouldValidate: true })}
                             />
                         </div>
 
@@ -317,7 +360,6 @@ export default function CreateREACHSection() {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.area_of_opportunity?.message ?? ''}
-                            onChange={(e) => setValue('area_of_opportunity', e.target.value, { shouldValidate: true })}
                         />
                     </div>
 
@@ -361,7 +403,6 @@ export default function CreateREACHSection() {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.biggest_rock?.message ?? ''}
-                            onChange={(e) => setValue('biggest_rock', e.target.value, { shouldValidate: true })}
                         />
 
                         <TextArea
@@ -372,7 +413,6 @@ export default function CreateREACHSection() {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.behavioral_root_cause?.message ?? ''}
-                            onChange={(e) => setValue('behavioral_root_cause', e.target.value, { shouldValidate: true })}
                         />
                     </div>
 
@@ -409,7 +449,6 @@ export default function CreateREACHSection() {
                             })}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.task_description?.message ?? ''}
-                            onChange={(e) => setValue('task_description', e.target.value, { shouldValidate: true })}
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -448,7 +487,6 @@ export default function CreateREACHSection() {
                                 })}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.employee_commitment?.message ?? ''}
-                                onChange={(e) => setValue('employee_commitment', e.target.value, { shouldValidate: true })}
                             />
 
                             <TextArea
@@ -459,7 +497,6 @@ export default function CreateREACHSection() {
                                 })}
                                 className="bg-transparent w-full outline-none text-black"
                                 error={errors?.leader_commitment?.message ?? ''}
-                                onChange={(e) => setValue('leader_commitment', e.target.value, { shouldValidate: true })}
                             />
                         </div>
                     </div>
@@ -490,7 +527,6 @@ export default function CreateREACHSection() {
                             {...register('follow_up_notes')}
                             className="bg-transparent w-full outline-none text-black"
                             error={errors?.follow_up_notes?.message ?? ''}
-                            onChange={(e) => setValue('follow_up_notes', e.target.value, { shouldValidate: true })}
                         />
                     </div>
 
