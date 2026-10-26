@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import moment from "moment";
 import {
     User,
     BadgeCheck,
@@ -8,42 +9,111 @@ import {
     Clock3,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import AttendanceHistorySection, { statusOf } from "./attendance-history-section";
+import SummaryCardsSection from "./summary-cards-section";
+import CutoffSelectorSection from "./cutoff-selector-section";
+import {
+    get_attendance_for_date_service,
+    get_attendance_logs_service,
+} from "@/app/services/attendance-service";
+import {
+    get_cutoff_period,
+    get_next_cutoff_period,
+    get_previous_cutoff_period,
+} from "@/app/lib/cutoff";
+
+const formatScheduleTime = (value) =>
+    moment(value, "HH:mm:ss").format("h:mm A");
+
+const formatSchedule = (schedule) => {
+    if (!schedule) return "-";
+    if (schedule.is_day_off) return "Day Off";
+
+    return `${formatScheduleTime(schedule.time_in)} - ${formatScheduleTime(schedule.time_out)}`;
+};
 
 export default function EmployeeDetailsSection() {
     const { data } = useSelector((store) => store.app);
+    const [cutoff, setCutoff] = useState(() => get_cutoff_period());
+    const [logs, setLogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [schedules, setSchedules] = useState({ today: null, tomorrow: null });
+    const [scheduleLoading, setScheduleLoading] = useState(true);
 
-    console.log("dataadad", data);
-    // Temporary data
-    const employee = {
-        id: "EMP-000123",
-        name: "Juan Dela Cruz",
-        department: "Information Technology",
-        position: "Software Developer",
-        schedule: "Monday - Friday | 8:00 AM - 5:00 PM",
-        status: "Active",
-    };
+    const today = moment().format("YYYY-MM-DD");
+    const tomorrow = moment().add(1, "day").format("YYYY-MM-DD");
+    const canGoNext = cutoff.end < today;
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchSchedules = async () => {
+            setScheduleLoading(true);
+
+            try {
+                const [todayRes, tomorrowRes] = await Promise.all([
+                    get_attendance_for_date_service(today),
+                    get_attendance_for_date_service(tomorrow),
+                ]);
+                if (!cancelled) {
+                    setSchedules({
+                        today: todayRes.data.schedule,
+                        tomorrow: tomorrowRes.data.schedule,
+                    });
+                }
+            } catch {
+                if (!cancelled) setSchedules({ today: null, tomorrow: null });
+            } finally {
+                if (!cancelled) setScheduleLoading(false);
+            }
+        };
+
+        fetchSchedules();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [today, tomorrow]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchLogs = async () => {
+            setLoading(true);
+
+            try {
+                // Days after today have no attendance yet, so stop the range at today.
+                const res = await get_attendance_logs_service({
+                    start_date: cutoff.start,
+                    end_date: cutoff.end < today ? cutoff.end : today,
+                });
+                if (!cancelled) setLogs(res.data.data ?? []);
+            } catch {
+                if (!cancelled) setLogs([]);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+
+        fetchLogs();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [cutoff.start, cutoff.end, today]);
+
+    const count = (...statuses) =>
+        logs.filter((log) => statuses.includes(statusOf(log))).length;
 
     const summary = [
         {
             title: "Present",
-            value: 20,
+            value: count("Present", "Undertime", "Clocked In", "On Break"),
             color: "bg-green-500",
         },
-        {
-            title: "Late",
-            value: 2,
-            color: "bg-yellow-500",
-        },
-        {
-            title: "Absent",
-            value: 1,
-            color: "bg-red-500",
-        },
-        {
-            title: "Leave",
-            value: 1,
-            color: "bg-blue-500",
-        },
+        { title: "Late", value: count("Late"), color: "bg-yellow-500" },
+        { title: "Absent", value: count("Absent"), color: "bg-red-500" },
+        { title: "Leave", value: count("On Leave"), color: "bg-blue-500" },
     ];
 
     return (
@@ -83,11 +153,25 @@ export default function EmployeeDetailsSection() {
                                     {data?.user?.account_employee?.position}
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    <Clock3 size={16} />
-                                    {/* {data?.user?.personal_information?.schedule} */}
-                                    Monday - Friday | 8:00 AM - 5:00 PM
-                                </div>
+                            </div>
+
+                            <div className="flex flex-col md:flex-row md:flex-wrap gap-x-6 gap-y-1 mt-2 text-sm text-gray-600">
+                                {[
+                                    { key: "today", label: "Today", date: today },
+                                    { key: "tomorrow", label: "Tomorrow", date: tomorrow },
+                                ].map(({ key, label, date }) => (
+                                    <div key={key} className="flex items-center gap-2">
+                                        <Clock3 size={16} />
+                                        <span className="font-medium text-gray-700">
+                                            {label} ({moment(date).format("dddd")}):
+                                        </span>
+                                        {scheduleLoading ? (
+                                            <span className="h-4 w-24 rounded bg-gray-200 animate-pulse" />
+                                        ) : (
+                                            formatSchedule(schedules[key])
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -100,105 +184,21 @@ export default function EmployeeDetailsSection() {
                     </div>
                 </div>
             </div>
-
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {summary.map((item) => (
-                    <div
-                        key={item.title}
-                        className="bg-white border rounded-xl shadow-sm p-5"
-                    >
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <p className="text-gray-500 text-sm">
-                                    {item.title}
-                                </p>
-
-                                <h2 className="text-3xl font-bold mt-2">
-                                    {item.value}
-                                </h2>
-                            </div>
-
-                            <div
-                                className={`w-4 h-12 rounded-full ${item.color}`}
-                            />
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Attendance History */}
-            <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <div className="px-6 py-4 border-b">
-                    <h2 className="font-semibold text-lg">Recent Attendance</h2>
-                </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left">Date</th>
-                                <th className="px-6 py-3 text-left">Time In</th>
-                                <th className="px-6 py-3 text-left">
-                                    Time Out
-                                </th>
-                                <th className="px-6 py-3 text-left">Hours</th>
-                                <th className="px-6 py-3 text-left">Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {[
-                                {
-                                    date: "July 20, 2026",
-                                    in: "8:01 AM",
-                                    out: "5:03 PM",
-                                    hrs: "8.0",
-                                    status: "Present",
-                                },
-                                {
-                                    date: "July 19, 2026",
-                                    in: "8:17 AM",
-                                    out: "5:05 PM",
-                                    hrs: "7.8",
-                                    status: "Late",
-                                },
-                                {
-                                    date: "July 18, 2026",
-                                    in: "-",
-                                    out: "-",
-                                    hrs: "0",
-                                    status: "Absent",
-                                },
-                            ].map((row, index) => (
-                                <tr
-                                    key={index}
-                                    className="border-t hover:bg-gray-50"
-                                >
-                                    <td className="px-6 py-4">{row.date}</td>
-                                    <td className="px-6 py-4">{row.in}</td>
-                                    <td className="px-6 py-4">{row.out}</td>
-                                    <td className="px-6 py-4">{row.hrs}</td>
-                                    <td className="px-6 py-4">
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-xs font-medium
-                                                ${
-                                                    row.status === "Present"
-                                                        ? "bg-green-100 text-green-700"
-                                                        : row.status === "Late"
-                                                          ? "bg-yellow-100 text-yellow-700"
-                                                          : "bg-red-100 text-red-700"
-                                                }`}
-                                        >
-                                            {row.status}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <CutoffSelectorSection
+                label={cutoff.label}
+                cutoffDate={cutoff.cutoffDate}
+                disabled={loading}
+                canGoNext={canGoNext}
+                onPrevious={() => setCutoff(get_previous_cutoff_period(cutoff))}
+                onNext={() => setCutoff(get_next_cutoff_period(cutoff))}
+            />
+            <SummaryCardsSection summary={summary} loading={loading} />
+            <AttendanceHistorySection
+                logs={logs}
+                loading={loading}
+                cutoffLabel={cutoff.label}
+                cutoffDate={cutoff.cutoffDate}
+            />
         </div>
     );
 }
