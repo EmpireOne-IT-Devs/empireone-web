@@ -41,6 +41,8 @@ class EngagementRewardChallengeTeamSubmissionResource extends JsonResource
             'bonus_points_awarded' => (int) $this->bonus_points_awarded,
             'team_points_awarded' => (int) $this->team_points_awarded,
             'total_points_awarded' => (int) $this->team_points_awarded,
+            'pending_base_points' => (int) $this->pending_base_points,
+            'pending_bonus_points' => (int) $this->pending_bonus_points,
             'employee' => $leader ? [
                 'id' => $leader->id,
                 'name' => $leader->name,

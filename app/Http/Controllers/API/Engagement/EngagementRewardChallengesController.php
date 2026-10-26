@@ -281,24 +281,50 @@ class EngagementRewardChallengesController extends Controller
                 ? (bool) ($preloaded['survey_completed'] ?? false)
                 : $pivot->hasCompletedSurvey($challenge))
             : false;
+        $individualDailyStats = $preloaded['individual_daily_stats'] ?? null;
+        $todayLog = $preloaded['today_log'] ?? null;
+        if ($isDailyChallenge && $pivot && $preloaded === null) {
+            $individualLogs = $pivot->dailyLogs()
+                ->whereNull('team_submission_id')
+                ->get();
+            $individualDailyStats = [
+                'submission_count' => $individualLogs->count(),
+                'completed_days' => $individualLogs->where('status', 'approved')->count(),
+            ];
+            $todayLog = $individualLogs->first(fn ($log) => $log->log_date->isToday());
+        }
+        $individualProofSubmitted = $pivot
+            ? ($isDailyChallenge
+                ? (int) ($individualDailyStats['submission_count'] ?? 0) > 0
+                : $pivot->hasIndividualSubmission())
+            : false;
+        $participationStatus = $pivot?->status;
+        $hasTeamSubmission = $pivot
+            ? ($preloaded['has_team_submission'] ?? $pivot->hasTeamSubmission())
+            : false;
+        if ($pivot && ! $individualProofSubmitted && $hasTeamSubmission) {
+            $participationStatus = 'joined';
+        }
 
-        // Only fire this extra, single-row, indexed lookup for daily challenges
-        // the employee has actually joined — list views for non-daily
-        // challenges (the vast majority) never pay this cost.
         $requiredDays = $pivot?->required_days
             ?? ($isDailyChallenge ? $challenge->duration_days : null);
-
-        $todayLog = ($isDailyChallenge && $pivot && ! $pivot->isDailyChallengeComplete())
+        $individualDailyComplete = $pivot && $isDailyChallenge
             ? ($preloaded !== null
-                ? ($preloaded['today_log'] ?? null)
-                : $pivot->dailyLogs()->whereDate('log_date', $today)->first())
-            : null;
+                ? $requiredDays > 0 && (int) ($individualDailyStats['completed_days'] ?? 0) >= $requiredDays
+                : $pivot->isDailyChallengeComplete())
+            : false;
+
+        if (! $individualDailyComplete) {
+            $todayLog = $isDailyChallenge ? $todayLog : null;
+        } else {
+            $todayLog = null;
+        }
         $submissionMedia = $isDailyChallenge
             ? $todayLog?->submission_media
-            : $pivot?->submission_media;
+            : ($individualProofSubmitted ? $pivot?->submission_media : null);
         $submissionPath = $isDailyChallenge
             ? $todayLog?->submission_path
-            : $pivot?->submission_path;
+            : ($individualProofSubmitted ? $pivot?->submission_path : null);
 
         return [
             'id' => $challenge->id,
@@ -323,7 +349,8 @@ class EngagementRewardChallengesController extends Controller
             'max_participants' => $challenge->max_participants,
             'participants_count' => $challenge->participants_count ?? $challenge->participants()->count(),
             'is_joined' => (bool) $pivot,
-            'participation_status' => $pivot?->status,
+            'participation_status' => $participationStatus,
+            'individual_proof_submitted' => $individualProofSubmitted,
             'team_submission_status' => $teamSubmission?->status,
             'team_submission_review_note' => $teamSubmission?->review_note,
             'team_submission_date' => $teamSubmission?->log_date?->toDateString(),
@@ -340,11 +367,13 @@ class EngagementRewardChallengesController extends Controller
                 && ! $surveyCompleted && $pivot->canAnswerSurvey($challenge),
             'survey_reward_points' => $challenge->survey_required ? ChallengeSurveyService::REWARD_POINTS : 0,
             'survey_points_awarded' => (int) $pivot?->survey_points_awarded,
-            'challenge_points_awarded' => (int) $pivot?->points_awarded,
+            'challenge_points_awarded' => $individualProofSubmitted ? (int) $pivot?->points_awarded : 0,
             'total_points_awarded' => $pivot?->total_points_awarded ?? 0,
-            'proof_approved_at' => $pivot?->proof_approved_at?->toDateTimeString(),
+            'proof_approved_at' => $individualProofSubmitted ? $pivot?->proof_approved_at?->toDateTimeString() : null,
             'required_days' => $requiredDays,
-            'completed_days' => $pivot?->completed_days,
+            'completed_days' => $isDailyChallenge
+                ? (int) ($individualDailyStats['completed_days'] ?? 0)
+                : $pivot?->completed_days,
             'submitted_today' => (bool) $todayLog,
             'daily_window_ends_at' => $isDailyChallenge ? $challenge->dailyWindowEndDate()->toDateString() : null,
             'submission_url' => $submissionPath
@@ -354,9 +383,9 @@ class EngagementRewardChallengesController extends Controller
                 $submissionMedia,
                 $submissionPath,
             ),
-            'submitted_at' => $pivot?->submitted_at?->toDateTimeString(),
-            'reviewed_at' => $pivot?->reviewed_at?->toDateTimeString(),
-            'review_note' => $pivot?->review_note,
+            'submitted_at' => $individualProofSubmitted ? $pivot?->submitted_at?->toDateTimeString() : null,
+            'reviewed_at' => $individualProofSubmitted ? $pivot?->reviewed_at?->toDateTimeString() : null,
+            'review_note' => $individualProofSubmitted ? $pivot?->review_note : null,
             'start_date' => $challenge->start_date->toDateString(),
             'deadline' => $challenge->deadline->toDateString(),
             'card_color' => $challenge->card_color,
@@ -398,11 +427,27 @@ class EngagementRewardChallengesController extends Controller
         $teamChallengeIds = $challenges
             ->where('type', 'Team')
             ->pluck('id');
+        $teamParticipationChallengeIds = collect();
 
-        if (
-            $teamChallengeIds->isNotEmpty()
-            && DB::table('e_r_leaders')->where('user_id', $userId)->exists()
-        ) {
+        if ($teamChallengeIds->isNotEmpty()) {
+            $teamParticipationChallengeIds = DB::table('engagement_reward_challenge_team_submissions as submissions')
+                ->leftJoin(
+                    'engagement_reward_challenge_team_submission_members as members',
+                    'members.team_submission_id',
+                    '=',
+                    'submissions.id',
+                )
+                ->whereIn('submissions.reward_challenge_id', $teamChallengeIds)
+                ->whereIn('submissions.status', ['submitted', 'approved'])
+                ->where(fn ($query) => $query
+                    ->where('submissions.leader_id', $userId)
+                    ->orWhere('members.user_id', $userId))
+                ->distinct()
+                ->pluck('submissions.reward_challenge_id')
+                ->flip();
+        }
+
+        if ($teamChallengeIds->isNotEmpty() && DB::table('e_r_leaders')->where('user_id', $userId)->exists()) {
             $teamSubmissionsByChallenge = EngagementRewardChallengeTeamSubmission::query()
                 ->where('leader_id', $userId)
                 ->whereIn('reward_challenge_id', $teamChallengeIds)
@@ -411,6 +456,36 @@ class EngagementRewardChallengesController extends Controller
                 ->get()
                 ->groupBy('reward_challenge_id')
                 ->map(fn ($submissions) => $submissions->first());
+
+            $surveyTeamChallengeIds = $challenges
+                ->where('survey_required', true)
+                ->whereIn('id', EngagementRewardChallengeTeamSubmission::query()
+                    ->where('leader_id', $userId)
+                    ->whereIn('reward_challenge_id', $teamChallengeIds)
+                    ->whereIn('status', ['submitted', 'approved'])
+                    ->distinct()
+                    ->pluck('reward_challenge_id'))
+                ->pluck('id');
+            $existingSurveyParticipationChallengeIds = EngagementRewardChallengeParticipant::query()
+                ->where('user_id', $userId)
+                ->whereIn('reward_challenge_id', $surveyTeamChallengeIds)
+                ->pluck('reward_challenge_id');
+
+            foreach ($surveyTeamChallengeIds->diff($existingSurveyParticipationChallengeIds) as $challengeId) {
+                $challenge = $challenges->firstWhere('id', $challengeId);
+                EngagementRewardChallengeParticipant::query()->firstOrCreate(
+                    [
+                        'reward_challenge_id' => $challengeId,
+                        'user_id' => $userId,
+                    ],
+                    [
+                        'status' => 'joined',
+                        'joined_at' => now(),
+                        'required_days' => $challenge?->isDailyChallenge() ? $challenge->duration_days : null,
+                        'completed_days' => 0,
+                    ],
+                );
+            }
         }
 
         $challengeIds = $challenges->pluck('id');
@@ -423,7 +498,17 @@ class EngagementRewardChallengesController extends Controller
             ? collect()
             : EngagementRewardChallengeDailyLog::query()
                 ->whereIn('reward_challenge_participant_id', $participations->pluck('id'))
+                ->whereNull('team_submission_id')
                 ->whereDate('log_date', now()->toDateString())
+                ->get()
+                ->keyBy('reward_challenge_participant_id');
+        $individualDailyStats = $participations->isEmpty()
+            ? collect()
+            : EngagementRewardChallengeDailyLog::query()
+                ->whereIn('reward_challenge_participant_id', $participations->pluck('id'))
+                ->whereNull('team_submission_id')
+                ->selectRaw('reward_challenge_participant_id, COUNT(*) as submission_count, SUM(CASE WHEN status = \'approved\' THEN 1 ELSE 0 END) as completed_days')
+                ->groupBy('reward_challenge_participant_id')
                 ->get()
                 ->keyBy('reward_challenge_participant_id');
         $completedSurveyChallengeIds = $participations->isEmpty()
@@ -437,7 +522,7 @@ class EngagementRewardChallengesController extends Controller
                 ->flip();
 
         $challenges = $challenges
-            ->map(function (EngagementRewardChallenge $challenge) use ($userId, $teamSubmissionsByChallenge, $participations, $todayLogs, $completedSurveyChallengeIds) {
+            ->map(function (EngagementRewardChallenge $challenge) use ($userId, $teamSubmissionsByChallenge, $teamParticipationChallengeIds, $participations, $todayLogs, $individualDailyStats, $completedSurveyChallengeIds) {
                 $participant = $participations->get($challenge->id);
 
                 return $this->formatChallenge(
@@ -446,7 +531,11 @@ class EngagementRewardChallengesController extends Controller
                     $teamSubmissionsByChallenge->get($challenge->id),
                     [
                         'participant' => $participant,
+                        'has_team_submission' => $teamParticipationChallengeIds->has($challenge->id),
                         'today_log' => $participant ? $todayLogs->get($participant->id) : null,
+                        'individual_daily_stats' => $participant && $individualDailyStats->has($participant->id)
+                            ? (array) $individualDailyStats->get($participant->id)
+                            : null,
                         'survey_completed' => $completedSurveyChallengeIds->has($challenge->id),
                     ],
                 );
@@ -465,56 +554,90 @@ class EngagementRewardChallengesController extends Controller
     {
         $userId = auth()->id();
 
-        $history = EngagementRewardChallengeParticipant::query()
+        $participations = EngagementRewardChallengeParticipant::query()
             ->where('user_id', $userId)
-            ->with(['challenge' => fn ($query) => $query->withTrashed()->select('id', 'title', 'points', 'category', 'type')])
+            ->with(['challenge' => fn ($query) => $query->withTrashed()->select('id', 'title', 'points', 'category', 'type', 'survey_required')])
             ->latest('joined_at')
-            ->get()
-            ->map(fn (EngagementRewardChallengeParticipant $participant) => [
+            ->get();
+        $teamSubmissions = EngagementRewardChallengeTeamSubmission::query()
+            ->where('leader_id', $userId)
+            ->with(['challenge' => fn ($query) => $query->withTrashed()->select('id', 'title', 'points', 'category', 'type', 'survey_required')])
+            ->latest('submitted_at')
+            ->get();
+        $teamChallengeIds = $teamSubmissions->pluck('reward_challenge_id')->unique()->flip();
+        $teamParticipationByChallenge = $participations->keyBy('reward_challenge_id');
+        $latestTeamSubmissionIds = $teamSubmissions
+            ->unique('reward_challenge_id')
+            ->mapWithKeys(fn (EngagementRewardChallengeTeamSubmission $submission) => [
+                $submission->reward_challenge_id => $submission->id,
+            ]);
+
+        $history = $participations
+            ->filter(fn (EngagementRewardChallengeParticipant $participant) => ! $teamChallengeIds->has($participant->reward_challenge_id)
+                || $participant->hasIndividualSubmission())
+            ->map(function (EngagementRewardChallengeParticipant $participant) use ($teamChallengeIds) {
+                $surveyPoints = $teamChallengeIds->has($participant->reward_challenge_id)
+                    ? 0
+                    : (int) $participant->survey_points_awarded;
+                $challengePoints = $participant->points_awarded !== null
+                    ? max(0, (int) $participant->points_awarded - (int) $participant->bonus_points)
+                    : 0;
+                $bonusPoints = $participant->points_awarded !== null
+                    ? (int) $participant->bonus_points
+                    : 0;
+
+                return [
                 'id' => $participant->id,
                 'challenge_title' => $participant->challenge?->title ?? 'Challenge removed',
                 'category' => $participant->challenge?->category ?? 'N/A',
-                'points' => $participant->points_awarded ?? $participant->challenge?->points ?? 0,
-                'challenge_points_awarded' => $participant->points_awarded !== null
-                    ? max(0, (int) $participant->points_awarded - (int) $participant->bonus_points)
-                    : 0,
-                'bonus_points_awarded' => $participant->points_awarded !== null
-                    ? (int) $participant->bonus_points
-                    : 0,
+                'points' => $challengePoints + $bonusPoints + $surveyPoints,
+                'challenge_points_awarded' => $challengePoints,
+                'bonus_points_awarded' => $bonusPoints,
                 'team_points_awarded' => 0,
-                'survey_points_awarded' => (int) $participant->survey_points_awarded,
-                'total_points_awarded' => $participant->total_points_awarded,
+                'survey_points_awarded' => $surveyPoints,
+                'total_points_awarded' => ($participant->status === 'approved' ? (int) $participant->points_awarded : 0) + $surveyPoints,
                 'survey_completed_at' => $participant->survey_rewarded_at?->toDateTimeString(),
                 'proof_approved_at' => $participant->proof_approved_at?->toDateTimeString(),
                 'status' => $participant->status,
                 'joined_at' => $participant->joined_at?->toDateString(),
                 'submitted_at' => $participant->submitted_at?->toDateString(),
                 'reviewed_at' => $participant->reviewed_at?->toDateString(),
-            ]);
-        $teamHistory = EngagementRewardChallengeTeamSubmission::query()
-            ->where('leader_id', $userId)
-            ->where('team_points_awarded', '>', 0)
-            ->with(['challenge' => fn ($query) => $query->withTrashed()->select('id', 'title', 'points', 'category', 'type')])
-            ->latest('submitted_at')
-            ->get()
-            ->map(fn (EngagementRewardChallengeTeamSubmission $submission) => [
-                'id' => 'team-'.$submission->id,
-                'challenge_title' => $submission->challenge?->title ?? 'Challenge removed',
-                'category' => $submission->challenge?->category ?? 'N/A',
-                'points' => $submission->team_points_awarded,
-                'challenge_points_awarded' => (int) $submission->base_points_awarded,
-                'bonus_points_awarded' => (int) $submission->bonus_points_awarded,
-                'team_points_awarded' => $submission->team_points_awarded,
-                'survey_points_awarded' => 0,
-                'total_points_awarded' => $submission->team_points_awarded,
-                'survey_completed_at' => null,
-                'proof_approved_at' => $submission->reviewed_at?->toDateTimeString(),
-                'status' => 'approved',
-                'joined_at' => $submission->log_date?->toDateString(),
-                'submitted_at' => $submission->submitted_at?->toDateString(),
-                'reviewed_at' => $submission->reviewed_at?->toDateString(),
-                'submission_type' => 'team',
-            ]);
+                ];
+            });
+        $teamHistory = $teamSubmissions
+            ->map(function (EngagementRewardChallengeTeamSubmission $submission) use ($teamParticipationByChallenge, $latestTeamSubmissionIds) {
+                $leaderParticipation = $teamParticipationByChallenge->get($submission->reward_challenge_id);
+                $isLatestSubmission = $latestTeamSubmissionIds->get($submission->reward_challenge_id) === $submission->id;
+                $hasCompletedSurvey = $leaderParticipation?->hasCompletedSurvey($submission->challenge) ?? false;
+                $surveyPoints = $isLatestSubmission
+                    ? (int) ($leaderParticipation?->survey_points_awarded ?? 0)
+                    : 0;
+                $status = $submission->status;
+                if ($submission->status === 'approved' && $submission->challenge?->survey_required) {
+                    $status = $hasCompletedSurvey ? 'approved' : 'pending_survey';
+                }
+
+                return [
+                    'id' => 'team-'.$submission->id,
+                    'challenge_title' => $submission->challenge?->title ?? 'Challenge removed',
+                    'category' => $submission->challenge?->category ?? 'N/A',
+                    'points' => (int) $submission->team_points_awarded + $surveyPoints,
+                    'challenge_points_awarded' => (int) $submission->base_points_awarded,
+                    'bonus_points_awarded' => (int) $submission->bonus_points_awarded,
+                    'team_points_awarded' => (int) $submission->team_points_awarded,
+                    'survey_points_awarded' => $surveyPoints,
+                    'total_points_awarded' => (int) $submission->team_points_awarded + $surveyPoints,
+                    'survey_completed_at' => $isLatestSubmission
+                        ? $leaderParticipation?->survey_rewarded_at?->toDateTimeString()
+                        : null,
+                    'proof_approved_at' => $submission->reviewed_at?->toDateTimeString(),
+                    'status' => $status,
+                    'joined_at' => $submission->log_date?->toDateString(),
+                    'submitted_at' => $submission->submitted_at?->toDateString(),
+                    'reviewed_at' => $submission->reviewed_at?->toDateString(),
+                    'submission_type' => 'team',
+                ];
+            });
         $history = $history->concat($teamHistory)->sortByDesc('joined_at')->values();
 
         // Challenge points come from this module's participant and team-award records.
@@ -693,7 +816,8 @@ class EngagementRewardChallengesController extends Controller
             return $this->rejectProof('Join this challenge before submitting proof.');
         }
 
-        if (! in_array($participant->pivot->status, ['joined', 'declined'], true)) {
+        if (! in_array($participant->pivot->status, ['joined', 'declined'], true)
+            && ! (! $participant->pivot->hasIndividualSubmission() && $participant->pivot->hasTeamSubmission())) {
             return $this->rejectProof('A submission is already pending or approved for this challenge.');
         }
 
@@ -708,7 +832,8 @@ class EngagementRewardChallengesController extends Controller
                     ->lockForUpdate()
                     ->first();
 
-                if (! $locked || ! in_array($locked->status, ['joined', 'declined'], true)) {
+                if (! $locked || (! in_array($locked->status, ['joined', 'declined'], true)
+                    && ! (! $locked->hasIndividualSubmission() && $locked->hasTeamSubmission()))) {
                     return null;
                 }
 
@@ -723,6 +848,9 @@ class EngagementRewardChallengesController extends Controller
                     'reviewed_at' => null,
                     'reviewed_by' => null,
                     'review_note' => null,
+                    'proof_approved_at' => null,
+                    'points_awarded' => null,
+                    'bonus_points' => 0,
                 ]);
 
                 return $previous;
@@ -788,7 +916,10 @@ class EngagementRewardChallengesController extends Controller
 
         $logDate = $today->toDateString();
 
-        if ($pivot->dailyLogs()->whereDate('log_date', $logDate)->exists()) {
+        if ($pivot->dailyLogs()
+            ->whereNull('team_submission_id')
+            ->whereDate('log_date', $logDate)
+            ->exists()) {
             return $this->rejectProof("You already submitted today's proof. Come back tomorrow!");
         }
 
@@ -796,17 +927,54 @@ class EngagementRewardChallengesController extends Controller
         $path = $media[0]['path'];
 
         try {
-            $pivot->dailyLogs()->create([
-                'log_date' => $logDate,
-                'submission_path' => $path,
-                'submission_media' => $media,
-                'challenge_description' => $validated['challenge_description'],
-                'status' => 'submitted',
-                'submitted_at' => now(),
-            ]);
+            $result = DB::transaction(function () use ($engagementRewardChallenge, $userId, $logDate, $path, $media, $validated) {
+                $locked = EngagementRewardChallengeParticipant::query()
+                    ->where('reward_challenge_id', $engagementRewardChallenge->id)
+                    ->where('user_id', $userId)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($locked->isDailyChallengeComplete()) {
+                    return 'complete';
+                }
+
+                if ($locked->dailyLogs()
+                    ->whereNull('team_submission_id')
+                    ->whereDate('log_date', $logDate)
+                    ->exists()) {
+                    return 'duplicate';
+                }
+
+                if (! $locked->hasIndividualSubmission() && $locked->hasTeamSubmission()) {
+                    $locked->update([
+                        'status' => 'joined',
+                        'completed_days' => 0,
+                        'submitted_at' => null,
+                        'proof_approved_at' => null,
+                        'reviewed_at' => null,
+                        'reviewed_by' => null,
+                        'review_note' => null,
+                        'points_awarded' => null,
+                        'bonus_points' => 0,
+                    ]);
+                }
+
+                $locked->dailyLogs()->create([
+                    'log_date' => $logDate,
+                    'submission_path' => $path,
+                    'submission_media' => $media,
+                    'challenge_description' => $validated['challenge_description'],
+                    'status' => 'submitted',
+                    'submitted_at' => now(),
+                ]);
+
+                if (in_array($locked->status, ['joined', 'declined'], true)) {
+                    $locked->update(['status' => 'submitted']);
+                }
+
+                return 'created';
+            });
         } catch (\Illuminate\Database\QueryException $e) {
-            // Two near-simultaneous submissions both passed the exists() check
-            // above; the unique index is the real guard against double-logging.
             $this->deleteProofMedia($media);
 
             if ($e->getCode() === '23000') {
@@ -822,10 +990,12 @@ class EngagementRewardChallengesController extends Controller
             throw $exception;
         }
 
-        // First-ever submission flips the display status away from the bare
-        // "joined" state so the UI can show an in-progress indicator.
-        if ($pivot->status === 'joined') {
-            $pivot->update(['status' => 'submitted']);
+        if ($result !== 'created') {
+            $this->deleteProofMedia($media);
+
+            return $this->rejectProof($result === 'complete'
+                ? 'You already completed this challenge.'
+                : "You already submitted today's proof. Come back tomorrow!");
         }
 
         $leaderboardService->forgetCached((int) $engagementRewardChallenge->id);
@@ -880,6 +1050,7 @@ class EngagementRewardChallengesController extends Controller
         }
 
         $logs = $participant->pivot->dailyLogs()
+            ->whereNull('team_submission_id')
             ->orderBy('log_date')
             ->get()
             ->map(fn (EngagementRewardChallengeDailyLog $log) => [

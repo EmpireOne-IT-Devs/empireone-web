@@ -6,6 +6,7 @@ use App\Models\Engagement\EngagementPostEventQuestion;
 use App\Models\Engagement\EngagementPostEventSurvey;
 use App\Models\Engagement\EngagementRewardChallenge;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
+use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
 use Illuminate\Support\Facades\DB;
 
 class ChallengeSurveyService
@@ -41,6 +42,8 @@ class ChallengeSurveyService
                     app(ChallengeCompletionService::class)->finalizeLocked($participant);
                 }
 
+                $this->releaseTeamPointsAfterSurvey($challenge, $userId);
+
                 return $participant->load('surveyResponse');
             }
 
@@ -71,9 +74,37 @@ class ChallengeSurveyService
             ]);
             app(ChallengeCompletionService::class)->finalizeLocked($participant);
             $survey->refreshSentimentOverview();
+            $this->releaseTeamPointsAfterSurvey($challenge, $userId);
 
             return $participant->load('surveyResponse');
         });
+    }
+
+    private function releaseTeamPointsAfterSurvey(EngagementRewardChallenge $challenge, int $leaderId): void
+    {
+        $submissions = EngagementRewardChallengeTeamSubmission::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('leader_id', $leaderId)
+            ->where('status', 'approved')
+            ->where(function ($query) {
+                $query->where('pending_base_points', '>', 0)
+                    ->orWhere('pending_bonus_points', '>', 0);
+            })
+            ->lockForUpdate()
+            ->get();
+
+        foreach ($submissions as $submission) {
+            $basePoints = (int) $submission->pending_base_points;
+            $bonusPoints = (int) $submission->pending_bonus_points;
+
+            $submission->update([
+                'base_points_awarded' => (int) $submission->base_points_awarded + $basePoints,
+                'bonus_points_awarded' => (int) $submission->bonus_points_awarded + $bonusPoints,
+                'team_points_awarded' => (int) $submission->team_points_awarded + $basePoints + $bonusPoints,
+                'pending_base_points' => 0,
+                'pending_bonus_points' => 0,
+            ]);
+        }
     }
 
     public function removeDuplicateQuestions(EngagementPostEventSurvey $survey): void
