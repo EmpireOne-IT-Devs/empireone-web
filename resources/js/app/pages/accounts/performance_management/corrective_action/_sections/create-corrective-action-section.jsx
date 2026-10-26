@@ -9,6 +9,8 @@ import Input from '@/app/_components/input'
 import InputSearch from '@/app/_components/input-search'
 import Modal from '@/app/_components/modal'
 import { search_employee_thunk } from '@/app/redux/employee-relation-thunk'
+import { create_corrective_action_service } from '@/app/services/human-resources-service'
+import { setAlert } from '@/app/redux/app-slice'
 
 export default function CreateCorrectiveActionSection() {
     const dispatch = useDispatch()
@@ -48,6 +50,8 @@ export default function CreateCorrectiveActionSection() {
             date_of_occurrence: '',
             description_of_infraction: '',
             evidence_drive_url: '',
+            supervisor_user_id:'',
+            manager_user_id:''
         },
     })
 
@@ -96,10 +100,48 @@ export default function CreateCorrectiveActionSection() {
     }
 
     const onSubmit = async (formData) => {
-        console.log('Corrective Action Form Data:', formData)
-        handleClose()
-    }
+        try {
+            // Include user_id if needed from the selected employee object
+            const payload = {
+                ...formData,
+                user_id: selected?.user_id,
+            }
 
+            await create_corrective_action_service(payload)
+
+            // Optional: Re-fetch the table list if you have a thunk for it
+            // await dispatch(get_corrective_actions_thunk())
+
+            dispatch(
+                setAlert({
+                    type: 'success',
+                    title: 'Corrective Action Created!',
+                    message: 'The corrective action has been submitted successfully and is ready for review.',
+                    open: true,
+                })
+            )
+
+            handleClose()
+        } catch (error) {
+            console.error('Failed to create corrective action:', error)
+
+            // Extract validation message or fallback error message
+            const errorMessage =
+                error?.response?.data?.message ||
+                (error?.response?.data?.errors
+                    ? Object.values(error.response.data.errors).flat().join(' ')
+                    : 'Something went wrong while submitting the form. Please try again.')
+
+            dispatch(
+                setAlert({
+                    type: 'error',
+                    title: 'Submission Failed',
+                    message: errorMessage,
+                    open: true,
+                })
+            )
+        }
+    }
     return (
         <>
             <Button
@@ -159,6 +201,8 @@ export default function CreateCorrectiveActionSection() {
                                         setValue('last_name', val?.personal_information?.last_name || '')
                                         setValue('eogs_email', val.eogs_email || '')
 
+                                        setValue('supervisor_user_id', val?.er_leader?.user_id || '')
+                                        setValue('manager_user_id', val?.department_manager?.user_id || '')
                                         setValue('supervisor_id', val?.er_leader?.employee?.employee_id || '')
                                         setValue('supervisor_email', val?.er_leader?.employee?.eogs_email || '')
                                         setValue('supervisor_first_name', val?.er_leader?.employee?.personal_information?.first_name || '')
@@ -429,7 +473,7 @@ export default function CreateCorrectiveActionSection() {
                     <div className="flex justify-center pt-4">
                         <Button
                             type="submit"
-                            disabled={isSubmitting}
+                            loading={isSubmitting}
                             className="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2.5 transform hover:-translate-y-0.5"
                         >
                             <FiSend className="w-4 h-4" />

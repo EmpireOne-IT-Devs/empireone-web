@@ -39,12 +39,7 @@ return new class extends Migration
             // ----------------------------------------------------
             // 2. INFRACTION DETAILS
             // ----------------------------------------------------
-            $table->enum('category', [
-                'Attendance',
-                'Performance',
-                'Behavior/Conduct',
-                'Security Policy',
-            ]);
+            $table->text('category')->nullable();
             $table->string('code_of_discipline_section'); // e.g., 1.1, 1.2
             $table->date('date_of_occurrence');
             $table->text('description_of_infraction');

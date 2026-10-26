@@ -12,6 +12,11 @@ export async function create_reach_service(data) {
     return await axios.post(`/api/er/reach`, data);
 }
 
+
+export async function create_corrective_action_service(data) {
+    return await axios.post(`/api/er/corrective_action`, data);
+}
+
 export async function get_reach_specific_leader_service() {
     return await axios.get(`/api/er/get_reach_specific_leader${window.location.search}`, );
 }

@@ -146,7 +146,7 @@ export default function FormSection() {
                 />
                 <Select
                     // disabled={data?.user?.account_employee?.e_r_leader_id}
-                    label="Leader"
+                    label="Immediate Supervisor"
                     name="e_r_leader_id"
                     value={form.e_r_leader_id}
                     options={data?.leaders?.map((res) => ({
@@ -160,7 +160,7 @@ export default function FormSection() {
 
 
                 <Select
-                    label="Department Manager"
+                    label="Next Level Manager"
                     required
                     name="department_manager_id"
                     options={data?.leaders?.map((res) => ({
