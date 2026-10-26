@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, X, Award, Clock, FileImage, User, Maximize2, ExternalLink } from "lucide-react";
+import {
+    FiCheck as Check,
+    FiX as X,
+    FiAward as Award,
+    FiClock as Clock,
+    FiImage as FileImage,
+    FiUser as User,
+    FiMaximize2 as Maximize2,
+    FiExternalLink as ExternalLink,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";

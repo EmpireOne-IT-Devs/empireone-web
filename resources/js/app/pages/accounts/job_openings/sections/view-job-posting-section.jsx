@@ -2,14 +2,16 @@ import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";
 import React, { useState } from "react";
 import {
-    Briefcase,
-    Building,
-    Calendar,
-    CheckCircle,
-    Clock,
-    DollarSign,
-    MapPin,
-} from "lucide-react";
+    FiBriefcase as Briefcase,
+    FiCalendar as Calendar,
+    FiCheckCircle as CheckCircle,
+    FiClock as Clock,
+    FiDollarSign as DollarSign,
+    FiMapPin as MapPin,
+} from "react-icons/fi";
+import {
+    FaBuilding as Building,
+} from "react-icons/fa";
 import { LuGraduationCap, LuBriefcase } from "react-icons/lu";
 import Badge from "@/app/_components/badge";
 import moment from "moment";

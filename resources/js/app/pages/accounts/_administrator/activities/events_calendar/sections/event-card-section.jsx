@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Clock, MapPin, Users, BarChart2 } from "lucide-react";
+import {
+    FiCalendar as Calendar,
+    FiClock as Clock,
+    FiMapPin as MapPin,
+    FiUsers as Users,
+    FiBarChart2 as BarChart2,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";

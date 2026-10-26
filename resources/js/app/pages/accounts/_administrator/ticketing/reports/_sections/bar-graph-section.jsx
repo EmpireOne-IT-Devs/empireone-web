@@ -9,7 +9,9 @@ import {
     Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Award } from "lucide-react";
+import {
+    FiAward as Award,
+} from "react-icons/fi";
 
 // Register required components
 ChartJS.register(

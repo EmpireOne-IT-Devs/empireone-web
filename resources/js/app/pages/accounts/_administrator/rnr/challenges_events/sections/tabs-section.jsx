@@ -1,13 +1,13 @@
 import { Link } from "@inertiajs/react";
 import React from "react";
 import {
-    LayoutDashboard,
-    Settings,
-    Trophy,
-    BarChart3,
-    FileText,
-    UserRound,
-} from "lucide-react";
+    FiAward,
+    FiBarChart2,
+    FiFileText,
+    FiLayout,
+    FiSettings,
+    FiUser,
+} from "react-icons/fi";
 import CreateNewChallenge from "./create-new-challenge";
 import ChallengeEventSection from "@/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-event-section";
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";
@@ -28,20 +28,20 @@ export default function TabsSection({ children }) {
     const tabs = [
         {
             label: "Join Challenges",
-            icon: UserRound,
+            icon: FiUser,
             path: "/accounts/administrator/rnr/challenges_events/join",
             active: currentPath === "join",
         },
         {
             label: "Dashboard",
-            icon: LayoutDashboard,
+            icon: FiLayout,
             managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/dashboard",
             active: currentPath === "dashboard",
         },
         {
             label: "Manage",
-            icon: Settings,
+            icon: FiSettings,
             managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/manage",
             active: ["manage", "participants"].includes(currentPath),
@@ -49,21 +49,21 @@ export default function TabsSection({ children }) {
        
         {
             label: "Submissions",
-            icon: BarChart3,
+            icon: FiBarChart2,
             managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/submissions",
             active: currentPath === "submissions",
         },
          {
             label: "Leaderboard",
-            icon: Trophy,
+            icon: FiAward,
             managementOnly: true,
             path: "/accounts/administrator/rnr/challenges_events/leaderboard",
             active: currentPath === "leaderboard",
         },
         // {
         //     label: "Reports",
-        //     icon: FileText,
+        //     icon: FiFileText,
         //     managementOnly: true,
         //     path: "/accounts/administrator/rnr/challenges_events/report",
         //     active: currentPath === "report",

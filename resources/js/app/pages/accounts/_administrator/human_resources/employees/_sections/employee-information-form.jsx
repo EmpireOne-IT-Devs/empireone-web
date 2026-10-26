@@ -2,7 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { Briefcase, Building2, Hash, Mail } from 'lucide-react';
+import {
+    FiBriefcase as Briefcase,
+    FiHome as Building2,
+    FiHash as Hash,
+    FiMail as Mail,
+} from "react-icons/fi";
 import { FaPencil } from 'react-icons/fa6';
 
 import Button from '@/app/_components/button';

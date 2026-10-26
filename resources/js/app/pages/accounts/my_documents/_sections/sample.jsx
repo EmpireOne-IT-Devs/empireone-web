@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import {
-    Search,
-    UploadCloud,
-    Eye,
-    Download,
-    Trash2,
-    FileText,
-    Image as ImageIcon,
-    Upload,
-    File,
-} from "lucide-react";
+    FiSearch as Search,
+    FiUploadCloud as UploadCloud,
+    FiEye as Eye,
+    FiDownload as Download,
+    FiTrash2 as Trash2,
+    FiFileText as FileText,
+    FiImage as ImageIcon,
+    FiUpload as Upload,
+    FiFile as File,
+} from "react-icons/fi";
 
 const TableSection = () => {
     const [searchTerm, setSearchTerm] = useState("");

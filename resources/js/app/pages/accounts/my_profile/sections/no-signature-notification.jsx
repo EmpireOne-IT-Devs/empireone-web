@@ -1,5 +1,7 @@
 import { Link } from "@inertiajs/react";
-import { Bell } from "lucide-react";
+import {
+    FiBell as Bell,
+} from "react-icons/fi";
 import React from "react";
 
 export default function NoSignatureNotification() {

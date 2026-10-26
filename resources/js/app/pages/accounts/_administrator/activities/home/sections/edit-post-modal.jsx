@@ -1,6 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CalendarDays, Newspaper, Send, Megaphone, ImagePlus, Trash2, X } from "lucide-react";
+import {
+    FiCalendar as CalendarDays,
+    FiSend as Send,
+    FiImage as ImagePlus,
+    FiTrash2 as Trash2,
+    FiX as X,
+} from "react-icons/fi";
+import {
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
+import {
+    BsMegaphone as Megaphone,
+} from "react-icons/bs";
 import { FaPaperPlane } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import Modal from "@/app/_components/modal";

@@ -1,5 +1,11 @@
 import React from "react";
-import { Gift, Sparkles, Star } from "lucide-react";
+import {
+    FiGift as Gift,
+    FiStar as Star,
+} from "react-icons/fi";
+import {
+    IoSparkles as Sparkles,
+} from "react-icons/io5";
 
 export default function HeaderSection() {
   return (

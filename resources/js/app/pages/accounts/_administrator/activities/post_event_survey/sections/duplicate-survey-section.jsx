@@ -1,5 +1,7 @@
 import React from "react";
-import { Copy } from "lucide-react";
+import {
+    FiCopy as Copy,
+} from "react-icons/fi";
 
 /**
  * Dropdown menu item that opens the shared survey form modal pre-filled with

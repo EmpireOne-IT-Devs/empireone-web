@@ -3,18 +3,20 @@ import Modal from "@/app/_components/modal";
 import Skeleton from "@/app/_components/skeleton";
 import CertificateRewardSection from "./certificate-reward-section";
 import {
-    Heart,
-    Share2,
-    Briefcase,
-    Lightbulb,
-    ArrowRight,
-    HeartHandshake,
-    Star,
-    Trophy,
-    Sparkles,
-    Quote,
-    Award,
-} from "lucide-react";
+    FiHeart as Heart,
+    FiShare2 as Share2,
+    FiBriefcase as Briefcase,
+    FiArrowRight as ArrowRight,
+    FiStar as Star,
+    FiStar as Sparkles,
+    FiMessageCircle as Quote,
+    FiAward as Award,
+} from "react-icons/fi";
+import {
+    FaLightbulb as Lightbulb,
+    FaHandshake as HeartHandshake,
+    FaTrophy as Trophy,
+} from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { get_engagement_reward_recognitions_thunk } from "@/app/redux/engagement-thunk";

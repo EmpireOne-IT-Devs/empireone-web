@@ -1,5 +1,10 @@
 import React from "react";
-import { Briefcase, Clipboard, InboxIcon, Users } from "lucide-react";
+import {
+    FiBriefcase as Briefcase,
+    FiClipboard as Clipboard,
+    FiInbox as InboxIcon,
+    FiUsers as Users,
+} from "react-icons/fi";
 import Card from "@/app/_components/card";
 
 export default function CardSection() {

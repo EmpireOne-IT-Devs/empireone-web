@@ -71,15 +71,15 @@ class ERLeaderController extends Controller
             // 2. Values to update: Leave empty because there are no other fields to update
             []
         );
-        // $employee = AccountEmployee::where('id', $request->user_id)->first();
-        // // $er_leader = ERLeader::where('user_id', $request->department_manager_id)->first();
-        // $e_r_leader = ERLeader::where('user_id', $request->e_r_leader_id)->first();
-        // if ($employee) {
-        //     $employee->update([
-        //         // 'department_manager_id' => $er_leader->id,
-        //         'e_r_leader_id' => $e_r_leader->id
-        //     ]);
-        // }
+        $employee = AccountEmployee::where('user_id', $request->user_id)->first();
+        $er_leader = ERLeader::where('user_id', $request->department_manager_id)->first();
+        $e_r_leader = ERLeader::where('user_id', $request->e_r_leader_id)->first();
+        if ($employee) {
+            $employee->update([
+                'department_manager_id' => $er_leader->id ?? null,
+                'e_r_leader_id' => $e_r_leader->id ?? null
+            ]);
+        }
         $user = User::where('id', $request->user_id)->first();
         if ($user) {
             $user->update([
@@ -129,6 +129,7 @@ class ERLeaderController extends Controller
 
 
         $immediate_supervisor =  ERLeader::where('user_id', $request->immediate_supervisor)->first();
+
         if ($leader) {
             $leader->update([
                 'user_id' => $request->user_id

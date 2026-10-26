@@ -1,7 +1,7 @@
 import React from "react";
 import {
     FcPieChart,
-    FcPortraitMode,
+    FcCollaboration ,
     FcLeave,
     FcConferenceCall,
 } from "react-icons/fc";
@@ -26,9 +26,9 @@ export default function SidebarSection({ children }) {
             active: currentPath === "my_team",
         },
         {
-            label: "REACH",
+            label: "Coaching",
             name: "Reach",
-            icon: <FcPortraitMode className="w-5 h-5 shrink-0" />,
+            icon: <FcCollaboration  className="w-5 h-5 shrink-0" />,
             path: "/accounts/administrator/performance_management/reach",
             active: currentPath === "reach",
         },

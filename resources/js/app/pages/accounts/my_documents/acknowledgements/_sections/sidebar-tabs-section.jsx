@@ -1,13 +1,19 @@
 import Sidetabs from './sidetabs'
 import React from 'react'
 import {
-    Book,
-    ShieldCheck,
-    Scale,
-    Video,
-    FileSignature,
-    Folder,
-} from 'lucide-react';
+    FiBook as Book,
+    FiVideo as Video,
+    FiFolder as Folder,
+} from "react-icons/fi";
+import {
+    BsShieldCheck as ShieldCheck,
+} from "react-icons/bs";
+import {
+    MdScale as Scale,
+} from "react-icons/md";
+import {
+    FaFileSignature as FileSignature,
+} from "react-icons/fa";
 import AddAcknowledgementSection from './add-acknowledgement-section';
 import { useSelector } from 'react-redux';
 

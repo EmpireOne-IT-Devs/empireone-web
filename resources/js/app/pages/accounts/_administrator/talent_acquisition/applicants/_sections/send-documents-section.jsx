@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { InfoIcon, MailIcon, SendIcon, AlertCircleIcon } from "lucide-react";
+import {
+    FiInfo as InfoIcon,
+    FiMail as MailIcon,
+    FiSend as SendIcon,
+    FiAlertCircle as AlertCircleIcon,
+} from "react-icons/fi";
 
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";

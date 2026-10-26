@@ -1,6 +1,8 @@
 import Button from "@/app/_components/button";
 import Radio from "@/app/_components/radio";
-import { Clock } from "lucide-react";
+import {
+    FiClock as Clock,
+} from "react-icons/fi";
 import React, { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 

@@ -7,14 +7,16 @@ import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import onboarding_documents from "@/app/lib/onboarding-documents";
 import {
-    UploadCloud,
-    Trash2,
-    ClipboardCheck,
-    ClipboardCheckIcon,
-    X,
-    Plus,
-    Trash,
-} from "lucide-react";
+    FiUploadCloud as UploadCloud,
+    FiTrash2 as Trash2,
+    FiCheckSquare as ClipboardCheckIcon,
+    FiX as X,
+    FiPlus as Plus,
+    FiTrash as Trash,
+} from "react-icons/fi";
+import {
+    FaClipboardCheck as ClipboardCheck,
+} from "react-icons/fa";
 import { add_documents_service } from "@/app/services/documents-services";
 import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";

@@ -6,7 +6,9 @@ import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import Select from "@/app/_components/select";
 import onboarding_documents from "@/app/lib/onboarding-documents";
-import { UploadCloud } from "lucide-react";
+import {
+    FiUploadCloud as UploadCloud,
+} from "react-icons/fi";
 import { re_upload_documents_service } from "@/app/services/documents-services";
 import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";

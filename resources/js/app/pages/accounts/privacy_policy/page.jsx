@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "@inertiajs/react";
-import { ArrowLeft } from "lucide-react";
+import {
+    FiArrowLeft as ArrowLeft,
+} from "react-icons/fi";
 
 export default function Page() {
     const [activeSection, setActiveSection] = useState("overview");

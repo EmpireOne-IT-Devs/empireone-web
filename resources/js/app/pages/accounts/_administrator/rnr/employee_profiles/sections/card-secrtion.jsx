@@ -1,6 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Users, BarChart2, Crown, Flag } from 'lucide-react';
+import {
+    FiUsers as Users,
+    FiBarChart2 as BarChart2,
+    FiFlag as Flag,
+} from "react-icons/fi";
+import { FaCrown as Crown } from "react-icons/fa";
 import Card from '@/app/_components/card';
 import Skeleton from '@/app/_components/skeleton';
 

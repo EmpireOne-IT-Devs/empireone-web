@@ -14,7 +14,9 @@ import { setAlert, setJobPostingId } from "@/app/redux/app-slice";
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/store/store";
 import { Link, router } from "@inertiajs/react";
-import { BriefcaseIcon } from "lucide-react";
+import {
+    FiBriefcase as BriefcaseIcon,
+} from "react-icons/fi";
 import SetScheduleSection from "./set-schedule-section";
 import { checking_applicant_service } from "@/app/services/applicants-service";
 import { getLeadAttributionFields } from "@/lib/leadAttribution";

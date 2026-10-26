@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import {
-    User,
-    BadgeCheck,
-    Building2,
-    Briefcase,
-    Calendar,
-    Clock3,
-} from "lucide-react";
+    FiUser as User,
+    FiHome as Building2,
+    FiBriefcase as Briefcase,
+    FiCalendar as Calendar,
+    FiClock as Clock3,
+} from "react-icons/fi";
+import {
+    FaCheckCircle as BadgeCheck,
+} from "react-icons/fa";
 import { useSelector } from "react-redux";
 import AttendanceHistorySection, { statusOf } from "./attendance-history-section";
 import SummaryCardsSection from "./summary-cards-section";

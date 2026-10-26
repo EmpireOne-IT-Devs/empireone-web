@@ -5,7 +5,9 @@ import { setAlert } from "@/app/redux/app-slice";
 import { get_leader_thunk } from "@/app/redux/employee-relation-thunk";
 import { add_leader_service } from "@/app/services/er-leaders-service";
 import store from "@/app/store/store";
-import { ClipboardCheckIcon } from "lucide-react";
+import {
+    FiCheckSquare as ClipboardCheckIcon,
+} from "react-icons/fi";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
@@ -28,7 +30,7 @@ export default function CreateLeadSection() {
     } = useForm({
         defaultValues: {
             user_id: "",
-            e_r_leader_id:"",
+            e_r_leader_id: "",
             department_manager_id: ""
         },
     });
@@ -77,9 +79,9 @@ export default function CreateLeadSection() {
     console.log('availableUsers', leaders)
     return (
         <>
-            <Button 
-            loading={loading}
-            onClick={() => setOpen(true)}>ADD LEADER</Button>
+            <Button
+                loading={loading}
+                onClick={() => setOpen(true)}>ADD LEADER</Button>
 
             <Modal
                 isOpen={open}
@@ -111,7 +113,7 @@ export default function CreateLeadSection() {
                         required
                         name="user_id"
                         // Pass the filtered availableUsers instead of the full users array
-                        options={availableUsers.map((res) => ({
+                        options={users?.map((res) => ({
                             ...res,
                             label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
                             value: res.id,
@@ -124,12 +126,12 @@ export default function CreateLeadSection() {
                         className="w-full"
                     />
 
-                       {/* <Select
+                    <Select
                         label="Immediate Supervisor"
                         required
                         name="e_r_leader_id"
                         // Pass the filtered availableUsers instead of the full users array
-                        options={availableUsers.map((res) => ({
+                        options={users.map((res) => ({
                             ...res,
                             label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
                             value: res.id,
@@ -140,10 +142,10 @@ export default function CreateLeadSection() {
                         }
                         error={errors.e_r_leader_id?.message}
                         className="w-full"
-                    /> */}
+                    />
 
 
-                    {/* <Select
+                    <Select
                         label="Second Level Manager"
                         required
                         name="department_manager_id"
@@ -159,7 +161,7 @@ export default function CreateLeadSection() {
                         }
                         error={errors.department_manager_id?.message}
                         className="w-full"
-                    /> */}
+                    />
 
 
                     <div className="w-full mt-auto pt-4">

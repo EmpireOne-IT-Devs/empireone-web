@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Cake, Gift } from "lucide-react";
+import {
+    MdCake as Cake,
+} from "react-icons/md";
+import {
+    FiGift as Gift,
+} from "react-icons/fi";
 import { useSelector } from "react-redux";
 import Modal from "@/app/_components/modal";
 import Button from "@/app/_components/button";

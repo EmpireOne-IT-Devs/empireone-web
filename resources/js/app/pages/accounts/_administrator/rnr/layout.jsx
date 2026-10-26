@@ -1,11 +1,11 @@
 import Tabs from "@/app/_components/tabs";
 import { router } from "@inertiajs/react";
-import { 
-    Heart, 
-    Zap, 
-    Star, 
-    Coins
-} from "lucide-react";
+import {
+    FiHeart as Heart,
+    FiZap as Zap,
+    FiStar as Star,
+} from "react-icons/fi";
+import { FaCoins as Coins } from "react-icons/fa";
 import React, { useState } from "react";
 import HeaderSection from "./sections/header-section";
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";

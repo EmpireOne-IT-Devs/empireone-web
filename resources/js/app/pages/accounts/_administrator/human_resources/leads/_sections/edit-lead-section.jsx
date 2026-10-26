@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { ClipboardCheckIcon } from "lucide-react";
+import {
+    FiCheckSquare as ClipboardCheckIcon,
+} from "react-icons/fi";
 import { FaPencil } from "react-icons/fa6";
 
 import Button from "@/app/_components/button";
@@ -39,9 +41,8 @@ export default function EditLeadSection({ props_data }) {
                 user_id: props_data?.user?.id ?? "",
                 department_manager_id: props_data?.employee?.department_manager_id ?? "",
                 e_r_leader_id: props_data?.id,
-                immediate_supervisor: props_data?.employee?.e_r_leader_id
+                immediate_supervisor: props_data?.user?.account_employee?.er_leader?.user_id
             });
-            console.log('props_data', props_data?.employee?.e_r_leader_id)
         }
     }, [open, props_data, reset]);
     // useEffect(() => {
@@ -63,6 +64,7 @@ export default function EditLeadSection({ props_data }) {
     // Handle form submission
     const onSubmit = async (data) => {
         try {
+            console.log('bazzzzzzz', data)
             await update_leaders_service(data);
             await dispatch(get_leader_thunk());
             dispatch(

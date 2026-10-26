@@ -1,5 +1,14 @@
 import React from "react";
-import { Zap, Sparkles, Building2, Fingerprint } from "lucide-react";
+import {
+    FiZap as Zap,
+    FiHome as Building2,
+} from "react-icons/fi";
+import {
+    IoSparkles as Sparkles,
+} from "react-icons/io5";
+import {
+    FaFingerprint as Fingerprint,
+} from "react-icons/fa";
 
 const actions = [
     { label: "View Activities", icon: Sparkles, iconColor: "text-blue-500", bg: "bg-blue-50" },

@@ -17,7 +17,9 @@ import Modal from "@/app/_components/modal";
 import JobRequisitionLogsSection from "./job-requisition-logs-section";
 import DeclinedJobRequisitionSection from "./declined-job-requisition-section";
 import { useSelector } from "react-redux";
-import { BriefcaseIcon } from "lucide-react";
+import {
+    FiBriefcase as BriefcaseIcon,
+} from "react-icons/fi";
 
 export default function JobRequisitionBodySection({ job_requisition }) {
     const [open, setOpen] = useState(false);

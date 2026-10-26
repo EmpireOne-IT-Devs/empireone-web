@@ -1,4 +1,9 @@
-import { Phone, User, Heart, Users } from "lucide-react";
+import {
+    FiPhone as Phone,
+    FiUser as User,
+    FiHeart as Heart,
+    FiUsers as Users,
+} from "react-icons/fi";
 import React from "react";
 import Input from "@/app/_components/input";
 

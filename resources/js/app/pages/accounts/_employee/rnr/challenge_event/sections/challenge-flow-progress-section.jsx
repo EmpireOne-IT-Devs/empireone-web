@@ -1,5 +1,5 @@
 import React from "react";
-import { Check } from "lucide-react";
+import { FiCheck as Check } from "react-icons/fi";
 
 const STEPS = ["Details", "Start", "Submitted", "Approved"];
 

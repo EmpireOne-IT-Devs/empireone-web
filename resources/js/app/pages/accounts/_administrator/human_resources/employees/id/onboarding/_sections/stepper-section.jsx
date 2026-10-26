@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Check, ChevronRight, ChevronLeft } from "lucide-react";
+import {
+    FiCheck as Check,
+    FiChevronRight as ChevronRight,
+    FiChevronLeft as ChevronLeft,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import { useDispatch, useSelector } from "react-redux";
 import { agree_onboarding_service } from "@/app/services/account-contract-service";

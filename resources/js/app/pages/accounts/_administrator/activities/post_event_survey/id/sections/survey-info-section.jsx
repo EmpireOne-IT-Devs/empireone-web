@@ -1,6 +1,11 @@
 import moment from "moment";
 import React from "react";
-import { Calendar, Tag, CalendarDays, Hash } from "lucide-react";
+import {
+    FiCalendar as Calendar,
+    FiTag as Tag,
+    FiCalendar as CalendarDays,
+    FiHash as Hash,
+} from "react-icons/fi";
 
 // Status styles updated with orange/amber warm spectrums
 const STATUS_STYLES = {

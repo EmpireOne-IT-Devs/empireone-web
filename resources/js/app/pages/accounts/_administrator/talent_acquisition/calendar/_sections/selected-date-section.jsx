@@ -1,5 +1,7 @@
 import Modal from "@/app/_components/modal";
-import { Calendar } from "lucide-react";
+import {
+    FiCalendar as Calendar,
+} from "react-icons/fi";
 import moment from "moment";
 import React, { useState } from "react";
 

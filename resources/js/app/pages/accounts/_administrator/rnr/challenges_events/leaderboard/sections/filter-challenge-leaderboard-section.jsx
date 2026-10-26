@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronDown, Flame } from "lucide-react";
+import { FiChevronDown as ChevronDown } from "react-icons/fi";
+import { FaFire as Flame } from "react-icons/fa";
 
 import { get_engagement_reward_challenges_thunk } from "@/app/redux/engagement-thunk";
 

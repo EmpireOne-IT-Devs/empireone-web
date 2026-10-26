@@ -249,6 +249,36 @@ class JobRequisitionController extends Controller
             ]
         ]);
     }
+
+    public function export_job_requisition(Request $request)
+    {
+        $user = Auth::user()?->load('personal_information', 'account_employee');
+        $status = $request->status ?? 'Active';
+
+        $query = JobPosting::where('status', $status)
+            ->with(['job_requisition', 'applications', 'applicant', 'erps']);
+
+        // // Filter by location_id from the job_requisition relationship
+        // if ($request->filled('location_id') && $request->where != 'applicants') {
+        //     $query->whereHas('job_requisition', function ($q) use ($request) {
+        //         $q->where('location_id', $request->location_id);
+        //     });
+        // }
+
+        if ($user && in_array($user->account_employee?->department_id, [1, 2])) {
+            $query->whereIn('target_audience', ['Internal', 'Both', 'External']);
+        } else if ($user && in_array($user->role, [1, 2])) {
+            // Standard Employees and Admins (Roles 1 & 2) see Internal and Both
+            $query->whereIn('target_audience', ['Internal', 'Both']);
+        } else {
+            $query->whereIn('target_audience', ['External', 'Both']);
+        }
+
+        // Use limit(2) or take(2) instead of passing 2 to get()
+        $jobPostings = $query->orderBy('created_at', 'desc')->limit(50)->get();
+
+        return response()->json($jobPostings);
+    }
     public function store(Request $request)
     {
         $auth = Auth::user()->load(['account_employee']);

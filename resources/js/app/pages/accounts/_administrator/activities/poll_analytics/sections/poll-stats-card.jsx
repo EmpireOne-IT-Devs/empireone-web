@@ -1,11 +1,13 @@
 import React from "react";
 import {
-    BarChart3,
-    Vote,
-    CheckCircle2,
-    XCircle,
-    Calculator,
-} from "lucide-react";
+    FiBarChart2 as BarChart3,
+    FiCheckSquare as Vote,
+    FiCheckCircle as CheckCircle2,
+    FiXCircle as XCircle,
+} from "react-icons/fi";
+import {
+    FaCalculator as Calculator,
+} from "react-icons/fa";
 import Card from "@/app/_components/card";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";

@@ -1,7 +1,10 @@
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import { peso_format } from "@/app/lib/peso-format";
-import { BriefcaseIcon, InfoIcon } from "lucide-react";
+import {
+    FiBriefcase as BriefcaseIcon,
+    FiInfo as InfoIcon,
+} from "react-icons/fi";
 import React, { useState } from "react";
 
 export default function ShowDetailsSection({ data }) {

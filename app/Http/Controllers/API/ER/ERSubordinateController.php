@@ -41,6 +41,7 @@ class ERSubordinateController extends Controller
         $subordinates = $request->subordinates;
 
         foreach ($subordinates as $subordinateId) {
+            
             if ($subordinateId) {
                 ERSubordinate::updateOrCreate(
                     ['subordinate_id' => $subordinateId], 
@@ -50,7 +51,7 @@ class ERSubordinateController extends Controller
                     'e_r_leader_id' => $leader->id,
                     'account_id' => $leader['employee']['account_id'] ?? null,
                     'department_id' => $leader['employee']['department_id'] ?? null,
-                    'department_manager_id' => $leader['employee']['department_manager_id']
+                    'department_manager_id' => $leader['employee']['e_r_leader_id']
                 ]);
             }
         }

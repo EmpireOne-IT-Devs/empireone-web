@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { Building2, ImagePlus, Landmark, Pencil, Users, X } from "lucide-react";
+import {
+    FiEdit2,
+    FiHome,
+    FiImage,
+    FiMap,
+    FiUsers,
+    FiX,
+} from "react-icons/fi";
 
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
@@ -301,7 +308,7 @@ export default function EditChallengeSection({ challenge }) {
                 className="p-1 rounded-full bg-blue-50 text-blue-400 hover:bg-blue-100 transition-colors"
                 aria-label="Edit challenge"
             >
-                <Pencil className="w-3.5 h-3.5" />
+                <FiEdit2 className="w-3.5 h-3.5" />
             </button>
 
             <Modal
@@ -364,7 +371,7 @@ export default function EditChallengeSection({ challenge }) {
                                         className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 shadow transition hover:bg-white"
                                         aria-label="Remove banner image"
                                     >
-                                        <X className="h-4 w-4 text-gray-600" />
+                                        <FiX className="h-4 w-4 text-gray-600" />
                                     </button>
                                 </div>
 
@@ -375,7 +382,7 @@ export default function EditChallengeSection({ challenge }) {
                             </div>
                         ) : (
                             <label className="flex h-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 text-gray-400 transition hover:border-gray-300 hover:bg-gray-50">
-                                <ImagePlus className="h-5 w-5" />
+                                <FiImage className="h-5 w-5" />
                                 <span className="text-xs">
                                     Upload banner image
                                 </span>
@@ -558,7 +565,7 @@ export default function EditChallengeSection({ challenge }) {
                                             : "bg-gray-100 text-gray-500"
                                     }`}
                                 >
-                                    <Users className="h-4 w-4" />
+                                    <FiUsers className="h-4 w-4" />
                                 </span>
                                 All Employees
                             </span>
@@ -591,7 +598,7 @@ export default function EditChallengeSection({ challenge }) {
                                                 : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                                         }`}
                                     >
-                                        <Building2 className="h-3.5 w-3.5" />
+                                        <FiHome className="h-3.5 w-3.5" />
                                         {dept.name}{" "}
                                         <span className="text-gray-400">
                                             {dept.employees_count}
@@ -629,7 +636,7 @@ export default function EditChallengeSection({ challenge }) {
                                                         : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                                                 }`}
                                             >
-                                                <Landmark className="h-3.5 w-3.5" />
+                                                <FiMap className="h-3.5 w-3.5" />
                                                 {account.name}{" "}
                                                 <span className="text-gray-400">
                                                     {account.employees_count}

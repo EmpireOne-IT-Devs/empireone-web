@@ -1,6 +1,8 @@
 import store from "@/app/store/store";
 import React from "react";
-import { Trash2 } from "lucide-react";
+import {
+    FiTrash2 as Trash2,
+} from "react-icons/fi";
 import { delete_job_postings_service } from "@/app/services/job-posting-service";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";

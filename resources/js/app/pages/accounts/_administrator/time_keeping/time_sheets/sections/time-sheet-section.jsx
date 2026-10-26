@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { Download, Filter } from "lucide-react";
+import {
+    FiDownload as Download,
+    FiFilter as Filter,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "@/app/_components/select";
 

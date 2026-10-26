@@ -5,7 +5,7 @@ import RnrLayout from "@/app/pages/accounts/_administrator/rnr/layout";
 import TabsSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/sections/tabs-section";
 import AllChallengesSection from "./sections/all-challenges-section";
 import ArchiveSection from "./sections/archive-section";
-import { LayoutGrid, Archive } from "lucide-react";
+import { FiArchive, FiGrid } from "react-icons/fi";
 
 export default function Page() {
     const [showArchived, setShowArchived] = useState(false);
@@ -13,12 +13,12 @@ export default function Page() {
     const viewTabs = [
         {
             label: "All Challenges",
-            icon: LayoutGrid,
+            icon: FiGrid,
             archived: false,
         },
         {
             label: "Archive",
-            icon: Archive,
+            icon: FiArchive,
             archived: true,
         },
     ];

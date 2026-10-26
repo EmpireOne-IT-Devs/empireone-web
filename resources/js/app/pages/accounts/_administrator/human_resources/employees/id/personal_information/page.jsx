@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Mail,
-    Phone,
-    MapPin,
-    User,
-    Briefcase,
-    BookOpen,
-    Shield,
-    QrCode,
-    PenLine,
-    AlertCircle,
-} from "lucide-react";
+    FiMail as Mail,
+    FiPhone as Phone,
+    FiMapPin as MapPin,
+    FiUser as User,
+    FiBriefcase as Briefcase,
+    FiBookOpen as BookOpen,
+    FiShield as Shield,
+    FiEdit as PenLine,
+    FiAlertCircle as AlertCircle,
+} from "react-icons/fi";
+import {
+    MdQrCode as QrCode,
+} from "react-icons/md";
 import EmployeeLayout from "../layout";
 import Layout from "../../../../../layout";
 import { useSelector } from "react-redux";

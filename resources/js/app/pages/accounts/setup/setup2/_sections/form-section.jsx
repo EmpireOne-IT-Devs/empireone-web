@@ -1,7 +1,15 @@
 import Input from '@/app/_components/input';
 import Select from '@/app/_components/select';
 import Button from '@/app/_components/button';
-import { Briefcase, Hash, Building2, Mail, UserCircle } from "lucide-react";
+import {
+    FiBriefcase as Briefcase,
+    FiHash as Hash,
+    FiHome as Building2,
+    FiMail as Mail,
+} from "react-icons/fi";
+import {
+    FaUserCircle as UserCircle,
+} from "react-icons/fa";
 import moment from 'moment';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';

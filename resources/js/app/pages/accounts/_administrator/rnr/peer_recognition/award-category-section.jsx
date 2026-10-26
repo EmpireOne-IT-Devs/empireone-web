@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import {
-    Award,
-    Medal,
-    Lightbulb,
-    Sparkles,
-    Users,
-    HeartHandshake,
-    GraduationCap,
-} from "lucide-react";
+    FiAward as Award,
+    FiStar as Sparkles,
+    FiUsers as Users,
+} from "react-icons/fi";
+import {
+    FaMedal as Medal,
+    FaLightbulb as Lightbulb,
+    FaHandshake as HeartHandshake,
+    FaGraduationCap as GraduationCap,
+} from "react-icons/fa";
 
 const tabs = [
     {

@@ -5,7 +5,15 @@ import Select from '@/app/_components/select'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { Hash, Building2, Briefcase, Mail, Clock, BriefcaseIcon, UserPlus } from 'lucide-react'
+import {
+    FiHash as Hash,
+    FiHome as Building2,
+    FiBriefcase as Briefcase,
+    FiMail as Mail,
+    FiClock as Clock,
+    FiBriefcase as BriefcaseIcon,
+    FiUserPlus as UserPlus,
+} from "react-icons/fi";
 import { Clickup } from '@thesvg/react'
 import store from '@/app/store/store'
 import { get_employees_thunk } from '@/app/redux/employee-relation-thunk'

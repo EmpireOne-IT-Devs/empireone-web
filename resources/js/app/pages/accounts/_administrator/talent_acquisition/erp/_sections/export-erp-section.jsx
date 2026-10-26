@@ -1,6 +1,8 @@
 import Button from '@/app/_components/button'
 import { router } from '@inertiajs/react'
-import { Download } from 'lucide-react'
+import {
+    FiDownload as Download,
+} from "react-icons/fi";
 import React from 'react'
 
 export default function ExportERPSection() {

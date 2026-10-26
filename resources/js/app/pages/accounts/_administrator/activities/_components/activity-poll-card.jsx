@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { BarChart2, CheckCircle2 } from "lucide-react";
+import {
+    FiBarChart2 as BarChart2,
+    FiCheckCircle as CheckCircle2,
+} from "react-icons/fi";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
 

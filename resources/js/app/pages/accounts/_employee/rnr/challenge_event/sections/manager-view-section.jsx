@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import { Link } from "@inertiajs/react";
 import {
-    LayoutDashboard,
-    Settings,
-    Trophy,
-    BarChart3,
-    FileText,
-    LayoutGrid,
-    Archive,
-    UserRound,
-} from "lucide-react";
+    FiGrid as LayoutDashboard,
+    FiSettings as Settings,
+    FiBarChart2 as BarChart3,
+    FiFileText as FileText,
+    FiGrid as LayoutGrid,
+    FiArchive as Archive,
+    FiUser as UserRound,
+} from "react-icons/fi";
+import { FaTrophy as Trophy } from "react-icons/fa";
 
 import ChallengeEventSection from "./challenge-event-section";
 import CreateNewChallenge from "@/app/pages/accounts/_administrator/rnr/challenges_events/sections/create-new-challenge";
@@ -26,17 +27,39 @@ import TableSection from "@/app/pages/accounts/_administrator/rnr/challenges_eve
 import ExportChallengeSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/report/sections/export-challenge-section";
 import HistoricalTrendSection from "@/app/pages/accounts/_administrator/rnr/challenges_events/report/sections/historical-trend-section";
 
-// Mirrors the admin "Challenges & Events" tab bar, but keeps everything on this
-// one employee route via local tab state instead of navigating to the
-// /accounts/administrator/* pages (those are locked to real admin accounts and
-// would bounce department 1/11 employees back, which looked like a glitch).
+// Managers use the administrator challenge pages, which are authorized by
+// challenge-management access rather than the administrator account role.
 const TABS = [
-    { key: "join", label: "Join Challenges", icon: UserRound },
-    { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { key: "manage", label: "Manage", icon: Settings },
-    { key: "leaderboard", label: "Leaderboard", icon: Trophy },
-    { key: "submissions", label: "Submissions", icon: BarChart3 },
-    { key: "report", label: "Reports", icon: FileText },
+    {
+        key: "join",
+        label: "Join Challenges",
+        icon: UserRound,
+        path: "/accounts/administrator/rnr/challenges_events/join",
+    },
+    {
+        key: "dashboard",
+        label: "Dashboard",
+        icon: LayoutDashboard,
+        path: "/accounts/administrator/rnr/challenges_events/dashboard",
+    },
+    {
+        key: "manage",
+        label: "Manage",
+        icon: Settings,
+        path: "/accounts/administrator/rnr/challenges_events/manage",
+    },
+    {
+        key: "submissions",
+        label: "Submissions",
+        icon: BarChart3,
+        path: "/accounts/administrator/rnr/challenges_events/submissions",
+    },
+    {
+        key: "leaderboard",
+        label: "Leaderboard",
+        icon: Trophy,
+        path: "/accounts/administrator/rnr/challenges_events/leaderboard",
+    },
 ];
 
 const DASHBOARD_VIEW_TABS = [
@@ -45,7 +68,7 @@ const DASHBOARD_VIEW_TABS = [
 ];
 
 export default function ManagerViewSection() {
-    const [activeTab, setActiveTab] = useState("dashboard");
+    const activeTab = "dashboard";
 
     const [showArchived, setShowArchived] = useState(false);
     const [selectedManageChallengeId, setSelectedManageChallengeId] = useState(null);
@@ -61,10 +84,9 @@ export default function ManagerViewSection() {
                         const active = activeTab === tab.key;
 
                         return (
-                            <button
+                            <Link
                                 key={tab.key}
-                                type="button"
-                                onClick={() => setActiveTab(tab.key)}
+                                href={tab.path}
                                 className={`relative flex items-center gap-1.5 px-2 py-3 text-sm font-medium outline-none transition-colors sm:px-0 sm:py-4 sm:text-base ${
                                     active
                                         ? "text-blue-800"
@@ -76,7 +98,7 @@ export default function ManagerViewSection() {
                                 {active && (
                                     <span className="absolute -bottom-px left-0 right-0 z-10 mx-auto h-0.5 w-full rounded bg-blue-800" />
                                 )}
-                            </button>
+                            </Link>
                         );
                     })}
                 </nav>

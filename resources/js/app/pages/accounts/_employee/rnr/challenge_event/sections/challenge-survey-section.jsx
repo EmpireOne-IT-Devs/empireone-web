@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CheckCircle, ClipboardList } from "lucide-react";
+import {
+    FiCheckCircle as CheckCircle,
+    FiClipboard as ClipboardList,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Radio from "@/app/_components/radio";
 import TextArea from "@/app/_components/textarea";

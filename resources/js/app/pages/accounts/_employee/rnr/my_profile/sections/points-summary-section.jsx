@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    Trophy,
-    Sparkles,
-    Users,
-    Target,
-    ClipboardCheck,
-    ArrowUpRight,
-    History,
-    Medal,
-} from "lucide-react";
+    FiStar as Sparkles,
+    FiUsers as Users,
+    FiTarget as Target,
+    FiCheckSquare as ClipboardCheck,
+    FiArrowUpRight as ArrowUpRight,
+    FiClock as History,
+} from "react-icons/fi";
+import { FaTrophy as Trophy, FaMedal as Medal } from "react-icons/fa";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Pagination from "@/app/_components/pagination";

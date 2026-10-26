@@ -1,11 +1,11 @@
 import {
-    Monitor,
-    Smartphone,
-    TrendingUp,
-    Database,
-    Cloud,
-    Shield,
-} from "lucide-react";
+    FiMonitor as Monitor,
+    FiSmartphone as Smartphone,
+    FiTrendingUp as TrendingUp,
+    FiDatabase as Database,
+    FiCloud as Cloud,
+    FiShield as Shield,
+} from "react-icons/fi";
 import { motion } from "framer-motion";
 
 const fadeUp = {

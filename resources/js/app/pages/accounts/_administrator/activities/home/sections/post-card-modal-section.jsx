@@ -2,18 +2,22 @@ import React, { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import {
-    Megaphone,
-    CalendarDays,
-    Newspaper,
-    Send,
-    Tag,
-    X,
-    ChevronLeft,
-    ChevronRight,
-    Images,
-    ArrowLeft,
-    FileText,
-} from "lucide-react";
+    BsMegaphone as Megaphone,
+} from "react-icons/bs";
+import {
+    FiCalendar as CalendarDays,
+    FiSend as Send,
+    FiTag as Tag,
+    FiX as X,
+    FiChevronLeft as ChevronLeft,
+    FiChevronRight as ChevronRight,
+    FiArrowLeft as ArrowLeft,
+    FiFileText as FileText,
+} from "react-icons/fi";
+import {
+    FaNewspaper as Newspaper,
+    FaImages as Images,
+} from "react-icons/fa";
 import Modal from "@/app/_components/modal";
 import Badge from "@/app/_components/badge";
 import PostInteractionPanel from "@/app/pages/accounts/_administrator/activities/_components/post-interaction-panel";

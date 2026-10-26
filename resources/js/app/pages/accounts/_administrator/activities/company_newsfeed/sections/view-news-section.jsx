@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
-import { Newspaper } from "lucide-react";
+import {
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
 import Badge from "@/app/_components/badge";
 import Modal from "@/app/_components/modal";
 import PostInteractionPanel from "../../_components/post-interaction-panel";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { X, TriangleAlert } from "lucide-react";
+import { FiAlertTriangle, FiX } from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import { setAlert } from "@/app/redux/app-slice";
@@ -54,7 +54,7 @@ export default function DeleteChallengeSection({ challenge }) {
                 className="p-1 rounded-full bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
                 aria-label="Delete challenge"
             >
-                <X className="w-3.5 h-3.5" />
+                <FiX className="w-3.5 h-3.5" />
             </button>
 
             <Modal
@@ -63,7 +63,7 @@ export default function DeleteChallengeSection({ challenge }) {
                 title={
                     <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 text-red-600 shrink-0">
-                            <TriangleAlert />
+                            <FiAlertTriangle />
                         </div>
                         <div>
                             <p className="text-[10px] font-semibold tracking-[0.1em] uppercase text-neutral-400 font-mono">
@@ -109,5 +109,3 @@ export default function DeleteChallengeSection({ challenge }) {
         </>
     );
 }
-
-

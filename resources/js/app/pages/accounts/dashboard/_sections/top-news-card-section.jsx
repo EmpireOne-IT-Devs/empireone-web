@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import {
-    Newspaper,
-    TrendingUp,
-    Package,
-    Users,
-    ChevronRight,
-} from "lucide-react";
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
+import {
+    FiTrendingUp as TrendingUp,
+    FiPackage as Package,
+    FiUsers as Users,
+    FiChevronRight as ChevronRight,
+} from "react-icons/fi";
 
 const news = [
     {

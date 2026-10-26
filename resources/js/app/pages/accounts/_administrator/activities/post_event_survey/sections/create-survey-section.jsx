@@ -9,7 +9,20 @@ import {
 } from "@/app/redux/post-event-survey-slice";
 import { get_engagement_posts_thunk } from "@/app/redux/engagement-thunk";
 import { setAlert } from "@/app/redux/app-slice";
-import { Folder, PlusCircleIcon, Trash2, GripVertical, Plus, Star, Copy, Pencil } from "lucide-react";
+import {
+    FiFolder as Folder,
+    FiPlusCircle as PlusCircleIcon,
+    FiTrash2 as Trash2,
+    FiPlus as Plus,
+    FiStar as Star,
+    FiCopy as Copy,
+} from "react-icons/fi";
+import {
+    FaGripVertical as GripVertical,
+} from "react-icons/fa";
+import {
+    BsPencil as Pencil,
+} from "react-icons/bs";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 

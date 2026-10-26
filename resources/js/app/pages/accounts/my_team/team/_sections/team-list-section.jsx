@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    CheckCircle2,
-    ChevronDown,
-    FileText,
-    Folder,
-    XCircle,
-} from 'lucide-react';
+    FiCheckCircle as CheckCircle2,
+    FiChevronDown as ChevronDown,
+    FiFileText as FileText,
+    FiFolder as Folder,
+    FiXCircle as XCircle,
+} from "react-icons/fi";
 
 export default function TeamListSection({ props_data,  children }) {
     const [open, setOpen] = useState(false);

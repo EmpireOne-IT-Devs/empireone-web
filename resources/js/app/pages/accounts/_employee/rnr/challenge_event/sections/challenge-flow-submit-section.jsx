@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ImagePlus, X, Clock3 } from "lucide-react";
+import {
+    FiImage as ImagePlus,
+    FiX as X,
+    FiClock as Clock3,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import TextArea from "@/app/_components/textarea";
 import moment from "moment/moment";

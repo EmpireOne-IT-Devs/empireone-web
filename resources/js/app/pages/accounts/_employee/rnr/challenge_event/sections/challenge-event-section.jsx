@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { LayoutGrid, Archive } from "lucide-react";
+import { FiGrid as LayoutGrid, FiArchive as Archive } from "react-icons/fi";
 import Button from "@/app/_components/button";
 import { get_my_engagement_reward_challenges_thunk } from "@/app/redux/engagement-thunk";
 import HeaderSection from "./header-section";

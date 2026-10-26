@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo } from "react";
-import { CalendarDays, MapPin, RotateCcw } from "lucide-react";
+import {
+    FiCalendar as CalendarDays,
+    FiMapPin as MapPin,
+    FiRotateCcw as RotateCcw,
+} from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "@/app/_components/select";
 import { setWorkAnniversaryFilters } from "@/app/redux/engagement-slice";

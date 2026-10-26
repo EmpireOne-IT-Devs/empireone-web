@@ -1,5 +1,10 @@
 import Button from "@/app/_components/button";
-import { AlertCircle, Mail, PencilLine, Link as LinkIcon } from "lucide-react";
+import {
+    FiAlertCircle as AlertCircle,
+    FiMail as Mail,
+    FiEdit as PencilLine,
+    FiLink as LinkIcon,
+} from "react-icons/fi";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import UploadProfileSection from "./upload-profile-section";

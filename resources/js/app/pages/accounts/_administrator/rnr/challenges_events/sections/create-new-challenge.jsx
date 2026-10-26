@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    Building2,
-    ChevronDown,
-    ImagePlus,
-    Landmark,
-    PlusCircleIcon,
-    Users,
-    X,
-} from "lucide-react";
+    FiChevronDown,
+    FiHome,
+    FiImage,
+    FiMap,
+    FiPlusCircle,
+    FiUsers,
+    FiX,
+} from "react-icons/fi";
 
 import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
@@ -322,7 +322,7 @@ export default function CreateNewChallenge() {
                     className="shrink-0 rounded-full"
                     onClick={() => setIsOpen(true)}
                 >
-                    <PlusCircleIcon className="mr-2 h-4 w-4" />
+                    <FiPlusCircle className="mr-2 h-4 w-4" />
                     Add new challenge
                 </Button>
             </div>
@@ -393,7 +393,7 @@ export default function CreateNewChallenge() {
                                         className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 shadow transition hover:bg-white"
                                         aria-label="Remove banner image"
                                     >
-                                        <X className="h-4 w-4 text-gray-600" />
+                                        <FiX className="h-4 w-4 text-gray-600" />
                                     </button>
                                 </div>
 
@@ -404,7 +404,7 @@ export default function CreateNewChallenge() {
                             </div>
                         ) : (
                             <label className="flex h-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 text-gray-400 transition hover:border-gray-300 hover:bg-gray-50">
-                                <ImagePlus className="h-5 w-5" />
+                                <FiImage className="h-5 w-5" />
 
                                 <span className="text-xs">
                                     Upload banner image
@@ -570,7 +570,7 @@ export default function CreateNewChallenge() {
                                             : "bg-gray-100 text-gray-500"
                                     }`}
                                 >
-                                    <Users className="h-4 w-4" />
+                                    <FiUsers className="h-4 w-4" />
                                 </span>
                                 All Employees
                             </span>
@@ -606,14 +606,14 @@ export default function CreateNewChallenge() {
                                     }`}
                                 >
                                     <span className="flex min-w-0 items-center gap-2">
-                                        <Building2 className="h-4 w-4 shrink-0" />
+                                        <FiHome className="h-4 w-4 shrink-0" />
                                         <span className="truncate text-left">
                                             {selectedDepartmentIds?.length > 0
                                                 ? `${selectedDepartmentIds.length} department(s) selected`
                                                 : "Select Department(s)"}
                                         </span>
                                     </span>
-                                    <ChevronDown
+                                    <FiChevronDown
                                         className={`h-4 w-4 shrink-0 transition-transform ${
                                             openEligibilityDropdown ===
                                             "departments"
@@ -684,14 +684,14 @@ export default function CreateNewChallenge() {
                                         }`}
                                     >
                                         <span className="flex min-w-0 items-center gap-2">
-                                            <Landmark className="h-4 w-4 shrink-0" />
+                                            <FiMap className="h-4 w-4 shrink-0" />
                                             <span className="truncate text-left">
                                                 {selectedAccountIds?.length > 0
                                                     ? `${selectedAccountIds.length} account(s) selected`
                                                     : "Select Account(s)"}
                                             </span>
                                         </span>
-                                        <ChevronDown
+                                        <FiChevronDown
                                             className={`h-4 w-4 shrink-0 transition-transform ${
                                                 openEligibilityDropdown ===
                                                 "accounts"

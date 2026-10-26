@@ -4,7 +4,10 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
-import { Eye, EyeOff } from "lucide-react";
+import {
+    FiEye as Eye,
+    FiEyeOff as EyeOff,
+} from "react-icons/fi";
 import { useRef, useState } from "react";
 
 export default function UpdatePasswordForm({ className = "" }) {

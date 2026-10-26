@@ -4,7 +4,9 @@ import { CalendarIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { FaFileAlt } from "react-icons/fa";
 import CreateJobRequisition from "../../job_requisition/_sections/create-requisition-section";
 import { router } from "@inertiajs/react";
-import { Briefcase } from "lucide-react";
+import {
+    FiBriefcase as Briefcase,
+} from "react-icons/fi";
 export default function QuickActionsSection() {
     return (
         <Card className="flex-1 flex flex-col gap-4 p-6">

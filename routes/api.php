@@ -140,6 +140,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('requisitions', JobRequisitionController::class);
         Route::get('get_job_requisitions_by_user',  [JobRequisitionController::class, 'get_job_requisitions_by_user']);
         Route::post('approve_job_requisition',  [JobRequisitionController::class, 'approve_job_requisition']);
+        Route::post('export_job_requisition',  [JobRequisitionController::class, 'export_job_requisition']);
+        
         Route::resource('requisition_logs', JobRequisitionLogController::class);
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::get('dashboard_stats', [JobPostingController::class, 'dashboard_stats']);

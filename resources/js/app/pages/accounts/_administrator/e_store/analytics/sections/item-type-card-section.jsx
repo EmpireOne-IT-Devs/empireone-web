@@ -1,5 +1,19 @@
 import React from 'react';
-import { Crown, Sparkles, Utensils, CreditCard, Shirt, Ticket, Laptop } from 'lucide-react';
+import {
+    FaCrown as Crown,
+    FaUtensils as Utensils,
+    FaLaptop as Laptop,
+} from "react-icons/fa";
+import {
+    IoSparkles as Sparkles,
+    IoShirt as Shirt,
+} from "react-icons/io5";
+import {
+    FiCreditCard as CreditCard,
+} from "react-icons/fi";
+import {
+    BsTicket as Ticket,
+} from "react-icons/bs";
 import Card from '@/app/_components/card'; // Adjust path based on your file structure
 
 // Performance Optimization: Moved static dataset outside of the render cycle

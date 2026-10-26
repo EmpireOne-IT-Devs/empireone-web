@@ -6,16 +6,18 @@ import {
 } from "@/app/redux/post-event-survey-slice";
 import { setAlert } from "@/app/redux/app-slice";
 import {
-    Type,
-    AlignLeft,
-    Circle,
-    CheckSquare,
-    ChevronDown,
-    Star,
-    ClipboardList,
-    CheckCircle2,
-    Lock,
-} from "lucide-react";
+    FiType as Type,
+    FiAlignLeft as AlignLeft,
+    FiCircle as Circle,
+    FiCheckSquare as CheckSquare,
+    FiChevronDown as ChevronDown,
+    FiStar as Star,
+    FiCheckCircle as CheckCircle2,
+    FiLock as Lock,
+} from "react-icons/fi";
+import {
+    FaClipboardList as ClipboardList,
+} from "react-icons/fa";
 
 const META = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');`;
 const sans = { fontFamily: "'Inter', sans-serif" };

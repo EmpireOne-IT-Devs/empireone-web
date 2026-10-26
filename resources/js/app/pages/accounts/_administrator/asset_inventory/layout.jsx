@@ -1,7 +1,24 @@
 import Tabs from "@/app/_components/tabs";
 import React from "react";
 import HeaderSection from "./_sections/header-section";
-import { LayoutDashboard, ClipboardList, Package, BarChart2, ShoppingCart, PackagePlus, FileText, Laptop, Cpu, Monitor, Mouse, Wrench, Archive, RotateCcw } from "lucide-react";
+import {
+    FiGrid as LayoutDashboard,
+    FiPackage as Package,
+    FiBarChart2 as BarChart2,
+    FiShoppingCart as ShoppingCart,
+    FiPackage as PackagePlus,
+    FiFileText as FileText,
+    FiCpu as Cpu,
+    FiMonitor as Monitor,
+    FiArchive as Archive,
+    FiRotateCcw as RotateCcw,
+} from "react-icons/fi";
+import {
+    FaClipboardList as ClipboardList,
+    FaLaptop as Laptop,
+    FaMouse as Mouse,
+    FaWrench as Wrench,
+} from "react-icons/fa";
 
 const TabLabel = ({ icon: Icon, text }) => (
     <span className="flex items-center gap-1.5">

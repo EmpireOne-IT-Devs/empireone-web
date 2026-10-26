@@ -1,6 +1,13 @@
 import Card from "@/app/_components/card";
 import React from "react";
-import { ClipboardList, CheckCircle2, XCircle, Clock } from "lucide-react";
+import {
+    FaClipboardList as ClipboardList,
+} from "react-icons/fa";
+import {
+    FiCheckCircle as CheckCircle2,
+    FiXCircle as XCircle,
+    FiClock as Clock,
+} from "react-icons/fi";
 
 function SectionLabel({ title }) {
     return (

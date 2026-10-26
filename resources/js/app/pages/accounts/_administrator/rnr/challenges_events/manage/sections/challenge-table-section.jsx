@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "@inertiajs/react";
-import { Flame, Lightbulb, Brain, Sprout, BookOpen, Users } from "lucide-react";
+import {
+    FaFire as Flame,
+    FaLightbulb as Lightbulb,
+    FaBrain as Brain,
+    FaSeedling as Sprout,
+} from "react-icons/fa";
+import { FiBookOpen as BookOpen, FiUsers as Users } from "react-icons/fi";
 
 import Table from "@/app/_components/table";
 import Badge from "@/app/_components/badge";

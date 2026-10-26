@@ -1,4 +1,6 @@
-import { ChevronDownIcon } from "lucide-react";
+import {
+    FiChevronDown as ChevronDownIcon,
+} from "react-icons/fi";
 import React from "react";
 import { useSelector } from "react-redux";
 

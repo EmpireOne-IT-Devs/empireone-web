@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { Bell, Newspaper, TicketCheck, FileText, CalendarDays, Megaphone, ChevronRight } from "lucide-react";
+import {
+    FiBell as Bell,
+    FiCheckCircle as TicketCheck,
+    FiFileText as FileText,
+    FiCalendar as CalendarDays,
+    FiChevronRight as ChevronRight,
+} from "react-icons/fi";
+import {
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
+import {
+    BsMegaphone as Megaphone,
+} from "react-icons/bs";
 
 const activities = [
     {

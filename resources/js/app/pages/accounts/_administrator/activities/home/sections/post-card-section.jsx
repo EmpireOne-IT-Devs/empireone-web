@@ -1,17 +1,23 @@
 ﻿import React, { useEffect, useState, useRef } from "react";
 import { Link } from "@inertiajs/react";
 import {
-    Megaphone,
-    CalendarDays,
-    Newspaper,
-    Send,
-    Tag,
-    Cake,
-    PartyPopper,
-    FileText,
-    Clock,
-    Trophy,
-} from "lucide-react";
+    BsMegaphone as Megaphone,
+} from "react-icons/bs";
+import {
+    FiCalendar as CalendarDays,
+    FiSend as Send,
+    FiTag as Tag,
+    FiGift as PartyPopper,
+    FiFileText as FileText,
+    FiClock as Clock,
+} from "react-icons/fi";
+import {
+    FaNewspaper as Newspaper,
+    FaTrophy as Trophy,
+} from "react-icons/fa";
+import {
+    MdCake as Cake,
+} from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "@/app/_components/card";
 import PostActionMenu from "./post-action-menu";

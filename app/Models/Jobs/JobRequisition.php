@@ -87,7 +87,7 @@ class JobRequisition extends Model
         }
 
         // Fetch all Users whose IDs are inside the interviewers array
-        return JobInterviewerSchedule::whereIn('interviewer_id', $this->interviewers)->get();
+        return JobInterviewerSchedule::whereIn('interviewer_id', $this->interviewers)->with(['recruiter'])->get();
     }
 
     /*

@@ -1,4 +1,7 @@
-import { Calendar, Image } from "lucide-react";
+import {
+    FiCalendar as Calendar,
+    FiImage as Image,
+} from "react-icons/fi";
 import React from "react";
 
 export default function HeaderSection() {

@@ -1,6 +1,10 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Flame, Medal, Trophy } from "lucide-react";
+import {
+    FaFire as Flame,
+    FaMedal as Medal,
+    FaTrophy as Trophy,
+} from "react-icons/fa";
 import Badge from "@/app/_components/badge";
 
 const AVATAR_COLORS = [

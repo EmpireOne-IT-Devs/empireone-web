@@ -4,7 +4,9 @@ import ActivitiesLayout from "../layout";
 import NewsSectionCard from "./sections/news-section-card";
 import CompanyFeaturesSection from "./sections/company-features-section";
 import PoolCardSection from "../poll_analytics/sections/pool-card-section";
-import { Newspaper } from "lucide-react";
+import {
+    FaNewspaper as Newspaper,
+} from "react-icons/fa";
 export default function Page() {
     return (
         <Layout>

@@ -1,20 +1,19 @@
 import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    BookOpen,
-    Calendar,
-    Flame,
-    Lightbulb,
-    Sparkles,
-    TrendingUp,
-    Users,
-    CheckCircle,
-    Clock,
-    XCircle,
-    Award,
-    Users as UsersIcon,
-    ArrowRight,
-} from "lucide-react";
+    FiBookOpen as BookOpen,
+    FiCalendar as Calendar,
+    FiStar as Sparkles,
+    FiTrendingUp as TrendingUp,
+    FiUsers as Users,
+    FiCheckCircle as CheckCircle,
+    FiClock as Clock,
+    FiXCircle as XCircle,
+    FiAward as Award,
+    FiUsers as UsersIcon,
+    FiArrowRight as ArrowRight,
+} from "react-icons/fi";
+import { FaFire as Flame, FaLightbulb as Lightbulb } from "react-icons/fa";
 import Card from "@/app/_components/card";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";

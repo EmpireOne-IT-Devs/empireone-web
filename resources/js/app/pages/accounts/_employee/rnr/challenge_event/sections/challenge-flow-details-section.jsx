@@ -1,13 +1,13 @@
 import React from "react";
 import {
-    ArrowRight,
-    Calendar,
-    CalendarDays,
-    Check,
-    ListChecks,
-    Star,
-    Users,
-} from "lucide-react";
+    FiArrowRight as ArrowRight,
+    FiCalendar as Calendar,
+    FiCalendar as CalendarDays,
+    FiCheck as Check,
+    FiList as ListChecks,
+    FiStar as Star,
+    FiUsers as Users,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import moment from "moment/moment";
 

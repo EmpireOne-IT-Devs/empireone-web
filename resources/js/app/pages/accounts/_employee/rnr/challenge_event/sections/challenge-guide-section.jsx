@@ -1,5 +1,8 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { BookOpen, ChevronDown } from "lucide-react";
+import {
+    FiBookOpen as BookOpen,
+    FiChevronDown as ChevronDown,
+} from "react-icons/fi";
 import { isHtml, sanitizeHtml, RICH_TEXT_CLASSES } from "@/app/lib/rich-text";
 
 const COLLAPSED_HEIGHT = 200;

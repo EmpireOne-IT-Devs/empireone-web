@@ -2,6 +2,7 @@
 
 namespace App\Models\Jobs;
 
+use App\Models\Account\AccountPersonalInformation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,6 +23,10 @@ class JobInterviewerSchedule extends Model
     public function interviewer(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'interviewer_id');
+    }
+     public function recruiter(): HasOne
+    {
+        return $this->hasOne(AccountPersonalInformation::class, 'user_id', 'interviewer_id');
     }
     /**
      * Retrieves ONLY upcoming schedules (future dates, or later times today)

@@ -1,6 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
 import SignatureCanvas from "react-signature-canvas";
-import { Trash2, PenTool, MousePointer2, Upload, Pen } from "lucide-react";
+import {
+    FiTrash2 as Trash2,
+    FiPenTool as PenTool,
+    FiMousePointer as MousePointer2,
+    FiUpload as Upload,
+} from "react-icons/fi";
+import {
+    FaPen as Pen,
+} from "react-icons/fa";
 import { FaRegSave } from "react-icons/fa";
 import { save_signature_service } from "@/app/services/account-service";
 import { useDispatch, useSelector } from "react-redux";

@@ -1,4 +1,6 @@
-import { Sparkles } from "lucide-react";
+import {
+    IoSparkles as Sparkles,
+} from "react-icons/io5";
 import React from "react";
 import WorkingExperienceSection from "./working-experience-section";
 import SkillsSection from "./skills-section";

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Trash2, TriangleAlert } from "lucide-react";
+import {
+    FiTrash2 as Trash2,
+    FiAlertTriangle as TriangleAlert,
+} from "react-icons/fi";
 import Button from "@/app/_components/button";
 import Modal from "@/app/_components/modal";
 import { setAlert } from "@/app/redux/app-slice";

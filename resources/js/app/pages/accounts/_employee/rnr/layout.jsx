@@ -1,11 +1,11 @@
 import Tabs from "@/app/_components/tabs";
 import React from "react";
-import { 
-    Heart, 
-    Zap, 
-    Star, 
-    Coins
-} from "lucide-react";
+import {
+    FiHeart as Heart,
+    FiZap as Zap,
+    FiStar as Star,
+} from "react-icons/fi";
+import { FaCoins as Coins } from "react-icons/fa";
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 import HeaderSection from "./sections/header-section";
 
