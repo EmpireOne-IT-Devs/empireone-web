@@ -9,6 +9,7 @@ use App\Models\Timekeeping\AttendanceEmployeeSettings;
 use App\Models\Timekeeping\Holiday;
 use App\Models\Timekeeping\LeaveRequest;
 use App\Models\Timekeeping\OvertimeRequest;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -43,11 +44,11 @@ class AttendanceController extends Controller
      * day-of-week of the given date, falling back to the default schedule
      * when no employee setting exists for that day.
      */
-    private function getScheduleForDate(string $date): array
+    private function getScheduleForDate(string $date, ?int $userId = null): array
     {
         $day = Carbon::parse($date)->format('l');
 
-        $setting = AttendanceEmployeeSettings::forEmployeeAndDay(Auth::id(), $day);
+        $setting = AttendanceEmployeeSettings::forEmployeeAndDay($userId ?? Auth::id(), $day);
 
         return [
             'day' => $day,
@@ -233,7 +234,20 @@ class AttendanceController extends Controller
             ? Carbon::parse($request->end_date)
             : null;
 
-        $query = Attendance::where('user_id', Auth::id())
+        return response()->json([
+            'data' => $this->buildLogRecords(Auth::id(), $startDate, $requestEndDate),
+        ], 200);
+    }
+
+    /**
+     * Per-day attendance rows (real records plus Day Off / Absent / On Leave placeholders)
+     * for the given user, newest date first.
+     */
+    public function buildLogRecords(int $userId, Carbon $startDate, ?Carbon $requestEndDate): array
+    {
+        $site = User::find($userId)?->account_employee?->site?->name;
+
+        $query = Attendance::where('user_id', $userId)
             ->where('date', '>=', $startDate->toDateString());
 
         if ($requestEndDate) {
@@ -250,7 +264,7 @@ class AttendanceController extends Controller
 
         $records = [];
 
-        $corrections = AttendanceCorrection::where('user_id', Auth::id())
+        $corrections = AttendanceCorrection::where('user_id', $userId)
             ->where('date', '>=', $startDate->toDateString())
             ->where('date', '<=', $endDate->toDateString())
             ->orderBy('id')
@@ -258,14 +272,14 @@ class AttendanceController extends Controller
             ->keyBy(fn($c) => $c->date->toDateString());
 
         // Declined filings are ignored; anything else reflects on the logs as soon as it is filed.
-        $overtimeRequests = OvertimeRequest::where('user_id', Auth::id())
+        $overtimeRequests = OvertimeRequest::where('user_id', $userId)
             ->where('date', '>=', $startDate->toDateString())
             ->where('date', '<=', $endDate->toDateString())
             ->where('status', '!=', 'declined')
             ->get()
             ->groupBy(fn($r) => Carbon::parse($r->date)->toDateString());
 
-        $leaveRequests = LeaveRequest::where('user_id', Auth::id())
+        $leaveRequests = LeaveRequest::where('user_id', $userId)
             ->where('date', '>=', $startDate->toDateString())
             ->where('date', '<=', $endDate->toDateString())
             ->where('status', '!=', 'declined')
@@ -275,13 +289,13 @@ class AttendanceController extends Controller
 
         for ($date = $endDate->copy(); $date->gte($startDate); $date->subDay()) {
             $dateString = $date->toDateString();
-            $schedule = $this->getScheduleForDate($dateString);
+            $schedule = $this->getScheduleForDate($dateString, $userId);
             $breaktimeLimit = $schedule['is_day_off'] ? 0 : $schedule['break_minutes'];
             $requiredMinutes = $this->getRequiredMinutes($schedule);
             $correctionModel = $corrections->get($dateString);
             $correction = $this->correctionSummary($correctionModel);
             $times = $this->resolveTimes($schedule, $correctionModel);
-            $holiday = $this->getHolidayForDate($dateString);
+            $holiday = Holiday::forDateAndSite($dateString, $site);
             $leave = $leaveRequests->get($dateString);
             $isVoluntaryTimeOff = $leave?->leave_type === LeaveRequest::VOLUNTARY_TIME_OFF;
             $leaveFields = [
@@ -344,7 +358,7 @@ class AttendanceController extends Controller
                 ...$correction,
                 ...$derived,
                 ...$leaveFields,
-                'user_id' => Auth::id(),
+                'user_id' => $userId,
                 'date' => $dateString,
                 'breaktime_limit' => $breaktimeLimit,
                 'breaktime_minutes' => 0,
@@ -380,7 +394,7 @@ class AttendanceController extends Controller
             ];
         }
 
-        return response()->json(['data' => $records], 200);
+        return $records;
     }
 
     /**

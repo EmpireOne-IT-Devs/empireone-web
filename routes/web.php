@@ -291,7 +291,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         });
 
         Route::prefix('time_keeping')->group(function () {
-            Route::redirect('/', '/accounts/administrator/time_keeping/dashboard');
+            Route::redirect('/', '/accounts/administrator/time_keeping/attendance');
             Route::inertia('/dashboard', 'accounts/_administrator/time_keeping/dashboard/page');
             Route::inertia('/attendance', 'accounts/_administrator/time_keeping/attendance/page');
             Route::inertia('/employee_calendar', 'accounts/_administrator/time_keeping/employee_calendar/page');
@@ -342,7 +342,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
         Route::inertia('/payroll', 'accounts/_employee/payroll/page');
         Route::redirect('/timekeeping', '/accounts/employee/time_keeping/dashboard');
         Route::prefix('time_keeping')->group(function () {
-            Route::redirect('/', '/accounts/employee/time_keeping/dashboard');
+            Route::redirect('/', '/accounts/employee/time_keeping/attendance');
             Route::inertia('/dashboard', 'accounts/_employee/timekeeping/dashboard/page');
             Route::inertia('/attendance', 'accounts/_employee/timekeeping/page');
             Route::inertia('/employee_calendar', 'accounts/_employee/timekeeping/employee_calendar/page');

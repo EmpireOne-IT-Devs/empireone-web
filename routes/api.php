@@ -58,6 +58,7 @@ use App\Http\Controllers\API\Timekeeping\HolidayController;
 use App\Http\Controllers\API\Timekeeping\OvertimeRequestController;
 use App\Http\Controllers\API\Timekeeping\LeaveRequestController;
 use App\Http\Controllers\API\Timekeeping\TeamRequestController;
+use App\Http\Controllers\API\Timekeeping\TimeSheetController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
@@ -337,6 +338,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::prefix('timekeeping')->group(function () {
         Route::get('attendance/today', [AttendanceController::class, 'today']);
         Route::get('attendance/logs', [AttendanceController::class, 'logs']);
+        Route::get('time_sheets', [TimeSheetController::class, 'index'])->name('timekeeping.time_sheets.index');
+        Route::get('time_sheets/export', [TimeSheetController::class, 'export'])->name('timekeeping.time_sheets.export');
         Route::post('attendance/clock_in', [AttendanceController::class, 'clock_in']);
         Route::post('attendance/break_start', [AttendanceController::class, 'break_start']);
         Route::post('attendance/break_end', [AttendanceController::class, 'break_end']);
