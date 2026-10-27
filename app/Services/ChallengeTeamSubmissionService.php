@@ -20,8 +20,6 @@ use Throwable;
 
 class ChallengeTeamSubmissionService
 {
-    public function __construct(private ChallengeCompletionService $completionService) {}
-
     public function submit(
         EngagementRewardChallenge $challenge,
         User $leader,
@@ -177,13 +175,17 @@ class ChallengeTeamSubmissionService
                     }
 
                     if ($challenge->isDailyChallenge() && $participant
-                        && $participant->dailyLogs()->whereDate('log_date', $logDate)->exists()) {
+                        && $participant->dailyLogs()
+                            ->whereNull('team_submission_id')
+                            ->whereDate('log_date', $logDate)
+                            ->exists()) {
                         throw ValidationException::withMessages([
                             'team' => "{$employee->name} already has a submission for today.",
                         ]);
                     }
 
                     if (! $challenge->isDailyChallenge() && $participant
+                        && $participant->hasIndividualSubmission()
                         && in_array($participant->status, ['submitted', 'approved', 'pending_survey'], true)) {
                         throw ValidationException::withMessages([
                             'team' => "{$employee->name} already has a pending or approved submission.",
@@ -212,6 +214,21 @@ class ChallengeTeamSubmissionService
                 $submission->save();
                 if ($existingToday) {
                     $submission->members()->delete();
+                }
+
+                if ($challenge->survey_required) {
+                    EngagementRewardChallengeParticipant::query()->firstOrCreate(
+                        [
+                            'reward_challenge_id' => $challenge->id,
+                            'user_id' => $leader->id,
+                        ],
+                        [
+                            'status' => 'joined',
+                            'joined_at' => now(),
+                            'required_days' => $challenge->isDailyChallenge() ? $challenge->duration_days : null,
+                            'completed_days' => 0,
+                        ],
+                    );
                 }
 
                 foreach ($employees as $employee) {
@@ -254,20 +271,6 @@ class ChallengeTeamSubmissionService
                             'submitted_at' => now(),
                         ]);
 
-                        if ($participant->status === 'joined') {
-                            $participant->update(['status' => 'submitted']);
-                        }
-                    } else {
-                        $participant->update([
-                            'status' => 'submitted',
-                            'submission_path' => $path,
-                            'submission_media' => $media,
-                            'challenge_description' => $description,
-                            'submitted_at' => now(),
-                            'reviewed_at' => null,
-                            'reviewed_by' => null,
-                            'review_note' => null,
-                        ]);
                     }
                 }
 
@@ -312,8 +315,6 @@ class ChallengeTeamSubmissionService
                 'members.participant',
             ]);
 
-            $allDailyProofsComplete = true;
-
             foreach ($submission->members as $member) {
                 $participant = EngagementRewardChallengeParticipant::query()
                     ->lockForUpdate()
@@ -338,48 +339,60 @@ class ChallengeTeamSubmissionService
                         'reviewed_by' => $reviewer->id,
                         'review_note' => null,
                     ]);
-                    $participant->increment('completed_days');
-                    $participant->refresh();
-
-                    if ($participant->isDailyChallengeComplete() && $participant->proof_approved_at === null) {
-                        $participant->update([
-                            'proof_approved_at' => now(),
-                            'reviewed_at' => now(),
-                            'reviewed_by' => $reviewer->id,
-                        ]);
-                    }
-
-                    $this->completionService->finalizeLocked($participant);
-                    $allDailyProofsComplete = $allDailyProofsComplete
-                        && $participant->isDailyChallengeComplete();
                     continue;
                 }
+            }
 
-                $participant->update([
-                    'proof_approved_at' => now(),
-                    'reviewed_at' => now(),
-                    'reviewed_by' => $reviewer->id,
-                    'review_note' => null,
-                ]);
-                $this->completionService->finalizeLocked($participant);
+            $allDailyProofsComplete = true;
+            $leaderParticipant = null;
+            if ($submission->challenge->survey_required) {
+                $leaderParticipant = EngagementRewardChallengeParticipant::query()
+                    ->where('reward_challenge_id', $submission->reward_challenge_id)
+                    ->where('user_id', $submission->leader_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+            }
+
+            if ($submission->challenge->isDailyChallenge()) {
+                $approvedTeamDates = EngagementRewardChallengeTeamSubmission::query()
+                    ->where('reward_challenge_id', $submission->reward_challenge_id)
+                    ->where('leader_id', $submission->leader_id)
+                    ->where('status', 'approved')
+                    ->where('id', '!=', $submission->id)
+                    ->pluck('log_date')
+                    ->push($submission->log_date->toDateString())
+                    ->unique()
+                    ->count();
+                $allDailyProofsComplete = $approvedTeamDates >= (int) $submission->challenge->duration_days;
             }
 
             $alreadyAwarded = EngagementRewardChallengeTeamSubmission::query()
                 ->where('reward_challenge_id', $submission->reward_challenge_id)
                 ->where('leader_id', $submission->leader_id)
-                ->where('base_points_awarded', '>', 0)
+                ->where(function ($query) {
+                    $query->where('base_points_awarded', '>', 0)
+                        ->orWhere('pending_base_points', '>', 0);
+                })
+                ->where('id', '!=', $submission->id)
                 ->exists();
             $basePointsAwarded = (
                 ! $submission->challenge->isDailyChallenge() || $allDailyProofsComplete
             ) && ! $alreadyAwarded
                 ? (int) $submission->challenge->points
                 : 0;
-
+            $deferPoints = $submission->challenge->survey_required
+                && ! ($leaderParticipant?->hasCompletedSurvey($submission->challenge) ?? false);
+            $pendingBasePoints = $deferPoints ? $basePointsAwarded : 0;
+            $pendingBonusPoints = $deferPoints ? $bonusPoints : 0;
+            $awardedBasePoints = $deferPoints ? 0 : $basePointsAwarded;
+            $awardedBonusPoints = $deferPoints ? 0 : $bonusPoints;
             $submission->update([
                 'status' => 'approved',
-                'base_points_awarded' => $basePointsAwarded,
-                'bonus_points_awarded' => $bonusPoints,
-                'team_points_awarded' => $basePointsAwarded + $bonusPoints,
+                'base_points_awarded' => $awardedBasePoints,
+                'bonus_points_awarded' => $awardedBonusPoints,
+                'team_points_awarded' => $awardedBasePoints + $awardedBonusPoints,
+                'pending_base_points' => $pendingBasePoints,
+                'pending_bonus_points' => $pendingBonusPoints,
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'review_note' => null,
@@ -417,17 +430,6 @@ class ChallengeTeamSubmissionService
                         'reviewed_by' => $reviewer->id,
                         'review_note' => $reviewNote,
                     ]);
-            } else {
-                foreach ($submission->members as $member) {
-                    EngagementRewardChallengeParticipant::query()
-                        ->whereKey($member->participant_id)
-                        ->update([
-                            'status' => 'declined',
-                            'reviewed_at' => now(),
-                            'reviewed_by' => $reviewer->id,
-                            'review_note' => $reviewNote,
-                        ]);
-                }
             }
 
             $submission->update([

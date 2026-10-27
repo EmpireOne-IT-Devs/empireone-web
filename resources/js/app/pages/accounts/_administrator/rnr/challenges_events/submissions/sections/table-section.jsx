@@ -29,10 +29,16 @@ const STATUS_BADGE = {
 
 function SubmissionPoints({ submission, challenge }) {
     const isTeam = submission.employees?.length > 0;
+    const pendingTeamPoints =
+        Number(submission.pending_base_points ?? 0) +
+        Number(submission.pending_bonus_points ?? 0);
     let amount;
     let breakdown;
 
-    if (submission.individual_daily_log && submission.status === "approved") {
+    if (isTeam && submission.status === "approved" && pendingTeamPoints > 0) {
+        amount = `+${pendingTeamPoints}`;
+        breakdown = `${submission.pending_base_points} base + ${submission.pending_bonus_points} bonus · pending leader survey`;
+    } else if (submission.individual_daily_log && submission.status === "approved") {
         const bonusPoints = Number(submission.bonus_points) || 0;
         amount = `+${bonusPoints}`;
         breakdown = `${bonusPoints} bonus approved · base points on completion`;
@@ -368,22 +374,16 @@ export default function TableSection({
                                             <Badge
                                                 label={
                                                     submission.employees?.length
-                                                        ? submission.employees.every(
-                                                              (member) =>
-                                                                  member.survey_completed,
-                                                          )
-                                                            ? "Team completed"
-                                                            : "Team pending"
+                                                        ? submission.employee?.survey_completed
+                                                            ? "Leader completed"
+                                                            : "Leader pending"
                                                         : submission.survey_completed
                                                           ? "Completed"
                                                           : "Pending"
                                                 }
                                                 variant={
                                                     submission.employees?.length
-                                                        ? submission.employees.every(
-                                                              (member) =>
-                                                                  member.survey_completed,
-                                                          )
+                                                        ? submission.employee?.survey_completed
                                                             ? "success"
                                                             : "warning"
                                                         : submission.survey_completed
@@ -392,18 +392,6 @@ export default function TableSection({
                                                 }
                                             />
                                         ) : null}
-                                        {submission.challenge
-                                            ?.survey_required &&
-                                            submission.employees?.length >
-                                                0 && (
-                                                <p className="mt-1 text-xs text-gray-500">
-                                                    Leader:{" "}
-                                                    {submission.employee
-                                                        ?.survey_completed
-                                                        ? "Completed"
-                                                        : "Pending"}
-                                                </p>
-                                            )}
                                         {!submission.challenge
                                             ?.survey_required && (
                                             <span className="text-sm text-gray-400">

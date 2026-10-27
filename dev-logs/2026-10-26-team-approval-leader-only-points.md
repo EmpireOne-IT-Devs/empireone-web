@@ -1,0 +1,22 @@
+### Phase 1: Award team points on approval and use leader survey status
+
+- **Timestamp:** 2026-10-26 21:40 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** ⚙️ Backend + 🖥️ Frontend + 🧪 QA + 🏗️ Tech Lead
+- **Files Modified/Created:**
+  - `app/Services/ChallengeTeamSubmissionService.php` — Award team base points when the team proof is approved and award reviewer bonus points immediately; new approvals leave pending-point fields at zero.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/table-section.jsx` — Display the leader’s survey status only, instead of waiting for every team member.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` — Cover immediate team awards, zero member awards, survey-only leader status, and daily team award behavior.
+- **Issues Encountered:** Team awards were deferred until survey completion, and the Survey cell derived its status from all team members even though only the leader is responsible for the survey.
+- **Resolution:** Kept team approval separate from individual approval, awarded points to the leader on approval, retained the survey reward as a separate leader-only award, and made the team Survey badge read the leader state.
+- **QA Checklist Result:**
+  - ✅ Plain JavaScript/JSX only; no TypeScript introduced.
+  - ✅ `ChallengeSurveyCreationTest.php`: 63 tests, 845 assertions passed.
+  - ✅ PHP syntax checks passed for the service and tests; JSX transform passed for the modified component.
+  - ✅ Team base/bonus awards are recorded on approval; the leader receives no duplicate individual challenge points and members receive no team points.
+  - ✅ Team Survey status is based only on the leader; member survey states do not affect its badge.
+  - ✅ Individual approval flow and API routes/resources/authorization were not changed.
+  - ✅ No migration or database schema changes were made. `pending_base_points` and `pending_bonus_points` remain legacy fields for previously deferred awards; new team approvals set both to zero.
+  - ✅ Redux, services/thunks/slices/store, links, layouts, forms, and destructive-action confirmations: not applicable to these changes.
+  - ✅ Responsive/keyboard/modal checks: no new interactive controls or layout structures were introduced; no browser run performed.
+- **Next Steps:** Deploy the backend and UI changes. The existing historical deferred-point fields are retained and can still be released by the legacy survey-completion path.

@@ -563,7 +563,7 @@ export const submit_engagement_reward_challenge_team_proof_thunk = createAsyncTh
     async (args, { dispatch, rejectWithValue }) => {
         try {
             const response = await submit_challenge_proof(submit_reward_challenge_team_proof_service, args, dispatch);
-            dispatch(get_my_engagement_reward_challenges_thunk());
+            await dispatch(get_my_engagement_reward_challenges_thunk());
             return response.data;
         } catch (error) {
             return rejectWithValue(proof_error_payload(error));

@@ -41,10 +41,81 @@ class EngagementRewardChallengeParticipant extends Pivot
             return false;
         }
 
-        return $this->required_days !== null
-            ? $this->isDailyChallengeComplete()
-            : ($this->submitted_at !== null
-                && in_array($this->status, ['submitted', 'pending_survey', 'approved'], true));
+        if ($challenge->isDailyChallenge()) {
+            if ($this->isActiveTeamSubmissionMember($challenge)) {
+                return false;
+            }
+
+            $requiredDays = (int) ($this->required_days ?? $challenge->duration_days);
+            $approvedTeamDays = EngagementRewardChallengeTeamSubmission::query()
+                ->where('reward_challenge_id', $challenge->id)
+                ->where('leader_id', $this->user_id)
+                ->where('status', 'approved')
+                ->distinct()
+                ->count('log_date');
+
+            return $this->isDailyChallengeComplete()
+                || ($requiredDays > 0 && $approvedTeamDays >= $requiredDays);
+        }
+
+        if ($this->hasActiveTeamSubmissionAsLeader($challenge)) {
+            return true;
+        }
+
+        if ($this->isActiveTeamSubmissionMember($challenge)) {
+            return false;
+        }
+
+        return $this->submitted_at !== null
+            && in_array($this->status, ['submitted', 'pending_survey', 'approved'], true);
+    }
+
+    public function hasIndividualSubmission(): bool
+    {
+        if ($this->required_days !== null) {
+            return $this->dailyLogs()->whereNull('team_submission_id')->exists();
+        }
+
+        if ($this->submission_path === null) {
+            return false;
+        }
+
+        return ! EngagementRewardChallengeTeamSubmission::query()
+            ->where('reward_challenge_id', $this->reward_challenge_id)
+            ->where('submission_path', $this->submission_path)
+            ->where(fn ($query) => $query
+                ->where('leader_id', $this->user_id)
+                ->orWhereHas('members', fn ($members) => $members->where('user_id', $this->user_id)))
+            ->exists();
+    }
+
+    public function hasTeamSubmission(): bool
+    {
+        return EngagementRewardChallengeTeamSubmission::query()
+            ->where('reward_challenge_id', $this->reward_challenge_id)
+            ->whereIn('status', ['submitted', 'approved'])
+            ->where(fn ($query) => $query
+                ->where('leader_id', $this->user_id)
+                ->orWhereHas('members', fn ($members) => $members->where('user_id', $this->user_id)))
+            ->exists();
+    }
+
+    private function hasActiveTeamSubmissionAsLeader(EngagementRewardChallenge $challenge): bool
+    {
+        return EngagementRewardChallengeTeamSubmission::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('leader_id', $this->user_id)
+            ->whereIn('status', ['submitted', 'approved'])
+            ->exists();
+    }
+
+    private function isActiveTeamSubmissionMember(EngagementRewardChallenge $challenge): bool
+    {
+        return $this->teamSubmissionMembers()
+            ->whereHas('submission', fn ($query) => $query
+                ->where('reward_challenge_id', $challenge->id)
+                ->whereIn('status', ['submitted', 'approved']))
+            ->exists();
     }
 
     protected $fillable = [
@@ -123,6 +194,9 @@ class EngagementRewardChallengeParticipant extends Pivot
     {
         return $this->required_days !== null
             && $this->required_days > 0
-            && $this->completed_days >= $this->required_days;
+            && $this->dailyLogs()
+                ->whereNull('team_submission_id')
+                ->where('status', 'approved')
+                ->count() >= $this->required_days;
     }
 }

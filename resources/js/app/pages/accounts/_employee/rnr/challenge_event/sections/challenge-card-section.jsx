@@ -71,7 +71,6 @@ const DEFAULT_CATEGORY_META = {
     border: "border-slate-200",
 };
 
-
 const STATUS_CONFIG = {
     pending_survey: {
         label: "Survey Required",
@@ -120,7 +119,9 @@ function getTimeRemaining(deadline) {
 
 function ChallengeCard({ challenge, highlighted = false }) {
     const dispatch = useDispatch();
-    const { rewardChallengeLeavingId } = useSelector((state) => state.engagement);
+    const { rewardChallengeLeavingId } = useSelector(
+        (state) => state.engagement,
+    );
     const [isFlowModalOpen, setIsFlowModalOpen] = useState(false);
     const descriptionPreview = useMemo(
         () => htmlToPlainText(challenge.description),
@@ -135,17 +136,31 @@ function ChallengeCard({ challenge, highlighted = false }) {
         Boolean(challenge.max_participants) &&
         challenge.participants_count >= challenge.max_participants;
     const capacityProgress = challenge.max_participants
-        ? Math.min(100, Math.round((challenge.participants_count / challenge.max_participants) * 100))
+        ? Math.min(
+              100,
+              Math.round(
+                  (challenge.participants_count / challenge.max_participants) *
+                      100,
+              ),
+          )
         : 0;
     const leaving = rewardChallengeLeavingId === challenge.id;
-    const canLeave = challenge.is_joined && !challenge.survey_completed && ["joined", "declined"].includes(challenge.participation_status);
+    const canLeave =
+        challenge.is_joined &&
+        !challenge.survey_completed &&
+        ["joined", "declined"].includes(challenge.participation_status);
 
     const statusInfo = STATUS_CONFIG[challenge.participation_status] || null;
     const timeRemaining = getTimeRemaining(challenge.deadline);
-    const isUrgent = timeRemaining && timeRemaining.includes("d") && parseInt(timeRemaining) <= 2;
+    const isUrgent =
+        timeRemaining &&
+        timeRemaining.includes("d") &&
+        parseInt(timeRemaining) <= 2;
 
     const handleLeave = async () => {
-        const result = await dispatch(leave_engagement_reward_challenge_thunk(challenge.id));
+        const result = await dispatch(
+            leave_engagement_reward_challenge_thunk(challenge.id),
+        );
 
         if (leave_engagement_reward_challenge_thunk.rejected.match(result)) {
             dispatch(
@@ -154,13 +169,23 @@ function ChallengeCard({ challenge, highlighted = false }) {
                     title: "Unable to leave challenge",
                     message: result.payload?.message || "Please try again.",
                     open: true,
-                })
+                }),
             );
         }
     };
 
     const renderActionButton = () => {
         const status = challenge.participation_status;
+        const hasPendingTeamProof =
+            challenge.type === "Team" &&
+            !challenge.is_daily_challenge &&
+            challenge.survey_required &&
+            ["submitted", "approved"].includes(
+                challenge.team_submission_status,
+            );
+        const canCompleteSurvey =
+            !challenge.survey_completed &&
+            (challenge.can_complete_survey || hasPendingTeamProof);
 
         if (isUpcoming) {
             return (
@@ -168,7 +193,11 @@ function ChallengeCard({ challenge, highlighted = false }) {
                     type="button"
                     variant="light"
                     disabled={!challenge.is_joined}
-                    onClick={challenge.is_joined ? () => setIsFlowModalOpen(true) : undefined}
+                    onClick={
+                        challenge.is_joined
+                            ? () => setIsFlowModalOpen(true)
+                            : undefined
+                    }
                     className="w-full gap-2 rounded-xl bg-gradient-to-r from-slate-100 to-gray-100 text-slate-500"
                 >
                     <Calendar className="h-4 w-4" />
@@ -177,12 +206,37 @@ function ChallengeCard({ challenge, highlighted = false }) {
             );
         }
 
-        if (challenge.is_joined && !challenge.survey_completed &&
-            (challenge.can_complete_survey || status === "pending_survey")) {
+        if (challenge.is_joined && canCompleteSurvey) {
             return (
-                <Button variant="secondary" className="w-full gap-2" onClick={() => setIsFlowModalOpen(true)}>
+                <Button
+                    variant="secondary"
+                    className="w-full gap-2"
+                    onClick={() => setIsFlowModalOpen(true)}
+                >
                     <ArrowRight className="h-4 w-4" />
                     Complete Survey
+                </Button>
+            );
+        }
+
+        if (hasPendingTeamProof) {
+            const isApproved = challenge.team_submission_status === "approved";
+
+            return (
+                <Button
+                    type="button"
+                    variant={isApproved ? "default" : "warning"}
+                    className={
+                        isApproved
+                            ? "w-full gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-200 hover:shadow-emerald-300"
+                            : "w-full gap-2"
+                    }
+                    onClick={() => setIsFlowModalOpen(true)}
+                >
+                    <Clock className="h-4 w-4" />
+                    {isApproved
+                        ? "Team Submission Approved"
+                        : "Team Proof Pending Review"}
                 </Button>
             );
         }
@@ -352,19 +406,23 @@ function ChallengeCard({ challenge, highlighted = false }) {
                             }}
                         />
                     ) : (
-                        <div className={`h-36 w-full bg-gradient-to-r ${meta.gradient}`} />
+                        <div
+                            className={`h-36 w-full bg-gradient-to-r ${meta.gradient}`}
+                        />
                     )}
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                     {/* Points badge - floating */}
                     <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-sm font-bold text-gray-900 backdrop-blur-sm shadow-lg">
-                        <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                        +{challenge.points} pts
+                        <Sparkles className="h-3.5 w-3.5 text-amber-400" />+
+                        {challenge.points} pts
                     </div>
 
                     {/* Category icon badge - floating */}
-                    <div className={`absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm shadow-lg ${meta.badge}`}>
+                    <div
+                        className={`absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm shadow-lg ${meta.badge}`}
+                    >
                         <Icon className="h-5 w-5" />
                     </div>
 
@@ -374,11 +432,14 @@ function ChallengeCard({ challenge, highlighted = false }) {
                             <Calendar className="h-3.5 w-3.5" />
                             Upcoming
                         </div>
-                    ) : timeRemaining && !isCompleted && (
-                        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-                            <Calendar className="h-3.5 w-3.5" />
-                            {timeRemaining}
-                        </div>
+                    ) : (
+                        timeRemaining &&
+                        !isCompleted && (
+                            <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                                <Calendar className="h-3.5 w-3.5" />
+                                {timeRemaining}
+                            </div>
+                        )
                     )}
                 </div>
 
@@ -433,7 +494,9 @@ function ChallengeCard({ challenge, highlighted = false }) {
                                 <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
                                     <div
                                         className={`h-full rounded-full bg-gradient-to-r ${meta.gradient}`}
-                                        style={{ width: `${capacityProgress}%` }}
+                                        style={{
+                                            width: `${capacityProgress}%`,
+                                        }}
                                     />
                                 </div>
                             </>
@@ -449,7 +512,8 @@ function ChallengeCard({ challenge, highlighted = false }) {
                     {statusInfo && (
                         <Badge
                             label={
-                                challenge.is_daily_challenge && statusInfo.label === "Pending Review"
+                                challenge.is_daily_challenge &&
+                                statusInfo.label === "Pending Review"
                                     ? `In Progress · Day ${challenge.completed_days ?? 0}/${challenge.required_days ?? challenge.duration_days}`
                                     : statusInfo.label
                             }
@@ -484,7 +548,11 @@ export default function ChallengeCardSection({
         return (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {Array.from({ length: 3 }).map((_, index) => (
-                    <Skeleton key={index} variant="card" className="h-[420px] bg-white rounded-2xl" />
+                    <Skeleton
+                        key={index}
+                        variant="card"
+                        className="h-[420px] bg-white rounded-2xl"
+                    />
                 ))}
             </div>
         );
@@ -514,7 +582,9 @@ export default function ChallengeCardSection({
                 <ChallengeCard
                     key={challenge.id}
                     challenge={challenge}
-                    highlighted={Boolean(highlightId) && highlightId === challenge.id}
+                    highlighted={
+                        Boolean(highlightId) && highlightId === challenge.id
+                    }
                 />
             ))}
         </div>

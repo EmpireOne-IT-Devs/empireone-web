@@ -714,25 +714,22 @@ class EngagementChallengeSubmissionsController extends Controller
 
     private function teamSubmissionParticipantIds()
     {
-        return EngagementRewardChallengeTeamSubmissionMember::query()
-            ->join(
-                'engagement_reward_challenge_team_submissions as team_submissions',
-                'team_submissions.id',
-                '=',
-                'engagement_reward_challenge_team_submission_members.team_submission_id',
-            )
-            ->where(function ($query) {
-                $query->where(function ($statusQuery) {
-                    $statusQuery
-                        ->whereColumn('team_submissions.status', 'engagement_reward_challenge_participants.status')
-                        ->whereIn('engagement_reward_challenge_participants.status', ['submitted', 'declined']);
-                })->orWhere(function ($approvedQuery) {
-                    $approvedQuery
-                        ->where('team_submissions.status', 'approved')
-                        ->whereNotNull('engagement_reward_challenge_participants.proof_approved_at');
-                });
+        $memberParticipantIds = DB::table('engagement_reward_challenge_team_submission_members as team_members')
+            ->join('engagement_reward_challenge_team_submissions as team_submissions', 'team_submissions.id', '=', 'team_members.team_submission_id')
+            ->join('engagement_reward_challenge_participants as participants', 'participants.id', '=', 'team_members.participant_id')
+            ->where(fn ($query) => $query
+                ->whereColumn('participants.submission_path', 'team_submissions.submission_path')
+                ->orWhereNull('participants.submission_path'))
+            ->select('participants.id');
+        $leaderParticipantIds = DB::table('engagement_reward_challenge_team_submissions as team_submissions')
+            ->join('engagement_reward_challenge_participants as participants', function ($join) {
+                $join->on('participants.reward_challenge_id', '=', 'team_submissions.reward_challenge_id')
+                    ->on('participants.user_id', '=', 'team_submissions.leader_id');
             })
-            ->select('engagement_reward_challenge_team_submission_members.participant_id');
+            ->whereNull('participants.submission_path')
+            ->select('participants.id');
+
+        return $memberParticipantIds->union($leaderParticipantIds);
     }
 
     private function formatDailyLog(EngagementRewardChallengeDailyLog $log): array
