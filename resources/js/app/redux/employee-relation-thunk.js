@@ -22,6 +22,7 @@ import {
 import {
     get_201_files_service,
     get_attrition_by_id_service,
+    get_corrective_action_by_id_service,
     get_reach_specific_leader_service,
     search_employee_service,
 } from "../services/human-resources-service";
@@ -85,6 +86,13 @@ export function get_reach_specific_leader_thunk() {
         dispatch(employeeRelationSlice.actions.setReaches(result.data));
     };
 }
+export function get_corrective_action_by_id_thunk(id) {
+    return async function (dispatch, getState) {
+        const result = await get_corrective_action_by_id_service(id);
+        dispatch(employeeRelationSlice.actions.setCorrectiveAction(result.data));
+    };
+}
+
 export function search_employee_thunk(value) {
     return async function (dispatch, getState) {
         const result = await search_employee_service(value);

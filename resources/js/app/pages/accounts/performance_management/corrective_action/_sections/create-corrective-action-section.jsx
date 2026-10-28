@@ -193,7 +193,7 @@ export default function CreateCorrectiveActionSection() {
                                 onSelect={(val) => {
                                     setSelected(val)
                                     if (val) {
-                                        console.log('vallll', val)
+                                        console.log('vallll', val?.er_leader?.user_id)
                                         setValue('name', val.name)
                                         setValue('employee_id', val.employee_id || '')
                                         setValue('department_id', val.department_id || '')
@@ -385,7 +385,7 @@ export default function CreateCorrectiveActionSection() {
                             </h3>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                                     CATEGORY <span className="text-red-500">*</span>
@@ -403,7 +403,7 @@ export default function CreateCorrectiveActionSection() {
                                 </select>
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                                     CODE OF DISCIPLINE SECTION <span className="text-red-500">*</span>
                                 </label>
@@ -411,7 +411,7 @@ export default function CreateCorrectiveActionSection() {
                                     {...register('code_of_discipline_section', { required: 'Code section is required' })}
                                     placeholder="e.g., 1.1, 1.2, 1.3"
                                 />
-                            </div>
+                            </div> */}
 
                             <div>
                                 <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">

@@ -316,6 +316,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_my_team',  [ERLeaderController::class, 'get_my_team']);
         Route::resource('reach', PMReachController::class);
         Route::resource('corrective_action', PMCorrectiveActionController::class);
+        Route::post('sign_corrective_action',  [PMCorrectiveActionController::class, 'sign_corrective_action']);
         
         Route::get('get_reach_specific_leader',  [PMReachController::class, 'get_reach_specific_leader']);
 

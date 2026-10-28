@@ -17,6 +17,13 @@ export async function create_corrective_action_service(data) {
     return await axios.post(`/api/er/corrective_action`, data);
 }
 
+export async function get_corrective_action_by_id_service(id) {
+    return await axios.get(`/api/er/corrective_action/${id}`);
+}
+
+export async function sign_corrective_action_service(data) {
+    return await axios.post(`/api/er/sign_corrective_action`, data);
+}
 export async function get_reach_specific_leader_service() {
     return await axios.get(`/api/er/get_reach_specific_leader${window.location.search}`, );
 }

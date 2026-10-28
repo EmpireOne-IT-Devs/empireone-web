@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\PMCorrectiveActionController;
 use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -69,8 +70,12 @@ Route::get('/privacy-policy', function () {
 Route::get('/pm-reaches/{pmReach}/acknowledge', [PMReachController::class, 'acknowledge'])
     ->name('pm-reaches.acknowledge');
 
-Route::get('/human-resources/reach', function () {
-    return Inertia::render('acknowledgment/reach/page');
+
+Route::prefix('human-resources')->name('human-resources.')->group(function () {
+    Route::inertia('/reach', 'acknowledgment/reach/page')->name('reach');
+    Route::inertia('/corrective-actions/{correctiveAction}/acknowledge', 'acknowledgment/corrective_action/page')
+        ->middleware(['auth:sanctum'])
+        ->name('corrective-actions.acknowledge');
 });
 
 
