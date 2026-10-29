@@ -158,38 +158,49 @@
 </head>
 
 <body>
+    @php
+    $formatField = function ($val) {
+    if (is_array($val)) {
+    return implode(', ', array_filter($val, fn($v) => !is_array($v)));
+    }
+    return (string) ($val ?? 'N/A');
+    };
+    @endphp
+
     <div class="email-wrapper">
         <!-- Top Hero Banner -->
         <div class="header-banner">
             <h1>Notice to Explain (NTE)</h1>
-            <p>Case Reference: {{ $correctiveAction->ca_id }}</p>
+            <p>Case Reference: {{ $correctiveAction->ca_id ?? $correctiveAction->id ?? 'N/A' }}</p>
         </div>
 
         <!-- Body Content -->
         <div class="content-body">
-            <p class="greeting">Dear <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>,</p>
+            <p class="greeting">
+                Dear <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>,
+            </p>
 
             <p class="intro-text">
                 Please be informed that a Corrective Action record has been generated regarding an incident on
-                <strong>{{ \Carbon\Carbon::parse($correctiveAction->date_of_occurrence)->format('F d, Y') }}</strong>.
+                <strong>{{ !empty($correctiveAction->date_of_occurrence) ? \Carbon\Carbon::parse($correctiveAction->date_of_occurrence)->format('F d, Y') : 'N/A' }}</strong>.
             </p>
 
             <!-- Incident Details Card -->
             <div class="card-box">
                 <div class="field-group">
                     <div class="field-label">Category</div>
-                    <div class="field-value">{{ $correctiveAction->category }}</div>
+                    <div class="field-value">{{ $formatField($correctiveAction->category) }}</div>
                 </div>
 
                 <div class="field-group">
                     <div class="field-label">Code of Discipline Section</div>
-                    <div class="field-value">{{ $correctiveAction->code_of_discipline_section }}</div>
+                    <div class="field-value">{{ $formatField($correctiveAction->code_of_discipline_section) }}</div>
                 </div>
 
-                <!-- <div class="field-group">
+                <div class="field-group">
                     <div class="field-label">Description of Infraction</div>
-                    <div class="field-value">{{ $correctiveAction->description_of_infraction }}</div>
-                </div> -->
+                    <div class="field-value">{{ $formatField($correctiveAction->description_of_infraction) }}</div>
+                </div>
             </div>
 
             <!-- Response Deadline Callout -->
