@@ -186,10 +186,10 @@
                     <div class="field-value">{{ $correctiveAction->code_of_discipline_section }}</div>
                 </div>
 
-                <div class="field-group">
+                <!-- <div class="field-group">
                     <div class="field-label">Description of Infraction</div>
                     <div class="field-value">{{ $correctiveAction->description_of_infraction }}</div>
-                </div>
+                </div> -->
             </div>
 
             <!-- Response Deadline Callout -->
