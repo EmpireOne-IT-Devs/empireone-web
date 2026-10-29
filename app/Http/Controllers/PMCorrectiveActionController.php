@@ -100,7 +100,7 @@ class PMCorrectiveActionController extends Controller
 
             if (!empty($correctiveAction->eogs_email)) {
                 $mail = Mail::to($correctiveAction->eogs_email);
-                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction,'You Have A Pending Explanation'));
+                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'You Have A Pending Explanation'));
             }
         }
         $correctiveAction->save();
@@ -113,7 +113,7 @@ class PMCorrectiveActionController extends Controller
         ) {
             if (!empty($correctiveAction->eogs_email)) {
                 $mail = Mail::to($correctiveAction->eogs_email);
-                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction,'You Have A Pending Commitment'));
+                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'You Have A Pending Commitment'));
             }
         }
         return response()->json([
@@ -125,6 +125,8 @@ class PMCorrectiveActionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+   
     public function store(Request $request, CocdDetectorService $cocdDetector)
     {
         $validated = $request->validate([

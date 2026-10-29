@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class CocdDetectorService
 {
@@ -15,46 +16,63 @@ class CocdDetectorService
         $pdfText = $this->policyReader->getPolicyContent();
 
         $systemPrompt = <<<SYS
-You are an HR compliance auditor who maps incident reports strictly against the provided Code of Discipline document.
+You are an HR compliance auditor who maps employee incident reports strictly against the provided Code of Discipline document.
+
+INSTRUCTIONS:
+1. Identify the specific rule that governs the reported conduct.
+   - Match by the underlying violation (e.g., "smoking on the production floor" falls under rules covering smoking in unauthorized/non-designated areas, premises safety, fire regulations, or unauthorized items on the work floor).
+2. The section title and section number MUST be drawn directly from the Reference Document.
+3. If multiple sections apply, select the most specific one.
+4. If the action is genuinely not addressed in any form anywhere in the text, only then return "Unclassified".
+5. Extract the exact penalties from the sanctions ladder table for that specific rule (1st, 2nd, 3rd, 4th offenses).
+
 Respond ONLY with a valid JSON object matching this schema:
 {
-  "section_number": "e.g., 4.82",
-  "code_of_discipline_section": "e.g., Section 4.82: Engaging in scandalous or indecent acts within or outside Company premises while on duty",
-  "classification_group": "e.g., Group IV: Provisions on Conduct, Integrity and Office Decorum",
-  "specific_violation_explanation": "Detailed explanation of what the rule prohibits and why the described act breaches it",
+  "section_number": "Section number from the document (e.g., 5.11 or IV.B)",
+  "code_of_discipline_section": "Official title or full text of the matched section",
+  "classification_group": "Group or category header (e.g., Office Decorum, Safety & Security)",
+  "specific_violation_explanation": "Explain clearly how the incident fits this specific section",
   "sanctions_ladder": {
-    "1st": "Penalty for 1st offense (e.g., T, WW, VW)",
-    "2nd": "Penalty for 2nd offense or N/A",
-    "3rd": "Penalty for 3rd offense or N/A",
-    "4th": "Penalty for 4th offense or N/A"
+    "1st": "1st offense sanction",
+    "2nd": "2nd offense sanction or N/A",
+    "3rd": "3rd offense sanction or N/A",
+    "4th": "4th offense sanction or N/A"
   },
-  "recommended_penalty": "Immediate penalty applicable for a 1st occurrence (e.g., Termination (T) or Written Warning (WW))",
+  "recommended_penalty": "Immediate penalty applicable for a 1st occurrence",
   "clearing_period": "Clearing period according to the document",
-  "due_process_protocol": "Procedural due process requirements according to the document",
-  "confidence_score": 0.00
+  "due_process_protocol": "Due process procedure according to the document",
+  "confidence_score": 0.85
 }
 SYS;
 
-        // Combines prompt + reference document exactly like your reference method
-        $fullPrompt = $description . "\n\nReference Document:\n" . $pdfText;
+        $fullPrompt = "INCIDENT REPORT:\n\"{$description}\"\n\nREFERENCE DOCUMENT:\n" . $pdfText;
 
-        $response = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-4o-mini',
-            'messages' => [
-                ['role' => 'system', 'content' => $systemPrompt],
-                ['role' => 'user', 'content' => $fullPrompt],
-            ],
-            'temperature' => 0,
-            'max_tokens'  => 1024,
-        ]);
+        try {
+            $apiKey = config('services.openai.api_key', env('OPENAI_API_KEY'));
 
-        if ($response->successful()) {
-            $rawOutput = trim($response['choices'][0]['message']['content'] ?? '');
-            $data = json_decode($rawOutput, true);
+            $response = Http::withToken($apiKey)->post('https://api.openai.com/v1/chat/completions', [
+                'model'           => 'gpt-4o-mini',
+                'response_format' => ['type' => 'json_object'],
+                'messages'        => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $fullPrompt],
+                ],
+                'temperature'     => 0.0,
+                'max_tokens'      => 1200,
+            ]);
 
-            if (is_array($data) && !empty($data['section_number'])) {
-                return $data;
+            if ($response->successful()) {
+                $rawOutput = trim($response->json('choices.0.message.content') ?? '');
+                $data = json_decode($rawOutput, true);
+
+                if (is_array($data) && !empty($data['section_number'])) {
+                    return $data;
+                }
+            } else {
+                Log::error('OpenAI Error: ' . $response->body());
             }
+        } catch (\Throwable $e) {
+            Log::error('CocdDetectorService Exception: ' . $e->getMessage());
         }
 
         return [

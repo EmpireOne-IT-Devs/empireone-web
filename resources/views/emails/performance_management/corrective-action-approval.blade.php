@@ -64,7 +64,7 @@
             line-height: 1.6;
         }
 
-        /* Employee / Incident Card Box */
+        /* Incident Card Box */
         .card-box {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -95,6 +95,48 @@
             font-weight: 600;
             color: #0f172a;
             line-height: 1.5;
+        }
+
+        /* Disciplinary Badge Card */
+        .cocd-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 4px;
+        }
+
+        .cocd-badge {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .cocd-category {
+            display: inline-block;
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .cocd-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 6px 0 2px 0;
+        }
+
+        .cocd-meta {
+            font-size: 12px;
+            color: #475569;
+            margin-top: 6px;
         }
 
         /* Highlighted Action Callout Box */
@@ -159,47 +201,64 @@
 
 <body>
     @php
-    $formatField = function ($val) {
-    if (is_array($val)) {
-    return implode(', ', array_filter($val, fn($v) => !is_array($v)));
-    }
-    return (string) ($val ?? 'N/A');
-    };
+    $cocd = is_array($correctiveAction->code_of_discipline_section)
+    ? $correctiveAction->code_of_discipline_section
+    : json_decode($correctiveAction->code_of_discipline_section ?? '', true);
     @endphp
 
     <div class="email-wrapper">
         <!-- Top Hero Banner -->
         <div class="header-banner">
             <h1>Notice to Explain (NTE)</h1>
-            <p>Case Reference: {{ $correctiveAction->ca_id ?? $correctiveAction->id ?? 'N/A' }}</p>
+            <p>Case Reference: {{ $correctiveAction->ca_id }}</p>
         </div>
 
         <!-- Body Content -->
         <div class="content-body">
-            <p class="greeting">
-                Dear <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>,
-            </p>
+            <p class="greeting">Dear <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>,</p>
 
             <p class="intro-text">
                 Please be informed that a Corrective Action record has been generated regarding an incident on
-                <strong>{{ !empty($correctiveAction->date_of_occurrence) ? \Carbon\Carbon::parse($correctiveAction->date_of_occurrence)->format('F d, Y') : 'N/A' }}</strong>.
+                <strong>{{ \Carbon\Carbon::parse($correctiveAction->date_of_occurrence)->format('F d, Y') }}</strong>.
             </p>
 
             <!-- Incident Details Card -->
             <div class="card-box">
                 <div class="field-group">
                     <div class="field-label">Category</div>
-                    <div class="field-value">{{ $formatField($correctiveAction->category) }}</div>
+                    <div class="field-value">{{ $correctiveAction->category ?? ($cocd['classification_group'] ?? 'N/A') }}</div>
                 </div>
 
                 <div class="field-group">
                     <div class="field-label">Code of Discipline Section</div>
-                    <div class="field-value">{{ $formatField($correctiveAction->code_of_discipline_section) }}</div>
+                    @if(is_array($cocd) && !empty($cocd['section_number']))
+                    <div class="cocd-card">
+                        <div>
+                            <span class="cocd-badge">Sec. {{ $cocd['section_number'] }}</span>
+                            @if(!empty($cocd['classification_group']))
+                            <span class="cocd-category">{{ $cocd['classification_group'] }}</span>
+                            @endif
+                        </div>
+                        <div class="cocd-title">
+                            {{ $cocd['code_of_discipline_section'] }}
+                        </div>
+                        @if(!empty($cocd['recommended_penalty']))
+                        <div class="cocd-meta">
+                            <strong>Sanction:</strong> {{ $cocd['recommended_penalty'] }}
+                            @if(!empty($cocd['clearing_period']))
+                            &bull; <strong>Clearing Period:</strong> {{ $cocd['clearing_period'] }}
+                            @endif
+                        </div>
+                        @endif
+                    </div>
+                    @else
+                    <div class="field-value">{{ is_string($correctiveAction->code_of_discipline_section) ? $correctiveAction->code_of_discipline_section : 'Pending HR Review' }}</div>
+                    @endif
                 </div>
 
                 <div class="field-group">
                     <div class="field-label">Description of Infraction</div>
-                    <div class="field-value">{{ $formatField($correctiveAction->description_of_infraction) }}</div>
+                    <div class="field-value">{{ $correctiveAction->description_of_infraction }}</div>
                 </div>
             </div>
 

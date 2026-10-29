@@ -9,6 +9,8 @@ class CocdPolicyReader
     public function getPolicyContent(): string
     {
         // Matches the file naming from your reference controller
+        
+        // $pdfPath = "https://careers.empireonecx.com/pdf/code-of-discipline.pdf";
         $pdfPath = public_path('pdf/cocd.pdf');
 
         // Fallback check in case the longer name is ever used
