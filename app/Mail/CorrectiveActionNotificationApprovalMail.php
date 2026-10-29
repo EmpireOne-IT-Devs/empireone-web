@@ -9,7 +9,6 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-// REMOVED: implements ShouldQueue
 class CorrectiveActionNotificationApprovalMail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -17,7 +16,10 @@ class CorrectiveActionNotificationApprovalMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public PMCorrectiveAction $correctiveAction) {}
+    public function __construct(
+        public PMCorrectiveAction $correctiveAction,
+        public string $customSubject = 'Corrective Action Approval'
+    ) {}
 
     /**
      * Get the message envelope.
@@ -27,11 +29,11 @@ class CorrectiveActionNotificationApprovalMail extends Mailable
         $employeeName = trim("{$this->correctiveAction->first_name} {$this->correctiveAction->last_name}")
             ?: ($this->correctiveAction->name ?? 'Employee');
 
-        // Use ca_id instead of integer id so it shows "CA-202610-XXX"
-        $caId = $this->correctiveAction->id ?? $this->correctiveAction->id ?? 'N/A';
+        // Use ca_id if available, falling back to id
+        $caId = $this->correctiveAction->ca_id ?? $this->correctiveAction->id ?? 'N/A';
 
         return new Envelope(
-            subject: "Action Required: Corrective Action Approval [{$caId}] - {$employeeName}",
+            subject: "Action Required: {$this->customSubject} [{$caId}] - {$employeeName}",
         );
     }
 

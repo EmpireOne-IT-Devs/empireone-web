@@ -74,7 +74,7 @@ class PMCorrectiveActionController extends Controller
                     $mail->cc($ccRecipients);
                 }
                 // Send synchronously
-                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction));
+                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'Pending Final Sanction Approval'));
                 break;
             case 'save_sanction':
                 $correctiveAction->final_sanction = $request->final_sanction;
@@ -100,7 +100,7 @@ class PMCorrectiveActionController extends Controller
 
             if (!empty($correctiveAction->eogs_email)) {
                 $mail = Mail::to($correctiveAction->eogs_email);
-                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction));
+                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction,'You Have A Pending Explanation'));
             }
         }
         $correctiveAction->save();
@@ -113,7 +113,7 @@ class PMCorrectiveActionController extends Controller
         ) {
             if (!empty($correctiveAction->eogs_email)) {
                 $mail = Mail::to($correctiveAction->eogs_email);
-                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction));
+                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction,'You Have A Pending Commitment'));
             }
         }
         return response()->json([
@@ -184,7 +184,7 @@ class PMCorrectiveActionController extends Controller
             if (!empty($ccRecipients)) {
                 $mail->cc($ccRecipients);
             }
-            $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction));
+            $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'Corrective Action Approval'));
         }
 
         return response()->json([
