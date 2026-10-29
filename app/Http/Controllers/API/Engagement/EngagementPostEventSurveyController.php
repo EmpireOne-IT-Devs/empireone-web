@@ -262,10 +262,6 @@ class EngagementPostEventSurveyController extends Controller
 
         $survey = EngagementPostEventSurvey::with(['questions'])->findOrFail($id);
 
-        $responseModels = EngagementPostEventSurveyResponse::with(['answers.question'])
-            ->where('engagement_post_event_survey_id', $id)
-            ->get();
-
         $isChallengeSurvey = $survey->reward_challenge_id !== null;
         $questions = $survey->questions->map(fn ($question) => [
             'id' => $question->id,
@@ -281,41 +277,8 @@ class EngagementPostEventSurveyController extends Controller
                     'user.account_employee.location',
                     fn ($locationQuery) => $locationQuery->where('name', $validated['site']),
                 ));
-            $participants = (clone $participantQuery)->orderByDesc('id')->paginate(10);
-            $responseMap = $responseModels->keyBy('reward_challenge_participant_id');
-            $tracker = collect($participants->items())->map(function ($participant) use ($responseMap) {
-                $employee = $participant->user;
-                $response = $responseMap->get($participant->id);
-                $answersByQuestion = [];
-                foreach ($response?->answers ?? [] as $answer) {
-                    $answersByQuestion[$answer->engagement_post_event_question_id] = $answer->answer;
-                }
-
-                return [
-                    'user_id' => $employee?->id,
-                    'employee_id' => $employee?->account_employee?->employee_id ?? 'N/A',
-                    'employee_name' => $employee?->name ?? 'Employee',
-                    'site' => $employee?->account_employee?->location?->name ?? 'N/A',
-                    'program_department' => $employee?->account_employee?->account?->name
-                        ?? $employee?->account_employee?->department?->name
-                        ?? 'N/A',
-                    'email' => $employee?->email ?? '',
-                    'status' => $response ? 'Completed' : 'Pending',
-                    'submitted_at' => $response?->submitted_at?->toDateTimeString(),
-                    'answers' => $answersByQuestion,
-                ];
-            });
-            $totalEmployees = $participants->total();
-            $filteredParticipantIds = (clone $participantQuery)->pluck('id');
-            $totalResponses = $responseModels->whereIn('reward_challenge_participant_id', $filteredParticipantIds)->count();
-            $pagination = [
-                'current_page' => $participants->currentPage(),
-                'last_page' => $participants->lastPage(),
-                'per_page' => $participants->perPage(),
-                'total' => $participants->total(),
-                'from' => $participants->firstItem(),
-                'to' => $participants->lastItem(),
-            ];
+            $totalEmployees = (clone $participantQuery)->count();
+            $respondentScope = (clone $participantQuery)->select('user_id');
             $sites = EngagementRewardChallengeParticipant::query()
                 ->where('reward_challenge_id', $survey->reward_challenge_id)
                 ->with('user.account_employee.location')
@@ -344,41 +307,57 @@ class EngagementPostEventSurveyController extends Controller
                 ->sort()
                 ->values();
 
-            $employees = $employeeQuery->orderBy('id', 'desc')->paginate(10);
-            $responseMap = $responseModels->keyBy('user_id');
-            $tracker = collect($employees->items())->map(function ($employee) use ($responseMap) {
-                $response = $responseMap->get($employee->id);
-                $answersByQuestion = [];
-                foreach ($response?->answers ?? [] as $answer) {
-                    $answersByQuestion[$answer->engagement_post_event_question_id] = $answer->answer;
-                }
-
-                return [
-                    'user_id' => $employee->id,
-                    'employee_id' => $employee->account_employee?->employee_id ?? 'N/A',
-                    'employee_name' => $employee->name,
-                    'site' => $employee->account_employee?->location?->name ?? 'N/A',
-                    'program_department' => $employee->account_employee?->account?->name
-                        ?? $employee->account_employee?->department?->name
-                        ?? 'N/A',
-                    'email' => $employee->email,
-                    'status' => $response ? 'Completed' : 'Pending',
-                    'submitted_at' => $response?->submitted_at?->toDateTimeString(),
-                    'answers' => $answersByQuestion,
-                ];
-            });
-            $totalEmployees = $employees->total();
-            $filteredEmployeeIds = (clone $employeeQuery)->pluck('id');
-            $totalResponses = $responseModels->whereIn('user_id', $filteredEmployeeIds)->count();
-            $pagination = [
-                'current_page' => $employees->currentPage(),
-                'last_page' => $employees->lastPage(),
-                'per_page' => $employees->perPage(),
-                'total' => $employees->total(),
-                'from' => $employees->firstItem(),
-                'to' => $employees->lastItem(),
-            ];
+            $totalEmployees = (clone $employeeQuery)->count();
+            // Event surveys accept answers from any authenticated user, so submitted
+            // responses are not restricted to employee-role accounts.
+            $respondentScope = null;
         }
+
+        $responses = EngagementPostEventSurveyResponse::with([
+            'user.account_employee.account',
+            'user.account_employee.department',
+            'user.account_employee.location',
+            'answers.question',
+        ])
+            ->where('engagement_post_event_survey_id', $id)
+            ->whereNotNull('submitted_at')
+            ->when($respondentScope, fn ($query) => $query->whereIn('user_id', $respondentScope))
+            ->when(! $isChallengeSurvey && ! empty($validated['site']), fn ($query) => $query->whereHas(
+                'user.account_employee.location',
+                fn ($locationQuery) => $locationQuery->where('name', $validated['site']),
+            ))
+            ->orderByDesc('id')
+            ->paginate(10);
+        $totalResponses = $responses->total();
+        $tracker = $responses->getCollection()->map(function ($response) {
+            $employee = $response->user;
+            $answersByQuestion = [];
+            foreach ($response->answers as $answer) {
+                $answersByQuestion[$answer->engagement_post_event_question_id] = $answer->answer;
+            }
+
+            return [
+                'user_id' => $employee?->id,
+                'employee_id' => $employee?->account_employee?->employee_id ?? 'N/A',
+                'employee_name' => $employee?->name ?? 'Employee',
+                'site' => $employee?->account_employee?->location?->name ?? 'N/A',
+                'program_department' => $employee?->account_employee?->account?->name
+                    ?? $employee?->account_employee?->department?->name
+                    ?? 'N/A',
+                'email' => $employee?->email ?? '',
+                'status' => 'Completed',
+                'submitted_at' => $response->submitted_at?->toDateTimeString(),
+                'answers' => $answersByQuestion,
+            ];
+        });
+        $pagination = [
+            'current_page' => $responses->currentPage(),
+            'last_page' => $responses->lastPage(),
+            'per_page' => $responses->perPage(),
+            'total' => $responses->total(),
+            'from' => $responses->firstItem(),
+            'to' => $responses->lastItem(),
+        ];
 
         if ($survey->sentiment_overview === null) {
             $survey->refreshSentimentOverview();

@@ -1,0 +1,1 @@
+import{j as n}from"./app-DSYB6LPO.js";import{P as o}from"./pagination-6bKYOJ4s.js";import"./iconBase-vw_tuHOs.js";function s({data:t,onPageChange:i}){return!t?.last_page||t.last_page<1?null:n.jsx(o,{data:t,onPageChange:i})}export{s as default};

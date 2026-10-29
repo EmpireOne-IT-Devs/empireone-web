@@ -44,7 +44,7 @@ export default function ChallengeFlowDetailsSection({
                     <p className="mt-0.5 text-sm font-semibold text-gray-800">
                         +{challenge.points}
                     </p>
-                </div>
+                </div>      ccxcxxZzxz
                 <div className="rounded-xl bg-gray-50 px-3 py-2.5">
                     <p className="flex items-center gap-1.5 text-xs text-gray-400">
                         <Check className="h-3.5 w-3.5" /> Slots

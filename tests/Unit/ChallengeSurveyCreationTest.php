@@ -1980,8 +1980,8 @@ class ChallengeSurveyCreationTest extends TestCase
     {
         $expectedRule = 'max:1048576';
 
-        $this->assertContains($expectedRule, (new SubmitChallengeProofRequest())->rules()['video']);
-        $this->assertContains($expectedRule, (new SubmitTeamChallengeRequest())->rules()['video']);
+        $this->assertContains($expectedRule, (new SubmitChallengeProofRequest)->rules()['video']);
+        $this->assertContains($expectedRule, (new SubmitTeamChallengeRequest)->rules()['video']);
 
         $phpLimits = parse_ini_file(public_path('.user.ini'));
         $this->assertSame('1024M', $phpLimits['upload_max_filesize']);
@@ -2686,6 +2686,62 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->assertSame(2, $response->answers()->count());
     }
 
+    public function test_event_survey_response_tracker_only_lists_employees_who_responded(): void
+    {
+        $respondent = User::create([
+            'name' => 'Survey Respondent',
+            'email' => 'survey-respondent@example.test',
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+        User::create([
+            'name' => 'Survey Nonrespondent',
+            'email' => 'survey-nonrespondent@example.test',
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+        $survey = EngagementPostEventSurvey::create([
+            'title' => 'Response tracker test',
+            'status' => 'published',
+            'user_id' => auth()->id(),
+        ]);
+        EngagementPostEventSurveyResponse::create([
+            'engagement_post_event_survey_id' => $survey->id,
+            'user_id' => $respondent->id,
+            'submitted_at' => now(),
+        ]);
+
+        $this->getJson("/api/engagement/surveys/{$survey->id}/responses")
+            ->assertOk()
+            ->assertJsonPath('data.total_employees', 2)
+            ->assertJsonPath('data.total_responses', 1)
+            ->assertJsonPath('data.response_tracker_pagination.total', 1)
+            ->assertJsonCount(1, 'data.response_tracker')
+            ->assertJsonPath('data.response_tracker.0.user_id', $respondent->id)
+            ->assertJsonPath('data.response_tracker.0.status', 'Completed');
+    }
+
+    public function test_event_survey_response_tracker_includes_non_employee_respondents(): void
+    {
+        $survey = EngagementPostEventSurvey::create([
+            'title' => 'Admin response tracker test',
+            'status' => 'published',
+            'user_id' => auth()->id(),
+        ]);
+        EngagementPostEventSurveyResponse::create([
+            'engagement_post_event_survey_id' => $survey->id,
+            'user_id' => auth()->id(),
+            'submitted_at' => now(),
+        ]);
+
+        $this->getJson("/api/engagement/surveys/{$survey->id}/responses")
+            ->assertOk()
+            ->assertJsonPath('data.total_employees', 0)
+            ->assertJsonPath('data.total_responses', 1)
+            ->assertJsonPath('data.response_tracker_pagination.total', 1)
+            ->assertJsonCount(1, 'data.response_tracker')
+            ->assertJsonPath('data.response_tracker.0.user_id', auth()->id())
+            ->assertJsonPath('data.response_tracker.0.status', 'Completed');
+    }
+
     public function test_challenge_surveys_are_readable_but_mutations_stay_blocked_on_legacy_routes(): void
     {
         $challenge = $this->createChallenge();
@@ -2695,9 +2751,20 @@ class ChallengeSurveyCreationTest extends TestCase
             'user_id' => auth()->id(),
             'status' => 'joined',
         ]);
+        EngagementRewardChallengeParticipant::create([
+            'reward_challenge_id' => $challenge->id,
+            'user_id' => User::create([
+                'name' => 'Challenge Nonrespondent',
+                'email' => 'challenge-nonrespondent@example.test',
+                'role' => User::ROLE_EMPLOYEE,
+            ])->id,
+            'status' => 'joined',
+        ]);
         $this->getJson("/api/engagement/surveys/{$survey->id}/responses")->assertOk()
-            ->assertJsonPath('data.total_employees', 1)
-            ->assertJsonPath('data.response_tracker.0.status', 'Pending');
+            ->assertJsonPath('data.total_employees', 2)
+            ->assertJsonPath('data.total_responses', 0)
+            ->assertJsonPath('data.response_tracker_pagination.total', 0)
+            ->assertJsonCount(0, 'data.response_tracker');
         EngagementPostEventSurveyResponse::create([
             'engagement_post_event_survey_id' => $survey->id,
             'reward_challenge_participant_id' => $participant->id,
@@ -2730,12 +2797,12 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonPath('data.0.challenge.id', $challenge->id)
             ->assertJsonPath('data.0.challenge.title', $challenge->title);
         $this->getJson("/api/engagement/surveys/{$survey->id}/responses")->assertOk()
-            ->assertJsonPath('data.total_employees', 1)
+            ->assertJsonPath('data.total_employees', 2)
             ->assertJsonPath('data.response_tracker.0.user_id', auth()->id())
             ->assertJsonPath('data.response_tracker.0.status', 'Completed')
             ->assertJsonPath('data.total_responses', 1);
         $this->getJson("/api/engagement/surveys/{$survey->id}/analytics")->assertOk()
-            ->assertJsonPath('data.total_employees', 1);
+            ->assertJsonPath('data.total_employees', 2);
         $this->assertSame(0, $participant->fresh()->survey_points_awarded);
         $this->assertNotNull($survey->fresh());
         $this->assertSame(7, $survey->questions()->count());

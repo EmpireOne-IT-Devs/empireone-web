@@ -239,7 +239,7 @@ export default function ResponsesSection({
                             />
                             {!responsesLoading && tableData.length === 0 && (
                                 <p className="px-5 py-6 text-sm text-gray-400 text-center">
-                                    {selectedSite ? "No employees found for this site." : "No employees found."}
+                                    {selectedSite ? "No responses found for this site." : "No responses found."}
                                 </p>
                             )}
                             <div className="mt-4">
