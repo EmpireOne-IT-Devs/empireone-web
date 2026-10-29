@@ -1,8 +1,224 @@
 [
     {
+        "section_number": "1.1",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring tardiness of up to 15 minutes with valid excuse",
+        "ladder": {
+            "1st": "FWW",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.2",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring tardiness with prior notification or authorization from the trainer",
+        "ladder": {
+            "1st": "FWW",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.3",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring tardiness greater than 15 minutes without valid excuse",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.4",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring one absence during the duration of the training, regardless of reason",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.5",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Being on a No Call No Show (NCNS) status or failure to inform the supervisor or manager in the manner provided in the Sick Hotline Policy of the inability to work at least two (2) hours before the start of the scheduled work day",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.6",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Late in informing immediate superior of the intended sick leave",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "1.7",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring at least 5 occurrences of tardiness or less than 60 minutes of accumulated tardiness within any given month",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "1.8",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Being tardy for 60 to 180 minutes in a given month regardless of the number of occurrences",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.9",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Being on a No Call No Show (NCNS) status or failure to inform the supervisor or manager in the manner provided in the Sick Hotline Policy of the inability to work at least two (2) hours before the start of the scheduled work day.",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.10",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Not complying with a directive to render overtime work",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.11",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Being tardy more than 180 minutes in a given month regardless of the number of occurrences",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.12",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Malingering or pretending to be sick, giving false excuse to avail of a sick leave or absence",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.13",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Failure to report to a pre-approved overtime work and failure to notify immediate superior about one's absence during a scheduled overtime work.",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.14",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Abuse of allowed break periods or excessive meal breaks.",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.15",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Changing position or changing break schedule or day off schedule without the Superior's permission",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.16",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Three unauthorized absences within a six-month period",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.17",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Absence of three consecutive days without notice or authorization",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
         "section_number": "1.18",
         "group": "GROUP I - Provisions on Attendance",
         "title": "Incurrence of Tardiness, i.e., inability to be at assigned workstation at expected time.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "1.19",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Failure to notify or not calling the sick hotline two (2) hours before start of scheduled shift of intended sick leave",
         "ladder": {
             "1st": "Verbal Warning (VW)",
             "2nd": "Written Warning (WW)",
@@ -24,9 +240,69 @@
         "clearing_period": "3 months"
     },
     {
+        "section_number": "1.21",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Logging off within or after the first four hours of the shift without notice or authorization",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "1.22",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring one (1) unauthorized absence due to reasons other than being sick and/or being unable to present a valid medical certificate from an HMO-accredited doctor within 24 hours upon return to work.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "1.23",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Failure to properly use appropriate AUX mode.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
         "section_number": "1.24",
         "group": "GROUP I - Provisions on Attendance",
         "title": "Incurring at least three (3) recorded tardiness totaling less than 60 minutes or two (2) instances more than 60 minutes in a given month",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.25",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring at least one (1) tardiness notice within sixty (60) days from issuance of a First Written Warning for violation of the Attendance guideline",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.26",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring one (1) unauthorized absence within sixty (60) days from issuance of a First Written Warning for violation of the Attendance guideline",
         "ladder": {
             "1st": "Written Warning (WW)",
             "2nd": "Final Written Warning (FWW)",
@@ -48,6 +324,42 @@
         "clearing_period": "6 months"
     },
     {
+        "section_number": "1.28",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Patterned Absence/s",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.29",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring at least one (1) tardiness notice within sixty (60) days from issuance of a Second Written Warning for violation of the Attendance guideline",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.30",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring one (1) unauthorized absence within sixty (60) days from issuance of a Second Written Warning for violation of the Attendance guideline",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
         "section_number": "1.31",
         "group": "GROUP I - Provisions on Attendance",
         "title": "Absence during a Critical Work Day such as a day before or after rest days, plotted vacation leaves, paydays and holidays whether on No Call No Show or an unauthorized absence",
@@ -60,9 +372,1581 @@
         "clearing_period": "12 months"
     },
     {
+        "section_number": "1.32",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring two consecutive sick calls but no valid medical certificate was presented to support the absence",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.33",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring one (1) No Call No Show within sixty (60) days from issuance of a Second Written Warning for violation of the Attendance guideline",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.34",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring 2 days consecutive NCNS for the first instance",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "1.35",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring at least one (1) tardiness notice within sixty (60) days from issuance of a Final Written Warning for violation of the Attendance guideline",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.36",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring one (1) unauthorized absence within sixty (60) days from issuance of a Final Written Warning for violation of the Attendance guideline",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.37",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Absence of three consecutive days without notice or authorization",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.38",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Abandonment, continued failure to report for work without complying with the notice and sick hotline policies of the Company, or failure to return to work after issuance of a return to work order within the period provided in the notice",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.39",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring 3 days consecutive NCNS for the first instance",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "1.40",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring one (1) NCNS within sixty (60) days from issuance of a Final Written Warning for violation of the Attendance Guideline",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "2.1",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Wasting time in any way during official work hours such as extending break time, idle chatting, or any form of simple malingering",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "2.2",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Using the Company's time, materials or equipment to do unauthorized work",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "2.3",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Changing position, hours, or days off without the team lead's permission",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "2.4",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "2.5",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Rendering overtime without any proper authorization and/or approval.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "2.6",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Repeatedly, recurring pattern of forgetting or failing to properly safeguard assigned system passwords, resulting in multiple password reset requests.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "2.7",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Failure to meet performance targets of the Company. Enrollment to PIP",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.8",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Refusal or failure to report for or to render overtime work after being required to do so in accordance with business exigencies declared at the time of the requirement",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.9",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Sleeping at the work station or Operations area while on duty or in a place other than the room or area designated for rest or sleeping",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.10",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Logging off or quitting work hours before your scheduled time off, or going on unauthorized undertime",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.11",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Loafing or loitering on Company time (such as but not limited to extending beyond break period/ beyond the allotted time, sleeping, browsing internet in the break room, and other similar acts are considered a violation of this rule)",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.12",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Failure to submit a project on the specified deadline",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.13",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Delays in reporting/processing/submitting mandatory reports (depending on criticality of impact, may be subjected to suspension or dismissal on 1st offense)",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.14",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "2.15",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Abandoning work while logged IN or attempting to be paid while not at work. This also includes logging in to the timekeeper and leaving work area without permission",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.16",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Leaving the work assignment during official working hours without prior permission from immediate team lead or department head",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.17",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Delegating assigned duties to others for personal gain",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.18",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Deviation from normal duties and responsibilities, systems, procedures, standards or flow of operations without authorization from the immediate supervisor or his representative",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.19",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Unauthorized use of the Internet, chat accounts, or other software programs without prior notice and consent of authorized Company representatives",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.20",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Refusal or failure to comply with a lawful and reasonable reassignment or transfer",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.21",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Failure to meet client required targets",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.22",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Misplacing or Losing important Company records, electronic files and other documents.",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.23",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Concealing poor, erroneous and substandard work from the Management to avoid being penalized",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.24",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Failure or refusal to carry out verbal or written job order or assignment",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.25",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Failure or refusal to follow a prescribed system or process work flow",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.26",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "2.27",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Abandonment of post",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "2.28",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Leaving building premises while on duty without authorization from immediate superior.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "2.29",
+        "group": "GROUP II - Provisions on Performance of Duties",
+        "title": "Engaging in sabotage (e.g. restricting output, slowdown of work, damaging or rendering vehicles, machines and/or equipment immobile or non-operational); Willful, deliberate, intentional destruction of any company resources which adversely affect operations...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
         "section_number": "3.1",
         "group": "GROUP III - Provisions on Quality",
         "title": "Dropping calls without justifiable reason/s; any form of call avoidance / call abandonment",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.2",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Staying silent on the other end of the line without justifiable reasons until the customer drops the call.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.3",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Behaving with disrespect, discourtesy, or improper conduct toward clients, subscribers, or other persons transacting business with the Company, or exhibiting any of the above behaviors in dealing with other employees in person or through telephone or email; Customer Abuse.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.4",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Neglect of Customer. Willful disregard of the needs of the customer; refusal or failure to assist the customer; ignoring the presence of customer; causing inconvenience to the customer; performing non-work related tasks or engaging in non-work related chatting or conversation...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.5",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Mishandling of Customer. It refers to a culpable, unjustified and avoidable errors (whether deliberate or through negligence) in servicing a customer especially if such errors results in customer dissatisfaction and client escalation.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.6",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Cross-talking while engaged in a call; uttering unnecessary remarks/sounds to caller/customer",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.7",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Connectivity (Active Listening Skills) - talks over customer, not using proper phone etiquette, not acknowledging comments from the customer, not assisting customer concerns",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.8",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Uttering vulgar, obscene, or offensive words or being discourteous in attending or handling calls",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.9",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Commission of call avoidance or acts that are not in accordance with instructions or training received for the proper handling of calls connected or handled",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.10",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Any form of system/tools manipulation which may directly or indirectly affect calls/call queues.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.11",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Misrepresentation, misleading, giving false or inaccurate information, giving false name, inclusion of unwanted add-ons or the like",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.12",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Commission of fraud or similar activities in attending to calls, including but not limited to unauthorized recording of personal information of customers, accessing client accounts...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "3.13",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.1",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Unauthorized posting or removal of articles or material from Company bulletin boards or other Company assigned posting areas",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "4.2",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Engaging in horseplay, running, scuffling, or throwing things within Company premises",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "4.3",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Violation of the Language Policy",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "4.4",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "4.5",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Failure to provide, in a timely manner and without justifiable reasons, the supporting documents necessary to validate request for sick, vacation leave, prolonged leave of absence or bereavement leave upon return to work e.g. police report, medical certificate etc.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "4.6",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Sharing of confidential information related to Payroll or Compensation to co-employees or unauthorized individuals other than those in authority to discuss such information.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "4.7",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Failure to issue Memorandum. It refers to supervisor's and up failure to report, document or issue a memorandum to a direct report for violating company rules and regulations with the attempt of covering-up or protecting erring personnel.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "4.8",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Unauthorized raffling, vending, soliciting, or collecting contributions for any purpose whatsoever at any time within Company premises or unauthorized use the Company's name in making such raffle, sale, solicitation, and/or contribution and all other analogous activities within or without Company premises",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "4.9",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Selling personal items, various goods, and the like at any time within the Company premises",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "4.10",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "4.11",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Using company resources for personal gain (including but not limited to: Using office address/telephone numbers/computers for personal bills, mails, and the like)",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "4.12",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Malingering or pretending to be sick, giving false excuse to avail of a sick leave or absence",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.13",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Concealing or deliberately misplacing any Company-issued or Company-owned property",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.14",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Taking part in betting or any form of gambling, lottery or any game including online games of chance within Company premises",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.15",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Negotiating, entering into, executing, or implementing transactions or contracts in violation of procurement or signature policies of the Company regardless of whether such act causes any material, fiscal, financial, or monetary injury, loss, or damage to the Company",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.16",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Unauthorized possession of or access to any confidential information or document maintained by the Company which employee may have deliberately or inadvertently secured or gained possession of",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.17",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Failure to observe proper office decorum within Company premises and/or during Company time and/or while at official Company functions, whether within or outside Company premises.",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.18",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Forming, operating or attempting to operate within the Company any credit union, loan association, or any other similar organization",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.19",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Failure to follow company policies and procedures (e.g. non-compliance to pre-employment requirements, non-compliance, failure to follow specific orders from Management and/or Immediate Supervisor is considered a violation of this rule).",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.20",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Negligence in the performance of duties as discussed by immediate superior",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.21",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Initiating and/or participating in disorderly conduct, whether consummated or attempted, including but not limited to shouting, cursing, or any violent act, whether done alone or in concert with others, regardless of whether such acts result in disturbances during working hours or within Company premises that impede, disturb, or disrupt any operation or Company-sponsored activity",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.22",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Gambling or engaging in a lottery or other related or similar activities within Company premises",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.23",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Refusal or failure to comply with a lawful and reasonable reassignment or transfer",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.24",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Engaging in usurious practices or money-lending activities within Company premises",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.25",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Negligence or failure to abide by lawful, reasonable, and specific instructions, orders, directives, or established procedures, or failure to exercise reasonable care in complying therewith, regardless of whether such negligence or failure results in actual loss or damage to any Company property",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.26",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Use of Company phone for unofficial business. This includes Company and/or client issued phones and handsets",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.27",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Using cellular phone and other restricted electronic devices/gadgets within the specified restricted areas",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.28",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.29",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Intrigue. It refers to any employee who engages in rumor mongering and/or deliberately spreading intrigue, misleading or incomplete information about an employee, with the intent or aim of or which results in damaging, tarnishing or besmirching his/her reputation or standing...",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "4.30",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Injuring the company's reputation. Deliberately damaging or injuring the reputation and image of the Company in the eyes of the general public, including but not limited to, spreading false rumors about the company, embarrassing, ridiculing, insulting, or mocking the company by word or action.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.31",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Conflict of Interest. Employees, during the period of employment, shall not engage with other employers or involve in any activity which is prejudicial to the interest of the company or which will interfere with the performance of their jobs...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.32",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Making false statements in employment applications or personal records, either when applying or during the course thereof",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.33",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Engaging in fictitious transactions, theft, fake invoicing, padding and other sales malpractices",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.34",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Misappropriation, extorting, embezzlement of Company funds or property or using company funds/name for personal gain. Misuse of Company funds.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.35",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Corruption/Extortion/Bribery",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.36",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Submission of fraudulent expense statements",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.37",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Obtaining or releasing company money, property, or documents fraudulently, either in person or collusion with others",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.38",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Fraud or willful breach by the employee of the trust/confidence reposed in him by the Company or its duly authorized representative where continuance in service is patently inimical to the company's interest.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.39",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Giving away restricted or classified Company information, forms, documents and/or any other confidential papers without authorization and/or clearance from Management to any outside or to those not authorized to possess such materials",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.40",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Divulging of confidential information that may lead directly or indirectly to the disadvantage of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.41",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Unauthorized possession, access or disclosure of confidential information or reproduction or distribution of confidential documents or information without proper authorization...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.42",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Planning, participating, or aiding any act that directly defrauds or tends to defraud the Company or its clients, regardless of whether material, fiscal, financial, or monetary injury, loss, or damage results from such actions",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.43",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Any act of dishonesty, which give unlawful gain to the offender to the prejudice of the company, its duly authorized representatives or his co-worker",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.44",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Perjury or knowingly giving untruthful statements or concealing facts or evidence in an inquiry or investigation conducted by authorized representatives of the Company or in any application submitted to the Company, or committing any act that directly delays or obstructs such investigation",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.45",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Failure to cooperate in company investigations of cases (administrative, civil or criminal) when testimony is required and where Company is a party",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.46",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Misrepresentation of company in official function resulting in prejudice to company interest",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.47",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Damaging or jeopardizing Company interests through acts or omissions affecting clients, visitors, customers, or other business partners of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.48",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Tampering attendance records or falsification of or irregularities in the accomplishment or keeping of time record",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.49",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Tampering medical certificate/s or any other document for the purpose of applying payment/s for leave; this also includes presentation of tampered or fraudulent documentation for unexcused leave of absence.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.50",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Timing in or logging in for another employee or conspiring with or arranging for another to do the same",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.51",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Falsifying Company records or knowingly using falsified records or documents",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.52",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Submitting false or fraudulent money claims against the Company or submission of forged certification or documents, regardless of whether or not it results in loss of revenue or damage to Company image or affects service obligation to the public",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.53",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Submission of false reports, false information, or false certification, regardless of whether it results in loss of revenue or damage to Company image or affects service obligation to the public",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.54",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Submission of false documents or false statement, or willful misrepresentation or concealment of disqualification, to secure employment or promotion in the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.55",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Making use of records or documents known by the user to be false in whole or in part",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.56",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Forging, falsifying, or altering an official document in a manner that changes the form or meaning of its contents without proper authority or tends to mislead the person to whom it is addressed or any person who shall use the same",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.57",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Offering or accepting anything of value in exchange for a job, work location, or favorable condition of employment or work",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.58",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Involving oneself directly or indirectly in any transaction, business undertaking or enterprise where such engagement, participation or involvement involves conflict of interest",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.59",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Accepting or performing employment or work with another employer or for the benefit of other persons or engaging in the practice of a profession without prior authorization from the Company that prevents the employee from effectively discharging one's duties and responsibilities.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.60",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Engaging in any activity that directly competes with the business of the Company or any part of its operation, or tends to disrupt, impede, obstruct, or delay the conduct of any business, function, or activity of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.61",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Soliciting or receiving money or anything of value, share percentage, benefits or favor from Company supplier or from any person, personally or through another for personal purposes without prior specific authorization",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.62",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Soliciting money, gifts, benefits, favors, or anything of value or promise from any person, or through the mediation of another, as a condition for the performance or nonperformance of one's duty, whether or not such solicitation was consummated",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.63",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Obtaining Company materials, pay envelopes, or entering premises or job sites on fraudulent orders/papers or through misrepresentation. This includes collusion with other persons to achieve the above ends",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.64",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "For employees considered as 'officers' of the Company, borrowing money from subordinates or allowing the same, particularly to act as co-makers or guarantors of officer's loan and the like.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.65",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Collaborating, conspiring, helping, or providing any information, means, or assistance that directly aids or abets another to defraud the Company, attempted or consummated, regardless of whether such acts cause fiscal, financial, monetary, or material damage to the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.66",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Cheating, cooperating in cheating, or facilitating cheating during examinations, or other acts that fraudulently or directly manipulate examinations or performance management tools and processes or their results",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.67",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Unprovoked insolence or disrespect towards the Company or its customers or acquaintances of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.68",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Making vicious or malicious statements against the Company or its products and services, its employees and/or officials",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.69",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Posting, circulating, writing or painting subversive materials or libelous, derogatory or offensive comments/statements/remarks against any employee whether inside or outside Company premises. This also includes use of Social Media...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.70",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Uttering words or performing acts that discriminate against or harass a fellow employee by reason of his race, nationality, ethnicity, religion, age, disability, gender, or sexual orientation",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.71",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Uttering words, committing acts, or making gestures that are manifestly insulting or grossly disrespectful to any employee",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.72",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Instigating, provoking, or participating in any act whether alone or in concert with others that tends to create panic, disturbance, or fear to others, such as making bomb jokes or threats",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.73",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Threatening, intimidating, or coercing an officer, manager, team lead, or any person acting for or on behalf of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.74",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Provoking or participating in a fight with another employee or person or aiding participants therein within the premises of the Company. Fighting.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.75",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Insubordination or refusal to follow verbal or written reasonable orders or instructions of a superior in connection with work, company policies, rules, SOP or work schedules including mandatory overtime.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.76",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Committing other acts of insubordination, neglect of duty, or other similar or analogous acts not embraced by any of the foregoing provisions",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.77",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Drinking/Taking alcoholic or intoxicating beverages or prohibited drugs within Company premises or during work schedules",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.78",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Entering company premises under the influence of liquor or prohibited drugs, including possession thereof, within company premises. Random drug check is also included.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.79",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Bringing or attempting to bring onto Company premises unauthorized alcoholic beverage(s)",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.80",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Use, possession, selling, and/or assistance in the distribution of prohibited drugs, derivatives, and other items considered illegal under the law.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.81",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Unauthorized use of addictive or habit-forming drug not prescribed by a medical practitioner at any time within the Company premises or property",
         "ladder": {
             "1st": "Termination (T)",
             "2nd": "N/A",
@@ -84,6 +1968,415 @@
         "clearing_period": "None"
     },
     {
+        "section_number": "4.83",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Immoral conduct within Company premises, regardless whether or not committed during working time, including but not limited to exhibition or distribution of pornographic materials",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.84",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Public imputation of vice or defect, real or imaginary or any act tending to cause dishonor to co-employee's work or Company's product.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.85",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Directly incriminating or imputing to an innocent employee the infraction of Company rules/ regulations or the commission of a crime. Inducing a co-employee to commit an infraction of Company rules/ regulations",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.86",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Inciting or participating in any work stoppage, slow down, mass leave, sit down, riot, or other similar disruptive activities",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.87",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Conduct of grossly indecent nature or using profane or defamatory language in addressing another person during working hours or within the Company premises depending on the gravity of the offense.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.88",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Gross/reckless negligence in the performance of assigned duties (resulting in loss, wastage, or damage exceeding Php20,000)",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.89",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Theft of Company property or that of a co-employee",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.90",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Misappropriating, misusing, embezzling, or applying Company funds for a purpose other than that for which the Company funds were released and authorized to be used, or the failure to liquidate or account for the use of funds entrusted to or under one's custody",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.91",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Unauthorized possession, selling, or disposing of Company property or failure or refusal to return any Company property",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.92",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Commission of a crime against the Company or any of its duly authorized representatives",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.93",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Conviction of a crime involving moral turpitude",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.94",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Physical assault upon one's superior. Violence.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.95",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Abuse of Authority, coercion, maltreatment of any retaliatory act against a subordinate",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.96",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Using without proper authority any office equipment, or other Company property for personal purposes",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.97",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Provided further that commission of two (2) or more such violations within a period of one (1) year will escalate the second and subsequent violations to the next higher penalty",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.98",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Failure to implement or follow proper procedures for performance management of employees, for conduct of investigation, or for disciplining of employees...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.99",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Indecent or immoral conduct within the Company premises, or acts violating morality or common decency and which proves damaging to the Company's credibility and integrity",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.100",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Any activity intended to fraudulently augment KPI scores, violation of client or EmpireOne policy, and consistent poor job performance.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.101",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Commission of any act of dishonesty or fraud, or any act that breaches the trust and confidence conferred by the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.102",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Committing other acts of fraud not embraced by the forgoing provisions, regardless of whether such acts cause or tend to cause material, fiscal, financial or monetary damage or loss to the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.103",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Committing other acts of deceit or anomaly not embraced by other provisions of this section that cause actual injury, damage, or loss of Company property",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.104",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Commission of any act prohibited in the Company Code of Conduct that is not otherwise penalized in this Code or is not subject to a specific penalty under other Company rules and policies",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.105",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations that are not embraced by the foregoing provisions, regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.106",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Accumulation of two (2) final written warnings within a 12-month period constitutes a grave offense punishable by termination, subject to the discretion of the department head",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+
+    {
+        "section_number": "5.1",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure to wear/ improper usage of Identification Card and/or failure to meet standards of the company's dress code during working hours or whenever required in accordance with Company Policy.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "5.2",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Refusal to submit to or failure to meet security requirements, or being in the Management opinion, a poor security risk",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "5.3",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure to comply with the prescribed dress code",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "5.4",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "5.5",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Improper/Mishandling of Company equipment/machines and other properties. This refers to lack of care and safety when handling office equipment or machines.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "5.6",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Any employee caught lending ID to another employee, or an employee borrowing an ID or security badge of a co-worker for purposes of entry inside company premises.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "5.7",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Entering restricted areas without permission or authority, or allowing unauthorized persons to enter restricted areas within the Company premises.",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "5.8",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Allowing and/or failure to report the presence of unauthorized person(s) entering or loitering within Company premises.",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "5.9",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure of authorized user to report immediately any damage to or defects of Company machines, equipment, or other facilities",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "5.10",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Refusing to submit to, preventing, or obstructing reasonable inspection conducted within Company premises by authorized Company personnel",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
         "section_number": "5.11",
         "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
         "title": "Smoking in a place or area other than those authorized or designated smoking areas within Company premises",
@@ -94,5 +2387,401 @@
             "4th": "N/A"
         },
         "clearing_period": "6 months"
+    },
+    {
+        "section_number": "5.12",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Creating or contributing to the creation of unclean or unsanitary conditions within Company premises or violating or allowing anyone to violate the Company's rules on or basic standards of sanitation",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "5.13",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Logging off or quitting work hours before your scheduled time off, or going on unauthorized undertime",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "5.14",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "5.15",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Permitting, allowing, or facilitating unauthorized person(s) to use Company supplies, facilities, or equipment regardless of whether such use results in actual loss or damage to the Company",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.16",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Vandalizing, defacing, or altering without authority the appearance, form, or substance of any Company property or part thereof...",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.17",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure to give due notification or providing the needed information to Company authorities regarding person(s) responsible for any activities resulting in actual loss or damage to any Company property",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.18",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Unauthorized tampering, transferring or playing with security cameras, smoke or fire alarms, fire exits, first-aid kits, emergency lights and signs, or other emergency equipment of the Company...",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.19",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Unauthorized installation and use of unlicensed or unauthorized software or copying/reproduction of any licensed software installed in any Company owned or issued computers",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.20",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Unauthorized use of the Internet, chat accounts, or other software programs without prior notice and consent of authorized Company representatives",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.21",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure of an employee to report to a Company authority the fact that he/she has contracted a highly contagious and communicable disease/illness that can cause undue exposure and detriment to other Company personnel",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.22",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure to report to the Medical officer (e.g. Company physician/nurse) when lawfully and reasonably instructed and ordered to do so by management",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.23",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure to submit to or comply with a required medical check-up for verification of a claim of illness",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.24",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Failure or refusal to submit to a drug or alcohol test required by the Company; Failure to comply with health, safety, and security requirements and policies of the Company",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.25",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "5.26",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Unauthorized use of somebody's login ID to commit violation; unauthorized access to passwords, files, etc.",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.27",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Misusing, destroying, or damaging any Company property or the property of a co-employee, official guests, or clients; attempting or committing any act of Sabotage or Vandalism...",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.28",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Writing, carving, etching, painting or posting writings or drawings or other similar acts which tend to deface Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.29",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Unauthorized withdrawal or attempt to withdraw Company records, equipment, tools, supplies, materials, or other assets in direct violation of security policies",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.30",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Using the Company's information and electronic communications systems in such a way as to create the perception or reality of impropriety, or storing or transmitting data or any electronic media, in whatever form, that is offensive to employees, customers, or other users",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.31",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Possessing, concealing, using, selling, or offering firearms, ammunition, explosives, or other deadly weapons on Company premises",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.32",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Commission of a crime against the Company or any of its duly authorized representatives; Conviction of a crime involving moral turpitude",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.33",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Making unwelcome advances, requesting any sexual favor, or other verbal, written, visual, or physical conduct of a sexual nature - with or without malice and intent - that creates an intimidating, hostile, or offensive work environment",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.34",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Violation of the Company's Computer/Internet Acceptable Use guidelines",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.35",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Presentation of a forged, false, altered, or falsified medical certificate to show good health or as justification for unauthorized absence",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.36",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Improper and abusive use of company facilities such as toilets, kitchen, canteen and other similar facilities",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.37",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Entering Company premises (including restricted areas) or allowing unauthorized persons to enter Company premises with the use of force, intimidation, or deception",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.38",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Causing the injury of another due to carelessness, negligence or horseplay",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.39",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Unauthorized possession of master keys, duplicate keys or similar devices",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.40",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Substitution or attempt to substitute the Company-owned material or equipment",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.41",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Unauthorized possession or bringing out of Company property, records, supplies, equipment, etc",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.42",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Creating disturbance resulting in the disruption or delay of operations",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.43",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Not reporting a serious contagious disease that may endanger other employees",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.44",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Committing other acts or omissions similar or analogous to any of the above enumerations which are not embraced by the foregoing provisions regardless of whether such acts cause actual damage and/or loss to the interest of the Company",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
     }
 ]
