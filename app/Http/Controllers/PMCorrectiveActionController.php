@@ -126,8 +126,17 @@ class PMCorrectiveActionController extends Controller
      * Store a newly created resource in storage.
      */
 
-   
-    public function store(Request $request, CocdDetectorService $cocdDetector)
+
+    public function get_ai_cocd(Request $request, CocdDetectorService $cocdDetector)
+    {
+        // 1. Detect COCD Section if not explicitly provided
+        $cocdAnalysis = [];
+        $cocdAnalysis = $cocdDetector->detectSection(
+            $request->description_of_infraction,
+        );
+        return response()->json($cocdAnalysis, 200);
+    }
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'employee_id'                 => ['required', 'string', 'max:100'],
@@ -151,22 +160,13 @@ class PMCorrectiveActionController extends Controller
             'description_of_infraction'   => ['required', 'string'],
             'evidence_drive_url'          => ['nullable', 'url', 'max:2048'],
             // Optional override: if the user manually passes one, prioritize it
-            'code_of_discipline_section'  => ['nullable', 'string', 'max:255'],
+            'code_of_discipline_section'  => ['nullable'],
         ]);
-        // 1. Detect COCD Section if not explicitly provided
-        $cocdAnalysis = [];
-        if (empty($validated['code_of_discipline_section'])) {
-            $cocdAnalysis = $cocdDetector->detectSection(
-                $validated['description_of_infraction'],
-            );
 
-            $validated['code_of_discipline_section'] = $cocdAnalysis ?? '';
-        }
 
         // 2. Persist Corrective Action
         $correctiveAction = PMCorrectiveAction::create([
             ...$validated,
-            'ai_analysis_meta' => !empty($cocdAnalysis) ? json_encode($cocdAnalysis) : null,
             'hr_user_id'       => 58,
             'hr_id'            => '26011207',
             'hr_first_name'    => 'Anthony',
@@ -193,7 +193,6 @@ class PMCorrectiveActionController extends Controller
             'success' => true,
             'message' => 'Corrective action created and email queued successfully.',
             'data'    => $correctiveAction,
-            'cocd_detection' => $cocdAnalysis,
         ], 200);
     }
     /**

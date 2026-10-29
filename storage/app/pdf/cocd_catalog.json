@@ -1,0 +1,98 @@
+[
+    {
+        "section_number": "1.18",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurrence of Tardiness, i.e., inability to be at assigned workstation at expected time.",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "1.20",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring at least two (2) recorded tardiness totaling less than 60 minutes or one (1) instance more than 60 minutes in a given month",
+        "ladder": {
+            "1st": "Verbal Warning (VW)",
+            "2nd": "Written Warning (WW)",
+            "3rd": "Final Written Warning (FWW)",
+            "4th": "Termination (T)"
+        },
+        "clearing_period": "3 months"
+    },
+    {
+        "section_number": "1.24",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Incurring at least three (3) recorded tardiness totaling less than 60 minutes or two (2) instances more than 60 minutes in a given month",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.27",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Being on a No Call No Show (NCNS) status or failure to inform the team lead or manager in the manner provided in the notification policy of the inability to work at least two (2) hours before the start of the scheduled work day",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    },
+    {
+        "section_number": "1.31",
+        "group": "GROUP I - Provisions on Attendance",
+        "title": "Absence during a Critical Work Day such as a day before or after rest days, plotted vacation leaves, paydays and holidays whether on No Call No Show or an unauthorized absence",
+        "ladder": {
+            "1st": "Final Written Warning (FWW)",
+            "2nd": "Termination (T)",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "12 months"
+    },
+    {
+        "section_number": "3.1",
+        "group": "GROUP III - Provisions on Quality",
+        "title": "Dropping calls without justifiable reason/s; any form of call avoidance / call abandonment",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "4.82",
+        "group": "GROUP IV - Provisions on Conduct, Integrity and Office Decorum",
+        "title": "Engaging in scandalous or indecent acts within or outside Company premises while on duty",
+        "ladder": {
+            "1st": "Termination (T)",
+            "2nd": "N/A",
+            "3rd": "N/A",
+            "4th": "N/A"
+        },
+        "clearing_period": "None"
+    },
+    {
+        "section_number": "5.11",
+        "group": "GROUP V - Provisions on Technology, Safety, Security, Health and Order",
+        "title": "Smoking in a place or area other than those authorized or designated smoking areas within Company premises",
+        "ladder": {
+            "1st": "Written Warning (WW)",
+            "2nd": "Final Written Warning (FWW)",
+            "3rd": "Termination (T)",
+            "4th": "N/A"
+        },
+        "clearing_period": "6 months"
+    }
+]

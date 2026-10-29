@@ -1,0 +1,1 @@
+import{j as t}from"./app-D1Ptb557.js";import{P as i}from"./pagination-D290T4yj.js";import"./iconBase-XALd4YvP.js";function s(){const a={current_page:1,last_page:5};return t.jsx("div",{className:"pagination-section",children:t.jsx(i,{data:a})})}export{s as default};

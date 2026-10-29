@@ -143,7 +143,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_job_requisitions_by_user',  [JobRequisitionController::class, 'get_job_requisitions_by_user']);
         Route::post('approve_job_requisition',  [JobRequisitionController::class, 'approve_job_requisition']);
         Route::post('export_job_requisition',  [JobRequisitionController::class, 'export_job_requisition']);
-        
+
         Route::resource('requisition_logs', JobRequisitionLogController::class);
         Route::resource('postings', JobPostingController::class)->only(['show', 'store', 'update', 'destroy']);
         Route::get('dashboard_stats', [JobPostingController::class, 'dashboard_stats']);
@@ -316,8 +316,10 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_my_team',  [ERLeaderController::class, 'get_my_team']);
         Route::resource('reach', PMReachController::class);
         Route::resource('corrective_action', PMCorrectiveActionController::class);
+        Route::post('get_ai_cocd', [PMCorrectiveActionController::class, 'get_ai_cocd']);
+
         Route::post('sign_corrective_action',  [PMCorrectiveActionController::class, 'sign_corrective_action']);
-        
+
         Route::get('get_reach_specific_leader',  [PMReachController::class, 'get_reach_specific_leader']);
 
         Route::resource('subordinates', ERSubordinateController::class);
