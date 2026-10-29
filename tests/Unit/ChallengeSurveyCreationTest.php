@@ -376,6 +376,26 @@ class ChallengeSurveyCreationTest extends TestCase
         [$leader] = $this->createTeamLeaderWithReports();
         $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
 
+        // The survey now comes first: team proof is rejected until the leader answers it.
+        $this->actingAs($leader)->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $this->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('team-proof.png'),
+                'challenge_description' => 'The team completed the activity together.',
+            ],
+            ['Accept' => 'application/json'],
+        )->assertUnprocessable()->assertJsonValidationErrors('survey');
+        $this->assertSame(0, EngagementRewardChallengeTeamSubmission::count());
+
+        $leaderParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('user_id', $leader->id)
+            ->firstOrFail();
+        $this->submitSurvey($leaderParticipant)
+            ->assertOk()
+            ->assertJsonPath('data.survey_completed', true);
+
         $this->actingAs($leader)->post(
             "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
             [
@@ -392,37 +412,10 @@ class ChallengeSurveyCreationTest extends TestCase
                 'bonus_points' => 25,
             ])
             ->assertOk()
-            ->assertJsonPath('data.team_points_awarded', 0)
-            ->assertJsonPath('data.pending_base_points', 100)
-            ->assertJsonPath('data.pending_bonus_points', 25);
+            ->assertJsonPath('data.team_points_awarded', 125)
+            ->assertJsonPath('data.pending_base_points', 0)
+            ->assertJsonPath('data.pending_bonus_points', 0);
 
-        $submission->refresh();
-        $this->assertSame(100, $submission->pending_base_points);
-        $this->assertSame(25, $submission->pending_bonus_points);
-        $beforeSurvey = $this->actingAs($leader)
-            ->getJson('/api/engagement/reward-challenges/profile-summary')
-            ->assertOk()
-            ->assertJsonPath('data.total_points', 0);
-        $teamHistoryBeforeSurvey = collect($beforeSurvey->json('data.challenge_history'))
-            ->firstWhere('id', 'team-'.$submission->id);
-        $this->assertSame(0, $teamHistoryBeforeSurvey['team_points_awarded']);
-        $this->assertSame(0, $teamHistoryBeforeSurvey['challenge_points_awarded']);
-        $this->assertSame(0, $teamHistoryBeforeSurvey['bonus_points_awarded']);
-        $this->assertSame('pending_survey', $teamHistoryBeforeSurvey['status']);
-        $this->assertSame(0, $teamHistoryBeforeSurvey['survey_points_awarded']);
-        $this->assertCount(1, $beforeSurvey->json('data.challenge_history'));
-
-        $leaderParticipant = EngagementRewardChallengeParticipant::query()
-            ->where('reward_challenge_id', $challenge->id)
-            ->where('user_id', $leader->id)
-            ->firstOrFail();
-        $this->assertSame(0, (int) $leaderParticipant->points_awarded);
-        foreach ($submission->members as $member) {
-            $this->assertSame(0, (int) $member->participant->points_awarded);
-        }
-        $this->submitSurvey($leaderParticipant)
-            ->assertOk()
-            ->assertJsonPath('data.survey_completed', true);
         $submission->refresh();
         $this->assertSame(100, $submission->base_points_awarded);
         $this->assertSame(25, $submission->bonus_points_awarded);
@@ -430,6 +423,7 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->assertSame(0, $submission->pending_base_points);
         $this->assertSame(0, $submission->pending_bonus_points);
 
+        $this->actingAs($leader);
         $this->submitSurvey($leaderParticipant)->assertOk();
         $this->assertSame(125, $submission->fresh()->team_points_awarded);
         $afterSurvey = $this->getJson('/api/engagement/reward-challenges/profile-summary')
@@ -451,6 +445,13 @@ class ChallengeSurveyCreationTest extends TestCase
         [$leader, $reports] = $this->createTeamLeaderWithReports();
         $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
 
+        $this->actingAs($leader)->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $leaderParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('user_id', $leader->id)
+            ->firstOrFail();
+        $this->submitSurvey($leaderParticipant)->assertOk();
+
         $teamResponse = $this->actingAs($leader)->post(
             "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
             [
@@ -465,14 +466,9 @@ class ChallengeSurveyCreationTest extends TestCase
                 'bonus_points' => 25,
             ])
             ->assertOk()
-            ->assertJsonPath('data.team_points_awarded', 0);
-        $this->assertSame(100, EngagementRewardChallengeTeamSubmission::findOrFail($teamSubmissionId)->pending_base_points);
-        $this->assertSame(25, EngagementRewardChallengeTeamSubmission::findOrFail($teamSubmissionId)->pending_bonus_points);
-
-        $leaderParticipant = EngagementRewardChallengeParticipant::query()
-            ->where('reward_challenge_id', $challenge->id)
-            ->where('user_id', $leader->id)
-            ->firstOrFail();
+            ->assertJsonPath('data.team_points_awarded', 125);
+        $this->assertSame(0, EngagementRewardChallengeTeamSubmission::findOrFail($teamSubmissionId)->pending_base_points);
+        $this->assertSame(0, EngagementRewardChallengeTeamSubmission::findOrFail($teamSubmissionId)->pending_bonus_points);
         $this->assertSame('joined', $leaderParticipant->status);
         $this->assertNull($leaderParticipant->submission_path);
         $this->assertNull($leaderParticipant->submitted_at);
@@ -510,20 +506,17 @@ class ChallengeSurveyCreationTest extends TestCase
                 'bonus_points' => 10,
             ])
             ->assertOk()
-            ->assertJsonPath('data.participation_status', 'pending_survey')
-            ->assertJsonPath('data.points_awarded', null);
+            ->assertJsonPath('data.participation_status', 'approved')
+            ->assertJsonPath('data.points_awarded', 110);
 
         $this->actingAs($leader)
             ->getJson('/api/engagement/reward-challenges/profile-summary')
             ->assertOk()
-            ->assertJsonPath('data.total_points', 0);
+            ->assertJsonPath('data.total_points', 250);
         $this->assertSame(0, EngagementRewardChallengeParticipant::query()
             ->where('reward_challenge_id', $challenge->id)
             ->where('user_id', $reports[0]->id)
             ->value('points_awarded') ?? 0);
-
-        $this->actingAs($leader);
-        $this->submitSurvey($leaderParticipant)->assertOk();
 
         $this->assertSame(110, (int) $leaderParticipant->fresh()->points_awarded);
         $this->assertSame(125, (int) EngagementRewardChallengeTeamSubmission::findOrFail($teamSubmissionId)->team_points_awarded);
@@ -545,6 +538,15 @@ class ChallengeSurveyCreationTest extends TestCase
         [$leader] = $this->createTeamLeaderWithReports();
         $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
 
+        $this->actingAs($leader)->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $leaderParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('user_id', $leader->id)
+            ->firstOrFail();
+        $this->submitSurvey($leaderParticipant)
+            ->assertOk()
+            ->assertJsonPath('data.participation_status', 'joined');
+
         $this->actingAs($leader)->post(
             "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
             [
@@ -552,15 +554,6 @@ class ChallengeSurveyCreationTest extends TestCase
                 'challenge_description' => 'The team completed the activity together.',
             ],
         )->assertCreated();
-
-        $leaderParticipant = EngagementRewardChallengeParticipant::query()
-            ->where('reward_challenge_id', $challenge->id)
-            ->where('user_id', $leader->id)
-            ->firstOrFail();
-        $this->actingAs($leader);
-        $this->submitSurvey($leaderParticipant)
-            ->assertOk()
-            ->assertJsonPath('data.participation_status', 'joined');
 
         $submission = EngagementRewardChallengeTeamSubmission::query()
             ->where('reward_challenge_id', $challenge->id)
@@ -698,6 +691,14 @@ class ChallengeSurveyCreationTest extends TestCase
         $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
         $teamSubmissions = [];
 
+        $this->actingAs($leader)->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $leaderParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('user_id', $leader->id)
+            ->firstOrFail();
+        $this->assertTrue($leaderParticipant->canAnswerSurvey($challenge));
+        $this->submitSurvey($leaderParticipant)->assertOk();
+
         $firstDay = $this->actingAs($leader)->post(
             "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
             [
@@ -711,13 +712,7 @@ class ChallengeSurveyCreationTest extends TestCase
                 'bonus_points' => 5,
             ])
             ->assertOk()
-            ->assertJsonPath('data.team_points_awarded', 0);
-
-        $leaderParticipant = EngagementRewardChallengeParticipant::query()
-            ->where('reward_challenge_id', $challenge->id)
-            ->where('user_id', $leader->id)
-            ->firstOrFail();
-        $this->assertFalse($leaderParticipant->canAnswerSurvey($challenge));
+            ->assertJsonPath('data.team_points_awarded', 5);
 
         Carbon::setTestNow(now()->addDay());
         try {
@@ -734,23 +729,12 @@ class ChallengeSurveyCreationTest extends TestCase
                     'bonus_points' => 5,
                 ])
                 ->assertOk()
-                ->assertJsonPath('data.team_points_awarded', 0);
+                ->assertJsonPath('data.team_points_awarded', 105);
         } finally {
             Carbon::setTestNow();
         }
 
         $this->assertTrue($leaderParticipant->fresh()->canAnswerSurvey($challenge));
-        foreach ($teamSubmissions as $submissionId) {
-            $submission = EngagementRewardChallengeTeamSubmission::findOrFail($submissionId);
-            $this->assertSame(5, $submission->pending_bonus_points);
-        }
-        $this->assertSame(0, EngagementRewardChallengeTeamSubmission::query()
-            ->whereIn('id', $teamSubmissions)
-            ->sum('team_points_awarded'));
-
-        $this->actingAs($leader);
-        $this->submitSurvey($leaderParticipant)->assertOk();
-
         $submissions = EngagementRewardChallengeTeamSubmission::query()
             ->whereIn('id', $teamSubmissions)
             ->orderBy('log_date')
@@ -758,7 +742,9 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->assertSame(110, $submissions->sum('team_points_awarded'));
         $this->assertSame(100, $submissions->sum('base_points_awarded'));
         $this->assertSame(10, $submissions->sum('bonus_points_awarded'));
-        $this->assertSame(125, $this->getJson('/api/engagement/reward-challenges/profile-summary')
+        $this->assertSame(0, $submissions->sum('pending_base_points'));
+        $this->assertSame(0, $submissions->sum('pending_bonus_points'));
+        $this->assertSame(125, $this->actingAs($leader)->getJson('/api/engagement/reward-challenges/profile-summary')
             ->assertOk()
             ->json('data.total_points'));
     }
@@ -835,25 +821,46 @@ class ChallengeSurveyCreationTest extends TestCase
         (new ChallengeSurveyService)->createForChallenge($challenge);
         [$leader, $reports] = $this->createTeamLeaderWithReports();
 
-        $this->actingAs($leader)->post(
-            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
-            [
-                'photo' => UploadedFile::fake()->image('team-proof.png'),
-                'challenge_description' => 'The team completed the activity together.',
-            ],
-        )->assertCreated();
-
+        $this->actingAs($leader)->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
         $leaderParticipant = EngagementRewardChallengeParticipant::query()
             ->where('reward_challenge_id', $challenge->id)
             ->where('user_id', $leader->id)
             ->firstOrFail();
 
+        // The survey is available immediately after joining, before any proof.
         $this->getJson('/api/engagement/reward-challenges/my')
             ->assertOk()
             ->assertJsonPath('data.0.can_complete_survey', true);
         $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/survey")
             ->assertOk()
             ->assertJsonPath('data.can_submit', true);
+
+        $this->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('team-proof.png'),
+                'challenge_description' => 'The team completed the activity together.',
+            ],
+            ['Accept' => 'application/json'],
+        )->assertUnprocessable()->assertJsonValidationErrors('survey');
+
+        $this->submitSurvey($leaderParticipant)
+            ->assertOk()
+            ->assertJsonPath('data.survey_completed', true);
+        $this->submitSurvey($leaderParticipant)
+            ->assertOk()
+            ->assertJsonPath('data.survey_completed', true);
+        $this->assertSame(1, EngagementPostEventSurveyResponse::where('user_id', $leader->id)->count());
+        $this->assertSame(15, $leaderParticipant->fresh()->survey_points_awarded);
+
+        // Once the leader's team proof is pending, members are excluded from the survey.
+        $this->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('team-proof.png'),
+                'challenge_description' => 'The team completed the activity together.',
+            ],
+        )->assertCreated();
 
         $member = $reports[0];
         $memberParticipant = EngagementRewardChallengeParticipant::query()
@@ -865,17 +872,7 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.can_submit', false);
         $this->submitSurvey($memberParticipant)->assertUnprocessable();
-
-        $this->actingAs($leader);
-        $this->submitSurvey($leaderParticipant)
-            ->assertOk()
-            ->assertJsonPath('data.survey_completed', true);
-        $this->submitSurvey($leaderParticipant)
-            ->assertOk()
-            ->assertJsonPath('data.survey_completed', true);
-        $this->assertSame(1, EngagementPostEventSurveyResponse::where('user_id', $leader->id)->count());
         $this->assertSame(0, EngagementPostEventSurveyResponse::where('user_id', $member->id)->count());
-        $this->assertSame(15, $leaderParticipant->fresh()->survey_points_awarded);
         $this->assertSame(0, $memberParticipant->fresh()->survey_points_awarded);
     }
 
@@ -886,7 +883,13 @@ class ChallengeSurveyCreationTest extends TestCase
         (new ChallengeSurveyService)->createForChallenge($challenge);
         [$leader] = $this->createTeamLeaderWithReports();
 
-        $this->actingAs($leader)->post(
+        $this->actingAs($leader)->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $leaderParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('user_id', $leader->id)
+            ->firstOrFail();
+        $this->submitSurvey($leaderParticipant)->assertOk();
+        $this->post(
             "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
             [
                 'photo' => UploadedFile::fake()->image('team-proof.png'),
@@ -899,6 +902,8 @@ class ChallengeSurveyCreationTest extends TestCase
             ->where('user_id', $leader->id)
             ->delete();
 
+        // Deleting the participant cascades to its survey response, so the repaired
+        // participant can answer the survey again.
         $this->getJson('/api/engagement/reward-challenges/my')
             ->assertOk()
             ->assertJsonPath('data.0.can_complete_survey', true);
@@ -912,7 +917,7 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonPath('data.can_submit', true);
     }
 
-    public function test_daily_team_survey_waits_for_approved_days_and_excludes_members(): void
+    public function test_daily_team_survey_is_available_before_proof_and_excludes_members(): void
     {
         $challenge = $this->createTeamChallenge(2);
         (new ChallengeSurveyService)->createForChallenge($challenge);
@@ -951,7 +956,8 @@ class ChallengeSurveyCreationTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $this->assertFalse($leaderParticipant->canAnswerSurvey($challenge));
+        $this->assertTrue($leaderParticipant->canAnswerSurvey($challenge));
+        $this->assertFalse($memberParticipant->canAnswerSurvey($challenge));
 
         EngagementRewardChallengeTeamSubmission::create([
             'reward_challenge_id' => $challenge->id,
@@ -1522,6 +1528,11 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->actingAs($leader)
             ->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")
             ->assertOk();
+        $leaderParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('user_id', $leader->id)
+            ->firstOrFail();
+        $this->submitSurvey($leaderParticipant)->assertOk();
         $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit", [
             'photo' => UploadedFile::fake()->image('individual-proof.png'),
             'challenge_description' => 'The leader completed the activity individually.',
@@ -1671,6 +1682,7 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.0.survey_completed', true);
 
+        $participant->update(['status' => 'joined', 'submitted_at' => null, 'proof_approved_at' => null]);
         $teamSubmissionResponse = $this->post(
             "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
             [
@@ -1737,11 +1749,11 @@ class ChallengeSurveyCreationTest extends TestCase
         ));
     }
 
-    public function test_daily_approval_counts_once_and_unlocks_survey_only_at_threshold(): void
+    public function test_daily_approval_counts_once_and_survey_is_available_before_proof(): void
     {
         Storage::fake('s3');
         $participant = $this->surveyParticipant(true);
-        $this->submitSurvey($participant)->assertUnprocessable();
+        $this->submitSurvey($participant)->assertOk()->assertJsonPath('data.survey_completed', true);
         $logs = [];
         foreach ([0, 1] as $offset) {
             $logs[] = EngagementRewardChallengeDailyLog::create([
@@ -1756,13 +1768,12 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$logs[0]->id}/approve")->assertOk();
         $this->assertFalse(Cache::has($this->leaderboardCacheKey($participant->challenge)));
         $this->assertSame(1, $participant->fresh()->completed_days);
-        $this->submitSurvey($participant)->assertUnprocessable();
         $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$logs[0]->id}/approve")->assertUnprocessable();
         $this->assertSame(1, $participant->fresh()->completed_days);
         $this->postJson("/api/engagement/reward-challenge-submissions/daily-{$logs[1]->id}/approve")->assertOk();
-        $this->assertSame('pending_survey', $participant->fresh()->status);
+        $this->assertSame('approved', $participant->fresh()->status);
         $this->assertSame(2, $participant->fresh()->completed_days);
-        $this->assertNull($participant->fresh()->points_awarded);
+        $this->assertSame(100, (int) $participant->fresh()->points_awarded);
         $this->getJson("/api/engagement/reward-challenges/{$participant->reward_challenge_id}/participants")->assertOk();
         $this->assertTrue(Cache::has($this->leaderboardCacheKey($participant->challenge)));
         $this->submitSurvey($participant)->assertOk()->assertJsonPath('data.total_points_awarded', 115);
@@ -1821,10 +1832,6 @@ class ChallengeSurveyCreationTest extends TestCase
     {
         $participant = $this->surveyParticipant();
         $participant->update(['status' => 'joined', 'submitted_at' => null]);
-        $this->submitSurvey($participant)->assertUnprocessable();
-        $participant->update(['status' => 'declined', 'submitted_at' => now()]);
-        $this->submitSurvey($participant)->assertUnprocessable();
-        $participant->update(['status' => 'submitted']);
         $participant->challenge->update(['start_date' => now()->addDay()]);
         $this->submitSurvey($participant)->assertUnprocessable();
         $participant->challenge->update(['start_date' => now()]);
@@ -1832,6 +1839,7 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->submitSurvey($participant)->assertUnprocessable();
         $participant->challenge->survey->delete();
         $this->submitSurvey($participant)->assertNotFound();
+        $participant->update(['status' => 'submitted', 'submitted_at' => now()]);
         $this->postJson("/api/engagement/reward-challenge-submissions/{$participant->id}/approve")->assertOk();
         $this->assertSame('pending_survey', $participant->fresh()->status);
         $this->assertNull($participant->fresh()->points_awarded);
@@ -2740,6 +2748,76 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonCount(1, 'data.response_tracker')
             ->assertJsonPath('data.response_tracker.0.user_id', auth()->id())
             ->assertJsonPath('data.response_tracker.0.status', 'Completed');
+    }
+
+    public function test_survey_is_answerable_immediately_after_joining(): void
+    {
+        $challenge = $this->createChallenge();
+        (new ChallengeSurveyService)->createForChallenge($challenge);
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $participant = EngagementRewardChallengeParticipant::query()->firstOrFail();
+
+        $this->assertTrue($participant->canAnswerSurvey($challenge));
+        $this->getJson("/api/engagement/reward-challenges/{$challenge->id}/survey")
+            ->assertOk()
+            ->assertJsonPath('data.can_submit', true);
+        $this->submitSurvey($participant)
+            ->assertOk()
+            ->assertJsonPath('data.survey_completed', true)
+            ->assertJsonPath('data.participation_status', 'joined');
+    }
+
+    public function test_individual_proof_requires_the_survey_first(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createChallenge();
+        (new ChallengeSurveyService)->createForChallenge($challenge);
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $participant = EngagementRewardChallengeParticipant::query()->firstOrFail();
+
+        $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit", [
+            'photo' => UploadedFile::fake()->image('proof.png'),
+            'challenge_description' => 'Completed the activity.',
+        ], ['Accept' => 'application/json'])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Please answer the challenge survey before submitting proof.');
+        $this->assertSame('joined', $participant->fresh()->status);
+        $this->assertNull($participant->fresh()->submission_path);
+        $this->assertSame([], Storage::disk('s3')->allFiles());
+
+        $this->submitSurvey($participant)->assertOk();
+        $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit", [
+            'photo' => UploadedFile::fake()->image('proof.png'),
+            'challenge_description' => 'Completed the activity.',
+        ], ['Accept' => 'application/json'])->assertOk();
+        $this->assertSame('submitted', $participant->fresh()->status);
+        $this->assertCount(1, Storage::disk('s3')->allFiles());
+    }
+
+    public function test_daily_proof_requires_the_survey_first(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createChallenge();
+        $challenge->update(['duration_days' => 2]);
+        (new ChallengeSurveyService)->createForChallenge($challenge);
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $participant = EngagementRewardChallengeParticipant::query()->firstOrFail();
+
+        $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit-daily", [
+            'photo' => UploadedFile::fake()->image('day-one.png'),
+            'challenge_description' => 'Day one.',
+        ], ['Accept' => 'application/json'])
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Please answer the challenge survey before submitting proof.');
+        $this->assertSame(0, EngagementRewardChallengeDailyLog::count());
+        $this->assertSame([], Storage::disk('s3')->allFiles());
+
+        $this->submitSurvey($participant)->assertOk();
+        $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit-daily", [
+            'photo' => UploadedFile::fake()->image('day-one.png'),
+            'challenge_description' => 'Day one.',
+        ], ['Accept' => 'application/json'])->assertOk();
+        $this->assertSame(1, EngagementRewardChallengeDailyLog::count());
     }
 
     public function test_challenge_surveys_are_readable_but_mutations_stay_blocked_on_legacy_routes(): void

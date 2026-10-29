@@ -1,9 +1,8 @@
-import { Link } from "@inertiajs/react";
-import React from "react";
+import { Link, usePage } from "@inertiajs/react";
+import React, { useEffect, useRef } from "react";
 import {
     FiAward,
     FiBarChart2,
-    FiFileText,
     FiLayout,
     FiSettings,
     FiUser,
@@ -13,17 +12,17 @@ import ChallengeEventSection from "@/app/pages/accounts/_employee/rnr/challenge_
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 
 export default function TabsSection({ children }) {
-    const {
-        isReady,
-        isContentManager: canManageChallenges,
-    } = useCurrentEmployee();
+    const { isReady, isContentManager: canManageChallenges } =
+        useCurrentEmployee();
 
-    const currentPath = window.location.pathname
-        .split("/")
-        .filter(Boolean)
-        .at(-1);
-    const isAdministratorRoute =
-        window.location.pathname.split("/")[2] === "administrator";
+    // usePage().url re-renders on every Inertia visit and is SSR-safe.
+    const { url } = usePage();
+    const pathname = url.split("?")[0].split("#")[0];
+    const segments = pathname.split("/").filter(Boolean);
+    const currentPath = segments.at(-1);
+    const isAdministratorRoute = segments[1] === "administrator";
+
+    const activeTabRef = useRef(null);
 
     const tabs = [
         {
@@ -46,7 +45,6 @@ export default function TabsSection({ children }) {
             path: "/accounts/administrator/rnr/challenges_events/manage",
             active: ["manage", "participants"].includes(currentPath),
         },
-       
         {
             label: "Submissions",
             icon: FiBarChart2,
@@ -54,7 +52,7 @@ export default function TabsSection({ children }) {
             path: "/accounts/administrator/rnr/challenges_events/submissions",
             active: currentPath === "submissions",
         },
-         {
+        {
             label: "Leaderboard",
             icon: FiAward,
             managementOnly: true,
@@ -68,67 +66,86 @@ export default function TabsSection({ children }) {
         //     path: "/accounts/administrator/rnr/challenges_events/report",
         //     active: currentPath === "report",
         // },
-    ].filter(
-        (tab) => !tab.managementOnly || canManageChallenges,
-    );
+    ].filter((tab) => !tab.managementOnly || canManageChallenges);
+
+    // On small screens the nav scrolls horizontally; keep the active tab
+    // visible (e.g. "Leaderboard" would otherwise be off-screen on load).
+    useEffect(() => {
+        activeTabRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center",
+        });
+    }, [currentPath, isReady]);
 
     // Wait until employee data is available.
     if (!isReady) {
         return (
-            <div className="mt-6 space-y-4 px-4 sm:px-6 lg:px-8">
-                <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
-                <div className="h-64 w-full animate-pulse rounded-lg bg-gray-200" />
+            <div className="mt-4 space-y-4 px-4 sm:mt-6 sm:px-6 lg:px-8">
+                <div className="h-10 w-full animate-pulse rounded-lg bg-gray-200 sm:h-12" />
+                <div className="h-48 w-full animate-pulse rounded-lg bg-gray-200 sm:h-64" />
             </div>
         );
     }
 
     // Employee / non-content-manager view.
-    // Only show ChallengeEventSection when the user is ready
-    // and is NOT a content manager.
-    if (isReady && !canManageChallenges && !isAdministratorRoute) {
+    if (!canManageChallenges && !isAdministratorRoute) {
         return (
-            <div className="mt-4">
+            <div className="mt-4 w-full min-w-0 px-0 sm:px-0">
                 <ChallengeEventSection />
             </div>
         );
     }
 
-    // Administrators keep their dashboard and join view; only departments
-    // 1 and 11 receive the management navigation.
+    // Administrators keep their dashboard and join view; only content
+    // managers receive the management navigation.
     return (
-        <div>
-            <div className="mt-6 flex items-center border-b border-gray-200 px-4 sm:px-6 lg:px-8">
-                <nav className="no-scrollbar flex min-w-0 flex-1 justify-start gap-4 overflow-x-auto whitespace-nowrap sm:gap-8">
+        <div className="w-full min-w-0">
+            {/*
+              Mobile: tabs scroll on top (with their own bottom border),
+                      the "Add new challenge" button sits below them.
+              md+:    tabs on the left, button on the right, single row
+                      sharing one bottom border.
+            */}
+            <div className="mt-4 flex flex-col px-4 sm:mt-6 sm:px-6 md:flex-row md:items-stretch md:justify-between md:gap-4 md:border-b md:border-gray-200 lg:px-8">
+                <nav
+                    aria-label="Challenges navigation"
+                    className="no-scrollbar -mx-4 flex min-w-0 snap-x snap-mandatory items-stretch gap-1 overflow-x-auto overscroll-x-contain whitespace-nowrap border-b border-gray-200 px-4 [-webkit-overflow-scrolling:touch] sm:-mx-6 sm:gap-4 sm:px-6 md:mx-0 md:flex-1 md:gap-6 md:border-b-0 md:px-0 lg:gap-8"
+                >
                     {tabs.map((tab) => {
                         const Icon = tab.icon;
 
                         return (
                             <Link
                                 key={tab.label}
+                                ref={tab.active ? activeTabRef : null}
                                 href={tab.path}
-                                className={`relative flex items-center gap-1.5 px-2 py-3 text-sm font-medium outline-none transition-colors sm:px-0 sm:py-4 sm:text-base ${
+                                aria-current={tab.active ? "page" : undefined}
+                                className={`relative flex min-h-[44px] shrink-0 snap-start items-center gap-1.5 px-3 py-3 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 sm:min-h-[48px] sm:px-1 sm:text-base ${
                                     tab.active
                                         ? "text-blue-800"
                                         : "text-gray-600 hover:text-blue-700"
                                 }`}
                             >
-                                <Icon className="h-4 w-4" />
+                                <Icon className="h-4 w-4 shrink-0" />
                                 <span>{tab.label}</span>
 
                                 {tab.active && (
-                                    <span className="absolute -bottom-px left-0 right-0 z-10 mx-auto h-0.5 w-full rounded bg-blue-800" />
+                                    <span className="absolute -bottom-px left-0 right-0 z-10 h-0.5 w-full rounded bg-blue-800" />
                                 )}
                             </Link>
                         );
                     })}
                 </nav>
 
-                <div className="shrink-0 pl-4">
-                    {canManageChallenges && <CreateNewChallenge />}
-                </div>
+                {canManageChallenges && (
+                    <div className="w-full shrink-0 py-3 md:w-auto md:self-center md:py-0 [&>*]:w-full md:[&>*]:w-auto">
+                        <CreateNewChallenge />
+                    </div>
+                )}
             </div>
 
-            <div>{children}</div>
+            <div className="w-full min-w-0">{children}</div>
         </div>
     );
 }

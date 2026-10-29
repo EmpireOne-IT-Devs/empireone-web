@@ -1,0 +1,32 @@
+### Phase 3: Survey first, then proof submission
+
+- **Timestamp:** 2026-10-30 02:00 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead + ⚙️ Backend + 🖥️ Frontend + 🎨 UI/UX + 🧪 QA
+- **Files Modified/Created:**
+  - `app/Models/Engagement/EngagementRewardChallengeParticipant.php` — `canAnswerSurvey()` no longer requires submitted/approved proof; the survey is answerable once the challenge has started. Active team-submission members remain excluded (the leader answers for the team).
+  - `app/Http/Controllers/API/Engagement/EngagementRewardChallengesController.php` — Added `surveyGateMessage()`; `submitProof()` and `submitDailyProof()` reject with 422 when a published survey is required and unanswered, checked before media upload and re-checked under the row lock (uploaded media is cleaned up on rejection).
+  - `app/Services/ChallengeTeamSubmissionService.php` — Team proof is rejected (validation error on `survey`) when the leader has not answered the published survey; checked before any file is stored.
+  - `app/Services/ChallengeSurveyService.php` — Updated the outdated "complete proof requirements first" abort message.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-section.jsx` — Survey banner copy reflects survey-first ordering; passes `onTakeSurvey` to the submit section.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submit-section.jsx` — When the survey is required and unanswered, the proof form (individual, daily, team modes) is replaced by an "Answer the survey first" notice with a "Take the Survey" CTA; success toast copy updated.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-survey-section.jsx` — Intro, completed, and unavailable copy updated for the new order.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-progress-section.jsx` — Daily progress note now says the survey unlocks proof submission.
+  - `resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-next-steps-section.jsx` — Adds an "Answer the challenge survey first" step when the challenge requires a survey.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` — New regression tests (survey answerable right after joining; individual, daily, and team proof rejected before the survey and accepted after). Existing proof-first tests updated to the new order: team leaders join and answer the survey before submitting team proof; points are awarded directly on approval instead of deferring to `pending_survey`.
+  - `dev-logs/2026-10-30-survey-before-proof.md` — This log.
+- **Issues Encountered:**
+  - Team leaders previously got a participant row created implicitly by their first team-proof submission. With survey-first, the leader must have a participant row before answering, so tests now have the leader join first (matching the UI, which only shows the submit section after joining).
+  - Several existing tests used `createChallenge()` without a survey; stray `submitSurvey` calls I had added to them were removed since no gate applies to challenges without a survey.
+  - Deleting a participant cascades to its survey response, so the "repair missing participation" test now expects the repaired participant to be able to answer the survey again.
+- **Resolution:** All gates reuse the existing `hasCompletedSurvey()` check and apply only while the survey is published, so a closed survey can never block proof. `ChallengeCompletionService` and team point deferral logic are unchanged; with survey-first, approval finalizes directly to `approved` with points awarded.
+- **QA Checklist Result:**
+  - ✅ Plain JavaScript/JSX only; esbuild parses all five changed JSX files; PHP syntax checks pass.
+  - ✅ Full related suite passes (72 tests, 960 assertions), including 3 new survey-first regression tests.
+  - ✅ No migration, route, Form Request, Resource, Policy, slice, thunk, or service file changes required; existing Sanctum auth and middleware unchanged.
+  - ✅ Reused `Button`/`Modal`/existing banner patterns; no new `_components/` created.
+  - ✅ Proof rejection paths delete any already-uploaded media (no orphaned S3 files); verified by test assertions on `Storage::fake`.
+  - ⚠️ Pint reports pre-existing style findings (`line_ending`, `ordered_imports`, `single_quote`, etc.) across whole untouched regions of the four touched PHP files; left as-is to avoid unrelated reformatting.
+  - 🧪 Code-level ✅ — browser verification of the new survey-first notice, keyboard focus, and responsive layout is still required.
+  - ✅ No guarded build, destructive, or git command was run.
+- **Next Steps:** None. Browser-verify the challenge modal: joined + survey required → "Answer the survey first" notice → Take the Survey → proof form unlocks.

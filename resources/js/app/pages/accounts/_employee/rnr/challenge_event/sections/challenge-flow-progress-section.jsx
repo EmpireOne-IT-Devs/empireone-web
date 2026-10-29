@@ -25,7 +25,7 @@ export default function ChallengeFlowProgressSection({ currentStep, isDeclined, 
                 </div>
                 {challenge.survey_required && !isComplete && (
                     <p className="mt-2 text-xs text-purple-700">
-                        {challenge.survey_completed ? "Survey completed; waiting for proof approval." : "Challenge completion also requires the survey."}
+                        {challenge.survey_completed ? "Survey completed; you can submit proof now." : "Answer the survey first to unlock proof submission."}
                     </p>
                 )}
                 <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-200">

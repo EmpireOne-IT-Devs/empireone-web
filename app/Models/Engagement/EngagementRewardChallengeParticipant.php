@@ -41,33 +41,9 @@ class EngagementRewardChallengeParticipant extends Pivot
             return false;
         }
 
-        if ($challenge->isDailyChallenge()) {
-            if ($this->isActiveTeamSubmissionMember($challenge)) {
-                return false;
-            }
-
-            $requiredDays = (int) ($this->required_days ?? $challenge->duration_days);
-            $approvedTeamDays = EngagementRewardChallengeTeamSubmission::query()
-                ->where('reward_challenge_id', $challenge->id)
-                ->where('leader_id', $this->user_id)
-                ->where('status', 'approved')
-                ->distinct()
-                ->count('log_date');
-
-            return $this->isDailyChallengeComplete()
-                || ($requiredDays > 0 && $approvedTeamDays >= $requiredDays);
-        }
-
-        if ($this->hasActiveTeamSubmissionAsLeader($challenge)) {
-            return true;
-        }
-
-        if ($this->isActiveTeamSubmissionMember($challenge)) {
-            return false;
-        }
-
-        return $this->submitted_at !== null
-            && in_array($this->status, ['submitted', 'pending_survey', 'approved'], true);
+        // The survey comes before proof submission; only team-submission members
+        // are excluded because their leader answers on the team's behalf.
+        return ! $this->isActiveTeamSubmissionMember($challenge);
     }
 
     public function hasIndividualSubmission(): bool

@@ -56,8 +56,8 @@ export default function ChallengeSurveySection({ challenge, onBack }) {
                 <div>
                     <h2 className="font-bold text-gray-900">Challenge survey</h2>
                     <p className="text-sm text-gray-600">
-                        Complete this survey to earn {survey?.reward_points ?? challenge.survey_reward_points} points.
-                        Challenge points are awarded separately after proof approval.
+                        Answer this survey to earn {survey?.reward_points ?? challenge.survey_reward_points} points
+                        and unlock proof submission. Challenge points are awarded separately after proof approval.
                     </p>
                 </div>
             </div>
@@ -77,12 +77,12 @@ export default function ChallengeSurveySection({ challenge, onBack }) {
                     <CheckCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
                     <p>
                         Survey completed. Your survey reward is recorded; you do not need to answer again.
-                        {challenge.participation_status !== "approved" && " Your challenge is still waiting for proof approval."}
+                        {challenge.participation_status !== "approved" && " You can now submit your proof for review."}
                     </p>
                 </div>
             ) : !survey?.can_submit ? (
                 <div role="status" className="space-y-3 rounded-xl bg-amber-50 p-4 text-amber-700">
-                    <p>This survey is not available yet. Single-proof challenges require submitted proof; multi-day challenges require all days to be approved. Contact an administrator if it remains unavailable.</p>
+                    <p>This survey is not available yet. It opens when the challenge starts. Contact an administrator if it remains unavailable.</p>
                     <Button onClick={loadSurvey} variant="secondary" outlined>Check availability</Button>
                 </div>
             ) : (
