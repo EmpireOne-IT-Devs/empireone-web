@@ -377,7 +377,7 @@
                 <a href="{{ URL::signedRoute('human-resources.corrective-actions.acknowledge', ['correctiveAction' => $correctiveAction->id]) }}"
                     class="btn-action"
                     target="_blank">
-                    ACKNOWLEDGE & SUBMIT EXPLANATION &rarr;
+                    REVIEW & PROCEED &rarr;
                 </a>
             </div>
 
