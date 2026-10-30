@@ -7,7 +7,7 @@ export default function EmployeeRelationLayout({ children }) {
         <>
             <div className="flex flex-col md:flex-row h-[89vh] bg-gray-50 overflow-hidden w-full">
                 <HRTabsSection />
-                <div className="p-3 overflow-auto w-full">
+                <div className="p-3 w-full">
                     <div className="mb-2">
                         <HeaderSection />
                     </div>

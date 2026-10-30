@@ -67,7 +67,7 @@ const Table = ({ columns, data, isloading = false, skeletonRows = 12 }) => {
 
             {/* Desktop View: Standard Table Layout */}
             {/* overflow-x-auto keeps wide tables scrollable on tablets instead of breaking the page width */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden md:block ">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="text-gray-500 text-xs font-medium border-b border-gray-200">

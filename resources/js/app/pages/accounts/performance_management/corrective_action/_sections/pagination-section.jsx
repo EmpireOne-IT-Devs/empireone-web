@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 
 export default function PaginationSection() {
 
-    const { reaches } = useSelector((store) => store.human_resources);
-    console.log('reaches',reaches)
+    const { corrective_actions } = useSelector((store) => store.human_resources);
+    console.log('corrective_actions',corrective_actions)
     return (
         <>
-            <Pagination data={reaches} />
+            <Pagination data={corrective_actions} />
         </>
     );
 }

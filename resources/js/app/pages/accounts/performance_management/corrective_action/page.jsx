@@ -30,8 +30,10 @@ export default function Page() {
                     <CreateCorrectiveActionSection />
                 </div>
             </div>
-            <TableSection isloading={loading} />
-            <PaginationSection />
+            <div className="flex flex-col gap-3">
+                <TableSection isloading={loading} />
+                <PaginationSection />
+            </div>
         </PerformanceManagementLayout>
     )
 }

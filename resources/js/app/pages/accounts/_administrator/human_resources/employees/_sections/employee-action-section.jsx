@@ -1,14 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FcMenu,FcOpenedFolder } from "react-icons/fc";
+import { FcMenu, FcOpenedFolder } from "react-icons/fc";
 import AddAttritionSection from './add-attrition-section';
 import UpdateEmployee from './update-employee';
 
 export default function EmployeeActionSection({ props_data }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [openUp, setOpenUp] = useState(false);
     const dropdownRef = useRef(null);
 
     const toggleDropdown = (e) => {
         e.stopPropagation();
+
+        if (!isOpen && dropdownRef.current) {
+            const rect = dropdownRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const MENU_HEIGHT = 220; // Estimated height of your dropdown menu in pixels
+
+            // If space below is tighter than the menu height, flip upwards
+            setOpenUp(spaceBelow < MENU_HEIGHT);
+        }
+
         setIsOpen((prev) => !prev);
     };
 
@@ -59,12 +70,15 @@ export default function EmployeeActionSection({ props_data }) {
             {/* Dropdown Menu Container */}
             <div
                 className={`
-                    absolute right-0 top-full mt-1 min-w-[200px] py-1.5 bg-white rounded-md z-[9999]
+                    absolute right-0 min-w-[200px] py-1.5 bg-white rounded-md z-[9999]
                     shadow-[0px_5px_5px_-3px_rgba(0,0,0,0.2),0px_8px_10px_1px_rgba(0,0,0,0.14),0px_3px_14px_2px_rgba(0,0,0,0.12)]
-                    transform transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] origin-top-right
+                    transform transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]
+                    ${openUp ? 'bottom-full mb-1 origin-bottom-right' : 'top-full mt-1 origin-top-right'}
                     ${isOpen
                         ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
-                        : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
+                        : openUp
+                            ? 'opacity-0 scale-95 translate-y-2 pointer-events-none'
+                            : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
                     }
                 `}
             >
@@ -74,7 +88,6 @@ export default function EmployeeActionSection({ props_data }) {
                         [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800
                     "
                 >
-
                     <button
                         onClick={() => window.open(`/accounts/administrator/human_resources/${props_data?.user_id}/201_files`, '_blank', 'noopener,noreferrer')}
                         className="group flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
@@ -85,8 +98,8 @@ export default function EmployeeActionSection({ props_data }) {
                         />
                         201 Files
                     </button>
-
                 </div>
+
                 <div
                     className="
                         w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150
