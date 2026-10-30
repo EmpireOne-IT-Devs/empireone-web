@@ -13,6 +13,7 @@ class PMCorrectiveAction extends Model
     protected $fillable = [
         'user_id',
         'employee_id',
+        'created_by',
         'is_employee_acknowledge',
         'nte_received_at',
         'first_name',

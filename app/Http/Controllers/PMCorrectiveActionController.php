@@ -28,7 +28,7 @@ class PMCorrectiveActionController extends Controller
 
         // If 'all' is not true, filter by the logged-in user
         if (!$request->boolean('all')) {
-            $query->where('user_id', Auth::id());
+            $query->where('created_by', Auth::id());
         }
 
         // Filter by search term across first_name and last_name
@@ -198,6 +198,7 @@ class PMCorrectiveActionController extends Controller
         $correctiveAction = PMCorrectiveAction::create([
             ...$validated,
             'hr_user_id'       => 58,
+            'created_by' => Auth::id(),
             'hr_id'            => '26011207',
             'hr_first_name'    => 'Anthony',
             'hr_last_name'     => 'Aragon',
