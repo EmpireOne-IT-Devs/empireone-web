@@ -539,7 +539,7 @@ export default function CorrectiveActionForm() {
                                                 type="radio"
                                                 name="final_sanction"
                                                 value={item.key}
-                                                disabled={isSanctionFullyLocked || Boolean(corrective_action?.final_sanction)}
+                                                disabled={user?.id == corrective_action?.user_id || isSanctionFullyLocked || Boolean(corrective_action?.final_sanction)}
                                                 checked={selectedSanction === item.key || corrective_action?.final_sanction === item.key}
                                                 onChange={(e) => setSelectedSanction(e.target.value)}
                                                 className="rounded-full border-black text-black focus:ring-0 disabled:opacity-75 cursor-pointer"
