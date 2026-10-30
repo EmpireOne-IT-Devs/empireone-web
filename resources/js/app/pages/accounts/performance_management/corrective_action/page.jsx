@@ -4,6 +4,8 @@ import CreateCorrectiveActionSection from './_sections/create-corrective-action-
 import store from '@/app/store/store'
 import TableSection from './_sections/table-section'
 import { get_corrective_actions_specific_leader_thunk } from '@/app/redux/employee-relation-thunk'
+import SearchSection from './_sections/search-section'
+import PaginationSection from './_sections/pagination-section'
 export default function Page() {
 
     const [loading, setLoading] = useState(true)
@@ -23,9 +25,13 @@ export default function Page() {
     return (
         <PerformanceManagementLayout>
             <div className='w-full flex items-center justify-end'>
-                <CreateCorrectiveActionSection />
+                <div className='flex w-full items-center justify-between'>
+                    <SearchSection />
+                    <CreateCorrectiveActionSection />
+                </div>
             </div>
-            <TableSection isloading={loading}/>
+            <TableSection isloading={loading} />
+            <PaginationSection />
         </PerformanceManagementLayout>
     )
 }
