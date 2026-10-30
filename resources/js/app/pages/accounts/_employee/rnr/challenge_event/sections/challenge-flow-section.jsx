@@ -152,10 +152,8 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                 const message = isCompleted
                                     ? `Your survey points are recorded.${challenge.participation_status !== "approved" ? " Proof approval is still required to finalize the challenge." : ""}`
                                     : isReady
-                                      ? "You're almost finished. It only takes a minute. Proof approval is also required to finalize."
-                                      : challenge.is_daily_challenge
-                                        ? "The survey unlocks after all required days are approved."
-                                        : `Submit your proof to unlock the survey, then earn +${SURVEY_REWARD_POINTS} points.`;
+                                      ? "Answer the survey first to unlock proof submission. It only takes a minute."
+                                      : "The survey opens when the challenge starts.";
 
                                 return (
                                     <div
@@ -238,6 +236,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                 isOpen={isOpen}
                                 onClose={handleClose}
                                 canSubmitTeam={canSubmitTeam}
+                                onTakeSurvey={() => setShowSurvey(true)}
                             />
                         )}
 
@@ -255,6 +254,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                         onClose={handleClose}
                                         canSubmitTeam
                                         individualSubmitted
+                                        onTakeSurvey={() => setShowSurvey(true)}
                                     />
                                 )}
                             </>
@@ -274,6 +274,7 @@ export default function ChallengeFlowSection({ challenge, isOpen, onClose }) {
                                         onClose={handleClose}
                                         canSubmitTeam
                                         individualSubmitted
+                                        onTakeSurvey={() => setShowSurvey(true)}
                                     />
                                 )}
                             </>

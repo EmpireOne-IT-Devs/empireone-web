@@ -47,7 +47,7 @@ class ChallengeSurveyService
                 return $participant->load('surveyResponse');
             }
 
-            abort_unless($participant->canAnswerSurvey($challenge), 422, 'Complete the challenge proof requirements before answering its survey.');
+            abort_unless($participant->canAnswerSurvey($challenge), 422, 'This survey is not available for your participation yet.');
             abort_unless($survey->status === 'published', 422, 'This challenge survey is not open for responses.');
             abort_if($survey->questions->isEmpty(), 409, 'This challenge survey has no questions.');
 

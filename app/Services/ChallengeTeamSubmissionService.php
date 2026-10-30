@@ -47,6 +47,21 @@ class ChallengeTeamSubmissionService
             abort(403, 'Only a team leader can submit team challenge proof.');
         }
 
+        if ($challenge->survey_required) {
+            $survey = $challenge->survey;
+            $leaderParticipant = EngagementRewardChallengeParticipant::query()
+                ->where('reward_challenge_id', $challenge->id)
+                ->where('user_id', $leader->id)
+                ->first();
+
+            if ($survey?->status === 'published'
+                && ! ($leaderParticipant?->hasCompletedSurvey($challenge) ?? false)) {
+                throw ValidationException::withMessages([
+                    'survey' => 'Please answer the challenge survey before submitting team proof.',
+                ]);
+            }
+        }
+
         $directReportIds = $leaderRecord->subordinates()
             ->pluck('subordinate_id')
             ->merge(AccountEmployee::query()->where('e_r_leader_id', $leaderRecord->id)->pluck('user_id'))

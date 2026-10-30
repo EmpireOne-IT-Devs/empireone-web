@@ -4,6 +4,7 @@ import {
     FiImage as ImagePlus,
     FiX as X,
     FiClock as Clock3,
+    FiClipboard as ClipboardList,
 } from "react-icons/fi";
 import Button from "@/app/_components/button";
 import TextArea from "@/app/_components/textarea";
@@ -28,6 +29,7 @@ export default function ChallengeFlowSubmitSection({
     onClose,
     canSubmitTeam,
     individualSubmitted = false,
+    onTakeSurvey,
 }) {
     const dispatch = useDispatch();
     const { rewardChallengeSubmittingId, rewardChallengeUploadProgress } = useSelector(
@@ -42,6 +44,10 @@ export default function ChallengeFlowSubmitSection({
     const submitting = rewardChallengeSubmittingId === challenge.id;
     const isDaily = challenge.is_daily_challenge;
     const allowsVideo = challenge.proof_type === "photo_or_video";
+    const surveyGateActive =
+        challenge.survey_required &&
+        !challenge.survey_completed &&
+        challenge.status !== "Upcoming";
 
     useEffect(() => {
         if (!isOpen) {
@@ -154,13 +160,49 @@ export default function ChallengeFlowSubmitSection({
                 title: isDaily ? "Today's proof submitted" : "Proof submitted",
                 message: isDaily
                     ? "Nice work! Today's submission is pending review. Come back tomorrow for the next day."
-                    : challenge.survey_required && !challenge.survey_completed
-                      ? "Almost finished! Your proof is pending admin review. Complete the survey to finalize your challenge requirements."
-                      : "Your submission is now pending admin review.",
+                    : "Your submission is now pending admin review.",
                 open: true,
             }),
         );
     };
+
+    if (surveyGateActive) {
+        return (
+            <>
+                <div className="flex items-start gap-3 rounded-xl border border-purple-200 bg-purple-50 p-4">
+                    <ClipboardList className="h-5 w-5 shrink-0 text-purple-600" aria-hidden="true" />
+                    <div>
+                        <p className="text-sm font-semibold text-purple-900">
+                            Answer the survey first
+                        </p>
+                        <p className="mt-0.5 text-sm text-purple-700">
+                            This challenge requires the survey before you can submit proof.
+                            It only takes a minute and earns bonus points.
+                        </p>
+                    </div>
+                </div>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <Button
+                        type="button"
+                        variant="light"
+                        outlined
+                        onClick={onClose}
+                        className="w-full sm:w-auto"
+                    >
+                        Close
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="primary"
+                        onClick={onTakeSurvey}
+                        className="w-full sm:w-auto"
+                    >
+                        Take the Survey
+                    </Button>
+                </div>
+            </>
+        );
+    }
 
     if (challenge.status === "Upcoming") {
         return (

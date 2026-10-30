@@ -234,6 +234,22 @@ class EngagementRewardChallengesController extends Controller
         }
     }
 
+    private function surveyGateMessage(EngagementRewardChallenge $challenge, EngagementRewardChallengeParticipant $participant): ?string
+    {
+        if (! $challenge->survey_required) {
+            return null;
+        }
+
+        $survey = $challenge->survey;
+        if (! $survey || $survey->status !== 'published') {
+            return null;
+        }
+
+        return $participant->hasCompletedSurvey($challenge)
+            ? null
+            : 'Please answer the challenge survey before submitting proof.';
+    }
+
     private function proofMediaUrls(?array $media, ?string $legacyPath = null): array
     {
         if (empty($media) && $legacyPath) {
@@ -821,6 +837,10 @@ class EngagementRewardChallengesController extends Controller
             return $this->rejectProof('A submission is already pending or approved for this challenge.');
         }
 
+        if ($message = $this->surveyGateMessage($engagementRewardChallenge, $participant->pivot)) {
+            return $this->rejectProof($message);
+        }
+
         $media = $this->storeProofMedia($request);
 
         try {
@@ -835,6 +855,10 @@ class EngagementRewardChallengesController extends Controller
                 if (! $locked || (! in_array($locked->status, ['joined', 'declined'], true)
                     && ! (! $locked->hasIndividualSubmission() && $locked->hasTeamSubmission()))) {
                     return null;
+                }
+
+                if ($message = $this->surveyGateMessage($engagementRewardChallenge, $locked)) {
+                    return $message;
                 }
 
                 $previous = [$locked->submission_media, $locked->submission_path];
@@ -864,6 +888,12 @@ class EngagementRewardChallengesController extends Controller
             $this->deleteProofMedia($media);
 
             return $this->rejectProof('A submission is already pending or approved for this challenge.');
+        }
+
+        if (is_string($previous)) {
+            $this->deleteProofMedia($media);
+
+            return $this->rejectProof($previous);
         }
 
         $this->deleteProofMedia(...$previous);
@@ -907,6 +937,10 @@ class EngagementRewardChallengesController extends Controller
             return $this->rejectProof('You already completed this challenge.');
         }
 
+        if ($message = $this->surveyGateMessage($engagementRewardChallenge, $pivot)) {
+            return $this->rejectProof($message);
+        }
+
         $today = now()->startOfDay();
         $windowEnd = $engagementRewardChallenge->dailyWindowEndDate();
 
@@ -936,6 +970,10 @@ class EngagementRewardChallengesController extends Controller
 
                 if ($locked->isDailyChallengeComplete()) {
                     return 'complete';
+                }
+
+                if ($message = $this->surveyGateMessage($engagementRewardChallenge, $locked)) {
+                    return $message;
                 }
 
                 if ($locked->dailyLogs()
@@ -993,9 +1031,11 @@ class EngagementRewardChallengesController extends Controller
         if ($result !== 'created') {
             $this->deleteProofMedia($media);
 
-            return $this->rejectProof($result === 'complete'
-                ? 'You already completed this challenge.'
-                : "You already submitted today's proof. Come back tomorrow!");
+            return $this->rejectProof(match (true) {
+                $result === 'complete' => 'You already completed this challenge.',
+                $result === 'duplicate' => "You already submitted today's proof. Come back tomorrow!",
+                default => $result,
+            });
         }
 
         $leaderboardService->forgetCached((int) $engagementRewardChallenge->id);

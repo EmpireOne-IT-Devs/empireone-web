@@ -3,9 +3,14 @@ import Button from "@/app/_components/button";
 import { FiArrowLeft as ArrowLeft } from "react-icons/fi";
 import moment from "moment/moment";
 
-const NEXT_STEPS = (challenge) =>
-    challenge.is_daily_challenge
+const NEXT_STEPS = (challenge) => {
+    const surveyStep = challenge.survey_required
+        ? [{ emoji: "📝", text: "Answer the challenge survey first to unlock proof submission" }]
+        : [];
+
+    return challenge.is_daily_challenge
         ? [
+              ...surveyStep,
               { emoji: "🎯", text: "Complete the daily activity as described" },
               { emoji: "📸", text: "Capture a new photo each day as proof" },
               { emoji: "📅", text: `Submit once per day for ${challenge.required_days ?? challenge.duration_days} day(s) — missed days are simply skipped` },
@@ -13,12 +18,14 @@ const NEXT_STEPS = (challenge) =>
               { emoji: "⭐", text: `Earn ${challenge.points} points once every required day is approved` },
           ]
         : [
+              ...surveyStep,
               { emoji: "🎯", text: "Complete the main challenge activity as described" },
               { emoji: "📸", text: "Capture evidence: photo, screenshot, doc, or video link" },
               { emoji: "✍️", text: "Write a short description explaining your submission" },
               { emoji: "📤", text: `Submit before the deadline: ${moment(challenge.deadline).format("MMM D, YYYY")}` },
               { emoji: "⭐", text: `Earn ${challenge.points} points after admin verification` },
           ];
+};
 
 export default function ChallengeFlowNextStepsSection({
     challenge,

@@ -20,10 +20,15 @@ const Table = ({ columns, data, isloading = false, skeletonRows = 12 }) => {
                             className="bg-white border border-gray-200 shadow-sm rounded-lg p-3 sm:p-4 space-y-3 animate-pulse"
                         >
                             {columns?.map((col, colIndex) => (
-                                <div key={colIndex} className="flex justify-between items-center text-sm gap-3 sm:gap-4">
-                                    <span className="font-medium text-gray-500 flex items-center gap-1 shrink-0">
-                                        {col.header}
-                                    </span>
+                                <div
+                                    key={colIndex}
+                                    className={`flex items-center text-sm gap-3 sm:gap-4 ${col.header ? 'justify-between' : 'justify-end'}`}
+                                >
+                                    {col.header ? (
+                                        <span className="font-medium text-gray-500 flex items-center gap-1 max-w-[45%] shrink-0">
+                                            {col.header}
+                                        </span>
+                                    ) : null}
                                     <div className="h-4 bg-gray-200 rounded w-24 max-w-[50%]"></div>
                                 </div>
                             ))}
@@ -40,10 +45,16 @@ const Table = ({ columns, data, isloading = false, skeletonRows = 12 }) => {
                             className="bg-white border border-gray-200 shadow-sm rounded-lg p-3 sm:p-4 space-y-3"
                         >
                             {columns?.map((col, colIndex) => (
-                                <div key={colIndex} className="flex justify-between items-start text-sm gap-3 sm:gap-4">
-                                    <span className="font-medium text-gray-500 flex items-center gap-1 shrink-0 pt-px">
-                                        {col.header}
-                                    </span>
+                                <div
+                                    key={colIndex}
+                                    className={`flex items-start text-sm gap-3 sm:gap-4 ${col.header ? 'justify-between' : 'justify-end'}`}
+                                >
+                                    {/* Columns without a header (e.g. action buttons) skip the label so the value isn't squeezed */}
+                                    {col.header ? (
+                                        <span className="font-medium text-gray-500 flex items-center gap-1 max-w-[45%] shrink-0 pt-px">
+                                            {col.header}
+                                        </span>
+                                    ) : null}
                                     <span className="text-gray-800 text-right flex flex-wrap items-center justify-end min-w-0 break-words">
                                         {getValue(col, row)}
                                     </span>
@@ -55,7 +66,8 @@ const Table = ({ columns, data, isloading = false, skeletonRows = 12 }) => {
             </div>
 
             {/* Desktop View: Standard Table Layout */}
-            <div className="hidden md:block ">
+            {/* overflow-x-auto keeps wide tables scrollable on tablets instead of breaking the page width */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="text-gray-500 text-xs font-medium border-b border-gray-200">
