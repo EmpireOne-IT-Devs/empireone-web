@@ -37,15 +37,17 @@ export default function TimekeepingSection() {
         return () => clearInterval(timer);
     }, []);
 
-    const fetchAttendance = useCallback(async (date) => {
-        setLoading(true);
+    const fetchAttendance = useCallback(async (date, { silent = false } = {}) => {
+        if (!silent) setLoading(true);
         try {
             const res = await get_attendance_for_date_service(date);
             setAttendance(res.data.attendance);
             setSchedule(res.data.schedule);
         } catch {
-            setAttendance(null);
-            setSchedule(null);
+            if (!silent) {
+                setAttendance(null);
+                setSchedule(null);
+            }
         } finally {
             setLoading(false);
         }
@@ -88,7 +90,7 @@ export default function TimekeepingSection() {
                 }),
             );
 
-            fetchAttendance(selectedDate);
+            fetchAttendance(selectedDate, { silent: true });
             setLogsRefreshKey((key) => key + 1);
         } catch (err) {
             dispatch(

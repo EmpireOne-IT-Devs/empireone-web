@@ -1,5 +1,5 @@
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { get_attendance_logs_service } from "@/app/services/attendance-service";
 import FilterLogDate from "./filter-log-date";
 import TableColumnsComponent from "../component/table-columns-component";
@@ -9,6 +9,7 @@ export default function AttendanceLogs({ refreshKey }) {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [reloadKey, setReloadKey] = useState(0);
+    const lastFilterRef = useRef(null);
     const [endDate, setEndDate] = useState("");
     const [startDate, setStartDate] = useState(
         moment().subtract(19, "days").format("YYYY-MM-DD"),
@@ -18,8 +19,13 @@ export default function AttendanceLogs({ refreshKey }) {
         t ? moment(t, "HH:mm:ss").format("hh:mm A") : "--:--";
 
     useEffect(() => {
+        // Only a changed date filter shows the loading row; other reloads update in place.
+        const filterKey = `${startDate}|${endDate}`;
+        const silent = lastFilterRef.current === filterKey;
+        lastFilterRef.current = filterKey;
+
         const fetchLogs = async () => {
-            setLoading(true);
+            if (!silent) setLoading(true);
 
             try {
                 const res = await get_attendance_logs_service({
@@ -28,7 +34,7 @@ export default function AttendanceLogs({ refreshKey }) {
                 });
                 setLogs(res.data.data ?? []);
             } catch {
-                setLogs([]);
+                if (!silent) setLogs([]);
             } finally {
                 setLoading(false);
             }
