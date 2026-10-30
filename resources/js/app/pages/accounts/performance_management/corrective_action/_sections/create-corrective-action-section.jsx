@@ -308,8 +308,6 @@ export default function CreateCorrectiveActionSection() {
                 },
                 selected_offenses: activeSelectedOffenses,
             }
-            dd('heelo');
-            sss
             await create_corrective_action_service(payload)
 
             dispatch(

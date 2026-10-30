@@ -280,11 +280,22 @@
 
         <!-- Body Content -->
         <div class="content-body">
-            <p class="greeting">Dear <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>,</p>
+            <p class="greeting">
+                @if($isNotApprover)
+                Dear <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>,
+                @else
+                Dear <strong>Approver</strong>,
+                @endif
+            </p>
 
             <p class="intro-text">
-                Please be advised that this <strong>Notice to Explain (NTE)</strong> is being served to you regarding an incident reported on
+                @if($isNotApprover)
+                Please be advised that this <strong>Notice to Explain (NTE)</strong> is being served to you, <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>, regarding an incident reported on
                 <strong>{{ \Carbon\Carbon::parse($correctiveAction->date_of_occurrence)->format('F d, Y') }}</strong>.
+                @else
+                Please be advised that this <strong>Notice to Explain (NTE)</strong> is being served regarding an incident reported for employee <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong> on
+                <strong>{{ \Carbon\Carbon::parse($correctiveAction->date_of_occurrence)->format('F d, Y') }}</strong>.
+                @endif
             </p>
 
             <!-- Incident Details Card -->

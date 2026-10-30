@@ -20,11 +20,11 @@ class PMCorrectiveActionController extends Controller
         //
     }
 
-     public function get_corrective_actions_specific_leader(Request $request)
+    public function get_corrective_actions_specific_leader(Request $request)
     {
         // Initialize the query builder using ::query() instead of ::get()
         $query = PMCorrectiveAction::query();
-        $query->with(['employee','manager','supervisor']);
+        $query->with(['employee', 'manager', 'supervisor']);
 
         // If 'all' is not true, filter by the logged-in user
         if (!$request->boolean('all')) {
@@ -41,7 +41,7 @@ class PMCorrectiveActionController extends Controller
         }
 
         // Eager load relationships before running paginate()
-        $reaches = $query->orderBy('id','desc')->paginate($request->input('per_page', 10));
+        $reaches = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 10));
 
         return response()->json($reaches, 200);
     }
@@ -125,7 +125,7 @@ class PMCorrectiveActionController extends Controller
 
             if (!empty($correctiveAction->eogs_email)) {
                 $mail = Mail::to($correctiveAction->eogs_email);
-                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'You Have A Pending Explanation'));
+                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'You Have A Pending Explanation', true));
             }
         }
         $correctiveAction->save();
@@ -138,7 +138,7 @@ class PMCorrectiveActionController extends Controller
         ) {
             if (!empty($correctiveAction->eogs_email)) {
                 $mail = Mail::to($correctiveAction->eogs_email);
-                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'You Have A Pending Commitment'));
+                $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'You Have A Pending Commitment', true));
             }
         }
         return response()->json([
@@ -213,9 +213,9 @@ class PMCorrectiveActionController extends Controller
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
 
             $mail = Mail::to('webdev@empireonegroup.com');
-            if (!empty($ccRecipients)) {
-                $mail->cc($ccRecipients);
-            }
+            // if (!empty($ccRecipients)) {
+            //     $mail->cc($ccRecipients);
+            // }
             $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'Corrective Action Approval'));
         }
 

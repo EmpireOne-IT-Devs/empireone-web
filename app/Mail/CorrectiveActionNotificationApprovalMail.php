@@ -18,7 +18,8 @@ class CorrectiveActionNotificationApprovalMail extends Mailable
      */
     public function __construct(
         public PMCorrectiveAction $correctiveAction,
-        public string $customSubject = 'Corrective Action Approval'
+        public string $customSubject = 'Corrective Action Approval',
+        public bool $isNotApprover = false,
     ) {}
 
     /**
@@ -44,6 +45,9 @@ class CorrectiveActionNotificationApprovalMail extends Mailable
     {
         return new Content(
             view: 'emails.performance_management.corrective-action-approval',
+            with: [
+                'isNotApprover' => $this->isNotApprover,
+            ],
         );
     }
 
