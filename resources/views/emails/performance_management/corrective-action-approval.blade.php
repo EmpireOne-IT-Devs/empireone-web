@@ -74,7 +74,7 @@
         }
 
         .field-group {
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .field-group:last-child {
@@ -87,7 +87,7 @@
             text-transform: uppercase;
             letter-spacing: 0.6px;
             color: #64748b;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .field-value {
@@ -103,7 +103,7 @@
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 12px 14px;
-            margin-top: 4px;
+            margin-top: 8px;
         }
 
         .cocd-badge {
@@ -127,16 +127,40 @@
         }
 
         .cocd-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: #0f172a;
             margin: 6px 0 2px 0;
+            line-height: 1.4;
+        }
+
+        .cocd-explanation {
+            font-size: 12px;
+            color: #475569;
+            font-style: italic;
+            background-color: #ffffff;
+            border-left: 3px solid #3b82f6;
+            padding: 6px 10px;
+            margin-top: 6px;
+            border-radius: 0 4px 4px 0;
+            line-height: 1.4;
         }
 
         .cocd-meta {
-            font-size: 12px;
-            color: #475569;
+            font-size: 11px;
+            color: #64748b;
             margin-top: 6px;
+        }
+
+        .rule-callout {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #991b1b;
+            line-height: 1.4;
         }
 
         /* Highlighted Action Callout Box */
@@ -201,16 +225,57 @@
 
 <body>
     @php
-    $cocd = is_array($correctiveAction->code_of_discipline_section)
-    ? $correctiveAction->code_of_discipline_section
-    : json_decode($correctiveAction->code_of_discipline_section ?? '', true);
+    // 1. Resolve raw data from possible field variants
+    $rawSection = $correctiveAction->selected_offenses ?? $correctiveAction->code_of_discipline_section;
+
+    if (is_string($rawSection)) {
+    $decoded = json_decode($rawSection, true);
+    $rawSection = json_last_error() === JSON_ERROR_NONE ? $decoded : $rawSection;
+    }
+
+    // 2. Normalize into an itemized array of offenses
+    $offenses = [];
+
+    if (is_array($rawSection)) {
+    if (!empty($rawSection['offenses']) && is_array($rawSection['offenses'])) {
+    $offenses = $rawSection['offenses'];
+    } elseif (isset($rawSection[0]) && is_array($rawSection[0])) {
+    $offenses = $rawSection;
+    } elseif (!empty($rawSection['section_number'])) {
+    $offenses = [$rawSection];
+    }
+    }
+
+    // 3. Penalty weights to calculate highest applicable baseline
+    $penaltyRanks = [
+    'Verbal Warning (VW)' => 1,
+    'Verbal Warning' => 1,
+    'Written Warning (WW)' => 2,
+    'Written Warning' => 2,
+    'Final Written Warning (FWW)' => 3,
+    'Final Written Warning' => 3,
+    'Termination (T)' => 4,
+    'Termination' => 4,
+    ];
+
+    $highestPenalty = null;
+    $maxRank = 0;
+
+    foreach ($offenses as $item) {
+    $penalty = $item['recommended_penalty'] ?? null;
+    $rank = $penaltyRanks[$penalty] ?? 0;
+    if ($rank > $maxRank) {
+    $maxRank = $rank;
+    $highestPenalty = $penalty;
+    }
+    }
     @endphp
 
     <div class="email-wrapper">
         <!-- Top Hero Banner -->
         <div class="header-banner">
             <h1>Notice to Explain (NTE)</h1>
-            <p>Case Reference: {{ $correctiveAction->ca_id }}</p>
+            <p>Case Reference: {{ $correctiveAction->ca_id ?? ('CA-' . str_pad($correctiveAction->id, 5, '0', STR_PAD_LEFT)) }}</p>
         </div>
 
         <!-- Body Content -->
@@ -218,55 +283,81 @@
             <p class="greeting">Dear <strong>{{ $correctiveAction->first_name }} {{ $correctiveAction->last_name }}</strong>,</p>
 
             <p class="intro-text">
-                Please be informed that a Corrective Action record has been generated regarding an incident on
+                Please be advised that this <strong>Notice to Explain (NTE)</strong> is being served to you regarding an incident reported on
                 <strong>{{ \Carbon\Carbon::parse($correctiveAction->date_of_occurrence)->format('F d, Y') }}</strong>.
             </p>
 
             <!-- Incident Details Card -->
             <div class="card-box">
                 <div class="field-group">
-                    <div class="field-label">Category</div>
-                    <div class="field-value">{{ $correctiveAction->category ?? ($cocd['classification_group'] ?? 'N/A') }}</div>
+                    <div class="field-label">Policy Category</div>
+                    <div class="field-value">{{ $correctiveAction->category ?? ($offenses[0]['classification_group'] ?? 'Code of Discipline') }}</div>
                 </div>
 
+                <!-- Alleged Code of Discipline Infractions -->
                 <div class="field-group">
-                    <div class="field-label">Code of Discipline Section</div>
-                    @if(is_array($cocd) && !empty($cocd['section_number']))
+                    <div class="field-label">
+                        Alleged Code of Discipline Section(s)
+                        @if(count($offenses) > 1)
+                        ({{ count($offenses) }} Violations Identified)
+                        @endif
+                    </div>
+
+                    @if(count($offenses) > 0)
+                    @foreach($offenses as $offense)
                     <div class="cocd-card">
                         <div>
-                            <span class="cocd-badge">Sec. {{ $cocd['section_number'] }}</span>
-                            @if(!empty($cocd['classification_group']))
-                            <span class="cocd-category">{{ $cocd['classification_group'] }}</span>
+                            <span class="cocd-badge">Sec. {{ $offense['section_number'] ?? 'N/A' }}</span>
+                            @if(!empty($offense['classification_group']))
+                            <span class="cocd-category">{{ $offense['classification_group'] }}</span>
                             @endif
                         </div>
+
                         <div class="cocd-title">
-                            {{ $cocd['code_of_discipline_section'] }}
+                            {{ $offense['code_of_discipline_section'] ?? ($offense['title'] ?? 'Policy Infraction') }}
                         </div>
-                        @if(!empty($cocd['recommended_penalty']))
+
+                        @if(!empty($offense['specific_violation_explanation']))
+                        <div class="cocd-explanation">
+                            {{ $offense['specific_violation_explanation'] }}
+                        </div>
+                        @endif
+
+                        @if(!empty($offense['recommended_penalty']))
                         <div class="cocd-meta">
-                            <strong>Sanction:</strong> {{ $cocd['recommended_penalty'] }}
-                            @if(!empty($cocd['clearing_period']))
-                            &bull; <strong>Clearing Period:</strong> {{ $cocd['clearing_period'] }}
+                            <strong>Standard 1st Offense:</strong> {{ $offense['recommended_penalty'] }}
+                            @if(!empty($offense['clearing_period']))
+                            &bull; <strong>Clearing Period:</strong> {{ $offense['clearing_period'] }}[cite: 2]
                             @endif
                         </div>
                         @endif
                     </div>
+                    @endforeach
+
+                    @if(count($offenses) > 1)
+                    <div class="rule-callout">
+                        <strong>Rule on Multiple Infractions:</strong> When a single act or incident constitutes two or more infractions, the highest applicable penalty shall govern (Baseline: <strong>{{ $highestPenalty ?? 'Final Written Warning' }}</strong>)[cite: 25].
+                    </div>
+                    @endif
                     @else
-                    <div class="field-value">{{ is_string($correctiveAction->code_of_discipline_section) ? $correctiveAction->code_of_discipline_section : 'Pending HR Review' }}</div>
+                    <div class="field-value">
+                        {{ is_string($correctiveAction->code_of_discipline_section) ? $correctiveAction->code_of_discipline_section : 'Pending HR Classification' }}
+                    </div>
                     @endif
                 </div>
 
+                <!-- Description of Infraction Narrative -->
                 <div class="field-group">
                     <div class="field-label">Description of Infraction</div>
-                    <div class="field-value">{{ $correctiveAction->description_of_infraction }}</div>
+                    <div class="field-value" style="white-space: pre-line; font-weight: normal; color: #334155;">{{ $correctiveAction->description_of_infraction }}</div>
                 </div>
             </div>
 
             <!-- Response Deadline Callout -->
             <div class="action-item-box">
-                <p class="action-item-title">Submission Required</p>
+                <p class="action-item-title">Submission Required (Due Process)</p>
                 <p class="action-item-desc">
-                    You are requested to submit your written explanation within five (5) calendar days from receipt of this notice.
+                    In accordance with company disciplinary procedures, you are hereby given an opportunity to be heard. Please submit your written explanation within <strong>five (5) calendar days</strong> from receipt of this notice[cite: 26].
                 </p>
             </div>
 
@@ -275,17 +366,17 @@
                 <a href="{{ URL::signedRoute('human-resources.corrective-actions.acknowledge', ['correctiveAction' => $correctiveAction->id]) }}"
                     class="btn-action"
                     target="_blank">
-                    ACKNOWLEDGE CORRECTIVE ACTION &rarr;
+                    ACKNOWLEDGE & SUBMIT EXPLANATION &rarr;
                 </a>
             </div>
 
             <!-- Footer Details -->
             <div class="footer-text">
                 <p class="footer-supervisor">
-                    Immediate Supervisor: {{ $correctiveAction->supervisor_first_name }} {{ $correctiveAction->supervisor_last_name }}
+                    Reporting Leader: {{ $correctiveAction->supervisor_first_name }} {{ $correctiveAction->supervisor_last_name }}
                 </p>
                 <p style="margin: 0;">
-                    This is an automated message from the HR Employee Relations System. Please do not reply directly to this email.
+                    This is an official communication from the Human Resources Department. Please do not reply directly to this automated email.
                 </p>
             </div>
         </div>

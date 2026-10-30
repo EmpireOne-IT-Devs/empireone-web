@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
 class CocdDetectorService
@@ -12,14 +11,12 @@ class CocdDetectorService
 
     public function __construct()
     {
-        // Load the clean catalog JSON
         $path = storage_path('app/pdf/cocd_catalog.json');
         $this->catalog = file_exists($path) ? json_decode(file_get_contents($path), true) : [];
     }
 
-    public function detectSection(string $description): array
+    public function detectSections(string $description): array
     {
-        // Compact list of options for the AI to pick from
         $options = array_map(function ($item) {
             return [
                 'section_number' => $item['section_number'],
@@ -29,24 +26,27 @@ class CocdDetectorService
         }, $this->catalog);
 
         $prompt = <<<PROMPT
-You are an HR auditor. Given the employee incident below, select the SINGLE most accurate section from the provided list.
+You are an HR auditor. An incident report may describe one or MORE policy infractions. 
+Review the incident description carefully and identify ALL relevant violated sections from the official list below.
 
 INCIDENT:
 "{$description}"
 
 OFFICIAL SECTIONS LIST:
-JSON:
 PROMPT;
 
         $prompt .= json_encode($options);
 
         $prompt .= <<<PROMPT
 
-
-Respond ONLY in valid JSON with:
+Respond ONLY in valid JSON matching this schema:
 {
-  "selected_section_number": "e.g., 1.20, 1.31, 5.11",
-  "explanation": "Why this rule applies to the reported incident"
+  "violations": [
+    {
+      "section_number": "e.g., 1.18",
+      "explanation": "Why this specific rule applies to this part of the incident"
+    }
+  ]
 }
 PROMPT;
 
@@ -64,39 +64,46 @@ PROMPT;
 
             if ($response->successful()) {
                 $result = json_decode($response->json('choices.0.message.content'), true);
-                $selectedNumber = $result['selected_section_number'] ?? null;
+                $detectedViolations = $result['violations'] ?? [];
 
-                // Find the exact item in our catalog
-                foreach ($this->catalog as $row) {
-                    if ($row['section_number'] === $selectedNumber) {
-                        return [
-                            'section_number'                 => $row['section_number'],
-                            'code_of_discipline_section'     => $row['title'],
-                            'classification_group'           => $row['group'],
-                            'specific_violation_explanation' => $result['explanation'] ?? '',
-                            'sanctions_ladder'               => $row['ladder'],
-                            'recommended_penalty'            => $row['ladder']['1st'] ?? 'Written Warning',
-                            'clearing_period'                => $row['clearing_period'],
-                            'due_process_protocol'           => 'The employee shall be given five (5) days from receipt of the notice of the charge to submit a written explanation to their immediate superior and/or HRD.',
-                            'confidence_score'               => 1.0,
+                $catalogKeyed = collect($this->catalog)->keyBy('section_number');
+                $matchedOffenses = [];
+
+                foreach ($detectedViolations as $violation) {
+                    $sec = $violation['section_number'] ?? null;
+                    if ($sec && isset($catalogKeyed[$sec])) {
+                        $matchedOffenses[] = [
+                            'section_number'                 => $catalogKeyed[$sec]['section_number'],
+                            'code_of_discipline_section'     => $catalogKeyed[$sec]['title'],
+                            'classification_group'           => $catalogKeyed[$sec]['group'],
+                            'specific_violation_explanation' => $violation['explanation'] ?? '',
+                            'sanctions_ladder'               => $catalogKeyed[$sec]['ladder'],
+                            'recommended_penalty'            => $catalogKeyed[$sec]['ladder']['1st'] ?? 'Written Warning',
+                            'clearing_period'                => $catalogKeyed[$sec]['clearing_period'],
                         ];
                     }
                 }
+
+                if (!empty($matchedOffenses)) {
+                    return [
+                        'total_offenses_detected' => count($matchedOffenses),
+                        'offenses'                => $matchedOffenses,
+                        'highest_penalty_rule'    => 'When a single act or incident constitutes two or more infractions, the highest applicable penalty shall be imposed.',
+                        'due_process_protocol'    => 'The employee shall be given five (5) days from receipt of the notice of charge to submit a written explanation.',
+                        'confidence_score'        => 1.0,
+                    ];
+                }
             }
         } catch (\Throwable $e) {
-            Log::error('COCD Match Error: ' . $e->getMessage());
+            Log::error('COCD Multi-Match Error: ' . $e->getMessage());
         }
 
         return [
-            'section_number'                 => 'Pending Review',
-            'code_of_discipline_section'     => 'Unclassified Infraction - Pending HR Evaluation',
-            'classification_group'           => 'Manual HR Review',
-            'specific_violation_explanation' => 'Could not map automatically. Please review manually.',
-            'sanctions_ladder'               => [],
-            'recommended_penalty'            => 'Subject to Investigation',
-            'clearing_period'                => 'N/A',
-            'due_process_protocol'           => 'Issue a formal Notice to Explain giving 5 days to respond.',
-            'confidence_score'               => 0.0,
+            'total_offenses_detected' => 0,
+            'offenses'                => [],
+            'highest_penalty_rule'    => 'Manual HR Review required.',
+            'due_process_protocol'    => 'Issue a formal Notice to Explain giving 5 days to respond.',
+            'confidence_score'        => 0.0,
         ];
     }
 }

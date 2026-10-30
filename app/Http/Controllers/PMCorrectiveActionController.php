@@ -20,6 +20,31 @@ class PMCorrectiveActionController extends Controller
         //
     }
 
+     public function get_corrective_actions_specific_leader(Request $request)
+    {
+        // Initialize the query builder using ::query() instead of ::get()
+        $query = PMCorrectiveAction::query();
+        $query->with(['employee','manager','supervisor']);
+
+        // If 'all' is not true, filter by the logged-in user
+        if (!$request->boolean('all')) {
+            $query->where('user_id', Auth::id());
+        }
+
+        // Filter by search term across first_name and last_name
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Eager load relationships before running paginate()
+        $reaches = $query->orderBy('id','desc')->paginate($request->input('per_page', 10));
+
+        return response()->json($reaches, 200);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -126,14 +151,19 @@ class PMCorrectiveActionController extends Controller
      * Store a newly created resource in storage.
      */
 
-
     public function get_ai_cocd(Request $request, CocdDetectorService $cocdDetector)
     {
-        // 1. Detect COCD Section if not explicitly provided
-        $cocdAnalysis = [];
-        $cocdAnalysis = $cocdDetector->detectSection(
-            $request->description_of_infraction,
+        $validated = $request->validate([
+            'description_of_infraction' => ['required', 'string', 'min:5'],
+        ]);
+
+        // Use detectSections (plural) or the alias method
+        $cocdAnalysis = $cocdDetector->detectSections(
+            $validated['description_of_infraction']
         );
+
+        // dd($cocdAnalysis); // Uncomment if inspecting locally
+
         return response()->json($cocdAnalysis, 200);
     }
     public function store(Request $request)

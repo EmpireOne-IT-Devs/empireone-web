@@ -319,6 +319,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('get_ai_cocd', [PMCorrectiveActionController::class, 'get_ai_cocd']);
 
         Route::post('sign_corrective_action',  [PMCorrectiveActionController::class, 'sign_corrective_action']);
+        Route::get('get_corrective_actions_specific_leader',  [PMCorrectiveActionController::class, 'get_corrective_actions_specific_leader']);
 
         Route::get('get_reach_specific_leader',  [PMReachController::class, 'get_reach_specific_leader']);
 

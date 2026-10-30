@@ -20,6 +20,9 @@ export async function create_reach_service(data) {
 export async function create_corrective_action_service(data) {
     return await axios.post(`/api/er/corrective_action`, data);
 }
+export async function get_corrective_actions_specific_leader_service(id) {
+    return await axios.get(`/api/er/get_corrective_actions_specific_leader${window.location.search}`);
+}
 
 export async function get_corrective_action_by_id_service(id) {
     return await axios.get(`/api/er/corrective_action/${id}`);

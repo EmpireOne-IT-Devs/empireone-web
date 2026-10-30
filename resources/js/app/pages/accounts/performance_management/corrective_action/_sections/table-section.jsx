@@ -4,7 +4,7 @@ import Table from "@/app/_components/table";
 // import MenuSection from "./menu-section";
 
 export default function TableSection({ isloading }) {
-    const { reaches } = useSelector((store) => store.human_resources);
+    const { corrective_actions } = useSelector((store) => store.human_resources);
 
     // Get search params from URL
     const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
@@ -21,17 +21,11 @@ export default function TableSection({ isloading }) {
         { header: "WORKFLOW TARGET ACTIONS", accessor: "workflow_target_actions" },
     ];
 
-    // Extract array from reaches (handles array directly or paginated object)
-    const rawData = Array.isArray(reaches?.data)
-        ? reaches.data
-        : Array.isArray(reaches?.data?.data)
-            ? reaches.data.data
-            : Array.isArray(reaches)
-                ? reaches
-                : [];
+    // Extract array from corrective_actions (handles array directly or paginated object)
+    const rawData = corrective_actions?.data || [];
 
     // Filter & Format Data
-    const formattedReaches = rawData
+    const formattedCorrective_actions = rawData
         .filter((item) => {
             if (!search_terms) return true;
 
@@ -39,7 +33,7 @@ export default function TableSection({ isloading }) {
             const empName = `${personal?.first_name || item?.first_name || ""} ${personal?.last_name || item?.last_name || ""}`.toLowerCase();
             const supName = `${item?.er_leader?.name || item?.supervisor_first_name || ""} ${item?.supervisor_last_name || ""}`.toLowerCase();
             const caId = String(item?.ca_id || item?.id || "").toLowerCase();
-            const account = (item?.account?.name || item?.account || "").toLowerCase();
+            const account = "item?.account?.name";
 
             return (
                 empName.includes(search_terms) ||
@@ -68,6 +62,7 @@ export default function TableSection({ isloading }) {
             const dateIssuedRaw = item?.date_issued || item?.date_of_session || item?.created_at;
             const dateIssued = dateIssuedRaw ? new Date(dateIssuedRaw).toLocaleDateString() : "N/A";
 
+            console.log('itemsssss', item)
             return {
                 id: item?.id,
                 ca_id: (
@@ -90,7 +85,7 @@ export default function TableSection({ isloading }) {
                 ),
                 account: (
                     <span className="font-medium text-slate-700">
-                        {item?.account?.name || item?.account || (item?.account_id ? `Account ID: ${item.account_id}` : "N/A")}
+                        {item?.employee?.account?.name ?? "N/A"}
                     </span>
                 ),
                 supervisor: (
@@ -103,16 +98,16 @@ export default function TableSection({ isloading }) {
                 ),
                 action_matrix: (
                     <span className="text-sm text-slate-700 font-medium">
-                        {item?.action_matrix || item?.kpi || "N/A"}
+                        {item?.final_sanction || "N/A"}
                     </span>
                 ),
                 status: (
                     <span
                         className={`inline-block px-2.5 py-1 text-xs font-bold rounded-full ${item?.status === "ACKNOWLEDGED" || item?.status === "COMPLETED"
-                                ? "bg-emerald-100 text-emerald-800"
-                                : item?.status === "PENDING"
-                                    ? "bg-amber-100 text-amber-800"
-                                    : "bg-slate-100 text-slate-700"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : item?.status === "PENDING"
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-slate-100 text-slate-700"
                             }`}
                     >
                         {item?.status || "PENDING"}
@@ -120,9 +115,14 @@ export default function TableSection({ isloading }) {
                 ),
                 workflow_target_actions: (
                     <div className="flex items-center gap-2">
-                        {item?.workflow_target_actions || item?.task_name || (
-                            <span className="text-slate-400 text-xs">No Actions</span>
-                        )}
+
+                        <a
+                            target="_blank"
+                            href={`/human-resources/corrective-actions/${item.id}/acknowledge`}>
+                            {item?.workflow_target_actions || item?.task_name || (
+                                <span className="text-slate-500 text-xs">View</span>
+                            )}
+                        </a>
                         {/* If you have action buttons or a menu dropdown: */}
                         {/* <MenuSection props_data={item} /> */}
                     </div>
@@ -135,7 +135,7 @@ export default function TableSection({ isloading }) {
             <Table
                 isloading={isloading}
                 columns={columns}
-                data={formattedReaches}
+                data={formattedCorrective_actions}
             />
         </div>
     );

@@ -24,17 +24,21 @@ export const employeeRelationSlice = createSlice({
         acknowledgements: [],
         attritions: [],
         attrition: {},
-        change_forms:[],
-        files:[],
-        reaches:[],
-        corrective_action:{},
+        change_forms: [],
+        files: [],
+        reaches: [],
+        corrective_action: {},
+        corrective_actions: [],
     },
     reducers: {
         setEmployees: (state, action) => {
             state.employees = action.payload;
         },
-         setCorrectiveAction: (state, action) => {
+        setCorrectiveAction: (state, action) => {
             state.corrective_action = action.payload;
+        },
+        setCorrectiveActions: (state, action) => {
+            state.corrective_actions = action.payload;
         },
         setChangeForms: (state, action) => {
             state.change_forms = action.payload;
@@ -102,15 +106,15 @@ export const employeeRelationSlice = createSlice({
         setFiles: (state, action) => {
             state.files = action.payload;
         },
-         setReaches: (state, action) => {
+        setReaches: (state, action) => {
             state.reaches = action.payload;
         },
-        
     },
 });
 
 export const {
     setFiles,
+    setCorrectiveActions,
     setCorrectiveAction,
     setReaches,
     setChangeForms,

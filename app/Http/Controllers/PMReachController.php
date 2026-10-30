@@ -119,7 +119,7 @@ class PMReachController extends Controller
         }
 
         // Eager load relationships before running paginate()
-        $reaches = $query->paginate($request->input('per_page', 10));
+        $reaches = $query->orderBy('id','desc')->paginate($request->input('per_page', 10));
 
         return response()->json($reaches, 200);
     }

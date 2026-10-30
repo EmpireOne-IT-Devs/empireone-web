@@ -12,7 +12,9 @@ import {
     FiInfo,
     FiShield,
     FiClock,
-    FiList
+    FiList,
+    FiCheckSquare,
+    FiSquare
 } from 'react-icons/fi'
 
 import Button from '@/app/_components/button'
@@ -23,12 +25,27 @@ import { search_employee_thunk } from '@/app/redux/employee-relation-thunk'
 import { create_corrective_action_service, get_ai_cocd_service } from '@/app/services/human-resources-service'
 import { setAlert } from '@/app/redux/app-slice'
 
+// Penalty rank order to compute the highest applicable penalty
+const PENALTY_WEIGHT = {
+    'Verbal Warning (VW)': 1,
+    'Verbal Warning': 1,
+    'Written Warning (WW)': 2,
+    'Written Warning': 2,
+    'Final Written Warning (FWW)': 3,
+    'Final Written Warning': 3,
+    'Termination (T)': 4,
+    'Termination': 4,
+}
+
 export default function CreateCorrectiveActionSection() {
     const dispatch = useDispatch()
     const [open, setOpen] = useState(false)
     const [selected, setSelected] = useState(null)
     const [isDetectingCocd, setIsDetectingCocd] = useState(false)
     const [aiAnalysis, setAiAnalysis] = useState(null)
+
+    // Multi-select indices state
+    const [selectedOffenseIndices, setSelectedOffenseIndices] = useState([])
 
     const searchTimeoutRef = useRef(null)
 
@@ -65,6 +82,7 @@ export default function CreateCorrectiveActionSection() {
             supervisor_user_id: '',
             manager_user_id: '',
             code_of_discipline_section: {},
+            selected_offenses: [],
         },
     })
 
@@ -87,6 +105,51 @@ export default function CreateCorrectiveActionSection() {
         )
     }, [employee?.data])
 
+    // Normalized list of detected offenses
+    const detectedOffensesList = useMemo(() => {
+        if (!aiAnalysis) return []
+
+        const payload = aiAnalysis.data ? aiAnalysis.data : aiAnalysis
+
+        if (Array.isArray(payload.offenses) && payload.offenses.length > 0) {
+            return payload.offenses
+        }
+
+        if (Array.isArray(payload) && payload.length > 0) {
+            return payload
+        }
+
+        if (payload.section_number) {
+            return [payload]
+        }
+
+        return []
+    }, [aiAnalysis])
+
+    // Get array of all currently checked offenses
+    const activeSelectedOffenses = useMemo(() => {
+        return selectedOffenseIndices
+            .map((idx) => detectedOffensesList[idx])
+            .filter(Boolean)
+    }, [selectedOffenseIndices, detectedOffensesList])
+
+    // Compute the highest penalty among the selected offenses
+    const highestRecommendedPenalty = useMemo(() => {
+        if (activeSelectedOffenses.length === 0) return null
+        let highest = activeSelectedOffenses[0]?.recommended_penalty || 'N/A'
+        let maxWeight = PENALTY_WEIGHT[highest] || 0
+
+        activeSelectedOffenses.forEach((off) => {
+            const pen = off?.recommended_penalty
+            const weight = PENALTY_WEIGHT[pen] || 0
+            if (weight > maxWeight) {
+                maxWeight = weight
+                highest = pen
+            }
+        })
+        return highest
+    }, [activeSelectedOffenses])
+
     const handleSearchEmployee = useCallback(
         (value) => {
             if (searchTimeoutRef.current) {
@@ -106,10 +169,10 @@ export default function CreateCorrectiveActionSection() {
         reset()
         setSelected(null)
         setAiAnalysis(null)
+        setSelectedOffenseIndices([])
         setOpen(false)
     }
 
-    // Helper to map classification_group to Category dropdown options
     const mapClassificationToCategory = (groupStr) => {
         if (!groupStr) return ''
         const lower = groupStr.toLowerCase()
@@ -117,10 +180,50 @@ export default function CreateCorrectiveActionSection() {
         if (lower.includes('conduct') || lower.includes('integrity') || lower.includes('decorum')) return 'Conduct'
         if (lower.includes('performance') || lower.includes('duties')) return 'Performance of Duties'
         if (lower.includes('quality')) return 'Quality'
-        if (lower.includes('technology') || lower.includes('safety') || lower.includes('security') || lower.includes('health')) {
+        if (lower.includes('technology') || lower.includes('safety') || lower.includes('security') || lower.includes('health') || lower.includes('order')) {
             return 'Technology, safety, Security, Health & Order'
         }
         return ''
+    }
+
+    // Toggle Checkbox selection
+    const handleToggleOffense = (index) => {
+        const nextIndices = selectedOffenseIndices.includes(index)
+            ? selectedOffenseIndices.filter((i) => i !== index)
+            : [...selectedOffenseIndices, index]
+
+        // Ensure at least one offense remains selected if items exist
+        if (nextIndices.length === 0 && detectedOffensesList.length > 0) {
+            return
+        }
+
+        setSelectedOffenseIndices(nextIndices)
+
+        const selectedItems = nextIndices.map((i) => detectedOffensesList[i]).filter(Boolean)
+        setValue('selected_offenses', selectedItems)
+        setValue('code_of_discipline_section', {
+            offenses: selectedItems,
+            primary: selectedItems[0] || null,
+        })
+
+        // Pick category from primary/first selected infraction
+        if (selectedItems[0]) {
+            const mappedCat = mapClassificationToCategory(selectedItems[0].classification_group)
+            if (mappedCat) {
+                setValue('category', mappedCat, { shouldValidate: true })
+            }
+        }
+    }
+
+    // Select all detected offenses
+    const handleSelectAll = () => {
+        const allIndices = detectedOffensesList.map((_, idx) => idx)
+        setSelectedOffenseIndices(allIndices)
+        setValue('selected_offenses', detectedOffensesList)
+        setValue('code_of_discipline_section', {
+            offenses: detectedOffensesList,
+            primary: detectedOffensesList[0] || null,
+        })
     }
 
     // AI COCD Detection trigger
@@ -145,22 +248,35 @@ export default function CreateCorrectiveActionSection() {
             })
 
             if (response) {
-                setAiAnalysis(response)
+                const unwrapped = response.data ? response.data : response
+                setAiAnalysis(unwrapped)
 
-                // Store full object in form state
-                setValue('code_of_discipline_section', response)
+                const offenses = Array.isArray(unwrapped.offenses) && unwrapped.offenses.length > 0
+                    ? unwrapped.offenses
+                    : (unwrapped.section_number ? [unwrapped] : [])
 
-                // Attempt auto-populating category based on group name
-                const detectedCategory = mapClassificationToCategory(response.classification_group)
-                if (detectedCategory) {
-                    setValue('category', detectedCategory, { shouldValidate: true })
+                // Default: SELECT ALL detected offenses
+                const allIndices = offenses.map((_, idx) => idx)
+                setSelectedOffenseIndices(allIndices)
+
+                setValue('selected_offenses', offenses)
+                setValue('code_of_discipline_section', {
+                    offenses: offenses,
+                    primary: offenses[0] || null,
+                })
+
+                if (offenses[0]?.classification_group) {
+                    const detectedCategory = mapClassificationToCategory(offenses[0].classification_group)
+                    if (detectedCategory) {
+                        setValue('category', detectedCategory, { shouldValidate: true })
+                    }
                 }
 
                 dispatch(
                     setAlert({
                         type: 'success',
-                        title: 'COCD Detected',
-                        message: `Rule Section ${response.section_number || ''} matched.`,
+                        title: 'COCD Match Complete',
+                        message: `Identified ${offenses.length} policy violation(s). You can toggle any offense below.`,
                         open: true,
                     })
                 )
@@ -185,8 +301,15 @@ export default function CreateCorrectiveActionSection() {
             const payload = {
                 ...formData,
                 user_id: selected?.user_id,
+                code_of_discipline_section: {
+                    offenses: activeSelectedOffenses,
+                    primary: activeSelectedOffenses[0] || null,
+                    recommended_penalty: highestRecommendedPenalty,
+                },
+                selected_offenses: activeSelectedOffenses,
             }
-
+            dd('heelo');
+            sss
             await create_corrective_action_service(payload)
 
             dispatch(
@@ -197,7 +320,7 @@ export default function CreateCorrectiveActionSection() {
                     open: true,
                 })
             )
-
+            reset();
             handleClose()
         } catch (error) {
             console.error('Failed to create corrective action:', error)
@@ -295,8 +418,8 @@ export default function CreateCorrectiveActionSection() {
 
                         {/* Read-only Employee Info Card */}
                         <div className={`p-4 rounded-xl space-y-4 transition-all duration-200 border ${isEmployeeSelected
-                                ? 'bg-indigo-50/30 border-indigo-200/80'
-                                : 'bg-slate-50 border-slate-200/80 border-dashed'
+                            ? 'bg-indigo-50/30 border-indigo-200/80'
+                            : 'bg-slate-50 border-slate-200/80 border-dashed'
                             }`}>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
@@ -350,8 +473,8 @@ export default function CreateCorrectiveActionSection() {
 
                         {/* Immediate Supervisor Card */}
                         <div className={`p-4 rounded-xl space-y-3 transition-all duration-200 border ${isEmployeeSelected
-                                ? 'bg-indigo-50/30 border-indigo-200/80'
-                                : 'bg-slate-50 border-slate-200/80 border-dashed'
+                            ? 'bg-indigo-50/30 border-indigo-200/80'
+                            : 'bg-slate-50 border-slate-200/80 border-dashed'
                             }`}>
                             <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b border-slate-200/60 pb-2">
                                 IMMEDIATE SUPERVISOR
@@ -400,8 +523,8 @@ export default function CreateCorrectiveActionSection() {
 
                         {/* Next Level Manager Card */}
                         <div className={`p-4 rounded-xl space-y-3 transition-all duration-200 border ${isEmployeeSelected
-                                ? 'bg-indigo-50/30 border-indigo-200/80'
-                                : 'bg-slate-50 border-slate-200/80 border-dashed'
+                            ? 'bg-indigo-50/30 border-indigo-200/80'
+                            : 'bg-slate-50 border-slate-200/80 border-dashed'
                             }`}>
                             <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest border-b border-slate-200/60 pb-2">
                                 NEXT LEVEL MANAGER
@@ -449,6 +572,37 @@ export default function CreateCorrectiveActionSection() {
                         </div>
                     </section>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                                CATEGORY <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                {...register('category', { required: 'Category is required' })}
+                                className="w-full h-11 px-3 bg-white border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer hover:border-slate-300"
+                            >
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="Attendance">Attendance</option>
+                                <option value="Performance of Duties">Performance of Duties</option>
+                                <option value="Quality">Quality</option>
+                                <option value="Conduct">Conduct</option>
+                                <option value="Technology, safety, Security, Health & Order">
+                                    Technology, safety, Security, Health & Order
+                                </option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                                DATE OF OCCURRENCE <span className="text-red-500">*</span>
+                            </label>
+                            <Input
+                                type="date"
+                                {...register('date_of_occurrence', { required: 'Date is required' })}
+                            />
+                        </div>
+                    </div>
+
                     {/* ==================== 2. INFRACTION DETAILS ==================== */}
                     <section className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-6 hover:shadow-md transition-all duration-200">
                         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -484,116 +638,120 @@ export default function CreateCorrectiveActionSection() {
                             />
                         </div>
 
-                        {/* AI Detection Result Banner */}
-                        {aiAnalysis && (
-                            <div className="p-5 rounded-xl bg-gradient-to-br from-indigo-50/70 to-slate-50 border border-indigo-200 shadow-xs space-y-4">
-                                <div className="flex items-start justify-between border-b border-indigo-100/80 pb-3">
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="px-2 py-0.5 bg-indigo-600 text-white text-xs font-bold rounded">
-                                                Section {aiAnalysis.section_number}
-                                            </span>
+                        {/* AI Multi-Select Offenses Section */}
+                        {detectedOffensesList.length > 0 && (
+                            <div className="p-5 rounded-xl bg-gradient-to-br from-indigo-50/70 to-slate-50 border border-indigo-200 shadow-xs space-y-5">
+
+                                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-100 pb-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="p-1.5 bg-indigo-600 text-white rounded-md">
+                                            <FiShield className="w-4 h-4" />
+                                        </span>
+                                        <div>
                                             <h4 className="text-sm font-bold text-slate-800">
-                                                {aiAnalysis.code_of_discipline_section}
+                                                Identified Code of Discipline Infractions
                                             </h4>
+                                            <p className="text-xs text-slate-500">
+                                                Check all applicable offenses that will be included in the Notice to Explain ({activeSelectedOffenses.length} selected):
+                                            </p>
                                         </div>
-                                        <p className="text-xs text-indigo-700 font-medium mt-1">
-                                            {aiAnalysis.classification_group}
-                                        </p>
-                                    </div>
-                                    {aiAnalysis.confidence_score !== undefined && (
-                                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                            {Math.round(aiAnalysis.confidence_score * 100)}% Confidence
-                                        </span>
-                                    )}
-                                </div>
-
-                                {aiAnalysis.specific_violation_explanation && (
-                                    <div className="text-xs text-slate-600 space-y-1">
-                                        <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                            <FiInfo className="w-3.5 h-3.5 text-indigo-500" /> Violation Assessment
-                                        </span>
-                                        <p className="leading-relaxed bg-white/80 p-2.5 rounded-lg border border-slate-200/60">
-                                            {aiAnalysis.specific_violation_explanation}
-                                        </p>
-                                    </div>
-                                )}
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                                    <div className="p-3 bg-white/80 rounded-lg border border-slate-200/60">
-                                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                                            Recommended Penalty
-                                        </span>
-                                        <span className="text-sm font-semibold text-rose-600 flex items-center gap-1.5">
-                                            <FiShield className="w-4 h-4" /> {aiAnalysis.recommended_penalty || 'N/A'}
-                                        </span>
                                     </div>
 
-                                    <div className="p-3 bg-white/80 rounded-lg border border-slate-200/60">
-                                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                                            Clearing Period
-                                        </span>
-                                        <span className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
-                                            <FiClock className="w-4 h-4 text-slate-500" /> {aiAnalysis.clearing_period || 'None'}
-                                        </span>
+                                    <div className="flex items-center gap-2">
+                                        {detectedOffensesList.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={handleSelectAll}
+                                                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 underline mr-2"
+                                            >
+                                                Select All
+                                            </button>
+                                        )}
+                                        {highestRecommendedPenalty && (
+                                            <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1 rounded-full">
+                                                Highest Applicable Penalty: {highestRecommendedPenalty}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
 
-                                {aiAnalysis.sanctions_ladder && (
-                                    <div className="p-3 bg-white/80 rounded-lg border border-slate-200/60 space-y-2">
-                                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <FiList className="w-3.5 h-3.5 text-indigo-500" /> Sanctions Ladder
-                                        </span>
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                            {Object.entries(aiAnalysis.sanctions_ladder).map(([key, val]) => (
-                                                <div key={key} className="bg-slate-50 px-2 py-1.5 rounded border border-slate-200 text-center">
-                                                    <span className="text-[10px] text-slate-400 uppercase font-bold block">{key} Offense</span>
-                                                    <span className="text-xs font-semibold text-slate-700">{val}</span>
+                                {/* Multi-Offense Checkbox Cards */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {detectedOffensesList.map((offense, index) => {
+                                        const isSelected = selectedOffenseIndices.includes(index)
+                                        return (
+                                            <div
+                                                key={offense.section_number || index}
+                                                onClick={() => handleToggleOffense(index)}
+                                                className={`relative flex items-start  gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${isSelected
+                                                    ? 'bg-white border-indigo-600 ring-2 ring-indigo-500/20 shadow-sm'
+                                                    : 'bg-white/60 border-slate-200 opacity-60 hover:opacity-100 hover:bg-white'
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isSelected}
+                                                    onChange={() => handleToggleOffense(index)}
+                                                    className="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-0 cursor-pointer"
+                                                />
+                                                <div className="flex-1 space-y-1">
+                                                    <div className="flex items-center justify-between gap-1">
+                                                        <span className="text-xs font-bold text-indigo-900 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">
+                                                            Sec. {offense.section_number}
+                                                        </span>
+                                                        <span className="text-[10px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                                                            {offense.recommended_penalty || 'Warning'}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs font-semibold text-slate-800 line-clamp-2">
+                                                        {offense.code_of_discipline_section || offense.title}
+                                                    </p>
+                                                    <span className="block text-[10px] text-slate-500 font-medium truncate">
+                                                        {offense.classification_group}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+
+                                {/* Summary of All Selected Violations */}
+                                {activeSelectedOffenses.length > 0 && (
+                                    <div className="bg-white rounded-xl border border-indigo-100 p-4 space-y-3 shadow-2xs">
+                                        <h5 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-100 pb-2">
+                                            <FiList className="w-3.5 h-3.5 text-indigo-600" /> Selected Offenses Detail ({activeSelectedOffenses.length})
+                                        </h5>
+                                        <div className="space-y-2">
+                                            {activeSelectedOffenses.map((off, idx) => (
+                                                <div key={idx} className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/70 text-xs space-y-1">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="font-bold text-slate-900">
+                                                            Section {off.section_number}: {off.code_of_discipline_section}
+                                                        </span>
+                                                        <span className="font-semibold text-amber-700 text-[11px]">
+                                                            Penalty: {off.recommended_penalty} | Clearing: {off.clearing_period || 'None'}[cite: 2]
+                                                        </span>
+                                                    </div>
+                                                    {off.specific_violation_explanation && (
+                                                        <p className="text-slate-600 text-[11px] italic">
+                                                            {off.specific_violation_explanation}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                 )}
 
-                                {aiAnalysis.due_process_protocol && (
-                                    <div className="p-3 bg-amber-50/70 rounded-lg border border-amber-200/80 text-xs text-amber-900 leading-relaxed">
-                                        <strong className="block font-semibold mb-0.5 text-amber-950">Due Process Protocol:</strong>
-                                        {aiAnalysis.due_process_protocol}
-                                    </div>
-                                )}
+                                {/* Due Process Alert Box */}
+                                <div className="p-3 bg-amber-50/70 rounded-lg border border-amber-200/80 text-xs text-amber-900 leading-relaxed">
+                                    <strong className="block font-semibold mb-0.5 text-amber-950">Disciplinary Rule on Multiple Offenses:</strong>
+                                    When a single act or incident constitutes two or more infractions, the highest applicable penalty shall be imposed[cite: 25]. The employee must be given five (5) calendar days from receipt of the notice to submit a written explanation[cite: 26].
+                                </div>
                             </div>
                         )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-                                    CATEGORY <span className="text-red-500">*</span>
-                                </label>
-                                <select
-                                    {...register('category', { required: 'Category is required' })}
-                                    className="w-full h-11 px-3 bg-white border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer hover:border-slate-300"
-                                >
-                                    <option value="">Select Category</option>
-                                    <option value="Attendance">Attendance</option>
-                                    <option value="Performance of Duties">Performance of Duties</option>
-                                    <option value="Quality">Quality</option>
-                                    <option value="Conduct">Conduct</option>
-                                    <option value="Technology, safety, Security, Health & Order">
-                                        Technology, safety, Security, Health & Order
-                                    </option>
-                                </select>
-                            </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-                                    DATE OF OCCURRENCE <span className="text-red-500">*</span>
-                                </label>
-                                <Input
-                                    type="date"
-                                    {...register('date_of_occurrence', { required: 'Date is required' })}
-                                />
-                            </div>
-                        </div>
                     </section>
 
                     {/* ==================== 3. SUPPORTING DOCUMENTS ==================== */}
@@ -617,7 +775,7 @@ export default function CreateCorrectiveActionSection() {
                                 </span>
                                 <input
                                     type="url"
-                                    {...register('evidence_drive_url')}
+                                    {...register('evidence_drive_url', { required: 'Evidence is required' })}
                                     placeholder="https://drive.google.com/..."
                                     className="w-full pl-14 pr-3 h-11 bg-white border border-slate-200 rounded-lg text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all hover:border-slate-300"
                                 />
@@ -641,6 +799,7 @@ export default function CreateCorrectiveActionSection() {
                         <Button
                             type="submit"
                             loading={isSubmitting}
+                            disabled={activeSelectedOffenses.length == 0}
                             className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2.5"
                         >
                             <FiSend className="w-4 h-4" />
