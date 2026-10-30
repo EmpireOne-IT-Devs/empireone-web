@@ -1,0 +1,1 @@
+import{j as n}from"./app-CyrY1Z-3.js";import{P as o}from"./pagination-BUuePtLf.js";import"./iconBase-NlRf-oiD.js";function s({data:t,onPageChange:i}){return!t?.last_page||t.last_page<1?null:n.jsx(o,{data:t,onPageChange:i})}export{s as default};

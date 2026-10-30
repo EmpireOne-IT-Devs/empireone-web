@@ -76,7 +76,7 @@ export default function EmployeeActionSection({ props_data }) {
                 >
 
                     <button
-                        onClick={() => window.open(`/accounts/administrator/human_resources/${props_data?.id}/201_files`, '_blank', 'noopener,noreferrer')}
+                        onClick={() => window.open(`/accounts/administrator/human_resources/${props_data?.user_id}/201_files`, '_blank', 'noopener,noreferrer')}
                         className="group flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
                     >
                         <FcOpenedFolder
