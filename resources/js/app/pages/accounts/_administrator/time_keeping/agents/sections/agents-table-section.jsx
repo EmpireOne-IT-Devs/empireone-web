@@ -144,30 +144,28 @@ export default function AgentsTableSection() {
 
     const columns = [
         {
-            header: "Select",
-            width: "w-16",
-            render: (row) =>
-                row.can_review ? (
-                    <Checkbox
-                        name={`team_request_${row.id}`}
-                        label={sr(`Select request from ${row.employee?.name}`)}
-                        checked={selected.includes(row.id)}
-                        onChange={() => toggleRow(row.id)}
-                    />
-                ) : null,
-        },
-        {
             header: "Employee",
             render: (row) => (
-                <div>
-                    <p className="font-medium text-gray-900">
-                        {row.employee?.name ?? "-"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                        {[row.employee?.employee_id, row.employee?.department]
-                            .filter(Boolean)
-                            .join(" · ")}
-                    </p>
+                <div className="flex items-center gap-3">
+                    <div className="shrink-0">
+                        <Checkbox
+                            name={`team_request_${row.id}`}
+                            label={sr(`Select request from ${row.employee?.name}`)}
+                            checked={row.can_review && selected.includes(row.id)}
+                            disabled={!row.can_review}
+                            onChange={() => toggleRow(row.id)}
+                        />
+                    </div>
+                    <div>
+                        <p className="font-medium text-gray-900">
+                            {row.employee?.name ?? "-"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                            {[row.employee?.employee_id, row.employee?.department]
+                                .filter(Boolean)
+                                .join(" · ")}
+                        </p>
+                    </div>
                 </div>
             ),
         },

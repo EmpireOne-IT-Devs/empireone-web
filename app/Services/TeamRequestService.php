@@ -134,6 +134,8 @@ class TeamRequestService
 
     public function attachEmployeeInfo(iterable $requests, string $type): void
     {
+        // collect() on a paginator yields its toArray() shape, so iterate the items instead.
+        $requests = $requests instanceof \Traversable ? iterator_to_array($requests, false) : $requests;
         $userIds = collect($requests)->pluck('user_id')->unique()->all();
 
         $names = AccountPersonalInformation::whereIn('user_id', $userIds)
