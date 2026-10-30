@@ -214,9 +214,9 @@ class PMCorrectiveActionController extends Controller
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
 
             $mail = Mail::to('webdev@empireonegroup.com');
-            // if (!empty($ccRecipients)) {
-            //     $mail->cc($ccRecipients);
-            // }
+            if (!empty($ccRecipients)) {
+                $mail->cc($ccRecipients);
+            }
             $mail->send(new CorrectiveActionNotificationApprovalMail($correctiveAction, 'Corrective Action Approval'));
         }
 
