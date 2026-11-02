@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DeleteRewardSection from "./delete-reward-section";
 import EditRewardSection from "./edit-reward-section";
 import ViewRewardModalSection from "./view-reward-modal-section";
+import RedeemConfirmationSection from "./redeem-confirmation-section";
 import Card from "@/app/_components/card";
 import { get_engagement_e_store_items_thunk } from "@/app/redux/engagement-thunk";
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";
@@ -23,6 +24,7 @@ export default function RewardCardSection({ showManagementActions = true }) {
     const dispatch = useDispatch();
     const [selectedReward, setSelectedReward] = useState(null);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
     const { eStoreItems, eStoreItemsLoading } = useSelector(
         (state) => state.engagement,
     );
@@ -38,6 +40,16 @@ export default function RewardCardSection({ showManagementActions = true }) {
 
     const closeRewardModal = () => {
         setIsViewModalOpen(false);
+        setSelectedReward(null);
+    };
+
+    const openRedeemModal = () => {
+        setIsViewModalOpen(false);
+        setIsRedeemModalOpen(true);
+    };
+
+    const closeRedeemModal = () => {
+        setIsRedeemModalOpen(false);
         setSelectedReward(null);
     };
 
@@ -167,6 +179,12 @@ export default function RewardCardSection({ showManagementActions = true }) {
                 reward={selectedReward}
                 isOpen={isViewModalOpen}
                 onClose={closeRewardModal}
+                onRedeem={openRedeemModal}
+            />
+            <RedeemConfirmationSection
+                reward={selectedReward}
+                isOpen={isRedeemModalOpen}
+                onClose={closeRedeemModal}
             />
         </div>
     );

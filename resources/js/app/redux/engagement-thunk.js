@@ -42,6 +42,18 @@ import {
     get_e_store_items_service,
     update_e_store_item_service,
     delete_e_store_item_service,
+    get_e_store_redemptions_service,
+    get_e_store_redemption_balance_service,
+    create_e_store_redemption_service,
+    get_e_store_redemption_service,
+    cancel_e_store_redemption_service,
+    get_admin_e_store_redemptions_service,
+    get_admin_e_store_redemption_stats_service,
+    approve_e_store_redemption_service,
+    process_e_store_redemption_service,
+    complete_e_store_redemption_service,
+    reject_e_store_redemption_service,
+    admin_cancel_e_store_redemption_service,
 } from "../services/engagement-service";
 
 export const set_reward_challenge_upload_progress = createAction(
@@ -689,6 +701,138 @@ export const delete_engagement_reward_item_thunk = createAsyncThunk(
                 ...response.data,
                 id,
             };
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_e_store_redemptions_thunk = createAsyncThunk(
+    "engagement/getEStoreRedemptions",
+    async (params = {}, { rejectWithValue }) => {
+        try {
+            const response = await get_e_store_redemptions_service(params);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_e_store_redemption_balance_thunk = createAsyncThunk(
+    "engagement/getEStoreRedemptionBalance",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_e_store_redemption_balance_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const create_e_store_redemption_thunk = createAsyncThunk(
+    "engagement/createEStoreRedemption",
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await create_e_store_redemption_service(data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const cancel_e_store_redemption_thunk = createAsyncThunk(
+    "engagement/cancelEStoreRedemption",
+    async ({ reference, data = {} }, { rejectWithValue }) => {
+        try {
+            const response = await cancel_e_store_redemption_service(reference, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_admin_e_store_redemptions_thunk = createAsyncThunk(
+    "engagement/getAdminEStoreRedemptions",
+    async (params = {}, { rejectWithValue }) => {
+        try {
+            const response = await get_admin_e_store_redemptions_service(params);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_admin_e_store_redemption_stats_thunk = createAsyncThunk(
+    "engagement/getAdminEStoreRedemptionStats",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_admin_e_store_redemption_stats_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const approve_e_store_redemption_thunk = createAsyncThunk(
+    "engagement/approveEStoreRedemption",
+    async ({ reference, data = {} }, { rejectWithValue }) => {
+        try {
+            const response = await approve_e_store_redemption_service(reference, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const process_e_store_redemption_thunk = createAsyncThunk(
+    "engagement/processEStoreRedemption",
+    async ({ reference, data = {} }, { rejectWithValue }) => {
+        try {
+            const response = await process_e_store_redemption_service(reference, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const complete_e_store_redemption_thunk = createAsyncThunk(
+    "engagement/completeEStoreRedemption",
+    async ({ reference, data = {} }, { rejectWithValue }) => {
+        try {
+            const response = await complete_e_store_redemption_service(reference, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const reject_e_store_redemption_thunk = createAsyncThunk(
+    "engagement/rejectEStoreRedemption",
+    async ({ reference, data }, { rejectWithValue }) => {
+        try {
+            const response = await reject_e_store_redemption_service(reference, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const admin_cancel_e_store_redemption_thunk = createAsyncThunk(
+    "engagement/adminCancelEStoreRedemption",
+    async ({ reference, data = {} }, { rejectWithValue }) => {
+        try {
+            const response = await admin_cancel_e_store_redemption_service(reference, data);
+            return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);
         }

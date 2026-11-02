@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Engagement;
 use App\Http\Controllers\Controller;
 use App\Models\Engagement\EngagementEStore;
 use App\Models\Engagement\EngagementPostEventFile;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -23,6 +24,7 @@ class EngagementEStoreController extends Controller
 
         $items = EngagementEStore::query()
             ->with('files:id,engagement_e_store_id,name,url')
+            ->when($request->user()->role !== User::ROLE_ADMIN, fn ($query) => $query->active())
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('product_name', 'like', "%{$search}%")
@@ -49,14 +51,22 @@ class EngagementEStoreController extends Controller
             'reward_type' => ['required', 'string', 'max:100'],
             'point_cost' => ['required', 'integer', 'min:0'],
             'quantity' => ['nullable', 'integer', 'min:0'],
+            'is_active' => ['sometimes', 'boolean'],
+            'is_unlimited_stock' => ['sometimes', 'boolean'],
         ]);
+
+        $isUnlimited = array_key_exists('is_unlimited_stock', $validated)
+            ? (bool) $validated['is_unlimited_stock']
+            : ! isset($validated['quantity']);
 
         $item = EngagementEStore::create([
             'product_name' => $validated['product_name'],
             'customer_description' => $validated['customer_description'] ?? null,
             'reward_type' => $validated['reward_type'],
             'point_cost' => $validated['point_cost'],
-            'quantity' => $validated['quantity'] ?? null,
+            'quantity' => $isUnlimited ? null : ($validated['quantity'] ?? null),
+            'is_active' => $validated['is_active'] ?? true,
+            'is_unlimited_stock' => $isUnlimited,
             'created_by' => auth()->id(),
         ]);
 
@@ -99,7 +109,25 @@ class EngagementEStoreController extends Controller
             'reward_type' => ['sometimes', 'string', 'max:100'],
             'point_cost' => ['sometimes', 'integer', 'min:0'],
             'quantity' => ['nullable', 'integer', 'min:0'],
+            'is_active' => ['sometimes', 'boolean'],
+            'is_unlimited_stock' => ['sometimes', 'boolean'],
         ]);
+
+        $isUnlimited = array_key_exists('is_unlimited_stock', $validated)
+            ? (bool) $validated['is_unlimited_stock']
+            : $engagementEStore->is_unlimited_stock;
+
+        $quantity = array_key_exists('quantity', $validated)
+            ? $validated['quantity']
+            : $engagementEStore->quantity;
+
+        if ($isUnlimited) {
+            $quantity = null;
+        } elseif ($quantity === null) {
+            // Switching from unlimited to limited without a quantity must not
+            // fall back to the legacy "NULL means unlimited" convention.
+            $quantity = 0;
+        }
 
         $engagementEStore->update([
             'product_name' => $validated['product_name'] ?? $engagementEStore->product_name,
@@ -108,9 +136,10 @@ class EngagementEStoreController extends Controller
                 : $engagementEStore->customer_description,
             'reward_type' => $validated['reward_type'] ?? $engagementEStore->reward_type,
             'point_cost' => $validated['point_cost'] ?? $engagementEStore->point_cost,
-            'quantity' => array_key_exists('quantity', $validated)
-                ? $validated['quantity']
-                : $engagementEStore->quantity,
+            'quantity' => $quantity,
+            'is_active' => $validated['is_active'] ?? $engagementEStore->is_active,
+            'is_unlimited_stock' => $isUnlimited,
+            'updated_by' => auth()->id(),
         ]);
 
         if ($request->hasFile('product_image') && $request->file('product_image')->isValid()) {

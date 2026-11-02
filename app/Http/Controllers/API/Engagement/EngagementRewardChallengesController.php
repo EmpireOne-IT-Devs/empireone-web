@@ -21,6 +21,7 @@ use App\Http\Resources\Engagement\EngagementRewardChallengeTeamSubmissionResourc
 use App\Services\ChallengeLeaderboardService;
 use App\Services\ChallengeTeamSubmissionService;
 use App\Services\ChallengeSurveyService;
+use App\Services\EmployeePointsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -566,7 +567,7 @@ class EngagementRewardChallengesController extends Controller
     /**
      * Points total and challenge participation history for the authenticated employee's profile.
      */
-    public function profileSummary(): JsonResponse
+    public function profileSummary(EmployeePointsService $pointsService): JsonResponse
     {
         $userId = auth()->id();
 
@@ -669,6 +670,9 @@ class EngagementRewardChallengesController extends Controller
             'status' => 'success',
             'data' => [
                 'total_points' => (int) $totalPoints,
+                'redeemed_points' => $pointsService->redeemedPoints($userId),
+                'refunded_points' => $pointsService->refundedPoints($userId),
+                'available_points' => $pointsService->spendablePoints($userId),
                 'challenge_history' => $history,
             ],
         ]);
