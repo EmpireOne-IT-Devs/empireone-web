@@ -29,6 +29,8 @@ use App\Http\Controllers\API\Engagement\EngagementBirthdayController;
 use App\Http\Controllers\API\Engagement\EngagementChallengeSubmissionsController;
 use App\Http\Controllers\API\Engagement\ChallengeSurveyController;
 use App\Http\Controllers\API\Engagement\EngagementEStoreController;
+use App\Http\Controllers\API\Engagement\EngagementEStoreRedemptionAdminController;
+use App\Http\Controllers\API\Engagement\EngagementEStoreRedemptionController;
 use App\Http\Controllers\API\Engagement\EngagementRewardChallengesController;
 use App\Http\Controllers\API\Engagement\EngagementRewardRecognitionController;
 use App\Http\Middleware\EnsurePostEventSurvey;
@@ -298,6 +300,25 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('reward-challenge-submissions/{id}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
         Route::apiResource('e-store-items', EngagementEStoreController::class)
             ->parameters(['e-store-items' => 'engagementEStore']);
+
+        Route::get('e-store-redemptions', [EngagementEStoreRedemptionController::class, 'index']);
+        Route::get('e-store-redemptions/balance', [EngagementEStoreRedemptionController::class, 'balance']);
+        Route::post('e-store-redemptions', [EngagementEStoreRedemptionController::class, 'store'])->middleware('throttle:10,1');
+        Route::get('e-store-redemptions/{redemption}', [EngagementEStoreRedemptionController::class, 'show']);
+        Route::post('e-store-redemptions/{redemption}/cancel', [EngagementEStoreRedemptionController::class, 'cancel']);
+
+        Route::get('admin/e-store-stock', [EngagementEStoreController::class, 'stock']);
+        Route::post('admin/e-store-stock/{engagementEStore}', [EngagementEStoreController::class, 'adjustStock']);
+
+        Route::get('admin/e-store-redemptions', [EngagementEStoreRedemptionAdminController::class, 'index']);
+        Route::get('admin/e-store-redemptions/stats', [EngagementEStoreRedemptionAdminController::class, 'stats']);
+        Route::get('admin/e-store-redemptions/analytics', [EngagementEStoreRedemptionAdminController::class, 'analytics']);
+        Route::get('admin/e-store-redemptions/{redemption}', [EngagementEStoreRedemptionAdminController::class, 'show']);
+        Route::post('admin/e-store-redemptions/{redemption}/approve', [EngagementEStoreRedemptionAdminController::class, 'approve']);
+        Route::post('admin/e-store-redemptions/{redemption}/process', [EngagementEStoreRedemptionAdminController::class, 'process']);
+        Route::post('admin/e-store-redemptions/{redemption}/complete', [EngagementEStoreRedemptionAdminController::class, 'complete']);
+        Route::post('admin/e-store-redemptions/{redemption}/reject', [EngagementEStoreRedemptionAdminController::class, 'reject']);
+        Route::post('admin/e-store-redemptions/{redemption}/cancel', [EngagementEStoreRedemptionAdminController::class, 'cancel']);
 
         Route::get('polls/analytics/dashboard',       [EngagementPollController::class, 'dashboard']);
         Route::get('polls/analytics',                 [EngagementPollController::class, 'index']);

@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/delete-post-section-BR6UsYsR.js
 import{u as r,G as t,s}from"./app-CGgoECHB.js";function a(){const e=r();return{handleDelete:async l=>{const n=await e(t(l));return t.fulfilled.match(n)?(e(s({type:"success",title:"Post deleted successfully!",open:!0})),!0):(e(s({type:"error",title:"Failed to delete post",open:!0})),!1)}}}export{a as DeletePostSection};
+========
+import{u as r,H as t,s}from"./app-BIgXwuew.js";function a(){const e=r();return{handleDelete:async l=>{const n=await e(t(l));return t.fulfilled.match(n)?(e(s({type:"success",title:"Post deleted successfully!",open:!0})),!0):(e(s({type:"error",title:"Failed to delete post",open:!0})),!1)}}}export{a as DeletePostSection};
+>>>>>>>> 515e2cf14bbc7050a85e0f7af939a2c3855c1395:public/build/assets/delete-post-section-B_j41Kjz.js

@@ -258,3 +258,63 @@ export async function update_e_store_item_service(id, data) {
 export async function delete_e_store_item_service(id) {
     return await axios.delete(`/api/engagement/e-store-items/${id}`);
 }
+
+export async function get_e_store_redemptions_service(params = {}) {
+    return await axios.get("/api/engagement/e-store-redemptions", { params });
+}
+
+export async function get_e_store_redemption_balance_service() {
+    return await axios.get("/api/engagement/e-store-redemptions/balance");
+}
+
+export async function create_e_store_redemption_service(data) {
+    return await axios.post("/api/engagement/e-store-redemptions", data);
+}
+
+export async function get_e_store_redemption_service(reference) {
+    return await axios.get(`/api/engagement/e-store-redemptions/${reference}`);
+}
+
+export async function cancel_e_store_redemption_service(reference, data = {}) {
+    return await axios.post(`/api/engagement/e-store-redemptions/${reference}/cancel`, data);
+}
+
+export async function get_admin_e_store_redemptions_service(params = {}) {
+    return await axios.get("/api/engagement/admin/e-store-redemptions", { params });
+}
+
+export async function get_admin_e_store_redemption_stats_service() {
+    return await axios.get("/api/engagement/admin/e-store-redemptions/stats");
+}
+
+export async function get_admin_e_store_redemption_analytics_service() {
+    return await axios.get("/api/engagement/admin/e-store-redemptions/analytics");
+}
+
+export async function approve_e_store_redemption_service(reference, data = {}) {
+    return await axios.post(`/api/engagement/admin/e-store-redemptions/${reference}/approve`, data);
+}
+
+export async function process_e_store_redemption_service(reference, data = {}) {
+    return await axios.post(`/api/engagement/admin/e-store-redemptions/${reference}/process`, data);
+}
+
+export async function complete_e_store_redemption_service(reference, data = {}) {
+    return await axios.post(`/api/engagement/admin/e-store-redemptions/${reference}/complete`, data);
+}
+
+export async function reject_e_store_redemption_service(reference, data) {
+    return await axios.post(`/api/engagement/admin/e-store-redemptions/${reference}/reject`, data);
+}
+
+export async function admin_cancel_e_store_redemption_service(reference, data = {}) {
+    return await axios.post(`/api/engagement/admin/e-store-redemptions/${reference}/cancel`, data);
+}
+
+export async function get_admin_e_store_stock_service(params = {}) {
+    return await axios.get("/api/engagement/admin/e-store-stock", { params });
+}
+
+export async function adjust_e_store_stock_service(id, data) {
+    return await axios.post(`/api/engagement/admin/e-store-stock/${id}`, data);
+}

@@ -8,6 +8,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setDesktopCollapsed, setSidebarOpen } from "@/app/redux/app-slice";
 import { Link } from "@inertiajs/react";
+import PointsSection from "../_employee/rewards_store/sections/points-section";
 
 const userNavigation = [
     { name: "Your profile", href: "#" },
@@ -49,11 +50,12 @@ export default function TopbarSection() {
                     </form>
 
                     <div className="flex items-center gap-x-4">
+                         <PointsSection /> 
                         <button className="p-2 text-gray-400 hover:text-gray-500 ">
                             <BellIcon className="w-6 h-6" />
                         </button>
-
-                        <Menu as="iv" className="relative">
+                       
+                        <Menu as="div" className="relative">
                             <Menu.Button className="flex items-center">
                                 <img
                                     className="w-8 h-8 rounded-full object-cover"
