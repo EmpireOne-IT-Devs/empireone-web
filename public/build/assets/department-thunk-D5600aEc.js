@@ -1,0 +1,1 @@
+import{g as s}from"./account-service-BHoc73Ku.js";import{a as r,bb as a}from"./app-DMljq8eI.js";async function i(){return await r.get("/api/departments")}function m(){return async function(t,n){const e=await i();t(a.actions.setDepartments(e.data))}}function u(){return async function(t,n){const e=await s();t(a.actions.setTeams(e.data))}}export{m as a,u as g};
