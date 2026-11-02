@@ -1,1 +1,5 @@
+<<<<<<<< HEAD:public/build/assets/layout-BSIGPxC_.js
 import{j as t}from"./app-BIgXwuew.js";import{T as s}from"./tabs-DQkEEwZu.js";import"./index-BODuKFF8.js";import"./iconBase-CwbjySae.js";function p({children:e}){const o=window.location.pathname.split("/")[4],n=window.location.pathname.split("/")[2],a=[{label:"My Documents",path:`/accounts/${n}/my_documents`,active:o==null},{label:"Acknowledgements",path:`/accounts/${n}/my_documents/acknowledgements`,active:o=="acknowledgements"}];return t.jsxs(t.Fragment,{children:[t.jsx(s,{tabs:a}),e]})}export{p as default};
+========
+import{j as t}from"./app-CGgoECHB.js";import{T as s}from"./tabs-DOwqX0X1.js";import"./index-CRpfRQhZ.js";import"./iconBase-Bk_BYJS5.js";function p({children:e}){const o=window.location.pathname.split("/")[4],n=window.location.pathname.split("/")[2],a=[{label:"My Documents",path:`/accounts/${n}/my_documents`,active:o==null},{label:"Acknowledgements",path:`/accounts/${n}/my_documents/acknowledgements`,active:o=="acknowledgements"}];return t.jsxs(t.Fragment,{children:[t.jsx(s,{tabs:a}),e]})}export{p as default};
+>>>>>>>> 0d184c9a8c (added commit):public/build/assets/layout-OWGndM62.js

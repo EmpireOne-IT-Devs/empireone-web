@@ -1,7 +1,10 @@
 import React from 'react'
 import PerformanceManagementLayout from './../layout'
+import CardSection from './_sections/card-section'
 export default function Page() {
   return (
-    <PerformanceManagementLayout>Pagess</PerformanceManagementLayout>
+    <PerformanceManagementLayout>
+        <CardSection />
+    </PerformanceManagementLayout>
   )
 }
