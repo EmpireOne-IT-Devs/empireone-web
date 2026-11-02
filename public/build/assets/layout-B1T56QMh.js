@@ -5,8 +5,17 @@ import{j as e}from"./app-BIgXwuew.js";import r from"./application-footer-section
 import{j as e}from"./app-CGgoECHB.js";import r from"./application-footer-section-CaY64pWD.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/layout-B1T56QMh.js
 =======
+<<<<<<< HEAD
 import{j as e}from"./app-CGgoECHB.js";import r from"./application-footer-section-CaY64pWD.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
 >>>>>>> 0d184c9a8c (added commit)
+=======
+<<<<<<<< HEAD:public/build/assets/layout-B1T56QMh.js
+import{j as e}from"./app-CGgoECHB.js";import r from"./application-footer-section-CaY64pWD.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
+========
+import{j as e}from"./app-BIgXwuew.js";import r from"./application-footer-section-B4GGAzR-.js";function n({children:a}){return e.jsxs("div",{className:"h-screen flex flex-col overflow-hidden font-sans",style:{backgroundImage:"url('/images/empireone-background.jpg')",backgroundSize:"cover",backgroundPosition:"center"},children:[e.jsx("div",{className:"fixed inset-0 pointer-events-none",style:{background:`
+>>>>>>>> 515e2cf14bbc7050a85e0f7af939a2c3855c1395:public/build/assets/layout-CjWdNkZo.js
+>>>>>>> 5cc6ea9a7349e23be3977d143a5a15c23e4f0212
+>>>>>>> 6baf6f7875a19186484606f01c7caf10652ec45f
                     linear-gradient(135deg, rgba(13,5,32,0.55) 0%, rgba(19,8,48,0.50) 50%, rgba(10,15,31,0.55) 100%),
                     radial-gradient(ellipse 60% 40% at 10% 80%, rgba(168,85,247,0.12) 0%, transparent 70%),
                     radial-gradient(ellipse 40% 50% at 90% 20%, rgba(59,130,246,0.09) 0%, transparent 70%),

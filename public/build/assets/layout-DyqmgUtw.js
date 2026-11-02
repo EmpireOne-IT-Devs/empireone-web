@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 <<<<<<<< HEAD:public/build/assets/layout-DyqmgUtw.js
 import{j as i}from"./app-BIgXwuew.js";import r from"./header-section-BI5NStjk.js";import s from"./tabs-section-B9yNKqND.js";import"./tabs-DQkEEwZu.js";import"./index-BODuKFF8.js";import"./iconBase-CwbjySae.js";import"./use-current-employee-isj0S2DW.js";function x({children:e}){return i.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[i.jsxs("div",{className:"shrink-0 ",children:[i.jsx(r,{}),i.jsx(s,{})]}),i.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:e})]})}export{x as default};
 ========
 import{j as i}from"./app-CGgoECHB.js";import r from"./header-section-DMqN1FjH.js";import s from"./tabs-section-CzXRuUoQ.js";import"./tabs-DOwqX0X1.js";import"./index-CRpfRQhZ.js";import"./iconBase-Bk_BYJS5.js";import"./use-current-employee-Db5ahtK2.js";function x({children:e}){return i.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[i.jsxs("div",{className:"shrink-0 ",children:[i.jsx(r,{}),i.jsx(s,{})]}),i.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:e})]})}export{x as default};
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/layout-HdxVaJSk.js
+=======
+<<<<<<<< HEAD:public/build/assets/layout-HdxVaJSk.js
+import{j as i}from"./app-CGgoECHB.js";import r from"./header-section-DMqN1FjH.js";import s from"./tabs-section-CzXRuUoQ.js";import"./tabs-DOwqX0X1.js";import"./index-CRpfRQhZ.js";import"./iconBase-Bk_BYJS5.js";import"./use-current-employee-Db5ahtK2.js";function x({children:e}){return i.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[i.jsxs("div",{className:"shrink-0 ",children:[i.jsx(r,{}),i.jsx(s,{})]}),i.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:e})]})}export{x as default};
+========
+import{j as i}from"./app-BIgXwuew.js";import r from"./header-section-BI5NStjk.js";import s from"./tabs-section-B9yNKqND.js";import"./tabs-DQkEEwZu.js";import"./index-BODuKFF8.js";import"./iconBase-CwbjySae.js";import"./use-current-employee-isj0S2DW.js";function x({children:e}){return i.jsxs("div",{className:"flex flex-col h-[calc(100vh-7rem)]",children:[i.jsxs("div",{className:"shrink-0 ",children:[i.jsx(r,{}),i.jsx(s,{})]}),i.jsx("div",{className:"flex-1 min-h-0 overflow-hidden pt-3",children:e})]})}export{x as default};
+>>>>>>>> 515e2cf14bbc7050a85e0f7af939a2c3855c1395:public/build/assets/layout-DyqmgUtw.js
+>>>>>>> 5cc6ea9a7349e23be3977d143a5a15c23e4f0212

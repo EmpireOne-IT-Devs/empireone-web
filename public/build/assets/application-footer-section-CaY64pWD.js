@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<<< HEAD:public/build/assets/application-footer-section-B4GGAzR-.js
 <<<<<<< HEAD
 =======
@@ -8,11 +9,21 @@ import{j as e,R as s}from"./app-BIgXwuew.js";function c(){const t=[{label:"Home"
 import{j as e,R as s}from"./app-CGgoECHB.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/application-footer-section-CaY64pWD.js
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ========
 import{j as e,R as s}from"./app-CGgoECHB.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/application-footer-section-CaY64pWD.js
 >>>>>>> 0d184c9a8c (added commit)
+=======
+=======
+<<<<<<<< HEAD:public/build/assets/application-footer-section-CaY64pWD.js
+import{j as e,R as s}from"./app-CGgoECHB.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
+========
+import{j as e,R as s}from"./app-BIgXwuew.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
+>>>>>>>> 515e2cf14bbc7050a85e0f7af939a2c3855c1395:public/build/assets/application-footer-section-B4GGAzR-.js
+>>>>>>> 5cc6ea9a7349e23be3977d143a5a15c23e4f0212
+>>>>>>> 6baf6f7875a19186484606f01c7caf10652ec45f
             radial-gradient(circle at 10% 40%, rgba(168, 85, 247, 0.3), transparent 30%),
             radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.25), transparent 30%),
             rgba(10, 5, 25, 0.45)

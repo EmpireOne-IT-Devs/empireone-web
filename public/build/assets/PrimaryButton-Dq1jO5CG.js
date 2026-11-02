@@ -5,5 +5,14 @@ import{j as n}from"./app-BIgXwuew.js";function s({className:r="",disabled:t,chil
 import{j as n}from"./app-CGgoECHB.js";function s({className:r="",disabled:t,children:e,...o}){return n.jsx("button",{...o,className:`inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${t&&"opacity-25"} `+r,disabled:t,children:e})}export{s as P};
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/PrimaryButton-Dq1jO5CG.js
 =======
+<<<<<<< HEAD
 import{j as n}from"./app-CGgoECHB.js";function s({className:r="",disabled:t,children:e,...o}){return n.jsx("button",{...o,className:`inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${t&&"opacity-25"} `+r,disabled:t,children:e})}export{s as P};
 >>>>>>> 0d184c9a8c (added commit)
+=======
+<<<<<<<< HEAD:public/build/assets/PrimaryButton-Dq1jO5CG.js
+import{j as n}from"./app-CGgoECHB.js";function s({className:r="",disabled:t,children:e,...o}){return n.jsx("button",{...o,className:`inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${t&&"opacity-25"} `+r,disabled:t,children:e})}export{s as P};
+========
+import{j as n}from"./app-BIgXwuew.js";function s({className:r="",disabled:t,children:e,...o}){return n.jsx("button",{...o,className:`inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 ${t&&"opacity-25"} `+r,disabled:t,children:e})}export{s as P};
+>>>>>>>> 515e2cf14bbc7050a85e0f7af939a2c3855c1395:public/build/assets/PrimaryButton-DpobhmcZ.js
+>>>>>>> 5cc6ea9a7349e23be3977d143a5a15c23e4f0212
+>>>>>>> 6baf6f7875a19186484606f01c7caf10652ec45f

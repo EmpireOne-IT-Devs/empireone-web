@@ -5,5 +5,14 @@ import{j as i}from"./app-BIgXwuew.js";import{L as a}from"./index-BODuKFF8.js";im
 import{j as i}from"./app-CGgoECHB.js";import{K as a}from"./index-CRpfRQhZ.js";import{B as e}from"./button-BSTmr2ny.js";import{m as o}from"./proxy-CAtb2wqg.js";import"./iconBase-Bk_BYJS5.js";import"./index-DIIJvtre.js";function l({selectedCount:r,onClick:s,loading:t}){return i.jsx(o.div,{whileTap:{scale:.97},whileHover:{y:-1},children:i.jsxs(e,{variant:"success",disabled:r===0,loading:t,onClick:s,className:"gap-2 !py-2.5 text-sm",children:[i.jsx(a,{size:16,"aria-hidden":"true"}),"Approve Selected",r>0?` (${r})`:""]})})}export{l as default};
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/batch-endorse-button-Rhycipes.js
 =======
+<<<<<<< HEAD
 import{j as i}from"./app-CGgoECHB.js";import{K as a}from"./index-CRpfRQhZ.js";import{B as e}from"./button-BSTmr2ny.js";import{m as o}from"./proxy-CAtb2wqg.js";import"./iconBase-Bk_BYJS5.js";import"./index-DIIJvtre.js";function l({selectedCount:r,onClick:s,loading:t}){return i.jsx(o.div,{whileTap:{scale:.97},whileHover:{y:-1},children:i.jsxs(e,{variant:"success",disabled:r===0,loading:t,onClick:s,className:"gap-2 !py-2.5 text-sm",children:[i.jsx(a,{size:16,"aria-hidden":"true"}),"Approve Selected",r>0?` (${r})`:""]})})}export{l as default};
 >>>>>>> 0d184c9a8c (added commit)
+=======
+<<<<<<<< HEAD:public/build/assets/batch-endorse-button-Rhycipes.js
+import{j as i}from"./app-CGgoECHB.js";import{K as a}from"./index-CRpfRQhZ.js";import{B as e}from"./button-BSTmr2ny.js";import{m as o}from"./proxy-CAtb2wqg.js";import"./iconBase-Bk_BYJS5.js";import"./index-DIIJvtre.js";function l({selectedCount:r,onClick:s,loading:t}){return i.jsx(o.div,{whileTap:{scale:.97},whileHover:{y:-1},children:i.jsxs(e,{variant:"success",disabled:r===0,loading:t,onClick:s,className:"gap-2 !py-2.5 text-sm",children:[i.jsx(a,{size:16,"aria-hidden":"true"}),"Approve Selected",r>0?` (${r})`:""]})})}export{l as default};
+========
+import{j as i}from"./app-BIgXwuew.js";import{L as a}from"./index-BODuKFF8.js";import{B as e}from"./button-ULjHK0m9.js";import{m as o}from"./proxy-c-QXg-11.js";import"./iconBase-CwbjySae.js";import"./index-Bwtnbsp_.js";function l({selectedCount:r,onClick:s,loading:t}){return i.jsx(o.div,{whileTap:{scale:.97},whileHover:{y:-1},children:i.jsxs(e,{variant:"success",disabled:r===0,loading:t,onClick:s,className:"gap-2 !py-2.5 text-sm",children:[i.jsx(a,{size:16,"aria-hidden":"true"}),"Approve Selected",r>0?` (${r})`:""]})})}export{l as default};
+>>>>>>>> 515e2cf14bbc7050a85e0f7af939a2c3855c1395:public/build/assets/batch-endorse-button-DOQI3iec.js
+>>>>>>> 5cc6ea9a7349e23be3977d143a5a15c23e4f0212
+>>>>>>> 6baf6f7875a19186484606f01c7caf10652ec45f
