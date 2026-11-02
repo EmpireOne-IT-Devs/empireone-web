@@ -151,6 +151,14 @@ class EStoreRedemptionTest extends TestCase
             $table->unique(['redemption_id', 'type']);
         });
 
+        Schema::create('engagement_post_event_files', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('engagement_e_store_id')->nullable();
+            $table->string('name')->nullable();
+            $table->string('url', 2048)->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('engagement_reward_challenges', function (Blueprint $table) {
             $table->id();
             $table->string('title');
@@ -601,5 +609,116 @@ class EStoreRedemptionTest extends TestCase
             ->assertJsonPath('data.total_points', 500)
             ->assertJsonPath('data.redeemed_points', 100)
             ->assertJsonPath('data.available_points', 400);
+    }
+
+    public function test_admin_can_list_stock_with_stats(): void
+    {
+        $this->makeItem(['product_name' => 'Hoodie', 'quantity' => 3]);
+        $this->makeItem(['product_name' => 'Mug', 'quantity' => 20]);
+        $this->makeItem(['product_name' => 'Sticker', 'quantity' => null, 'is_unlimited_stock' => true]);
+
+        $response = $this->actingAs($this->admin)->getJson('/api/engagement/admin/e-store-stock');
+
+        $response->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('stats.total_rewards', 3)
+            ->assertJsonPath('stats.needs_attention', 1)
+            ->assertJsonPath('stats.total_units', 23);
+        $this->assertCount(3, $response->json('data'));
+    }
+
+    public function test_admin_can_adjust_stock_set_add_subtract(): void
+    {
+        $item = $this->makeItem(['quantity' => 10]);
+
+        $this->actingAs($this->admin)
+            ->postJson("/api/engagement/admin/e-store-stock/{$item->id}", ['action' => 'set', 'quantity' => 50])
+            ->assertOk();
+        $this->assertDatabaseHas('engagement_e_stores', ['id' => $item->id, 'quantity' => 50]);
+
+        $this->actingAs($this->admin)
+            ->postJson("/api/engagement/admin/e-store-stock/{$item->id}", ['action' => 'add', 'quantity' => 5])
+            ->assertOk();
+        $this->assertDatabaseHas('engagement_e_stores', ['id' => $item->id, 'quantity' => 55]);
+
+        $this->actingAs($this->admin)
+            ->postJson("/api/engagement/admin/e-store-stock/{$item->id}", ['action' => 'subtract', 'quantity' => 15])
+            ->assertOk();
+        $this->assertDatabaseHas('engagement_e_stores', ['id' => $item->id, 'quantity' => 40]);
+    }
+
+    public function test_stock_cannot_go_below_zero(): void
+    {
+        $item = $this->makeItem(['quantity' => 5]);
+
+        $this->actingAs($this->admin)
+            ->postJson("/api/engagement/admin/e-store-stock/{$item->id}", ['action' => 'subtract', 'quantity' => 10])
+            ->assertStatus(422);
+        $this->assertDatabaseHas('engagement_e_stores', ['id' => $item->id, 'quantity' => 5]);
+    }
+
+    public function test_adjust_stock_can_toggle_unlimited(): void
+    {
+        $item = $this->makeItem(['quantity' => 10, 'is_unlimited_stock' => false]);
+
+        $this->actingAs($this->admin)
+            ->postJson("/api/engagement/admin/e-store-stock/{$item->id}", ['action' => 'set', 'quantity' => 0, 'is_unlimited_stock' => true])
+            ->assertOk();
+        $this->assertDatabaseHas('engagement_e_stores', ['id' => $item->id, 'quantity' => null, 'is_unlimited_stock' => true]);
+
+        $this->actingAs($this->admin)
+            ->postJson("/api/engagement/admin/e-store-stock/{$item->id}", ['action' => 'set', 'quantity' => 7, 'is_unlimited_stock' => false])
+            ->assertOk();
+        $this->assertDatabaseHas('engagement_e_stores', ['id' => $item->id, 'quantity' => 7, 'is_unlimited_stock' => false]);
+    }
+
+    public function test_non_admin_cannot_access_stock_endpoints(): void
+    {
+        $item = $this->makeItem();
+
+        $this->actingAs($this->employee)->getJson('/api/engagement/admin/e-store-stock')->assertForbidden();
+        $this->actingAs($this->employee)
+            ->postJson("/api/engagement/admin/e-store-stock/{$item->id}", ['action' => 'set', 'quantity' => 1])
+            ->assertForbidden();
+    }
+
+    public function test_analytics_returns_top_redeemed_and_items_by_type(): void
+    {
+        $this->awardPoints($this->employee, 5000);
+        $hoodie = $this->makeItem(['product_name' => 'Hoodie', 'reward_type' => 'Merchandise', 'point_cost' => 100]);
+        $mug = $this->makeItem(['product_name' => 'Mug', 'reward_type' => 'Merchandise', 'point_cost' => 50]);
+        $card = $this->makeItem(['product_name' => 'Gift Card', 'reward_type' => 'Gift Card', 'point_cost' => 200]);
+
+        // Two approved redemptions for hoodie, one for mug; card only pending (not counted).
+        foreach ([$hoodie, $hoodie, $mug] as $item) {
+            $reference = $this->actingAs($this->employee)
+                ->postJson('/api/engagement/e-store-redemptions', $this->redeemPayload($item))
+                ->json('data.reference');
+            $this->actingAs($this->admin)->postJson("/api/engagement/admin/e-store-redemptions/{$reference}/approve");
+        }
+        $this->actingAs($this->employee)
+            ->postJson('/api/engagement/e-store-redemptions', $this->redeemPayload($card));
+
+        $response = $this->actingAs($this->admin)->getJson('/api/engagement/admin/e-store-redemptions/analytics');
+
+        $response->assertOk()->assertJsonPath('status', 'success');
+
+        $top = $response->json('data.top_redeemed');
+        $this->assertSame('Hoodie', $top[0]['product_name']);
+        $this->assertSame(2, $top[0]['redemptions']);
+        $this->assertSame('Mug', $top[1]['product_name']);
+        $this->assertSame(1, $top[1]['redemptions']);
+        $this->assertCount(2, $top); // pending card redemption not counted
+
+        $types = collect($response->json('data.items_by_type'))->keyBy('reward_type');
+        $this->assertSame(2, $types['Merchandise']['count']);
+        $this->assertSame(1, $types['Gift Card']['count']);
+    }
+
+    public function test_non_admin_cannot_access_analytics(): void
+    {
+        $this->actingAs($this->employee)
+            ->getJson('/api/engagement/admin/e-store-redemptions/analytics')
+            ->assertForbidden();
     }
 }

@@ -12,6 +12,8 @@ import {
     get_e_store_redemptions_thunk,
     cancel_e_store_redemption_thunk,
     get_admin_e_store_redemptions_thunk,
+    get_e_store_redemption_balance_thunk,
+    get_engagement_reward_challenge_profile_summary_thunk,
 } from "@/app/redux/engagement-thunk";
 import RedemptionDetailsModalSection from "./redemption-details-modal-section";
 import RedemptionFilterSection from "./redemption-filter-section";
@@ -95,6 +97,8 @@ export default function RedemptionTableSection() {
             return;
         }
         dispatch(setAlert({ type: "success", message: "Redemption cancelled and points refunded." }));
+        dispatch(get_e_store_redemption_balance_thunk());
+        dispatch(get_engagement_reward_challenge_profile_summary_thunk());
         setCancelTarget(null);
     };
 

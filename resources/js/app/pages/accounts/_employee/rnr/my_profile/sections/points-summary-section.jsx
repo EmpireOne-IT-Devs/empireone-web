@@ -137,6 +137,9 @@ export default function PointsSummarySection() {
         : [];
 
     const totalPoints = Number(summary.total_points) || 0;
+    const availablePoints = Number(summary.available_points ?? summary.total_points) || 0;
+    const redeemedPoints = Number(summary.redeemed_points) || 0;
+    const refundedPoints = Number(summary.refunded_points) || 0;
     const totalChallenges = history.length;
     const approvedChallenges = history.filter(
         (item) => item.status === "approved"
@@ -246,13 +249,20 @@ export default function PointsSummarySection() {
                             <Trophy size={24} />
                         </div>
                         <div>
-                            <p className="text-xs font-medium text-gray-500">Total Points Earned</p>
+                            <p className="text-xs font-medium text-gray-500">Available Points</p>
                             {challengeProfileSummaryLoading && !challengeProfileSummary ? (
                                 <div className="mt-1 h-7 w-24 animate-pulse rounded bg-gray-200" />
                             ) : (
-                                <p className="text-2xl font-bold text-gray-900">
-                                    {formatPoints(totalPoints)}
-                                </p>
+                                <>
+                                    <p className="text-2xl font-bold text-gray-900">
+                                        {formatPoints(availablePoints)}
+                                    </p>
+                                    <p className="mt-0.5 text-[11px] text-gray-500">
+                                        {formatPoints(totalPoints)} earned
+                                        {redeemedPoints > 0 && ` · ${formatPoints(redeemedPoints)} redeemed`}
+                                        {refundedPoints > 0 && ` · ${formatPoints(refundedPoints)} refunded`}
+                                    </p>
+                                </>
                             )}
                         </div>
                     </div>
@@ -260,12 +270,18 @@ export default function PointsSummarySection() {
             </section>
 
             {/* Overview cards */}
-            <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     icon={Trophy}
-                    label="Total Points"
-                    value={totalPoints}
-                    description="Points accumulated"
+                    label="Available Points"
+                    value={availablePoints}
+                    description="Points you can spend"
+                />
+                <StatCard
+                    icon={Sparkles}
+                    label="Points Redeemed"
+                    value={redeemedPoints}
+                    description="Spent on E-Store rewards"
                 />
                 <StatCard
                     icon={Target}

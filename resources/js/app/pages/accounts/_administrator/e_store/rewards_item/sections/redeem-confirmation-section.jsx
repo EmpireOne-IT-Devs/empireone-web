@@ -15,6 +15,7 @@ import {
     create_e_store_redemption_thunk,
     get_e_store_redemption_balance_thunk,
     get_engagement_e_store_items_thunk,
+    get_engagement_reward_challenge_profile_summary_thunk,
 } from "@/app/redux/engagement-thunk";
 
 function newIdempotencyKey() {
@@ -96,6 +97,7 @@ export default function RedeemConfirmationSection({ reward, isOpen, onClose, onR
         const redemption = result.payload?.data;
         dispatch(get_e_store_redemption_balance_thunk());
         dispatch(get_engagement_e_store_items_thunk());
+        dispatch(get_engagement_reward_challenge_profile_summary_thunk());
         dispatch(
             setAlert({
                 type: "success",

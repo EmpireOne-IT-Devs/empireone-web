@@ -48,11 +48,14 @@ import {
     cancel_e_store_redemption_thunk,
     get_admin_e_store_redemptions_thunk,
     get_admin_e_store_redemption_stats_thunk,
+    get_admin_e_store_redemption_analytics_thunk,
     approve_e_store_redemption_thunk,
     process_e_store_redemption_thunk,
     complete_e_store_redemption_thunk,
     reject_e_store_redemption_thunk,
     admin_cancel_e_store_redemption_thunk,
+    get_admin_e_store_stock_thunk,
+    adjust_e_store_stock_thunk,
     set_reward_challenge_upload_progress,
 } from "./engagement-thunk";
 
@@ -105,11 +108,14 @@ export {
     cancel_e_store_redemption_thunk,
     get_admin_e_store_redemptions_thunk,
     get_admin_e_store_redemption_stats_thunk,
+    get_admin_e_store_redemption_analytics_thunk,
     approve_e_store_redemption_thunk,
     process_e_store_redemption_thunk,
     complete_e_store_redemption_thunk,
     reject_e_store_redemption_thunk,
     admin_cancel_e_store_redemption_thunk,
+    get_admin_e_store_stock_thunk,
+    adjust_e_store_stock_thunk,
 };
 
 const engagementSlice = createSlice({
@@ -262,8 +268,19 @@ const engagementSlice = createSlice({
         adminEStoreRedemptionsError: null,
         adminEStoreRedemptionStats: null,
         adminEStoreRedemptionStatsLoading: false,
+        adminEStoreRedemptionAnalytics: null,
+        adminEStoreRedemptionAnalyticsLoading: false,
         adminEStoreRedemptionActionRef: null,
         adminEStoreRedemptionActionError: null,
+
+        // E-Store stock management (admin)
+        adminEStoreStock: [],
+        adminEStoreStockMeta: null,
+        adminEStoreStockStats: null,
+        adminEStoreStockLoading: false,
+        adminEStoreStockError: null,
+        adminEStoreStockAdjustingId: null,
+        adminEStoreStockAdjustError: null,
     },
     reducers: {
         syncInteraction(state, action) {
@@ -1118,6 +1135,17 @@ const engagementSlice = createSlice({
             .addCase(get_admin_e_store_redemption_stats_thunk.rejected, (state) => {
                 state.adminEStoreRedemptionStatsLoading = false;
             })
+
+            .addCase(get_admin_e_store_redemption_analytics_thunk.pending, (state) => {
+                state.adminEStoreRedemptionAnalyticsLoading = true;
+            })
+            .addCase(get_admin_e_store_redemption_analytics_thunk.fulfilled, (state, action) => {
+                state.adminEStoreRedemptionAnalyticsLoading = false;
+                state.adminEStoreRedemptionAnalytics = action.payload?.data ?? null;
+            })
+            .addCase(get_admin_e_store_redemption_analytics_thunk.rejected, (state) => {
+                state.adminEStoreRedemptionAnalyticsLoading = false;
+            })
             .addCase(approve_e_store_redemption_thunk.pending, adminActionPending)
             .addCase(approve_e_store_redemption_thunk.fulfilled, syncAdminRedemption)
             .addCase(approve_e_store_redemption_thunk.rejected, adminActionRejected)
@@ -1132,7 +1160,45 @@ const engagementSlice = createSlice({
             .addCase(reject_e_store_redemption_thunk.rejected, adminActionRejected)
             .addCase(admin_cancel_e_store_redemption_thunk.pending, adminActionPending)
             .addCase(admin_cancel_e_store_redemption_thunk.fulfilled, syncAdminRedemption)
-            .addCase(admin_cancel_e_store_redemption_thunk.rejected, adminActionRejected);
+            .addCase(admin_cancel_e_store_redemption_thunk.rejected, adminActionRejected)
+
+            .addCase(get_admin_e_store_stock_thunk.pending, (state) => {
+                state.adminEStoreStockLoading = true;
+                state.adminEStoreStockError = null;
+            })
+            .addCase(get_admin_e_store_stock_thunk.fulfilled, (state, action) => {
+                state.adminEStoreStockLoading = false;
+                state.adminEStoreStock = action.payload?.data ?? [];
+                state.adminEStoreStockMeta = action.payload?.meta ?? null;
+                state.adminEStoreStockStats = action.payload?.stats ?? null;
+            })
+            .addCase(get_admin_e_store_stock_thunk.rejected, (state, action) => {
+                state.adminEStoreStockLoading = false;
+                state.adminEStoreStockError = action.payload;
+            })
+
+            .addCase(adjust_e_store_stock_thunk.pending, (state, action) => {
+                state.adminEStoreStockAdjustingId = action.meta.arg?.id ?? null;
+                state.adminEStoreStockAdjustError = null;
+            })
+            .addCase(adjust_e_store_stock_thunk.fulfilled, (state, action) => {
+                state.adminEStoreStockAdjustingId = null;
+                const updated = action.payload?.data;
+                if (updated?.id) {
+                    const index = state.adminEStoreStock.findIndex((item) => item.id === updated.id);
+                    if (index !== -1) {
+                        state.adminEStoreStock[index] = updated;
+                    }
+                    const itemIndex = state.eStoreItems.findIndex((item) => item.id === updated.id);
+                    if (itemIndex !== -1) {
+                        state.eStoreItems[itemIndex] = updated;
+                    }
+                }
+            })
+            .addCase(adjust_e_store_stock_thunk.rejected, (state, action) => {
+                state.adminEStoreStockAdjustingId = null;
+                state.adminEStoreStockAdjustError = action.payload;
+            });
     },
 });
 

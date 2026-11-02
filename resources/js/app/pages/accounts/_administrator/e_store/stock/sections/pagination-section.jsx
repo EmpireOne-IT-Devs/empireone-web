@@ -1,16 +1,15 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import Pagination from "@/app/_components/pagination";
 
-export default function PaginationSection() {
-    // Static sample pagination data (UI only for now, not wired to real data yet)
-    const data = {
-        current_page: 1,
-        last_page: 5,
-    };
+export default function PaginationSection({ onPageChange }) {
+    const { adminEStoreStockMeta } = useSelector((state) => state.engagement);
+
+    if (!adminEStoreStockMeta || adminEStoreStockMeta.last_page <= 1) return null;
 
     return (
         <div className="pagination-section">
-            <Pagination data={data} />
+            <Pagination data={adminEStoreStockMeta} onPageChange={onPageChange} />
         </div>
     );
 }

@@ -49,11 +49,14 @@ import {
     cancel_e_store_redemption_service,
     get_admin_e_store_redemptions_service,
     get_admin_e_store_redemption_stats_service,
+    get_admin_e_store_redemption_analytics_service,
     approve_e_store_redemption_service,
     process_e_store_redemption_service,
     complete_e_store_redemption_service,
     reject_e_store_redemption_service,
     admin_cancel_e_store_redemption_service,
+    get_admin_e_store_stock_service,
+    adjust_e_store_stock_service,
 } from "../services/engagement-service";
 
 export const set_reward_challenge_upload_progress = createAction(
@@ -832,6 +835,42 @@ export const admin_cancel_e_store_redemption_thunk = createAsyncThunk(
     async ({ reference, data = {} }, { rejectWithValue }) => {
         try {
             const response = await admin_cancel_e_store_redemption_service(reference, data);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_admin_e_store_redemption_analytics_thunk = createAsyncThunk(
+    "engagement/getAdminEStoreRedemptionAnalytics",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await get_admin_e_store_redemption_analytics_service();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const get_admin_e_store_stock_thunk = createAsyncThunk(
+    "engagement/getAdminEStoreStock",
+    async (params = {}, { rejectWithValue }) => {
+        try {
+            const response = await get_admin_e_store_stock_service(params);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    },
+);
+
+export const adjust_e_store_stock_thunk = createAsyncThunk(
+    "engagement/adjustEStoreStock",
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await adjust_e_store_stock_service(id, data);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || error.message);

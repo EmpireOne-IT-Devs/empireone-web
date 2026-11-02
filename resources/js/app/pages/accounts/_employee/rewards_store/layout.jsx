@@ -22,6 +22,7 @@ export default function RewardsStoreLayout({ children }) {
     return (
         <div>
             <HeaderSection />
+        
             <Tabs tabs={tabs} />
             <div className="p-3">{children}</div>
         </div>

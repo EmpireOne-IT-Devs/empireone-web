@@ -287,6 +287,10 @@ export async function get_admin_e_store_redemption_stats_service() {
     return await axios.get("/api/engagement/admin/e-store-redemptions/stats");
 }
 
+export async function get_admin_e_store_redemption_analytics_service() {
+    return await axios.get("/api/engagement/admin/e-store-redemptions/analytics");
+}
+
 export async function approve_e_store_redemption_service(reference, data = {}) {
     return await axios.post(`/api/engagement/admin/e-store-redemptions/${reference}/approve`, data);
 }
@@ -305,4 +309,12 @@ export async function reject_e_store_redemption_service(reference, data) {
 
 export async function admin_cancel_e_store_redemption_service(reference, data = {}) {
     return await axios.post(`/api/engagement/admin/e-store-redemptions/${reference}/cancel`, data);
+}
+
+export async function get_admin_e_store_stock_service(params = {}) {
+    return await axios.get("/api/engagement/admin/e-store-stock", { params });
+}
+
+export async function adjust_e_store_stock_service(id, data) {
+    return await axios.post(`/api/engagement/admin/e-store-stock/${id}`, data);
 }

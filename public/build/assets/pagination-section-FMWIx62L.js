@@ -1,1 +1,0 @@
-import{b as s,j as e}from"./app-KhFClalj.js";import{P as n}from"./pagination-Brb0qg1E.js";import"./iconBase-DU1RHd7v.js";function m(){const{employees:o}=s(t=>t.human_resources);return console.log("employees",o),e.jsx(e.Fragment,{children:e.jsx(n,{data:o})})}export{m as default};

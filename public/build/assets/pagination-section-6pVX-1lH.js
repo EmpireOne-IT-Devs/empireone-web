@@ -1,1 +1,0 @@
-import{j as n}from"./app-KhFClalj.js";import{P as o}from"./pagination-Brb0qg1E.js";import"./iconBase-DU1RHd7v.js";function s({data:t,onPageChange:i}){return!t?.last_page||t.last_page<1?null:n.jsx(o,{data:t,onPageChange:i})}export{s as default};

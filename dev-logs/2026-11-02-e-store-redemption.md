@@ -115,3 +115,83 @@
 - **QA Checklist Result:** ✅ All items pass.
 - **Deployment Notes (for user to run):** `npm run build`; git add/commit/push; `php artisan queue:work` only when notifications are added later. No config/env changes required.
 - **Next Steps:** Feature complete. Optional future phase: email notifications on status change (deferred per Phase 1 decision 5).
+
+### Phase 6: Live Points Badge in Rewards Store Layout
+
+- **Timestamp:** 2026-11-02 18:52
+- **Mode:** Agent
+- **Persona(s) Active:** 🖥️ Frontend + 🎨 Designer
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/_employee/rewards_store/sections/points-section.jsx` — **replaced stub**: compact orange pill badge (star icon + available points), click-to-open breakdown popover (earned / −redeemed / +refunded / available), skeleton loading, Escape + click-outside close
+  - `resources/js/app/pages/accounts/_employee/rewards_store/layout.jsx` — renders `PointsSection` under the header, above the tabs
+  - `resources/js/app/pages/accounts/_administrator/e_store/redemption_history/sections/redemption-table-section.jsx` — dispatches `get_e_store_redemption_balance_thunk()` after a successful employee cancel so refunds update the badge instantly
+- **Issues Encountered:**
+  1. esbuild `--outfile=NUL` made PowerShell report a false failure (stderr redirect confused `$LASTEXITCODE`).
+- **Resolution:**
+  1. Re-ran with a real temp outfile — all 3 files parse clean.
+- **QA Checklist Result:** ✅ All items pass; a11y/responsive marked Code-level ✅ — requires browser verification.
+- **Realtime approach:** Option A (Redux-driven). Badge reads `eStoreRedemptionBalance`; redeem success and cancel/refund both re-dispatch the balance thunk, so deduct/refund update instantly in-session. No websockets/polling added (not in current infra).
+- **Next Steps:** None — feature complete. Optional: email notifications phase.
+
+### Phase 7: Spendable Points on R&R My Profile
+
+- **Timestamp:** 2026-11-02 20:05
+- **Mode:** Agent
+- **Persona(s) Active:** 🖥️ Frontend
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/_employee/rnr/my_profile/sections/points-summary-section.jsx` — hero "Total Points Earned" → "Available Points" (spendable) with "earned · redeemed · refunded" sub-line; added 4th overview card "Points Redeemed"; grid `sm:grid-cols-3` → `sm:grid-cols-2 lg:grid-cols-4`
+  - `resources/js/app/pages/accounts/_administrator/e_store/rewards_item/sections/redeem-confirmation-section.jsx` — dispatches `get_engagement_reward_challenge_profile_summary_thunk()` after successful redeem
+  - `resources/js/app/pages/accounts/_administrator/e_store/redemption_history/sections/redemption-table-section.jsx` — dispatches the same thunk after employee cancel (refund)
+- **Issues Encountered:** None.
+- **Resolution:** N/A
+- **QA Checklist Result:** ✅ All items pass; responsive marked Code-level ✅ — requires browser verification. `php artisan test --filter=EStoreRedemption` re-confirmed 21/21.
+- **Realtime approach:** Redux-driven — redeem and cancel both refresh `challengeProfileSummary`, so Available/Redeemed update instantly in-session.
+- **Next Steps:** None — feature complete. Optional: email notifications phase.
+
+### Phase 8: Stock Management (Backend + UI)
+
+- **Timestamp:** 2026-11-02 20:15
+- **Mode:** Agent
+- **Persona(s) Active:** ⚙️ Backend + 🖥️ Frontend
+- **Files Modified/Created:**
+  - `app/Http/Controllers/API/Engagement/EngagementEStoreController.php` — added `stock()` (admin, paginated, search/reward_type/status filter, low-stock threshold 5, stats) and `adjustStock()` (transaction + `lockForUpdate`, set/add/subtract, never negative, unlimited toggle)
+  - `app/Http/Requests/Engagement/AdjustEStoreStockRequest.php` — **new**: `action` in set/add/subtract, `quantity` int 0–1000000, `is_unlimited_stock` bool
+  - `routes/api.php` — `GET admin/e-store-stock`, `POST admin/e-store-stock/{engagementEStore}`
+  - `resources/js/app/services/engagement-service.js` — `get_admin_e_store_stock_service`, `adjust_e_store_stock_service`
+  - `resources/js/app/redux/engagement-thunk.js` — 2 thunks
+  - `resources/js/app/redux/engagement-slice.js` — `adminEStoreStock*` state; adjust fulfillment syncs both `adminEStoreStock` and shared `eStoreItems`
+  - `resources/js/app/pages/accounts/_administrator/e_store/stock/sections/stock-table-section.jsx` — **replaced hardcoded** sample data with real paginated data + per-row Adjust Stock
+  - `resources/js/app/pages/accounts/_administrator/e_store/stock/sections/card-section.jsx` — **replaced hardcoded** stats with live `total_rewards` / `needs_attention` / `total_units`
+  - `resources/js/app/pages/accounts/_administrator/e_store/stock/sections/pagination-section.jsx` — **replaced fake** pagination with real `meta`
+  - `resources/js/app/pages/accounts/_administrator/e_store/stock/sections/stock-adjust-modal-section.jsx` — **new**: set/add/subtract + unlimited toggle, inline 422
+  - `resources/js/app/pages/accounts/_administrator/e_store/stock/page.jsx` — lifted `page` state to share between table and pagination
+  - `tests/Feature/Engagement/EStoreRedemptionTest.php` — +5 stock tests; added `engagement_post_event_files` stub table
+- **Issues Encountered:**
+  1. 3 stock tests failed: `adjustStock` returns `$locked->fresh('files…')` but the test schema lacked `engagement_post_event_files`.
+  2. `page` state lived in the table but pagination needed it — lifted to `page.jsx`.
+- **Resolution:**
+  1. Added the stub table to the test schema.
+  2. Passed `page`/`onPageChange` as props.
+- **QA Checklist Result:** ✅ All items pass; responsive marked Code-level ✅ — requires browser verification. `php artisan test --filter=EStoreRedemption` → **26 passed, 104 assertions**.
+- **Next Steps:** None — feature complete. Optional: email notifications phase.
+
+### Phase 9: E-Store Analytics (Backend + UI)
+
+- **Timestamp:** 2026-11-02 20:25
+- **Mode:** Agent
+- **Persona(s) Active:** ⚙️ Backend + 🖥️ Frontend
+- **Files Modified/Created:**
+  - `app/Http/Controllers/API/Engagement/EngagementEStoreRedemptionAdminController.php` — added `analytics()`: top redeemed items (approved/processing/completed only, grouped by item, redemptions + units, top 5) and items-by-type (grouped `reward_type` counts)
+  - `routes/api.php` — `GET admin/e-store-redemptions/analytics`
+  - `resources/js/app/services/engagement-service.js` — `get_admin_e_store_redemption_analytics_service`
+  - `resources/js/app/redux/engagement-thunk.js` — `get_admin_e_store_redemption_analytics_thunk`
+  - `resources/js/app/redux/engagement-slice.js` — `adminEStoreRedemptionAnalytics*` state
+  - `resources/js/app/pages/accounts/_administrator/e_store/analytics/sections/redeemed-item-sections.jsx` — **replaced static array** with real top-redeemed list (rank, image/type icon, name, redemptions + units), loading skeleton, empty state
+  - `resources/js/app/pages/accounts/_administrator/e_store/analytics/sections/item-type-card-section.jsx` — **replaced static array** with real items-by-type counts (icon per type, fallback tag icon), loading skeleton, empty state
+  - `tests/Feature/Engagement/EStoreRedemptionTest.php` — +2 analytics tests (data correctness + admin-only)
+- **Issues Encountered:**
+  1. Two slice edits hit ambiguous matches (import block vs re-export block share the same thunk list).
+- **Resolution:**
+  1. Disambiguated with surrounding context (`set_reward_challenge_upload_progress` for imports, `};` for re-exports).
+- **QA Checklist Result:** ✅ All items pass; responsive marked Code-level ✅ — requires browser verification. `php artisan test --filter=EStoreRedemption` → **28 passed, 114 assertions**.
+- **Next Steps:** None — feature complete. Optional: email notifications phase.

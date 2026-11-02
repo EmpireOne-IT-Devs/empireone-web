@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Engagement\AdjustEStoreStockRequest;
 use App\Models\Engagement\EngagementEStore;
 use App\Models\Engagement\EngagementPostEventFile;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class EngagementEStoreController extends Controller
@@ -171,6 +174,106 @@ class EngagementEStoreController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Reward item deleted successfully.',
+        ]);
+    }
+
+    public function stock(Request $request): JsonResponse
+    {
+        Gate::authorize('viewAnyAdmin', \App\Models\Engagement\EngagementEStoreRedemption::class);
+
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'reward_type' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'string', 'in:in_stock,low_stock,out_of_stock,unlimited'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
+        ]);
+
+        $search = trim((string) ($validated['search'] ?? ''));
+        $rewardType = $validated['reward_type'] ?? null;
+        $status = $validated['status'] ?? null;
+        $lowThreshold = 5;
+
+        $query = EngagementEStore::query()
+            ->with('files:id,engagement_e_store_id,name,url')
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($inner) use ($search) {
+                    $inner->where('product_name', 'like', "%{$search}%")
+                        ->orWhere('customer_description', 'like', "%{$search}%")
+                        ->orWhere('reward_type', 'like', "%{$search}%");
+                });
+            })
+            ->when($rewardType, fn ($q, $value) => $q->where('reward_type', $value))
+            ->when($status === 'unlimited', fn ($q) => $q->where('is_unlimited_stock', true))
+            ->when($status === 'in_stock', fn ($q) => $q->where('is_unlimited_stock', false)->where('quantity', '>', $lowThreshold))
+            ->when($status === 'low_stock', fn ($q) => $q->where('is_unlimited_stock', false)->whereBetween('quantity', [1, $lowThreshold]))
+            ->when($status === 'out_of_stock', fn ($q) => $q->where('is_unlimited_stock', false)->where('quantity', '<=', 0))
+            ->latest();
+
+        $items = $query->paginate($validated['per_page'] ?? 15);
+
+        $all = EngagementEStore::query()->get(['quantity', 'is_unlimited_stock']);
+        $stats = [
+            'total_rewards' => $all->count(),
+            'needs_attention' => $all->filter(fn ($i) => ! $i->is_unlimited_stock && (int) $i->quantity <= $lowThreshold)->count(),
+            'total_units' => $all->filter(fn ($i) => ! $i->is_unlimited_stock)->sum(fn ($i) => (int) $i->quantity),
+        ];
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $items->items(),
+            'meta' => [
+                'current_page' => $items->currentPage(),
+                'last_page' => $items->lastPage(),
+                'per_page' => $items->perPage(),
+                'total' => $items->total(),
+            ],
+            'stats' => $stats,
+        ]);
+    }
+
+    public function adjustStock(AdjustEStoreStockRequest $request, EngagementEStore $engagementEStore): JsonResponse
+    {
+        Gate::authorize('viewAnyAdmin', \App\Models\Engagement\EngagementEStoreRedemption::class);
+
+        $validated = $request->validated();
+
+        $item = DB::transaction(function () use ($engagementEStore, $validated) {
+            $locked = EngagementEStore::query()->whereKey($engagementEStore->id)->lockForUpdate()->firstOrFail();
+
+            $makeUnlimited = array_key_exists('is_unlimited_stock', $validated)
+                ? (bool) $validated['is_unlimited_stock']
+                : $locked->is_unlimited_stock;
+
+            if ($makeUnlimited) {
+                $locked->is_unlimited_stock = true;
+                $locked->quantity = null;
+            } else {
+                $current = (int) ($locked->quantity ?? 0);
+                $quantity = (int) $validated['quantity'];
+
+                $newQuantity = match ($validated['action']) {
+                    'set' => $quantity,
+                    'add' => $current + $quantity,
+                    'subtract' => $current - $quantity,
+                };
+
+                abort_unless($newQuantity >= 0, 422, 'Stock cannot go below zero.');
+
+                $locked->is_unlimited_stock = false;
+                $locked->quantity = $newQuantity;
+            }
+
+            $locked->updated_by = auth()->id();
+            $locked->save();
+
+            return $locked->fresh('files:id,engagement_e_store_id,name,url');
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Stock updated successfully.',
+            'data' => $item,
         ]);
     }
 }

@@ -307,8 +307,12 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('e-store-redemptions/{redemption}', [EngagementEStoreRedemptionController::class, 'show']);
         Route::post('e-store-redemptions/{redemption}/cancel', [EngagementEStoreRedemptionController::class, 'cancel']);
 
+        Route::get('admin/e-store-stock', [EngagementEStoreController::class, 'stock']);
+        Route::post('admin/e-store-stock/{engagementEStore}', [EngagementEStoreController::class, 'adjustStock']);
+
         Route::get('admin/e-store-redemptions', [EngagementEStoreRedemptionAdminController::class, 'index']);
         Route::get('admin/e-store-redemptions/stats', [EngagementEStoreRedemptionAdminController::class, 'stats']);
+        Route::get('admin/e-store-redemptions/analytics', [EngagementEStoreRedemptionAdminController::class, 'analytics']);
         Route::get('admin/e-store-redemptions/{redemption}', [EngagementEStoreRedemptionAdminController::class, 'show']);
         Route::post('admin/e-store-redemptions/{redemption}/approve', [EngagementEStoreRedemptionAdminController::class, 'approve']);
         Route::post('admin/e-store-redemptions/{redemption}/process', [EngagementEStoreRedemptionAdminController::class, 'process']);

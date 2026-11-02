@@ -81,6 +81,55 @@ class EngagementEStoreRedemptionAdminController extends Controller
         ]);
     }
 
+    public function analytics(): JsonResponse
+    {
+        Gate::authorize('viewAnyAdmin', EngagementEStoreRedemption::class);
+
+        $countedStatuses = [
+            EngagementEStoreRedemption::STATUS_APPROVED,
+            EngagementEStoreRedemption::STATUS_PROCESSING,
+            EngagementEStoreRedemption::STATUS_COMPLETED,
+        ];
+
+        $topRedeemed = EngagementEStoreRedemption::query()
+            ->selectRaw('engagement_e_store_id, COUNT(*) as redemptions, SUM(quantity) as units')
+            ->whereIn('status', $countedStatuses)
+            ->groupBy('engagement_e_store_id')
+            ->orderByDesc('redemptions')
+            ->orderByDesc('units')
+            ->limit(5)
+            ->with('item:id,product_name,product_image,reward_type')
+            ->get()
+            ->map(fn ($row) => [
+                'item_id' => $row->engagement_e_store_id,
+                'product_name' => $row->item?->product_name ?? 'Unknown item',
+                'product_image' => $row->item?->product_image,
+                'reward_type' => $row->item?->reward_type,
+                'redemptions' => (int) $row->redemptions,
+                'units' => (int) $row->units,
+            ])
+            ->values();
+
+        $itemsByType = \App\Models\Engagement\EngagementEStore::query()
+            ->selectRaw('reward_type, COUNT(*) as total')
+            ->groupBy('reward_type')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn ($row) => [
+                'reward_type' => $row->reward_type,
+                'count' => (int) $row->total,
+            ])
+            ->values();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'top_redeemed' => $topRedeemed,
+                'items_by_type' => $itemsByType,
+            ],
+        ]);
+    }
+
     public function show(Request $request, EngagementEStoreRedemption $redemption): JsonResponse
     {
         Gate::authorize('view', $redemption);
