@@ -1,8 +1,18 @@
 <<<<<<<< HEAD:public/build/assets/divider-section-D_GyVnHV.js
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:public/build/assets/divider-section-D_GyVnHV.js
+>>>>>>> 0d184c9a8c (added commit)
 import{j as e}from"./app-BIgXwuew.js";function r(){return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
 ========
 import{j as e}from"./app-CGgoECHB.js";function r(){return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/divider-section-WndqnmHP.js
+<<<<<<< HEAD
+=======
+========
+import{j as e}from"./app-CGgoECHB.js";function r(){return e.jsxs(e.Fragment,{children:[e.jsx("style",{children:`
+>>>>>>>> 0d184c9a8c (added commit):public/build/assets/divider-section-WndqnmHP.js
+>>>>>>> 0d184c9a8c (added commit)
                 @keyframes gradientSlide {
                     0%   { background-position: 0% 50%; }
                     100% { background-position: 200% 50%; }

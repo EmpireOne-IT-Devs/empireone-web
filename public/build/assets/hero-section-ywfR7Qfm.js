@@ -1,8 +1,18 @@
 <<<<<<<< HEAD:public/build/assets/hero-section-DB0O11W-.js
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:public/build/assets/hero-section-DB0O11W-.js
+>>>>>>> 0d184c9a8c (added commit)
 import{r as l,j as e}from"./app-BIgXwuew.js";import"./index-Bwtnbsp_.js";const t=[{role:"UI/UX Designer",type:"Remote",color:"#7c3aed"},{role:"Customer Support",type:"Full-time",color:"#0ea5e9"},{role:"Data Analyst",type:"Contract",color:"#10b981"},{role:"Sales Rep",type:"Remote",color:"#f97316"},{role:"Administrative Assistant",type:"Part-time",color:"#ec4899"},{role:"TA Staff",type:"Freelance",color:"#f59e0b"},{role:"Account Manager",type:"Remote",color:"#6366f1"}];function o(){const[r,i]=l.useState(850);return l.useEffect(()=>{const s=setInterval(()=>{i(a=>a+Math.floor(Math.random()*3))},3e3);return()=>clearInterval(s)},[]),e.jsxs("section",{className:"relative sm:min-h-screen w-full overflow-hidden bg-[#0a0a14] text-white flex flex-col",id:"home",children:[e.jsx("style",{children:`
 ========
 import{r as l,j as e}from"./app-CGgoECHB.js";import"./index-DIIJvtre.js";const t=[{role:"UI/UX Designer",type:"Remote",color:"#7c3aed"},{role:"Customer Support",type:"Full-time",color:"#0ea5e9"},{role:"Data Analyst",type:"Contract",color:"#10b981"},{role:"Sales Rep",type:"Remote",color:"#f97316"},{role:"Administrative Assistant",type:"Part-time",color:"#ec4899"},{role:"TA Staff",type:"Freelance",color:"#f59e0b"},{role:"Account Manager",type:"Remote",color:"#6366f1"}];function o(){const[r,i]=l.useState(850);return l.useEffect(()=>{const s=setInterval(()=>{i(a=>a+Math.floor(Math.random()*3))},3e3);return()=>clearInterval(s)},[]),e.jsxs("section",{className:"relative sm:min-h-screen w-full overflow-hidden bg-[#0a0a14] text-white flex flex-col",id:"home",children:[e.jsx("style",{children:`
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/hero-section-ywfR7Qfm.js
+<<<<<<< HEAD
+=======
+========
+import{r as l,j as e}from"./app-CGgoECHB.js";import"./index-DIIJvtre.js";const t=[{role:"UI/UX Designer",type:"Remote",color:"#7c3aed"},{role:"Customer Support",type:"Full-time",color:"#0ea5e9"},{role:"Data Analyst",type:"Contract",color:"#10b981"},{role:"Sales Rep",type:"Remote",color:"#f97316"},{role:"Administrative Assistant",type:"Part-time",color:"#ec4899"},{role:"TA Staff",type:"Freelance",color:"#f59e0b"},{role:"Account Manager",type:"Remote",color:"#6366f1"}];function o(){const[r,i]=l.useState(850);return l.useEffect(()=>{const s=setInterval(()=>{i(a=>a+Math.floor(Math.random()*3))},3e3);return()=>clearInterval(s)},[]),e.jsxs("section",{className:"relative sm:min-h-screen w-full overflow-hidden bg-[#0a0a14] text-white flex flex-col",id:"home",children:[e.jsx("style",{children:`
+>>>>>>>> 0d184c9a8c (added commit):public/build/assets/hero-section-ywfR7Qfm.js
+>>>>>>> 0d184c9a8c (added commit)
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
         .font-syne { font-family: 'Syne', sans-serif; }

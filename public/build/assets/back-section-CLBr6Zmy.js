@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 <<<<<<<< HEAD:public/build/assets/back-section-CXMlXGJs.js
 import{j as e,k as t}from"./app-BIgXwuew.js";function s({onBack:o}){const n=()=>{t.visit("/accounts/administrator/talent_acquisition/job_posting")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
 ========
 import{j as e,k as t}from"./app-CGgoECHB.js";function s({onBack:o}){const n=()=>{t.visit("/accounts/administrator/talent_acquisition/job_posting")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/back-section-CLBr6Zmy.js
+=======
+import{j as e,k as t}from"./app-CGgoECHB.js";function s({onBack:o}){const n=()=>{t.visit("/accounts/administrator/talent_acquisition/job_posting")};return e.jsx("div",{className:"flex items-center w-full px-6 ",children:e.jsxs("button",{onClick:n,"aria-label":"Go back",className:`
+>>>>>>> 0d184c9a8c (added commit)
           group flex items-center gap-2 px-4 py-2 
           text-[15px] font-semibold text-blue-600 
           bg-transparent border  rounded-lg 

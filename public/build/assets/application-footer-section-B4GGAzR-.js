@@ -1,5 +1,9 @@
 <<<<<<<< HEAD:public/build/assets/application-footer-section-B4GGAzR-.js
+<<<<<<<< HEAD:public/build/assets/application-footer-section-B4GGAzR-.js
 import{j as e,R as s}from"./app-BIgXwuew.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
+========
+import{j as e,R as s}from"./app-CGgoECHB.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
+>>>>>>>> 0d184c9a8c (added commit):public/build/assets/application-footer-section-CaY64pWD.js
 ========
 import{j as e,R as s}from"./app-CGgoECHB.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
 >>>>>>>> 0d184c9a8c (added commit):public/build/assets/application-footer-section-CaY64pWD.js
