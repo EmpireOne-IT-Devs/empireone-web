@@ -1,0 +1,1 @@
+import{b as a,j as t}from"./app-KhFClalj.js";import{P as n}from"./pagination-Brb0qg1E.js";import"./iconBase-DU1RHd7v.js";function m(){const{change_forms:o}=a(r=>r.human_resources);return t.jsx(t.Fragment,{children:t.jsx(n,{data:o})})}export{m as default};
