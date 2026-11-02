@@ -1,0 +1,1 @@
+import{j as t}from"./app-CGgoECHB.js";import{P as i}from"./pagination-B8iiX4mh.js";import"./iconBase-Bk_BYJS5.js";function s(){const a={current_page:1,last_page:5};return t.jsx("div",{className:"pagination-section",children:t.jsx(i,{data:a})})}export{s as default};

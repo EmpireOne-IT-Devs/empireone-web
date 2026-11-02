@@ -338,7 +338,7 @@
                         <div class="cocd-meta">
                             <strong>Standard 1st Offense:</strong> {{ $offense['recommended_penalty'] }}
                             @if(!empty($offense['clearing_period']))
-                            &bull; <strong>Clearing Period:</strong> {{ $offense['clearing_period'] }}[cite: 2]
+                            &bull; <strong>Clearing Period:</strong> {{ $offense['clearing_period'] }}
                             @endif
                         </div>
                         @endif
@@ -347,7 +347,7 @@
 
                     @if(count($offenses) > 1)
                     <div class="rule-callout">
-                        <strong>Rule on Multiple Infractions:</strong> When a single act or incident constitutes two or more infractions, the highest applicable penalty shall govern (Baseline: <strong>{{ $highestPenalty ?? 'Final Written Warning' }}</strong>)[cite: 25].
+                        <strong>Rule on Multiple Infractions:</strong> When a single act or incident constitutes two or more infractions, the highest applicable penalty shall govern (Baseline: <strong>{{ $highestPenalty ?? 'Final Written Warning' }}</strong>).
                     </div>
                     @endif
                     @else
@@ -368,7 +368,7 @@
             <div class="action-item-box">
                 <p class="action-item-title">Submission Required (Due Process)</p>
                 <p class="action-item-desc">
-                    In accordance with company disciplinary procedures, you are hereby given an opportunity to be heard. Please submit your written explanation within <strong>five (5) calendar days</strong> from receipt of this notice[cite: 26].
+                    In accordance with company disciplinary procedures, you are hereby given an opportunity to be heard. Please submit your written explanation within <strong>five (5) calendar days</strong> from receipt of this notice.
                 </p>
             </div>
 

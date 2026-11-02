@@ -1,0 +1,1 @@
+import{j as n}from"./app-CGgoECHB.js";import{P as i}from"./pagination-B8iiX4mh.js";import"./iconBase-Bk_BYJS5.js";function s({data:t,onPageChange:r}){return!t?.last_page||t.last_page<=1?null:n.jsx(n.Fragment,{children:n.jsx(i,{data:t,onPageChange:r})})}export{s as default};
