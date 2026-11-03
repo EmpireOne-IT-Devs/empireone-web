@@ -1310,7 +1310,7 @@ class JobApplicationController extends Controller
     {
         // 1. Validate incoming data
         $validated = $request->validate([
-            'status' => 'string',
+            'ai_status' => 'string',
             'ai_score' => 'nullable'
         ]);
         $application = JobApplication::findOrFail($id);
