@@ -158,7 +158,7 @@ export default function EditLeadSection({ props_data }) {
                         className="w-full"
                     />
                     <Select
-                        label="Second Level Manager"
+                        label="Next Level Manager"
                         required
                         name="department_manager_id"
                         options={leaders?.map((res) => ({

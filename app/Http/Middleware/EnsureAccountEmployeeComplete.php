@@ -17,13 +17,6 @@ class EnsureAccountEmployeeComplete
             return redirect()->route('login');
         }
 
-        // 🔥 INFINITE LOOP PREVENTION
-        // If the user is ALREADY on a setup page or the signature page, let them through immediately!
-        // The asterisk (*) is a wildcard that matches 'administrator' or 'employee' and 'setup1' or 'setup2'
-        if ($request->is('accounts/*/setup*') || $request->is('accounts/*/my_profile/signature')) {
-            return $next($request);
-        }
-
         // 2. Applicants (role 3) don't have an account_employee record — skip check
         if ($user->role === 3) {
             return $next($request);
@@ -33,11 +26,7 @@ class EnsureAccountEmployeeComplete
         $info2 = $user->personal_information;
 
         $accountType = ($user->role == 1) ? 'administrator' : 'employee';
-
-        // 3. If EITHER record doesn't exist at all, start them at step 1
-        // if (!$info || !$info2) {
-        //     return redirect("/accounts/{$accountType}/setup1");
-        // }
+        $dashboardUrl = "/accounts/{$accountType}/dashboard";
 
         $requiredFields1 = [
             'first_name',
@@ -56,7 +45,7 @@ class EnsureAccountEmployeeComplete
             'course',
         ];
 
-        // 4. List of required database columns
+        // 3. List of required database columns
         $requiredFields2 = [
             'employee_id',
             'started_at',
@@ -67,34 +56,52 @@ class EnsureAccountEmployeeComplete
             'status',
             'signature',
             'department_id',
-            'department_manager_id'
+            'department_manager_id',
         ];
 
-
-
-        // 5. Check if required fields are filled for Admins (1) and Employees (2)
+        // 4. Verify completion for Admins (1) and Employees (2)
         if ($user->role == 2 || $user->role == 1) {
 
             // STEP 1: Check personal_information fields first (Redirects to setup1)
             foreach ($requiredFields1 as $field) {
-                if (blank($info2->{$field})) {
+                if (!$info2 || blank($info2->{$field})) {
+                    // Allow access if already on setup1, otherwise redirect
+                    if ($request->is("accounts/{$accountType}/setup1")) {
+                        return $next($request);
+                    }
                     return redirect("/accounts/{$accountType}/setup1");
                 }
             }
 
-            // STEP 2: Check account_employee fields next (Redirects to setup2)
+            // STEP 2: Check account_employee fields next
             foreach ($requiredFields2 as $field) {
-                if (blank($info->{$field})) {
-                    if ($field == 'signature') {
-                        // If they only missed the signature, send them specifically there
+                if (!$info || blank($info->{$field})) {
+                    if ($field === 'signature') {
+                        // Allow access if already on the signature page
+                        if ($request->is("accounts/{$accountType}/my_profile/signature")) {
+                            return $next($request);
+                        }
                         return redirect("/accounts/{$accountType}/my_profile/signature");
+                    }
+
+                    // Allow access if already on setup2
+                    if ($request->is("accounts/{$accountType}/setup2")) {
+                        return $next($request);
                     }
                     return redirect("/accounts/{$accountType}/setup2");
                 }
             }
+
+            // STEP 3: If everything IS complete, prevent them from accessing setup or signature pages
+            if (
+                $request->is('accounts/*/setup*') ||
+                $request->is('accounts/*/my_profile/signature')
+            ) {
+                return redirect($dashboardUrl);
+            }
         }
 
-        // 6. If everything is filled out, let the request proceed normally
+        // 5. Allow standard request flow
         return $next($request);
     }
 }

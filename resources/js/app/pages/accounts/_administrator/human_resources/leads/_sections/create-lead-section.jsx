@@ -146,7 +146,7 @@ export default function CreateLeadSection() {
 
 
                     <Select
-                        label="Second Level Manager"
+                        label="Next Level Manager"
                         required
                         name="department_manager_id"
                         // Pass the filtered availableUsers instead of the full users array

@@ -8,16 +8,14 @@ import {
 } from "@/app/redux/employee-relation-thunk";
 import { add_subordinates_service } from "@/app/services/er-leaders-service";
 import store from "@/app/store/store";
-import {
-    FiCheckSquare as ClipboardCheckIcon,
-} from "react-icons/fi";
+import { FiCheckSquare as ClipboardCheckIcon } from "react-icons/fi";
 import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 
 export default function AddMemberSection() {
     const dispatch = useDispatch();
-    const { users } = useSelector((state) => state.job_requisitions);
+    const { data } = useSelector((store) => store.app);
     const { leader } = useSelector((store) => store.human_resources);
     const er_leader_id = window.location.pathname.split("/")[5];
     const [open, setOpen] = useState(false);
@@ -32,40 +30,76 @@ export default function AddMemberSection() {
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
-            subordinates: [{ user_id: "" }], // Start with one empty dynamic field
+            subordinates: [{ location_id: "", user_id: "" }],
         },
     });
 
-    // Setup dynamic field array
     const { fields, append, remove } = useFieldArray({
         control,
         name: "subordinates",
     });
 
-    // Safely watch the array, defaulting to an empty array
     const watchedSubordinates = watch("subordinates") || [];
 
-    // --- DOUBLE CHOOSE PREVENTION LOGIC ---
-    // Extract all user_ids currently selected in the form
-    const selectedUserIds = watchedSubordinates
-        .map((sub) => sub.user_id)
-        .filter(Boolean); // Remove empty strings/undefined
-
-    // Register all dynamic fields to enforce validation
     useEffect(() => {
         fields.forEach((_, index) => {
+            register(`subordinates.${index}.location_id`, {
+                required: "Please select a location",
+            });
             register(`subordinates.${index}.user_id`, {
                 required: "Please select a member",
             });
         });
     }, [register, fields]);
 
-    // Handle form submission
-    const onSubmit = async (data) => {
+    const selectedUserIds = watchedSubordinates
+        .map((sub) => sub.user_id)
+        .filter(Boolean);
+
+    // List of already assigned user IDs to exclude
+    const existingLeaderIds =
+        leader?.data?.subordinates?.map(
+            (item) => item.user_id || item.id,
+        ) || [];
+
+    // All available employees excluding existing ones
+    const unassignedEmployees =
+        leader?.employees?.filter(
+            (user) => !existingLeaderIds.includes(user.id),
+        ) || [];
+
+    // Helper to safely extract user location_id across different API shapes
+    const getUserLocationId = (user) => {
+        if (!user) return null;
+        if (user.location_id !== undefined && user.location_id !== null) {
+            return String(user.location_id);
+        }
+        if (Array.isArray(user.account_employee) && user.account_employee.length > 0) {
+            return String(user.account_employee[0]?.location_id || "");
+        }
+        if (user.account_employee?.location_id !== undefined && user.account_employee?.location_id !== null) {
+            return String(user.account_employee.location_id);
+        }
+        if (user.employee?.location_id !== undefined && user.employee?.location_id !== null) {
+            return String(user.employee.location_id);
+        }
+        return null;
+    };
+
+    const locationOptions =
+        data?.locations?.map((loc) => ({
+            label: loc.name || loc.location_name || `Location ${loc.id}`,
+            value: loc.id,
+        })) || [];
+
+    const onSubmit = async (formData) => {
         try {
             const payload = {
-                subordinates: data.subordinates.map((sub) => sub.user_id),
                 er_leader_id: er_leader_id,
+                subordinates: formData.subordinates.map((sub) => ({
+                    user_id: sub.user_id,
+                    location_id: sub.location_id,
+                })),
             };
 
             await add_subordinates_service(payload);
@@ -92,24 +126,13 @@ export default function AddMemberSection() {
         }
     };
 
-    // Helper to close modal and clear form completely
     const handleClose = () => {
         setOpen(false);
-        reset({ subordinates: [{ user_id: "" }] });
+        reset({
+            subordinates: [{ location_id: "", user_id: "" }],
+        });
     };
 
-    // --- BASE FILTERING LOGIC ---
-    const existingLeaderIds =
-        leader?.data?.subordinates?.map(
-            (leader) => leader.user_id || leader.id,
-        ) || [];
-
-    // Filter out users who are already saved as subordinates
-    const availableUsers =
-        leader?.employees?.filter(
-            (user) => !existingLeaderIds.includes(user.id),
-        ) || [];
-console.log('availableUsers',availableUsers)
     return (
         <>
             <Button onClick={() => setOpen(true)}>ADD MEMBER</Button>
@@ -117,7 +140,7 @@ console.log('availableUsers',availableUsers)
             <Modal
                 isOpen={open}
                 onClose={handleClose}
-                width="max-w-xl max-h-[80vh] overflow-hidden flex flex-col"
+                width="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col"
                 title={
                     <div className="flex items-center gap-3 p-2">
                         <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 shrink-0">
@@ -136,47 +159,106 @@ console.log('availableUsers',availableUsers)
             >
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="p-4 flex flex-col w-full h-full "
+                    className="p-4 flex flex-col w-full h-full"
                 >
-                    <div className="flex-1 overflow-y-auto pr-2 space-y-4 max-h-[50vh] p-5">
+                    <div className="flex-1 overflow-y-auto pr-2 space-y-4 max-h-[55vh] p-4">
                         {fields.map((field, index) => {
-                            const fieldError =
+                            const rowLocationId = watchedSubordinates[index]?.location_id;
+                            const rowUserId = watchedSubordinates[index]?.user_id;
+
+                            const locationError =
+                                errors?.subordinates?.[index]?.location_id?.message;
+                            const memberError =
                                 errors?.subordinates?.[index]?.user_id?.message;
+
+                            // Filter members for this row
+                            const rowMemberOptions = unassignedEmployees
+                                .filter((user) => {
+                                    const userLocId = getUserLocationId(user);
+
+                                    // If a location is selected, match against user's location
+                                    if (rowLocationId && userLocId) {
+                                        if (String(userLocId) !== String(rowLocationId)) {
+                                            return false;
+                                        }
+                                    }
+
+                                    // Retain the current user if already chosen in this row
+                                    if (rowUserId && String(rowUserId) === String(user.id)) {
+                                        return true;
+                                    }
+
+                                    // Prevent selecting the same member in other rows
+                                    return !selectedUserIds.includes(user.id);
+                                })
+                                .map((res) => {
+                                    const firstName =
+                                        res?.personal_information?.first_name ||
+                                        res?.first_name ||
+                                        "";
+                                    const lastName =
+                                        res?.personal_information?.last_name ||
+                                        res?.last_name ||
+                                        "";
+                                    const fullName = `${firstName} ${lastName}`.trim();
+
+                                    return {
+                                        label: fullName || res?.name || res?.email || `Employee #${res.id}`,
+                                        value: res.id,
+                                    };
+                                });
 
                             return (
                                 <div
                                     key={field.id}
-                                    className="flex items-start gap-2 relative bg-gray-50  rounded border border-gray-100"
+                                    className="p-4 bg-gray-50 rounded-lg border border-gray-200 relative"
                                 >
-                                    <div className="flex-1">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Member #{index + 1}
+                                        </span>
+                                        {fields.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => remove(index)}
+                                                className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-1.5 rounded transition-colors text-xs flex items-center gap-1"
+                                                title="Remove row"
+                                            >
+                                                ✕ Remove
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {/* Location Select */}
                                         <Select
-                                            label={`Member ${index + 1}`}
+                                            label="Location"
+                                            required
+                                            name={`subordinates.${index}.location_id`}
+                                            options={locationOptions}
+                                            value={rowLocationId || ""}
+                                            onChange={(val) => {
+                                                setValue(
+                                                    `subordinates.${index}.location_id`,
+                                                    val,
+                                                    { shouldValidate: true },
+                                                );
+                                                setValue(
+                                                    `subordinates.${index}.user_id`,
+                                                    "",
+                                                );
+                                            }}
+                                            error={locationError}
+                                            className="w-full"
+                                        />
+
+                                        {/* Member Select */}
+                                        <Select
+                                            label="Member"
                                             required
                                             name={`subordinates.${index}.user_id`}
-                                            options={availableUsers
-                                                // Filter out options already selected in OTHER dropdowns
-                                                .filter((res) => {
-                                                    // Always keep the option if it's the one currently selected in THIS dropdown
-                                                    if (
-                                                        watchedSubordinates[
-                                                            index
-                                                        ]?.user_id === res.id
-                                                    )
-                                                        return true;
-                                                    // Otherwise, remove it if it exists in the selectedUserIds array
-                                                    return !selectedUserIds.includes(
-                                                        res.id,
-                                                    );
-                                                })
-                                                .map((res) => ({
-                                                    ...res,
-                                                    label: `${res?.personal_information?.first_name} ${res?.personal_information?.last_name}`,
-                                                    value: res.id,
-                                                }))}
-                                            value={
-                                                watchedSubordinates[index]
-                                                    ?.user_id || ""
-                                            }
+                                            options={rowMemberOptions}
+                                            value={rowUserId || ""}
                                             onChange={(val) =>
                                                 setValue(
                                                     `subordinates.${index}.user_id`,
@@ -184,29 +266,21 @@ console.log('availableUsers',availableUsers)
                                                     { shouldValidate: true },
                                                 )
                                             }
-                                            error={fieldError}
+                                            disabled={!rowLocationId}
+                                            error={memberError}
                                             className="w-full"
                                         />
                                     </div>
-
-                                    {fields.length > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => remove(index)}
-                                            className=" text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition-colors h-10 w-10 flex items-center justify-center"
-                                            title="Remove member"
-                                        >
-                                            ✕
-                                        </button>
-                                    )}
                                 </div>
                             );
                         })}
 
                         <button
                             type="button"
-                            onClick={() => append({ user_id: "" })}
-                            className="text-blue-600 font-semibold text-sm flex items-center gap-1 hover:text-blue-800 transition-colors p-3 border border-dashed border-blue-300 rounded w-full justify-center hover:bg-blue-50 mt-2"
+                            onClick={() =>
+                                append({ location_id: "", user_id: "" })
+                            }
+                            className="text-blue-600 font-semibold text-sm flex items-center gap-1 hover:text-blue-800 transition-colors p-3 border border-dashed border-blue-300 rounded-lg w-full justify-center hover:bg-blue-50 mt-2"
                         >
                             + Add Another Member
                         </button>

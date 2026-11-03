@@ -13,7 +13,7 @@ export default function TableSection() {
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
         { header: "Immediate Supervisor", accessor: "immediate_supervisor" },
-        { header: "Second Level Manager", accessor: "second_level_manager" },
+        { header: "Next Level Manager", accessor: "second_level_manager" },
         { header: "Account", accessor: "account" },
         // { header: "Action", accessor: "action" },
     ];

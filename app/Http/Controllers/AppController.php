@@ -63,7 +63,7 @@ class AppController extends Controller
             'status' => 'success'
         ], 200);
     }
-    public function index()
+    public function index(Request $request)
     {
 
         $auth = User::where('id', Auth::id())->with(['department', 'personal_information', 'documents', 'skills', 'working_experience', 'account_employee'])->first();
@@ -120,11 +120,9 @@ class AppController extends Controller
         $location_id = Auth::user()->account_employee?->location_id;
 
         // 2. Build and execute the query using dot notation
+        $location = $request->location_id ?? $location_id;
         $leaders = $location_id
-            ? ERLeader::with('user')
-            // ->whereHas('user.account_employee', function ($query) use ($location_id) {
-            //     $query->where('location_id', $location_id);
-            // })
+            ? ERLeader::where('location_id', $location)->with('user')
             ->get()
             : collect();
 

@@ -136,7 +136,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function job_offer(): HasOne
     {
-        return $this->hasOne(JobOffer::class, 'user_id', 'id')->with(['allowances'])->orderBy('id', 'desc');
+        return $this->hasOne(JobOffer::class, 'user_id', 'id')->with(['allowances','job_application'])->orderBy('id', 'desc');
     }
     public function application(): HasOne
     {

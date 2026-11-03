@@ -39,16 +39,11 @@ class ERLeaderController extends Controller
 
         // 4. Apply location_id filtering if provided
         if ($locationId) {
-            $leadersQuery->whereHas('employee', function ($query) use ($locationId) {
-                $query->where('location_id', $locationId);
-            });
-
-            $usersQuery->whereHas('account_employee', function ($query) use ($locationId) {
-                $query->where('location_id', $locationId);
-            });
+            // Direct column check on e_r_leaders table
+            $leadersQuery->where('location_id', $locationId);
         }
 
-        // 5. Execute queries simultaneously
+        // 5. Execute queries
         $leaders = $leadersQuery->orderBy('id', 'desc')->get();
         $users = $usersQuery->get();
 
@@ -66,7 +61,10 @@ class ERLeaderController extends Controller
 
         ERLeader::updateOrCreate(
             // 1. Search criteria: Look for an existing record with this user_id
-            ['user_id' => $request->user_id],
+            [
+                'user_id' => $request->user_id,
+                'location_id' => $request->location_id,
+            ],
 
             // 2. Values to update: Leave empty because there are no other fields to update
             []

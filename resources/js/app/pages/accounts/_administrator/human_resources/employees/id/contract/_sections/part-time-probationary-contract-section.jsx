@@ -74,10 +74,42 @@ const styles = StyleSheet.create({
         fontSize: 8,
         color: "#444444",
     },
+    annexTitle: {
+        fontFamily: "Times-Bold",
+        fontSize: 12,
+        marginBottom: 10,
+        textAlign: "center",
+        textTransform: "uppercase",
+    },
+    annexSectionHeading: {
+        fontFamily: "Times-Bold",
+        fontSize: 10,
+        marginTop: 12,
+        marginBottom: 6,
+        textDecoration: "underline",
+    },
 });
 
+// Utility to safely strip HTML markup and format entities coming from job_requisition fields
+const formatHtmlText = (htmlString) => {
+    if (!htmlString) return "";
+    return htmlString
+        .replace(/<br\s*[\/]?>/gi, "\n")
+        .replace(/<\/p>/gi, "\n\n")
+        .replace(/<\/li>/gi, "\n")
+        .replace(/<li[^>]*>/gi, "• ")
+        .replace(/<[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .trim();
+};
+
 const PageFooter = ({ pageNumber }) => (
-    <Text style={styles.pageNumber}>Page {pageNumber} of 7</Text>
+    <Text style={styles.pageNumber}>Page {pageNumber} of 8</Text>
 );
 
 const PartTimeProbationaryContract = ({ data }) => {
@@ -88,6 +120,13 @@ const PartTimeProbationaryContract = ({ data }) => {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
+
+    const qualificationsText = formatHtmlText(
+        data?.job_requisition?.qualifications || data?.qualifications
+    );
+    const responsibilitiesText = formatHtmlText(
+        data?.job_requisition?.responsibilities || data?.responsibilities
+    );
 
     return (
         <Document>
@@ -450,7 +489,6 @@ const PartTimeProbationaryContract = ({ data }) => {
                         </Text>
                     </View>
 
-
                     <View style={styles.signatureBlock}>
                         <Text style={styles.text}>Conforme:</Text>
                         {data?.signature && (
@@ -472,6 +510,40 @@ const PartTimeProbationaryContract = ({ data }) => {
                         </Text>
                     </View>
                 </View>
+            </Page>
+
+            {/* PAGE 8 - ANNEX: RESPONSIBILITIES & QUALIFICATIONS */}
+            <Page size="A4" style={styles.page}>
+                <PageFooter pageNumber={8} />
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
+                </View>
+
+                <Text style={styles.annexTitle}>Annex "A": Job Description</Text>
+                <Text style={[styles.text, { textAlign: "center", marginBottom: 14 }]}>
+                    Position: <Text style={styles.bold}>{data?.position || data?.job_requisition?.title || "Agent"}</Text>
+                </Text>
+
+                <Text style={styles.annexSectionHeading}>Key Responsibilities:</Text>
+                <Text style={styles.text}>
+                    {responsibilitiesText || "No responsibilities provided."}
+                </Text>
+            </Page>
+              <Page size="A4" style={styles.page}>
+                <PageFooter pageNumber={8} />
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
+                </View>
+
+                <Text style={styles.annexTitle}>Annex "B": Job Description</Text>
+                <Text style={[styles.text, { textAlign: "center", marginBottom: 14 }]}>
+                    Position: <Text style={styles.bold}>{data?.position || data?.job_requisition?.title || "Agent"}</Text>
+                </Text>
+
+                <Text style={styles.annexSectionHeading}>Qualifications:</Text>
+                <Text style={styles.text}>
+                    {qualificationsText || "No qualifications provided."}
+                </Text>
             </Page>
         </Document>
     );

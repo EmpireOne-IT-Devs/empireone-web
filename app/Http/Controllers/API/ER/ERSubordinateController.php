@@ -34,21 +34,22 @@ class ERSubordinateController extends Controller
         $request->validate([
             'er_leader_id' => 'required|integer',
             'subordinates' => 'required|array',
-            'subordinates.*' => 'required|integer'
+            'subordinates.*.user_id' => 'required|integer',
+            'subordinates.*.location_id' => 'required|integer',
         ]);
         $leaderId = $request->er_leader_id;
-        $leader = ERLeader::where('id', $leaderId)->with(['employee'])->first();
         $subordinates = $request->subordinates;
 
-        foreach ($subordinates as $subordinateId) {
-            
-            if ($subordinateId) {
+        foreach ($subordinates as $subordinate) {
+            $leader = ERLeader::where('user_id', $leaderId)->where('location_id', $subordinate['location_id'])->with(['employee'])->first();
+
+            if ($subordinate && $leader) {
                 ERSubordinate::updateOrCreate(
-                    ['subordinate_id' => $subordinateId], 
-                    ['er_leader_id' => $leaderId]        
+                    ['subordinate_id' => $subordinate['user_id']],
+                    ['er_leader_id' => $leader['id']]
                 );
-                AccountEmployee::where('user_id', $subordinateId)->update([
-                    'e_r_leader_id' => $leader->id,
+                AccountEmployee::where('user_id', $subordinate['user_id'])->update([
+                    'e_r_leader_id' => $leader['id'],
                     'account_id' => $leader['employee']['account_id'] ?? null,
                     'department_id' => $leader['employee']['department_id'] ?? null,
                     'department_manager_id' => $leader['employee']['e_r_leader_id']

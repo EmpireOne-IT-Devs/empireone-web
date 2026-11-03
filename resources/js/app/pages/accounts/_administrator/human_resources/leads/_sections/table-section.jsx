@@ -14,7 +14,7 @@ export default function TableSection({ loading }) {
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
         { header: "Immediate Supervisor", accessor: "immediate_supervisor" },
-        { header: "Second Level Manager", accessor: "second_level_manager" },
+        { header: "Next Level Manager", accessor: "second_level_manager" },
         { header: "Account", accessor: "account" },
         { header: "Member handled", accessor: "subordinates_count" },
         { header: "Action", accessor: "action" },

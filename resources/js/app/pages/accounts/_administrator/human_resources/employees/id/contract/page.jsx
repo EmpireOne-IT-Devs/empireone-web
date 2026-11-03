@@ -44,8 +44,9 @@ export default function Page() {
         started_at: `${moment(user?.account_employee?.started_at).format("LL")}`,
         ended_at: `${moment(user?.account_employee?.started_at).add(179, "days").format("LL")}`,
         salary: `${user?.job_offer?.salary}`,
+        job_requisition: user?.job_offer?.job_application?.job_posting?.job_requisition
     };
-    console.log('useruser', user)
+    console.log('useruser', user?.job_offer?.job_application?.job_posting?.job_requisition)
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
             return null;
@@ -63,7 +64,7 @@ export default function Page() {
                     {!user?.account_employee?.is_has_contract && (
                         <AgreeSection data={data} user={user} />
                     )}
-                    {user?.application?.final_status == "Sent Documents" && <SendContractSection props_data={user}/>}
+                    {user?.application?.final_status == "Sent Documents" && <SendContractSection props_data={user} />}
 
                 </>
             );

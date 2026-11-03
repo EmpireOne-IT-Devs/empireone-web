@@ -45,7 +45,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
     const dispatch = useDispatch();
     const { data } = useSelector((state) => state.app);
 
-    console.log('props_datasssss', open)
+    console.log('props_datasssss', data)
     const {
         register,
         handleSubmit,
@@ -53,6 +53,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
         control,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: {} });
+
 
     // Memoized options for drop-down performance
     const leaderOptions = useMemo(
@@ -167,7 +168,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
                         control={control}
                         render={({ field }) => (
                             <Select
-                                label="Leader"
+                                label="Immediate Supervisor"
                                 options={leaderOptions}
                                 value={field.value}
                                 onChange={field.onChange}
@@ -182,7 +183,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
                         rules={{ required: 'Department Manager is required' }}
                         render={({ field }) => (
                             <Select
-                                label="Department Manager"
+                                label="Next Level Manager"
                                 required
                                 options={leaderOptions}
                                 value={field.value}

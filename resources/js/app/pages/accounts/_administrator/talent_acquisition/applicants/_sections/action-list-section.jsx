@@ -187,7 +187,9 @@ export default function ActionListSection({ props_data }) {
                                         )
                                     }
                                 >
-                                    CONTRACT
+                                    <div className='text-white'>
+                                        CONTRACT
+                                    </div>
                                 </Button>
                             </div>
                             <div className="w-full hover:bg-black/[0.04] active:bg-black/[0.08] px-3 transition-colors duration-150 [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800">
@@ -200,7 +202,10 @@ export default function ActionListSection({ props_data }) {
                                         )
                                     }
                                 >
-                                    ONBOARDING
+                                    <div className='text-white'>
+                                        ONBOARDING
+                                    </div>
+
                                 </Button>
                             </div>
                         </>

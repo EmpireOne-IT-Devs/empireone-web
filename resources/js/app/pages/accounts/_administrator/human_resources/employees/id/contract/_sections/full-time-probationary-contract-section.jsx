@@ -87,23 +87,62 @@ const styles = StyleSheet.create({
         fontFamily: "Times-Italic",
         color: "#555555",
     },
+    annexTitle: {
+        fontFamily: "Times-Bold",
+        fontSize: 12,
+        marginBottom: 10,
+        textAlign: "center",
+        textTransform: "uppercase",
+    },
+    annexSectionHeading: {
+        fontFamily: "Times-Bold",
+        fontSize: 10,
+        marginTop: 12,
+        marginBottom: 6,
+        textDecoration: "underline",
+    },
 });
+
+// Helper to strip HTML tags and decode common entities since the fields contain HTML markup
+const formatHtmlText = (htmlString) => {
+    if (!htmlString) return "";
+    return htmlString
+        .replace(/<br\s*[\/]?>/gi, "\n")
+        .replace(/<\/p>/gi, "\n\n")
+        .replace(/<\/li>/gi, "\n")
+        .replace(/<li[^>]*>/gi, "• ")
+        .replace(/<[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .trim();
+};
 
 const PageFooter = ({ pageNumber }) => (
     <>
         <Text style={styles.disclaimer}>
             <Text style={styles.bold}>Disclaimer:</Text> This document and its contents are the property of EmpireOne BPO Solutions, Inc. and are intended for internal use only. Unauthorized reproduction, disclosure, or distribution of this material, in whole or in part, without prior written permission from the company is strictly prohibited.
         </Text>
-        <Text style={styles.pageNumber}>Page {pageNumber} of 8</Text>
+        <Text style={styles.pageNumber}>Page {pageNumber} of 9</Text>
     </>
 );
 
 const FullTimeProbationaryContract = ({ data }) => {
-    const salaryInWords = numberToWords.toWords(Number(data?.salary)).toUpperCase();
+    const salaryInWords = numberToWords.toWords(Number(data?.salary || 0)).toUpperCase();
     const salaryInFigures = Number(data?.salary || 0).toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
+
+    const qualificationsText = formatHtmlText(
+        data?.job_requisition?.qualifications || data?.qualifications
+    );
+    const responsibilitiesText = formatHtmlText(
+        data?.job_requisition?.responsibilities || data?.responsibilities
+    );
 
     return (
         <Document>
@@ -232,16 +271,14 @@ const FullTimeProbationaryContract = ({ data }) => {
                 <Text style={[styles.text, styles.bulletIndent]}>
                     • HMO coverage for work related emergency care, dental services, In-patient and outpatient upon your start date.
                 </Text>
-                {
-                    data?.allowances && data?.allowances?.map((res, i) => {
-                        return <Text key={i} style={[styles.text, styles.bulletIndent]}>
-                            • {res?.allowance_type} <Text style={styles.bold}>{numberToWords?.toWords(Number(res.allowance)).toUpperCase()}</Text> (PHP <Text style={styles.bold}>{Number(res?.allowance)?.toLocaleString("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })}</Text>)
-                        </Text>
-                    })
-                }
+                {data?.allowances && data?.allowances?.map((res, i) => (
+                    <Text key={i} style={[styles.text, styles.bulletIndent]}>
+                        • {res?.allowance_type} <Text style={styles.bold}>{numberToWords?.toWords(Number(res.allowance)).toUpperCase()}</Text> (PHP <Text style={styles.bold}>{Number(res?.allowance)?.toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })}</Text>)
+                    </Text>
+                ))}
 
                 <Text style={[styles.text, { marginTop: 6 }]}>Upon regularization, you shall be entitled to the following benefits:</Text>
 
@@ -500,13 +537,47 @@ const FullTimeProbationaryContract = ({ data }) => {
                     </View>
                 </View>
             </Page>
+
+            {/* PAGE 9 - QUALIFICATIONS & RESPONSIBILITIES */}
+            <Page size="A4" style={styles.page}>
+                <PageFooter pageNumber={9} />
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
+                </View>
+
+                <Text style={styles.annexTitle}>Annex "A": Job Description</Text>
+                <Text style={[styles.text, { textAlign: "center", marginBottom: 14 }]}>
+                    Position: <Text style={styles.bold}>{data?.position || data?.job_requisition?.title || "Customer Service Representative"}</Text>
+                </Text>
+
+                <Text style={styles.annexSectionHeading}>Responsibilities:</Text>
+                <Text style={styles.text}>
+                    {responsibilitiesText || "No responsibilities provided."}
+                </Text>
+
+            </Page>
+            <Page size="A4" style={styles.page}>
+                <PageFooter pageNumber={9} />
+                <View style={styles.logoContainer}>
+                    <Image style={styles.logo} src="/images/E1CXlogo.png" />
+                </View>
+
+                <Text style={styles.annexTitle}>Annex "B": Job Description</Text>
+                <Text style={[styles.text, { textAlign: "center", marginBottom: 14 }]}>
+                    Position: <Text style={styles.bold}>{data?.position || data?.job_requisition?.title || "Customer Service Representative"}</Text>
+                </Text>
+                <Text style={styles.annexSectionHeading}>Qualifications:</Text>
+                <Text style={styles.text}>
+                    {qualificationsText || "No qualifications provided."}
+                </Text>
+            </Page>
         </Document>
     );
 };
 
 export default function FullTimeProbationaryContractSection({ data }) {
     const dispatch = useDispatch();
-
+    console.log("datadata", data);
     return (
         <PDFLoader
             pdf={<FullTimeProbationaryContract data={data} />}
