@@ -368,8 +368,7 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
                     </div>
                 </section>
 
-                {/* Shift 2 */}
-                <section className="mb-6 rounded-lg border border-gray-200 p-4">
+                {/* <section className="mb-6 rounded-lg border border-gray-200 p-4">
                     <div className="mb-4">
                         <h3 className="text-base font-semibold text-gray-800">
                             Shift 2
@@ -420,7 +419,6 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
                         ))}
                     </div>
 
-                    {/* Shift 2 Breaks */}
                     <div className="mt-6">
                         <h4 className="mb-3 text-sm font-semibold text-gray-800">
                             Manually Add Time (Break Time 1 - 3)
@@ -459,7 +457,7 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
                             ))}
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 {/* Attendance Summary */}
                 <section className="mb-6 rounded-lg border border-gray-200 p-4">

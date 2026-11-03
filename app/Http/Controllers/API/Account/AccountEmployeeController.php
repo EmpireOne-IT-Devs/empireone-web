@@ -176,6 +176,7 @@ class AccountEmployeeController extends Controller
         $search = $request->input('search');
         $location_id = $request->input('location_id');
         $isAll = $request->boolean('all');
+        $isLite = $isAll && $request->boolean('lite');
 
         // 2. Fetch all master acknowledgements with items and employee sign-off records.
         // Skip for the unpaginated "all" mode (dropdown selectors) since it doesn't
@@ -188,17 +189,27 @@ class AccountEmployeeController extends Controller
             ])->get();
 
         // 3. Query employees with search & role filters
-        $employees = AccountEmployee::with([
-            'user',
-            'personal_information',
-            'department_manager',
-            'department',
-            'account',
-            'location',
-            'site',
-            'reporting_to',
-            'files'
-        ])
+        // Lite mode (dropdown selectors) skips heavy relations and nested eager loads.
+        $relations = $isLite
+            ? [
+                'user',
+                'personal_information',
+                'department' => fn($q) => $q->without('manager'),
+                'account' => fn($q) => $q->without('ecfs'),
+            ]
+            : [
+                'user',
+                'personal_information',
+                'department_manager',
+                'department',
+                'account',
+                'location',
+                'site',
+                'reporting_to',
+                'files'
+            ];
+
+        $employees = AccountEmployee::with($relations)
             ->whereNotNull('employee_id')
             // Filter by Role
             ->whereHas('user', function ($query) {

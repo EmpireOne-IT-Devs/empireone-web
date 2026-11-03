@@ -7,7 +7,7 @@ import { get_employees_thunk } from "@/app/redux/employee-relation-thunk";
 
 export default function Page() {
     useEffect(() => {
-        store.dispatch(get_employees_thunk(true));
+        store.dispatch(get_employees_thunk(true, true));
     }, [window.location.search]);
     return (
         <Layout>
