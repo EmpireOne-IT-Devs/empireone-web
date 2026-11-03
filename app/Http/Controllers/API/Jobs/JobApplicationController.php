@@ -1257,7 +1257,7 @@ class JobApplicationController extends Controller
     public function index()
     {
 
-        $applications = JobApplication::query()->with(['job_posting', 'applicant'])->orderBy('id','desc')->paginate();
+        $applications = JobApplication::query()->with(['job_posting', 'applicant'])->orderBy('id', 'desc')->paginate();
 
         return response()->json([
             'data' => $applications,
@@ -1311,6 +1311,7 @@ class JobApplicationController extends Controller
         // 1. Validate incoming data
         $validated = $request->validate([
             'status' => 'string',
+            'ai_score' => 'nullable'
         ]);
         $application = JobApplication::findOrFail($id);
         $application->update($validated);

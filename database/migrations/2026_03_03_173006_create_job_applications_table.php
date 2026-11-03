@@ -37,6 +37,7 @@ return new class extends Migration
                 'Pharsing',
                 'Pharsed',
             ])->default('Pending');
+            $table->string('ai_score')->nullable();
             $table->enum('screening_status', [
                 'New',
                 'Conducted',
