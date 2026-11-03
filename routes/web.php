@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PMCorrectiveActionController;
 use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,6 +22,15 @@ if (! function_exists('route_page')) {
         };
     }
 }
+
+// routes/web.php
+Route::middleware('auth')->get('/user/token', function (Request $request) {
+    $token = $request->user()->createToken('web-access-token')->plainTextToken;
+
+    return response()->json([
+        'bearer_token' => $token,
+    ]);
+});
 
 Route::get('/', function () {
     if (Auth::user()) {

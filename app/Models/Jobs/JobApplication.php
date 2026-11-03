@@ -24,6 +24,7 @@ class JobApplication extends Model
         'screening_status',
         'interview_status',
         'final_status',
+        'ai_status',
         'referral_id',
         'source',
         'lead_source',

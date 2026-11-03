@@ -79,6 +79,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
+
 Route::middleware('auth:sanctum')->post('auth/logout', [AuthorizationController::class, 'logout']);
 Route::post('auth/login', [AuthorizationController::class, 'login']);
 Route::post('auth/send_otp', [EmailOtpController::class, 'send_OTP']);

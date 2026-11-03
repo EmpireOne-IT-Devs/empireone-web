@@ -1257,7 +1257,7 @@ class JobApplicationController extends Controller
     public function index()
     {
 
-        $applications = JobApplication::where('status', 'Active')->with(['job_posting', 'applicant'])->get();
+        $applications = JobApplication::query()->with(['job_posting', 'applicant'])->paginate();
 
         return response()->json([
             'data' => $applications,
@@ -1306,9 +1306,18 @@ class JobApplicationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JobApplication $jobApplication)
+    public function update(Request $request, string $id)
     {
-        //
+        // 1. Validate incoming data
+        $validated = $request->validate([
+            'status' => 'string',
+        ]);
+        $application = JobApplication::findOrFail($id);
+        $application->update($validated);
+        return response()->json([
+            'message' => 'Job application updated successfully.',
+            'data' => $application,
+        ], 200);
     }
 
     /**
