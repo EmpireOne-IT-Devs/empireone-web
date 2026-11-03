@@ -1,4 +1,12 @@
-import React, { forwardRef, useState, useEffect, useRef } from "react";
+import React, {
+    forwardRef,
+    useState,
+    useEffect,
+    useRef,
+    useMemo,
+} from "react";
+
+const MAX_RENDERED_OPTIONS = 100;
 
 const Select = forwardRef(
     (
@@ -58,10 +66,15 @@ const Select = forwardRef(
                 window.removeEventListener("mousedown", handleClickOutside, true);
         }, []);
 
-        // Filter options
-        const filteredOptions = options.filter((opt) =>
-            opt?.label?.toLowerCase()?.includes(search?.toLowerCase()),
-        );
+        const filteredOptions = useMemo(() => {
+            const term = (search ?? "").toLowerCase();
+            return options.filter((opt) =>
+                opt?.label?.toLowerCase()?.includes(term),
+            );
+        }, [options, search]);
+
+        const visibleOptions = filteredOptions.slice(0, MAX_RENDERED_OPTIONS);
+        const hiddenCount = filteredOptions.length - visibleOptions.length;
 
         return (
             <div className="w-full" ref={containerRef}>
@@ -134,10 +147,10 @@ const Select = forwardRef(
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
                         <ul className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg">
-                            {filteredOptions.length > 0 ? (
-                                filteredOptions.map((option, idx) => (
+                            {visibleOptions.length > 0 ? (
+                                visibleOptions.map((option, idx) => (
                                     <li
-                                        key={idx}
+                                        key={option.value ?? idx}
                                         className={`cursor-pointer px-4 py-2 hover:bg-purple-100 text-black text-sm ${value === option.value
                                             ? "bg-purple-50 text-purple-600"
                                             : ""
@@ -153,6 +166,11 @@ const Select = forwardRef(
                             ) : (
                                 <li className="px-4 py-2 text-sm text-gray-500">
                                     No results found
+                                </li>
+                            )}
+                            {hiddenCount > 0 && (
+                                <li className="px-4 py-2 text-xs text-gray-400">
+                                    {hiddenCount} more — type to narrow results
                                 </li>
                             )}
                         </ul>

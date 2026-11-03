@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export async function get_employees_service(data, all = false) {
+export async function get_employees_service(data, all = false, lite = false) {
     const search = window.location.search;
     const separator = search ? "&" : "?";
-    const allParam = all ? `${separator}all=1` : "";
+    const allParam = all ? `${separator}all=1${lite ? "&lite=1" : ""}` : "";
     return (
         await axios.get(`/api/accounts/employees${search}${allParam}`, data)
     ).data;

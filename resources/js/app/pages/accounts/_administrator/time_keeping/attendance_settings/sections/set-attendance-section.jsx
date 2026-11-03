@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DayAttendanceComponents from "../components/day-attendance-components";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "@/app/_components/select";
@@ -45,33 +45,43 @@ export default function SetAttendanceSection() {
     const [loadingSchedule, setLoadingSchedule] = useState(false);
     const [saving, setSaving] = useState(false);
 
-    const employeeList = Array.isArray(employees)
-        ? employees
-        : (employees?.data ?? []);
-
-    const selectedEmployee = employeeList.find(
-        (employee) =>
-            employee.employee_id.toString() === selectedEmployeeId.toString(),
+    const employeeList = useMemo(
+        () => (Array.isArray(employees) ? employees : (employees?.data ?? [])),
+        [employees],
     );
 
-    const sortedEmployeeOptions = [...employeeList]
-        .sort((a, b) => {
-            const lastNameA = a.personal_information?.last_name || "";
-            const lastNameB = b.personal_information?.last_name || "";
+    const selectedEmployee = useMemo(
+        () =>
+            employeeList.find(
+                (employee) =>
+                    employee.employee_id.toString() ===
+                    selectedEmployeeId.toString(),
+            ),
+        [employeeList, selectedEmployeeId],
+    );
 
-            const lastNameComparison = lastNameA.localeCompare(lastNameB);
+    const sortedEmployeeOptions = useMemo(
+        () =>
+            [...employeeList]
+                .sort((a, b) => {
+                    const lastNameA = a.personal_information?.last_name || "";
+                    const lastNameB = b.personal_information?.last_name || "";
 
-            if (lastNameComparison !== 0) return lastNameComparison;
+                    const lastNameComparison = lastNameA.localeCompare(lastNameB);
 
-            const firstNameA = a.personal_information?.first_name || "";
-            const firstNameB = b.personal_information?.first_name || "";
+                    if (lastNameComparison !== 0) return lastNameComparison;
 
-            return firstNameA.localeCompare(firstNameB);
-        })
-        .map((employee) => ({
-            value: employee.employee_id,
-            label: `${employee.personal_information?.last_name ?? ""}, ${employee.personal_information?.first_name ?? ""} - ${employee.employee_id}`,
-        }));
+                    const firstNameA = a.personal_information?.first_name || "";
+                    const firstNameB = b.personal_information?.first_name || "";
+
+                    return firstNameA.localeCompare(firstNameB);
+                })
+                .map((employee) => ({
+                    value: employee.employee_id,
+                    label: `${employee.personal_information?.last_name ?? ""}, ${employee.personal_information?.first_name ?? ""} - ${employee.employee_id}`,
+                })),
+        [employeeList],
+    );
 
     useEffect(() => {
         if (!selectedEmployeeId) return;
@@ -162,8 +172,6 @@ export default function SetAttendanceSection() {
         }
     };
 
-    console.log("Selected Employee ID:", selectedEmployeeId);
-    console.log("Selected Employee Data:", selectedEmployee);
     return (
         <div className="">
             <div className="bg-white rounded-xl shadow-md">
@@ -183,6 +191,7 @@ export default function SetAttendanceSection() {
                             name="employee_id"
                             options={sortedEmployeeOptions}
                             value={selectedEmployeeId}
+                            disabled={employeesLoading}
                             onChange={(val) => setSelectedEmployeeId(val)}
                         />
                     </div>
