@@ -1257,7 +1257,7 @@ class JobApplicationController extends Controller
     public function index()
     {
 
-        $applications = JobApplication::query()->with(['job_posting', 'applicant'])->paginate();
+        $applications = JobApplication::query()->with(['job_posting', 'applicant'])->orderBy('id','desc')->paginate();
 
         return response()->json([
             'data' => $applications,
