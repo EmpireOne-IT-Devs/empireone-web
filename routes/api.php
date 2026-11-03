@@ -349,6 +349,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('performance_evaluation', ERPerformanceEvaluationFormController::class);
         Route::resource('employee_change_form', EREmployeeChangeFormController::class);
         Route::post('accept_employee_change_form',  [EREmployeeChangeFormController::class, 'accept_employee_change_form']);
+        Route::post('export_change_form',  [EREmployeeChangeFormController::class, 'export_change_form']);
         Route::resource('acknowledgement', ERAcknowledgementController::class);
         Route::post('add_sub_acknowledgement',  [ERAcknowledgementController::class, 'add_sub_acknowledgement']);
         Route::resource('acknowledgement_employee', ERAcknowledgementEmployeeController::class);

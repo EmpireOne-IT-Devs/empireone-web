@@ -3,6 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import ChangeFormDetailsSection from "./change-form-details-section";
 import { FcSearch  } from "react-icons/fc";
+import moment from "moment";
 
 
 export default function ChangeFormTableSection({ loading }) {
@@ -14,6 +15,7 @@ export default function ChangeFormTableSection({ loading }) {
         { header: "Fullname", accessor: "name" },
         { header: "Position", accessor: "position" },
         { header: "Department", accessor: "department" },
+        { header: "Created At", accessor: "created_at" },
         { header: "Action", accessor: "action" },
     ];
     
@@ -32,6 +34,7 @@ export default function ChangeFormTableSection({ loading }) {
                         ),
                         name: `${res?.employee?.personal_information?.first_name} ${res?.employee?.personal_information?.middle_name} ${res?.employee?.personal_information?.last_name}`,
                         position: `${res?.position} `,
+                        created_at: moment(res?.created_at).format('LL'),
                         department:
                             res?.department,
                         started_at:

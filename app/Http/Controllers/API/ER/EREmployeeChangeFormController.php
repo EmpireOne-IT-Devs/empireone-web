@@ -13,12 +13,137 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EREmployeeChangeFormController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function export_change_form(Request $request)
+    {
+        $status    = $request->input('status');
+        $startDate = $request->input('start_date');
+        $endDate   = $request->input('end_date');
+
+        // 1. Base query
+        $query = EREmployeeChangeForm::with([
+            'employee.personal_information',
+            'department_to',
+            'account_to',
+            'prepaired_by.personal_information',
+        ]);
+
+        // 2. Filter by status (handles case-insensitivity: 'Pending', 'Accepted', 'accepted')
+        if (!empty($status)) {
+            $query->whereRaw('LOWER(status) = ?', [strtolower(trim($status))]);
+        }
+
+        // 3. Filter by date range
+        if (!empty($startDate) && !empty($endDate)) {
+            $query->whereBetween('created_at', [
+                $startDate . ' 00:00:00',
+                $endDate . ' 23:59:59'
+            ]);
+        } elseif (!empty($startDate)) {
+            $query->where('created_at', '>=', $startDate . ' 00:00:00');
+        } elseif (!empty($endDate)) {
+            $query->where('created_at', '<=', $endDate . ' 23:59:59');
+        }
+
+        $records = $query->orderBy('id', 'desc')->get();
+
+        // 4. File download headers
+        $filename = 'ecf_report_' . now()->format('Y_m_d_His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        // 5. Stream output
+        return new StreamedResponse(function () use ($records) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF"); // UTF-8 BOM
+
+            fputcsv($file, [
+                'ECF ID',
+                'Employee ID',
+                'Employee Name',
+                'Hire Date',
+                'Effective Date',
+                'Status',
+                'Department (From)',
+                'Account (From)',
+                'Position (From)',
+                'Reports To (From)',
+                'Basic Pay (From)',
+                'Allowances (From)',
+                'Department (To)',
+                'Account (To)',
+                'Position (To)',
+                'Reports To (To)',
+                'Basic Pay (To)',
+                'Allowances (To)',
+                'Reason for Change',
+                'Prepared By',
+                'Created At'
+            ]);
+
+            foreach ($records as $item) {
+                $empFirstName = $item->employee->personal_information->first_name ?? '';
+                $empLastName  = $item->employee->personal_information->last_name ?? '';
+                $employeeFullName = trim("{$empFirstName} {$empLastName}");
+
+                $prepFirstName = $item->prepaired_by->personal_information->first_name ?? '';
+                $prepLastName  = $item->prepaired_by->personal_information->last_name ?? '';
+                $preparedByFullName = trim("{$prepFirstName} {$prepLastName}");
+
+                $posFrom = trim(($item->info_position_from ?? '') . ($item->info_position_level_from ? " ({$item->info_position_level_from})" : ''));
+                $posTo   = trim(($item->info_position_to ?? '') . ($item->info_position_level_to ? " ({$item->info_position_level_to})" : ''));
+
+                $allowancesToText = '-';
+                if (!empty($item->allowances) && is_array($item->allowances)) {
+                    $formatted = array_map(function ($allowance) {
+                        $type = $allowance['allowance_type'] ?? $allowance['name'] ?? 'Allowance';
+                        $amount = isset($allowance['allowance']) ? '₱' . number_format($allowance['allowance'], 2) : ($allowance['amount'] ?? '');
+                        return "{$type} - {$amount}";
+                    }, $item->allowances);
+                    $allowancesToText = implode(', ', $formatted);
+                } elseif (!empty($item->info_allowances_to)) {
+                    $allowancesToText = $item->info_allowances_to;
+                }
+
+                fputcsv($file, [
+                    $item->id,
+                    $item->employee_id ?? 'N/A',
+                    $employeeFullName ?: 'N/A',
+                    $item->hire_date ?? 'N/A',
+                    $item->effective_date ?? 'N/A',
+                    $item->status ?? 'N/A',
+                    $item->info_department_from ?? 'N/A',
+                    $item->info_account_from ?? 'N/A',
+                    $posFrom ?: 'N/A',
+                    $item->info_reporting_from ?? 'N/A',
+                    $item->info_basic_pay_from ? '₱' . number_format((float)$item->info_basic_pay_from, 2) : '₱0.00',
+                    $item->info_allowances_from ?? '-',
+                    $item->department_to->name ?? $item->department ?? 'N/A',
+                    $item->account_to->name ?? $item->account ?? 'N/A',
+                    $posTo ?: 'N/A',
+                    $item->info_reporting_to ?? $item->reporting_to ?? 'N/A',
+                    $item->info_basic_pay_to ? '₱' . number_format((float)$item->info_basic_pay_to, 2) : '₱0.00',
+                    $allowancesToText,
+                    $item->reason_for_change ?? '-',
+                    $preparedByFullName ?: 'N/A',
+                    $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : 'N/A',
+                ]);
+            }
+
+            fclose($file);
+        }, 200, $headers);
+    }
     public function index(Request $request)
     {
         $locationId = $request->query('location_id');
@@ -34,7 +159,7 @@ class EREmployeeChangeFormController extends Controller
         }
 
         // 3. Paginate filtered or unfiltered results
-        $ecfs = $query->orderBy('id','desc')->paginate(10);
+        $ecfs = $query->orderBy('id', 'desc')->paginate(10);
 
         return response()->json($ecfs);
     }

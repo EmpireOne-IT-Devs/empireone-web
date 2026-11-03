@@ -16,12 +16,20 @@ export async function create_reach_service(data) {
     return await axios.post(`/api/er/reach`, data);
 }
 
+export async function export_change_form_service(data) {
+    return await axios.post(
+        `/api/er/export_change_form${window.location.search}`,
+        data,
+    );
+}
 
 export async function create_corrective_action_service(data) {
     return await axios.post(`/api/er/corrective_action`, data);
 }
 export async function get_corrective_actions_specific_leader_service(id) {
-    return await axios.get(`/api/er/get_corrective_actions_specific_leader${window.location.search}`);
+    return await axios.get(
+        `/api/er/get_corrective_actions_specific_leader${window.location.search}`,
+    );
 }
 
 export async function get_corrective_action_by_id_service(id) {
@@ -32,7 +40,9 @@ export async function sign_corrective_action_service(data) {
     return await axios.post(`/api/er/sign_corrective_action`, data);
 }
 export async function get_reach_specific_leader_service() {
-    return await axios.get(`/api/er/get_reach_specific_leader${window.location.search}`, );
+    return await axios.get(
+        `/api/er/get_reach_specific_leader${window.location.search}`,
+    );
 }
 
 export async function add_exit_interview_service(data) {
@@ -47,18 +57,17 @@ export async function employee_change_form_service() {
     return await axios.get(`/api/er/employee_change_form`);
 }
 
-
 export async function get_201_files_service() {
     return await axios.get(`/api/er/get_201_files${window.location.search}`);
 }
 
 export async function update_201_files_service(data) {
-    return await axios.post(`/api/er/update_201_files`,data);
+    return await axios.post(`/api/er/update_201_files`, data);
 }
 
 export async function update_or_create_account_service(data) {
-    return await axios.post(`/api/er/accounts`,data);
+    return await axios.post(`/api/er/accounts`, data);
 }
 export async function update_or_create_department_service(data) {
-    return await axios.post(`/api/er/departments`,data);
+    return await axios.post(`/api/er/departments`, data);
 }

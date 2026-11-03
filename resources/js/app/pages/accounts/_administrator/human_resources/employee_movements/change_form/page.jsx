@@ -8,6 +8,7 @@ import CreateECFSection from "./_sections/create-ecf-section";
 import ChangeFormTableSection from "./_sections/change-form-table-section";
 import PaginationSection from "./_sections/pagination-section";
 import Loading from "@/app/_components/loading-page";
+import ExportDataSection from "./_sections/export-data-section";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -28,17 +29,22 @@ export default function Page() {
         <Layout>
             <EmployeeRelationLayout>
                 <TabsSection />
-               
-                    <div className="py-3">
-                        <div className="flex items-center justify-end">
+
+                <div className="py-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+                        <div className="w-full sm:w-auto">
+                            <ExportDataSection />
+                        </div>
+                        <div className="w-full sm:w-auto flex justify-end">
                             <CreateECFSection />
                         </div>
-                        <div className="flex flex-col gap-3">
-                            <ChangeFormTableSection loading={loading} />
-                            <PaginationSection />
-                        </div>
                     </div>
-             
+                    <div className="flex flex-col gap-3">
+                        <ChangeFormTableSection loading={loading} />
+                        <PaginationSection />
+                    </div>
+                </div>
+
             </EmployeeRelationLayout>
         </Layout>
     );
