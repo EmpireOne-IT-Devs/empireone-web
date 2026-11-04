@@ -12,26 +12,9 @@ use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
 
 class EngagementRewardRecognitionController extends Controller
 {
-    private const AWARD_CATEGORIES = [
-        'Reliability',
-        'Excellence',
-        'Adaptability',
-        'Collaboration',
-        'Integrity',
-        'The Excellence Award',
-        'The One Team Award',
-        'The Empathy Award',
-        'The Initiative Award',
-        'The Innovation Award',
-        'The Customer Champion',
-        'The Integrity Award',
-        'The Ownership Award',
-    ];
-
     /**
      * Display all recognitions.
      */
@@ -157,7 +140,7 @@ class EngagementRewardRecognitionController extends Controller
     {
         $validated = $request->validate([
             'employee_id' => ['required', 'exists:users,id'],
-            'award_category' => ['nullable', Rule::in(self::AWARD_CATEGORIES)],
+            'award_category' => ['nullable', 'string', 'max:255'],
             'company_value' => ['nullable', 'string', 'in:Innovation,Teamwork,Excellence,Leadership,Customer Focus,Integrity,Resilience,Creativity'],
             'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
@@ -264,7 +247,7 @@ class EngagementRewardRecognitionController extends Controller
     public function update(Request $request, EngagementRewardRecognition $engagementRewardRecognition)
     {
         $validated = $request->validate([
-            'award_category' => ['nullable', Rule::in(self::AWARD_CATEGORIES)],
+            'award_category' => ['nullable', 'string', 'max:255'],
             'company_value' => ['nullable', 'string', 'in:Innovation,Teamwork,Excellence,Leadership,Customer Focus,Integrity,Resilience,Creativity'],
             'award_point' => ['nullable', 'integer', 'min:0'],
             'message' => ['required', 'string', 'max:1000'],
