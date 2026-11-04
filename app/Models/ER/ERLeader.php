@@ -4,6 +4,7 @@ namespace App\Models\ER;
 
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,6 +28,10 @@ class ERLeader extends Model
     public function employee(): HasOne
     {
         return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id')->with(['personal_information', 'department', 'department_manager']);
+    }
+      public function location(): HasOne
+    {
+        return $this->hasOne(Location::class, 'id', 'location_id');
     }
 
     public function second_level_manager()

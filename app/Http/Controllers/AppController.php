@@ -117,14 +117,16 @@ class AppController extends Controller
         $total_job_offer = JobOffer::where('user_id', $user->id)->count();
 
         // 1. Extract the ID first to avoid calling Auth deeply inside closures
-        $location_id = Auth::user()->account_employee?->location_id;
+        // $location_id = Auth::user()->account_employee?->location_id;
 
         // 2. Build and execute the query using dot notation
-        $location = $request->location_id ?? $location_id;
-        $leaders = $location_id
-            ? ERLeader::where('location_id', $location)->with('user')
-            ->get()
-            : collect();
+        $location = $request->location_id;
+
+        $leaders = ERLeader::when($location, function ($query, $location) {
+            $query->where('location_id', $location);
+        })
+            ->with('user','location')
+            ->get();
 
         return response()->json([
             'user' => $userArray,

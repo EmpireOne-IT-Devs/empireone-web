@@ -151,7 +151,7 @@ export default function FormSection() {
                     value={form.e_r_leader_id}
                     options={data?.leaders?.map((res) => ({
                         ...res,
-                        label: res?.user?.name,
+                        label: `${res?.user?.name}  - ${res?.location?.name}`,
                         value: res.id,
                     }))}
                     error={errors.e_r_leader_id}
@@ -165,7 +165,7 @@ export default function FormSection() {
                     name="department_manager_id"
                     options={data?.leaders?.map((res) => ({
                         ...res,
-                        label: res?.user?.name,
+                        label: `${res?.user?.name} - ${res?.location?.name}`,
                         value: res.id,
                     }))}
                     value={form.department_manager_id}
