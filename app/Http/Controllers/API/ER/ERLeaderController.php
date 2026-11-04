@@ -35,7 +35,7 @@ class ERLeaderController extends Controller
 
         // 3. Build base query for Users
         $usersQuery = User::whereIn('role', [1, 2])
-            ->with(['personal_information', 'account_employee']);
+            ->with(['personal_information']);
 
         // 4. Apply location_id filtering if provided
         if ($locationId) {
