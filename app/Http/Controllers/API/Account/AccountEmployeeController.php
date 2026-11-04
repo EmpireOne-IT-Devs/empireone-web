@@ -13,10 +13,273 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AccountEmployeeController extends Controller
 {
+    public function export_employee(Request $request)
+    {
+        $locationId = $request->input('location_id') ?? $request->query('location_id');
 
+        $query = AccountEmployee::with([
+            'user',
+            'personal_information',
+            'department',
+            'account',
+            'site',
+            'location',
+            'reporting_to.leader.user.personal_information',
+            'department_manager.personal_information',
+        ]);
+
+        $query->when($locationId, function ($q, $locationId) {
+            $q->where('location_id', $locationId);
+        });
+
+        $records = $query->orderBy('id', 'desc')->get();
+
+        $filename = 'employees_' . ($locationId ? "loc_{$locationId}_" : '') . now()->format('Y_m_d_His') . '.xls';
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $escapeXml = function ($value) {
+            if (is_null($value) || $value === '') return 'N/A';
+            if (is_bool($value)) return $value ? 'Yes' : 'No';
+            if (is_array($value) || is_object($value)) {
+                $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+            }
+            return htmlspecialchars((string) $value, ENT_XML1, 'UTF-8');
+        };
+
+        return response()->stream(function () use ($records, $escapeXml) {
+            $file = fopen('php://output', 'w');
+
+            // Excel XML Header with Styles
+            fwrite($file, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n");
+            fwrite($file, "<?mso-application progid=\"Excel.Sheet\"?>\r\n");
+            fwrite($file, "<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\"\r\n");
+            fwrite($file, " xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\">\r\n");
+
+            // Styles: Bold header style
+            fwrite($file, "<Styles>\r\n");
+            fwrite($file, "  <Style ss:ID=\"HeaderStyle\">\r\n");
+            fwrite($file, "    <Font ss:Bold=\"1\" ss:Color=\"#000000\"/>\r\n");
+            fwrite($file, "    <Interior ss:Color=\"#F1F5F9\" ss:Pattern=\"Solid\"/>\r\n");
+            fwrite($file, "  </Style>\r\n");
+            fwrite($file, "</Styles>\r\n");
+
+            fwrite($file, "<Worksheet ss:Name=\"Employees\">\r\n");
+            fwrite($file, "<Table>\r\n");
+
+            // Explicit wide column widths so columns don't compress
+            $colWidths = [
+                110, // A: Employee ID
+                190, // B: Full Name
+                190, // C: EOGS Email
+                220, // D: Position
+                110, // E: Position Level
+                90,  // F: Work Type
+                130, // G: Employment Status
+                90,  // H: Status
+                190, // I: Department
+                130, // J: Account
+                100, // K: Site
+                120, // L: Location
+                170, // M: Immediate Supervisor
+                170, // N: Department Manager
+                110, // O: Started At
+                100, // P: Basic Pay
+                100, // Q: Allowance
+                80,  // R: With BPO
+                80,  // S: Gender
+                100, // Date of Birth
+                130, // Birth Place
+                100, // Nationality
+                100, // Marital Status
+                110, // Contact
+                150, // Street
+                120, // Barangay
+                120, // City
+                120, // Province
+                120, // Region
+                80,  // Zip Code
+                100, // Village
+                100, // SSS
+                100, // TIN
+                100, // PhilHealth
+                100, // Pag-IBIG
+                120, // Government ID Type
+                120, // ID Number
+                170, // Highest Level of Education
+                140, // Degree
+                160, // Course
+                190, // School Name
+                100, // Year Graduated
+                120, // Awards
+                150, // Contact Name
+                130, // Contact Relationship
+                110, // Contact Number
+                190, // Contact Address
+                120  // Created At
+            ];
+
+            foreach ($colWidths as $width) {
+                fwrite($file, "  <Column ss:AutoFitWidth=\"1\" ss:Width=\"{$width}\"/>\r\n");
+            }
+
+            // Header Labels
+            $headers = [
+                'Employee ID',
+                'Full Name',
+                'EOGS Email',
+                'Position',
+                'Position Level',
+                'Work Type',
+                'Employment Status',
+                'Status',
+                'Department',
+                'Account',
+                'Site',
+                'Location',
+                'Immediate Supervisor',
+                'Department Manager',
+                'Started At',
+                'Basic Pay',
+                'Allowance',
+                'With BPO',
+                'Gender',
+                'Date of Birth',
+                'Birth Place',
+                'Nationality',
+                'Marital Status',
+                'Contact',
+                'Street',
+                'Barangay',
+                'City',
+                'Province',
+                'Region',
+                'Zip Code',
+                'Village',
+                'SSS',
+                'TIN',
+                'PhilHealth',
+                'Pag-IBIG',
+                'Government ID Type',
+                'ID Number',
+                'Highest Level of Education',
+                'Degree',
+                'Course',
+                'School Name',
+                'Year Graduated',
+                'Awards',
+                'Contact Name',
+                'Contact Relationship',
+                'Contact Number',
+                'Contact Address',
+                'Created At'
+            ];
+
+            // Write Header Row
+            fwrite($file, "  <Row ss:StyleID=\"HeaderStyle\">\r\n");
+            foreach ($headers as $header) {
+                $val = $escapeXml($header);
+                fwrite($file, "    <Cell><Data ss:Type=\"String\">{$val}</Data></Cell>\r\n");
+            }
+            fwrite($file, "  </Row>\r\n");
+
+            // Write Data Rows
+            foreach ($records as $item) {
+                $pi = $item->personal_information;
+
+                $firstName  = $pi->first_name ?? '';
+                $middleName = $pi->middle_name ?? '';
+                $lastName   = $pi->last_name ?? '';
+                $suffix     = $pi->suffix ?? '';
+                $fullName   = trim(preg_replace('/\s+/', ' ', "{$firstName} {$middleName} {$lastName} {$suffix}"));
+
+                $supervisorInfo = $item->reporting_to->leader->user->personal_information ?? null;
+                $supervisorName = $supervisorInfo
+                    ? trim("{$supervisorInfo->first_name} {$supervisorInfo->last_name}")
+                    : 'N/A';
+
+                $managerInfo = $item->department_manager->personal_information ?? null;
+                $managerName = $managerInfo
+                    ? trim("{$managerInfo->first_name} {$managerInfo->last_name}")
+                    : 'N/A';
+
+                $startedAt = $item->started_at ? date('Y-m-d', strtotime($item->started_at)) : 'N/A';
+
+                $rowCells = [
+                    $item->employee_id,
+                    $fullName ?: 'N/A',
+                    $item->eogs_email,
+                    $item->position,
+                    $item->position_level,
+                    $item->work_type,
+                    $item->employment_status,
+                    $item->status,
+                    $item->department->name ?? $item->department ?? 'N/A',
+                    $item->account->name ?? $item->account ?? 'N/A',
+                    $item->site->name ?? 'N/A',
+                    $item->location->name ?? 'N/A',
+                    $supervisorName,
+                    $managerName,
+                    $startedAt,
+                    $item->basic_pay ? '₱' . number_format((float)$item->basic_pay, 2) : '₱0.00',
+                    $item->allowance ? '₱' . number_format((float)$item->allowance, 2) : '₱0.00',
+                    $item->with_bpo ? 'Yes' : 'No',
+                    $pi->gender ?? null,
+                    $pi->date_of_birth ?? null,
+                    $pi->birth_place ?? null,
+                    $pi->nationality ?? null,
+                    $pi->marital_status ?? null,
+                    $pi->contact ?? null,
+                    $pi->street ?? null,
+                    $pi->barangay ?? null,
+                    $pi->city ?? null,
+                    $pi->province ?? null,
+                    $pi->region ?? null,
+                    $pi->zip_code ?? null,
+                    $pi->village ?? null,
+                    $pi->sss ?? null,
+                    $pi->tin ?? null,
+                    $pi->philhealth ?? null,
+                    $pi->pagibig ?? null,
+                    $pi->government_type ?? null,
+                    $pi->id_number ?? null,
+                    $pi->highest_level_of_education ?? null,
+                    $pi->degree ?? null,
+                    $pi->course ?? null,
+                    $pi->school_name ?? null,
+                    $pi->year_graduated ?? null,
+                    $pi->awards ?? null,
+                    $pi->contact_name ?? null,
+                    $pi->contact_relationship ?? null,
+                    $pi->contact_number ?? null,
+                    $pi->contact_address ?? null,
+                    $item->created_at ? $item->created_at->format('Y-m-d') : 'N/A',
+                ];
+
+                fwrite($file, "  <Row>\r\n");
+                foreach ($rowCells as $val) {
+                    $cleaned = $escapeXml($val);
+                    fwrite($file, "    <Cell><Data ss:Type=\"String\">{$cleaned}</Data></Cell>\r\n");
+                }
+                fwrite($file, "  </Row>\r\n");
+            }
+
+            fwrite($file, "</Table>\r\n");
+            fwrite($file, "</Worksheet>\r\n");
+            fwrite($file, "</Workbook>\r\n");
+
+            fclose($file);
+        }, 200, $headers);
+    }
     public function get_inactive_employee()
     {
         $users = AccountEmployee::whereNull('e_r_leader_id')

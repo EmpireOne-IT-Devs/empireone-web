@@ -7,6 +7,7 @@ import SearchSection from "./_sections/search-section";
 import PaginationSection from "./_sections/pagination-section";
 import AddEmployeeSection from "./_sections/add-employee-section";
 import EmployeesTableSection from "./_sections/employees-table-section";
+import ExportEmployeeSection from "./_sections/export-employee-section";
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
@@ -16,7 +17,7 @@ export default function Page() {
             try {
                 setLoading(true);
                 await store.dispatch(get_employees_thunk()),
-                setLoading(false);
+                    setLoading(false);
             } catch (error) {
                 setLoading(false);
             }
@@ -27,27 +28,29 @@ export default function Page() {
     return (
         <Layout>
             <EmployeeRelationLayout>
-                
-                    <>
-                        {/* Changed to flex-col for mobile, and md:flex-row for desktop */}
-                        <div className="flex w-full flex-col gap-3 md:flex-row md:items-center">
-                            {/* Added w-full so the search spans the whole width on mobile */}
-                            <div className="flex-1 w-full">
-                                <SearchSection />
-                            </div>
-                            {/* Added w-full for mobile button width, scaling back to auto on md */}
-                            <div className="flex-none w-full md:w-auto">
-                                <AddEmployeeSection />
-                            </div>
-                        </div>
 
-                        {/* Added mt-4 to ensure proper spacing between controls and the card list */}
-                        <div className="mt-4 flex flex-col gap-3">
-                            <EmployeesTableSection loading={loading} />
-                            <PaginationSection />
+                <>
+
+                    {/* Changed to flex-col for mobile, and md:flex-row for desktop */}
+                    <div className="flex w-full flex-col gap-3 md:flex-row md:items-center">
+                        <ExportEmployeeSection />
+                        {/* Added w-full so the search spans the whole width on mobile */}
+                        <div className="flex-1 w-full">
+                            <SearchSection />
                         </div>
-                    </>
-           
+                        {/* Added w-full for mobile button width, scaling back to auto on md */}
+                        <div className="flex-none w-full md:w-auto">
+                            <AddEmployeeSection />
+                        </div>
+                    </div>
+
+                    {/* Added mt-4 to ensure proper spacing between controls and the card list */}
+                    <div className="mt-4 flex flex-col gap-3">
+                        <EmployeesTableSection loading={loading} />
+                        <PaginationSection />
+                    </div>
+                </>
+
             </EmployeeRelationLayout>
         </Layout>
     );
