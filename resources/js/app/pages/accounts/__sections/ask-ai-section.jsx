@@ -7,8 +7,7 @@ import {
 import {
     IoSparkles as Sparkles,
 } from "react-icons/io5";
-// import axios from 'axios'; // Make sure this is imported if using it in this file
-import { ask_ai_service } from '@/app/services/ai-service';
+import { get_ai_cocd_service } from '@/app/services/human-resources-service';
 
 export default function AskAiSection() {
     const [isOpen, setIsOpen] = useState(false);
@@ -39,6 +38,36 @@ export default function AskAiSection() {
         }
     }, [messages, isLoading]);
 
+    const formatAiResponse = (data) => {
+        if (data?.offenses && data.offenses.length > 0) {
+            const offensesList = data.offenses.map((offense, index) => {
+                const ladder = offense.sanctions_ladder
+                    ? `\n  - 1st: ${offense.sanctions_ladder['1st'] || 'N/A'}\n  - 2nd: ${offense.sanctions_ladder['2nd'] || 'N/A'}\n  - 3rd: ${offense.sanctions_ladder['3rd'] || 'N/A'}\n  - 4th: ${offense.sanctions_ladder['4th'] || 'N/A'}`
+                    : '';
+
+                return (
+                    `📌 [Offense ${index + 1}] Section ${offense.section_number}\n` +
+                    `Group: ${offense.classification_group}\n` +
+                    `Clearing Period: ${offense.clearing_period || 'N/A'}\n` +
+                    `Violation: ${offense.code_of_discipline_section}\n` +
+                    `Recommended Penalty: ${offense.recommended_penalty}\n` +
+                    `Sanctions Ladder:${ladder}\n` +
+                    `Explanation: ${offense.specific_violation_explanation}`
+                );
+            }).join('\n\n-------------------------\n\n');
+
+            return (
+                `⚠️ Found ${data.total_offenses_detected} Offense(s) Detected:\n\n` +
+                `${offensesList}\n\n` +
+                `⚖️ Highest Penalty Rule:\n${data.highest_penalty_rule}\n\n` +
+                `📋 Due Process Protocol:\n${data.due_process_protocol}`
+            );
+        }
+
+        // Fallbacks in case the response is standard text or empty
+        return data?.reply || data?.message || "No infractions detected for the submitted description.";
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -48,22 +77,29 @@ export default function AskAiSection() {
         // 1. Add user message to UI immediately & clear input
         setMessages(prev => [...prev, { role: 'user', text: userText }]);
         setQuery('');
-        setIsLoading(true); // Start loading animation
+        setIsLoading(true);
 
         try {
-            // 2. Call API (passing as an object { query: userText } to match Laravel)
-            const response = await ask_ai_service({ query: userText });
+            // 2. Call API
+            const response = await get_ai_cocd_service({ description_of_infraction: userText });
+            console.log('messages', response);
 
-            // 3. Extract the reply from your Laravel API response
-            const aiText = response.data.reply;
+            // Handle both unwrapped data and raw Axios response objects
+            const responseData = response?.data !== undefined ? response.data : response;
+
+            // 3. Format structured response
+            const aiText = formatAiResponse(responseData);
 
             // 4. Add AI response to UI
             setMessages(prev => [...prev, { role: 'ai', text: aiText }]);
         } catch (error) {
             console.error("AI Error:", error);
-            setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I encountered an error. Please try again." }]);
+            setMessages(prev => [
+                ...prev,
+                { role: 'ai', text: "Sorry, I encountered an error processing your request. Please try again." }
+            ]);
         } finally {
-            setIsLoading(false); // Stop loading animation
+            setIsLoading(false);
         }
     };
 
@@ -74,14 +110,14 @@ export default function AskAiSection() {
                 className={`
                     mb-4 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden 
                     origin-bottom-right transition-all duration-300 ease-out flex flex-col
-                    ${isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto h-[450px]' : 'opacity-0 scale-90 translate-y-8 pointer-events-none h-0'}
+                    ${isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto h-[500px]' : 'opacity-0 scale-90 translate-y-8 pointer-events-none h-0'}
                 `}
             >
                 {/* Header */}
                 <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 flex justify-between items-center text-white shrink-0">
                     <div className="flex items-center gap-2">
                         <Sparkles size={20} className="text-purple-200" />
-                        <h3 className="font-semibold text-sm">Ask AI For Employee Information</h3>
+                        <h3 className="font-semibold text-sm">Ask AI For Code of Conduct</h3>
                     </div>
                     <button
                         onClick={toggleOpen}
@@ -94,8 +130,6 @@ export default function AskAiSection() {
 
                 {/* Chat Body Area */}
                 <div className="p-4 flex-1 overflow-y-auto bg-slate-50 flex flex-col gap-3">
-
-                    {/* Dynamic Message Rendering */}
                     {messages.map((msg, index) => (
                         <div
                             key={index}
@@ -104,7 +138,7 @@ export default function AskAiSection() {
                                     : 'bg-white text-slate-700 border-slate-100 self-start rounded-tl-none'
                                 }`}
                         >
-                            <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                            <p className="text-sm whitespace-pre-wrap leading-relaxed break-words font-sans">
                                 {msg.text}
                             </p>
                         </div>
@@ -133,7 +167,7 @@ export default function AskAiSection() {
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Ask anything..."
+                        placeholder="Describe an infraction or scenario..."
                         disabled={isLoading}
                         className="flex-1 bg-slate-100 border-transparent focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 rounded-full px-4 py-2 text-sm outline-none transition-all placeholder:text-slate-400 text-slate-700 disabled:opacity-50"
                     />
@@ -155,6 +189,7 @@ export default function AskAiSection() {
                     transition-all duration-300 transform hover:-translate-y-1 relative
                     ${isOpen ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'}
                 `}
+                aria-label="Toggle AI Chat"
             >
                 <div className={`transition-all duration-300 absolute ${isOpen ? 'scale-100 rotate-0 opacity-100' : 'scale-50 -rotate-90 opacity-0'}`}>
                     <X size={26} />
