@@ -13,12 +13,123 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EREmployeeAttritionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function export_separation(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate   = $request->input('end_date');
+        $status    = $request->input('status');
+
+        $query = EREmployeeAttrition::with([
+            'personal_information',
+            'employee.personal_information',
+            'employee.department',
+            'employee.site',
+            'employee.er_leader',
+        ]);
+
+        if (!empty($status)) {
+            $query->whereRaw('LOWER(status) = ?', [strtolower(trim($status))]);
+        }
+
+        if (!empty($startDate) && !empty($endDate)) {
+            $query->whereBetween('separation_date', [
+                $startDate . ' 00:00:00',
+                $endDate . ' 23:59:59'
+            ]);
+        } elseif (!empty($startDate)) {
+            $query->where('separation_date', '>=', $startDate . ' 00:00:00');
+        } elseif (!empty($endDate)) {
+            $query->where('separation_date', '<=', $endDate . ' 23:59:59');
+        }
+
+        $records = $query->orderBy('separation_date', 'desc')->get();
+
+        $filename = 'separation_report_' . now()->format('Y_m_d_His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $toString = function ($value) {
+            if (is_null($value)) return 'N/A';
+            if (is_bool($value)) return $value ? 'Yes' : 'No';
+            if (is_array($value) || is_object($value)) {
+                return json_encode($value, JSON_UNESCAPED_UNICODE);
+            }
+            return (string) $value;
+        };
+
+        return new StreamedResponse(function () use ($records, $toString) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF");
+
+            fputcsv($file, [
+                'ID',
+                'Employee ID',
+                'Employee Name',
+                'Site / Location',
+                'EOGS Email',
+                'Department',
+                'Account',
+                'Position',
+                'Immediate Supervisor',
+                'Department Manager',
+                'Employment Status',
+                'Started At',
+                'Last Working Date',
+                'Separation Date',
+                'Status',
+                'Reason for Separation',
+                'Attrition Status',
+                'Eligible for Rehire',
+                'Is Liquidated',
+                'Days of Liquidated',
+                'Created At',
+            ]);
+
+            foreach ($records as $item) {
+                $personalInfo = $item->personal_information ?? $item->employee->personal_information ?? null;
+                $firstName = $personalInfo->first_name ?? '';
+                $lastName = $personalInfo->last_name ?? '';
+                $fullName = trim("{$firstName} {$lastName}");
+
+                $site = $item->employee->site->name ?? $item->employee->site->location_name ?? 'N/A';
+
+                fputcsv($file, [
+                    $item->id,
+                    $toString($item->employee_id),
+                    $fullName ?: 'N/A',
+                    $toString($site),
+                    $toString($item->eogs_email),
+                    $toString($item->department ?? $item->employee->department->name ?? 'N/A'),
+                    $toString($item->account),
+                    $toString($item->position),
+                    $toString($item->immediate_supervisor),
+                    $toString($item->department_manager),
+                    $toString($item->employment_status),
+                    $toString($item->started_at),
+                    $toString($item->last_working_date),
+                    $toString($item->separation_date),
+                    $toString($item->status),
+                    $toString($item->reason_for_separation),
+                    $toString($item->attrition_status),
+                    $item->is_rehire ? 'Yes' : 'No',
+                    $item->is_liquidated ? 'Yes' : 'No',
+                    $toString($item->days_of_liquidated ?? '0'),
+                    $item->created_at ? $item->created_at->format('Y-m-d H:i:s') : 'N/A',
+                ]);
+            }
+
+            fclose($file);
+        }, 200, $headers);
+    }
     public function index(Request $request)
     {
         $locationId = $request->query('location_id');

@@ -354,6 +354,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('add_sub_acknowledgement',  [ERAcknowledgementController::class, 'add_sub_acknowledgement']);
         Route::resource('acknowledgement_employee', ERAcknowledgementEmployeeController::class);
         Route::resource('attrition', EREmployeeAttritionController::class);
+        Route::post('export_separation',  [EREmployeeAttritionController::class, 'export_separation']);
         Route::resource('exit_clearance', ERExitClearanceController::class);
         Route::resource('exit_interview', ERExitInterviewController::class);
         Route::get('search_employee',  [AccountEmployeeController::class, 'search_employee']);
