@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { get_engagement_reward_recognitions_thunk } from "@/app/redux/engagement-thunk";
 import { syncRewardRecognitionInteraction } from "@/app/redux/engagement-slice";
 import { toggle_reward_recognition_reaction_service } from "@/app/services/engagement-service";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 import moment from "moment";
 
 // ── Color theme per category variant ─────────────────────────────────────
@@ -250,6 +251,8 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
     const { rewardRecognitions, rewardRecognitionsLoading } = useSelector(
         (state) => state.engagement,
     );
+    const { user, isContentManager } = useCurrentEmployee();
+    const currentUserId = user?.id != null ? Number(user.id) : null;
     const reactingIds = useRef(new Set());
     const [, forceUpdate] = useState(0);
     const [selectedCertificateItem, setSelectedCertificateItem] = useState(null);
@@ -371,6 +374,8 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
 
         return {
             id: r.id,
+            authorId: author.id != null ? Number(author.id) : null,
+            recipientId: employee.id != null ? Number(employee.id) : null,
             author: {
                 name: authorFullName,
                 initials: initials(authorFullName),
@@ -422,23 +427,51 @@ export default function RewardCardSection({ selectedCategory = "All Awards" }) {
         badge_variant: item.category?.variant,
     });
 
+    // Only content managers (dept 1/11), the recipient who was recognized,
+    // or the author who sent the recognition may open the certificate.
+    // Everyone else sees the card but it is not clickable.
+    const canViewCertificate = (item) => {
+        if (isContentManager) return true;
+        if (currentUserId === null) return false;
+
+        return (
+            item.recipientId === currentUserId ||
+            item.authorId === currentUserId
+        );
+    };
+
+    const handleCardClick = (item) => {
+        if (canViewCertificate(item)) {
+            setSelectedCertificateItem(item);
+        }
+    };
+
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {rewardRecognitionsLoading
                 ? loadingCards
-                : mapped.map((item) => (
-                    <div
-                        key={item.id}
-                        onClick={() => setSelectedCertificateItem(item)}
-                        className="cursor-pointer"
-                    >
-                        <RewardCard
-                            item={item}
-                            reacting={reactingIds.current.has(item.id)}
-                            onReact={handleReact}
-                        />
-                    </div>
-                  ))}
+                : mapped.map((item) => {
+                      const clickable = canViewCertificate(item);
+
+                      return (
+                          <div
+                              key={item.id}
+                              onClick={() => handleCardClick(item)}
+                              className={clickable ? "cursor-pointer" : "cursor-default"}
+                              title={
+                                  clickable
+                                      ? undefined
+                                      : "Only the recipient, the sender, or an administrator can view this certificate"
+                              }
+                          >
+                              <RewardCard
+                                  item={item}
+                                  reacting={reactingIds.current.has(item.id)}
+                                  onReact={handleReact}
+                              />
+                          </div>
+                      );
+                  })}
 
             <Modal
                 isOpen={!!selectedCertificateItem}

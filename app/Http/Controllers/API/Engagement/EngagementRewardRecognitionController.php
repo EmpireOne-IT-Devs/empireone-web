@@ -187,12 +187,31 @@ class EngagementRewardRecognitionController extends Controller
     private function sendRecognitionEmail(EngagementRewardRecognition $recognition, ?User $employee): void
     {
         if (!$employee) {
+            Log::warning('Recognition email skipped: no employee', [
+                'recognition_id' => $recognition->id,
+            ]);
             return;
         }
 
         $workEmail = $employee->account_employee?->eogs_email ?: $employee->email;
 
         if (!$workEmail) {
+            Log::warning('Recognition email skipped: recipient has no email', [
+                'recognition_id' => $recognition->id,
+                'employee_id' => $employee->id,
+            ]);
+            return;
+        }
+
+        // Read via config() so it survives `php artisan config:cache` on
+        // production — env() returns null there once config is cached.
+        $webhookUrl = config('services.recognition.webhook_url');
+
+        if (!$webhookUrl) {
+            Log::error('Recognition email skipped: SEND_RECOGNITION is not configured', [
+                'recognition_id' => $recognition->id,
+                'email' => $workEmail,
+            ]);
             return;
         }
 
@@ -207,7 +226,7 @@ class EngagementRewardRecognitionController extends Controller
             $htmlBody = $mailable->render();
 
             $client = new Client();
-            $client->post(env('SEND_RECOGNITION'), [
+            $response = $client->post($webhookUrl, [
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
@@ -217,8 +236,14 @@ class EngagementRewardRecognitionController extends Controller
                     'html_body' => $htmlBody,
                 ],
             ]);
+
+            Log::info('Recognition email sent', [
+                'recognition_id' => $recognition->id,
+                'email' => $workEmail,
+                'status' => $response->getStatusCode(),
+            ]);
         } catch (\Throwable $e) {
-            Log::warning('Failed to send recognition email', [
+            Log::error('Failed to send recognition email', [
                 'recognition_id' => $recognition->id,
                 'email' => $workEmail,
                 'error' => $e->getMessage(),
