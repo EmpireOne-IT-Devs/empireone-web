@@ -134,5 +134,18 @@
 - **QA Checklist Result:** ✅ All applicable items pass. Keyboard/focus items code-level ✅ — requires browser verification.
 - **Next Steps:** None. Run `npm run build` / `npm run dev` to see it live.
 
+---
+
+### Phase 5 Hotfix: Clamp long card messages
+
+- **Timestamp:** 2026-11-05 18:35 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🎨 Designer + 🧪 QA
+- **Issue:** Recognition cards rendered the full citation, making cards extremely tall.
+- **Files Modified:**
+  - `resources/js/app/pages/.../sections/reward-card-section.jsx` — Card message clamped to 4 lines with an ellipsis via inline `-webkit-box` line-clamp (Tailwind 3.2 has no core `line-clamp` utility; no custom CSS files per project rules). Full message still shows in the certificate modal on click.
+- **Validation:** `npx esbuild` clean.
+- **QA Checklist Result:** ✅ Pass.
+
 
 
