@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import moment from "moment";
 import {
     FiAward as Award,
@@ -102,6 +102,19 @@ export function getAwardMessage(cert) {
         AWARD_MESSAGES[cert.category] ||
         null
     );
+}
+
+// User-edited citation text (from the Create Certificate form) overrides the
+// preset award message. Paragraphs are split on blank lines.
+export function getCustomMessageParagraphs(cert) {
+    if (!cert || !cert.custom_message) return null;
+
+    const paragraphs = String(cert.custom_message)
+        .split(/\n\s*\n/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean);
+
+    return paragraphs.length ? paragraphs : null;
 }
 
 export function formatCertificateDate(cert) {
@@ -222,6 +235,14 @@ export default function CertificateRewardSection({
 
     const certificateRef = useRef(null);
 
+    // Keep the preview in sync when a single-certificate draft prop changes
+    // (e.g. live editing in Create Certificate).
+    useEffect(() => {
+        if (hideList) {
+            setSelectedCert(certificates[0] || null);
+        }
+    }, [hideList, certificates]);
+
     // ========================================================================
     // FILTER CERTIFICATES
     // ========================================================================
@@ -297,6 +318,7 @@ export default function CertificateRewardSection({
     // ========================================================================
 
     const awardMessage = getAwardMessage(selectedCert);
+    const customMessage = getCustomMessageParagraphs(selectedCert);
     const certificateDate = formatCertificateDate(selectedCert);
     const certificateCount = getCertificateCount(selectedCert);
 
@@ -592,7 +614,7 @@ export default function CertificateRewardSection({
 
                                         {/* Presented To */}
                                         <p className="mt-2 text-center text-[0.6rem] font-medium uppercase tracking-[0.3em] text-slate-500 sm:text-[0.7rem]">
-                                            {awardMessage
+                                            {awardMessage || customMessage
                                                 ? "Presented with Distinction to"
                                                 : "This Certificate is Proudly Presented to"}
                                         </p>
@@ -609,7 +631,20 @@ export default function CertificateRewardSection({
                                             CITATION MESSAGE
                                         ================================================= */}
 
-                                        {awardMessage ? (
+                                        {customMessage ? (
+                                            <div className="mx-auto mt-2 w-full max-w-auto space-y-[0.3em] sm:max-w-[92%]">
+                                                {customMessage.map(
+                                                    (paragraph, idx) => (
+                                                        <p
+                                                            key={idx}
+                                                            className="mx-auto text-center text-[0.68rem] leading-[1.45] text-slate-900 sm:text-[0.68rem] md:text-[0.72rem]"
+                                                        >
+                                                            {paragraph}
+                                                        </p>
+                                                    ),
+                                                )}
+                                            </div>
+                                        ) : awardMessage ? (
                                             <div className="mx-auto mt-2 w-full max-w-auto space-y-[0.3em] sm:max-w-[92%]">
                                                 {awardMessage.map(
                                                     (paragraph, idx) => (
