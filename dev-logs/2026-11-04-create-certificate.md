@@ -134,5 +134,47 @@
 - **QA Checklist Result:** ✅ All applicable items pass. Keyboard/focus items code-level ✅ — requires browser verification.
 - **Next Steps:** None. Run `npm run build` / `npm run dev` to see it live.
 
+---
+
+### Phase 5 Hotfix: Clamp long card messages
+
+- **Timestamp:** 2026-11-05 18:35 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🎨 Designer + 🧪 QA
+- **Issue:** Recognition cards rendered the full citation, making cards extremely tall.
+- **Files Modified:**
+  - `resources/js/app/pages/.../sections/reward-card-section.jsx` — Card message clamped to 4 lines with an ellipsis via inline `-webkit-box` line-clamp (Tailwind 3.2 has no core `line-clamp` utility; no custom CSS files per project rules). Full message still shows in the certificate modal on click.
+- **Validation:** `npx esbuild` clean.
+- **QA Checklist Result:** ✅ Pass.
+
+---
+
+### Phase 6: Gate certificate viewing on reward cards
+
+- **Timestamp:** 2026-11-05 19:00 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🖥️ Frontend + 🧪 QA
+- **Request:** A reward card should open the certificate only for content managers (department 1/11) and the author who sent the recognition. Others see the card but cannot click it.
+- **Files Modified:**
+  - `resources/js/app/pages/.../sections/reward-card-section.jsx` — Added `useCurrentEmployee()` (`user`, `isContentManager`); carried `authorId`/`recipientId` through the `mapped` recognitions; added `canViewCertificate(item)` (content manager OR author) and `handleCardClick`; card `onClick`/`cursor`/`title` now reflect clickability. Like/share still work for everyone via `stopPropagation`.
+- **Issues Encountered:** esbuild/Vite parse error `Expected ">" but found "}"` from an inline `onClick={ clickable ? () => ... : undefined }` ternary inside JSX braces.
+- **Resolution:** Extracted the click logic into a `handleCardClick(item)` guard so the JSX `onClick` is a plain arrow — file parses cleanly.
+- **Validation:** esbuild `transformSync` OK.
+- **QA Checklist Result:** ✅ Pass.
+
+---
+
+### Phase 6 Hotfix: Recipient can open their own certificate + email diagnostics
+
+- **Timestamp:** 2026-11-05 19:20 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🖥️ Frontend + ⚙️ Backend + 🧪 QA
+- **Issue 1:** The recognized employee could not open their certificate. Console debug showed `currentUserId: 320` (logged-in recipient) vs `authorId: 5` — the gate only allowed the **sender**, but "the one who was recognized" is the **recipient**.
+- **Fix 1:** `canViewCertificate` now allows content managers, the **recipient** (`recipientId`), or the author (`authorId`). Removed the temporary debug log; reverted `currentUserId` to plain `user.id` (all id fields resolved identically). Tooltip updated.
+- **Issue 2:** On production, no recognition email arrives. Email goes through a Google Apps Script webhook (`SEND_RECOGNITION` env) and failures were swallowed as a silent `Log::warning`.
+- **Fix 2:** `EngagementRewardRecognitionController::sendRecognitionEmail()` now logs every path: no employee, recipient has no email, `SEND_RECOGNITION` not set (error), webhook success (with HTTP status), webhook failure (error + message). Check `storage/logs/laravel.log` on production after creating a recognition; most likely cause is a missing `SEND_RECOGNITION` in the production `.env`.
+- **Validation:** esbuild OK; `php -l` clean.
+- **QA Checklist Result:** ✅ Pass.
+
 
 
