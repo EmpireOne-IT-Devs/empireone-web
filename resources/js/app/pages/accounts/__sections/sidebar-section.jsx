@@ -148,7 +148,7 @@ export default function SidebarSection() {
                             href: `/accounts/${account_role}/asset_inventory`,
                             icon: PackageIcon,
                             current: path == "asset_inventory",
-                            is_incoming: true,
+                            is_incoming: false,
                         },
                     ]
                     : []),
@@ -176,7 +176,7 @@ export default function SidebarSection() {
                             href: `/accounts/${account_role}/e_store/rewards_items`,
                             icon: FcShop,
                             current: path == "e_store",
-                            is_incoming: false,
+                            is_incoming: true,
                         },
                     ]
                     : []),
@@ -242,7 +242,7 @@ export default function SidebarSection() {
                     href: `/accounts/${account_role}/rewards_store`,
                     icon: FcShop,
                     current: path == "rewards_store",
-                    is_incoming: false,
+                    is_incoming: true,
                 },
                 {
                     name: "Loan",
