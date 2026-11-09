@@ -222,8 +222,11 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::redirect('/', '/accounts/administrator/asset_inventory/dashboard');
             Route::inertia('/dashboard', 'accounts/_administrator/asset_inventory/dashboard/page');
             Route::inertia('/purchase_request', 'accounts/_administrator/asset_inventory/purchase_request/page');
+            Route::inertia('/purchase_request/{id}', 'accounts/_administrator/asset_inventory/purchase_request/id/page');
             Route::inertia('/item_request', 'accounts/_administrator/asset_inventory/item_request/page');
+            Route::inertia('/item_request/{id}', 'accounts/_administrator/asset_inventory/item_request/id/page');
             Route::inertia('/liability_form', 'accounts/_administrator/asset_inventory/liability_form/page');
+            Route::inertia('/liability_form/{id}', 'accounts/_administrator/asset_inventory/liability_form/id/page');
             Route::inertia('/devices', 'accounts/_administrator/asset_inventory/devices/page');
             Route::inertia('/system_unit', 'accounts/_administrator/asset_inventory/system_unit/page');
             Route::inertia('/monitors', 'accounts/_administrator/asset_inventory/monitors/page');

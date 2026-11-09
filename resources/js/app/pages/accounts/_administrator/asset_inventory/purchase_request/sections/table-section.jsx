@@ -1,8 +1,8 @@
 import React from "react";
+import { Link } from "@inertiajs/react";
 import { FiEye } from "react-icons/fi";
 import Table from "@/app/_components/table";
 import Badge from "@/app/_components/badge";
-import Button from "@/app/_components/button";
 import Pagination from "@/app/_components/pagination";
 import {
     CATEGORY_VARIANTS,
@@ -12,13 +12,14 @@ import {
     formatMoney,
 } from "./purchase-request-helpers";
 
+const DETAIL_BASE = "/accounts/administrator/asset_inventory/purchase_request";
+
 export default function TableSection({
     data = [],
     currency = "PHP",
     loading = false,
     meta = null,
     onPageChange,
-    onView,
 }) {
     const columns = [
         {
@@ -123,15 +124,14 @@ export default function TableSection({
             header: "",
             accessor: "actions",
             render: (row) => (
-                <Button
-                    size="sm"
-                    variant="success"
-                    onClick={() => onView?.(row)}
-                    ariaLabel={`View purchase request ${row.id}`}
+                <Link
+                    href={`${DETAIL_BASE}/${row.id}`}
+                    aria-label={`View purchase request ${row.id}`}
+                    className="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                 >
                     <FiEye className="mr-1.5 h-3.5 w-3.5" />
                     View
-                </Button>
+                </Link>
             ),
         },
     ];

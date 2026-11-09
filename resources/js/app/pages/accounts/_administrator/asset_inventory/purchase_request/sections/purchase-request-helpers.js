@@ -1,5 +1,3 @@
-import moment from "moment";
-
 export const DEPARTMENTS = [
     "IT Department",
     "Human Resources",
@@ -56,8 +54,39 @@ export const STATUS_VARIANTS = {
     Rejected: "danger",
 };
 
-export const toOptions = (values) =>
-    values.map((value) => ({ label: value, value }));
+// Fixed 4-level approval chain. Order matters — each level unlocks the next.
+export const APPROVAL_STEPS = [
+    {
+        key: "department_head",
+        label: "Department Head",
+        description: "Validates the business need and budget line",
+    },
+    {
+        key: "finance",
+        label: "Finance",
+        description: "Confirms funds availability and cost center",
+    },
+    {
+        key: "procurement",
+        label: "Procurement",
+        description: "Reviews supplier, pricing, and sourcing terms",
+    },
+    {
+        key: "general_manager",
+        label: "Admin / General Manager",
+        description: "Final sign-off to release the purchase order",
+    },
+];
+
+export const APPROVAL_STATUSES = ["pending", "approved", "rejected"];
+
+export {
+    APPROVAL_STATUS_VARIANTS,
+    getCurrentStepIndex,
+    getApprovalSummary,
+    toOptions,
+    formatDate,
+} from "../../_lib/approval-helpers";
 
 export function formatMoney(amountPhp, currency = "PHP") {
     const amount = Number(amountPhp) || 0;
@@ -73,10 +102,4 @@ export function formatMoney(amountPhp, currency = "PHP") {
         style: "currency",
         currency: "PHP",
     }).format(amount);
-}
-
-export function formatDate(value) {
-    if (!value) return "—";
-    const date = moment(value);
-    return date.isValid() ? date.format("MMM D, YYYY") : "—";
 }
