@@ -77,7 +77,7 @@ class AccountEmployee extends Model
     protected function calculateWeekReach(int $startDay, int $endDay = 31)
     {
         if (!$this->relationLoaded('reaches')) {
-            return 0;
+            return [];
         }
 
         $targetMonth = static::$defaultMonth ?? now()->month;
@@ -85,15 +85,14 @@ class AccountEmployee extends Model
 
         return $this->reaches
             ->filter(function ($reach) use ($startDay, $endDay, $targetMonth, $targetYear) {
-                // Replace 'created_at' with your actual date column if it's named 'date' or 'reach_date'
-                $reachDate = Carbon::parse($reach->created_at);
+                $reachDate = \Carbon\Carbon::parse($reach->created_at);
 
                 return (int) $reachDate->year === (int) $targetYear
                     && (int) $reachDate->month === (int) $targetMonth
                     && $reachDate->day >= $startDay
                     && $reachDate->day <= $endDay;
             })
-            ->count(); // <--- CHANGE FROM ->sum('value') TO ->count()
+            ->values(); // <--- Returns the matching records as an array/collection
     }
 
     public function getWeek1Attribute()

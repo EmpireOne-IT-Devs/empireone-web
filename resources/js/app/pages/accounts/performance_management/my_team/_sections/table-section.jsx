@@ -3,6 +3,7 @@ import Button from "@/app/_components/button";
 import React from "react";
 import { useSelector } from "react-redux";
 import MenuSection from "./menu-section";
+import HoverWeekSection from "./hover-week-section";
 
 export default function TableSection({ isloading }) {
     const { teams } = useSelector((store) => store.departments);
@@ -23,7 +24,7 @@ export default function TableSection({ isloading }) {
         // { header: "Date Added", accessor: "created_at" },
         { header: "Action", accessor: "action" },
     ];
-    console.log('teams',teams)
+    console.log('teams', teams)
 
     // Format the array structure from console log
     const formattedTeams = Array.isArray(teams)
@@ -48,13 +49,11 @@ export default function TableSection({ isloading }) {
                     id: item?.id,
                     employee_id: item?.employee_id || "N/A",
                     full_name: fullName,
-                    // eogs_email: item?.eogs_email || "N/A",
-                    // created_at: item?.created_at
-                    //     ? new Date(item.created_at).toLocaleDateString()
-                    //     : "N/A",
-                    action: (
-                        <MenuSection props_data={item} />
-                    ),
+                    week_1: <HoverWeekSection props_data={item} week="week_1" />,
+                    week_2: <HoverWeekSection props_data={item} week="week_2" />,
+                    week_3: <HoverWeekSection props_data={item} week="week_3" />,
+                    week_4: <HoverWeekSection props_data={item} week="week_4" />,
+                    action: <MenuSection props_data={item} />,
                 };
             })
         : [];
