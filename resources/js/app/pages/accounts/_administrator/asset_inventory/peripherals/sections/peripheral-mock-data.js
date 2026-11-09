@@ -1,0 +1,67 @@
+// Mock data until the peripherals API exists. Amounts are numeric PHP (null = no price).
+export const initialPeripherals = [
+    {
+        id: "PH-001",
+        type: "Keyboard",
+        brand: "Logitech",
+        model: "K120",
+        description: "Wired full-size USB keyboard.",
+        quantity: 12,
+        lowStockThreshold: 5,
+        location: "Main office",
+        status: "Active",
+        price: 650,
+    },
+    {
+        id: "PH-002",
+        type: "Mouse",
+        brand: "Logitech",
+        model: "M185",
+        description: "Wireless optical mouse with USB receiver.",
+        quantity: 4,
+        lowStockThreshold: 5,
+        location: "Main office",
+        status: "Active",
+        price: 550,
+    },
+    {
+        id: "PH-003",
+        type: "Headset",
+        brand: "Jabra",
+        model: "Evolve 20",
+        description: "Stereo USB headset with noise-canceling mic.",
+        quantity: 8,
+        lowStockThreshold: 3,
+        location: "Main office",
+        status: "Active",
+        price: 2200,
+    },
+    {
+        id: "PH-004",
+        type: "Webcam",
+        brand: "Logitech",
+        model: "C270",
+        description: "720p HD webcam.",
+        quantity: 0,
+        lowStockThreshold: 2,
+        location: "North hub",
+        status: "Active",
+        price: 1500,
+    },
+    {
+        id: "PH-005",
+        type: "Docking Station",
+        brand: "Dell",
+        model: "WD19",
+        description: "USB-C dock with dual display support.",
+        quantity: 3,
+        lowStockThreshold: 2,
+        location: "Main office",
+        status: "Active",
+        price: 8500,
+    },
+];
+
+export function findPeripheral(id) {
+    return initialPeripherals.find((item) => item.id === id) ?? null;
+}

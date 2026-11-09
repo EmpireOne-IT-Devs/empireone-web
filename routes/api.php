@@ -50,6 +50,7 @@ use App\Http\Controllers\API\Activities\ActivityPollController;
 use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
+use App\Http\Controllers\API\AssetInventory\AssetDeviceController;
 use App\Http\Controllers\API\EmpireoneHealth\BookingController;
 use App\Http\Controllers\API\Engagement\EngagementCompanyGalleryController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventController;
@@ -134,6 +135,15 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
+
+    Route::prefix('asset_inventory')->group(function () {
+        Route::post('devices/import', [AssetDeviceController::class, 'import_devices']);
+        Route::get('devices', [AssetDeviceController::class, 'get_all']);
+        Route::post('devices', [AssetDeviceController::class, 'create_device']);
+        Route::get('devices/{asset_device}', [AssetDeviceController::class, 'get_device']);
+        Route::put('devices/{asset_device}', [AssetDeviceController::class, 'update_device']);
+        Route::delete('devices/{asset_device}', [AssetDeviceController::class, 'delete_device']);
+    });
     Route::resource('get_app_data', AppController::class);
     Route::resource('accounts_information', AccountPersonalInformationController::class);
 

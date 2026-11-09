@@ -15,6 +15,7 @@ import locationEmployeeSlice from "../redux/location-employee-slice";
 import accountPendingSlice from "../redux/account-pending-slice";
 import teamRequestSlice from "../redux/team-request-slice";
 import timeSheetSlice from "../redux/time-sheet-slice";
+import assetDevicesSlice from "../redux/asset-device-slice";
 
 const store = configureStore({
     reducer: {
@@ -34,6 +35,7 @@ const store = configureStore({
         account_pendings: accountPendingSlice,
         team_requests: teamRequestSlice,
         time_sheets: timeSheetSlice,
+        asset_devices: assetDevicesSlice,
     },
 });
 

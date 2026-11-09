@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\AssetInventory\AssetDevice;
 use App\Models\Engagement\EngagementEStoreRedemption;
 use App\Models\Engagement\EngagementPostEventSurvey;
 use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
@@ -9,6 +10,7 @@ use App\Models\Timekeeping\AttendanceCorrection;
 use App\Models\Timekeeping\Attendance;
 use App\Models\Timekeeping\LeaveRequest;
 use App\Models\Timekeeping\OvertimeRequest;
+use App\Policies\AssetDevicePolicy;
 use App\Policies\ChallengeSurveyPolicy;
 use App\Policies\Engagement\EngagementEStoreRedemptionPolicy;
 use App\Policies\Engagement\EngagementRewardChallengeTeamSubmissionPolicy;
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceRootUrl(config('app.url'));
             URL::forceScheme('https');
         }
+        Gate::policy(AssetDevice::class, AssetDevicePolicy::class);
         Gate::policy(EngagementEStoreRedemption::class, EngagementEStoreRedemptionPolicy::class);
         Gate::policy(EngagementPostEventSurvey::class, ChallengeSurveyPolicy::class);
         Gate::policy(EngagementRewardChallengeTeamSubmission::class, EngagementRewardChallengeTeamSubmissionPolicy::class);
