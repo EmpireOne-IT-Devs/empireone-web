@@ -1,9 +1,10 @@
 import React from "react";
 import {
     FcPieChart,
-    FcCollaboration ,
+    FcCollaboration,
     FcLeave,
     FcConferenceCall,
+    FcPortraitMode,
 } from "react-icons/fc";
 import SubSidebarSection from "./../../__sections/sub-sidebar-section";
 
@@ -18,7 +19,7 @@ export default function SidebarSection({ children }) {
             path: "/accounts/administrator/performance_management/dashboard",
             active: currentPath === "dashboard" || currentPath === "",
         },
-          {
+        {
             label: "My Team",
             name: "my_team",
             icon: <FcConferenceCall className="w-5 h-5 shrink-0" />,
@@ -28,7 +29,7 @@ export default function SidebarSection({ children }) {
         {
             label: "Coaching",
             name: "Reach",
-            icon: <FcCollaboration  className="w-5 h-5 shrink-0" />,
+            icon: <FcCollaboration className="w-5 h-5 shrink-0" />,
             path: "/accounts/administrator/performance_management/reach",
             active: currentPath === "reach",
         },
@@ -38,6 +39,13 @@ export default function SidebarSection({ children }) {
             icon: <FcLeave className="w-5 h-5 shrink-0" />,
             path: "/accounts/administrator/performance_management/corrective_action",
             active: currentPath === "corrective_action",
+        },
+        {
+            label: "PIP",
+            name: "Pip",
+            icon: <FcPortraitMode className="w-5 h-5 shrink-0" />,
+            path: "/accounts/administrator/performance_management/pip",
+            active: currentPath === "pip",
         },
     ];
 

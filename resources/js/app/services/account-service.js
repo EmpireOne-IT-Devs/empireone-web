@@ -31,5 +31,5 @@ export async function add_employee_service(data) {
 }
 
 export async function get_my_team_service() {
-    return await axios.get(`/api/er/get_my_team`);
+    return await axios.get(`/api/er/get_my_team${window.location.search}`);
 }

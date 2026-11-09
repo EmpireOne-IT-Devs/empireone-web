@@ -31,21 +31,21 @@ export default function TableSection() {
                             //     disabled
                             //     href={`/accounts/administrator/human_resources/leads/${res.id}`}
                             // >
-                            //     {res?.employee?.account_employee?.employee_id}
+                            //     {res?.employee_id}
                             // </Link>
-                            <> {res?.employee?.account_employee?.employee_id}</>
+                            <> {res?.employee_id}</>
                         ),
-                        name: `${res?.employee?.personal_information?.first_name} ${res?.employee?.personal_information?.middle_name} ${res?.employee?.personal_information?.last_name}`,
-                        position: `${res?.employee?.account_employee?.position} `,
+                        name: `${res?.personal_information?.first_name} ${res?.personal_information?.middle_name} ${res?.personal_information?.last_name}`,
+                        position: `${res?.position} `,
                         department:
-                            res?.employee?.account_employee?.department?.name,
+                            res?.department?.name,
                         account:
-                            res?.employee?.account_employee?.account?.name ??
+                            res?.account?.name ??
                             "N/A",
                         immediate_supervisor:
-                            `${res?.leader?.user?.personal_information?.first_name ?? ''} ${res?.leader?.user?.personal_information?.last_name ?? ''}`,
+                            `${res?.er_leader?.employee?.personal_information?.first_name ?? ''} ${res?.er_leader?.employee?.personal_information?.last_name ?? ''}`,
                         second_level_manager:
-                            `${res?.employee?.account_employee?.department_manager?.personal_information?.first_name ?? ''} ${res?.employee?.account_employee?.department_manager?.personal_information?.last_name ?? ''}`,
+                            `${res?.department_manager?.personal_information?.first_name ?? ''} ${res?.department_manager?.personal_information?.last_name ?? ''}`,
                         // action: "button",
                     })) ?? []
                 }

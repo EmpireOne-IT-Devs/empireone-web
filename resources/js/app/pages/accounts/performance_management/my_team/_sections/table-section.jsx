@@ -3,6 +3,7 @@ import Button from "@/app/_components/button";
 import React from "react";
 import { useSelector } from "react-redux";
 import MenuSection from "./menu-section";
+import HoverWeekSection from "./hover-week-section";
 
 export default function TableSection({ isloading }) {
     const { teams } = useSelector((store) => store.departments);
@@ -15,10 +16,17 @@ export default function TableSection({ isloading }) {
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
         { header: "Name", accessor: "full_name" },
-        { header: "Email", accessor: "eogs_email" },
-        { header: "Date Added", accessor: "created_at" },
+        { header: "Immediate Supervisor", accessor: "immediate_supervisor" },
+        { header: "Next Level Manager ", accessor: "next_level_manager" },
+        { header: "Week 1", accessor: "week_1" },
+        { header: "Week 2", accessor: "week_2" },
+        { header: "Week 3", accessor: "week_3" },
+        { header: "Week 4", accessor: "week_4" },
+        // { header: "Email", accessor: "eogs_email" },
+        // { header: "Date Added", accessor: "created_at" },
         { header: "Action", accessor: "action" },
     ];
+    console.log('teams', teams)
 
     // Format the array structure from console log
     const formattedTeams = Array.isArray(teams)
@@ -43,13 +51,13 @@ export default function TableSection({ isloading }) {
                     id: item?.id,
                     employee_id: item?.employee_id || "N/A",
                     full_name: fullName,
-                    eogs_email: item?.eogs_email || "N/A",
-                    created_at: item?.created_at
-                        ? new Date(item.created_at).toLocaleDateString()
-                        : "N/A",
-                    action: (
-                        <MenuSection props_data={item} />
-                    ),
+                    immediate_supervisor:`${item?.er_leader?.employee?.personal_information?.first_name} ${item?.er_leader?.employee?.personal_information?.last_name}`,
+                    next_level_manager:`${item?.department_manager?.personal_information?.first_name} ${item?.department_manager?.personal_information?.last_name}`,
+                    week_1: <HoverWeekSection props_data={item} week="week_1" />,
+                    week_2: <HoverWeekSection props_data={item} week="week_2" />,
+                    week_3: <HoverWeekSection props_data={item} week="week_3" />,
+                    week_4: <HoverWeekSection props_data={item} week="week_4" />,
+                    action: <MenuSection props_data={item} />,
                 };
             })
         : [];

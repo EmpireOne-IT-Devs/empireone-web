@@ -13,6 +13,7 @@ export default function TableSection({ isloading }) {
     const search_terms = params.get("search")?.toLowerCase() || "";
 
     const columns = [
+        { header: "ID", accessor: "id" },
         { header: "Employee Name", accessor: "employee_name" },
         { header: "Supervisor", accessor: "supervisor_name" },
         { header: "Account & Date", accessor: "session_details" },
