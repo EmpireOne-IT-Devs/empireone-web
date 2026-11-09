@@ -1,5 +1,6 @@
 import React from "react";
 import AddDocumentSection from "./add-document-section";
+import GenerateCoeSection from "./generate-coe-section";
 
 export default function HeaderSection() {
     return (
@@ -13,8 +14,9 @@ export default function HeaderSection() {
                     documents.
                 </p> */}
             </div>
-            <div className="flex-none w-full sm:w-auto">
+            <div className="flex gap-2 w-full sm:w-auto">
                 <AddDocumentSection />
+                <GenerateCoeSection />
             </div>
         </div>
     );

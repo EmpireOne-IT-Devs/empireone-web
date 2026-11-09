@@ -11,6 +11,7 @@ class Site extends Model
         'location_id',
         'name',
         'address',
+        'full_address',
         'status',
     ];
 
