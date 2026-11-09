@@ -16,6 +16,8 @@ export default function TableSection({ isloading }) {
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
         { header: "Name", accessor: "full_name" },
+        { header: "Immediate Supervisor", accessor: "immediate_supervisor" },
+        { header: "Next Level Manager ", accessor: "next_level_manager" },
         { header: "Week 1", accessor: "week_1" },
         { header: "Week 2", accessor: "week_2" },
         { header: "Week 3", accessor: "week_3" },
@@ -49,6 +51,8 @@ export default function TableSection({ isloading }) {
                     id: item?.id,
                     employee_id: item?.employee_id || "N/A",
                     full_name: fullName,
+                    immediate_supervisor:`${item?.er_leader?.employee?.personal_information?.first_name} ${item?.er_leader?.employee?.personal_information?.last_name}`,
+                    next_level_manager:`${item?.department_manager?.personal_information?.first_name} ${item?.department_manager?.personal_information?.last_name}`,
                     week_1: <HoverWeekSection props_data={item} week="week_1" />,
                     week_2: <HoverWeekSection props_data={item} week="week_2" />,
                     week_3: <HoverWeekSection props_data={item} week="week_3" />,
