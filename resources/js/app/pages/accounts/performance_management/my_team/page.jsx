@@ -3,6 +3,7 @@ import PerformanceManagementLayout from './../layout'
 import store from '@/app/store/store'
 import { get_my_team_thunk } from '@/app/redux/department-thunk'
 import TableSection from './_sections/table-section'
+import SearchSection from './_sections/search-section'
 export default function Page() {
 
     const [loading, setLoading] = useState(true)
@@ -18,10 +19,11 @@ export default function Page() {
             }
         }
         get_data()
-    }, [])
+    }, [window.location.search])
     
     return (
         <PerformanceManagementLayout>
+            <SearchSection />
             <TableSection isloading={loading} />
         </PerformanceManagementLayout>
     )

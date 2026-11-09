@@ -1,0 +1,1 @@
+import{j as n}from"./app-B2YUU1sc.js";import{P as o}from"./pagination-CWLAVo8V.js";import"./iconBase-BglipL1Z.js";function s({data:t,onPageChange:i}){return!t?.last_page||t.last_page<1?null:n.jsx(o,{data:t,onPageChange:i})}export{s as default};

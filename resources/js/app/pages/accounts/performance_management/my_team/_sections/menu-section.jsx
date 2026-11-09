@@ -2,10 +2,18 @@ import Menu from '@/app/_components/menu';
 import {  FcFolder } from 'react-icons/fc';
 import CreateREACHSection from './create-reach-section';
 import CreateCorrectiveActionSection from './create-corrective-action-section';
+import EditEmployeeSection from './edit-employee-section';
 
 export default function MenuSection({ props_data }) {
 
     const menuOptions = [
+        
+         {
+            // Case 1: Passing a custom JSX component directly
+            component: (
+                <EditEmployeeSection props_data={props_data} />
+            )
+        },
         {
             // Case 1: Passing a custom JSX component directly
             component: (

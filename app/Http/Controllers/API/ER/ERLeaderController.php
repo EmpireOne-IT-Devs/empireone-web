@@ -26,23 +26,42 @@ class ERLeaderController extends Controller
             return response()->json(['message' => 'Leader not found'], 404);
         }
 
-        // Optional: If the request sends month/year, override the default
-        if ($request->filled('month')) {
-            AccountEmployee::$defaultMonth = (int) $request->input('month');
-        }
-        if ($request->filled('year')) {
-            AccountEmployee::$defaultYear = (int) $request->input('year');
+        $month = $request->filled('month') ? (int) $request->input('month') : now()->month;
+        $year  = $request->filled('year') ? (int) $request->input('year') : now()->year;
+
+        AccountEmployee::$defaultMonth = $month;
+        AccountEmployee::$defaultYear  = $year;
+
+        $query = AccountEmployee::where('e_r_leader_id', $el->id);
+
+        // 1. Account Filter
+        if ($request->filled('account_id')) {
+            $query->where('account_id', $request->input('account_id'));
         }
 
-        $teams = AccountEmployee::where('e_r_leader_id', $el->id)
-            ->with([
-                'personal_information',
-                'account',
-                'er_leader',
-                'department_manager',
-                'reaches', // Automatically scoped to the specified month/year
-            ])
-            ->get();
+        // 2. Search Filter
+        if ($request->filled('search')) {
+            $search = trim($request->input('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('employee_id', 'like', "%{$search}%")
+                    ->orWhere('eogs_email', 'like', "%{$search}%")
+                    ->orWhereHas('personal_information', function ($sub) use ($search) {
+                        $sub->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $teams = $query->with([
+            'personal_information',
+            'account',
+            'er_leader',
+            'department_manager',
+            'reaches' => function ($q) use ($month, $year) {
+                $q->whereMonth('created_at', $month)
+                    ->whereYear('created_at', $year);
+            },
+        ])->get();
 
         return response()->json($teams, 200);
     }
