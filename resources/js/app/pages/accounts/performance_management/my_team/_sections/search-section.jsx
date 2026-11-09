@@ -98,7 +98,7 @@ export default function SearchSection() {
                     onChange={(e) => setAccountId(e.target.value)}
                     className="w-full h-10 px-3 text-sm border border-slate-300 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
-                    <option value="" disabled selected>All Accounts</option>
+                    <option value="" >All Accounts</option>
                     {data?.accounts?.map((acc) => (
                         <option key={acc.id} value={acc.id}>
                             {acc?.name}

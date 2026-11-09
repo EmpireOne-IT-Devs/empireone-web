@@ -32,11 +32,13 @@ class ERLeaderController extends Controller
         AccountEmployee::$defaultMonth = $month;
         AccountEmployee::$defaultYear  = $year;
 
-        $query = AccountEmployee::where('e_r_leader_id', $el->id);
+        $query = AccountEmployee::query();
 
         // 1. Account Filter
         if ($request->filled('account_id')) {
             $query->where('account_id', $request->input('account_id'));
+        }else{
+            $query->where('e_r_leader_id', $el->id);
         }
 
         // 2. Search Filter
