@@ -148,7 +148,7 @@ export default function SubSidebarSection({
 
             {/* Desktop Sidebar */}
             <aside
-                className={`hidden md:block bg-white h-screen pt-2 relative transition-all duration-300 ease-in-out border-r border-gray-200 shadow-sm flex-shrink-0 z-10 ${isSidebarOpen ? 'w-64' : 'w-20'
+                className={`hidden md:block bg-white h-screen pt-2 relative transition-all duration-300 ease-in-out border-r border-gray-200 shadow-sm flex-shrink-0 z-10 ${isSidebarOpen ? 'w-[300px]' : 'w-20'
                     }`}
             >
                 {/* Toggle Button */}

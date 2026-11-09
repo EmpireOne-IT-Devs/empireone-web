@@ -8,7 +8,8 @@ import {
     FcOpenedFolder,
     FcNightPortrait,
     FcServices,
-    FcPodiumWithSpeaker 
+    FcPodiumWithSpeaker,
+    FcIdea
 } from "react-icons/fc";
 import SubSidebarSection from "./../../../__sections/sub-sidebar-section";
 
@@ -41,6 +42,18 @@ export default function HRTabsSection({ children }) {
                 path: `/accounts/administrator/human_resources/employees?location_id=${res.id}`,
                 active:
                     currentPath === "employees" &&
+                    currentLocationId === String(res.id),
+            })),
+        },
+        {
+            label: "Performance Management",
+            icon: <FcIdea className="w-5 h-5 shrink-0" />,
+            active: currentPath === "performance_management",
+            children: data?.locations?.map((res) => ({
+                label: res.name,
+                path: `/accounts/administrator/human_resources/performance_management?location_id=${res.id}`,
+                active:
+                    currentPath === "performance_management" &&
                     currentLocationId === String(res.id),
             })),
         },
@@ -117,7 +130,7 @@ export default function HRTabsSection({ children }) {
         {
             label: "Account Pendings",
             icon: (
-                <FcPodiumWithSpeaker  className="w-5 h-5 shrink-0 text-green-400" />
+                <FcPodiumWithSpeaker className="w-5 h-5 shrink-0 text-green-400" />
             ),
             active: currentPath === "account_pendings",
             children: data?.locations?.map((res) => ({

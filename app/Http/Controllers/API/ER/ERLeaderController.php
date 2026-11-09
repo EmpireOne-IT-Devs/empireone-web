@@ -17,11 +17,33 @@ class ERLeaderController extends Controller
      * Display a listing of the resource.
      */
 
-    public function get_my_team()
+    public function get_my_team(Request $request)
     {
-        $user = Auth::id();
-        $el = ERLeader::where('user_id', $user)->first();
-        $teams = AccountEmployee::where('e_r_leader_id', $el->id)->with(['personal_information', 'account', 'er_leader', 'department_manager'])->get();
+        $userId = Auth::id();
+        $el = ERLeader::where('user_id', $userId)->first();
+
+        if (!$el) {
+            return response()->json(['message' => 'Leader not found'], 404);
+        }
+
+        // Optional: If the request sends month/year, override the default
+        if ($request->filled('month')) {
+            AccountEmployee::$defaultMonth = (int) $request->input('month');
+        }
+        if ($request->filled('year')) {
+            AccountEmployee::$defaultYear = (int) $request->input('year');
+        }
+
+        $teams = AccountEmployee::where('e_r_leader_id', $el->id)
+            ->with([
+                'personal_information',
+                'account',
+                'er_leader',
+                'department_manager',
+                'reaches', // Automatically scoped to the specified month/year
+            ])
+            ->get();
+
         return response()->json($teams, 200);
     }
     public function index(Request $request)

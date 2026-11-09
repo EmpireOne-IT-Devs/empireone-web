@@ -15,10 +15,15 @@ export default function TableSection({ isloading }) {
     const columns = [
         { header: "Employee ID", accessor: "employee_id" },
         { header: "Name", accessor: "full_name" },
-        { header: "Email", accessor: "eogs_email" },
-        { header: "Date Added", accessor: "created_at" },
+        { header: "Week 1", accessor: "week_1" },
+        { header: "Week 2", accessor: "week_2" },
+        { header: "Week 3", accessor: "week_3" },
+        { header: "Week 4", accessor: "week_4" },
+        // { header: "Email", accessor: "eogs_email" },
+        // { header: "Date Added", accessor: "created_at" },
         { header: "Action", accessor: "action" },
     ];
+    console.log('teams',teams)
 
     // Format the array structure from console log
     const formattedTeams = Array.isArray(teams)
@@ -43,10 +48,10 @@ export default function TableSection({ isloading }) {
                     id: item?.id,
                     employee_id: item?.employee_id || "N/A",
                     full_name: fullName,
-                    eogs_email: item?.eogs_email || "N/A",
-                    created_at: item?.created_at
-                        ? new Date(item.created_at).toLocaleDateString()
-                        : "N/A",
+                    // eogs_email: item?.eogs_email || "N/A",
+                    // created_at: item?.created_at
+                    //     ? new Date(item.created_at).toLocaleDateString()
+                    //     : "N/A",
                     action: (
                         <MenuSection props_data={item} />
                     ),
