@@ -32,6 +32,7 @@ class AccountEmployeeController extends Controller
 
         $totalTeam = (clone $baseQuery)->count();
         $regular = (clone $baseQuery)->where('status', 'Regular')->count();
+        $probationary = (clone $baseQuery)->where('status', 'Probationary')->count();
 
         // Probation Review Dates
         $probation3rd = (clone $baseQuery)
@@ -74,6 +75,7 @@ class AccountEmployeeController extends Controller
         return response()->json([
             'regularization' => [
                 'regular' => $regular,
+                'probationary' => $probationary,
                 'probation_3rd_review' => $probation3rd,
                 'probation_5th_review' => $probation5th,
                 'total' => $totalTeam,

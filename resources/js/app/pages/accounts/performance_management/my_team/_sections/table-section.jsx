@@ -74,11 +74,25 @@ export default function TableSection({ isloading }) {
                       item?.personal_information?.first_name || "";
                   const lastName = item?.personal_information?.last_name || "";
                   const fullName = `${firstName} ${lastName}`.trim() || "N/A";
-
+                  const status = item?.status || "Unknown";
                   const completionPercent = calculateCompletion(item);
                   return {
                       id: item?.id,
-                      employee_id: item?.employee_id || "N/A",
+                      employee_id: (
+                          <>
+                              <span
+                                  className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                      item?.status === "Regular"
+                                          ? "bg-green-100 text-green-800"
+                                          : item?.status === "Probationary"
+                                            ? "bg-blue-100 text-blue-800"
+                                            : "bg-gray-100 text-gray-800"
+                                  }`}
+                              >
+                                  {item?.employee_id || "N/A"}
+                              </span>
+                          </>
+                      ),
                       full_name: (
                           <>
                               {fullName}

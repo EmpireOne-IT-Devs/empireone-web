@@ -20,9 +20,9 @@ class ERLeaderController extends Controller
     public function get_my_team(Request $request)
     {
         $userId = Auth::id();
-        $el = ERLeader::where('user_id', $userId)->first();
+        $ids = ERLeader::where('user_id', $userId)->pluck('id')->toArray();
 
-        if (!$el) {
+        if (!$ids) {
             return response()->json(['message' => 'Leader not found'], 404);
         }
 
@@ -37,8 +37,24 @@ class ERLeaderController extends Controller
         // 1. Account Filter
         if ($request->filled('account_id')) {
             $query->where('account_id', $request->input('account_id'));
-        }else{
-            $query->where('e_r_leader_id', $el->id);
+        } else {
+            $query->whereIn('e_r_leader_id', $ids);
+        }
+
+        if ($request->status == '5th_review') {
+            $query->whereBetween('started_at', [
+                now()->subMonths(6)->startOfDay(),
+                now()->subMonths(5)->endOfDay()
+            ]);
+        } else if ($request->status == '3rd_review') {
+            $query->whereBetween('started_at', [
+                now()->subMonths(4)->startOfDay(),
+                now()->subMonths(3)->endOfDay()
+            ]);
+        } else {
+            if ($request->status) {
+                $query->where('status', $request->status);
+            }
         }
 
         // 2. Search Filter

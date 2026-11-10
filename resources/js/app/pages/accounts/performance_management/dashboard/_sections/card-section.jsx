@@ -61,6 +61,18 @@ export default function CardSection() {
             link: "/accounts/administrator/performance_management/my_team?status=Regular",
         },
         {
+            id: "probationary",
+            title: "Probationary",
+            count: regData.probationary || 0,
+            percentage: getPercentage(regData.probationary, totalTeamCount),
+            icon: UserCheck,
+            activeRing:
+                "border-purple-500 ring-2 ring-purple-500/20 shadow-md",
+            barColor: "bg-purple-600",
+            iconBg: "bg-purple-50 text-purple-600",
+            link: "/accounts/administrator/performance_management/my_team?status=Probationary",
+        },
+        {
             id: "probationary_3rd",
             title: "Probationary 3rd Review",
             count: regData.probation_3rd_review || 0,
@@ -168,7 +180,7 @@ export default function CardSection() {
             activeRing: "border-amber-500 ring-2 ring-amber-500/20 shadow-md",
             barColor: "bg-amber-500",
             iconBg: "bg-amber-50 text-amber-600",
-            link: "/accounts/administrator/performance_management/corrective_action?status=PENDING_EMPLOYEE_EXPLANATION",
+            link: "/accounts/administrator/performance_management/corrective_action?status=PENDING EMPLOYEE EXPLANATION",
         },
         {
             id: "pending-final-sanction",
@@ -182,7 +194,7 @@ export default function CardSection() {
             activeRing: "border-purple-500 ring-2 ring-purple-500/20 shadow-md",
             barColor: "bg-purple-600",
             iconBg: "bg-purple-50 text-purple-600",
-            link: "/accounts/administrator/performance_management/corrective_action?status=PENDING_FINAL_SANCTION",
+            link: "/accounts/administrator/performance_management/corrective_action?status=PENDING FINAL SANCTION",
         },
         {
             id: "pending-employee-commitment",
@@ -196,7 +208,7 @@ export default function CardSection() {
             activeRing: "border-orange-500 ring-2 ring-orange-500/20 shadow-md",
             barColor: "bg-orange-500",
             iconBg: "bg-orange-50 text-orange-600",
-            link: "/accounts/administrator/performance_management/corrective_action?status=PENDING_EMPLOYEE_COMMITMENT",
+            link: "/accounts/administrator/performance_management/corrective_action?status=PENDING EMPLOYEE COMMITMENT",
         },
         {
             id: "completed",
@@ -300,7 +312,7 @@ export default function CardSection() {
                     teamCards,
                     activeTeamCard,
                     setActiveTeamCard,
-                    "sm:grid-cols-2 lg:grid-cols-4",
+                    "sm:grid-cols-2 lg:grid-cols-5",
                 )}
             </section>
 

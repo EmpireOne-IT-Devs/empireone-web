@@ -1,0 +1,1 @@
+import{j as e}from"./app-BnsQyzLS.js";function s(){return e.jsxs("div",{className:"px-1 pb-3 pt-1",children:[e.jsx("div",{className:"text-2xl font-black text-gray-900",children:"Inventory Dashboard"}),e.jsx("div",{className:"text-sm text-gray-600",children:"Real-time overview of your company's assets and performance metrics"})]})}export{s as default};
