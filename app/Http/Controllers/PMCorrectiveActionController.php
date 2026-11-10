@@ -31,7 +31,7 @@ class PMCorrectiveActionController extends Controller
             $query->where('created_by', Auth::id());
         }
         if ($request->status) {
-            $query->where('created_by', $request->status);
+            $query->where('status', $request->status);
         }
 
         // Filter by search term across first_name and last_name

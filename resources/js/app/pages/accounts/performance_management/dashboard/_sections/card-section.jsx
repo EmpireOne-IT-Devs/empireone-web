@@ -46,7 +46,7 @@ export default function CardSection() {
             activeRing: "border-blue-500 ring-2 ring-blue-500/20 shadow-md",
             barColor: "bg-blue-600",
             iconBg: "bg-blue-50 text-blue-600",
-            link: "/accounts/administrator/performance_management/team?status=all",
+            link: "/accounts/administrator/performance_management/my_team?status=all",
         },
         {
             id: "regular",
@@ -58,7 +58,7 @@ export default function CardSection() {
                 "border-emerald-500 ring-2 ring-emerald-500/20 shadow-md",
             barColor: "bg-emerald-600",
             iconBg: "bg-emerald-50 text-emerald-600",
-            link: "/accounts/administrator/performance_management/team?status=Regular",
+            link: "/accounts/administrator/performance_management/my_team?status=Regular",
         },
         {
             id: "probationary_3rd",
@@ -72,7 +72,7 @@ export default function CardSection() {
             activeRing: "border-amber-500 ring-2 ring-amber-500/20 shadow-md",
             barColor: "bg-amber-500",
             iconBg: "bg-amber-50 text-amber-600",
-            link: "/accounts/administrator/performance_management/team?status=3rd_review",
+            link: "/accounts/administrator/performance_management/my_team?status=3rd_review",
         },
         {
             id: "probationary_5th",
@@ -86,7 +86,7 @@ export default function CardSection() {
             activeRing: "border-orange-500 ring-2 ring-orange-500/20 shadow-md",
             barColor: "bg-orange-500",
             iconBg: "bg-orange-50 text-orange-600",
-            link: "/accounts/administrator/performance_management/team?status=5th_review",
+            link: "/accounts/administrator/performance_management/my_team?status=5th_review",
         },
     ];
 
