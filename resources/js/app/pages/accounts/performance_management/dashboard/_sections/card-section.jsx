@@ -46,7 +46,7 @@ export default function CardSection() {
             activeRing: "border-blue-500 ring-2 ring-blue-500/20 shadow-md",
             barColor: "bg-blue-600",
             iconBg: "bg-blue-50 text-blue-600",
-            link: "/accounts/administrator/performance_management/my_team?status=all",
+            link: "/accounts/administrator/performance_management/my_team",
         },
         {
             id: "regular",
