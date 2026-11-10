@@ -25,6 +25,7 @@ export default function Page() {
         <PerformanceManagementLayout>
             <SearchSection />
             <TableSection isloading={loading} />
+            
         </PerformanceManagementLayout>
     )
 }

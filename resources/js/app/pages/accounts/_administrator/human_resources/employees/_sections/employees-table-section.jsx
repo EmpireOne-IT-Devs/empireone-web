@@ -13,13 +13,10 @@ const calculateCompletion = (res) => {
         res?.department_id,
         res?.position,
         res?.eogs_email,
-        res?.user?.email,
         res?.personal_information?.first_name,
         res?.personal_information?.last_name,
         res?.personal_information?.contact,
-        res?.personal_information?.date_of_birth,
         res?.site_id,
-        res?.reporting_to,
         res?.department_manager_id,
     ];
 
@@ -32,7 +29,7 @@ const calculateCompletion = (res) => {
 
 export default function EmployeesTableSection({ loading }) {
     const { employees } = useSelector((store) => store.human_resources);
-console.log('employees',employees)
+    console.log("employees", employees);
     const columns = [
         {
             header: "ID",
@@ -105,7 +102,7 @@ console.log('employees',employees)
         },
         {
             header: "Site",
-            render: (row) => row?.location?.name ,
+            render: (row) => row?.location?.name,
         },
         {
             header: "Actions",
