@@ -28,7 +28,6 @@ const calculateCompletion = (res) => {
 };
 export default function TableSection({ isloading }) {
     const { teams } = useSelector((store) => store.departments);
-    const { data } = useSelector((store) => store.app);
 
     // Get search params from URL
     const params = new URLSearchParams(
@@ -37,7 +36,7 @@ export default function TableSection({ isloading }) {
     const search_teams = params.get("search")?.toLowerCase() || "";
 
     const columns = [
-        { header: "Employee ID", accessor: "employee_id" },
+        { header: `Employee ID ${teams?.length??''}`, accessor: "employee_id" },
         { header: "Name", accessor: "full_name" },
         { header: "Immediate Supervisor", accessor: "immediate_supervisor" },
         { header: "Next Level Manager ", accessor: "next_level_manager" },
@@ -52,9 +51,8 @@ export default function TableSection({ isloading }) {
     console.log("teams", teams);
 
     // Format the array structure from console log
-    const formattedTeams = Array.isArray(teams)
-        ? teams
-              .filter((item) => {
+    const formattedTeams = Array.isArray(teams?.data)
+        ? teams?.data?.filter((item) => {
                   if (!search_teams) return true;
                   const firstName =
                       item?.personal_information?.first_name?.toLowerCase() ||

@@ -28,7 +28,8 @@ class PMCorrectiveActionController extends Controller
 
         // If 'all' is not true, filter by the logged-in user
         if (!$request->boolean('all')) {
-            $query->where('created_by', Auth::id());
+            $query->where('supervisor_user_id', Auth::id());
+            $query->orWhere('manager_user_id', Auth::id());
         }
         if ($request->status) {
             $query->where('status', $request->status);

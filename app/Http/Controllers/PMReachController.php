@@ -106,7 +106,8 @@ class PMReachController extends Controller
 
         // If 'all' is not true, filter by the logged-in user
         if (!$request->boolean('all')) {
-            $query->where('created_by', Auth::id());
+            $query->where('supervisor_user_id', Auth::id());
+            $query->orWhere('manager_user_id', Auth::id());
         }
 
         // Filter by search term across first_name and last_name

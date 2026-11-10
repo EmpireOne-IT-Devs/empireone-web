@@ -94,6 +94,7 @@ export default function CreateREACHSection() {
             date_of_session: todayDate,
             account_id: '',
             account: '',
+            manager_user_id:'',
         },
     })
 
@@ -112,6 +113,8 @@ export default function CreateREACHSection() {
         setValue('supervisor_email', supervisorEmail)
         setValue('account_id', accountId)
         setValue('account', accountName)
+        setValue('manager_user_id', selectedUser?.department_manager?.user_id)
+        
     }, [
         selectedUser,
         setValue,
@@ -125,8 +128,6 @@ export default function CreateREACHSection() {
         supervisorEmail,
         accountId,
     ])
-
-    console.log('accountName',selectedUser)
 
     const watchedAccount = useWatch({ control, name: 'account_id' })
 

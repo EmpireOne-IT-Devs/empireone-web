@@ -39,6 +39,7 @@ class ERLeaderController extends Controller
             $query->where('account_id', $request->input('account_id'));
         } else {
             $query->whereIn('e_r_leader_id', $ids);
+            $query->orWhereIn('department_manager_id', $ids);
         }
 
         if ($request->status == '5th_review') {
@@ -79,7 +80,7 @@ class ERLeaderController extends Controller
                 $q->whereMonth('created_at', $month)
                     ->whereYear('created_at', $year);
             },
-        ])->get();
+        ])->paginate(10);
 
         return response()->json($teams, 200);
     }
