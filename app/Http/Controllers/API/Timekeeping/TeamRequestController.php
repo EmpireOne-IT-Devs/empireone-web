@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Timekeeping\TeamRequestDeclineRequest;
 use App\Http\Requests\Timekeeping\TeamRequestIndexRequest;
 use App\Http\Resources\Timekeeping\TeamRequestResource;
+use App\Http\Resources\Timekeeping\TeamSubordinateResource;
+use App\Models\Timekeeping\OvertimeRequest;
 use App\Services\TeamRequestService;
 use Illuminate\Support\Facades\Gate;
 
@@ -26,6 +28,15 @@ class TeamRequestController extends Controller
 
         return TeamRequestResource::collection(
             $this->service->paginate($request->user(), $filters['type'], $filters)
+        );
+    }
+
+    public function subordinates()
+    {
+        Gate::authorize('viewAny', OvertimeRequest::class);
+
+        return TeamSubordinateResource::collection(
+            $this->service->subordinateOptions(request()->user())
         );
     }
 

@@ -50,7 +50,10 @@ class TeamRequestResource extends JsonResource
             'status' => $this->status,
             'status_label' => $this->statusLabel(),
             'can_review' => $this->status === 'pending',
+            'can_final_approve' => $this->status === 'endorsed',
+            'endorsed_at' => $this->endorsed_at ? Carbon::parse($this->endorsed_at)->format('m/d/Y h:i A') : null,
             'supervisor_note' => $this->supervisor_note,
+            'accounting_note' => $this->accounting_note ?? null,
         ];
     }
 

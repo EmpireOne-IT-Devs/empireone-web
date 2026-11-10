@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaRegHandPointer } from "react-icons/fa";
+import { FaHands, FaRegHandPointer } from "react-icons/fa";
 import Modal from "@/app/_components/modal";
 import CorrectionSection from "../sections/correction-section";
 import OvertimeSection from "../sections/overtime-section";
@@ -27,7 +27,14 @@ export default function AttendanceAction({ date, log, onSaved }) {
     const renderActiveSection = () => {
         switch (activeTab) {
             case "correction":
-                return <CorrectionSection date={date} log={log} setIsOpen={setIsModalOpen} onSaved={onSaved} />;
+                return (
+                    <CorrectionSection
+                        date={date}
+                        log={log}
+                        setIsOpen={setIsModalOpen}
+                        onSaved={onSaved}
+                    />
+                );
 
             case "overtime":
                 return <OvertimeSection date={date} onSaved={onSaved} />;
@@ -36,7 +43,14 @@ export default function AttendanceAction({ date, log, onSaved }) {
                 return <LeaveSection date={date} onSaved={onSaved} />;
 
             default:
-                return <CorrectionSection date={date} log={log} setIsOpen={setIsModalOpen} onSaved={onSaved} />;
+                return (
+                    <CorrectionSection
+                        date={date}
+                        log={log}
+                        setIsOpen={setIsModalOpen}
+                        onSaved={onSaved}
+                    />
+                );
         }
     };
 
@@ -47,7 +61,7 @@ export default function AttendanceAction({ date, log, onSaved }) {
                 className="p-1.5 rounded-md hover:bg-green-500 text-white bg-green-400"
                 onClick={() => setIsModalOpen(true)}
             >
-                <FaRegHandPointer />
+                <FaRegHandPointer className="text-green-700" />
             </button>
 
             <Modal

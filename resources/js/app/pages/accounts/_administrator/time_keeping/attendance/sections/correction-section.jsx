@@ -1,10 +1,13 @@
 import { ConfigProvider, DatePicker } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
-import { create_attendance_correction_service } from "@/app/services/attendance-service";
+import {
+    create_attendance_correction_service,
+    get_attendance_corrections_service,
+} from "@/app/services/attendance-service";
 
 const DATE_FORMAT = "YYYY-MM-DD";
 const DATETIME_LOCAL_FORMAT = "YYYY-MM-DDTHH:mm";
@@ -100,6 +103,33 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
 
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
+    const [filed, setFiled] = useState(null);
+
+    useEffect(() => {
+        let active = true;
+
+        get_attendance_corrections_service(date)
+            .then((res) => {
+                if (active) setFiled(res.data.data?.[0] ?? null);
+            })
+            .catch(() => {
+                if (active) setFiled(null);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [date]);
+
+    const reviewedBy = (user, at) =>
+        user ? `${user.name} - ${moment(at).format("LLL")}` : "";
+
+    const progressMessage = {
+        pending: "Waiting for your leader's approval.",
+        endorsed: "Approved by your leader. Waiting for final approval by HR/Accounting.",
+        granted: "Approved. The correction is now reflected on your attendance.",
+        declined: "This correction request was declined.",
+    }[filed?.status];
 
     const handleDateChange = (value) => {
         setForm((prev) => ({ ...prev, attendanceDate: value }));
@@ -513,6 +543,15 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
                         Approval Information
                     </h3>
 
+                    {progressMessage && (
+                        <p className="mb-4 text-sm text-gray-600" role="status">
+                            {progressMessage}
+                            {filed?.status === "declined" &&
+                                (filed.accounting_note || filed.supervisor_note) &&
+                                ` Reason: ${filed.accounting_note || filed.supervisor_note}`}
+                        </p>
+                    )}
+
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div>
                             <label className={labelClass}>
@@ -522,6 +561,7 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
                             <input
                                 type="text"
                                 readOnly
+                                value={reviewedBy(filed?.endorser, filed?.endorsed_at)}
                                 placeholder="Not yet endorsed"
                                 className={`${inputClass} bg-gray-50`}
                             />
@@ -535,6 +575,7 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
                             <input
                                 type="text"
                                 readOnly
+                                value={reviewedBy(filed?.granter, filed?.granted_at)}
                                 placeholder="Not yet granted"
                                 className={`${inputClass} bg-gray-50`}
                             />
@@ -548,6 +589,7 @@ export default function CorrectionSection({ date, log, setIsOpen, onSaved }) {
                             <input
                                 type="text"
                                 readOnly
+                                value={reviewedBy(filed?.decliner, filed?.declined_at)}
                                 placeholder="Not declined"
                                 className={`${inputClass} bg-gray-50`}
                             />

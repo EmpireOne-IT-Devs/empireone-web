@@ -4,6 +4,7 @@ import {
     batch_approve_team_requests_thunk,
     decline_team_request_thunk,
     get_team_requests_thunk,
+    get_team_subordinates_thunk,
 } from "./team-request-thunk";
 
 const replaceItem = (state, updated) => {
@@ -18,6 +19,8 @@ const teamRequestSlice = createSlice({
     initialState: {
         items: [],
         meta: null,
+        subordinates: [],
+        isLoadingSubordinates: false,
         isLoading: true,
         isNotLeader: false,
         error: null,
@@ -51,6 +54,17 @@ const teamRequestSlice = createSlice({
                 state.error = state.isNotLeader
                     ? null
                     : action.payload?.message || "Unable to load team requests.";
+            })
+            .addCase(get_team_subordinates_thunk.pending, (state) => {
+                state.isLoadingSubordinates = true;
+            })
+            .addCase(get_team_subordinates_thunk.fulfilled, (state, action) => {
+                state.isLoadingSubordinates = false;
+                state.subordinates = action.payload.data;
+            })
+            .addCase(get_team_subordinates_thunk.rejected, (state) => {
+                state.isLoadingSubordinates = false;
+                state.subordinates = [];
             })
             .addCase(approve_team_request_thunk.pending, (state) => {
                 state.isActing = true;

@@ -25,3 +25,9 @@ export const clock_out_service = (date) =>
 export async function create_attendance_correction_service(data) {
     return axios.post(`/api/timekeeping/attendance_corrections`, data);
 }
+
+export async function get_attendance_corrections_service(date) {
+    return axios.get(`/api/timekeeping/attendance_corrections`, {
+        params: { date },
+    });
+}

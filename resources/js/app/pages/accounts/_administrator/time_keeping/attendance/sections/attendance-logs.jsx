@@ -210,7 +210,7 @@ export default function AttendanceLogs({ refreshKey }) {
                             border-gray-200
                         "
                             >
-                                Date
+                                Action | Date
                             </th>
 
                             <TableColumnsComponent column_name="Time In" />

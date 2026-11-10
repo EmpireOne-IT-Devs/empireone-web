@@ -64,6 +64,7 @@ use App\Http\Controllers\API\Ticketing\TicketingController;
 use App\Http\Controllers\API\Timekeeping\AttendanceEmployeeSettingsController;
 use App\Http\Controllers\API\Timekeeping\HolidayController;
 use App\Http\Controllers\API\Timekeeping\OvertimeRequestController;
+use App\Http\Controllers\API\Timekeeping\FinalApprovalController;
 use App\Http\Controllers\API\Timekeeping\LeaveRequestController;
 use App\Http\Controllers\API\Timekeeping\TeamRequestController;
 use App\Http\Controllers\API\Timekeeping\TimeSheetController;
@@ -431,6 +432,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('overtime_requests/{overtimeRequest}/endorse', [OvertimeRequestController::class, 'endorse']);
         Route::post('overtime_requests/{overtimeRequest}/approve', [OvertimeRequestController::class, 'approve']);
         Route::post('overtime_requests/{overtimeRequest}/decline', [OvertimeRequestController::class, 'decline']);
+        Route::delete('overtime_requests/{overtimeRequest}', [OvertimeRequestController::class, 'destroy']);
 
         Route::get('leave_requests/credits', [LeaveRequestController::class, 'credits']);
         Route::get('leave_requests', [LeaveRequestController::class, 'index']);
@@ -443,8 +445,13 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::post('attendance_corrections/{attendanceCorrection}/decline', [AttendanceCorrectionController::class, 'decline']);
 
         Route::get('team_requests', [TeamRequestController::class, 'index']);
+        Route::get('team_requests/subordinates', [TeamRequestController::class, 'subordinates']);
         Route::post('team_requests/{type}/{id}/approve', [TeamRequestController::class, 'approve'])->whereIn('type', ['overtime', 'schedule', 'leave'])->whereNumber('id');
         Route::post('team_requests/{type}/{id}/decline', [TeamRequestController::class, 'decline'])->whereIn('type', ['overtime', 'schedule', 'leave'])->whereNumber('id');
+
+        Route::get('final_approvals', [FinalApprovalController::class, 'index']);
+        Route::post('final_approvals/{type}/{id}/approve', [FinalApprovalController::class, 'approve'])->whereIn('type', ['overtime', 'schedule', 'leave'])->whereNumber('id');
+        Route::post('final_approvals/{type}/{id}/decline', [FinalApprovalController::class, 'decline'])->whereIn('type', ['overtime', 'schedule', 'leave'])->whereNumber('id');
     });
 
 

@@ -14,3 +14,6 @@ export const approve_overtime_request_service = (id) =>
 
 export const decline_overtime_request_service = (id, note) =>
     axios.post(`/api/timekeeping/overtime_requests/${id}/decline`, { note });
+
+export const delete_overtime_request_service = (id) =>
+    axios.delete(`/api/timekeeping/overtime_requests/${id}`);

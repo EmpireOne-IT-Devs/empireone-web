@@ -318,9 +318,10 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/employee_calendar', 'accounts/_administrator/time_keeping/employee_calendar/page');
             Route::inertia('/time_sheets', 'accounts/_administrator/time_keeping/time_sheets/page');
             Route::inertia('/reports', 'accounts/_administrator/time_keeping/reports/page');
-            Route::inertia('/attendance_settings', 'accounts/_administrator/time_keeping/attendance_settings/page');
-            Route::inertia('/calendar_settings', 'accounts/_administrator/time_keeping/calendar_settings/page');
+            Route::inertia('/attendance_settings', 'accounts/_administrator/time_keeping/attendance_settings/page')->middleware('final.approver');
+            Route::inertia('/calendar_settings', 'accounts/_administrator/time_keeping/calendar_settings/page')->middleware('final.approver');
             Route::inertia('/agents', 'accounts/_administrator/time_keeping/agents/page');
+            Route::inertia('/approvals', 'accounts/_administrator/time_keeping/approvals/page')->middleware('final.approver');
         });
 
         // Route::prefix('rnr')->group(function () { ... });

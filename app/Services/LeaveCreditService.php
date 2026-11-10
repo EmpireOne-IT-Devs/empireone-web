@@ -47,7 +47,7 @@ class LeaveCreditService
         }
 
         $used = LeaveRequest::where('user_id', $userId)
-            ->where('status', '!=', 'declined')
+            ->where('status', 'approved')
             ->whereBetween('date', [$yearStart->toDateString(), $yearEnd->toDateString()])
             ->whereIn('leave_type', config('leave.deductible_types'))
             ->count();

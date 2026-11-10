@@ -19,7 +19,8 @@ class LeaveRequestController extends Controller
             'date' => 'required|date',
         ]);
 
-        $requests = LeaveRequest::where('user_id', Auth::id())
+        $requests = LeaveRequest::with(['endorser', 'approver', 'decliner'])
+            ->where('user_id', Auth::id())
             ->where('date', $request->date)
             ->orderByDesc('id')
             ->get();

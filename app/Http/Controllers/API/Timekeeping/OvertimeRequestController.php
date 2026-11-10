@@ -84,6 +84,8 @@ class OvertimeRequestController extends Controller
      */
     public function approve(OvertimeRequest $overtimeRequest)
     {
+        abort_unless(Auth::user()->role === User::ROLE_ADMIN, 403, 'Only an administrator can give final approval.');
+
         if ($overtimeRequest->status !== 'endorsed') {
             return response()->json([
                 'message' => 'Only endorsed requests can be approved.',
@@ -129,6 +131,24 @@ class OvertimeRequestController extends Controller
         ]);
 
         return response()->json($overtimeRequest->fresh(['endorser', 'approver', 'decliner']), 200);
+    }
+
+    /**
+     * Delete the owner's own overtime request while it is still pending.
+     */
+    public function destroy(OvertimeRequest $overtimeRequest)
+    {
+        Gate::authorize('delete', $overtimeRequest);
+
+        if ($overtimeRequest->status !== 'pending') {
+            return response()->json([
+                'message' => 'Only pending requests can be deleted.',
+            ], 422);
+        }
+
+        $overtimeRequest->delete();
+
+        return response()->json(null, 204);
     }
 
     // The leader stage belongs to the owner's leader; admins keep full access.

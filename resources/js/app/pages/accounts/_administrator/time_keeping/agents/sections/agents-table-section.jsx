@@ -21,6 +21,7 @@ import {
     batch_approve_team_requests_thunk,
     decline_team_request_thunk,
     get_team_requests_thunk,
+    get_team_subordinates_thunk,
 } from "@/app/redux/team-request-thunk";
 import { fadeUp } from "@/lib/animations";
 import SearchAgentSection from "./search-agent-section";
@@ -29,6 +30,7 @@ import ReviewRequestModal from "./review-request-modal";
 const DEFAULT_FILTERS = {
     type: "overtime",
     status: "pending",
+    userId: undefined,
     search: "",
     dateFrom: "",
     dateTo: "",
@@ -46,8 +48,18 @@ const sr = (text) => <span className="sr-only">{text}</span>;
 
 export default function AgentsTableSection() {
     const dispatch = useDispatch();
-    const { items, meta, isLoading, isNotLeader, error, isActing, actionError, actionErrors } =
-        useSelector((state) => state.team_requests);
+    const {
+        items,
+        meta,
+        isLoading,
+        isNotLeader,
+        subordinates,
+        isLoadingSubordinates,
+        error,
+        isActing,
+        actionError,
+        actionErrors,
+    } = useSelector((state) => state.team_requests);
 
     const [filters, setFilters] = useState(DEFAULT_FILTERS);
     const [page, setPage] = useState(1);
@@ -63,6 +75,7 @@ export default function AgentsTableSection() {
                 type: filters.type,
                 status: filters.status || undefined,
                 search: filters.search || undefined,
+                user_id: filters.userId || undefined,
                 date_from: filters.dateFrom || undefined,
                 date_to: filters.dateTo || undefined,
                 page,
@@ -74,6 +87,10 @@ export default function AgentsTableSection() {
         load();
     }, [load]);
 
+    useEffect(() => {
+        dispatch(get_team_subordinates_thunk());
+    }, [dispatch]);
+
     const applyFilters = (next) => {
         setFilters(next);
         setPage(1);
@@ -84,8 +101,12 @@ export default function AgentsTableSection() {
         setFilterKey((k) => k + 1);
     };
 
-    const pendingIds = items.filter((item) => item.can_review).map((item) => item.id);
-    const allSelected = pendingIds.length > 0 && pendingIds.every((id) => selected.includes(id));
+    const pendingIds = items
+        .filter((item) => item.can_review)
+        .map((item) => item.id);
+    const allSelected =
+        pendingIds.length > 0 &&
+        pendingIds.every((id) => selected.includes(id));
 
     const toggleRow = (id) =>
         setSelected((prev) =>
@@ -101,7 +122,11 @@ export default function AgentsTableSection() {
         const { item, mode } = review;
         const action =
             mode === "decline"
-                ? decline_team_request_thunk({ type: item.type, id: item.id, note })
+                ? decline_team_request_thunk({
+                      type: item.type,
+                      id: item.id,
+                      note,
+                  })
                 : approve_team_request_thunk({ type: item.type, id: item.id });
 
         const result = await dispatch(action);
@@ -110,13 +135,18 @@ export default function AgentsTableSection() {
             dispatch(
                 setAlert({
                     type: "success",
-                    title: mode === "decline" ? "Request declined." : "Request approved.",
+                    title:
+                        mode === "decline"
+                            ? "Request declined."
+                            : "Request approved.",
                 }),
             );
             closeReview();
             load();
         } else if (mode === "approve") {
-            dispatch(setAlert({ type: "error", title: result.payload?.message }));
+            dispatch(
+                setAlert({ type: "error", title: result.payload?.message }),
+            );
             closeReview();
             load();
         }
@@ -124,7 +154,10 @@ export default function AgentsTableSection() {
 
     const handleBatchApprove = async () => {
         const result = await dispatch(
-            batch_approve_team_requests_thunk({ type: filters.type, ids: selected }),
+            batch_approve_team_requests_thunk({
+                type: filters.type,
+                ids: selected,
+            }),
         );
         setConfirmBatch(false);
 
@@ -145,29 +178,38 @@ export default function AgentsTableSection() {
     const columns = [
         {
             header: "Employee",
-            render: (row) => (
-                <div className="flex items-center gap-3">
-                    <div className="shrink-0">
-                        <Checkbox
-                            name={`team_request_${row.id}`}
-                            label={sr(`Select request from ${row.employee?.name}`)}
-                            checked={row.can_review && selected.includes(row.id)}
-                            disabled={!row.can_review}
-                            onChange={() => toggleRow(row.id)}
-                        />
+            render: (row) => {
+                return (
+                    <div className="flex items-center gap-3">
+                        <div className="shrink-0">
+                            <Checkbox
+                                name={`team_request_${row.id}`}
+                                label={sr(
+                                    `Select request from ${row.employee?.name}`,
+                                )}
+                                checked={
+                                    row.can_review && selected.includes(row.id)
+                                }
+                                disabled={!row.can_review}
+                                onChange={() => toggleRow(row.id)}
+                            />
+                        </div>
+                        <div>
+                            <p className="font-medium text-gray-900">
+                                {row.employee?.name ?? "-"}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                {[
+                                    row.employee?.employee_id,
+                                    row.employee?.department,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" · ")}
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="font-medium text-gray-900">
-                            {row.employee?.name ?? "-"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                            {[row.employee?.employee_id, row.employee?.department]
-                                .filter(Boolean)
-                                .join(" · ")}
-                        </p>
-                    </div>
-                </div>
-            ),
+                );
+            },
         },
         {
             header: "Date",
@@ -179,7 +221,9 @@ export default function AgentsTableSection() {
                 <ul className="space-y-0.5 text-xs">
                     {row.details.map((detail) => (
                         <li key={detail.label}>
-                            <span className="text-gray-500">{detail.label}:</span>{" "}
+                            <span className="text-gray-500">
+                                {detail.label}:
+                            </span>{" "}
                             {detail.value}
                         </li>
                     ))}
@@ -221,7 +265,9 @@ export default function AgentsTableSection() {
                                 size="xs"
                                 variant="success"
                                 className="gap-1"
-                                onClick={() => setReview({ item: row, mode: "approve" })}
+                                onClick={() =>
+                                    setReview({ item: row, mode: "approve" })
+                                }
                             >
                                 <Check size={14} aria-hidden="true" />
                                 Approve
@@ -233,7 +279,9 @@ export default function AgentsTableSection() {
                                 variant="danger"
                                 outlined
                                 className="gap-1"
-                                onClick={() => setReview({ item: row, mode: "decline" })}
+                                onClick={() =>
+                                    setReview({ item: row, mode: "decline" })
+                                }
                             >
                                 <X size={14} aria-hidden="true" />
                                 Decline
@@ -264,7 +312,11 @@ export default function AgentsTableSection() {
                         : "Nothing matches the current filters. Try a different request type, status or date range."}
                 </p>
                 {!isNotLeader && (
-                    <Button variant="secondary" className="mt-4" onClick={resetFilters}>
+                    <Button
+                        variant="secondary"
+                        className="mt-4"
+                        onClick={resetFilters}
+                    >
                         Clear filters
                     </Button>
                 )}
@@ -275,15 +327,20 @@ export default function AgentsTableSection() {
     return (
         <motion.div variants={fadeUp} initial="hidden" animate="visible">
             <div className="mb-4">
-                <h2 className="text-lg font-medium text-gray-900">Team Requests</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                    Team Requests
+                </h2>
                 <p className="text-sm text-gray-500">
-                    Review overtime, schedule corrections and leave filed by the agents assigned to you.
+                    Review overtime, schedule corrections and leave filed by the
+                    agents assigned to you.
                 </p>
             </div>
 
             <SearchAgentSection
                 key={filterKey}
                 filters={filters}
+                subordinates={subordinates}
+                isLoadingSubordinates={isLoadingSubordinates}
                 onApply={applyFilters}
                 selectedCount={selected.length}
                 onBatchApprove={() => setConfirmBatch(true)}
@@ -317,7 +374,12 @@ export default function AgentsTableSection() {
                         </div>
                     )}
                     <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-                        <Table columns={columns} data={items} isloading={isLoading} skeletonRows={8} />
+                        <Table
+                            columns={columns}
+                            data={items}
+                            isloading={isLoading}
+                            skeletonRows={8}
+                        />
                     </div>
                 </div>
             )}
@@ -343,13 +405,22 @@ export default function AgentsTableSection() {
                 title="Approve selected requests"
             >
                 <p className="text-sm text-gray-600">
-                    Approve {selected.length} selected request(s)? This cannot be undone.
+                    Approve {selected.length} selected request(s)? This cannot
+                    be undone.
                 </p>
                 <div className="mt-4 flex justify-end gap-2">
-                    <Button variant="light" outlined onClick={() => setConfirmBatch(false)}>
+                    <Button
+                        variant="light"
+                        outlined
+                        onClick={() => setConfirmBatch(false)}
+                    >
                         Cancel
                     </Button>
-                    <Button variant="success" loading={isActing} onClick={handleBatchApprove}>
+                    <Button
+                        variant="success"
+                        loading={isActing}
+                        onClick={handleBatchApprove}
+                    >
                         Approve
                     </Button>
                 </div>

@@ -14,6 +14,7 @@ import engagementSlice from "../redux/engagement-slice";
 import locationEmployeeSlice from "../redux/location-employee-slice";
 import accountPendingSlice from "../redux/account-pending-slice";
 import teamRequestSlice from "../redux/team-request-slice";
+import finalApprovalSlice from "../redux/final-approval-slice";
 import timeSheetSlice from "../redux/time-sheet-slice";
 import assetDevicesSlice from "../redux/asset-device-slice";
 import assetImportSlice from "../redux/asset-import-slice";
@@ -39,6 +40,7 @@ const store = configureStore({
         location_employees: locationEmployeeSlice,
         account_pendings: accountPendingSlice,
         team_requests: teamRequestSlice,
+        final_approvals: finalApprovalSlice,
         time_sheets: timeSheetSlice,
         asset_devices: assetDevicesSlice,
         asset_import: assetImportSlice,

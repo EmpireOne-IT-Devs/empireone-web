@@ -77,12 +77,12 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Time in/out for one specific date: a filed, non-declined correction
+     * Time in/out for one specific date: a granted correction
      * overrides the weekday schedule for that date only.
      */
     private function resolveTimes(array $schedule, ?AttendanceCorrection $correction): array
     {
-        $active = $correction && $correction->status !== 'declined';
+        $active = $correction && $correction->status === 'granted';
 
         return [
             'time_in' => ($active ? $correction->time_in_correction?->format('H:i:s') : null) ?? $schedule['time_in'],
@@ -91,13 +91,13 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Clock in/out for one date: a filed, non-declined correction wins over the
+     * Clock in/out for one date: a granted correction wins over the
      * stored punch. A Time In/Out correction stands in when no explicit Clock
      * In/Out correction exists, mirroring how a granted correction is applied.
      */
     private function effectivePunch(?AttendanceCorrection $correction, string $clockColumn, string $timeColumn): ?Carbon
     {
-        if (!$correction || $correction->status === 'declined') {
+        if (!$correction || $correction->status !== 'granted') {
             return null;
         }
 
@@ -271,18 +271,18 @@ class AttendanceController extends Controller
             ->get()
             ->keyBy(fn($c) => $c->date->toDateString());
 
-        // Declined filings are ignored; anything else reflects on the logs as soon as it is filed.
+        // Overtime reflects on the logs only after final approval by Accounting/HR.
         $overtimeRequests = OvertimeRequest::where('user_id', $userId)
             ->where('date', '>=', $startDate->toDateString())
             ->where('date', '<=', $endDate->toDateString())
-            ->where('status', '!=', 'declined')
+            ->where('status', 'approved')
             ->get()
             ->groupBy(fn($r) => Carbon::parse($r->date)->toDateString());
 
         $leaveRequests = LeaveRequest::where('user_id', $userId)
             ->where('date', '>=', $startDate->toDateString())
             ->where('date', '<=', $endDate->toDateString())
-            ->where('status', '!=', 'declined')
+            ->where('status', 'approved')
             ->orderBy('id')
             ->get()
             ->keyBy(fn($l) => $l->date->toDateString());

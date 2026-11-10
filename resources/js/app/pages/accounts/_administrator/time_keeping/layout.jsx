@@ -1,9 +1,16 @@
 import Tabs from "@/app/_components/tabs";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 import { router } from "@inertiajs/react";
 import React, { useState } from "react";
 
+// Human Resources and Accounting & Finance give the final approval.
+const FINAL_APPROVER_DEPARTMENT_IDS = [2, 3];
+
 export default function TimeKeepingLayout({ children }) {
     const [activeTab, setActiveTab] = useState(0);
+    const { departmentId } = useCurrentEmployee();
+    const canManageTimekeeping =
+        FINAL_APPROVER_DEPARTMENT_IDS.includes(departmentId);
     const path = window.location.pathname.split("/")[4];
 
     const tabs = [
@@ -27,21 +34,34 @@ export default function TimeKeepingLayout({ children }) {
             path: "/accounts/administrator/time_keeping/time_sheets",
             active: path === "time_sheets",
         },
-        {
-            label: "Attendance Settings",
-            path: "/accounts/administrator/time_keeping/attendance_settings",
-            active: path === "attendance_settings",
-        },
-        {
-            label: "Calendar Settings",
-            path: "/accounts/administrator/time_keeping/calendar_settings",
-            active: path === "calendar_settings",
-        },
+        ...(canManageTimekeeping
+            ? [
+                  {
+                      label: "Attendance Settings",
+                      path: "/accounts/administrator/time_keeping/attendance_settings",
+                      active: path === "attendance_settings",
+                  },
+                  {
+                      label: "Calendar Settings",
+                      path: "/accounts/administrator/time_keeping/calendar_settings",
+                      active: path === "calendar_settings",
+                  },
+              ]
+            : []),
         {
             label: "Agents",
             path: "/accounts/administrator/time_keeping/agents",
             active: path === "agents",  
         },
+        ...(canManageTimekeeping
+            ? [
+                  {
+                      label: "Approvals",
+                      path: "/accounts/administrator/time_keeping/approvals",
+                      active: path === "approvals",
+                  },
+              ]
+            : []),
         // {
         //     label: "Reports",
         //     path: "/accounts/administrator/time_keeping/reports",

@@ -101,9 +101,20 @@ export default function LeaveSection({ date, onSaved }) {
 
     const activeLeave = leaveRequests.find((r) => r.status !== "declined");
     const isOnLeave =
-        !!activeLeave && activeLeave.leave_type !== VOLUNTARY_TIME_OFF;
+        activeLeave?.status === "approved" &&
+        activeLeave.leave_type !== VOLUNTARY_TIME_OFF;
     const declinedLeave = leaveRequests.find((r) => r.status === "declined");
     const latestLeave = activeLeave ?? declinedLeave;
+
+    const reviewedBy = (user, at) =>
+        user ? `${user.name} - ${moment(at).format("LLL")}` : "";
+
+    const progressMessage = {
+        pending: "Waiting for your leader's approval.",
+        endorsed: "Approved by your leader. Waiting for final approval by HR/Accounting.",
+        approved: "Approved. This leave is now reflected on your attendance.",
+        declined: "This leave request was declined.",
+    }[latestLeave?.status];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -167,7 +178,9 @@ export default function LeaveSection({ date, onSaved }) {
                             </h3>
 
                             <p className="text-sm text-gray-500">
-                                Subject for verification by the HR
+                                Subject for verification by the HR. Credits are
+                                deducted once HR/Accounting give the final
+                                approval.
                             </p>
                         </div>
 
@@ -284,7 +297,8 @@ export default function LeaveSection({ date, onSaved }) {
                         <StatusItem
                             label="Leave Endorsed"
                             value={
-                                latestLeave?.status === "endorsed"
+                                latestLeave?.status === "endorsed" ||
+                                latestLeave?.status === "approved"
                                     ? "Yes"
                                     : "No"
                             }
@@ -317,6 +331,15 @@ export default function LeaveSection({ date, onSaved }) {
                             }
                         />
                     </div>
+
+                    {progressMessage && (
+                        <p className="mt-3 text-sm text-gray-600" role="status">
+                            {progressMessage}
+                            {latestLeave?.status === "declined" &&
+                                (latestLeave.accounting_note || latestLeave.supervisor_note) &&
+                                ` Reason: ${latestLeave.accounting_note || latestLeave.supervisor_note}`}
+                        </p>
+                    )}
                 </div>
 
                 {/* Approval Information */}
@@ -334,6 +357,7 @@ export default function LeaveSection({ date, onSaved }) {
                             <input
                                 type="text"
                                 readOnly
+                                value={reviewedBy(latestLeave?.endorser, latestLeave?.endorsed_at)}
                                 placeholder="Not yet endorsed"
                                 className={`${inputClass} bg-gray-50`}
                             />
@@ -347,6 +371,7 @@ export default function LeaveSection({ date, onSaved }) {
                             <input
                                 type="text"
                                 readOnly
+                                value={reviewedBy(latestLeave?.approver, latestLeave?.approved_at)}
                                 placeholder="Not yet approved"
                                 className={`${inputClass} bg-gray-50`}
                             />
@@ -360,6 +385,7 @@ export default function LeaveSection({ date, onSaved }) {
                             <input
                                 type="text"
                                 readOnly
+                                value={reviewedBy(latestLeave?.decliner, latestLeave?.declined_at)}
                                 placeholder="Not declined"
                                 className={`${inputClass} bg-gray-50`}
                             />

@@ -11,9 +11,11 @@ use App\Models\Timekeeping\AttendanceCorrection;
 use App\Models\Timekeeping\LeaveRequest;
 use App\Models\Timekeeping\OvertimeRequest;
 use App\Models\User;
+use App\Services\Timekeeping\AttendanceCorrectionService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\AbstractPaginator;
 
 class TeamRequestService
 {
@@ -27,6 +29,15 @@ class TeamRequestService
     private const STATUS_GROUPS = [
         'pending' => ['pending'],
         'approved' => ['endorsed', 'approved', 'granted'],
+        'declined' => ['declined'],
+    ];
+
+    public const FINAL_APPROVER_DEPARTMENT_IDS = [2, 3]; // Human Resources, Accounting & Finance
+
+    // Final-approval filter group -> raw statuses; "pending" means awaiting HR/Accounting.
+    private const FINAL_STATUS_GROUPS = [
+        'pending' => ['endorsed'],
+        'approved' => ['approved', 'granted'],
         'declined' => ['declined'],
     ];
 
@@ -55,6 +66,28 @@ class TeamRequestService
             ->all();
     }
 
+    public function subordinateOptions(User $leader): array
+    {
+        $ids = $this->subordinateIds($leader);
+
+        $names = AccountPersonalInformation::whereIn('user_id', $ids)
+            ->get(['user_id', 'first_name', 'last_name'])
+            ->keyBy('user_id');
+        $employeeIds = AccountEmployee::whereIn('user_id', $ids)
+            ->pluck('employee_id', 'user_id');
+
+        return collect($ids)
+            ->map(fn ($id) => [
+                'user_id' => $id,
+                'name' => ($info = $names->get($id)) ? trim("{$info->first_name} {$info->last_name}") : null,
+                'employee_id' => $employeeIds->get($id),
+            ])
+            ->filter(fn ($row) => $row['name'])
+            ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values()
+            ->all();
+    }
+
     public function isLeader(User $leader): bool
     {
         return ERLeader::where('user_id', $leader->id)->exists();
@@ -65,21 +98,110 @@ class TeamRequestService
         return in_array($userId, $this->subordinateIds($leader), true);
     }
 
+    // Only HR and Accounting & Finance give the final approval; the admin role alone does not.
+    public function isFinalApprover(User $user): bool
+    {
+        return AccountEmployee::where('user_id', $user->id)
+            ->whereIn('department_id', self::FINAL_APPROVER_DEPARTMENT_IDS)
+            ->exists();
+    }
+
+    /**
+     * Leader-endorsed requests from every employee, for the final approver.
+     */
+    public function paginateForFinalApproval(string $type, array $filters): LengthAwarePaginator
+    {
+        $query = $this->modelClass($type)::query()->whereNotNull('endorsed_by');
+
+        $status = $filters['status'] ?? 'pending';
+        $query->whereIn('status', self::FINAL_STATUS_GROUPS[$status] ?? self::FINAL_STATUS_GROUPS['pending']);
+
+        if (! empty($filters['search'])) {
+            $term = '%' . $filters['search'] . '%';
+            $matches = AccountPersonalInformation::where(function ($q) use ($term) {
+                $q->where('first_name', 'like', $term)->orWhere('last_name', 'like', $term);
+            })->pluck('user_id');
+
+            $query->whereIn('user_id', $matches);
+        }
+
+        if (! empty($filters['date_from'])) {
+            $query->whereDate('date', '>=', $filters['date_from']);
+        }
+
+        if (! empty($filters['date_to'])) {
+            $query->whereDate('date', '<=', $filters['date_to']);
+        }
+
+        $paginator = $query
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->paginate($filters['per_page'] ?? 15);
+
+        $this->attachEmployeeInfo($paginator, $type);
+
+        return $paginator;
+    }
+
+    public function finalApprove(string $type, Model $request, User $approver): Model
+    {
+        $this->ensureEndorsed($request, 'approved');
+
+        if ($type === 'leave') {
+            $this->ensureLeaveCredits($request);
+        }
+
+        $now = Carbon::now();
+
+        if ($type === 'schedule') {
+            $request->update(['status' => 'granted', 'granted_by' => $approver->id, 'granted_at' => $now]);
+            app(AttendanceCorrectionService::class)->applyToAttendance($request);
+        } else {
+            $request->update(['status' => 'approved', 'approved_by' => $approver->id, 'approved_at' => $now]);
+        }
+
+        return $request;
+    }
+
+    public function finalDecline(Model $request, User $approver, string $note): Model
+    {
+        $this->ensureEndorsed($request, 'declined');
+
+        $request->update([
+            'status' => 'declined',
+            'declined_by' => $approver->id,
+            'declined_at' => Carbon::now(),
+            'accounting_note' => $note,
+        ]);
+
+        return $request;
+    }
+
     public function paginate(User $leader, string $type, array $filters): LengthAwarePaginator
     {
         $subordinateIds = $this->subordinateIds($leader);
         $query = $this->modelClass($type)::query()->whereIn('user_id', $subordinateIds);
 
+        if (! empty($filters['user_id'])) {
+            $query->where('user_id', $filters['user_id']);
+        }
+
         if (! empty($filters['search'])) {
-            $matches = AccountPersonalInformation::whereIn('user_id', $subordinateIds)
-                ->where(function ($q) use ($filters) {
-                    $term = '%' . $filters['search'] . '%';
+            $term = '%' . $filters['search'] . '%';
+
+            $nameMatches = AccountPersonalInformation::whereIn('user_id', $subordinateIds)
+                ->where(function ($q) use ($term) {
                     $q->where('first_name', 'like', $term)
-                        ->orWhere('last_name', 'like', $term);
+                        ->orWhere('last_name', 'like', $term)
+                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", [$term]);
                 })
                 ->pluck('user_id');
 
-            $query->whereIn('user_id', $matches);
+            $idMatches = AccountEmployee::whereIn('user_id', $subordinateIds)
+                ->where('employee_id', 'like', $term)
+                ->pluck('user_id');
+
+            $query->whereIn('user_id', $nameMatches->merge($idMatches)->unique()->values());
         }
 
         if (! empty($filters['status']) && isset(self::STATUS_GROUPS[$filters['status']])) {
@@ -111,9 +233,7 @@ class TeamRequestService
 
         $now = Carbon::now();
 
-        $request->update($type === 'leave'
-            ? ['status' => 'approved', 'approved_by' => $leader->id, 'approved_at' => $now]
-            : ['status' => 'endorsed', 'endorsed_by' => $leader->id, 'endorsed_at' => $now]);
+        $request->update(['status' => 'endorsed', 'endorsed_by' => $leader->id, 'endorsed_at' => $now]);
 
         return $request;
     }
@@ -134,8 +254,11 @@ class TeamRequestService
 
     public function attachEmployeeInfo(iterable $requests, string $type): void
     {
-        // collect() on a paginator yields its toArray() shape, so iterate the items instead.
-        $requests = $requests instanceof \Traversable ? iterator_to_array($requests, false) : $requests;
+        // collect() on a paginator yields its page metadata, not the items.
+        if ($requests instanceof AbstractPaginator) {
+            $requests = $requests->items();
+        }
+
         $userIds = collect($requests)->pluck('user_id')->unique()->all();
 
         $names = AccountPersonalInformation::whereIn('user_id', $userIds)
@@ -165,6 +288,29 @@ class TeamRequestService
     {
         if ($request->status !== 'pending') {
             abort(422, "Only pending requests can be {$action}.");
+        }
+    }
+
+    private function ensureEndorsed(Model $request, string $action): void
+    {
+        if ($request->status !== 'endorsed') {
+            abort(422, "Only leader-approved requests can be {$action}.");
+        }
+    }
+
+    // Credits are deducted on final approval, so guard against overdrawing the balance.
+    private function ensureLeaveCredits(Model $request): void
+    {
+        $credits = app(LeaveCreditService::class);
+
+        if (! $credits->isDeductible($request->leave_type)) {
+            return;
+        }
+
+        $summary = $credits->summary((int) $request->user_id);
+
+        if (! $summary['is_regular'] || $summary['balance'] < 1) {
+            abort(422, 'Insufficient leave credits.');
         }
     }
 }

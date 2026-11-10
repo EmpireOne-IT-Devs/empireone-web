@@ -15,15 +15,19 @@ class LeaveRequest extends Model
         'leave_type',
         'reason',
         'status',
+        'endorsed_by',
+        'endorsed_at',
         'approved_by',
         'approved_at',
         'declined_by',
         'declined_at',
         'supervisor_note',
+        'accounting_note',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'endorsed_at' => 'datetime',
         'approved_at' => 'datetime',
         'declined_at' => 'datetime',
     ];
@@ -31,6 +35,11 @@ class LeaveRequest extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function endorser()
+    {
+        return $this->belongsTo(User::class, 'endorsed_by');
     }
 
     public function approver()

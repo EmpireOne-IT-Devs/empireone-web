@@ -22,4 +22,20 @@ class TeamRequestPolicy
     {
         return $this->service->isSubordinateOf($user, (int) $request->user_id);
     }
+
+    public function delete(User $user, Model $request): bool
+    {
+        return $user->id === (int) $request->user_id;
+    }
+
+    public function viewFinalApprovals(User $user): bool
+    {
+        return $this->service->isFinalApprover($user);
+    }
+
+    // Final approvers cannot approve or decline their own filings.
+    public function finalApprove(User $user, Model $request): bool
+    {
+        return $this->service->isFinalApprover($user) && $user->id !== (int) $request->user_id;
+    }
 }

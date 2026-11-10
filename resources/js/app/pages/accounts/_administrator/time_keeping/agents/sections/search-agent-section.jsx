@@ -4,7 +4,6 @@ import {
     FiSearch as Search,
 } from "react-icons/fi";
 import Button from "@/app/_components/button";
-import Input from "@/app/_components/input";
 import FilterAttendanceDate from "./filter-attendance-date";
 import BatchEndorseButton from "./batch-endorse-button";
 
@@ -23,17 +22,26 @@ const STATUS_OPTIONS = [
 
 export default function SearchAgentSection({
     filters,
+    subordinates,
+    isLoadingSubordinates,
     onApply,
     selectedCount,
     onBatchApprove,
     isBusy,
 }) {
-    const [search, setSearch] = useState(filters.search);
     const [dateFrom, setDateFrom] = useState(filters.dateFrom);
     const [dateTo, setDateTo] = useState(filters.dateTo);
 
+    const employeeOptions = [
+        { value: "", label: "All employees" },
+        ...subordinates.map((s) => ({
+            value: s.user_id,
+            label: s.employee_id ? `${s.name} (${s.employee_id})` : s.name,
+        })),
+    ];
+
     const apply = (overrides = {}) =>
-        onApply({ ...filters, search, dateFrom, dateTo, ...overrides });
+        onApply({ ...filters, dateFrom, dateTo, ...overrides });
 
     return (
         <div className="mb-4 flex flex-wrap items-end gap-3">
@@ -66,12 +74,20 @@ export default function SearchAgentSection({
             </div>
 
             <div className="w-full sm:w-64">
-                <Input
-                    label="Search employee"
-                    name="team_request_search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && apply()}
+                <span className="mb-1 block text-xs font-medium text-gray-500">
+                    Employee
+                </span>
+                <AntSelect
+                    showSearch
+                    size="large"
+                    className="w-full"
+                    aria-label="Employee"
+                    loading={isLoadingSubordinates}
+                    disabled={isLoadingSubordinates}
+                    value={filters.userId ?? ""}
+                    options={employeeOptions}
+                    optionFilterProp="label"
+                    onChange={(userId) => apply({ userId: userId || undefined })}
                 />
             </div>
 

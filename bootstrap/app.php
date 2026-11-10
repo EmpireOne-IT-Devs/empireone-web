@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'challenge.management' => \App\Http\Middleware\EnsureChallengeManagementAccess::class,
+            'final.approver' => \App\Http\Middleware\EnsureFinalApprover::class,
             'info.complete' => \App\Http\Middleware\EnsureAccountEmployeeComplete::class,
             'role.redirect' => \App\Http\Middleware\RedirectByRole::class,
         ]);

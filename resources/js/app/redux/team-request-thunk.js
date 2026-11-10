@@ -3,6 +3,7 @@ import {
     approve_team_request_service,
     decline_team_request_service,
     get_team_requests_service,
+    get_team_subordinates_service,
 } from "@/app/services/team-request-service";
 
 const toRejection = (error, fallback) => ({
@@ -19,6 +20,19 @@ export const get_team_requests_thunk = createAsyncThunk(
         } catch (error) {
             return rejectWithValue(
                 toRejection(error, "Unable to load team requests."),
+            );
+        }
+    },
+);
+
+export const get_team_subordinates_thunk = createAsyncThunk(
+    "teamRequests/getSubordinates",
+    async (_, { rejectWithValue }) => {
+        try {
+            return await get_team_subordinates_service();
+        } catch (error) {
+            return rejectWithValue(
+                toRejection(error, "Unable to load your team members."),
             );
         }
     },

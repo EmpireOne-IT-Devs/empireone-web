@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { FaXmark, FaPlus, FaCheck, FaBan, FaUserCheck } from "react-icons/fa6";
+import { FaPlus, FaTrash, FaCheck, FaBan, FaUserCheck } from "react-icons/fa6";
 import { ConfigProvider, DatePicker } from "antd";
 import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
+import Confirmation from "@/app/_components/confirmation";
+import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 import {
     get_overtime_requests_service,
     create_overtime_request_service,
     endorse_overtime_request_service,
     approve_overtime_request_service,
     decline_overtime_request_service,
+    delete_overtime_request_service,
 } from "@/app/services/overtime-service";
 
 // Native date inputs follow the OS locale, so use antd's own calendar to lock the order to MM/DD/YYYY
@@ -23,9 +26,14 @@ const formatDateTime = (value) => {
 
 export default function OvertimeSection({ date, onSaved }) {
     const dispatch = useDispatch();
+    const { user, isERLeader } = useCurrentEmployee();
+    const isAdmin = Number(user?.role) == 1;
+    const canReview = isAdmin || isERLeader;
     const [isOpen, setIsOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [deleteTarget, setDeleteTarget] = useState(null);
+    const [deleting, setDeleting] = useState(false);
 
     const [form, setForm] = useState({
         attendanceDate: dayjs(date),
@@ -147,11 +155,12 @@ export default function OvertimeSection({ date, onSaved }) {
         }
     };
 
-    // Final approval by accounting, only allowed once endorsed
+    // Final approval, only allowed once endorsed
     const handleApprove = async (id) => {
         try {
             await approve_overtime_request_service(id);
             fetchOvertimeRequests();
+            onSaved?.();
         } catch (err) {
             dispatch(
                 setAlert({
@@ -183,6 +192,34 @@ export default function OvertimeSection({ date, onSaved }) {
                     title: err.response?.data?.message || "Failed to decline request.",
                 }),
             );
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!deleteTarget) return;
+
+        setDeleting(true);
+
+        try {
+            await delete_overtime_request_service(deleteTarget);
+            dispatch(
+                setAlert({
+                    type: "success",
+                    title: "Overtime request deleted.",
+                }),
+            );
+            setDeleteTarget(null);
+            fetchOvertimeRequests();
+            onSaved?.();
+        } catch (err) {
+            dispatch(
+                setAlert({
+                    type: "error",
+                    title: err.response?.data?.message || "Failed to delete request.",
+                }),
+            );
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -397,58 +434,69 @@ export default function OvertimeSection({ date, onSaved }) {
                                     >
                                         <td className="whitespace-nowrap px-4 py-3">
                                             <div className="flex items-center gap-2">
-                                                {!endorsedBySupervisor &&
-                                                    !declined && (
-                                                        <button
-                                                            type="button"
-                                                            title="Endorse (Supervisor/Leader)"
-                                                            onClick={() =>
-                                                                handleEndorse(
-                                                                    item.id,
-                                                                )
-                                                            }
-                                                            className="inline-flex items-center gap-1 rounded-md bg-amber-500 px-2 py-1 text-xs font-medium text-white hover:bg-amber-600"
-                                                        >
-                                                            <FaUserCheck />
-                                                            Endorse
-                                                        </button>
-                                                    )}
-
-                                                {endorsedBySupervisor &&
-                                                    !approvedByAccounting &&
-                                                    !declined && (
-                                                        <button
-                                                            type="button"
-                                                            title="Approve (Accounting)"
-                                                            onClick={() =>
-                                                                handleApprove(
-                                                                    item.id,
-                                                                )
-                                                            }
-                                                            className="inline-flex items-center gap-1 rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white hover:bg-green-600"
-                                                        >
-                                                            <FaCheck />
-                                                            Approve
-                                                        </button>
-                                                    )}
-
-                                                {!approvedByAccounting &&
-                                                    !declined && (
+                                                {canReview && item.status === "pending" && (
                                                     <button
                                                         type="button"
-                                                        title="Decline"
+                                                        title="Endorse (Supervisor/Leader)"
                                                         onClick={() =>
-                                                            handleDecline(
+                                                            handleEndorse(item.id)
+                                                        }
+                                                        className="inline-flex items-center gap-1 rounded-md bg-amber-500 px-2 py-1 text-xs font-medium text-white hover:bg-amber-600"
+                                                    >
+                                                        <FaUserCheck />
+                                                        Endorse
+                                                    </button>
+                                                )}
+
+                                                {isAdmin && item.status === "endorsed" && (
+                                                    <button
+                                                        type="button"
+                                                        title="Approve (Accounting/HR)"
+                                                        onClick={() =>
+                                                            handleApprove(item.id)
+                                                        }
+                                                        className="inline-flex items-center gap-1 rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white hover:bg-green-600"
+                                                    >
+                                                        <FaCheck />
+                                                        Approve
+                                                    </button>
+                                                )}
+
+                                                {canReview &&
+                                                    (item.status === "pending" ||
+                                                        (isAdmin &&
+                                                            item.status === "endorsed")) && (
+                                                        <button
+                                                            type="button"
+                                                            title="Decline"
+                                                            onClick={() =>
+                                                                handleDecline(
+                                                                    item.id,
+                                                                    endorsedBySupervisor
+                                                                        ? "accounting"
+                                                                        : "supervisor",
+                                                                )
+                                                            }
+                                                            className="inline-flex items-center gap-1 rounded-md bg-red-500 px-2 py-1 text-xs font-medium text-white hover:bg-red-600"
+                                                        >
+                                                            <FaBan />
+                                                            Decline
+                                                        </button>
+                                                    )}
+
+                                                {!canReview && item.status === "pending" && (
+                                                    <button
+                                                        type="button"
+                                                        title="Delete"
+                                                        onClick={() =>
+                                                            setDeleteTarget(
                                                                 item.id,
-                                                                endorsedBySupervisor
-                                                                    ? "accounting"
-                                                                    : "supervisor",
                                                             )
                                                         }
                                                         className="inline-flex items-center gap-1 rounded-md bg-red-500 px-2 py-1 text-xs font-medium text-white hover:bg-red-600"
                                                     >
-                                                        <FaBan />
-                                                        Decline
+                                                        <FaTrash />
+                                                        Delete
                                                     </button>
                                                 )}
                                             </div>
@@ -516,6 +564,37 @@ export default function OvertimeSection({ date, onSaved }) {
                     Close
                 </button>
             </div>
+
+            <Confirmation
+                isOpen={deleteTarget !== null}
+                onClose={() => !deleting && setDeleteTarget(null)}
+                title="Delete overtime request"
+            >
+                <p className="text-sm text-gray-600">
+                    Are you sure you want to delete this overtime request? This
+                    action cannot be undone.
+                </p>
+
+                <div className="mt-6 flex justify-end gap-3">
+                    <button
+                        type="button"
+                        onClick={() => setDeleteTarget(null)}
+                        disabled={deleting}
+                        className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-60"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        <FaTrash />
+                        {deleting ? "Deleting..." : "Delete"}
+                    </button>
+                </div>
+            </Confirmation>
         </>
     );
 }
