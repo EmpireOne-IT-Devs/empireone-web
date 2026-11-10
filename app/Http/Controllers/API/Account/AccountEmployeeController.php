@@ -9,6 +9,9 @@ use App\Models\Account\AccountDocument;
 use App\Models\Account\AccountEmployee;
 use App\Models\Account\AccountPersonalInformation;
 use App\Models\ER\ERAcknowledgement;
+use App\Models\ER\ERLeader;
+use App\Models\PM\PMCorrectiveAction;
+use App\Models\PM\PMReach;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +20,79 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AccountEmployeeController extends Controller
 {
+    public function performance_management_dashboard(Request $request)
+    {
+        $leaders = ERLeader::where('user_id', Auth::id())->pluck('id');
+
+        // Base query for account employees under these leaders
+        $baseQuery = AccountEmployee::where(function ($query) use ($leaders) {
+            $query->whereIn('e_r_leader_id', $leaders)
+                ->orWhereIn('department_manager_id', $leaders);
+        });
+
+        $totalTeam = (clone $baseQuery)->count();
+        $regular = (clone $baseQuery)->where('status', 'Regular')->count();
+
+        // Probation Review Dates
+        $probation3rd = (clone $baseQuery)
+            ->whereBetween('started_at', [
+                now()->subMonths(4)->startOfDay(),
+                now()->subMonths(3)->endOfDay()
+            ])
+            ->count();
+
+        $probation5th = (clone $baseQuery)
+            ->whereBetween('started_at', [
+                now()->subMonths(6)->startOfDay(),
+                now()->subMonths(5)->endOfDay()
+            ])
+            ->count();
+
+        $leaderIds = AccountEmployee::where('e_r_leader_id', Auth::id())
+            ->orWhere('department_manager_id', Auth::id())
+            ->pluck('e_r_leader_id')
+            ->filter() // Removes null values if any
+            ->unique()
+            ->values()
+            ->toArray();
+            
+        $coachingsQuery = PMReach::whereIn('created_by', $leaderIds);
+        $totalCoachings = (clone $coachingsQuery)->count();
+        $pendingCoachings = (clone $coachingsQuery)->where('status', 'PENDING')->count();
+        $acknowledgedCoachings = (clone $coachingsQuery)->where('status', 'ACKNOWLEDGED')->count();
+
+        // Combined Corrective Actions
+        $correctiveQuery = PMCorrectiveAction::whereIn('created_by', $leaderIds);
+        $totalCorrective = (clone $correctiveQuery)->count();
+
+        $pending = (clone $correctiveQuery)->where('status', 'PENDING')->count();
+        $pendingExplanation = (clone $correctiveQuery)->where('status', 'PENDING EMPLOYEE EXPLANATION')->count();
+        $pendingSanction = (clone $correctiveQuery)->where('status', 'PENDING FINAL SANCTION')->count();
+        $pendingCommitment = (clone $correctiveQuery)->where('status', 'PENDING EMPLOYEE COMMITMENT')->count();
+        $completed = (clone $correctiveQuery)->where('status', 'COMPLETED')->count();
+
+        return response()->json([
+            'regularization' => [
+                'regular' => $regular,
+                'probation_3rd_review' => $probation3rd,
+                'probation_5th_review' => $probation5th,
+                'total' => $totalTeam,
+            ],
+            'coachings' => [
+                'pending' => $pendingCoachings,
+                'acknowledged' => $acknowledgedCoachings,
+                'total' => $totalCoachings
+            ],
+            'corrective_actions' => [
+                'pending' => $pending,
+                'pending_employee_explanation' => $pendingExplanation,
+                'pending_final_sanction' => $pendingSanction,
+                'pending_employee_commitment' => $pendingCommitment,
+                'completed' => $completed,
+                'total' => $totalCorrective
+            ]
+        ], 200);
+    }
     public function export_employee(Request $request)
     {
         $locationId = $request->input('location_id') ?? $request->query('location_id');

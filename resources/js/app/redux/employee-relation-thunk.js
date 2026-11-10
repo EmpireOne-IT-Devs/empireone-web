@@ -24,6 +24,7 @@ import {
     get_attrition_by_id_service,
     get_corrective_action_by_id_service,
     get_corrective_actions_specific_leader_service,
+    performance_management_dashboard_service,
     get_reach_specific_leader_service,
     search_employee_service,
 } from "../services/human-resources-service";
@@ -52,8 +53,17 @@ export function get_account_pendings_thunk() {
             const result = await get_account_pendings_service();
             dispatch(employeeRelationSlice.actions.setAccountPendings(result));
         } finally {
-            dispatch(employeeRelationSlice.actions.setAccountPendingsLoading(false));
+            dispatch(
+                employeeRelationSlice.actions.setAccountPendingsLoading(false),
+            );
         }
+    };
+}
+
+export function performance_management_dashboard_thunk() {
+    return async function (dispatch) {
+        const result = await performance_management_dashboard_service();
+        dispatch(employeeRelationSlice.actions.setPMDashboard(result));
     };
 }
 
@@ -93,14 +103,18 @@ export function get_reach_specific_leader_thunk() {
 export function get_corrective_action_by_id_thunk(id) {
     return async function (dispatch, getState) {
         const result = await get_corrective_action_by_id_service(id);
-        dispatch(employeeRelationSlice.actions.setCorrectiveAction(result.data));
+        dispatch(
+            employeeRelationSlice.actions.setCorrectiveAction(result.data),
+        );
     };
 }
 
 export function get_corrective_actions_specific_leader_thunk() {
     return async function (dispatch, getState) {
         const result = await get_corrective_actions_specific_leader_service();
-        dispatch(employeeRelationSlice.actions.setCorrectiveActions(result.data));
+        dispatch(
+            employeeRelationSlice.actions.setCorrectiveActions(result.data),
+        );
     };
 }
 

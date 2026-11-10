@@ -29,10 +29,14 @@ export const employeeRelationSlice = createSlice({
         reaches: [],
         corrective_action: {},
         corrective_actions: [],
+        p_m_dashboard: {},
     },
     reducers: {
         setEmployees: (state, action) => {
             state.employees = action.payload;
+        },
+        setPMDashboard: (state, action) => {
+            state.p_m_dashboard = action.payload;
         },
         setCorrectiveAction: (state, action) => {
             state.corrective_action = action.payload;

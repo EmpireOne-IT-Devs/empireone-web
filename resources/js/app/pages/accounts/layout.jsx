@@ -10,30 +10,30 @@ import { setLoading } from "@/app/redux/app-slice";
 
 export default function Layout({ children }) {
     const { desktopCollapsed, loading } = useSelector((store) => store.app);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     useEffect(() => {
         async function get_data(params) {
             try {
-                await store.dispatch(get_app_data_thunk());
-                dispatch(setLoading(false))
+                if (loading) {
+                    await store.dispatch(get_app_data_thunk());
+                    dispatch(setLoading(false));
+                }
             } catch (error) {
-                dispatch(setLoading(false))
+                dispatch(setLoading(false));
             }
         }
-        get_data()
+        get_data();
     }, []);
     return (
         <div className="h-full">
             <SidebarSection />
             <div
-                className={`${desktopCollapsed ? "" : "lg:pl-72"
-                    } flex flex-col min-h-screen transition-all duration-300`}
+                className={`${
+                    desktopCollapsed ? "" : "lg:pl-72"
+                } flex flex-col min-h-screen transition-all duration-300`}
             >
                 <TopbarSection />
-                <main
-                    className={`flex-1${desktopCollapsed ? "ml-20" : ""
-                        }`}
-                >
+                <main className={`flex-1${desktopCollapsed ? "ml-20" : ""}`}>
                     {/* Added the animation wrapper here */}
                     <div className="animate-slideUp p-4">
                         {/* {

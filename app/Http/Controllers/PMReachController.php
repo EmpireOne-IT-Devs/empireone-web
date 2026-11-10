@@ -117,9 +117,12 @@ class PMReachController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%");
             });
         }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
         // Eager load relationships before running paginate()
-        $reaches = $query->orderBy('id','desc')->paginate($request->input('per_page', 10));
+        $reaches = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 10));
 
         return response()->json($reaches, 200);
     }

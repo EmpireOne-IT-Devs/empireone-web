@@ -371,6 +371,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::resource('exit_interview', ERExitInterviewController::class);
         Route::get('search_employee',  [AccountEmployeeController::class, 'search_employee']);
         Route::get('get_201_files',  [AccountEmployeeController::class, 'get_201_files']);
+        Route::get('performance_management_dashboard',  [AccountEmployeeController::class, 'performance_management_dashboard']);
         Route::post('update_201_files',  [AccountDocumentController::class, 'update_201_files']);
 
 

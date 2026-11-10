@@ -8,6 +8,10 @@ export async function add_exit_clearance_service(data) {
     return await axios.post(`/api/er/exit_clearance`, data);
 }
 
+export async function performance_management_dashboard_service(data) {
+    return (await axios.get(`/api/er/performance_management_dashboard`, data)).data;
+}
+
 export async function get_ai_cocd_service(data) {
     return (await axios.post(`/api/er/get_ai_cocd`, data)).data;
 }
