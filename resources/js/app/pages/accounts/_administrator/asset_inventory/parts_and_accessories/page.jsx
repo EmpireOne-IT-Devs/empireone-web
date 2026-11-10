@@ -1,22 +1,24 @@
-import React, { useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../layout";
 import AssetInventory from "../layout";
 import { setAlert } from "@/app/redux/app-slice";
+import SmartImportModal from "../_components/smart-import-modal";
+import { analyze_import_thunk, commit_import_thunk } from "@/app/redux/asset-import-thunk";
+import { get_asset_parts_thunk, create_asset_parts_thunk } from "@/app/redux/asset-part-thunk";
+import { clearErrors } from "@/app/redux/asset-part-slice";
 import HeaderSection from "./sections/header-section";
 import StatsSection from "./sections/stats-section";
 import CurrencyStrip from "./sections/currency-strip";
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import CreatePartSection from "./sections/create-part-section";
-import { initialParts } from "./sections/part-mock-data";
 import { getStockStatus } from "./sections/part-helpers";
-
-const PER_PAGE = 10;
 
 export default function Page() {
     const dispatch = useDispatch();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isImportOpen, setIsImportOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [brandFilter, setBrandFilter] = useState("");
@@ -24,7 +26,22 @@ export default function Page() {
     const [stockFilter, setStockFilter] = useState("");
     const [currency, setCurrency] = useState("PHP");
     const [page, setPage] = useState(1);
-    const [items, setItems] = useState(initialParts);
+    const { items, meta, loading, saving, errors } = useSelector((state) => state.asset_parts);
+
+    // Debounced server-side fetch on any filter/page change.
+    // The parts API only supports search/status/condition — type, brand, location, and stock remain client-side UI state.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            dispatch(
+                get_asset_parts_thunk({
+                    page,
+                    per_page: 10,
+                    search: searchQuery.trim() || undefined,
+                }),
+            );
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [dispatch, page, searchQuery, typeFilter, brandFilter, locationFilter, stockFilter]);
 
     const withPageReset = (setter) => (value) => {
         setter(value);
@@ -49,31 +66,51 @@ export default function Page() {
         [items],
     );
 
-    const handleCreateSubmit = (values) => {
-        const nextNumber = items.length + 1;
+    const handleAnalyze = async (rows) => {
+        const result = await dispatch(analyze_import_thunk(rows));
+        if (analyze_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
 
-        const item = {
-            id: `PT-${String(nextNumber).padStart(3, "0")}`,
-            name: values.name,
-            brand: values.brand,
-            type: values.type,
-            quantity: values.quantity,
-            lowStockThreshold: values.lowStockThreshold,
-            location: values.location,
-            price: values.price,
-            description: values.description || null,
-        };
+    const handleImport = async (modules) => {
+        const result = await dispatch(commit_import_thunk(modules));
+        if (commit_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
 
-        setItems((prev) => [item, ...prev]);
-        setPage(1);
-        dispatch(
-            setAlert({
-                open: true,
-                type: "success",
-                title: "Part added",
-                message: `${item.name} was added to the inventory.`,
+    const handleImportDone = (summary) => {
+        const total = Object.values(summary ?? {}).reduce((sum, m) => sum + (m.imported ?? 0), 0);
+        dispatch(setAlert({ open: true, type: "success", title: "Import complete", message: ` ${total} assets imported. ` }));
+    };
+    const handleCreateSubmit = async (values) => {
+        const result = await dispatch(
+            create_asset_parts_thunk({
+                asset_tag: `PT-${Date.now().toString(36).toUpperCase()}`,
+                name: values.name,
+                brand: values.brand || null,
+                part_type: values.type,
+                quantity: values.quantity,
+                low_stock_threshold: values.lowStockThreshold,
+                status: "New",
+                location: values.location || null,
+                price: values.price,
+                notes: values.description || null,
             }),
         );
+        if (create_asset_parts_thunk.fulfilled.match(result)) {
+            setIsCreateOpen(false);
+            dispatch(clearErrors());
+            dispatch(
+                setAlert({
+                    open: true,
+                    type: "success",
+                    title: "Part added",
+                    message: `${values.name} was added to the inventory.`,
+                }),
+            );
+            dispatch(get_asset_parts_thunk({ page: 1, per_page: 10 }));
+            setPage(1);
+        }
     };
 
     const handleView = (row) => {
@@ -87,47 +124,13 @@ export default function Page() {
         );
     };
 
-    const filteredData = useMemo(() => {
-        const term = searchQuery.trim().toLowerCase();
-
-        return items.filter((item) => {
-            const matchesSearch =
-                !term ||
-                [item.name, item.brand, item.type, item.description]
-                    .filter(Boolean)
-                    .some((field) => field.toLowerCase().includes(term));
-
-            return (
-                matchesSearch &&
-                (!typeFilter || item.type === typeFilter) &&
-                (!brandFilter || item.brand === brandFilter) &&
-                (!locationFilter || item.location === locationFilter) &&
-                (!stockFilter || getStockStatus(item.quantity, item.lowStockThreshold) === stockFilter)
-            );
-        });
-    }, [items, searchQuery, typeFilter, brandFilter, locationFilter, stockFilter]);
-
-    const pageMeta = useMemo(
-        () => ({
-            current_page: page,
-            last_page: Math.max(1, Math.ceil(filteredData.length / PER_PAGE)),
-            per_page: PER_PAGE,
-            total: filteredData.length,
-        }),
-        [filteredData.length, page],
-    );
-
-    const pageData = useMemo(() => {
-        const start = (page - 1) * PER_PAGE;
-        return filteredData.slice(start, start + PER_PAGE);
-    }, [filteredData, page]);
-
     return (
         <Layout>
             <AssetInventory>
                 <div className="space-y-4">
-                    <HeaderSection onCreateClick={() => setIsCreateOpen(true)} />
+                    <HeaderSection onCreateClick={() => setIsCreateOpen(true)} onImportClick={() => setIsImportOpen(true)} />
 
+                    {/* Stats reflect the current page until the API exposes a stats block. */}
                     <StatsSection items={items} />
 
                     <CurrencyStrip currency={currency} setCurrency={setCurrency} />
@@ -144,14 +147,15 @@ export default function Page() {
                         stockFilter={stockFilter}
                         setStockFilter={withPageReset(setStockFilter)}
                         brands={brands}
-                        resultCount={filteredData.length}
-                        totalCount={items.length}
+                        resultCount={meta?.total ?? 0}
+                        totalCount={meta?.total ?? 0}
                     />
 
                     <TableSection
-                        data={pageData}
+                        data={items}
                         currency={currency}
-                        meta={pageMeta}
+                        loading={loading}
+                        meta={meta}
                         onPageChange={setPage}
                         hasFilters={hasFilters}
                         onClearFilters={clearFilters}
@@ -160,9 +164,15 @@ export default function Page() {
 
                     <CreatePartSection
                         isOpen={isCreateOpen}
-                        onClose={() => setIsCreateOpen(false)}
+                        onClose={() => {
+                            setIsCreateOpen(false);
+                            dispatch(clearErrors());
+                        }}
                         onSubmit={handleCreateSubmit}
+                        submitting={saving}
+                        apiErrors={errors}
                     />
+                    <SmartImportModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} onAnalyze={handleAnalyze} onImport={handleImport} onDone={handleImportDone} />
                 </div>
             </AssetInventory>
         </Layout>

@@ -9,16 +9,14 @@ import CurrencyStrip from "./sections/currency-strip";
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import CreateDeviceSection from "./sections/create-device-section";
-import ExcelImportModal from "../_components/excel-import-modal";
+import SmartImportModal from "../_components/smart-import-modal";
 import {
-    DEVICE_IMPORT_FIELDS,
-    routeDeviceRow,
-    transformDeviceRow,
-} from "./sections/device-import-config";
+    analyze_import_thunk,
+    commit_import_thunk,
+} from "@/app/redux/asset-import-thunk";
 import {
     create_asset_device_thunk,
     get_asset_devices_thunk,
-    import_asset_devices_thunk,
 } from "@/app/redux/asset-device-thunk";
 import { clearErrors } from "@/app/redux/asset-device-slice";
 
@@ -89,21 +87,33 @@ export default function Page() {
         }
     };
 
-    const handleImport = async (rows) => {
-        const result = await dispatch(import_asset_devices_thunk(rows));
-        if (import_asset_devices_thunk.fulfilled.match(result)) {
+    const handleAnalyze = async (rows) => {
+        const result = await dispatch(analyze_import_thunk(rows));
+        if (analyze_import_thunk.fulfilled.match(result)) {
+            return result.payload;
+        }
+        throw result.payload;
+    };
+
+    const handleImport = async (modules) => {
+        const result = await dispatch(commit_import_thunk(modules));
+        if (commit_import_thunk.fulfilled.match(result)) {
             return result.payload;
         }
         throw result.payload;
     };
 
     const handleImportDone = (summary) => {
+        const total = Object.values(summary ?? {}).reduce(
+            (sum, m) => sum + (m.imported ?? 0),
+            0,
+        );
         dispatch(
             setAlert({
                 open: true,
                 type: "success",
                 title: "Import complete",
-                message: `${summary.imported} devices imported${summary.skipped?.length ? `, ${summary.skipped.length} duplicates skipped` : ""}.`,
+                message: `${total} assets imported across all modules.`,
             }),
         );
         dispatch(get_asset_devices_thunk({ page: 1, per_page: 10 }));
@@ -168,13 +178,10 @@ export default function Page() {
                         apiErrors={errors}
                     />
 
-                    <ExcelImportModal
+                    <SmartImportModal
                         isOpen={isImportOpen}
                         onClose={() => setIsImportOpen(false)}
-                        title="Import Devices from Excel"
-                        fields={DEVICE_IMPORT_FIELDS}
-                        transformRow={transformDeviceRow}
-                        routeRow={routeDeviceRow}
+                        onAnalyze={handleAnalyze}
                         onImport={handleImport}
                         onDone={handleImportDone}
                     />

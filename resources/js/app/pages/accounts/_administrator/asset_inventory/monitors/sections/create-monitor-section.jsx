@@ -31,17 +31,29 @@ function SectionHeading({ children }) {
     return <h3 className="text-sm font-semibold text-gray-900">{children}</h3>;
 }
 
+// Maps API field names (snake_case) to form field names (camelCase).
+const API_TO_FORM = {
+    asset_tag: "serialNumber",
+    serial_number: "serialNumber",
+    screen_size: "screenSize",
+    monitor_type: "deviceType",
+    issued_to: "issuedTo",
+    site: "station",
+};
+
 export default function CreateMonitorSection({
     isOpen,
     onClose,
     onSubmit,
     submitting = false,
+    apiErrors = {},
 }) {
     const {
         register,
         handleSubmit,
         control,
         reset,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: DEFAULT_VALUES });
 
@@ -49,6 +61,15 @@ export default function CreateMonitorSection({
     useEffect(() => {
         if (isOpen) reset(DEFAULT_VALUES);
     }, [isOpen, reset]);
+
+    // Map Laravel 422 errors onto the matching inputs.
+    useEffect(() => {
+        Object.entries(apiErrors).forEach(([field, messages]) => {
+            const formField = API_TO_FORM[field] ?? field;
+            const message = Array.isArray(messages) ? messages[0] : String(messages);
+            setError(formField, { type: "server", message });
+        });
+    }, [apiErrors, setError]);
 
     const handleClose = () => {
         reset(DEFAULT_VALUES);
@@ -68,7 +89,6 @@ export default function CreateMonitorSection({
             issuedTo: values.issuedTo.trim() || null,
             price: values.price === "" ? null : Number(values.price),
         });
-        handleClose();
     };
 
     return (

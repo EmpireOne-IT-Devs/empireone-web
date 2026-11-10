@@ -78,8 +78,8 @@ export default function TableSection({
         },
         {
             header: "Device Type",
-            accessor: "deviceType",
-            render: (row) => <span className="text-sm text-gray-700">{row.deviceType}</span>,
+            accessor: "monitorType",
+            render: (row) => <span className="text-sm text-gray-700">{row.monitorType ?? "—"}</span>,
         },
         {
             header: "Status",

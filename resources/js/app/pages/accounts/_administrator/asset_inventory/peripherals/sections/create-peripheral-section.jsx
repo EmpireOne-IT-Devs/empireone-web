@@ -29,17 +29,26 @@ function SectionHeading({ children }) {
     return <h3 className="text-sm font-semibold text-gray-900">{children}</h3>;
 }
 
+// Maps API field names (snake_case) to form field names (camelCase).
+const API_TO_FORM = {
+    asset_tag: "model",
+    peripheral_type: "type",
+    low_stock_threshold: "lowStockThreshold",
+};
+
 export default function CreatePeripheralSection({
     isOpen,
     onClose,
     onSubmit,
     submitting = false,
+    apiErrors = {},
 }) {
     const {
         register,
         handleSubmit,
         control,
         reset,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: DEFAULT_VALUES });
 
@@ -47,6 +56,15 @@ export default function CreatePeripheralSection({
     useEffect(() => {
         if (isOpen) reset(DEFAULT_VALUES);
     }, [isOpen, reset]);
+
+    // Map Laravel 422 errors onto the matching inputs.
+    useEffect(() => {
+        Object.entries(apiErrors).forEach(([field, messages]) => {
+            const formField = API_TO_FORM[field] ?? field;
+            const message = Array.isArray(messages) ? messages[0] : String(messages);
+            setError(formField, { type: "server", message });
+        });
+    }, [apiErrors, setError]);
 
     const handleClose = () => {
         reset(DEFAULT_VALUES);
@@ -63,7 +81,6 @@ export default function CreatePeripheralSection({
             quantity: Number(values.quantity),
             lowStockThreshold: Number(values.lowStockThreshold),
         });
-        handleClose();
     };
 
     return (

@@ -1,29 +1,48 @@
-import React, { useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../layout";
 import AssetInventory from "../layout";
 import { setAlert } from "@/app/redux/app-slice";
+import SmartImportModal from "../_components/smart-import-modal";
+import { analyze_import_thunk, commit_import_thunk } from "@/app/redux/asset-import-thunk";
+import { get_asset_monitors_thunk, create_asset_monitors_thunk } from "@/app/redux/asset-monitor-thunk";
+import { clearErrors } from "@/app/redux/asset-monitor-slice";
 import HeaderSection from "./sections/header-section";
 import StatsSection from "./sections/stats-section";
 import CurrencyStrip from "./sections/currency-strip";
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import CreateMonitorSection from "./sections/create-monitor-section";
-import { initialMonitors } from "./sections/monitor-mock-data";
-import { sizeBucket } from "./sections/monitor-helpers";
 
-const PER_PAGE = 10;
+
 
 export default function Page() {
     const dispatch = useDispatch();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isImportOpen, setIsImportOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
     const [availabilityFilter, setAvailabilityFilter] = useState("");
     const [sizeFilter, setSizeFilter] = useState("");
     const [currency, setCurrency] = useState("PHP");
     const [page, setPage] = useState(1);
-    const [monitors, setMonitors] = useState(initialMonitors);
+    const { items, meta, loading, saving, errors } = useSelector((state) => state.asset_monitors);
+
+    // Debounced server-side fetch on any filter/page change.
+    // The monitors API only supports search/status/condition — availability and size remain client-side UI state.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            dispatch(
+                get_asset_monitors_thunk({
+                    page,
+                    per_page: 10,
+                    search: searchQuery.trim() || undefined,
+                    status: statusFilter || undefined,
+                }),
+            );
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [dispatch, page, searchQuery, statusFilter, availabilityFilter, sizeFilter]);
 
     const withPageReset = (setter) => (value) => {
         setter(value);
@@ -42,34 +61,54 @@ export default function Page() {
         setPage(1);
     };
 
-    const handleCreateSubmit = (values) => {
-        const monitor = {
-            id: values.serialNumber,
-            serialNumber: values.serialNumber,
-            brand: values.brand,
-            model: values.model,
-            screenSize: values.screenSize,
-            resolution: values.resolution || "—",
-            deviceType: values.deviceType,
-            status: values.status,
-            availability: values.availability,
-            price: values.price,
-            issuedTo: values.issuedTo,
-            receivedBy: "You",
-            location: values.location || "—",
-            station: values.station || "—",
-        };
+    const handleAnalyze = async (rows) => {
+        const result = await dispatch(analyze_import_thunk(rows));
+        if (analyze_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
 
-        setMonitors((prev) => [monitor, ...prev]);
-        setPage(1);
-        dispatch(
-            setAlert({
-                open: true,
-                type: "success",
-                title: "Monitor added",
-                message: `${monitor.serialNumber} was added to the inventory.`,
+    const handleImport = async (modules) => {
+        const result = await dispatch(commit_import_thunk(modules));
+        if (commit_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
+
+    const handleImportDone = (summary) => {
+        const total = Object.values(summary ?? {}).reduce((sum, m) => sum + (m.imported ?? 0), 0);
+        dispatch(setAlert({ open: true, type: "success", title: "Import complete", message: ` ${total} assets imported. ` }));
+    };
+    const handleCreateSubmit = async (values) => {
+        const result = await dispatch(
+            create_asset_monitors_thunk({
+                asset_tag: values.serialNumber,
+                serial_number: values.serialNumber || null,
+                brand: values.brand,
+                model: values.model || null,
+                screen_size: values.screenSize || null,
+                resolution: values.resolution || null,
+                monitor_type: values.deviceType,
+                status: values.status,
+                availability: values.availability,
+                location: values.location || null,
+                site: values.station || null,
+                issued_to: values.issuedTo,
+                price: values.price,
             }),
         );
+        if (create_asset_monitors_thunk.fulfilled.match(result)) {
+            setIsCreateOpen(false);
+            dispatch(clearErrors());
+            dispatch(
+                setAlert({
+                    open: true,
+                    type: "success",
+                    title: "Monitor added",
+                    message: `${values.serialNumber} was added to the inventory.`,
+                }),
+            );
+            dispatch(get_asset_monitors_thunk({ page: 1, per_page: 10 }));
+            setPage(1);
+        }
     };
 
     const handleView = (row) => {
@@ -83,47 +122,14 @@ export default function Page() {
         );
     };
 
-    const filteredData = useMemo(() => {
-        const term = searchQuery.trim().toLowerCase();
-
-        return monitors.filter((monitor) => {
-            const matchesSearch =
-                !term ||
-                [monitor.serialNumber, monitor.brand, monitor.model, monitor.screenSize, monitor.issuedTo]
-                    .filter(Boolean)
-                    .some((field) => field.toLowerCase().includes(term));
-
-            return (
-                matchesSearch &&
-                (!statusFilter || monitor.status === statusFilter) &&
-                (!availabilityFilter || monitor.availability === availabilityFilter) &&
-                (!sizeFilter || sizeBucket(monitor.screenSize) === sizeFilter)
-            );
-        });
-    }, [monitors, searchQuery, statusFilter, availabilityFilter, sizeFilter]);
-
-    const pageMeta = useMemo(
-        () => ({
-            current_page: page,
-            last_page: Math.max(1, Math.ceil(filteredData.length / PER_PAGE)),
-            per_page: PER_PAGE,
-            total: filteredData.length,
-        }),
-        [filteredData.length, page],
-    );
-
-    const pageData = useMemo(() => {
-        const start = (page - 1) * PER_PAGE;
-        return filteredData.slice(start, start + PER_PAGE);
-    }, [filteredData, page]);
-
     return (
         <Layout>
             <AssetInventory>
                 <div className="space-y-4">
-                    <HeaderSection onCreateClick={() => setIsCreateOpen(true)} />
+                    <HeaderSection onCreateClick={() => setIsCreateOpen(true)} onImportClick={() => setIsImportOpen(true)} />
 
-                    <StatsSection monitors={monitors} />
+                    {/* Stats reflect the current page until the API exposes a stats block. */}
+                    <StatsSection monitors={items} />
 
                     <CurrencyStrip currency={currency} setCurrency={setCurrency} />
 
@@ -136,13 +142,14 @@ export default function Page() {
                         setAvailabilityFilter={withPageReset(setAvailabilityFilter)}
                         sizeFilter={sizeFilter}
                         setSizeFilter={withPageReset(setSizeFilter)}
-                        resultCount={filteredData.length}
+                        resultCount={meta?.total ?? 0}
                     />
 
                     <TableSection
-                        data={pageData}
+                        data={items}
                         currency={currency}
-                        meta={pageMeta}
+                        loading={loading}
+                        meta={meta}
                         onPageChange={setPage}
                         hasFilters={hasFilters}
                         onClearFilters={clearFilters}
@@ -151,9 +158,15 @@ export default function Page() {
 
                     <CreateMonitorSection
                         isOpen={isCreateOpen}
-                        onClose={() => setIsCreateOpen(false)}
+                        onClose={() => {
+                            setIsCreateOpen(false);
+                            dispatch(clearErrors());
+                        }}
                         onSubmit={handleCreateSubmit}
+                        submitting={saving}
+                        apiErrors={errors}
                     />
+                    <SmartImportModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} onAnalyze={handleAnalyze} onImport={handleImport} onDone={handleImportDone} />
                 </div>
             </AssetInventory>
         </Layout>

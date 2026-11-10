@@ -51,6 +51,11 @@ use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
 use App\Http\Controllers\API\AssetInventory\AssetDeviceController;
+use App\Http\Controllers\API\AssetInventory\AssetImportController;
+use App\Http\Controllers\API\AssetInventory\AssetMonitorController;
+use App\Http\Controllers\API\AssetInventory\AssetOtherAssetController;
+use App\Http\Controllers\API\AssetInventory\AssetPartController;
+use App\Http\Controllers\API\AssetInventory\AssetPeripheralController;
 use App\Http\Controllers\API\EmpireoneHealth\BookingController;
 use App\Http\Controllers\API\Engagement\EngagementCompanyGalleryController;
 use App\Http\Controllers\API\Engagement\EngagementPostEventController;
@@ -143,6 +148,33 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('devices/{asset_device}', [AssetDeviceController::class, 'get_device']);
         Route::put('devices/{asset_device}', [AssetDeviceController::class, 'update_device']);
         Route::delete('devices/{asset_device}', [AssetDeviceController::class, 'delete_device']);
+
+        Route::post('import/analyze', [AssetImportController::class, 'analyze']);
+        Route::post('import/commit', [AssetImportController::class, 'commit']);
+
+        Route::get('monitors', [AssetMonitorController::class, 'get_all']);
+        Route::post('monitors', [AssetMonitorController::class, 'create_device']);
+        Route::get('monitors/{asset_monitor}', [AssetMonitorController::class, 'get_device']);
+        Route::put('monitors/{asset_monitor}', [AssetMonitorController::class, 'update_device']);
+        Route::delete('monitors/{asset_monitor}', [AssetMonitorController::class, 'delete_device']);
+
+        Route::get('parts', [AssetPartController::class, 'get_all']);
+        Route::post('parts', [AssetPartController::class, 'create_device']);
+        Route::get('parts/{asset_part}', [AssetPartController::class, 'get_device']);
+        Route::put('parts/{asset_part}', [AssetPartController::class, 'update_device']);
+        Route::delete('parts/{asset_part}', [AssetPartController::class, 'delete_device']);
+
+        Route::get('other_assets', [AssetOtherAssetController::class, 'get_all']);
+        Route::post('other_assets', [AssetOtherAssetController::class, 'create_device']);
+        Route::get('other_assets/{asset_other_asset}', [AssetOtherAssetController::class, 'get_device']);
+        Route::put('other_assets/{asset_other_asset}', [AssetOtherAssetController::class, 'update_device']);
+        Route::delete('other_assets/{asset_other_asset}', [AssetOtherAssetController::class, 'delete_device']);
+
+        Route::get('peripherals', [AssetPeripheralController::class, 'get_all']);
+        Route::post('peripherals', [AssetPeripheralController::class, 'create_device']);
+        Route::get('peripherals/{asset_peripheral}', [AssetPeripheralController::class, 'get_device']);
+        Route::put('peripherals/{asset_peripheral}', [AssetPeripheralController::class, 'update_device']);
+        Route::delete('peripherals/{asset_peripheral}', [AssetPeripheralController::class, 'delete_device']);
     });
     Route::resource('get_app_data', AppController::class);
     Route::resource('accounts_information', AccountPersonalInformationController::class);

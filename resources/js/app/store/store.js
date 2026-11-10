@@ -16,6 +16,11 @@ import accountPendingSlice from "../redux/account-pending-slice";
 import teamRequestSlice from "../redux/team-request-slice";
 import timeSheetSlice from "../redux/time-sheet-slice";
 import assetDevicesSlice from "../redux/asset-device-slice";
+import assetImportSlice from "../redux/asset-import-slice";
+import assetMonitorsSlice from "../redux/asset-monitor-slice";
+import assetPartsSlice from "../redux/asset-part-slice";
+import assetOtherAssetsSlice from "../redux/asset-other-asset-slice";
+import assetPeripheralsSlice from "../redux/asset-peripheral-slice";
 
 const store = configureStore({
     reducer: {
@@ -36,6 +41,11 @@ const store = configureStore({
         team_requests: teamRequestSlice,
         time_sheets: timeSheetSlice,
         asset_devices: assetDevicesSlice,
+        asset_import: assetImportSlice,
+        asset_monitors: assetMonitorsSlice,
+        asset_parts: assetPartsSlice,
+        asset_other_assets: assetOtherAssetsSlice,
+        asset_peripherals: assetPeripheralsSlice,
     },
 });
 

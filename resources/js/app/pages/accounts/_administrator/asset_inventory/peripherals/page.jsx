@@ -1,29 +1,46 @@
-import React, { useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../layout";
 import AssetInventory from "../layout";
 import { setAlert } from "@/app/redux/app-slice";
+import SmartImportModal from "../_components/smart-import-modal";
+import { analyze_import_thunk, commit_import_thunk } from "@/app/redux/asset-import-thunk";
+import { get_asset_peripherals_thunk, create_asset_peripherals_thunk } from "@/app/redux/asset-peripheral-thunk";
+import { clearErrors } from "@/app/redux/asset-peripheral-slice";
 import HeaderSection from "./sections/header-section";
 import StatsSection from "./sections/stats-section";
 import CurrencyStrip from "./sections/currency-strip";
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import CreatePeripheralSection from "./sections/create-peripheral-section";
-import { initialPeripherals } from "./sections/peripheral-mock-data";
 import { getStockStatus } from "./sections/peripheral-helpers";
-
-const PER_PAGE = 10;
 
 export default function Page() {
     const dispatch = useDispatch();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isImportOpen, setIsImportOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [stockFilter, setStockFilter] = useState("");
     const [locationFilter, setLocationFilter] = useState("");
     const [currency, setCurrency] = useState("PHP");
     const [page, setPage] = useState(1);
-    const [items, setItems] = useState(initialPeripherals);
+    const { items, meta, loading, saving, errors } = useSelector((state) => state.asset_peripherals);
+
+    // Debounced server-side fetch on any filter/page change.
+    // The peripherals API only supports search/status/condition — type, stock, and location remain client-side UI state.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            dispatch(
+                get_asset_peripherals_thunk({
+                    page,
+                    per_page: 10,
+                    search: searchQuery.trim() || undefined,
+                }),
+            );
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [dispatch, page, searchQuery, typeFilter, stockFilter, locationFilter]);
 
     const withPageReset = (setter) => (value) => {
         setter(value);
@@ -42,32 +59,51 @@ export default function Page() {
         setPage(1);
     };
 
-    const handleCreateSubmit = (values) => {
-        const nextNumber = items.length + 1;
+    const handleAnalyze = async (rows) => {
+        const result = await dispatch(analyze_import_thunk(rows));
+        if (analyze_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
 
-        const item = {
-            id: `PH-${String(nextNumber).padStart(3, "0")}`,
-            type: values.type,
-            brand: values.brand,
-            model: values.model,
-            description: values.description || null,
-            quantity: values.quantity,
-            lowStockThreshold: values.lowStockThreshold,
-            location: values.location,
-            status: values.status,
-            price: values.price,
-        };
+    const handleImport = async (modules) => {
+        const result = await dispatch(commit_import_thunk(modules));
+        if (commit_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
 
-        setItems((prev) => [item, ...prev]);
-        setPage(1);
-        dispatch(
-            setAlert({
-                open: true,
-                type: "success",
-                title: "Peripheral added",
-                message: `${item.brand} ${item.model} was added to stock.`,
+    const handleImportDone = (summary) => {
+        const total = Object.values(summary ?? {}).reduce((sum, m) => sum + (m.imported ?? 0), 0);
+        dispatch(setAlert({ open: true, type: "success", title: "Import complete", message: ` ${total} assets imported. ` }));
+    };
+    const handleCreateSubmit = async (values) => {
+        const result = await dispatch(
+            create_asset_peripherals_thunk({
+                asset_tag: `PH-${Date.now().toString(36).toUpperCase()}`,
+                peripheral_type: values.type,
+                brand: values.brand || null,
+                model: values.model || null,
+                description: values.description || null,
+                quantity: values.quantity,
+                low_stock_threshold: values.lowStockThreshold,
+                status: values.status,
+                location: values.location || null,
+                price: values.price,
             }),
         );
+        if (create_asset_peripherals_thunk.fulfilled.match(result)) {
+            setIsCreateOpen(false);
+            dispatch(clearErrors());
+            dispatch(
+                setAlert({
+                    open: true,
+                    type: "success",
+                    title: "Peripheral added",
+                    message: `${values.brand} ${values.model} was added to stock.`,
+                }),
+            );
+            dispatch(get_asset_peripherals_thunk({ page: 1, per_page: 10 }));
+            setPage(1);
+        }
     };
 
     const handleView = (row) => {
@@ -81,46 +117,13 @@ export default function Page() {
         );
     };
 
-    const filteredData = useMemo(() => {
-        const term = searchQuery.trim().toLowerCase();
-
-        return items.filter((item) => {
-            const matchesSearch =
-                !term ||
-                [item.type, item.brand, item.model, item.description]
-                    .filter(Boolean)
-                    .some((field) => field.toLowerCase().includes(term));
-
-            return (
-                matchesSearch &&
-                (!typeFilter || item.type === typeFilter) &&
-                (!stockFilter || getStockStatus(item.quantity, item.lowStockThreshold) === stockFilter) &&
-                (!locationFilter || item.location === locationFilter)
-            );
-        });
-    }, [items, searchQuery, typeFilter, stockFilter, locationFilter]);
-
-    const pageMeta = useMemo(
-        () => ({
-            current_page: page,
-            last_page: Math.max(1, Math.ceil(filteredData.length / PER_PAGE)),
-            per_page: PER_PAGE,
-            total: filteredData.length,
-        }),
-        [filteredData.length, page],
-    );
-
-    const pageData = useMemo(() => {
-        const start = (page - 1) * PER_PAGE;
-        return filteredData.slice(start, start + PER_PAGE);
-    }, [filteredData, page]);
-
     return (
         <Layout>
             <AssetInventory>
                 <div className="space-y-4">
-                    <HeaderSection onCreateClick={() => setIsCreateOpen(true)} />
+                    <HeaderSection onCreateClick={() => setIsCreateOpen(true)} onImportClick={() => setIsImportOpen(true)} />
 
+                    {/* Stats reflect the current page until the API exposes a stats block. */}
                     <StatsSection items={items} />
 
                     <CurrencyStrip currency={currency} setCurrency={setCurrency} />
@@ -134,12 +137,13 @@ export default function Page() {
                         setStockFilter={withPageReset(setStockFilter)}
                         locationFilter={locationFilter}
                         setLocationFilter={withPageReset(setLocationFilter)}
-                        resultCount={filteredData.length}
+                        resultCount={meta?.total ?? 0}
                     />
 
                     <TableSection
-                        data={pageData}
-                        meta={pageMeta}
+                        data={items}
+                        loading={loading}
+                        meta={meta}
                         onPageChange={setPage}
                         hasFilters={hasFilters}
                         onClearFilters={clearFilters}
@@ -148,9 +152,15 @@ export default function Page() {
 
                     <CreatePeripheralSection
                         isOpen={isCreateOpen}
-                        onClose={() => setIsCreateOpen(false)}
+                        onClose={() => {
+                            setIsCreateOpen(false);
+                            dispatch(clearErrors());
+                        }}
                         onSubmit={handleCreateSubmit}
+                        submitting={saving}
+                        apiErrors={errors}
                     />
+                    <SmartImportModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} onAnalyze={handleAnalyze} onImport={handleImport} onDone={handleImportDone} />
                 </div>
             </AssetInventory>
         </Layout>
