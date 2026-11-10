@@ -22,7 +22,7 @@ class ERLeaderController extends Controller
         $userId = Auth::id();
         $ids = ERLeader::where('user_id', $userId)->pluck('id')->toArray();
 
-        if (!$ids) {
+        if (empty($ids)) {
             return response()->json(['message' => 'Leader not found'], 404);
         }
 
@@ -34,14 +34,18 @@ class ERLeaderController extends Controller
 
         $query = AccountEmployee::query();
 
-        // 1. Account Filter
+        // 1. Secure Base Authorization: Must belong to the leader/manager
+        $query->where(function ($q) use ($ids) {
+            $q->whereIn('e_r_leader_id', $ids)
+                ->orWhereIn('department_manager_id', $ids);
+        });
+
+        // 2. Optional Account Filter
         if ($request->filled('account_id')) {
             $query->where('account_id', $request->input('account_id'));
-        } else {
-            $query->whereIn('e_r_leader_id', $ids);
-            $query->orWhereIn('department_manager_id', $ids);
         }
 
+        // 3. Status Filter
         if ($request->status == '5th_review') {
             $query->whereBetween('started_at', [
                 now()->subMonths(6)->startOfDay(),
@@ -53,12 +57,12 @@ class ERLeaderController extends Controller
                 now()->subMonths(3)->endOfDay()
             ]);
         } else {
-            if ($request->status) {
+            if ($request->filled('status')) {
                 $query->where('status', $request->status);
             }
         }
 
-        // 2. Search Filter
+        // 4. Search Filter
         if ($request->filled('search')) {
             $search = trim($request->input('search'));
             $query->where(function ($q) use ($search) {
