@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Models\AssetInventory\AssetDevice;
+use App\Models\AssetInventory\AssetMonitor;
+use App\Models\AssetInventory\AssetOtherAsset;
+use App\Models\AssetInventory\AssetPart;
+use App\Models\AssetInventory\AssetPeripheral;
 use App\Models\Engagement\EngagementEStoreRedemption;
 use App\Models\Engagement\EngagementPostEventSurvey;
 use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
@@ -11,6 +15,10 @@ use App\Models\Timekeeping\Attendance;
 use App\Models\Timekeeping\LeaveRequest;
 use App\Models\Timekeeping\OvertimeRequest;
 use App\Policies\AssetDevicePolicy;
+use App\Policies\AssetMonitorPolicy;
+use App\Policies\AssetOtherAssetPolicy;
+use App\Policies\AssetPartPolicy;
+use App\Policies\AssetPeripheralPolicy;
 use App\Policies\ChallengeSurveyPolicy;
 use App\Policies\Engagement\EngagementEStoreRedemptionPolicy;
 use App\Policies\Engagement\EngagementRewardChallengeTeamSubmissionPolicy;
@@ -42,6 +50,10 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
         Gate::policy(AssetDevice::class, AssetDevicePolicy::class);
+        Gate::policy(AssetMonitor::class, AssetMonitorPolicy::class);
+        Gate::policy(AssetOtherAsset::class, AssetOtherAssetPolicy::class);
+        Gate::policy(AssetPart::class, AssetPartPolicy::class);
+        Gate::policy(AssetPeripheral::class, AssetPeripheralPolicy::class);
         Gate::policy(EngagementEStoreRedemption::class, EngagementEStoreRedemptionPolicy::class);
         Gate::policy(EngagementPostEventSurvey::class, ChallengeSurveyPolicy::class);
         Gate::policy(EngagementRewardChallengeTeamSubmission::class, EngagementRewardChallengeTeamSubmissionPolicy::class);
