@@ -10,6 +10,7 @@ use App\Models\Engagement\EngagementRewardChallengeDailyLog;
 use App\Models\Engagement\EngagementRewardChallengeParticipant;
 use App\Models\Engagement\EngagementRewardChallengeTeamSubmission;
 use App\Models\ER\ERLeader;
+use App\Models\ER\ERSubordinate;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -62,9 +63,11 @@ class ChallengeTeamSubmissionService
             }
         }
 
-        $directReportIds = $leaderRecord->subordinates()
+        $directReportIds = ERSubordinate::query()
+            ->where('er_leader_id', $leaderRecord->id)
             ->pluck('subordinate_id')
             ->merge(AccountEmployee::query()->where('e_r_leader_id', $leaderRecord->id)->pluck('user_id'))
+            ->filter()
             ->unique()
             ->reject(fn ($id) => (int) $id === (int) $leader->id)
             ->values();
