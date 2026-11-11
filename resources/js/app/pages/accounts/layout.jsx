@@ -26,24 +26,29 @@ export default function Layout({ children }) {
     }, []);
     return (
         <div className="h-full">
-            <SidebarSection />
-            <div
-                className={`${
-                    desktopCollapsed ? "" : "lg:pl-72"
-                } flex flex-col min-h-screen transition-all duration-300`}
-            >
-                <TopbarSection />
-                <main className={`flex-1${desktopCollapsed ? "ml-20" : ""}`}>
-                    {/* Added the animation wrapper here */}
-                    <div className="animate-slideUp p-4">
-                        {/* {
-                            loading ? <LoadingPage /> : children
-                        } */}
-                        {children}
+            {loading ? (
+                <LoadingPage />
+            ) : (
+                <>
+                    <SidebarSection />
+                    <div
+                        className={`${
+                            desktopCollapsed ? "" : "lg:pl-72"
+                        } flex flex-col min-h-screen transition-all duration-300`}
+                    >
+                        <TopbarSection />
+                        <main
+                            className={`flex-1${desktopCollapsed ? "ml-20" : ""}`}
+                        >
+                            {/* Added the animation wrapper here */}
+                            <div className="animate-slideUp p-4">
+                                {children}
+                            </div>
+                        </main>
                     </div>
-                </main>
-            </div>
-            <AskAiSection />
+                    <AskAiSection />
+                </>
+            )}
         </div>
     );
 }
