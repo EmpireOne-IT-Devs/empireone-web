@@ -15,7 +15,7 @@ import {
     View,
 } from "@react-pdf/renderer";
 
-const DEFAULT_PURPOSE = "whatever legal purpose it may serve";
+const DEFAULT_PURPOSE = "___________";
 const WEBSITE = "www.empireonecx.com";
 const HR_EMAIL = "empireone.hrd@empireonegroup.com";
 const VERIFICATION_EMAIL = "EmpireOne.HRD@empireonegroup.com";
@@ -266,7 +266,7 @@ export default function CoeDocument({
 
                 <Text style={styles.paragraph}>
                     This certification is being issued upon the request of{" "}
-                    {requester} for {purpose_text}. EmpireOne shall not be held
+                    {requester} for {purpose_text} purposes. EmpireOne shall not be held
                     liable if this certification is used other than the purpose
                     indicated.
                 </Text>
