@@ -41,9 +41,9 @@ class EngagementRewardChallengeParticipant extends Pivot
             return false;
         }
 
-        // The survey comes before proof submission; only team-submission members
-        // are excluded because their leader answers on the team's behalf.
-        return ! $this->isActiveTeamSubmissionMember($challenge);
+        // The leader covers team-only members, not members with their own proof.
+        return $this->hasIndividualSubmission()
+            || ! $this->isActiveTeamSubmissionMember($challenge);
     }
 
     public function hasIndividualSubmission(): bool

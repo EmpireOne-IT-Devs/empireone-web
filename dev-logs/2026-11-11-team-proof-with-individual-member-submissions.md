@@ -1,0 +1,24 @@
+### Phase 1: Allow team proof alongside members' individual submissions
+
+- **Timestamp:** 2026-11-11 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** Backend + Tech Lead + QA
+- **Files Modified/Created:**
+  - `app/Services/ChallengeTeamSubmissionService.php` - Removes per-member individual-proof and completion checks that blocked the leader's team submission. Keeps team duplicate, capacity, eligibility, date-window, leader and survey checks.
+  - `app/Models/Engagement/EngagementRewardChallengeParticipant.php` - Allows members with individual proof to answer their own survey even while included in an active team submission. Team-only members remain excluded.
+  - `tests/Unit/ChallengeSurveyCreationTest.php` - Adds three regression tests covering pending, approved and pending-survey individual proofs, same-day daily proofs, completed daily participation, independent approval and survey access. Verifies individual records and points remain unchanged by team approval and duplicate team proofs remain rejected.
+  - `dev-logs/2026-11-11-team-proof-with-individual-member-submissions.md` - Records implementation and validation, including the outstanding suite failures.
+- **Issues Encountered:** Existing per-member guards made individual-first submission fail even though team-first coexistence was supported. Active-team membership also excluded members with their own proof from the survey. The complete challenge test suite still encounters the previously reported missing `engagement_e_store_point_transactions` table in its in-memory fixture.
+- **Resolution:** Removed only the conflicting member guards and reused `hasIndividualSubmission()` for survey eligibility. No migrations, frontend changes, points-calculation changes or authentication changes. Left unrelated test-fixture failures untouched as agreed in the approved plan.
+- **QA Checklist Result:**
+  - PASS: PHP syntax checks on all three modified PHP files.
+  - PASS: Focused regression selection, 5 tests and 77 assertions, including existing team-only survey exclusion and team-first daily coexistence.
+  - FAIL / existing blocker: Complete challenge suite, 65 passed and 10 failed, 946 assertions. The 10 failures report the missing `engagement_e_store_point_transactions` fixture table. Full-suite QA is not green and the phase is not fully QA-cleared.
+  - PASS: Non-trivial business logic stays in the existing service.
+  - PASS / unchanged: JavaScript purity, web/API route separation, Form Requests, policies, Eloquent Resources, reversible migrations, Axios/service isolation, thunk/slice flow, 422 mapping, Inertia links, authenticated layouts, presentation-only shared components and component reuse. No related surfaces added or changed.
+  - PASS / unchanged: Component identifiers, kebab-case Redux/service files, snake-case thunk/service functions, page naming and store registration. No frontend files added.
+  - PASS / unchanged: Network loading states, destructive confirmations, inline validation and empty states. Existing form feedback remains in place.
+  - NOT REVERIFIED: Keyboard accessibility, responsive breakpoints and modal focus trapping. No UI change; production/browser verification remains outstanding.
+  - PASS / unchanged: Sanctum authentication, resource response wrapping and route identifiers.
+  - PASS: No guarded build, migration, destructive or git commands run. Tests use an explicitly configured in-memory SQLite connection.
+- **Next Steps:** Retry individual-member-first team submission in the browser. Deploy both changed application PHP files through the normal deployment process; no migration or frontend build is required for this change. The previously reported fixture failure remains a separate task requiring approval.

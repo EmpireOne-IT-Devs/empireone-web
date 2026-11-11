@@ -183,34 +183,6 @@ class ChallengeTeamSubmissionService
                     }
                 }
 
-                foreach ($employees as $employee) {
-                    $participant = $participants->get($employee->id);
-                    if ($participant && ($participant->status === 'approved'
-                        || ($challenge->isDailyChallenge() && $participant->isDailyChallengeComplete()))) {
-                        throw ValidationException::withMessages([
-                            'team' => "{$employee->name} has already completed this challenge.",
-                        ]);
-                    }
-
-                    if ($challenge->isDailyChallenge() && $participant
-                        && $participant->dailyLogs()
-                            ->whereNull('team_submission_id')
-                            ->whereDate('log_date', $logDate)
-                            ->exists()) {
-                        throw ValidationException::withMessages([
-                            'team' => "{$employee->name} already has a submission for today.",
-                        ]);
-                    }
-
-                    if (! $challenge->isDailyChallenge() && $participant
-                        && $participant->hasIndividualSubmission()
-                        && in_array($participant->status, ['submitted', 'approved', 'pending_survey'], true)) {
-                        throw ValidationException::withMessages([
-                            'team' => "{$employee->name} already has a pending or approved submission.",
-                        ]);
-                    }
-                }
-
                 $submission = $existingToday;
                 if (! $submission) {
                     $submission = new EngagementRewardChallengeTeamSubmission;

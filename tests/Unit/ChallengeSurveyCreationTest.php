@@ -1518,6 +1518,180 @@ class ChallengeSurveyCreationTest extends TestCase
         ]);
     }
 
+    public function test_team_proof_preserves_members_existing_individual_submissions(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createTeamChallenge();
+        [$leader, $reports] = $this->createTeamLeaderWithReports(3);
+        $participants = [];
+
+        foreach (['submitted', 'approved', 'pending_survey'] as $index => $status) {
+            $participants[] = EngagementRewardChallengeParticipant::create([
+                'reward_challenge_id' => $challenge->id,
+                'user_id' => $reports[$index]->id,
+                'status' => $status,
+                'joined_at' => now(),
+                'submitted_at' => now(),
+                'submission_path' => "individual-{$index}.png",
+                'challenge_description' => 'My individual proof.',
+                'proof_approved_at' => $status === 'submitted' ? null : now(),
+                'points_awarded' => $status === 'approved' ? $challenge->points : null,
+            ]);
+        }
+        $original = array_map(fn ($participant) => $participant->fresh()->getAttributes(), $participants);
+
+        $response = $this->actingAs($leader)->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('team-proof.png'),
+                'challenge_description' => 'The team completed the activity together.',
+            ],
+        )->assertCreated();
+        $submissionId = $response->json('data.team_submission_id');
+        $this->assertDatabaseCount('engagement_reward_challenge_team_submission_members', 3);
+
+        $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
+        $this->actingAs($admin)
+            ->postJson("/api/engagement/reward-challenge-submissions/team-{$submissionId}/approve")
+            ->assertOk();
+        $this->assertSame(
+            (int) $challenge->points,
+            EngagementRewardChallengeTeamSubmission::findOrFail($submissionId)->team_points_awarded,
+        );
+
+        foreach ($participants as $index => $participant) {
+            $this->assertSame($original[$index], $participant->fresh()->getAttributes());
+            $this->assertDatabaseHas('engagement_reward_challenge_team_submission_members', [
+                'team_submission_id' => $submissionId,
+                'participant_id' => $participant->id,
+            ]);
+        }
+
+        $this->actingAs($leader)->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('duplicate-team-proof.png'),
+                'challenge_description' => 'Duplicate team proof.',
+            ],
+            ['Accept' => 'application/json'],
+        )->assertUnprocessable()->assertJsonValidationErrors('challenge');
+    }
+
+    public function test_daily_team_proof_preserves_members_existing_individual_logs(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createTeamChallenge(2);
+        [$leader, $reports] = $this->createTeamLeaderWithReports(2);
+        $participants = [];
+        $individualLogs = [];
+
+        foreach (['submitted', 'approved'] as $index => $status) {
+            $participant = EngagementRewardChallengeParticipant::create([
+                'reward_challenge_id' => $challenge->id,
+                'user_id' => $reports[$index]->id,
+                'status' => $status === 'approved' ? 'approved' : 'joined',
+                'joined_at' => now(),
+                'required_days' => 2,
+                'completed_days' => $status === 'approved' ? 2 : 0,
+                'points_awarded' => $status === 'approved' ? $challenge->points : null,
+            ]);
+            if ($status === 'approved') {
+                $participant->dailyLogs()->create([
+                    'log_date' => now()->subDay()->toDateString(),
+                    'submission_path' => 'previous-individual.png',
+                    'status' => 'approved',
+                    'submitted_at' => now()->subDay(),
+                ]);
+            }
+            $individualLogs[] = $participant->dailyLogs()->create([
+                'log_date' => now()->toDateString(),
+                'submission_path' => "individual-day-{$index}.png",
+                'status' => $status,
+                'submitted_at' => now(),
+            ]);
+            $participants[] = $participant;
+        }
+        $original = array_map(fn ($participant) => $participant->fresh()->getAttributes(), $participants);
+        $originalLogs = array_map(fn ($log) => $log->fresh()->getAttributes(), $individualLogs);
+
+        $response = $this->actingAs($leader)->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('team-day-proof.png'),
+                'challenge_description' => 'The team completed today together.',
+            ],
+        )->assertCreated();
+        $submissionId = $response->json('data.team_submission_id');
+        $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
+        $this->actingAs($admin)
+            ->postJson("/api/engagement/reward-challenge-submissions/team-{$submissionId}/approve")
+            ->assertOk();
+
+        foreach ($participants as $index => $participant) {
+            $this->assertSame($original[$index], $participant->fresh()->getAttributes());
+            $this->assertSame($originalLogs[$index], $individualLogs[$index]->fresh()->getAttributes());
+            $this->assertSame(2, $participant->dailyLogs()->whereDate('log_date', now()->toDateString())->count());
+            $this->assertDatabaseHas('engagement_reward_challenge_daily_logs', [
+                'reward_challenge_participant_id' => $participant->id,
+                'team_submission_id' => $submissionId,
+                'status' => 'approved',
+            ]);
+        }
+
+        $this->actingAs($leader)->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('duplicate-day-proof.png'),
+                'challenge_description' => 'Duplicate daily team proof.',
+            ],
+            ['Accept' => 'application/json'],
+        )->assertUnprocessable()->assertJsonValidationErrors('photo');
+    }
+
+    public function test_team_members_with_individual_proof_can_still_complete_their_survey(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createTeamChallenge();
+        (new ChallengeSurveyService)->createForChallenge($challenge);
+        [$leader, $reports] = $this->createTeamLeaderWithReports();
+        $member = $reports[0];
+        $participant = EngagementRewardChallengeParticipant::create([
+            'reward_challenge_id' => $challenge->id,
+            'user_id' => $member->id,
+            'status' => 'pending_survey',
+            'joined_at' => now(),
+            'submitted_at' => now(),
+            'submission_path' => 'legacy-individual-proof.png',
+            'proof_approved_at' => now(),
+        ]);
+        $this->actingAs($leader)
+            ->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")
+            ->assertOk();
+        $leaderParticipant = EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->where('user_id', $leader->id)
+            ->firstOrFail();
+        $this->submitSurvey($leaderParticipant)->assertOk();
+        $this->post("/api/engagement/reward-challenges/{$challenge->id}/submit-team", [
+            'photo' => UploadedFile::fake()->image('team-proof.png'),
+            'challenge_description' => 'The team completed the activity together.',
+        ])->assertCreated();
+
+        $this->actingAs($member)
+            ->getJson("/api/engagement/reward-challenges/{$challenge->id}/survey")
+            ->assertOk()
+            ->assertJsonPath('data.can_submit', true);
+        $this->submitSurvey($participant)->assertOk();
+        $participant->refresh();
+        $this->assertSame('approved', $participant->status);
+        $this->assertSame((int) $challenge->points, $participant->points_awarded);
+        $this->assertSame(15, $participant->survey_points_awarded);
+        $this->assertSame('legacy-individual-proof.png', $participant->submission_path);
+        $this->submitSurvey($participant)->assertOk();
+        $this->assertSame(15, $participant->fresh()->survey_points_awarded);
+        $this->assertSame(1, EngagementPostEventSurveyResponse::where('user_id', $member->id)->count());
+    }
+
     public function test_individual_then_team_proof_keeps_one_survey_and_question_set(): void
     {
         Storage::fake('s3');
