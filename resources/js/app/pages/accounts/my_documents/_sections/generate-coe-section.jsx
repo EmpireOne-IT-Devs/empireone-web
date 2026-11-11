@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 
 import Button from "@/app/_components/button";
-import Input from "@/app/_components/input";
+import Select from "@/app/_components/select";
 import Modal from "@/app/_components/modal";
 import { useCurrentEmployee } from "@/app/_hooks/use-current-employee";
 import {
@@ -12,6 +12,20 @@ import {
     FiDownload as Download,
 } from "react-icons/fi";
 import CoeDocument from "./coe-document-section";
+
+const PURPOSE_OPTIONS = [
+    "Auto Loan",
+    "Salary/Multi-Purpose Loan",
+    "Housing Loan",
+    "VISA Application",
+    "Passport Application",
+    "Government Transaction",
+    "Educational Requirement (Scholarship/OJT/Graduation)",
+    "Insurance Requirement",
+    "Phone/Mobile Plan Application",
+    "Internet Subscription",
+    "Credit Card Application",
+].map((item) => ({ label: item, value: item }));
 
 export default function GenerateCoeSection() {
     const [open, setOpen] = useState(false);
@@ -73,11 +87,12 @@ export default function GenerateCoeSection() {
             >
                 {isReady && user?.name ? (
                     <div className="flex flex-col gap-4 p-4">
-                        <Input
+                        <Select
                             name="coe_purpose"
                             label="Purpose of request"
+                            options={PURPOSE_OPTIONS}
                             value={purpose}
-                            onChange={(e) => setPurpose(e.target.value)}
+                            onChange={setPurpose}
                         />
                         <div className="h-[60vh] w-full overflow-hidden rounded-xl border border-gray-200">
                             <PDFViewer
