@@ -1,0 +1,1 @@
+import{b as e,j as t}from"./app-D9x2pK1P.js";import{P as n}from"./pagination-A_vkMKQ0.js";import"./iconBase-Qs2zq1Zq.js";function m(){const{teams:o}=e(a=>a.departments);return console.log("teams",o),t.jsx(t.Fragment,{children:t.jsx(n,{data:o})})}export{m as default};
