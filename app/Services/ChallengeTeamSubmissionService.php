@@ -115,18 +115,21 @@ class ChallengeTeamSubmissionService
             ]);
         }
 
-        $files = array_filter($video ? [$video] : $photos);
+        $files = array_map(fn ($file) => ['file' => $file, 'type' => 'image'], array_filter($photos));
+        if ($video) {
+            $files[] = ['file' => $video, 'type' => 'video'];
+        }
         $media = [];
 
         try {
-            foreach ($files as $file) {
-                $path = $file->store('unified/engagement/reward_challenges/submissions', 's3');
+            foreach ($files as $item) {
+                $path = $item['file']->store('unified/engagement/reward_challenges/submissions', 's3');
                 if (! $path) {
                     throw new \RuntimeException('Unable to store challenge proof media in Amazon S3.');
                 }
                 $media[] = [
                     'path' => $path,
-                    'type' => $video ? 'video' : 'image',
+                    'type' => $item['type'],
                 ];
             }
         } catch (Throwable $exception) {

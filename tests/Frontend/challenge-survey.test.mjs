@@ -51,6 +51,7 @@ const Survey = (await load("resources/js/app/pages/accounts/_employee/rnr/challe
 const Submitted = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submitted-section.jsx")).default;
 const Progress = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-progress-section.jsx")).default;
 const SubmitProof = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-submit-section.jsx")).default;
+const TeamSubmission = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/team-submission-section.jsx")).default;
 const ChallengeFlow = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-section.jsx")).default;
 const Details = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-details-section.jsx")).default;
 const Approved = (await load("resources/js/app/pages/accounts/_employee/rnr/challenge_event/sections/challenge-flow-approved-section.jsx")).default;
@@ -222,7 +223,20 @@ test("daily proof service uploads the proof without a client-selected date", asy
     assert.equal(requests[0].data.getAll("photos[]").length, 1);
 });
 
-test("challenge proof service sends three images or one video as separate proof types", async () => {
+test("individual and team proof forms describe mixed upload limits", () => {
+    for (const Component of [SubmitProof, TeamSubmission]) {
+        const html = render(Component, {}, {
+            challenge: { ...challenge, survey_required: false, proof_type: "photo_or_video" },
+            isOpen: true,
+        });
+        assert.match(html, /Upload up to 3 images/);
+        assert.match(html, /Images and video can be submitted together/);
+        assert.match(html, /0\/3 images selected/);
+        assert.match(html, /type="file"/);
+    }
+});
+
+test("challenge proof services send images and video together or separately", async () => {
     const requests = [];
     adapter((config) => {
         requests.push(config);
@@ -242,6 +256,21 @@ test("challenge proof service sends three images or one video as separate proof 
     }], "One video");
     assert.equal(requests[1].data.getAll("photos[]").length, 0);
     assert.equal(requests[1].data.get("video").type, "video/mp4");
+
+    const mixed = [...images, {
+        file: new Blob(["video"], { type: "video/mp4" }),
+        type: "video",
+    }];
+    for (const submit of [
+        services.submit_reward_challenge_proof_service,
+        services.submit_reward_challenge_daily_proof_service,
+        services.submit_reward_challenge_team_proof_service,
+    ]) {
+        await submit(12, mixed, "Mixed proof");
+        const data = requests.at(-1).data;
+        assert.equal(data.getAll("photos[]").length, 3);
+        assert.equal(data.get("video").type, "video/mp4");
+    }
 });
 
 test("proof thunks post files to the server, report progress and explain oversized uploads", async () => {

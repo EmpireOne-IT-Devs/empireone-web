@@ -188,21 +188,22 @@ class EngagementRewardChallengesController extends Controller
 
     private function storeProofMedia(Request $request): array
     {
-        $files = $request->file('video')
-            ? [$request->file('video')]
-            : ($request->file('photos') ?: [$request->file('photo')]);
-        $files = array_filter($files);
+        $photos = array_filter($request->file('photos') ?: [$request->file('photo')]);
+        $files = array_map(fn ($file) => ['file' => $file, 'type' => 'image'], $photos);
+        if ($request->hasFile('video')) {
+            $files[] = ['file' => $request->file('video'), 'type' => 'video'];
+        }
         $media = [];
 
         try {
-            foreach ($files as $file) {
-                $path = $file->store('unified/engagement/reward_challenges/submissions', 's3');
+            foreach ($files as $item) {
+                $path = $item['file']->store('unified/engagement/reward_challenges/submissions', 's3');
                 if (! $path) {
                     throw new \RuntimeException('Unable to store challenge proof media in Amazon S3.');
                 }
                 $media[] = [
                     'path' => $path,
-                    'type' => $request->hasFile('video') ? 'video' : 'image',
+                    'type' => $item['type'],
                 ];
             }
         } catch (\Throwable $exception) {

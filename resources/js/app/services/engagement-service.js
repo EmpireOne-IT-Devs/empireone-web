@@ -156,9 +156,9 @@ function build_challenge_proof_form_data(media, challengeDescription) {
     const video = media.find((item) => item.type === "video");
     if (video) {
         formData.append("video", video.file);
-    } else {
-        media.forEach((item) => formData.append("photos[]", item.file));
     }
+    media.filter((item) => item.type === "image")
+        .forEach((item) => formData.append("photos[]", item.file));
     formData.append("challenge_description", challengeDescription);
     return formData;
 }

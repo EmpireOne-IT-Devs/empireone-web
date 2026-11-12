@@ -62,20 +62,18 @@ export default function TeamSubmissionSection({ challenge, onClose }) {
         event.target.value = "";
         if (!files.length) return;
 
-        const selectingVideo = files.some((file) => file.type.startsWith("video/"));
-        if (selectingVideo && (!allowsVideo || files.length !== 1 || mediaRef.current.length > 0)) {
-            setMediaError(allowsVideo
-                ? "Upload either images or one video per submission."
-                : "This challenge only accepts photo proof.");
+        const newVideos = files.filter((file) => file.type.startsWith("video/")).length;
+        if (newVideos && !allowsVideo) {
+            setMediaError("This challenge only accepts photo proof.");
             return;
         }
-        if (!selectingVideo && mediaRef.current.some((item) => item.type === "video")) {
-            setMediaError("Remove the selected video before choosing images.");
+        if (newVideos + mediaRef.current.filter((item) => item.type === "video").length > 1) {
+            setMediaError("You can upload a maximum of 1 video per submission.");
             return;
         }
 
         const imageCount = mediaRef.current.filter((item) => item.type === "image").length;
-        if (!selectingVideo && imageCount + files.length > MAX_IMAGES) {
+        if (imageCount + files.filter((file) => file.type.startsWith("image/")).length > MAX_IMAGES) {
             setMediaError(IMAGE_LIMIT_NOTICE);
             return;
         }
@@ -201,7 +199,7 @@ export default function TeamSubmissionSection({ challenge, onClose }) {
             <div>
                 <p className="mb-1 text-sm font-medium text-gray-700">Team Proof</p>
                 <p className="mb-2 text-xs text-gray-500">
-                    {allowsVideo ? "Photo or video proof is accepted. Choose up to 3 images or one video (MP4, MOV, WebM, max 1 GB)." : "Photo proof only. Choose up to 3 images (JPEG, PNG, WebP, max 5 MB each)."}
+                    {allowsVideo ? "Upload up to 3 images (JPEG, PNG, WebP, max 5 MB each) and 1 video (MP4, MOV, WebM, max 1 GB). Images and video can be submitted together." : "Photo proof only. Choose up to 3 images (JPEG, PNG, WebP, max 5 MB each)."}
                 </p>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     {media.map((item, index) => (
@@ -221,10 +219,10 @@ export default function TeamSubmissionSection({ challenge, onClose }) {
                             </button>
                         </div>
                     ))}
-                    {!media.some((item) => item.type === "video") && (
+                    {(media.filter((item) => item.type === "image").length < MAX_IMAGES || (allowsVideo && !media.some((item) => item.type === "video"))) && (
                         <label className="flex h-40 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 text-gray-400 transition hover:border-gray-300 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2">
                             <ImagePlus className="h-6 w-6" />
-                            <span className="text-xs">{media.length ? "Add proof images" : allowsVideo ? "Upload images or one video" : "Upload proof images"}</span>
+                            <span className="text-xs">{media.length ? "Add proof files" : allowsVideo ? "Upload images and/or video" : "Upload proof images"}</span>
                             <input
                                 type="file"
                                 accept={allowsVideo ? "image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" : "image/jpeg,image/png,image/webp"}

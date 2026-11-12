@@ -6,7 +6,7 @@ use Illuminate\Validation\Validator;
 
 /**
  * Shared proof-media rules for Individual, Daily and Team submissions:
- * up to 3 images, or one video when the challenge allows video proof.
+ * up to 3 images and one video when the challenge allows video proof.
  */
 trait ValidatesChallengeProofMedia
 {
@@ -34,11 +34,8 @@ trait ValidatesChallengeProofMedia
         $validator->after(function (Validator $validator) {
             $challenge = $this->route('engagementRewardChallenge');
             $allowsVideo = ($challenge?->proof_type ?? 'photo_only') === 'photo_or_video';
-            $hasImages = $this->hasFile('photos') || $this->hasFile('photo');
-
-            if (($this->hasFile('photos') && $this->hasFile('photo'))
-                || ($hasImages && $this->hasFile('video'))) {
-                $validator->errors()->add('photos', 'Upload images or one video, not both.');
+            if ($this->hasFile('photos') && $this->hasFile('photo')) {
+                $validator->errors()->add('photos', 'Use either photos or the legacy photo field, not both.');
             }
 
             if ($this->hasFile('video') && ! $allowsVideo) {

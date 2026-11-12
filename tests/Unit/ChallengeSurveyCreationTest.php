@@ -2095,6 +2095,120 @@ class ChallengeSurveyCreationTest extends TestCase
             ->assertJsonPath('data.0.proof_type', 'photo_only');
     }
 
+    public function test_mixed_media_is_stored_for_individual_daily_and_team_submissions(): void
+    {
+        Storage::fake('s3');
+        $individual = $this->createChallenge();
+        $daily = $this->createChallenge();
+        $team = $this->createTeamChallenge();
+        $individual->update(['proof_type' => 'photo_or_video']);
+        $daily->update(['proof_type' => 'photo_or_video', 'duration_days' => 2]);
+        $team->update(['proof_type' => 'photo_or_video']);
+
+        foreach ([$individual, $daily] as $challenge) {
+            $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        }
+
+        $files = fn () => [
+            'photos' => [
+                UploadedFile::fake()->image('first.png'),
+                UploadedFile::fake()->image('second.png'),
+                UploadedFile::fake()->image('third.png'),
+            ],
+            'video' => UploadedFile::fake()->create('proof.mp4', 100, 'video/mp4'),
+            'challenge_description' => 'Completed the activity.',
+        ];
+        $this->post("/api/engagement/reward-challenges/{$individual->id}/submit", $files(), ['Accept' => 'application/json'])
+            ->assertOk()->assertJsonCount(4, 'data.submission_media')
+            ->assertJsonPath('data.submission_media.0.type', 'image')
+            ->assertJsonPath('data.submission_media.3.type', 'video');
+        $this->post("/api/engagement/reward-challenges/{$daily->id}/submit-daily", $files(), ['Accept' => 'application/json'])
+            ->assertOk();
+        [$leader] = $this->createTeamLeaderWithReports();
+        $this->actingAs($leader)->post("/api/engagement/reward-challenges/{$team->id}/submit-team", $files(), ['Accept' => 'application/json'])
+            ->assertCreated()->assertJsonCount(4, 'data.submission_media')
+            ->assertJsonPath('data.submission_media.3.type', 'video');
+
+        $records = [
+            EngagementRewardChallengeParticipant::query()->where('reward_challenge_id', $individual->id)->firstOrFail(),
+            EngagementRewardChallengeDailyLog::query()->whereHas('participant', fn ($query) => $query->where('reward_challenge_id', $daily->id))->firstOrFail(),
+            EngagementRewardChallengeTeamSubmission::query()->where('reward_challenge_id', $team->id)->firstOrFail(),
+        ];
+        foreach ($records as $record) {
+            $this->assertSame(['image', 'image', 'image', 'video'], array_column($record->submission_media, 'type'));
+            foreach ($record->submission_media as $item) {
+                Storage::disk('s3')->assertExists($item['path']);
+            }
+        }
+        $this->assertCount(12, Storage::disk('s3')->allFiles());
+    }
+
+    public function test_mixed_media_limits_and_legacy_photo_validation(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createChallenge();
+        $this->postJson("/api/engagement/reward-challenges/{$challenge->id}/join")->assertOk();
+        $url = "/api/engagement/reward-challenges/{$challenge->id}/submit";
+        $photo = fn () => UploadedFile::fake()->image('proof.png');
+        $video = fn () => UploadedFile::fake()->create('proof.mp4', 100, 'video/mp4');
+        $description = ['challenge_description' => 'Completed the activity.'];
+
+        $this->post($url, [...$description, 'photos' => [$photo()], 'video' => $video()], ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('video');
+        $challenge->update(['proof_type' => 'photo_or_video']);
+        $this->post($url, [...$description, 'photos' => [$photo(), $photo(), $photo(), $photo()], 'video' => $video()], ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('photos');
+        $this->post($url, [...$description, 'photos' => [$photo()], 'video' => [$video(), $video()]], ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('video');
+        $this->post($url, [...$description, 'photos' => [$photo()], 'photo' => $photo()], ['Accept' => 'application/json'])
+            ->assertUnprocessable()->assertJsonValidationErrors('photos');
+        $this->post($url, $description, ['Accept' => 'application/json'])
+            ->assertUnprocessable();
+        $this->assertSame([], Storage::disk('s3')->allFiles());
+        $this->post($url, [...$description, 'photo' => $photo(), 'video' => $video()], ['Accept' => 'application/json'])
+            ->assertOk()->assertJsonCount(2, 'data.submission_media')
+            ->assertJsonPath('data.submission_media.0.type', 'image')
+            ->assertJsonPath('data.submission_media.1.type', 'video');
+    }
+
+    public function test_mixed_media_partial_uploads_are_cleaned_up_on_storage_failure(): void
+    {
+        $individual = $this->createChallenge();
+        $daily = $this->createChallenge();
+        $team = $this->createTeamChallenge();
+        $individual->update(['proof_type' => 'photo_or_video']);
+        $daily->update(['proof_type' => 'photo_or_video', 'duration_days' => 2]);
+        $team->update(['proof_type' => 'photo_or_video']);
+        $this->postJson("/api/engagement/reward-challenges/{$individual->id}/join")->assertOk();
+        $this->postJson("/api/engagement/reward-challenges/{$daily->id}/join")->assertOk();
+        [$leader] = $this->createTeamLeaderWithReports();
+
+        foreach ([
+            [$individual, 'submit'],
+            [$daily, 'submit-daily'],
+            [$team, 'submit-team'],
+        ] as [$challenge, $endpoint]) {
+            $disk = Mockery::mock(\Illuminate\Filesystem\FilesystemAdapter::class);
+            $disk->shouldReceive('putFileAs')->once()->ordered()->andReturn('stored-image.png');
+            $disk->shouldReceive('putFileAs')->once()->ordered()->andReturnFalse();
+            $disk->shouldReceive('delete')->once()->with(['stored-image.png'])->andReturnTrue();
+            Storage::set('s3', $disk);
+            if ($endpoint === 'submit-team') {
+                $this->actingAs($leader);
+            }
+            $this->post("/api/engagement/reward-challenges/{$challenge->id}/{$endpoint}", [
+                'photos' => [UploadedFile::fake()->image('proof.png')],
+                'video' => UploadedFile::fake()->create('proof.mp4', 100, 'video/mp4'),
+                'challenge_description' => 'Completed the activity.',
+            ], ['Accept' => 'application/json'])->assertStatus(500);
+        }
+
+        $this->assertSame(0, EngagementRewardChallengeTeamSubmission::count());
+        $this->assertSame(0, EngagementRewardChallengeDailyLog::count());
+        $this->assertNull(EngagementRewardChallengeParticipant::query()
+            ->where('reward_challenge_id', $individual->id)->firstOrFail()->submission_media);
+    }
+
     public function test_individual_proof_accepts_at_most_three_images_and_returns_media_urls(): void
     {
         Storage::fake('s3');
