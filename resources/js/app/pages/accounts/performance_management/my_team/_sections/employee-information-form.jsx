@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
 import {
     FiBriefcase as Briefcase,
     FiHome as Building2,
@@ -9,23 +9,25 @@ import {
     FiMail as Mail,
 } from "react-icons/fi";
 
-import Button from '@/app/_components/button';
-import Input from '@/app/_components/input';
-import Modal from '@/app/_components/modal';
-import Select from '@/app/_components/select';
+import Button from "@/app/_components/button";
+import Input from "@/app/_components/input";
+import Modal from "@/app/_components/modal";
+import Select from "@/app/_components/select";
 
-import { setAlert } from '@/app/redux/app-slice';
-import { get_employees_thunk } from '@/app/redux/employee-relation-thunk';
-import { update_employee_information_service } from '@/app/services/account-service';
-import store from '@/app/store/store';
-import { get_my_team_thunk } from '@/app/redux/department-thunk';
-
+import { setAlert } from "@/app/redux/app-slice";
+import { get_employees_thunk } from "@/app/redux/employee-relation-thunk";
+import { update_employee_information_service } from "@/app/services/account-service";
+import store from "@/app/store/store";
+import { get_my_team_thunk } from "@/app/redux/department-thunk";
 
 export default function EmployeeInformationForm({ props_data, open, setOpen }) {
     const dispatch = useDispatch();
     const { data } = useSelector((state) => state.app);
-
-    console.log('props_datasssss', data)
+    const EMPLOYMENT_STATUS_OPTIONS = [
+        { label: "Probationary", value: "Probationary" },
+        { label: "Regular", value: "Regular" },
+    ];
+    console.log("props_datasssss", data);
     const {
         register,
         handleSubmit,
@@ -34,15 +36,14 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: {} });
 
-
     // Memoized options for drop-down performance
     const leaderOptions = useMemo(
         () =>
             data?.leaders?.map((item) => ({
-                label: item?.user?.name || '',
+                label: item?.user?.name || "",
                 value: item.id,
             })) || [],
-        [data?.leaders]
+        [data?.leaders],
     );
 
     const accountOptions = useMemo(
@@ -51,7 +52,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
                 label: item.name,
                 value: item.id,
             })) || [],
-        [data?.accounts]
+        [data?.accounts],
     );
 
     const departmentOptions = useMemo(
@@ -60,7 +61,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
                 label: item.name,
                 value: item.id,
             })) || [],
-        [data?.departments]
+        [data?.departments],
     );
 
     useEffect(() => {
@@ -68,8 +69,8 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
             reset({
                 ...props_data,
                 started_at: props_data?.started_at
-                    ? moment(props_data.started_at).format('YYYY-MM-DD')
-                    : '',
+                    ? moment(props_data.started_at).format("YYYY-MM-DD")
+                    : "",
                 skills: data?.user?.skills,
                 experiences: data?.user?.working_experience,
             });
@@ -79,27 +80,42 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
     const onSubmit = async (formData) => {
         try {
             await update_employee_information_service(formData);
-            await store.dispatch(get_my_team_thunk())
+            await store.dispatch(get_my_team_thunk());
 
             dispatch(
                 setAlert({
-                    type: 'success',
-                    title: 'Information saved successfully!',
-                    message: 'Your profile has been updated.',
+                    type: "success",
+                    title: "Information saved successfully!",
+                    message: "Your profile has been updated.",
                     open: true,
-                })
+                }),
             );
             setOpen(false);
         } catch (error) {
-            console.error('Failed to update employee:', error);
+            console.error("Failed to update employee:", error);
         }
     };
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-3 w-full px-3">
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="mt-3 w-full px-3"
+            >
                 <div className="grid grid-cols-1 gap-x-6 gap-y-4">
-
+                    <Controller
+                        name="status"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                            <Select
+                                label="Employment Status"
+                                options={EMPLOYMENT_STATUS_OPTIONS}
+                                value={field.value}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
                     <Controller
                         name="e_r_leader_id"
                         control={control}
@@ -117,7 +133,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
                     <Controller
                         name="department_manager_id"
                         control={control}
-                        rules={{ required: 'Department Manager is required' }}
+                        rules={{ required: "Department Manager is required" }}
                         render={({ field }) => (
                             <Select
                                 label="Next Level Manager"
@@ -158,26 +174,27 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
                         )}
                     />
 
-
                     <Input
                         label="EOGS Email"
                         name="eogs_email"
                         placeholder="eogs.yourname@gmail.com"
                         type="email"
-                        {...register('eogs_email', {
-                            required: 'Email is required',
+                        {...register("eogs_email", {
+                            required: "Email is required",
                             pattern: {
                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                message: 'Invalid email address',
+                                message: "Invalid email address",
                             },
                         })}
                         iconLeft={<Mail size={14} />}
                         error={errors.eogs_email}
                     />
 
-
-
-                    <Button type="submit" variant="secondary" loading={isSubmitting}>
+                    <Button
+                        type="submit"
+                        variant="secondary"
+                        loading={isSubmitting}
+                    >
                         SAVE CHANGES
                     </Button>
                 </div>

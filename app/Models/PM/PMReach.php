@@ -45,6 +45,7 @@ class PMReach extends Model
         'next_follow_up_date',
         'follow_up_notes',
         'status',
+        'created_at'
     ];
 
     protected $casts = [

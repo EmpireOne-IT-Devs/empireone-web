@@ -4,14 +4,11 @@ import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, router, useForm } from "@inertiajs/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaRegUserCircle } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { setAlert } from "@/app/redux/app-slice";
 import NavFooterSection from "../../landing_page/sections/nav-footer-section";
 
 const Page = ({ flash }) => {
     const params = new URLSearchParams(location.search);
     const error_message = params.get("error_message");
-    const dispatch = useDispatch();
 
     // Backend Logic & Form States Left Intact
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -37,12 +34,6 @@ const Page = ({ flash }) => {
         post(route("auth.login"), {
             onSuccess: async () => {
                 reset("login_id");
-                await dispatch(
-                    setAlert({
-                        type: "success",
-                        title: "Login successfully!",
-                    }),
-                );
             },
         });
     };

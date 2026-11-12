@@ -101,13 +101,16 @@ class PMReachController extends Controller
 
     public function get_reach_specific_leader(Request $request)
     {
-        // Initialize the query builder using ::query() instead of ::get()
-        $query = PMReach::query();
+        // Initialize the query builder
+        $query = PMReach::query()->with(['account']);
 
-        // If 'all' is not true, filter by the logged-in user
+        // If 'all' is not true, filter by the logged-in user safely wrapped in parenthesis
         if (!$request->boolean('all')) {
-            $query->where('supervisor_user_id', Auth::id());
-            $query->orWhere('manager_user_id', Auth::id());
+            $userId = Auth::id();
+            $query->where(function ($q) use ($userId) {
+                $q->where('supervisor_user_id', $userId)
+                    ->orWhere('manager_user_id', $userId);
+            });
         }
 
         // Filter by search term across first_name and last_name
@@ -118,11 +121,13 @@ class PMReachController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%");
             });
         }
+
+        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Eager load relationships before running paginate()
+        // Eager load relationships if any (e.g., ->with(['user', 'account'])) and paginate
         $reaches = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 10));
 
         return response()->json($reaches, 200);

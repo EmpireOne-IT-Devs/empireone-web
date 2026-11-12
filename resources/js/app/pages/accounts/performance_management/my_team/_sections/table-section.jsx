@@ -140,6 +140,22 @@ export default function TableSection({ isloading }) {
 
     return (
         <div className="w-full">
+             <div className="py-3 px-3">
+                    <div className="flex items-center gap-4 text-xs font-medium">
+                        <div className="flex items-center gap-1.5 text-green-600">
+                            <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                            Regular
+                        </div>
+                        <div className="flex items-center gap-1.5 text-blue-600">
+                            <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                            Probationary
+                        </div>
+                        <div className="flex items-center gap-1.5 text-gray-500">
+                            <span className="w-2 h-2 rounded-full bg-gray-400"></span>
+                            Unknown
+                        </div>
+                    </div>
+                </div>
             <Table
                 isloading={isloading}
                 columns={columns}

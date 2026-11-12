@@ -73,6 +73,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ERAcknowledgementController;
 use App\Http\Controllers\ERAcknowledgementEmployeeController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PMCorrectiveActionController;
 use App\Http\Controllers\PMReachController;
@@ -85,6 +86,10 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+
+
+
+Route::get('import_reach_data',  [ImportController::class, 'import_reach_data']);
 
 
 Route::middleware('auth:sanctum')->post('auth/logout', [AuthorizationController::class, 'logout']);
