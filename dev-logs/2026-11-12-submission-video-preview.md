@@ -1,0 +1,22 @@
+### Phase 1: Enlarge submission video preview
+
+- **Timestamp:** 2026-11-12 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** UI/UX Designer + Frontend Engineer + QA Engineer + Tech Lead
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/proof-section.jsx` — Uses a wider review modal for video submissions and spans videos across both media-grid columns. Preserves native playback controls, inline playback and uncropped media.
+  - `tests/Frontend/challenge-proof-video.test.mjs` — Covers video sizing and native controls, image-only previews, mixed media and review controls.
+  - `dev-logs/2026-11-12-submission-video-preview.md` — Records changes and QA.
+- **Issues Encountered:** Video occupied only one cell of a two-column grid inside the media column. The new test's esbuild stub initially lacked a resolve directory, and its inline-playback attribute assertion needed to match React's rendered HTML.
+- **Resolution:** Video now spans the grid and uses a wider modal, while image-only submissions retain their original modal width and grid. The test stub and assertion were corrected.
+- **QA Checklist Result:**
+  - ✅ Plain JavaScript; JSX syntax parsed successfully.
+  - ✅ Focused frontend tests: 4 passed, including existing review bonus-points validation.
+  - ✅ Backend routes, Form Requests, policies, resources, migrations, services and authorization: unchanged, not applicable.
+  - ✅ Redux, API services, field validation, internal navigation, layouts and shared UI component boundaries: unchanged, not applicable.
+  - ✅ Existing modal, button and input components reused; no new UI primitives or Redux modules.
+  - ✅ Existing review actions, loading behavior and image preview markup remain in place.
+  - 🧪 Keyboard operation, native fullscreen availability, playback and responsive layout: code-level checks only; require verification in supported browsers, including mobile.
+  - 🧪 Focus trapping: existing shared modal unchanged; requires browser verification.
+  - ✅ No guarded build, migration, destructive or git commands run.
+- **Next Steps:** Browser-test portrait and landscape video playback and native fullscreen, including mobile; verify image preview and approval/decline interactions.

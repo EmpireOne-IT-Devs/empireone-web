@@ -56,6 +56,7 @@ export default function ProofSection({
         : activeSubmission.submission_url
           ? [{ type: "image", url: activeSubmission.submission_url }]
           : [];
+    const hasVideo = proofMedia.some((item) => item.type === "video");
     const canReview = activeSubmission.status === "submitted";
     const approving = approvingId === activeSubmission.id;
     const basePoints = Number(activeSubmission.challenge?.points) || 0;
@@ -80,7 +81,7 @@ export default function ProofSection({
             <Modal
                 isOpen={Boolean(submission)}
                 onClose={onClose}
-                width="max-w-2xl"
+                width={hasVideo ? "max-w-4xl" : "max-w-2xl"}
                 title={
                     <div className="flex items-center gap-2">
                         <h2 className="text-base font-semibold leading-snug text-neutral-900">
@@ -94,7 +95,7 @@ export default function ProofSection({
                     </div>
                 }
             >
-                <div className="flex flex-col gap-6 pt-1">
+                <div className="flex flex-col gap-6 p-2 ">
                     {/* Main Content Split Layout */}
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
                         {/* Media Preview Column */}
@@ -102,9 +103,23 @@ export default function ProofSection({
                             {proofMedia.length > 0 ? (
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     {proofMedia.map((item, index) => (
-                                        <div key={item.url} className="group relative flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-neutral-900/5 ring-1 ring-inset ring-neutral-900/10 dark:bg-neutral-800">
+                                        <div
+                                            key={item.url}
+                                            className={`group relative flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-neutral-900/5 ring-1 ring-inset ring-neutral-900/10 dark:bg-neutral-800 ${
+                                                item.type === "video"
+                                                    ? "sm:col-span-2"
+                                                    : ""
+                                            }`}
+                                        >
                                             {item.type === "video" ? (
-                                                <video src={item.url} controls className="h-full w-full bg-black object-contain" aria-label={`Submission video proof ${index + 1}`} />
+                                                <video
+                                                    src={item.url}
+                                                    controls
+                                                    playsInline
+                                                    preload="metadata"
+                                                    className="h-full w-full bg-black object-contain"
+                                                    aria-label={`Submission video proof ${index + 1}`}
+                                                />
                                             ) : (
                                                 <>
                                                     <img
@@ -112,16 +127,24 @@ export default function ProofSection({
                                                         alt={`Submission proof ${index + 1}`}
                                                         className="h-full w-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
                                                         onClick={() => {
-                                                            setPreviewMedia(item);
-                                                            setIsPreviewOpen(true);
+                                                            setPreviewMedia(
+                                                                item,
+                                                            );
+                                                            setIsPreviewOpen(
+                                                                true,
+                                                            );
                                                         }}
                                                     />
                                                     <button
                                                         type="button"
                                                         className="absolute inset-0 flex w-full cursor-pointer items-center justify-center bg-neutral-900/40 text-left opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                                                         onClick={() => {
-                                                            setPreviewMedia(item);
-                                                            setIsPreviewOpen(true);
+                                                            setPreviewMedia(
+                                                                item,
+                                                            );
+                                                            setIsPreviewOpen(
+                                                                true,
+                                                            );
                                                         }}
                                                         aria-label={`Preview submission image ${index + 1}`}
                                                     >
@@ -139,7 +162,9 @@ export default function ProofSection({
                                 <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-neutral-900/5 ring-1 ring-inset ring-neutral-900/10 dark:bg-neutral-800">
                                     <div className="flex flex-col items-center gap-2 p-6 text-center text-neutral-400">
                                         <FileImage className="h-8 w-8 stroke-1" />
-                                        <p className="text-xs font-medium">No proof attached</p>
+                                        <p className="text-xs font-medium">
+                                            No proof attached
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -164,10 +189,12 @@ export default function ProofSection({
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p className="truncate text-sm font-semibold text-neutral-900">
-                                            {activeSubmission.employee?.name || "Unknown User"}
+                                            {activeSubmission.employee?.name ||
+                                                "Unknown User"}
                                         </p>
                                         <p className="truncate text-xs text-neutral-500">
-                                            {activeSubmission.employee?.email || "No email provided"}
+                                            {activeSubmission.employee?.email ||
+                                                "No email provided"}
                                         </p>
                                     </div>
                                 </div>
@@ -175,17 +202,26 @@ export default function ProofSection({
                                 {activeSubmission.employees?.length > 0 && (
                                     <div className="rounded-lg border border-neutral-100 bg-neutral-50/50 p-3">
                                         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
-                                            Team members ({activeSubmission.employees.length})
+                                            Team members (
+                                            {activeSubmission.employees.length})
                                         </p>
                                         <ul className="max-h-40 space-y-1 overflow-y-auto text-xs text-neutral-600">
-                                            {activeSubmission.employees.map((employee) => (
-                                                <li key={employee.id} className="flex justify-between gap-3">
-                                                    <span className="truncate">{employee.name}</span>
-                                                    <span className="shrink-0 text-neutral-400">
-                                                        {employee.eoid || "No EOID"}
-                                                    </span>
-                                                </li>
-                                            ))}
+                                            {activeSubmission.employees.map(
+                                                (employee) => (
+                                                    <li
+                                                        key={employee.id}
+                                                        className="flex justify-between gap-3"
+                                                    >
+                                                        <span className="truncate">
+                                                            {employee.name}
+                                                        </span>
+                                                        <span className="shrink-0 text-neutral-400">
+                                                            {employee.eoid ||
+                                                                "No EOID"}
+                                                        </span>
+                                                    </li>
+                                                ),
+                                            )}
                                         </ul>
                                     </div>
                                 )}
@@ -202,8 +238,10 @@ export default function ProofSection({
                                         {activeSubmission.challenge?.points && (
                                             <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-600/20">
                                                 <Award className="h-3 w-3 text-amber-600" />
-                                                {activeSubmission.employees?.length > 0
-                                                    ? activeSubmission.challenge.is_daily_challenge &&
+                                                {activeSubmission.employees
+                                                    ?.length > 0
+                                                    ? activeSubmission.challenge
+                                                          .is_daily_challenge &&
                                                       !activeSubmission.team_points_awarded
                                                         ? `+${activeSubmission.challenge.points} pts to leader on completion`
                                                         : `+${activeSubmission.team_points_awarded || activeSubmission.challenge.points} pts to leader only`
@@ -217,9 +255,9 @@ export default function ProofSection({
                                 <div className="flex items-center gap-1.5 text-xs text-neutral-500">
                                     <Clock className="h-3.5 w-3.5 text-neutral-400" />
                                     <span>
-                                        {moment(activeSubmission.submitted_at).format(
-                                            "MMM D, YYYY · h:mm A"
-                                        )}
+                                        {moment(
+                                            activeSubmission.submitted_at,
+                                        ).format("MMM D, YYYY · h:mm A")}
                                     </span>
                                 </div>
                             </div>
@@ -227,47 +265,115 @@ export default function ProofSection({
                     </div>
 
                     {canReview && (
-                        <div className="space-y-4 rounded-lg border border-amber-100 bg-amber-50/50 p-4">
-                            <Input
-                                label="Bonus Points"
-                                name="bonus_points"
-                                type="number"
-                                min="0"
-                                step="1"
-                                value={bonusPoints}
-                                onChange={(event) => {
-                                    setBonusPoints(event.target.value);
-                                    setBonusError("");
-                                }}
-                                error={bonusError}
-                            />
-                            <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                        <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                            {/* Header */}
+                            <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-xs text-gray-500">Challenge Points</p>
-                                    <p className="font-semibold text-gray-800">{basePoints}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500">Bonus Points</p>
-                                    <p className="font-semibold text-amber-700">
-                                        {validBonusPoints ? parsedBonusPoints : "—"}
+                                    <h3 className="text-sm font-semibold text-gray-900">
+                                        Bonus Points Allocation
+                                    </h3>
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        Add additional points to this
+                                        submission.
                                     </p>
                                 </div>
-                                <div>
-                                    <p className="text-xs text-gray-500">Total</p>
-                                    <p className="font-bold text-gray-900">
-                                        {validBonusPoints ? basePoints + parsedBonusPoints : "—"}
+                                <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+                                    Bonus
+                                </span>
+                            </div>
+
+                            {/* Input */}
+                            <div>
+                                <Input
+                                    label="Bonus Points"
+                                    name="bonus_points"
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    value={bonusPoints}
+                                    onChange={(event) => {
+                                        setBonusPoints(event.target.value);
+                                        setBonusError("");
+                                    }}
+                                    error={bonusError}
+                                />
+                            </div>
+
+                            {/* Points Breakdown */}
+                            <div className="grid grid-cols-3 gap-3">
+                                <div className="rounded-lg bg-gray-50 p-3">
+                                    <p className="text-xs font-medium text-gray-500">
+                                        Challenge
+                                    </p>
+                                    <p className="mt-2 text-xl font-bold text-gray-900">
+                                        {basePoints}
+                                    </p>
+                                    <p className="text-[11px] text-gray-400">
+                                        Base points
+                                    </p>
+                                </div>
+
+                                <div className="rounded-lg bg-amber-50 p-3">
+                                    <p className="text-xs font-medium text-amber-700">
+                                        Bonus
+                                    </p>
+                                    <p className="mt-2 text-xl font-bold text-amber-700">
+                                        {validBonusPoints
+                                            ? parsedBonusPoints
+                                            : "—"}
+                                    </p>
+                                    <p className="text-[11px] text-amber-600">
+                                        Extra points
+                                    </p>
+                                </div>
+
+                                <div className="rounded-lg border border-emerald-100 bg-emerald-50 p-3">
+                                    <p className="text-xs font-medium text-emerald-700">
+                                        Total
+                                    </p>
+                                    <p className="mt-2 text-xl font-bold text-emerald-700">
+                                        {validBonusPoints
+                                            ? basePoints + parsedBonusPoints
+                                            : "—"}
+                                    </p>
+                                    <p className="text-[11px] text-emerald-600">
+                                        Final points
                                     </p>
                                 </div>
                             </div>
-                            {activeSubmission.employees?.length > 0 && (
-                                <p className="text-xs text-gray-500">
-                                    Team challenge and bonus points are awarded to the leader only.
-                                </p>
-                            )}
-                            {activeSubmission.challenge?.is_daily_challenge && (
-                                <p className="text-xs text-gray-500">
-                                    The challenge points are awarded when the required approved days are complete.
-                                </p>
+
+                            {/* Information */}
+                            {(activeSubmission.employees?.length > 0 ||
+                                activeSubmission.challenge
+                                    ?.is_daily_challenge) && (
+                                <div className="space-y-2 border-t border-gray-100 pt-4">
+                                    {activeSubmission.employees?.length > 0 && (
+                                        <div className="flex items-start gap-2 text-xs text-gray-500">
+                                            <span className="text-amber-500">
+                                                ⓘ
+                                            </span>
+                                            <p>
+                                                Team challenge points and bonus
+                                                points are awarded to the team
+                                                leader only.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {activeSubmission.challenge
+                                        ?.is_daily_challenge && (
+                                        <div className="flex items-start gap-2 text-xs text-gray-500">
+                                            <span className="text-blue-500">
+                                                ⓘ
+                                            </span>
+                                            <p>
+                                                Challenge points are awarded
+                                                once the required approved days
+                                                are completed.
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
                     )}
@@ -280,7 +386,8 @@ export default function ProofSection({
                         <p className="whitespace-pre-line text-xs leading-relaxed text-neutral-600">
                             {activeSubmission.challenge_description || (
                                 <span className="italic text-neutral-400">
-                                    No description was provided for this submission.
+                                    No description was provided for this
+                                    submission.
                                 </span>
                             )}
                         </p>
@@ -317,39 +424,36 @@ export default function ProofSection({
 
             {/* Portal Lightbox Preview Overlay */}
             {/* z-index must exceed Modal's z-[9999] since both portal directly to document.body */}
-            {mounted && isPreviewOpen && previewMedia &&
-               
-                    <div 
-                        className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-150"
-                        onClick={() => setIsPreviewOpen(false)}
+            {mounted && isPreviewOpen && previewMedia && (
+                <div
+                    className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-150"
+                    onClick={() => setIsPreviewOpen(false)}
+                >
+                    <div
+                        className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-xl bg-neutral-900 shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        <div 
-                            className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-xl bg-neutral-900 shadow-2xl"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {/* Controls */}
-                            <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
-                              
-                                <button
-                                    type="button"
-                                    onClick={() => setIsPreviewOpen(false)}
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900/60 text-white backdrop-blur-md transition-colors hover:bg-neutral-900/90"
-                                    title="Close preview"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                            </div>
-
-                            {/* Image */}
-                            <img
-                                src={previewMedia.url}
-                                alt="Submission proof enlarged preview"
-                                className="max-h-[85vh] w-auto max-w-[85vw] object-contain"
-                            />
+                        {/* Controls */}
+                        <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setIsPreviewOpen(false)}
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900/60 text-white backdrop-blur-md transition-colors hover:bg-neutral-900/90"
+                                title="Close preview"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
                         </div>
+
+                        {/* Image */}
+                        <img
+                            src={previewMedia.url}
+                            alt="Submission proof enlarged preview"
+                            className="max-h-[85vh] w-auto max-w-[85vw] object-contain"
+                        />
                     </div>
-               
-            }
+                </div>
+            )}
         </>
     );
 }
