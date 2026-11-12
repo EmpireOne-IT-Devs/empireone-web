@@ -1,0 +1,24 @@
+### Phase 1: Route employee challenge links to an authorized Join page
+
+- **Timestamp:** 2026-11-12 18:26 (+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead + 🖥️ Frontend + ⚙️ Backend + 🧪 QA
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/_administrator/activities/home/sections/post-card-section.jsx` — Sends employees outside departments 1 and 11 to the employee challenge page; administrators and employees in departments 1 and 11 retain the administrator Join page. Challenge query parameters are preserved.
+  - `app/Http/Middleware/EnsureChallengeManagementAccess.php` — Redirects ordinary employees from the administrator Join route to the employee challenge page while preserving the query string. Administrator Join remains for role 1 and employees in departments 1 and 11; non-employee, non-administrator roles are denied on this route. Other management access remains department-restricted.
+  - `tests/Unit/ChallengeManagementAccessTest.php` — Covers allowed department access, manager Join access, employee redirect and query preservation, and applicant denial.
+  - `dev-logs/2026-11-12-join-challenge-access-for-employees.md` — Records implementation and QA.
+- **Issues Encountered:** Activity-feed challenge cards always linked to `/accounts/administrator/rnr/challenges_events/join`, where the middleware rejected employees outside departments 1 and 11.
+- **Resolution:** Choose the audience-appropriate Join page in the activity feed and redirect legacy/direct employee Join links to the registered employee route. No route, migration, API controller, Form Request, Resource, Redux, or challenge-management authorization was broadened.
+- **QA Checklist Result:**
+  - ✅ JavaScript remains plain JavaScript; updated JSX parses with esbuild.
+  - ✅ PHP middleware syntax check passes.
+  - ✅ Focused `ChallengeManagementAccessTest` passes (1 test, 10 assertions).
+  - ✅ `route:list` confirms the administrator Join route retains `challenge.management:administrator` and the employee challenge page is registered with `role.redirect:2`.
+  - ✅ No web/API route definitions, POST/PUT endpoints, policies, resources, or migrations were changed; existing middleware continues protecting management routes.
+  - ✅ No Redux, service, thunk, or slice changes. No reusable UI components were added.
+  - ✅ No form, destructive action, or empty/loading UI behavior changed.
+  - 🧪 Code-level routing is verified; browser verification as an employee outside departments 1 and 11 and a department 1/11 manager remains outstanding.
+  - ✅ Existing authentication middleware is unchanged; applicants are explicitly rejected from administrator Join.
+  - ✅ No guarded build, migration, destructive, or git command was run.
+- **Next Steps:** Browser-test the challenge card as a regular employee and confirm the selected `?challenge=ID` opens the employee challenge page; verify administrator and department 1/11 manager links still work.

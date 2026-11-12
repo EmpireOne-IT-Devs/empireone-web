@@ -1,1 +1,0 @@
-import{j as t}from"./app-D9x2pK1P.js";import{z as r}from"./index-B7pgZoyj.js";import"./iconBase-Qs2zq1Zq.js";function s(){return t.jsx("div",{children:t.jsx(r,{className:"text-2xl cursor-pointer text-blue-600"})})}export{s as default};

@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Google_Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class GoogleController extends Controller
 {
@@ -229,7 +230,7 @@ class GoogleController extends Controller
     }
 
 
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
         try {
             $googleUser = Socialite::driver('google')->user();
@@ -245,10 +246,42 @@ class GoogleController extends Controller
                     ]
                 );
                 Auth::login($user, true);
+                $request->session()->regenerate();
+
+                $intended = $request->session()->get('url.intended');
+                if ($intended !== null && ! $this->isLocalIntendedUrl($intended, $request)) {
+                    Log::warning('Discarded unsafe intended URL after Google login.');
+                    $request->session()->forget('url.intended');
+                }
+
+                return redirect()->intended($this->route_page($user->role)->getTargetUrl());
             }
             return $this->route_page($user->role ?? 0);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    private function isLocalIntendedUrl(mixed $url, Request $request): bool
+    {
+        if (! is_string($url) || $url === '' || preg_match('/[\x00-\x20\\\\]/', $url)) {
+            return false;
+        }
+
+        if (str_starts_with($url, '/') && ! str_starts_with($url, '//')) {
+            return true;
+        }
+
+        $parts = parse_url($url);
+        $origin = parse_url($request->getSchemeAndHttpHost());
+
+        return is_array($parts)
+            && is_array($origin)
+            && ! isset($parts['user'])
+            && ! isset($parts['pass'])
+            && isset($parts['scheme'], $parts['host'], $origin['scheme'], $origin['host'])
+            && strtolower($parts['scheme']) === strtolower($origin['scheme'])
+            && strtolower($parts['host']) === strtolower($origin['host'])
+            && ($parts['port'] ?? null) === ($origin['port'] ?? null);
     }
 }

@@ -489,7 +489,7 @@ function EngagementPostCard({
     );
 }
 
-function ChallengeAnnouncements({ challenges, loading, error, onRetry }) {
+function ChallengeAnnouncements({ challenges, loading, error, onRetry, challengePath }) {
     const activeChallenges = challenges
         .filter((challenge) => ["Active", "Upcoming"].includes(challenge.status))
         .slice(0, MAX_CHALLENGE_ANNOUNCEMENTS);
@@ -524,7 +524,6 @@ function ChallengeAnnouncements({ challenges, loading, error, onRetry }) {
 
     if (activeChallenges.length === 0) return null;
 
-    const challengePath = "/accounts/administrator/rnr/challenges_events/join";
     const gridColumns =
         activeChallenges.length === 1
             ? "grid-cols-1"
@@ -628,7 +627,19 @@ export default function PostCardSection() {
         myRewardChallengesLoading,
         myRewardChallengesError,
     } = useSelector((state) => state.engagement);
-    const user = useSelector((state) => state.auth?.user || state.app?.user);
+    const user = useSelector((state) =>
+        state.app?.data?.user || state.auth?.user || state.app?.user,
+    );
+    const accountRole =
+        typeof window !== "undefined"
+            ? window.location.pathname.split("/")[2]
+            : null;
+    const departmentId = Number(user?.account_employee?.department_id);
+    const isEmployee = Number(user?.role) === 2 || accountRole === "employee";
+    const challengePath =
+        isEmployee && ![1, 11].includes(departmentId)
+            ? "/accounts/employee/rnr/challenge_event"
+            : "/accounts/administrator/rnr/challenges_events/join";
     // Scheduled posts (not yet due) are only meant for the admin who manages them — never render
     // them for employees even if they somehow end up in state (e.g. stale cache, backend change).
     const isViewerAdmin = Number(user?.role) === 1;
@@ -660,6 +671,7 @@ export default function PostCardSection() {
             challenges={myRewardChallenges}
             loading={myRewardChallengesLoading}
             error={myRewardChallengesError}
+            challengePath={challengePath}
             onRetry={() => dispatch(get_my_engagement_reward_challenges_thunk())}
         />
     );

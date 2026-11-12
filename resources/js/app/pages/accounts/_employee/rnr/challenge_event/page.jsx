@@ -7,10 +7,14 @@ import ChallengeEventSection from "./sections/challenge-event-section";
 import ManagerViewSection from "./sections/manager-view-section";
 import useCurrentEmployee from "@/app/_hooks/use-current-employee";
 import { get_my_engagement_reward_challenges_thunk } from "@/app/redux/engagement-thunk";
+import { usePage } from "@inertiajs/react";
 
 export default function Page() {
     const { isReady, isContentManager } = useCurrentEmployee();
     const dispatch = useDispatch();
+    const { url } = usePage();
+    const query = url.split("?")[1]?.split("#")[0] ?? "";
+    const sharedChallenge = new URLSearchParams(query).get("challenge");
 
     useEffect(() => {
         if (isReady) dispatch(get_my_engagement_reward_challenges_thunk());
@@ -24,7 +28,7 @@ export default function Page() {
                         <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
                         <div className="h-64 w-full animate-pulse rounded-lg bg-gray-200" />
                     </div>
-                ) : isContentManager ? (
+                ) : isContentManager && !sharedChallenge ? (
                     <ManagerViewSection />
                 ) : (
                     <ChallengeEventSection />
