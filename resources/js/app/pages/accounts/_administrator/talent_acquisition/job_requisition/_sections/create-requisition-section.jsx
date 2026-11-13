@@ -66,7 +66,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             approver1_id: "",
             position_level: 'Rank and File',
             approver2_id: "",
-            approver3_id: "",
+            approver3_id: 3,
         },
     });
 
@@ -96,7 +96,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             setValue("title", req?.title || "");
             setValue("approver1_id", req?.approver1_id || "");
             setValue("approver2_id", req?.approver2_id || "");
-            setValue("approver3_id", req?.approver3_id || "");
+            // setValue("approver3_id", req?.approver3_id || "");
 
             setValue("department_id", req?.department_id || "");
             setValue("location_id", req?.location_id || "");
@@ -142,7 +142,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             setValue("qualifications", "");
             setValue("responsibilities", "");
             setValue("approver2_id", 1342);
-            setValue("approver3_id", 3);
+            // setValue("approver3_id", 3);
 
             setValue("interviewer1", "");
             setValue("availability1", "");
@@ -956,6 +956,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             <Select
                                                 label="Approver 3 "
                                                 required
+                                                disabled
                                                 name="approver3_id"
                                                 options={
                                                     users?.users?.map((res) => ({
