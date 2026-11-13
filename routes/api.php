@@ -76,6 +76,7 @@ use App\Http\Controllers\ERAcknowledgementEmployeeController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PMCorrectiveActionController;
+use App\Http\Controllers\PMPipController;
 use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\SiteController;
 use App\Models\Account\AccountDocument;
@@ -389,6 +390,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get_my_team',  [ERLeaderController::class, 'get_my_team']);
         Route::resource('reach', PMReachController::class);
         Route::resource('corrective_action', PMCorrectiveActionController::class);
+        Route::resource('pip', PMPipController::class);
         Route::post('get_ai_cocd', [PMCorrectiveActionController::class, 'get_ai_cocd']);
 
         Route::post('sign_corrective_action',  [PMCorrectiveActionController::class, 'sign_corrective_action']);

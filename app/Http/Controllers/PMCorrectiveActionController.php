@@ -19,7 +19,6 @@ class PMCorrectiveActionController extends Controller
     {
         //
     }
-    
 
     public function get_corrective_actions_specific_leader(Request $request)
     {
@@ -179,7 +178,8 @@ class PMCorrectiveActionController extends Controller
             'last_name'                   => ['nullable', 'string', 'max:255'],
             'eogs_email'                  => ['nullable', 'email', 'max:255'],
             'department_id'               => ['nullable', 'integer'],
-            'account_id'               => ['nullable', 'integer'],
+            'account_id'               => ['nullable'],
+            
             'supervisor_id'               => ['nullable', 'string'],
             'user_id'                     => ['nullable'],
             'supervisor_user_id'          => ['nullable'],
