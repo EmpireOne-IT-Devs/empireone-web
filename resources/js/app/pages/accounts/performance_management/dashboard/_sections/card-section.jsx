@@ -114,7 +114,7 @@ export default function CardSection() {
             activeRing: "border-indigo-500 ring-2 ring-indigo-500/20 shadow-md",
             barColor: "bg-indigo-600",
             iconBg: "bg-indigo-50 text-indigo-600",
-            link: "/accounts/administrator/performance_management/reach?status=ALL",
+            link: "/accounts/administrator/performance_management/reach?status",
         },
         {
             id: "pending-coaching",
@@ -348,7 +348,7 @@ export default function CardSection() {
                     disciplinaryCards,
                     activeDisciplinaryCard,
                     setActiveDisciplinaryCard,
-                    "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6",
+                    "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3",
                 )}
             </section>
         </div>

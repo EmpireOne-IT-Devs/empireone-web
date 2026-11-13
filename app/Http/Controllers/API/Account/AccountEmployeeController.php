@@ -22,7 +22,8 @@ class AccountEmployeeController extends Controller
 {
     public function performance_management_dashboard(Request $request)
     {
-        $leaders = ERLeader::where('user_id', Auth::id())->pluck('id');
+        $authId = Auth::id(); // Save it to a variable for cleaner closures
+        $leaders = ERLeader::where('user_id', $authId)->pluck('id');
 
         // Base query for account employees under these leaders
         $baseQuery = AccountEmployee::where(function ($query) use ($leaders) {
@@ -49,21 +50,23 @@ class AccountEmployeeController extends Controller
             ])
             ->count();
 
-        $leaderIds = AccountEmployee::where('e_r_leader_id', Auth::id())
-            ->orWhere('department_manager_id', Auth::id())
-            ->pluck('e_r_leader_id')
-            ->filter() // Removes null values if any
-            ->unique()
-            ->values()
-            ->toArray();
-            
-        $coachingsQuery = PMReach::whereIn('created_by', $leaderIds);
+        // 🔥 THE FIX: Group the user checks together so the status filter applies to ALL of them
+        $coachingsQuery = PMReach::where(function ($query) use ($authId) {
+            $query->where('created_by', $authId)
+                ->orWhere('supervisor_user_id', $authId)
+                ->orWhere('manager_user_id', $authId);
+        });
+
         $totalCoachings = (clone $coachingsQuery)->count();
         $pendingCoachings = (clone $coachingsQuery)->where('status', 'PENDING')->count();
         $acknowledgedCoachings = (clone $coachingsQuery)->where('status', 'ACKNOWLEDGED')->count();
 
-        // Combined Corrective Actions
-        $correctiveQuery = PMCorrectiveAction::whereIn('created_by', $leaderIds);
+        // Combined Corrective Actions (No closure needed here since there are no ORs)
+        $correctiveQuery = PMCorrectiveAction::where(function ($query) use ($authId) {
+            $query->where('created_by', $authId)
+                ->orWhere('supervisor_user_id', $authId)
+                ->orWhere('manager_user_id', $authId);
+        });
         $totalCorrective = (clone $correctiveQuery)->count();
 
         $pending = (clone $correctiveQuery)->where('status', 'PENDING')->count();

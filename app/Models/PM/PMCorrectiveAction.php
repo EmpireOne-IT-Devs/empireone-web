@@ -20,6 +20,7 @@ class PMCorrectiveAction extends Model
         'last_name',
         'eogs_email',
         'department_id',
+        'account_id',
         'hr_user_id',
         'hr_id',
         'hr_first_name',
@@ -49,6 +50,9 @@ class PMCorrectiveAction extends Model
         'employee_explanation_at',
         'final_sanction',
         'employee_commitment',
+        'is_supervisor_sanction_acknowledge',
+        'is_manager_sanction_acknowledge',
+        'is_hr_sanction_acknowledge'
     ];
 
     protected $casts = [

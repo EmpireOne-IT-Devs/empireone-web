@@ -21,7 +21,7 @@ export default function Page() {
             }
         }
         get_data()
-    }, [])
+    }, [window.location.search])
     return (
         <PerformanceManagementLayout>
             <div className='w-full flex items-center justify-end'>

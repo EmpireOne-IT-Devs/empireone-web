@@ -183,8 +183,8 @@ export default function CorrectiveActionForm() {
     const isManagerSigned = Number(corrective_action?.is_manager_acknowledge) === 1;
     const isEmployeeNteSigned = Number(corrective_action?.is_employee_acknowledge) === 1;
 
-    // Section 2: Explanation signature
-    const isExplanationSigned = Boolean(corrective_action?.employee_explanation_at);
+    // Section 2: Explanation signature 
+    const isExplanationSigned = Boolean(corrective_action?.employee_explanation_at) || Boolean(corrective_action?.employee_explanation);
 
     // Section 3: Final sanction approvals
     const isHrSanctionSigned = Number(corrective_action?.is_hr_sanction_acknowledge) === 1;
@@ -215,6 +215,7 @@ export default function CorrectiveActionForm() {
 
     // Attached signature images
     const supervisorSignature = corrective_action?.supervisor?.signature;
+    console.log('isSupervisorSigned',corrective_action)
     const managerSignature = corrective_action?.manager?.signature;
     const hrSignature = corrective_action?.hr?.signature;
     const employeeSignature = corrective_action?.employee?.signature;
@@ -397,10 +398,10 @@ export default function CorrectiveActionForm() {
                     {/* Advisory Paragraphs */}
                     <div className="space-y-2 text-justify text-slate-800">
                         <p>
-                            In view of the above, you are hereby given an opportunity to be heard by submitting a written response within five (5) calendar days from receipt of this notice[cite: 26].
+                            In view of the above, you are hereby given an opportunity to be heard by submitting a written response within five (5) calendar days from receipt of this notice.
                         </p>
                         <p>
-                            Please be informed that when an employee commits multiple infractions, the highest applicable penalty under company regulations shall be imposed[cite: 25]. Depending on findings and totality of circumstances, sanctions may range up to and including <span className="font-bold tracking-wider">TERMINATION</span>[cite: 2, 25].
+                            Please be informed that when an employee commits multiple infractions, the highest applicable penalty under company regulations shall be imposed. Depending on findings and totality of circumstances, sanctions may range up to and including <span className="font-bold tracking-wider">TERMINATION</span>.
                         </p>
                     </div>
 
@@ -510,7 +511,7 @@ export default function CorrectiveActionForm() {
                                         </h2>
                                         {chargedOffenses.length > 1 && (
                                             <span className="text-[10px] text-amber-800 font-semibold">
-                                                *Highest penalty rule applies (Calculated baseline: {highestRecommendedPenalty})[cite: 25]
+                                                *Highest penalty rule applies (Calculated baseline: {highestRecommendedPenalty})
                                             </span>
                                         )}
                                     </div>

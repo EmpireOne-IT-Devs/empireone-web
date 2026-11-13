@@ -90,6 +90,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('import_reach_data',  [ImportController::class, 'import_reach_data']);
+Route::get('import_corrective_action_data',  [ImportController::class, 'import_corrective_action_data']);
 
 
 Route::middleware('auth:sanctum')->post('auth/logout', [AuthorizationController::class, 'logout']);
