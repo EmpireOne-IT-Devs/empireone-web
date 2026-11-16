@@ -20,20 +20,7 @@ import {
     FiDownload as Download,
 } from "react-icons/fi";
 import CoeDocument from "./coe-document-section";
-
-const PURPOSE_OPTIONS = [
-    "Auto Loan",
-    "Salary/Multi-Purpose Loan",
-    "Housing Loan",
-    "VISA Application",
-    "Passport Application",
-    "Government Transaction",
-    "Educational Requirement (Scholarship/OJT/Graduation)",
-    "Insurance Requirement",
-    "Phone/Mobile Plan Application",
-    "Internet Subscription",
-    "Credit Card Application",
-].map((item) => ({ label: item, value: item }));
+import { COE_PURPOSES } from "@/app/lib/coe-purposes";
 
 export default function GenerateCoeSection() {
     const [open, setOpen] = useState(false);
@@ -188,7 +175,7 @@ export default function GenerateCoeSection() {
                         <Select
                             name="coe_purpose"
                             label="Purpose of request"
-                            options={PURPOSE_OPTIONS}
+                            options={COE_PURPOSES}
                             value={purpose}
                             onChange={setPurpose}
                         />

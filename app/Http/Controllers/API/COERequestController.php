@@ -19,13 +19,42 @@ class COERequestController extends Controller
     {
         Gate::authorize('viewAny', COERequest::class);
 
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'purpose' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $perPage = min((int) $request->query('per_page', 10), 100);
 
-        $requests = COERequest::query()
+        $query = COERequest::query()
             ->with('user.personal_information')
-            ->latest('requested_at')
-            ->paginate($perPage)
-            ->appends($request->query());
+            ->latest('requested_at');
+
+        if ($purpose = trim((string) ($filters['purpose'] ?? ''))) {
+            $query->where('purpose', $purpose);
+        }
+
+        if ($search = trim((string) ($filters['search'] ?? ''))) {
+            $like = '%'.addcslashes($search, '%_\\').'%';
+
+            $query->where(function ($q) use ($search, $like) {
+                $q->where('employee_id', 'like', $like)
+                    ->orWhere('purpose', 'like', $like)
+                    ->orWhereHas('user', function ($u) use ($like) {
+                        $u->where('name', 'like', $like)
+                            ->orWhereHas('personal_information', function ($p) use ($like) {
+                                $p->whereRaw("CONCAT_WS(' ', first_name, middle_name, last_name) like ?", [$like]);
+                            });
+                    });
+
+                // Accepts "COE-000123", "000123" or "123".
+                if (preg_match('/^(?:COE-)?0*(\d+)$/i', $search, $m)) {
+                    $q->orWhere('id', (int) $m[1]);
+                }
+            });
+        }
+
+        $requests = $query->paginate($perPage)->appends($request->query());
 
         return COERequestResource::collection($requests);
     }
