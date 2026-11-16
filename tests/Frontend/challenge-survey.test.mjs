@@ -673,6 +673,29 @@ test("leaderboard separates team submissions and labels each team by its leader"
     assert.match(individualHtml, /Individual Entry/);
     assert.doesNotMatch(individualHtml, /Team: Team Leader/);
     assert.match(individualHtml, /Co-winner/);
+    assert.match(individualHtml, /100 base \+ 25 bonus</);
+
+    const surveyState = {
+        ...leaderboardState,
+        rewardChallengeIndividualParticipants: [{
+            ...leaderboardState.rewardChallengeIndividualParticipants[0],
+            points_awarded: 112,
+            challenge_points_awarded: 12,
+            bonus_points_awarded: 100,
+            survey_points_awarded: 15,
+            total_points_awarded: 127,
+            winner_count: 1,
+        }],
+    };
+    const surveyTableHtml = render(ParticipantLeaderboard, surveyState, {
+        submissionType: "individual",
+    });
+    assert.match(surveyTableHtml, />127</);
+    assert.match(surveyTableHtml, /12 base \+ 100 bonus \+ 15 survey</);
+    assert.match(
+        render(TopLeaderboard, surveyState, { submissionType: "individual" }),
+        /127 pts/,
+    );
 
     const topWinnersHtml = render(TopLeaderboard, leaderboardState, {
         submissionType: "individual",
@@ -934,7 +957,7 @@ test("submissions table renders one server page of the active type and its pager
 test("Submissions table points use the leaderboard total and base-plus-bonus hierarchy", () => {
     const html = render(SubmissionTable, {
         challengeSubmissionsLoading: false,
-        challengeSubmissionCounts: { individual: 4, team: 0 },
+        challengeSubmissionCounts: { individual: 5, team: 0 },
         challengeSubmissions: [
             {
                 id: "approved",
@@ -945,6 +968,17 @@ test("Submissions table points use the leaderboard total and base-plus-bonus hie
                 submitted_at: "2026-10-12",
                 challenge: { title: "Approved Challenge", points: 100 },
                 employee: { name: "Approved Employee", email: "approved@example.test" },
+            },
+            {
+                id: "approved-survey",
+                status: "approved",
+                points_awarded: 112,
+                challenge_points_awarded: 12,
+                bonus_points_awarded: 100,
+                survey_points_awarded: 15,
+                submitted_at: "2026-10-12",
+                challenge: { title: "Surveyed Challenge", points: 12 },
+                employee: { name: "Surveyed Employee", email: "surveyed@example.test" },
             },
             {
                 id: "pending-survey",
@@ -975,7 +1009,9 @@ test("Submissions table points use the leaderboard total and base-plus-bonus hie
     }, { filters: {} });
 
     assert.match(html, /text-sm font-semibold text-green-600[^>]*>\+125</);
-    assert.match(html, /100 base \+ 25 bonus/);
+    assert.match(html, /100 base \+ 25 bonus</);
+    assert.match(html, /text-sm font-semibold text-green-600[^>]*>\+127</);
+    assert.match(html, /12 base \+ 100 bonus \+ 15 survey</);
     assert.match(html, /pending survey/);
     assert.match(html, /100 base \+ bonus on approval/);
     assert.match(html, /10 bonus approved/);

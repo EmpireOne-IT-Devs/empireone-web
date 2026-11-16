@@ -181,7 +181,22 @@ export default function ParticipantTableSection({
         const isApproved = participant.status === "approved";
         const isSubmitted = participant.status === "submitted";
         const isDeclined = participant.status === "declined";
-        const points = isApproved ? Number(participant.points_awarded) || 0 : 0;
+        const challengePoints = isApproved
+            ? Number(participant.points_awarded) || 0
+            : 0;
+        const surveyPoints = Number(participant.survey_points_awarded) || 0;
+        const points =
+            Number(
+                participant.total_points_awarded ??
+                    challengePoints + surveyPoints,
+            ) || 0;
+        const breakdown = [
+            isApproved &&
+                `${participant.challenge_points_awarded ?? challengePoints} base + ${participant.bonus_points_awarded ?? 0} bonus`,
+            surveyPoints > 0 && `${surveyPoints} survey`,
+        ]
+            .filter(Boolean)
+            .join(" + ");
         const progress = isApproved ? 100 : isSubmitted ? 90 : 0;
         const badge =
             participant.rank && participant.rank <= 3 && isApproved
@@ -211,12 +226,8 @@ export default function ParticipantTableSection({
                     <span className="text-sm font-semibold text-green-600">
                         {points}
                     </span>
-                    {isApproved && (
-                        <p className="text-xs text-gray-400">
-                            {participant.challenge_points_awarded ?? points} base
-                            {" + "}
-                            {participant.bonus_points_awarded ?? 0} bonus
-                        </p>
+                    {breakdown && (
+                        <p className="text-xs text-gray-400">{breakdown}</p>
                     )}
                 </div>
             ),
@@ -271,8 +282,8 @@ export default function ParticipantTableSection({
                         </h2>
                         <p className="text-sm text-gray-500">
                             {submissionType === "team"
-                                ? "Teams ranked by approved challenge points, including bonuses"
-                                : "Participants ranked by approved challenge points, including bonuses"}
+                                ? "Teams ranked by approved challenge points, including bonuses and survey points"
+                                : "Participants ranked by approved challenge points, including bonuses and survey points"}
                         </p>
                     </div>
                 </div>

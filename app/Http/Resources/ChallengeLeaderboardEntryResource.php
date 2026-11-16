@@ -19,6 +19,8 @@ class ChallengeLeaderboardEntryResource extends JsonResource
             'points_awarded' => $this['points_awarded'],
             'challenge_points_awarded' => $this['challenge_points_awarded'],
             'bonus_points_awarded' => $this['bonus_points_awarded'],
+            'survey_points_awarded' => $this['survey_points_awarded'] ?? 0,
+            'total_points_awarded' => $this['total_points_awarded'] ?? $this['points_awarded'],
             'joined_at' => $this['joined_at'],
             'submitted_at' => $this['submitted_at'],
             'member_count' => $this['member_count'] ?? null,

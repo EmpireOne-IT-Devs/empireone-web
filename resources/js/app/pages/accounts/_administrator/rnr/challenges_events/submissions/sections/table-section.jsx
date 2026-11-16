@@ -32,24 +32,29 @@ function SubmissionPoints({ submission, challenge }) {
     const pendingTeamPoints =
         Number(submission.pending_base_points ?? 0) +
         Number(submission.pending_bonus_points ?? 0);
-    let amount;
+    const surveyPoints = Number(submission.survey_points_awarded) || 0;
+    let points;
     let breakdown;
+    let note;
 
     if (isTeam && submission.status === "approved" && pendingTeamPoints > 0) {
-        amount = `+${pendingTeamPoints}`;
-        breakdown = `${submission.pending_base_points} base + ${submission.pending_bonus_points} bonus · pending leader survey`;
+        points = pendingTeamPoints;
+        breakdown = `${submission.pending_base_points} base + ${submission.pending_bonus_points} bonus`;
+        note = "pending leader survey";
     } else if (submission.individual_daily_log && submission.status === "approved") {
         const bonusPoints = Number(submission.bonus_points) || 0;
-        amount = `+${bonusPoints}`;
-        breakdown = `${bonusPoints} bonus approved · base points on completion`;
+        points = bonusPoints;
+        breakdown = `${bonusPoints} bonus approved`;
+        note = "base points on completion";
     } else if (
         !isTeam &&
         submission.participation_status === "pending_survey"
     ) {
         const basePoints = Number(challenge.points) || 0;
         const bonusPoints = Number(submission.bonus_points) || 0;
-        amount = `+${basePoints + bonusPoints}`;
-        breakdown = `${basePoints} base + ${bonusPoints} bonus · pending survey`;
+        points = basePoints + bonusPoints;
+        breakdown = `${basePoints} base + ${bonusPoints} bonus`;
+        note = "pending survey";
     } else if (submission.status === "approved") {
         const basePoints =
             Number(
@@ -64,18 +69,28 @@ function SubmissionPoints({ submission, challenge }) {
         const totalPoints = Number(
             isTeam ? submission.team_points_awarded : submission.points_awarded,
         );
-        amount = `+${Number.isFinite(totalPoints) ? totalPoints : basePoints + bonusPoints}`;
+        points = Number.isFinite(totalPoints)
+            ? totalPoints
+            : basePoints + bonusPoints;
         breakdown = `${basePoints} base + ${bonusPoints} bonus`;
     } else {
         const basePoints = Number(challenge.points) || 0;
-        amount = `+${basePoints}`;
+        points = basePoints;
         breakdown = `${basePoints} base + bonus on approval`;
+    }
+
+    if (surveyPoints > 0) {
+        breakdown = `${breakdown} + ${surveyPoints} survey`;
     }
 
     return (
         <div>
-            <p className="text-sm font-semibold text-green-600">{amount}</p>
-            <p className="text-xs text-gray-400">{breakdown}</p>
+            <p className="text-sm font-semibold text-green-600">
+                +{points + surveyPoints}
+            </p>
+            <p className="text-xs text-gray-400">
+                {note ? `${breakdown} · ${note}` : breakdown}
+            </p>
             {isTeam && (
                 <p className="text-xs text-gray-500">Awarded to leader only</p>
             )}

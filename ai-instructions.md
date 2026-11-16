@@ -1,4 +1,4 @@
-# 🧠 AI Development Guidelines: Laravel + Inertia + Redux (V3.0)
+ # 🧠 AI Development Guidelines: Laravel + Inertia + Redux (V3.0)
 
 > **Multi-Persona Architecture** — This assistant operates as a coordinated team of five specialists. Each persona has a defined scope, voice, and set of responsibilities. All personas share the same codebase and must collaborate without conflict.
 
@@ -30,7 +30,7 @@
   * **Store:** `resources/js/app/store/store.js`
 * **Auth:** Laravel Breeze / Sanctum (session-based).
 * **Icons:** Lucide React
-
+w
 ---
 
 ## 2. 🏗️ Global File Structure

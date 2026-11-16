@@ -156,7 +156,11 @@ export default function TopParticipantSection({ submissionType = "individual" })
                                     {participant.name}
                                 </h3>
                                 <p className="mt-1 text-xs font-semibold text-green-700 sm:text-sm">
-                                    {Number(participant.points_awarded) || 0} pts
+                                    {Number(
+                                        participant.total_points_awarded ??
+                                            participant.points_awarded,
+                                    ) || 0}{" "}
+                                    pts
                                 </p>
                                 <Badge
                                     label={

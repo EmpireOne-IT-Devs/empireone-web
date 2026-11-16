@@ -1,0 +1,13 @@
+### Phase 1: Submission video baseline and lazy playback
+
+- **Timestamp:** 2026-11-16 (UTC+08:00)
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, 🖥️ Frontend, 🎨 UI/UX, 🧪 QA
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/submission-video-player.jsx` — Add per-video lazy playback, buffering/error feedback, retry, and resource cleanup.
+  - `resources/js/app/pages/accounts/_administrator/rnr/challenges_events/submissions/sections/proof-section.jsx` — Replace the inline player and pass the active modal/submission state.
+  - `tests/Frontend/challenge-proof-video.test.mjs` — Verify unloaded initial markup, preserved layout/actions, and independent multi-video controls.
+- **Issues Encountered:** `ffprobe` is not installed. S3 range checks succeeded, but one sample MP4 has its `moov` box after `mdat`; three sampled objects were 10,127,768, 36,033,428, and 120,399,716 bytes. All three returned HTTP 206 with `Accept-Ranges: bytes` and `Content-Type: video/mp4`; `Cache-Control` was absent. The sample with `moov` after `mdat` may delay startup/seeking. Encoding and bitrate were not measured.
+- **Resolution:** The new player renders no `src` and uses `preload="none"` until the reviewer requests playback. It tracks loading/buffering/error independently, keeps native controls after playback starts, retries failed loads, and removes the source on close or unmount. Existing modal layout and review actions are unchanged. No Laravel, S3 configuration, bucket, or CloudFront changes were made in this phase.
+- **QA Checklist Result:** ✅ Plain JavaScript; focused frontend tests passed (4/4); existing image/video layout and approval/decline/bonus controls remain present; video URLs are absent from initial player markup; multiple players have independent state; no service, thunk, slice, route, or backend behavior changed; no AWS credentials were exposed. ✅ Keyboard-operable playback/retry controls and existing responsive layout are present at code level — requires browser verification. ⚠️ Browser playback/focus checks remain unverified. S3 range delivery and MP4 metadata layout were checked with bounded byte-range requests. Existing unsigned S3 video URLs are publicly retrievable; this phase did not change that deployment/security state.
+- **Next Steps:** Phase 2 should authorize reviewer access to proof media with temporary URLs and explicit S3 object metadata, while preserving the existing response shape. Decide whether to revoke public access for existing challenge proof objects as part of deployment; no AWS infrastructure will be changed automatically.
