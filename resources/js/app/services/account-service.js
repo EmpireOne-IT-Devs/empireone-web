@@ -33,3 +33,7 @@ export async function add_employee_service(data) {
 export async function get_my_team_service() {
     return await axios.get(`/api/er/get_my_team${window.location.search}`);
 }
+
+export async function get_hr_director_service() {
+    return (await axios.get(`/api/accounts/get_hr_director${window.location.search}`)).data;
+}
