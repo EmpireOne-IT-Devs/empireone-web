@@ -128,10 +128,9 @@ class PMPipController extends Controller
 
             if (!empty($pip->supervisor_email)) {
                 $ccRecipients = array_values(array_filter([
-                    // $pip->supervisor_email,
-                    // 'anthony@empireonegroup.com',
-                    // $pip->manager_email,
-                    // $pip->employee_email,
+                    $pip->supervisor_email,
+                    'anthony@empireonegroup.com',
+                    $pip->manager_email,
                 ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
 
                 $mail = Mail::to('webdev@empireonegroup.com');

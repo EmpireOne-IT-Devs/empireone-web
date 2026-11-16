@@ -311,7 +311,7 @@ export default function PerformanceImprovementPlanPage() {
                 <div className="border border-black grid grid-cols-3">
                     <div className="p-4 flex items-center justify-center border-r border-black">
                         <span className="text-2xl font-black tracking-tight text-blue-900">
-                            Empire<span className="text-cyan-400">One</span>
+                            Empire<span className="text-cyan-400">OneCX</span>
                         </span>
                     </div>
 
