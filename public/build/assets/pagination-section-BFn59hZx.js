@@ -1,1 +1,0 @@
-import{b as i,j as a}from"./app-Ck8YYFv4.js";import{P as o}from"./pagination-Bc9Lkxjd.js";import"./iconBase-DqMB4g8C.js";function c({onPageChange:n}){const{adminEStoreStockMeta:t}=i(e=>e.engagement);return!t||t.last_page<=1?null:a.jsx("div",{className:"pagination-section",children:a.jsx(o,{data:t,onPageChange:n})})}export{c as default};
