@@ -72,6 +72,7 @@ test("video uses the full media column and defers loading until playback", () =>
     assert.match(html, /<video[^>]*playsinline=""/i);
     assert.match(html, /<video[^>]*object-contain[^>]*aria-label="Submission video proof 1"/);
     assert.match(html, /aria-label="Play submission video proof 1"/);
+    assert.match(html, /aria-label="Download submission video proof 1"[^>]*>.*?Download</);
     assert.match(html, /Review Submission/);
     assert.match(html, /Bonus Points/);
     assert.match(html, /Approve/);

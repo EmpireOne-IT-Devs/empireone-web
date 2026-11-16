@@ -354,6 +354,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('reward-challenge-team-submissions', [EngagementChallengeSubmissionsController::class, 'teamIndex']);
         Route::get('reward-challenge-submissions/export', [EngagementChallengeSubmissionsController::class, 'export']);
         Route::get('reward-challenge-submissions/stats', [EngagementChallengeSubmissionsController::class, 'stats']);
+        Route::get('reward-challenge-submissions/{id}/media/{index}/download', [EngagementChallengeSubmissionsController::class, 'downloadMedia'])
+            ->whereNumber('index');
         Route::post('reward-challenge-submissions/{id}/approve', [EngagementChallengeSubmissionsController::class, 'approve']);
         Route::post('reward-challenge-submissions/{id}/decline', [EngagementChallengeSubmissionsController::class, 'decline']);
         Route::apiResource('e-store-items', EngagementEStoreController::class)

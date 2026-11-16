@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Engagement;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Engagement\ApproveChallengeSubmissionRequest;
+use App\Http\Resources\Engagement\ChallengeProofDownloadResource;
 use App\Http\Resources\Engagement\EngagementRewardChallengeTeamSubmissionResource;
 use App\Models\Account\AccountEmployee;
 use App\Models\Engagement\EngagementRewardChallenge;
@@ -21,6 +22,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class EngagementChallengeSubmissionsController extends Controller
 {
@@ -162,6 +164,61 @@ class EngagementChallengeSubmissionsController extends Controller
             fclose($handle);
         }, 'challenge_submissions_'.now()->format('Ymd_His').'.xls', [
             'Content-Type' => 'application/vnd.ms-excel',
+        ]);
+    }
+
+    /**
+     * Short-lived S3 download link for one proof video, named after the
+     * submitter and submission date. The file never passes through Laravel.
+     */
+    public function downloadMedia(string $id, int $index): JsonResponse
+    {
+        Gate::authorize('viewAny', EngagementRewardChallengeTeamSubmission::class);
+
+        if (str_starts_with($id, 'team-')) {
+            $submission = EngagementRewardChallengeTeamSubmission::query()
+                ->with('leader:id,name')
+                ->findOrFail((int) substr($id, 5));
+            $media = $submission->submission_media;
+            $submitter = 'Team '.($submission->leader?->name ?? 'Unknown');
+            $submittedAt = $submission->submitted_at;
+        } elseif (str_starts_with($id, 'daily-')) {
+            $log = EngagementRewardChallengeDailyLog::query()
+                ->with('participant.user:id,name')
+                ->findOrFail((int) substr($id, 6));
+            $media = $log->submission_media;
+            $submitter = $log->participant?->user?->name;
+            $submittedAt = $log->submitted_at;
+        } else {
+            $participant = EngagementRewardChallengeParticipant::query()
+                ->with('user:id,name')
+                ->findOrFail((int) $id);
+            $media = $participant->submission_media;
+            $submitter = $participant->user?->name;
+            $submittedAt = $participant->submitted_at;
+        }
+
+        // Same filtering as the media list sent to the review screen, so the index lines up.
+        $item = collect($media ?? [])
+            ->filter(fn (array $item) => ! empty($item['path']))
+            ->values()
+            ->get($index);
+        abort_unless($item && ($item['type'] ?? 'image') === 'video', 404);
+
+        $name = trim(preg_replace('/[^A-Za-z0-9]+/', '-', Str::ascii($submitter ?: 'Unknown')), '-') ?: 'Unknown';
+        $extension = strtolower(pathinfo($item['path'], PATHINFO_EXTENSION)) ?: 'mp4';
+        $filename = $name.($submittedAt ? '_'.$submittedAt->format('Y-m-d') : '').'.'.$extension;
+        $expiresAt = now()->addMinutes(5);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => (new ChallengeProofDownloadResource([
+                'url' => Storage::disk('s3')->temporaryUrl($item['path'], $expiresAt, [
+                    'ResponseContentDisposition' => 'attachment; filename="'.$filename.'"',
+                ]),
+                'filename' => $filename,
+                'expires_at' => $expiresAt->toIso8601String(),
+            ]))->resolve(request()),
         ]);
     }
 
