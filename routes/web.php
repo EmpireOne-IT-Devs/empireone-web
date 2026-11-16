@@ -34,9 +34,6 @@ Route::middleware('auth')->get('/user/token', function (Request $request) {
 });
 
 Route::get('/', function () {
-    if (Auth::user()) {
-        return route_page();
-    }
     return Inertia::render('landing_page/page');
 });
 
