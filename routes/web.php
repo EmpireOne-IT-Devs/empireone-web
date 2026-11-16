@@ -87,7 +87,11 @@ Route::get('/pm-reaches/{pmReach}/acknowledge', [PMReachController::class, 'ackn
 
 Route::prefix('human-resources')->name('human-resources.')->group(function () {
     Route::inertia('/reach', 'acknowledgment/reach/page')->name('reach');
-    Route::inertia('/pip', 'acknowledgment/pip/page')->name('pip');
+
+    Route::get('/pip/{pip_id}/acknowledge', function ($pip_id) {
+        return Inertia::render('acknowledgment/pip/page');
+    })->middleware(['auth', 'info.complete'])->name('pip');
+
     Route::inertia('/corrective-actions/{correctiveAction}/acknowledge', 'acknowledgment/corrective_action/page')
         ->middleware(['auth:sanctum'])
         ->name('corrective-actions.acknowledge');

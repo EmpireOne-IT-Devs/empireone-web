@@ -35,6 +35,29 @@ return new class extends Migration
             $table->string('manager_name')->nullable();
             $table->string('manager_email')->nullable();
 
+            $table->string('hr_user_id')->nullable();
+            $table->string('hr_id')->nullable();
+            $table->string('hr_first_name')->nullable();
+            $table->string('hr_last_name')->nullable();
+            $table->string('hr_email')->nullable();
+
+            $table->boolean('is_hr_approved')->nullable();
+            $table->boolean('is_manager_approved')->nullable();
+            $table->boolean('is_supervisor_approved')->nullable();
+            $table->boolean('is_employee_acknowledged')->nullable();
+
+
+            $table->boolean('is_passed')->nullable();
+            $table->string('sanction')->nullable();
+
+            
+            $table->boolean('is_hr_final_approved')->nullable();
+            $table->boolean('is_manager_final_approved')->nullable();
+            $table->boolean('is_supervisor_final_approved')->nullable();
+            $table->boolean('is_employee_final_acknowledged')->nullable();
+
+            $table->longText('action_notes')->nullable();
+
             // PIP Cycle & Dates
             $table->date('pip_start_date')->nullable();
             $table->date('pip_end_date')->nullable();
