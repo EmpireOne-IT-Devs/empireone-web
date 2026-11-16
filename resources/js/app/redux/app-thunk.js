@@ -3,6 +3,7 @@ import {
     get_job_interview_by_id_service,
     get_location_service,
 } from "../services/app-service";
+import { get_hr_director_service } from "../services/account-service";
 import {
     get_job_interviewer_schedule_by_interviewer_id_service,
     get_job_interviewer_schedule_service,
@@ -56,5 +57,12 @@ export function get_user_by_id_thunk(user_id) {
         const result = await get_user_by_id_service(user_id);
         dispatch(appSlice.actions.setUser(result.data));
         dispatch(appSlice.actions.setHr(result.hr));
+    };
+}
+
+export function get_hr_director_thunk() {
+    return async function (dispatch, getState) {
+        const result = await get_hr_director_service();
+        dispatch(appSlice.actions.setHrDirector(result.data));
     };
 }

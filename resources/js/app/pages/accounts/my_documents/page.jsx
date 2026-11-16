@@ -7,10 +7,12 @@ import StatsSection from "./_sections/stats-section";
 import store from "@/app/store/store";
 import { get_documents_by_user_thunk } from "@/app/redux/applicant-thunk";
 import MyDocumentsLayout from "./layout";
+import { get_hr_director_thunk } from "@/app/redux/app-thunk";
 
 export default function Page() {
     useEffect(() => {
         store.dispatch(get_documents_by_user_thunk());
+        store.dispatch(get_hr_director_thunk());
     }, []);
     return (
         <Layout>

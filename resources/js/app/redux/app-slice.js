@@ -27,6 +27,7 @@ export const appSlice = createSlice({
         tas: [],
         hr: null,
         locations: [],
+        hr_director: null,
     },
     reducers: {
         setUser: (state, action) => {
@@ -74,6 +75,9 @@ export const appSlice = createSlice({
         setLocations: (state, action) => {
             state.locations = action.payload;
         },
+        setHrDirector: (state, action) => {
+            state.hr_director = action.payload;
+        },
     },
 });
 export const {
@@ -92,6 +96,7 @@ export const {
     setInterviewer,
     setInterviewerId,
     setJobInterview,
+    setHrDirector,
 } = appSlice.actions;
 
 export default appSlice.reducer;

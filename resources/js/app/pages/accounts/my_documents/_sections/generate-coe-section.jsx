@@ -30,6 +30,8 @@ export default function GenerateCoeSection() {
     const [confirm_open, setConfirmOpen] = useState(false);
     const dispatch = useDispatch();
     const { user, employee, isReady } = useCurrentEmployee();
+    const account_employees = useSelector((store) => store.app.data?.account_employees);
+    const hr_director = useSelector((store) => store.app.hr_director);
     const sites = useSelector((store) => store.app.data?.sites);
     const { status, status_loading } = useSelector(
         (store) => store.coe_requests,
@@ -58,6 +60,7 @@ export default function GenerateCoeSection() {
         started_at: employee?.started_at,
         office_address: site?.full_address,
         purpose: debounced_purpose,
+        signature: hr_director?.signature,
     };
     const file_name = `COE - ${coe_props.name}.pdf`;
 
@@ -92,6 +95,7 @@ export default function GenerateCoeSection() {
                     {...coe_props}
                     purpose={purpose}
                     control_number={result.payload?.data?.control_no}
+                    signature={result.payload?.signatory_signature}
                 />,
             ).toBlob();
 
