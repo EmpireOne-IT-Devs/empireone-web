@@ -111,6 +111,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 8,
     },
+    controlRow: {
+        position: "absolute",
+        right: 60,
+        bottom: 16,
+    },
+    controlText: {
+        fontFamily: "Helvetica-Bold",
+        fontSize: 8.5,
+        color: "#374151",
+        textAlign: "right",
+    },
 });
 
 export const format_coe_date = (value) => {
@@ -213,7 +224,7 @@ function HeaderRule() {
 export default function CoeDocument({
     name,
     first_name,
-    middle_name,    
+    middle_name,
     last_name,
     employee_id,
     gender,
@@ -221,11 +232,14 @@ export default function CoeDocument({
     started_at,
     purpose,
     office_address,
+    control_number,
 }) {
     const today = new Date();
     const { salutation, pronoun } = get_title_and_pronoun(gender);
     const start_date = format_coe_date(started_at);
-    const display_name = String(`${first_name} ${middle_name ?? ""} ${last_name}` ?? "").toUpperCase();
+    const display_name = String(
+        `${first_name} ${middle_name ?? ""} ${last_name}` ?? "",
+    ).toUpperCase();
     const requester = [salutation, last_name || name].filter(Boolean).join(" ");
     const purpose_text = purpose?.trim() || DEFAULT_PURPOSE;
     const month = today.toLocaleDateString("en-US", { month: "long" });
@@ -239,13 +253,17 @@ export default function CoeDocument({
                     src="/images/E1Icon.png"
                 />
 
-                <Image style={styles.logo} src="/images/E1CXlogo2-cropped.png" />
+                <Image
+                    style={styles.logo}
+                    src="/images/E1CXlogo2-cropped.png"
+                />
                 <HeaderRule />
 
                 <Text style={styles.title}>CERTIFICATE OF EMPLOYMENT</Text>
 
                 <Text style={styles.paragraph}>
-                    This is to certify that{salutation ? ` ${salutation} ` : " "}
+                    This is to certify that
+                    {salutation ? ` ${salutation} ` : " "}
                     <Text style={styles.bold}>{display_name}</Text>
                     {employee_id ? (
                         <>
@@ -266,9 +284,9 @@ export default function CoeDocument({
 
                 <Text style={styles.paragraph}>
                     This certification is being issued upon the request of{" "}
-                    {requester} for {purpose_text} purposes. EmpireOne shall not be held
-                    liable if this certification is used other than the purpose
-                    indicated.
+                    {requester} for {purpose_text} purposes. EmpireOne shall not
+                    be held liable if this certification is used other than the
+                    purpose indicated.
                 </Text>
 
                 <Text style={styles.paragraph}>
@@ -314,6 +332,14 @@ export default function CoeDocument({
                         </View>
                     ) : null}
                 </View>
+
+                {control_number ? (
+                    <View style={styles.controlRow}>
+                        <Text style={styles.controlText}>
+                            Control Number: {control_number}
+                        </Text>
+                    </View>
+                ) : null}
             </Page>
         </Document>
     );

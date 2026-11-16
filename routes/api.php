@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AIController;
+use App\Http\Controllers\API\COERequestController;
 use App\Http\Controllers\API\Account\AccountAccessController;
 use App\Http\Controllers\API\Account\AccountContractController;
 use App\Http\Controllers\API\Account\AccountPendingController;
@@ -145,6 +146,10 @@ Route::post('ask_ai', [AIController::class, 'ask_ai'])->middleware(['auth:sanctu
 Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::get('locations/employee-counts', [LocationController::class, 'employeeCounts']);
     Route::get('locations/{location}/employees/export', [LocationController::class, 'exportEmployees']);
+
+    Route::get('coe_requests/status', [COERequestController::class, 'status']);
+    Route::get('coe_requests', [COERequestController::class, 'index']);
+    Route::post('coe_requests', [COERequestController::class, 'store']);
 
     Route::apiResource('tickets', TicketingController::class);
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
