@@ -62,13 +62,16 @@ function render(media) {
     }));
 }
 
-test("video uses the full media column with native playback controls", () => {
+test("video uses the full media column and defers loading until playback", () => {
     const html = render([{ type: "video", url: "/proof.mp4" }]);
     assert.match(html, /data-modal-width="max-w-4xl"/);
     assert.match(html, /aspect-video[^"]*sm:col-span-2/);
-    assert.match(html, /<video[^>]*src="\/proof.mp4"[^>]*controls=""/);
+    assert.match(html, /<video[^>]*preload="none"/);
+    assert.doesNotMatch(html, /<video[^>]*src=/);
+    assert.doesNotMatch(html, /<video[^>]*controls=""/);
     assert.match(html, /<video[^>]*playsinline=""/i);
     assert.match(html, /<video[^>]*object-contain[^>]*aria-label="Submission video proof 1"/);
+    assert.match(html, /aria-label="Play submission video proof 1"/);
     assert.match(html, /Review Submission/);
     assert.match(html, /Bonus Points/);
     assert.match(html, /Approve/);
@@ -97,4 +100,16 @@ test("a video spans the media grid when mixed with images", () => {
     assert.match(html, /sm:col-span-2/);
     assert.match(html, /aria-label="Preview submission image 1"/);
     assert.match(html, /aria-label="Submission video proof 2"/);
+});
+
+test("multiple videos remain unloaded until each playback is requested", () => {
+    const html = render([
+        { type: "video", url: "/first.mp4" },
+        { type: "video", url: "/second.mp4" },
+    ]);
+
+    assert.equal((html.match(/<video/g) || []).length, 2);
+    assert.equal((html.match(/preload="none"/g) || []).length, 2);
+    assert.equal((html.match(/aria-label="Play submission video proof/g) || []).length, 2);
+    assert.doesNotMatch(html, /<video[^>]*src=/);
 });

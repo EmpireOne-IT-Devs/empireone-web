@@ -100,7 +100,7 @@ class EngagementChallengeSubmissionsController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $submissions,
+            'data' => $this->withSurveyPoints($submissions),
         ]);
     }
 
@@ -127,7 +127,7 @@ class EngagementChallengeSubmissionsController extends Controller
 
         return response()->streamDownload(function () use ($submissions) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['EOID', 'Fullname', 'Email', 'Challenge Title', 'Department', 'Account', 'Base Points', 'Bonus Points', 'Total Points'], "\t");
+            fputcsv($handle, ['EOID', 'Fullname', 'Email', 'Challenge Title', 'Department', 'Account', 'Base Points', 'Bonus Points', 'Survey Points', 'Total Points'], "\t");
 
             foreach ($submissions as $submission) {
                 $employee = $submission['employee'] ?? [];
@@ -143,6 +143,7 @@ class EngagementChallengeSubmissionsController extends Controller
                             ?? (! empty($submission['individual_daily_log']) ? $submission['bonus_points'] : 0));
                 }
                 $basePoints = max(0, $totalPoints - $bonusPoints);
+                $surveyPoints = (int) ($submission['survey_points_awarded'] ?? 0);
 
                 fputcsv($handle, [
                     $employee['eoid'] ?? '',
@@ -153,7 +154,8 @@ class EngagementChallengeSubmissionsController extends Controller
                     $employee['account_name'] ?? '',
                     $basePoints,
                     $bonusPoints,
-                    $basePoints + $bonusPoints,
+                    $surveyPoints,
+                    $basePoints + $bonusPoints + $surveyPoints,
                 ], "\t");
             }
 
@@ -212,9 +214,9 @@ class EngagementChallengeSubmissionsController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Team submission approved.',
-                'data' => (new EngagementRewardChallengeTeamSubmissionResource(
+                'data' => $this->withSurveyPointsRow((new EngagementRewardChallengeTeamSubmissionResource(
                     $approved->load(['leader.account_employee', 'leader.challengeParticipations']),
-                ))->resolve(request()),
+                ))->resolve(request())),
             ]);
         }
 
@@ -254,7 +256,7 @@ class EngagementChallengeSubmissionsController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => $completed ? 'Submission approved and points awarded.' : 'Proof approved. Challenge completion is waiting for the employee survey.',
-                'data' => $this->formatSubmission($participant->fresh(['user'])->load(['challenge' => fn ($query) => $query->withTrashed()])),
+                'data' => $this->withSurveyPointsRow($this->formatSubmission($participant->fresh(['user'])->load(['challenge' => fn ($query) => $query->withTrashed()]))),
             ]);
         });
     }
@@ -285,9 +287,9 @@ class EngagementChallengeSubmissionsController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Team submission declined.',
-                'data' => (new EngagementRewardChallengeTeamSubmissionResource(
+                'data' => $this->withSurveyPointsRow((new EngagementRewardChallengeTeamSubmissionResource(
                     $declined->load(['leader.account_employee', 'leader.challengeParticipations']),
-                ))->resolve($request),
+                ))->resolve($request)),
             ]);
         }
 
@@ -312,7 +314,7 @@ class EngagementChallengeSubmissionsController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Submission declined.',
-                'data' => $this->formatSubmission($participant->fresh(['user'])->load(['challenge' => fn ($query) => $query->withTrashed()])),
+                'data' => $this->withSurveyPointsRow($this->formatSubmission($participant->fresh(['user'])->load(['challenge' => fn ($query) => $query->withTrashed()]))),
             ]);
         });
     }
@@ -375,7 +377,7 @@ class EngagementChallengeSubmissionsController extends Controller
                 'message' => $completed
                     ? 'Day approved — challenge complete, points awarded!'
                     : ($participant->status === 'pending_survey' ? 'Day approved. Challenge completion is waiting for the employee survey.' : 'Day approved.'),
-                'data' => $this->formatDailyLog($log->fresh(['participant.challenge', 'participant.user'])),
+                'data' => $this->withSurveyPointsRow($this->formatDailyLog($log->fresh(['participant.challenge', 'participant.user']))),
             ]);
         });
     }
@@ -412,7 +414,7 @@ class EngagementChallengeSubmissionsController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Day declined.',
-                'data' => $this->formatDailyLog($log->fresh(['participant.challenge', 'participant.user'])),
+                'data' => $this->withSurveyPointsRow($this->formatDailyLog($log->fresh(['participant.challenge', 'participant.user']))),
             ]);
         });
     }
@@ -434,10 +436,79 @@ class EngagementChallengeSubmissionsController extends Controller
             ->get()
             ->map(fn ($submission) => (new EngagementRewardChallengeTeamSubmissionResource($submission))->resolve(request()));
 
-        return $singleSubmissions->concat($dailySubmissions)
-            ->concat($teamSubmissions)
-            ->sortByDesc('submitted_at')
-            ->values();
+        return $this->withSurveyPoints(
+            $singleSubmissions->concat($dailySubmissions)
+                ->concat($teamSubmissions)
+                ->sortByDesc('submitted_at')
+                ->values(),
+        );
+    }
+
+    /**
+     * Adds each employee's survey reward to exactly one of their submission
+     * rows per challenge, so table and export totals never count it twice.
+     * This mirrors the employee points history: the leader's latest team
+     * submission carries it, otherwise the latest individual daily log,
+     * otherwise the single-proof row.
+     */
+    private function withSurveyPoints(Collection $rows): Collection
+    {
+        $challengeIds = $rows->pluck('challenge.id')->filter()->unique()->values();
+        $userIds = $rows->pluck('employee.id')->filter()->unique()->values();
+        $rewarded = $challengeIds->isEmpty() || $userIds->isEmpty()
+            ? collect()
+            : EngagementRewardChallengeParticipant::query()
+                ->whereIn('reward_challenge_id', $challengeIds)
+                ->whereIn('user_id', $userIds)
+                ->where('survey_points_awarded', '>', 0)
+                ->get(['id', 'reward_challenge_id', 'user_id', 'survey_points_awarded'])
+                ->keyBy(fn (EngagementRewardChallengeParticipant $participant) => "{$participant->reward_challenge_id}:{$participant->user_id}");
+
+        if ($rewarded->isEmpty()) {
+            return $rows->map(fn (array $row) => [...$row, 'survey_points_awarded' => 0]);
+        }
+
+        $latestTeamSubmissionIds = EngagementRewardChallengeTeamSubmission::query()
+            ->whereIn('reward_challenge_id', $rewarded->pluck('reward_challenge_id')->unique())
+            ->whereIn('leader_id', $rewarded->pluck('user_id')->unique())
+            ->orderByDesc('submitted_at')
+            ->orderByDesc('id')
+            ->get(['id', 'reward_challenge_id', 'leader_id'])
+            ->unique(fn (EngagementRewardChallengeTeamSubmission $submission) => "{$submission->reward_challenge_id}:{$submission->leader_id}")
+            ->mapWithKeys(fn (EngagementRewardChallengeTeamSubmission $submission) => [
+                "{$submission->reward_challenge_id}:{$submission->leader_id}" => (int) $submission->id,
+            ]);
+        $latestDailyLogIds = EngagementRewardChallengeDailyLog::query()
+            ->whereIn('reward_challenge_participant_id', $rewarded->pluck('id'))
+            ->whereNull('team_submission_id')
+            ->selectRaw('reward_challenge_participant_id, MAX(id) as latest_id')
+            ->groupBy('reward_challenge_participant_id')
+            ->pluck('latest_id', 'reward_challenge_participant_id');
+
+        return $rows->map(function (array $row) use ($rewarded, $latestTeamSubmissionIds, $latestDailyLogIds) {
+            $key = ($row['challenge']['id'] ?? '').':'.($row['employee']['id'] ?? '');
+            $participant = $rewarded->get($key);
+            $carriesReward = false;
+
+            if ($participant && isset($row['team_submission_id'])) {
+                $carriesReward = $latestTeamSubmissionIds->get($key) === (int) $row['team_submission_id'];
+            } elseif ($participant && ! $latestTeamSubmissionIds->has($key)) {
+                $latestDailyLogId = $latestDailyLogIds->get($participant->id);
+                $carriesReward = empty($row['individual_daily_log'])
+                    ? $latestDailyLogId === null
+                    : (int) $latestDailyLogId === (int) substr((string) $row['id'], 6);
+            }
+
+            return [
+                ...$row,
+                'survey_points_awarded' => $carriesReward ? (int) $participant->survey_points_awarded : 0,
+            ];
+        });
+    }
+
+    private function withSurveyPointsRow(array $row): array
+    {
+        return $this->withSurveyPoints(collect([$row]))->first();
     }
 
     /**
@@ -497,7 +568,7 @@ class EngagementChallengeSubmissionsController extends Controller
         }
 
         return [
-            'data' => $rows,
+            'data' => $this->withSurveyPoints($rows),
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'last_page' => $paginator->lastPage(),

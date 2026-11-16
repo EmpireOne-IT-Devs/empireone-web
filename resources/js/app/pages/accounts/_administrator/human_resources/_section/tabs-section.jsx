@@ -9,7 +9,7 @@ import {
     FcNightPortrait,
     FcServices,
     FcPodiumWithSpeaker,
-    FcIdea
+    FcIdea,
 } from "react-icons/fc";
 import SubSidebarSection from "./../../../__sections/sub-sidebar-section";
 
@@ -146,6 +146,12 @@ export default function HRTabsSection({ children }) {
             icon: <FcDocument className="w-5 h-5 shrink-0" />,
             path: "/accounts/administrator/human_resources/acknowledgements",
             active: currentPath === "acknowledgements",
+        },
+        {
+            label: "COE Requests",
+            icon: <FcDocument className="w-5 h-5 shrink-0" />,
+            path: "/accounts/administrator/human_resources/coe_requests",
+            active: currentPath === "coe_requests",
         },
     ];
 

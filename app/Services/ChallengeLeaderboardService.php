@@ -18,6 +18,16 @@ class ChallengeLeaderboardService
         array $teamParticipantIds,
         Collection $departmentNames,
     ): array {
+        $surveyPointsByUser = $participants->mapWithKeys(fn (User $user) => [
+            (int) $user->id => (int) $user->pivot->survey_points_awarded,
+        ]);
+        $teamLeaderIds = $teamSubmissions
+            ->pluck('leader_id')
+            ->map(fn ($leaderId) => (int) $leaderId)
+            ->unique()
+            ->flip();
+
+        // A team leader's survey reward is counted once, on the team entry.
         $individualEntries = $participants
             ->reject(fn (User $user) => in_array(
                 (int) $user->pivot->id,
@@ -27,11 +37,17 @@ class ChallengeLeaderboardService
             ->map(fn (User $user) => $this->individualEntry(
                 $user,
                 $departmentNames->get($user->id),
+                $teamLeaderIds->has((int) $user->id)
+                    ? 0
+                    : (int) $surveyPointsByUser->get((int) $user->id, 0),
             ));
 
         $teamEntries = $teamSubmissions
             ->groupBy('leader_id')
-            ->map(fn (Collection $submissions) => $this->teamEntry($submissions));
+            ->map(fn (Collection $submissions, $leaderId) => $this->teamEntry(
+                $submissions,
+                (int) $surveyPointsByUser->get((int) $leaderId, 0),
+            ));
 
         return [
             'individual' => $this->rankEntries($individualEntries)->all(),
@@ -68,7 +84,7 @@ class ChallengeLeaderboardService
         return "engagement.reward-challenges.{$challengeId}.leaderboards";
     }
 
-    private function individualEntry(User $user, ?string $departmentName): array
+    private function individualEntry(User $user, ?string $departmentName, int $surveyPoints): array
     {
         $participant = $user->pivot;
         $approved = $participant->status === 'approved';
@@ -85,12 +101,14 @@ class ChallengeLeaderboardService
             'points_awarded' => $points,
             'challenge_points_awarded' => max(0, $points - $bonusPoints),
             'bonus_points_awarded' => $bonusPoints,
+            'survey_points_awarded' => $surveyPoints,
+            'total_points_awarded' => $points + $surveyPoints,
             'joined_at' => $participant->joined_at?->toDateTimeString(),
             'submitted_at' => $participant->submitted_at?->toDateTimeString(),
         ];
     }
 
-    private function teamEntry(Collection $submissions): array
+    private function teamEntry(Collection $submissions, int $surveyPoints): array
     {
         /** @var EngagementRewardChallengeTeamSubmission $latestSubmission */
         $latestSubmission = $submissions->first();
@@ -123,6 +141,8 @@ class ChallengeLeaderboardService
             'points_awarded' => $points,
             'challenge_points_awarded' => $basePoints,
             'bonus_points_awarded' => $bonusPoints,
+            'survey_points_awarded' => $surveyPoints,
+            'total_points_awarded' => $points + $surveyPoints,
             'joined_at' => $joinedAt ? (string) $joinedAt : null,
             'submitted_at' => $latestSubmission->submitted_at?->toDateTimeString(),
             'member_count' => $members->count(),
@@ -134,7 +154,7 @@ class ChallengeLeaderboardService
     {
         $rankedEntries = $entries
             ->sort(function (array $left, array $right) {
-                $pointsOrder = $right['points_awarded'] <=> $left['points_awarded'];
+                $pointsOrder = $right['total_points_awarded'] <=> $left['total_points_awarded'];
                 if ($pointsOrder !== 0) {
                     return $pointsOrder;
                 }
@@ -142,9 +162,9 @@ class ChallengeLeaderboardService
                 return strcasecmp($left['name'], $right['name']);
             })
             ->values();
-        $topPoints = (int) ($rankedEntries->first()['points_awarded'] ?? 0);
+        $topPoints = (int) ($rankedEntries->first()['total_points_awarded'] ?? 0);
         $winnerCount = $topPoints > 0
-            ? $rankedEntries->where('points_awarded', $topPoints)->count()
+            ? $rankedEntries->where('total_points_awarded', $topPoints)->count()
             : 0;
         $previousPoints = null;
         $previousRank = null;
@@ -155,7 +175,7 @@ class ChallengeLeaderboardService
             &$previousPoints,
             &$previousRank,
         ) {
-            $points = (int) $entry['points_awarded'];
+            $points = (int) $entry['total_points_awarded'];
             $rank = null;
 
             if ($points > 0) {

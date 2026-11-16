@@ -14,6 +14,7 @@ import Button from "@/app/_components/button";
 import Input from "@/app/_components/input";
 import Modal from "@/app/_components/modal";
 import moment from "moment/moment";
+import SubmissionVideoPlayer from "./submission-video-player";
 
 export default function ProofSection({
     submission,
@@ -112,13 +113,15 @@ export default function ProofSection({
                                             }`}
                                         >
                                             {item.type === "video" ? (
-                                                <video
-                                                    src={item.url}
-                                                    controls
-                                                    playsInline
-                                                    preload="metadata"
-                                                    className="h-full w-full bg-black object-contain"
-                                                    aria-label={`Submission video proof ${index + 1}`}
+                                                <SubmissionVideoPlayer
+                                                    key={`${activeSubmission.id}-${item.url}`}
+                                                    url={item.url}
+                                                    label={`Submission video proof ${index + 1}`}
+                                                    isOpen={
+                                                        Boolean(submission) &&
+                                                        submission.id ===
+                                                            activeSubmission.id
+                                                    }
                                                 />
                                             ) : (
                                                 <>
