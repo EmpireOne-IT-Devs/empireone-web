@@ -28,6 +28,7 @@ import {
     get_reach_specific_leader_service,
     search_employee_service,
     get_pip_service,
+    get_pip_by_id_service,
 } from "../services/human-resources-service";
 import {
     get_performance_evaluation_by_id_service,
@@ -99,6 +100,12 @@ export function get_pip_thunk() {
     return async function (dispatch, getState) {
         const result = await get_pip_service();
         dispatch(employeeRelationSlice.actions.setPIPs(result));
+    };
+}
+export function get_pip_by_id_thunk(id) {
+    return async function (dispatch, getState) {
+        const result = await get_pip_by_id_service(id);
+        dispatch(employeeRelationSlice.actions.setPIP(result));
     };
 }
 

@@ -29,6 +29,15 @@ export async function get_pip_service() {
     return (await axios.get(`/api/er/pip${window.location.search}`)).data;
 }
 
+export async function get_pip_by_id_service(id) {
+    return (await axios.get(`/api/er/pip/${id}`)).data;
+}
+
+
+export async function approved_pip_service(data) {
+    return (await axios.put(`/api/er/pip/${data?.id}`,data)).data;
+}
+
 export async function export_change_form_service(data) {
     return await axios.post(
         `/api/er/export_change_form${window.location.search}`,

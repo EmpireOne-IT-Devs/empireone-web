@@ -22,6 +22,7 @@ import assetMonitorsSlice from "../redux/asset-monitor-slice";
 import assetPartsSlice from "../redux/asset-part-slice";
 import assetOtherAssetsSlice from "../redux/asset-other-asset-slice";
 import assetPeripheralsSlice from "../redux/asset-peripheral-slice";
+import coeRequestsSlice from "../redux/coe-request-slice";
 
 const store = configureStore({
     reducer: {
@@ -48,6 +49,7 @@ const store = configureStore({
         asset_parts: assetPartsSlice,
         asset_other_assets: assetOtherAssetsSlice,
         asset_peripherals: assetPeripheralsSlice,
+        coe_requests: coeRequestsSlice,
     },
 });
 

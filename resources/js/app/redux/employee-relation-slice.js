@@ -31,6 +31,7 @@ export const employeeRelationSlice = createSlice({
         corrective_actions: [],
         p_m_dashboard: {},
         pips: [],
+        pip: {},
     },
     reducers: {
         setEmployees: (state, action) => {
@@ -38,6 +39,9 @@ export const employeeRelationSlice = createSlice({
         },
         setPIPs: (state, action) => {
             state.pips = action.payload;
+        },
+        setPIP: (state, action) => {
+            state.pip = action.payload;
         },
         setPMDashboard: (state, action) => {
             state.p_m_dashboard = action.payload;
@@ -121,6 +125,7 @@ export const employeeRelationSlice = createSlice({
 });
 
 export const {
+    setPIP,
     setPIPs,
     setFiles,
     setCorrectiveActions,

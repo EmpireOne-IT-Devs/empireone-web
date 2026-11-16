@@ -222,13 +222,14 @@
        </table>
 
        <!-- Interactive Call-To-Action Button -->
-       @if(!$isCc)
+
+       <!-- Interactive Call-To-Action Button -->
+       <!-- Interactive Call-To-Action Button -->
        <div style="text-align: center; margin-top: 32px; margin-bottom: 16px;">
-        <a href="{{ URL::signedRoute('pm-pips.acknowledge', ['pmPip' => $pip->id]) }}" class="btn-action">
-         ACKNOWLEDGE PIP ENROLLMENT &rarr;
+        <a href="{{ URL::signedRoute('human-resources.pip', ['pip_id' => $pip->id]) }}" class="btn-action">
+         REVIEW PIP ENROLLMENT &rarr;
         </a>
        </div>
-       @endif
 
       </td>
      </tr>

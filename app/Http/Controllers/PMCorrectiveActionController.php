@@ -203,8 +203,8 @@ class PMCorrectiveActionController extends Controller
         // 2. Persist Corrective Action
         $correctiveAction = PMCorrectiveAction::create([
             ...$validated,
-            'hr_user_id'       => 58,
             'created_by' => Auth::id(),
+            'hr_user_id'       => 58,
             'hr_id'            => '26011207',
             'hr_first_name'    => 'Anthony',
             'hr_last_name'     => 'Aragon',

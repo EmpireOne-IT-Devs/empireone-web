@@ -31,9 +31,34 @@ class PMPip extends Model
         'manager_name',
         'manager_email',
 
+        'hr_user_id',
+        'hr_id',
+        'hr_first_name',
+        'hr_last_name',
+        'hr_email',
+
         'pip_start_date',
         'pip_end_date',
         'pip_cycle',
+
+
+        'is_hr_approved',
+        'is_manager_approved',
+        'is_supervisor_approved',
+        'is_employee_acknowledged',
+
+
+        'is_passed',
+        'sanction',
+
+        'action_notes',
+
+
+        'is_hr_final_approved',
+        'is_manager_final_approved',
+        'is_supervisor_final_approved',
+        'is_employee_final_acknowledged',
+
 
         'history_kpi',
         'history_target',
@@ -69,7 +94,22 @@ class PMPip extends Model
         return $this->hasOne(AccountEmployee::class, 'user_id', 'supervisor_user_id');
     }
 
-     public function account(): HasOne
+    public function manager(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'manager_user_id');
+    }
+    public function hr(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'hr_user_id');
+    }
+
+    public function employee(): HasOne
+    {
+        return $this->hasOne(AccountEmployee::class, 'user_id', 'user_id');
+    }
+
+
+    public function account(): HasOne
     {
         return $this->hasOne(Account::class, 'id', 'account_id');
     }

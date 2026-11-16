@@ -84,7 +84,11 @@ Route::get('/pm-reaches/{pmReach}/acknowledge', [PMReachController::class, 'ackn
 
 Route::prefix('human-resources')->name('human-resources.')->group(function () {
     Route::inertia('/reach', 'acknowledgment/reach/page')->name('reach');
-    Route::inertia('/pip', 'acknowledgment/pip/page')->name('pip');
+
+    Route::get('/pip/{pip_id}/acknowledge', function ($pip_id) {
+        return Inertia::render('acknowledgment/pip/page');
+    })->middleware(['auth', 'info.complete'])->name('pip');
+
     Route::inertia('/corrective-actions/{correctiveAction}/acknowledge', 'acknowledgment/corrective_action/page')
         ->middleware(['auth:sanctum'])
         ->name('corrective-actions.acknowledge');
@@ -279,6 +283,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('disciplinary_records', 'accounts/_administrator/human_resources/disciplinary_records/page');
             Route::inertia('separation', 'accounts/_administrator/human_resources/separation/page');
             Route::inertia('acknowledgements', 'accounts/_administrator/human_resources/acknowledgements/page');
+            Route::inertia('coe_requests', 'accounts/_administrator/human_resources/coe_requests/page');
             Route::inertia('201Files', 'accounts/_administrator/human_resources/201Files/page');
 
             Route::prefix('leads')->group(function () {

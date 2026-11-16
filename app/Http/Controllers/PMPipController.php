@@ -13,10 +13,10 @@ class PMPipController extends Controller
 {
     public function acknowledge(Request $request, PmPip $pmPip)
     {
-     
+
 
         $pmPip->update(['status' => 'ACKNOWLEDGED']);
-        return redirect(env('FRONTEND_URL') . '/human-resources/pip-success-page');
+        return redirect(env('FRONTEND_URL') . '/human-resources/pip/2/acknowledge');
     }
     public function index(Request $request)
     {
@@ -73,7 +73,7 @@ class PMPipController extends Controller
                 'last_name'            => 'nullable|string',
                 'position'             => 'nullable|string',
                 'account_id'             => 'nullable|string',
-                
+
                 'employee_email'       => 'nullable|email',
 
                 'supervisor_id'        => 'nullable',
@@ -107,7 +107,15 @@ class PMPipController extends Controller
             // Set default status
             $validatedData['status'] = 'Pending';
 
-            $pip = PmPip::create($validatedData);
+            $pip = PmPip::create([
+                ...$validatedData,
+                'hr_user_id'       => 58,
+                'hr_id'            => '26011207',
+                'hr_first_name'    => 'Anthony',
+                'hr_last_name'     => 'Aragon',
+                'hr_email'         => 'anthony@empireonegroup.com',
+            ]);
+
 
             // if (!empty($pip->employee_email)) {
             //     Mail::to($pip->employee_email)->send(new PipEnrollmentMail($pip, false));
@@ -120,9 +128,10 @@ class PMPipController extends Controller
 
             if (!empty($pip->supervisor_email)) {
                 $ccRecipients = array_values(array_filter([
-                    // $pip->employee_email,
                     // $pip->supervisor_email,
                     // 'anthony@empireonegroup.com',
+                    // $pip->manager_email,
+                    // $pip->employee_email,
                 ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
 
                 $mail = Mail::to('webdev@empireonegroup.com');
@@ -155,9 +164,11 @@ class PMPipController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PMPip $pMPip)
+    public function show($id)
     {
-        //
+
+        $pMPip = PMPip::where('id', $id)->with(['supervisor', 'manager', 'hr', 'employee'])->first();
+        return response()->json($pMPip, 200);
     }
 
     /**
@@ -168,14 +179,116 @@ class PMPipController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, PMPip $pMPip)
-    {
-        //
-    }
 
+    public function update(Request $request, $id)
+    {
+        $pMPip = PMPip::where('id', $id)->first();
+        if (!$pMPip) {
+            return response()->json(['message' => 'PIP record not found.'], 404);
+        }
+
+        $role = $request->input('role');
+
+        // Expanded allowed flags matching your database schema & frontend roles
+        $allowedFlags = [
+            'is_employee_acknowledged',
+            'is_hr_approved',
+            'is_supervisor_approved',
+            'is_manager_approved',
+
+            'is_employee_final_acknowledged',
+            'is_hr_final_approved',
+            'is_supervisor_final_approved',
+            'is_manager_final_approved',
+            'is_operations_manager_final_approved'
+        ];
+
+        if (in_array($role, $allowedFlags)) {
+            $pMPip->{$role} = 1;
+        }
+        // Fallback handlers for descriptive strings if any remain
+        elseif ($role === 'employee_acknowledge') {
+            $pMPip->is_employee_acknowledged = 1;
+        } elseif ($role === 'hr_approve') {
+            $pMPip->is_hr_approved = 1;
+        } elseif ($role === 'supervisor_approve' || $role === 'manager_approve') {
+            $pMPip->is_manager_approved = 1;
+        }
+
+        // Save action notes if present in request
+        if ($request->has('action_notes')) {
+            $pMPip->action_notes = $request->input('action_notes');
+        }
+
+        // Handle numeric is_passed (1 or 0)
+        if ($request->has('is_passed')) {
+            $pMPip->is_passed = (int) $request->input('is_passed');
+        }
+
+        // Handle sanction based on numeric is_passed value
+        if ($request->has('sanction')) {
+            $pMPip->sanction = ((int) $pMPip->is_passed === 1) ? null : $request->input('sanction');
+        }
+
+        // Check if all four final progress report approvals are complete
+        $isFinalApproved = (
+            (int) $pMPip->is_hr_final_approved === 1 &&
+            (int) $pMPip->is_manager_final_approved === 1 &&
+            (int) $pMPip->is_supervisor_final_approved === 1 &&
+            (int) $pMPip->is_employee_final_acknowledged === 1
+        );
+
+        // Evaluate and update status progression automatically
+        if ($isFinalApproved) {
+            $pMPip->status = ((int) $pMPip->is_passed === 1) ? 'Closed - Passed' : 'Closed - Failed';
+        } else {
+            // Fallback to initial enrollment status progression if not fully closed yet
+            if ($pMPip->is_employee_acknowledged == 1) {
+                $pMPip->status = 'Active PIP';
+            } elseif ($pMPip->is_manager_approved != 1) {
+                $pMPip->status = 'Pending Manager Approval';
+            } elseif ($pMPip->is_hr_approved != 1) {
+                $pMPip->status = 'Pending HR Approval';
+            } else {
+                $pMPip->status = 'Awaiting Employee Acknowledgment';
+            }
+        }
+
+        $pMPip->save();
+
+        if ($request->role == 'is_supervisor_final_approved') {
+            $mail = Mail::to('webdev@empireonegroup.com');
+            $ccRecipients = array_values(array_filter([
+                $pMPip->supervisor_email,
+                $pMPip->manager_email,
+                $pMPip->hr_email,
+            ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
+            $mail->send(new PipEnrollmentMail($pMPip, 'PIP Decision'));
+        }
+        // Check if current action was an HR or Manager initial approval, AND both are now approved
+        $isApproverAction = in_array($role, ['is_hr_approved', 'is_manager_approved', 'hr_approve', 'supervisor_approve', 'manager_approve']);
+        if ($isApproverAction && $pMPip->is_hr_approved == 1 && $pMPip->is_manager_approved == 1 && $pMPip->supervisor_email == 1) {
+            $ccRecipients = array_values(array_filter([
+                $pMPip->employee_email,
+            ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
+
+            $mail = Mail::to('webdev@empireonegroup.com');
+            if (!empty($ccRecipients)) {
+                $mail->cc($ccRecipients);
+            }
+            $mail->send(new PipEnrollmentMail($pMPip, 'PIP Decision'));
+        }
+
+        if ($request->sanction == 'Recommended for Termination') {
+            $mail = Mail::to('anthony@empireonegroup.com');
+            $mail->send(new PipEnrollmentMail($pMPip, $request->sanction));
+        }
+
+        return response()->json([
+            'message' => 'PIP record updated and approved successfully.',
+            'pip' => $pMPip
+        ], 200);
+    }
     /**
      * Remove the specified resource from storage.
      */
