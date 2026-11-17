@@ -71,8 +71,6 @@ export default function PerformanceImprovementPlanPage() {
         return numericSegment || 1;
     };
 
-   
-
     const formatDate = (dateString) => {
         if (!dateString) return "_____________";
 
@@ -308,16 +306,19 @@ export default function PerformanceImprovementPlanPage() {
 
                 {/* HEADER TABLE */}
 
-                <div className="border border-black grid grid-cols-3">
-                    <div className="p-4 flex items-center justify-center border-r border-black">
+                <div className="border border-black grid grid-cols-1 md:grid-cols-3">
+                    <div className="p-4 flex items-center justify-center border-b md:border-b-0 md:border-r border-black">
                         <span className="text-2xl font-black tracking-tight text-blue-900">
-                            Empire<span className="text-cyan-400">OneCX</span>
+                            <img
+                                src="/images/E1CXlogo.png"
+                                alt="E1CX Logo"
+                                className="max-h-16 object-contain"
+                            />
                         </span>
                     </div>
 
-                    <div className="col-span-2 p-4 flex flex-col items-center justify-center text-center font-bold uppercase tracking-wide text-xs">
+                    <div className="md:col-span-2 p-4 flex flex-col items-center justify-center text-center font-bold uppercase tracking-wide text-xs">
                         <p>Performance Improvement Plan (PIP)</p>
-
                         <p className="text-base font-extrabold mt-0.5">
                             Enrollment Form
                         </p>

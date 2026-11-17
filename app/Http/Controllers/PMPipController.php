@@ -67,38 +67,38 @@ class PMPipController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'user_id'              => 'nullable|integer',
-                'employee_id'          => 'required|string',
-                'first_name'           => 'required|string',
-                'last_name'            => 'nullable|string',
-                'position'             => 'nullable|string',
-                'account_id'             => 'nullable|string',
+                'user_id'              => 'nullable',
+                'employee_id'          => 'nullable',
+                'first_name'           => 'nullable',
+                'last_name'            => 'nullable',
+                'position'             => 'nullable',
+                'account_id'             => 'nullable',
 
-                'employee_email'       => 'nullable|email',
+                'employee_email'       => 'nullable',
 
                 'supervisor_id'        => 'nullable',
-                'supervisor_user_id'   => 'nullable|integer',
-                'supervisor_name'      => 'nullable|string',
-                'supervisor_email'     => 'nullable|email',
+                'supervisor_user_id'   => 'nullable',
+                'supervisor_name'      => 'nullable',
+                'supervisor_email'     => 'nullable',
 
                 'manager_id'           => 'nullable',
-                'manager_user_id'      => 'nullable|integer',
-                'manager_name'         => 'nullable|string',
-                'manager_email'        => 'nullable|email',
+                'manager_user_id'      => 'nullable',
+                'manager_name'         => 'nullable',
+                'manager_email'        => 'nullable',
 
-                'pip_start_date'       => 'required|date',
-                'pip_end_date'         => 'required|date',
-                'pip_cycle'            => 'required|string',
+                'pip_start_date'       => 'nullable',
+                'pip_end_date'         => 'nullable',
+                'pip_cycle'            => 'nullable',
 
-                'history_kpi'          => 'required|string',
-                'history_target'       => 'required|string',
-                'history_actual'       => 'required|string',
+                'history_kpi'          => 'nullable',
+                'history_target'       => 'nullable',
+                'history_actual'       => 'nullable',
 
-                'root_cause_analysis'  => 'required|string',
+                'root_cause_analysis'  => 'nullable',
 
-                'action_kpi_goal'      => 'required|string',
-                'action_target_action' => 'required|string',
-                'action_date'          => 'required|date',
+                'action_kpi_goal'      => 'nullable',
+                'action_target_action' => 'nullable',
+                'action_date'          => 'nullable',
             ]);
 
             // Assign the currently authenticated user as the creator
@@ -242,31 +242,37 @@ class PMPipController extends Controller
             $pMPip->status = ((int) $pMPip->is_passed === 1) ? 'Closed - Passed' : 'Closed - Failed';
         } else {
             // Fallback to initial enrollment status progression if not fully closed yet
-            if ($pMPip->is_employee_acknowledged == 1) {
+            if ($pMPip->is_employee_acknowledged == 1 && $pMPip->is_supervisor_final_approved == 0) {
                 $pMPip->status = 'Active PIP';
-            } elseif ($pMPip->is_manager_approved != 1) {
+            } elseif ($pMPip->is_manager_approved != 1 && $pMPip->is_supervisor_final_approved == 0) {
                 $pMPip->status = 'Pending Manager Approval';
-            } elseif ($pMPip->is_hr_approved != 1) {
+            } elseif ($pMPip->is_hr_approved != 1 && $pMPip->is_supervisor_final_approved == 0) {
                 $pMPip->status = 'Pending HR Approval';
             } else {
-                $pMPip->status = 'Awaiting Employee Acknowledgment';
+                if ($pMPip->is_supervisor_final_approved == 0) {
+                    $pMPip->status = 'Awaiting Employee Acknowledgment';
+                }
             }
         }
 
-        $pMPip->save();
+
 
         if ($request->role == 'is_supervisor_final_approved') {
+            $pMPip->status = 'Pending Final Acknowledgment';
             $mail = Mail::to('webdev@empireonegroup.com');
             $ccRecipients = array_values(array_filter([
                 $pMPip->supervisor_email,
                 $pMPip->manager_email,
                 $pMPip->hr_email,
+                $pMPip->employee_email,
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
             $mail->send(new PipEnrollmentMail($pMPip, 'PIP Decision'));
         }
+
+        $pMPip->save();
         // Check if current action was an HR or Manager initial approval, AND both are now approved
         $isApproverAction = in_array($role, ['is_hr_approved', 'is_manager_approved', 'hr_approve', 'supervisor_approve', 'manager_approve']);
-        if ($isApproverAction && $pMPip->is_hr_approved == 1 && $pMPip->is_manager_approved == 1 && $pMPip->supervisor_email == 1) {
+        if ($isApproverAction && $pMPip->is_hr_approved == 1 && $pMPip->is_manager_approved == 1) {
             $ccRecipients = array_values(array_filter([
                 $pMPip->employee_email,
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));

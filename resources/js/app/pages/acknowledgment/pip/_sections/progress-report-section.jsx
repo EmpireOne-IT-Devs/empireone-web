@@ -117,13 +117,18 @@ export default function ProgressReportSection({
             )}
 
             {/* HEADER TABLE */}
-            <div className="border border-black grid grid-cols-3">
-                <div className="p-4 flex items-center justify-center border-r border-black">
+            <div className="border border-black grid grid-cols-1 md:grid-cols-3">
+                <div className="p-4 flex items-center justify-center border-b md:border-b-0 md:border-r border-black">
                     <span className="text-2xl font-black tracking-tight text-blue-900">
-                        Empire<span className="text-cyan-400">OneCX</span>
+                        <img
+                            src="/images/E1CXlogo.png"
+                            alt="E1CX Logo"
+                            className="max-h-16 object-contain"
+                        />
                     </span>
                 </div>
-                <div className="col-span-2 p-4 flex flex-col items-center justify-center text-center font-bold uppercase tracking-wide text-xs">
+
+                <div className="md:col-span-2 p-4 flex flex-col items-center justify-center text-center font-bold uppercase tracking-wide text-xs">
                     <p>Performance Improvement Plan (PIP)</p>
                     <p className="text-base font-extrabold mt-0.5">
                         Progress Report
@@ -136,70 +141,86 @@ export default function ProgressReportSection({
             </div>
 
             {/* EMPLOYEE INFO TABLE */}
-            <table className="w-full border-collapse border border-black text-xs">
-                <tbody>
-                    <tr>
-                        <td className="border border-black p-2 font-semibold w-1/2">
-                            Employee Name:{" "}
-                            <span className="font-normal">
-                                {employeeFullName || "Loading..."}
-                            </span>
-                        </td>
-                        <td className="border border-black p-2 font-semibold w-1/2">
-                            Employee Number:{" "}
-                            <span className="font-normal">
-                                {pip?.employee_id || ""}
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="border border-black p-2 font-semibold">
-                            Position:{" "}
-                            <span className="font-normal">
-                                {pip?.position || ""}
-                            </span>
-                        </td>
-                        <td className="border border-black p-2 font-semibold">
-                            Immediate Supervisor:{" "}
-                            <span className="font-normal">
-                                {supervisorFullName}
-                            </span>
-                        </td>
-                    </tr>
-                    <tr className="text-center font-semibold bg-slate-100">
-                        <td className="border border-black p-1.5">
-                            PIP Start Date
-                        </td>
-                        <td className="border border-black p-1.5">
-                            PIP End Date
-                        </td>
-                        <td className="border border-black p-1.5">
-                            # of Enrollments
-                        </td>
-                        <td className="border border-black p-1.5">
-                            Dates of Previous Enrollments
-                        </td>
-                    </tr>
-                    <tr className="text-center">
-                        <td className="border border-black p-2">
-                            {formatDate(pip?.pip_start_date)}
-                        </td>
-                        <td className="border border-black p-2">
-                            {formatDate(pip?.pip_end_date)}
-                        </td>
-                        <td className="border border-black p-2">
-                            {pip?.pip_cycle || "1"}
-                        </td>
-                        <td className="border border-black p-2">N/A</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div className="w-full overflow-x-auto mb-4">
+                {/* Added min-w-[600px] so the text doesn't squish on mobile */}
+                <table className="w-full border-collapse border border-black text-xs min-w-[600px] md:min-w-full">
+                    <tbody>
+                        <tr>
+                            {/* Added colSpan={2} so the grid aligns with the 4 columns below */}
+                            <td
+                                colSpan={2}
+                                className="border border-black p-2 font-semibold w-1/2"
+                            >
+                                Employee Name:{" "}
+                                <span className="font-normal">
+                                    {employeeFullName || "Loading..."}
+                                </span>
+                            </td>
+                            <td
+                                colSpan={2}
+                                className="border border-black p-2 font-semibold w-1/2"
+                            >
+                                Employee Number:{" "}
+                                <span className="font-normal">
+                                    {pip?.employee_id || ""}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                colSpan={2}
+                                className="border border-black p-2 font-semibold"
+                            >
+                                Position:{" "}
+                                <span className="font-normal">
+                                    {pip?.position || ""}
+                                </span>
+                            </td>
+                            <td
+                                colSpan={2}
+                                className="border border-black p-2 font-semibold"
+                            >
+                                Immediate Supervisor:{" "}
+                                <span className="font-normal">
+                                    {supervisorFullName}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr className="text-center font-semibold bg-slate-100">
+                            <td className="border border-black p-1.5 w-1/4">
+                                PIP Start Date
+                            </td>
+                            <td className="border border-black p-1.5 w-1/4">
+                                PIP End Date
+                            </td>
+                            <td className="border border-black p-1.5 w-1/4">
+                                # of Enrollments
+                            </td>
+                            <td className="border border-black p-1.5 w-1/4">
+                                Dates of Previous Enrollments
+                            </td>
+                        </tr>
+                        <tr className="text-center">
+                            <td className="border border-black p-2">
+                                {formatDate(pip?.pip_start_date)}
+                            </td>
+                            <td className="border border-black p-2">
+                                {formatDate(pip?.pip_end_date)}
+                            </td>
+                            <td className="border border-black p-2">
+                                {pip?.pip_cycle || "1"}
+                            </td>
+                            <td className="border border-black p-2">{formatDate(pip?.pip_start_date)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             {/* NOTIFICATION PARAGRAPH */}
             <p className="text-justify">
                 You were notified last{" "}
                 <span className="underline">
-                    {formatDate(pip?.notification_date) || "(month/date/year)"}
+                    {formatDate(pip?.created_at) || "(month/date/year)"}
                 </span>{" "}
                 that you are being enrolled under the Performance Improvement
                 Plan due to failing standard performance metrics from{" "}
