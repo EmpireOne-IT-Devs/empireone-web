@@ -18,9 +18,10 @@ export async function get_erps_service() {
     return (await axios.get(`/api/job/get_erps${window.location.search}`)).data;
 }
 
-export async function get_job_postings_service() {
+export async function get_job_postings_service(params = {}) {
+    const extra = new URLSearchParams(params).toString();
     return await axios.get(
-        `/api/job/postings${window.location.search ? window.location.search : "?"}&where=${window.location.pathname.split("/")[4] ?? ""}`,
+        `/api/job/postings${window.location.search ? window.location.search : "?"}&where=${window.location.pathname.split("/")[4] ?? ""}${extra ? `&${extra}` : ""}`,
     );
 }
 

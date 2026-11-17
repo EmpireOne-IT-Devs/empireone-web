@@ -20,6 +20,8 @@ const Select = forwardRef(
             iconRight,
             disabled = false,
             className = "",
+            variant = "light",
+            labelBgClass,
             value, // from React Hook Form
             onChange, // from React Hook Form
             ...props
@@ -76,12 +78,29 @@ const Select = forwardRef(
         const visibleOptions = filteredOptions.slice(0, MAX_RENDERED_OPTIONS);
         const hiddenCount = filteredOptions.length - visibleOptions.length;
 
+        const isDark = variant === "dark";
+        const iconColor = isDark ? "text-purple-300/70" : "text-gray-500";
+        const inputTheme = isDark
+            ? `rounded-xl bg-white/5 text-purple-100 focus:ring-purple-400 focus:shadow-[0_0_20px_rgba(168,85,247,0.25)] disabled:opacity-60 ${error ? "border-red-500 focus:ring-red-500" : "border-purple-500/30"}`
+            : `rounded-md bg-white text-black focus:ring-purple-500 ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}`;
+        const labelTheme = isDark
+            ? `${labelBgClass ?? "bg-[#130830]"} ${search || isOpen ? "-top-2 text-xs text-purple-300" : "top-2.5 text-purple-200/50 !bg-transparent"}`
+            : `bg-white ${search || isOpen ? "-top-2 text-xs text-purple-600" : "top-2.5 text-gray-500"}`;
+        const listTheme = isDark
+            ? "rounded-xl border-purple-500/30 bg-[#130830] shadow-[0_8px_30px_rgba(168,85,247,0.25)]"
+            : "rounded-md bg-white shadow-lg";
+        const optionTheme = (selected) =>
+            isDark
+                ? `text-purple-100 hover:bg-purple-500/20 ${selected ? "bg-purple-500/20 text-orange-300" : ""}`
+                : `text-black hover:bg-purple-100 ${selected ? "bg-purple-50 text-purple-600" : ""}`;
+        const mutedText = isDark ? "text-purple-200/50" : "text-gray-500";
+
         return (
             <div className="w-full" ref={containerRef}>
                 <div className="relative">
                     {/* Left Icon */}
                     {iconLeft && (
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 z-10">
+                        <div className={`absolute left-3 top-1/2 -translate-y-1/2 ${iconColor} z-10`}>
                             {iconLeft}
                         </div>
                     )}
@@ -102,25 +121,25 @@ const Select = forwardRef(
                         }}
                         onClick={handleInputClick}
                         placeholder=""
-                        className={`w-full rounded-md border bg-white py-2.5 px-4 text-sm text-black
-              focus:outline-none focus:ring-2 focus:ring-purple-500
+                        className={`w-full border py-2.5 px-4 text-sm transition-shadow
+              focus:outline-none focus:ring-2
               ${iconLeft ? "pl-10" : ""} ${iconRight ? "pr-10" : "pr-8"}
-              ${error ? "border-red-500 focus:ring-red-500" : "border-gray-300"}
+              ${inputTheme}
               ${className}`}
                     />
 
                     {/* Floating Label */}
                     <label
                         htmlFor={name}
-                        className={`absolute left-3 bg-white px-1 text-sm transition-all duration-200 ease-out pointer-events-none
-              ${search || isOpen ? "-top-2 text-xs text-purple-600" : "top-2.5 text-gray-500"}`}
+                        className={`absolute left-3 px-1 text-sm transition-all duration-200 ease-out pointer-events-none
+              ${labelTheme}`}
                     >
                         {label}
                     </label>
 
                     {/* Dropdown Arrow */}
                     {!iconRight && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                        <div className={`absolute right-3 top-1/2 -translate-y-1/2 ${iconColor} pointer-events-none`}>
                             <svg
                                 className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
                                 fill="none"
@@ -139,22 +158,19 @@ const Select = forwardRef(
 
                     {/* Right Icon */}
                     {iconRight && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                        <div className={`absolute right-3 top-1/2 -translate-y-1/2 ${iconColor} pointer-events-none`}>
                             {iconRight}
                         </div>
                     )}
 
                     {/* Dropdown Options */}
                     {isOpen && !disabled && (
-                        <ul className="absolute z-[60] mt-1 w-full max-h-60 overflow-auto rounded-md border bg-white shadow-lg">
+                        <ul className={`absolute z-[60] mt-1 w-full max-h-60 overflow-auto border ${listTheme}`}>
                             {visibleOptions.length > 0 ? (
                                 visibleOptions.map((option, idx) => (
                                     <li
                                         key={option.value ?? idx}
-                                        className={`cursor-pointer px-4 py-2 hover:bg-purple-100 text-black text-sm ${value === option.value
-                                            ? "bg-purple-50 text-purple-600"
-                                            : ""
-                                            }`}
+                                        className={`cursor-pointer px-4 py-2 text-sm ${optionTheme(value === option.value)}`}
                                         onMouseDown={(e) => {
                                             e.preventDefault(); // Prevent input defocusing
                                         }}
@@ -164,12 +180,12 @@ const Select = forwardRef(
                                     </li>
                                 ))
                             ) : (
-                                <li className="px-4 py-2 text-sm text-gray-500">
+                                <li className={`px-4 py-2 text-sm ${mutedText}`}>
                                     No results found
                                 </li>
                             )}
                             {hiddenCount > 0 && (
-                                <li className="px-4 py-2 text-xs text-gray-400">
+                                <li className={`px-4 py-2 text-xs ${isDark ? "text-purple-200/40" : "text-gray-400"}`}>
                                     {hiddenCount} more — type to narrow results
                                 </li>
                             )}

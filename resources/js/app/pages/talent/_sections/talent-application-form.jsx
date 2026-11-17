@@ -17,6 +17,7 @@ import { Link, router } from "@inertiajs/react";
 import {
     FiBriefcase as BriefcaseIcon,
 } from "react-icons/fi";
+import { MapPin } from "lucide-react";
 import SetScheduleSection from "./set-schedule-section";
 import { checking_applicant_service } from "@/app/services/applicants-service";
 import { getLeadAttributionFields } from "@/lib/leadAttribution";
@@ -36,6 +37,7 @@ const TalentApplicationForm = () => {
     })
     const { interviewer } = useSelector((store) => store.app);
     const [position, setPosition] = useState('')
+    const [location, setLocation] = useState('')
     const referral_id = new URLSearchParams(window.location.search).get(
         "referral_id",
     );
@@ -90,10 +92,11 @@ const TalentApplicationForm = () => {
     
     useEffect(() => {
         if (job_postings && watchedValues.job_posting_id) {
-            const position_title = job_postings.find(
+            const selected_posting = job_postings.find(
                 (res) => res.id == watchedValues.job_posting_id
-            )?.job_requisition?.title;
-            setPosition(position_title || "");
+            );
+            setPosition(selected_posting?.job_requisition?.title || "");
+            setLocation(selected_posting?.job_requisition?.location?.name || "");
         }
     }, [watchedValues.job_posting_id, job_postings]);
 
@@ -392,6 +395,15 @@ const TalentApplicationForm = () => {
                                 {position}
                             </p>
                         </div>
+                        {location && (
+                            <div className="flex-1 flex items-center justify-end gap-1.5 text-sm font-semibold text-gray-600">
+                                <MapPin
+                                    className="w-4 h-4 shrink-0"
+                                    style={{ color: "#9333ea" }}
+                                />
+                                <span>{location}</span>
+                            </div>
+                        )}
                     </div>
                 )}
 

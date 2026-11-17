@@ -10,9 +10,9 @@ import {
 } from "../services/job-posting-service";
 import { jobPostingsSlice } from "./job-posting-slice";
 
-export function get_job_posting_thunk() {
+export function get_job_posting_thunk(params) {
     return async function (dispatch, getState) {
-        const result = await get_job_postings_service();
+        const result = await get_job_postings_service(params);
         dispatch(jobPostingsSlice.actions.setJobPostings(result.data));
     };
 }

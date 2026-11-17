@@ -1,11 +1,34 @@
 import { HiOutlineArrowLongLeft, HiOutlineArrowLongRight } from "react-icons/hi2";
 import { Link } from "@inertiajs/react";
 
-export default function Pagination({ data, onPageChange }) {
+export default function Pagination({ data, onPageChange, variant = "light" }) {
     const currentPage = data?.current_page;
     const lastPage = data?.last_page;
     const maxVisiblePages = 5; // Maximum number of pages to show
     const isCustomPager = typeof onPageChange === "function";
+    const isDark = variant === "dark";
+
+    const navClass = isDark
+        ? "inline-flex items-center rounded-xl border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-sm font-medium text-purple-100 transition-colors hover:border-orange-400/50 hover:bg-purple-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+        : "inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium";
+    const iconClass = isDark ? "text-purple-200" : "text-white";
+    const pageClass = (page) => {
+        if (!isDark) {
+            return `inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
+                ? "text-purple-600 border-purple-600 border-2 text-purple"
+                : "bg-purple-500 hover:bg-purple-500 text-white"
+                }`;
+        }
+        const base =
+            "inline-flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400";
+        if (currentPage === page) {
+            return `${base} bg-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.45)]`;
+        }
+        if (typeof page !== "number") {
+            return `${base} cursor-default text-purple-300/50`;
+        }
+        return `${base} border border-purple-500/30 bg-purple-500/10 text-purple-200 hover:bg-purple-500/25`;
+    };
 
     // PRO-TIP: This function grabs ALL current URL params and just updates the page.
     // Now you never have to hardcode `search`, `final_status`, etc. again!
@@ -65,22 +88,22 @@ export default function Pagination({ data, onPageChange }) {
                         <button
                             type="button"
                             onClick={() => handlePageClick(currentPage - 1)}
-                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                            className={navClass}
                         >
                             <HiOutlineArrowLongLeft
                                 aria-hidden="true"
-                                className="mr-3 h-5 w-5 text-white"
+                                className={`mr-3 h-5 w-5 ${iconClass}`}
                             />
                             Previous
                         </button>
                     ) : (
                         <Link
                             href={buildUrl(currentPage - 1)}
-                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                            className={navClass}
                         >
                             <HiOutlineArrowLongLeft
                                 aria-hidden="true"
-                                className="mr-3 h-5 w-5 text-white"
+                                className={`mr-3 h-5 w-5 ${iconClass}`}
                             />
                             Previous
                         </Link>
@@ -96,10 +119,8 @@ export default function Pagination({ data, onPageChange }) {
                             type="button"
                             onClick={() => handlePageClick(page)}
                             disabled={typeof page !== "number"}
-                            className={`inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
-                                ? "text-purple-600 border-purple-600 border-2 text-purple"
-                                : "bg-purple-500 hover:bg-purple-500 text-white"
-                                } ${typeof page !== "number" ? "cursor-default opacity-80" : ""}`}
+                            aria-current={currentPage === page ? "page" : undefined}
+                            className={`${pageClass(page)} ${typeof page !== "number" && !isDark ? "cursor-default opacity-80" : ""}`}
                         >
                             {page}
                         </button>
@@ -107,10 +128,7 @@ export default function Pagination({ data, onPageChange }) {
                         <Link
                             key={index}
                             href={typeof page === "number" ? buildUrl(page) : "#"}
-                            className={`inline-flex items-center rounded-md text-center px-4 p-2 text-sm font-medium ${currentPage === page
-                                ? "text-purple-600 border-purple-600 border-2 text-purple"
-                                : "bg-purple-500 hover:bg-purple-500 text-white"
-                                }`}
+                            className={pageClass(page)}
                         >
                             {page}
                         </Link>
@@ -124,23 +142,23 @@ export default function Pagination({ data, onPageChange }) {
                         <button
                             type="button"
                             onClick={() => handlePageClick(currentPage + 1)}
-                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                            className={navClass}
                         >
                             Next
                             <HiOutlineArrowLongRight
                                 aria-hidden="true"
-                                className="ml-3 h-5 w-5 text-white"
+                                className={`ml-3 h-5 w-5 ${iconClass}`}
                             />
                         </button>
                     ) : (
                         <Link
                             href={buildUrl(currentPage + 1)}
-                            className="inline-flex items-center border-transparent bg-purple-500 p-2 text-white rounded-md text-sm font-medium"
+                            className={navClass}
                         >
                             Next
                             <HiOutlineArrowLongRight
                                 aria-hidden="true"
-                                className="ml-3 h-5 w-5 text-white"
+                                className={`ml-3 h-5 w-5 ${iconClass}`}
                             />
                         </Link>
                     )

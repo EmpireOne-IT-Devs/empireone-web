@@ -1,15 +1,17 @@
 import Card from "@/app/_components/card";
-import React, { useEffect, useState } from "react";
+import Pagination from "@/app/_components/pagination";
+import Select from "@/app/_components/select";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "@inertiajs/react";
+import { motion, useReducedMotion } from "framer-motion";
+import { MapPin, SearchX } from "lucide-react";
 import store from "@/app/store/store";
 import { get_job_posting_thunk } from "@/app/redux/job-posting-thunk";
-import { setJobPostingId } from "@/app/redux/app-slice";
-import {
-    FiChevronDown as ChevronDown,
-    FiEye as Eye,
-    FiEyeOff as EyeOff,
-} from "react-icons/fi";
+import { fadeUp, staggerContainer } from "@/lib/animations";
+
+const ALL_LOCATIONS = "all";
+const PER_PAGE = 5;
 /* =========================
    HELPERS
 ========================= */
@@ -128,8 +130,9 @@ function JobCard({ id, title, tags, onApply, posting }) {
                 {/* BUTTONS */}
                 <div className="flex flex-col gap-2 flex-shrink-0">
                     {/* APPLY BUTTON */}
-                    <a
-                        onClick={() => onApply(id)}
+                    <button
+                        type="button"
+                        onClick={() => onApply(id, req?.location?.id)}
                         className="w-auto h-10 flex items-center justify-center text-sm font-semibold rounded-xl whitespace-nowrap transition-all duration-200 hover:scale-105"
                         style={{
                             color: "#c084fc",
@@ -138,7 +141,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
                         }}
                     >
                         Apply Now
-                    </a>
+                    </button>
 
                     {/* VIEW BUTTON */}
                     <button
@@ -189,7 +192,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
                                 Job Qualifications
                             </p>
                             <div
-                                className="text-sm leading-relaxed prose-sm"
+                                className="text-sm leading-relaxed prose-sm [&_*]:!bg-transparent [&_*]:!text-purple-100/80"
                                 style={{ color: "rgba(200,180,255,0.7)" }}
                                 dangerouslySetInnerHTML={{
                                     __html: req.qualifications,
@@ -203,7 +206,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
                                 Job Responsibilities
                             </p>
                             <div
-                                className="text-sm leading-relaxed"
+                                className="text-sm leading-relaxed [&_*]:!bg-transparent [&_*]:!text-purple-100/80"
                                 style={{ color: "rgba(200,180,255,0.7)" }}
                                 dangerouslySetInnerHTML={{
                                     __html: req.responsibilities,
@@ -217,7 +220,7 @@ function JobCard({ id, title, tags, onApply, posting }) {
                                 Justification for Position
                             </p>
                             <div
-                                className="text-sm leading-relaxed"
+                                className="text-sm leading-relaxed [&_*]:!bg-transparent [&_*]:!text-purple-100/80"
                                 style={{ color: "rgba(200,180,255,0.7)" }}
                                 dangerouslySetInnerHTML={{
                                     __html: req.justification_for_position,
@@ -232,20 +235,72 @@ function JobCard({ id, title, tags, onApply, posting }) {
 }
 
 export default function CareerSection() {
-    const { job_postings, loading } = useSelector(
-        (state) => state.job_postings,
-    );
+    const { job_postings } = useSelector((state) => state.job_postings);
+    const [loading, setLoading] = useState(true);
+    const [location, setLocation] = useState(ALL_LOCATIONS);
+    const [page, setPage] = useState(1);
+    const listRef = useRef(null);
+    const reduceMotion = useReducedMotion();
 
-    useEffect(() => {
-        store.dispatch(get_job_posting_thunk());
-    }, []);
-
-    const handleApply = (id) => {
-        router.visit(`/talent/application?job_posting_id=${id}`);
+    const changeLocation = (value) => {
+        setLocation(value);
+        setPage(1);
     };
 
-    const grouped = groupByDepartment((job_postings ?? []).slice(0, 5));
-    const featuredJobs = topJobPerDepartment(job_postings ?? []);
+    const changePage = (next) => {
+        setPage(next);
+        listRef.current?.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "start",
+        });
+    };
+    useEffect(() => {
+        // per_page is large so every active posting loads in one request
+        store
+            .dispatch(get_job_posting_thunk({ per_page: 1000 }))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const handleApply = (id, locationId) => {
+        router.visit(
+            `/talent/application/${locationId}?job_posting_id=${id}`,
+        );
+    };
+
+    // API returns a paginated resource ({ data, meta, links }) rather than a plain array
+    const allPostings = Array.isArray(job_postings)
+        ? job_postings
+        : (job_postings?.data ?? []);
+
+    const locationOptions = useMemo(() => {
+        const names = [
+            ...new Set(
+                allPostings
+                    .map((p) => p.job_requisition?.location?.name)
+                    .filter(Boolean),
+            ),
+        ].sort((a, b) => a.localeCompare(b));
+        return [
+            { value: ALL_LOCATIONS, label: "All Locations" },
+            ...names.map((name) => ({ value: name, label: name })),
+        ];
+    }, [allPostings]);
+
+    const postings =
+        location === ALL_LOCATIONS
+            ? allPostings
+            : allPostings.filter(
+                  (p) => p.job_requisition?.location?.name === location,
+              );
+    const lastPage = Math.max(1, Math.ceil(postings.length / PER_PAGE));
+    const currentPage = Math.min(page, lastPage);
+    const rangeStart = (currentPage - 1) * PER_PAGE;
+    const pagedPostings = postings.slice(rangeStart, rangeStart + PER_PAGE);
+    const grouped = groupByDepartment(pagedPostings);
+    const featuredJobs = topJobPerDepartment(postings);
+
+    const containerVariants = reduceMotion ? {} : staggerContainer;
+    const itemVariants = reduceMotion ? {} : fadeUp;
 
     return (
         <section
@@ -303,12 +358,41 @@ export default function CareerSection() {
                     </h2>
 
                     <p
-                        className="text-sm"
+                        className="text-sm mb-3"
                         style={{ color: "rgba(200,180,255,0.5)" }}
                     >
                         Join a world-class team delivering exceptional outcomes
                         across the globe.
                     </p>
+
+                    {/* LOCATION FILTER */}
+                    <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                        <div className="w-full sm:w-72">
+                            <Select
+                                label="Filter by location"
+                                name="career_location"
+                                options={locationOptions}
+                                value={location}
+                                onChange={changeLocation}
+                                iconRight={<MapPin className="w-4 h-4" />}
+                                variant="dark"
+                                disabled={loading}
+                            />
+                        </div>
+                        {!loading && (
+                            <p
+                                className="text-xs text-purple-300/70"
+                                aria-live="polite"
+                            >
+                                Showing{" "}
+                                {postings.length === 0
+                                    ? 0
+                                    : `${rangeStart + 1}–${rangeStart + pagedPostings.length}`}{" "}
+                                of {postings.length}{" "}
+                                {postings.length === 1 ? "opening" : "openings"}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
                 {/* GRID */}
@@ -320,7 +404,10 @@ export default function CareerSection() {
                     }}
                 >
                     {/* LEFT — job listings grouped by department */}
-                    <div className="flex flex-col gap-8 sm:gap-6">
+                    <div
+                        ref={listRef}
+                        className="flex flex-col gap-8 sm:gap-6 scroll-mt-24"
+                    >
                         {loading ? (
                             <div className="flex flex-col gap-6">
                                 {[...Array(3)].map((_, i) => (
@@ -332,20 +419,49 @@ export default function CareerSection() {
                                 className="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-purple-800/20"
                                 style={{ background: "rgba(20,8,40,0.4)" }}
                             >
+                                <SearchX
+                                    className="w-10 h-10 mb-3"
+                                    style={{ color: "rgba(192,132,252,0.7)" }}
+                                />
                                 <p className="text-purple-300 font-semibold text-lg mb-1">
-                                    No open positions right now
+                                    {location === ALL_LOCATIONS
+                                        ? "No open positions right now"
+                                        : `No openings in ${location}`}
                                 </p>
                                 <p
                                     className="text-sm"
                                     style={{ color: "rgba(200,180,255,0.4)" }}
                                 >
-                                    Check back soon — we're always growing!
+                                    {location === ALL_LOCATIONS
+                                        ? "Check back soon — we're always growing!"
+                                        : "Try another location to see more openings."}
                                 </p>
+                                {location !== ALL_LOCATIONS && (
+                                    <button
+                                        onClick={() =>
+                                            changeLocation(ALL_LOCATIONS)
+                                        }
+                                        className="mt-5 px-5 py-2.5 min-h-[44px] rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105"
+                                        style={{
+                                            color: "#c084fc",
+                                            background: "rgba(168,85,247,0.12)",
+                                            border: "1px solid rgba(168,85,247,0.3)",
+                                        }}
+                                    >
+                                        Clear filter
+                                    </button>
+                                )}
                             </div>
                         ) : (
-                            <>
+                            <motion.div
+                                key={`${location}-${currentPage}`}
+                                variants={containerVariants}
+                                initial="hidden"
+                                animate="visible"
+                                className="flex flex-col gap-8 sm:gap-6"
+                            >
                                 {Object.entries(grouped).map(
-                                    ([department, postings]) => (
+                                    ([department, deptPostings]) => (
                                         <div
                                             key={department}
                                             className="flex flex-col gap-1"
@@ -354,45 +470,46 @@ export default function CareerSection() {
                                                 {department}
                                             </p>
                                             <div className="flex flex-col gap-6">
-                                                {postings.map((posting) => (
-                                                    <JobCard
+                                                {deptPostings.map((posting) => (
+                                                    <motion.div
                                                         key={posting.id}
-                                                        id={posting.id}
-                                                        title={
-                                                            posting
-                                                                .job_requisition
-                                                                ?.title
-                                                        }
-                                                        tags={buildTags(
-                                                            posting,
-                                                        )}
-                                                        onApply={handleApply}
-                                                        posting={posting}
-                                                    />
+                                                        variants={itemVariants}
+                                                    >
+                                                        <JobCard
+                                                            id={posting.id}
+                                                            title={
+                                                                posting
+                                                                    .job_requisition
+                                                                    ?.title
+                                                            }
+                                                            tags={buildTags(
+                                                                posting,
+                                                            )}
+                                                            onApply={
+                                                                handleApply
+                                                            }
+                                                            posting={posting}
+                                                        />
+                                                    </motion.div>
                                                 ))}
                                             </div>
                                         </div>
                                     ),
                                 )}
-                                {(job_postings ?? []).length > 5 && (
-                                    <div className="flex justify-center mt-2">
-                                        <button
-                                            onClick={() =>
-                                                router.visit(
-                                                    "/talent/application",
-                                                )
-                                            }
-                                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105"
-                                        >
-                                            See More Openings
-                                            <ChevronDown
-                                                size={15}
-                                                className="-rotate-90"
-                                            />
-                                        </button>
-                                    </div>
-                                )}
-                            </>
+                            </motion.div>
+                        )}
+
+                        {!loading && lastPage > 1 && (
+                            <div className="w-full rounded-2xl px-3">
+                                <Pagination
+                                    data={{
+                                        current_page: currentPage,
+                                        last_page: lastPage,
+                                    }}
+                                    onPageChange={changePage}
+                                    variant="dark"
+                                />
+                            </div>
                         )}
                     </div>
 

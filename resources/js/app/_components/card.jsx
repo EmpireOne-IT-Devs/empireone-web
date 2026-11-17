@@ -38,15 +38,16 @@ export default function Card({
               }
           })()
         : variantMap[variant] || variantMap.default;
+    const Wrapper = href ? "a" : "div";
 
     return (
-        <a
-            href={href}
+        <Wrapper
+            {...(href ? { href } : {})}
             onClick={onClick}
             {...props}
             className={`${baseClasses} ${variantClasses} ${className} shadow-sm border border-1 transition duration-300 ease-in-out`}
         >
             {children}
-        </a>
+        </Wrapper>
     );
 }

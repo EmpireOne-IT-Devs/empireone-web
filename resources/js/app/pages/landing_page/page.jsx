@@ -20,7 +20,8 @@ export default function Page() {
                 <div id="hero">
                     <HeroSection />
                 </div>
-                 {/* Ayaw e uncomment ang CareerSection kay naay bugs: by MP */}  {/* <CareerSection /> */}
+                 {/* Ayaw e uncomment ang CareerSection kay naay bugs: by MP */}  
+                 <CareerSection />
                 {/* <DeveloperSection /> */}
                 {/* <ServicesSection /> */}
                 <AboutSection />
