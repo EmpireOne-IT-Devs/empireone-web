@@ -130,6 +130,9 @@ Route::post('job/get_job_application_from_email',  [JobApplicationController::cl
 
 Route::get('job/postings',  [JobPostingController::class, 'index']);
 
+
+Route::get('job/active_postings',  [JobPostingController::class, 'index'])->middleware(['auth:sanctum']);
+
 Route::get('get_job_posting_by_location/{location_id}',  [JobPostingController::class, 'get_job_posting_by_location']);
 Route::resource('job/job_interviewer_schedules', JobInterviewerScheduleController::class);
 Route::get('merge_account',  [AccountPersonalInformationController::class, 'accounts_merge_account']);
