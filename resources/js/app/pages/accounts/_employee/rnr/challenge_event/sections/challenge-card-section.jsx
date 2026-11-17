@@ -290,11 +290,11 @@ function ChallengeCard({ challenge, highlighted = false }) {
         // Declined state
         if (status === "declined") {
             return (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <Button
                         type="button"
                         variant="warning"
-                        className="flex-1 gap-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white shadow-lg shadow-amber-200 hover:shadow-amber-300"
+                        className="w-full flex-1 gap-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white shadow-lg shadow-amber-200 hover:shadow-amber-300 sm:w-auto"
                         onClick={() => setIsFlowModalOpen(true)}
                     >
                         <ArrowRight className="h-4 w-4" />
@@ -308,7 +308,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
                         loading={leaving}
                         disabled={leaving || !canLeave}
                         onClick={handleLeave}
-                        className="border-rose-200 text-rose-600 hover:bg-rose-50"
+                        className="w-full border-rose-200 text-rose-600 hover:bg-rose-50 sm:w-auto"
                     >
                         Leave
                     </Button>
@@ -319,11 +319,11 @@ function ChallengeCard({ challenge, highlighted = false }) {
         // Joined state
         if (challenge.is_joined) {
             return (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <Button
                         type="button"
                         variant="primary"
-                        className="flex-1 gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-200 hover:shadow-indigo-300"
+                        className="w-full flex-1 gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-200 hover:shadow-indigo-300 sm:w-auto"
                         onClick={() => setIsFlowModalOpen(true)}
                     >
                         <ArrowRight className="h-4 w-4" />
@@ -337,7 +337,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
                         loading={leaving}
                         disabled={leaving || !canLeave}
                         onClick={handleLeave}
-                        className="border-rose-200 text-rose-600 hover:bg-rose-50"
+                        className="w-full border-rose-200 text-rose-600 hover:bg-rose-50 sm:w-auto"
                     >
                         Leave
                     </Button>
@@ -392,7 +392,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
             <Card
                 id={`challenge-${challenge.id}`}
                 padding="p-0"
-                className={`group flex h-full w-full flex-col overflow-hidden rounded-2xl border ${meta.border} bg-white shadow-lg shadow-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${highlighted ? "ring-4 ring-indigo-400 ring-offset-2" : ""}`}
+                className={`group flex h-full min-w-0 w-full flex-col overflow-hidden rounded-2xl border ${meta.border} bg-white shadow-lg shadow-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${highlighted ? "ring-4 ring-indigo-400 ring-offset-2" : ""}`}
             >
                 {/* Banner with gradient overlay */}
                 <div className="relative">
@@ -444,10 +444,10 @@ function ChallengeCard({ challenge, highlighted = false }) {
                 </div>
 
                 {/* Content */}
-                <div className="flex flex-1 flex-col gap-3 p-5">
+                <div className="flex min-w-0 flex-1 flex-col gap-3 p-4 sm:p-5">
                     {/* Title & badges */}
                     <div>
-                        <h3 className="text-base font-bold text-gray-900 leading-tight group-hover:text-indigo-600 transition-colors">
+                        <h3 className="break-words text-base font-bold text-gray-900 leading-tight group-hover:text-indigo-600 transition-colors">
                             {challenge.title}
                         </h3>
                         <div className="mt-2 flex flex-wrap gap-1.5">
@@ -474,7 +474,7 @@ function ChallengeCard({ challenge, highlighted = false }) {
                     </div>
 
                     {/* Description */}
-                    <p className="text-sm leading-relaxed text-gray-500 line-clamp-2">
+                    <p className="break-words text-sm leading-relaxed text-gray-500 line-clamp-2">
                         {descriptionPreview}
                     </p>
 
@@ -525,7 +525,9 @@ function ChallengeCard({ challenge, highlighted = false }) {
                     )}
 
                     {/* Action Button */}
-                    <div className="mt-auto pt-2">{renderActionButton()}</div>
+                    <div className="mt-auto pt-2 [&_button]:min-h-[44px] [&_button]:min-w-0 [&_button]:whitespace-normal [&_button]:break-words [&_svg]:shrink-0">
+                        {renderActionButton()}
+                    </div>
                 </div>
             </Card>
 
@@ -546,7 +548,7 @@ export default function ChallengeCardSection({
 }) {
     if (loading) {
         return (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
                 {Array.from({ length: 3 }).map((_, index) => (
                     <Skeleton
                         key={index}
@@ -577,7 +579,7 @@ export default function ChallengeCardSection({
     }
 
     return (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
             {challenges.map((challenge) => (
                 <ChallengeCard
                     key={challenge.id}

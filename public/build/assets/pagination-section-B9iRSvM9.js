@@ -1,1 +1,0 @@
-import{b as e,j as o}from"./app-Cl0Up6p6.js";import{P as n}from"./pagination-6lEYbN4F.js";import"./iconBase-CqPQQKA5.js";function c(){const{corrective_actions:t}=e(r=>r.human_resources);return console.log("corrective_actions",t),o.jsx(o.Fragment,{children:o.jsx(n,{data:t})})}export{c as default};
