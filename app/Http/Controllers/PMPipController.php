@@ -261,6 +261,7 @@ class PMPipController extends Controller
                 $pMPip->supervisor_email,
                 $pMPip->manager_email,
                 $pMPip->hr_email,
+                $pMPip->employee_email,
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
             $mail->send(new PipEnrollmentMail($pMPip, 'PIP Decision'));
         }
