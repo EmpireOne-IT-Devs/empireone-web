@@ -1,0 +1,1 @@
+function i(r){if(r==null||r==="")return"";let t=r;return typeof r=="string"&&(t=parseFloat(r.replace(/[^0-9.]/g,""))),isNaN(t)?"":new Intl.NumberFormat("en-PH",{minimumFractionDigits:2,maximumFractionDigits:2}).format(t)}export{i as p};
