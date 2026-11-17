@@ -1228,6 +1228,96 @@ class ChallengeSurveyCreationTest extends TestCase
         $this->assertNull($leaderEntry['rank']);
     }
 
+    public function test_team_proof_can_be_approved_after_a_member_participation_record_was_removed(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createTeamChallenge();
+        [$leader] = $this->createTeamLeaderWithReports(2);
+        $this->actingAs($leader)->post(
+            "/api/engagement/reward-challenges/{$challenge->id}/submit-team",
+            [
+                'photo' => UploadedFile::fake()->image('team-proof.png'),
+                'challenge_description' => 'Team proof with a member who later left.',
+            ],
+        )->assertCreated();
+        $teamSubmission = EngagementRewardChallengeTeamSubmission::query()
+            ->where('reward_challenge_id', $challenge->id)
+            ->firstOrFail();
+        $member = EngagementRewardChallengeTeamSubmissionMember::query()
+            ->where('team_submission_id', $teamSubmission->id)
+            ->firstOrFail();
+
+        // Production keeps the member row when the participation row is deleted.
+        Schema::disableForeignKeyConstraints();
+        DB::table('engagement_reward_challenge_participants')->where('id', $member->participant_id)->delete();
+        Schema::enableForeignKeyConstraints();
+        $this->assertNotNull($member->fresh());
+        $this->assertNull(EngagementRewardChallengeParticipant::query()->find($member->participant_id));
+
+        $admin = User::where('email', 'survey-admin@example.test')->firstOrFail();
+        $this->actingAs($admin)
+            ->postJson("/api/engagement/reward-challenge-submissions/team-{$teamSubmission->id}/approve", [
+                'bonus_points' => 10,
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.status', 'approved')
+            ->assertJsonPath('data.team_points_awarded', 110)
+            ->assertJsonCount(2, 'data.employees');
+    }
+
+    public function test_reviewers_get_a_named_download_link_for_proof_videos_and_others_are_refused(): void
+    {
+        Storage::fake('s3');
+        $challenge = $this->createChallenge();
+        $employee = User::create([
+            'name' => 'Wacky Hojilla',
+            'email' => 'download-employee-'.uniqid().'@example.test',
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+        $participant = EngagementRewardChallengeParticipant::create([
+            'reward_challenge_id' => $challenge->id,
+            'user_id' => $employee->id,
+            'status' => 'submitted',
+            'joined_at' => now(),
+            'submitted_at' => '2026-11-12 23:31:00',
+            'submission_path' => 'proofs/photo.png',
+            'submission_media' => [
+                ['path' => 'proofs/photo.png', 'type' => 'image'],
+                ['path' => 'proofs/clip.MOV', 'type' => 'video'],
+            ],
+        ]);
+        $leader = User::create([
+            'name' => 'Juan Dela Cruz',
+            'email' => 'download-leader-'.uniqid().'@example.test',
+            'role' => User::ROLE_EMPLOYEE,
+        ]);
+        $teamSubmission = EngagementRewardChallengeTeamSubmission::create([
+            'reward_challenge_id' => $challenge->id,
+            'leader_id' => $leader->id,
+            'log_date' => '2026-11-13',
+            'submission_path' => 'proofs/team.mp4',
+            'submission_media' => [['path' => 'proofs/team.mp4', 'type' => 'video']],
+            'status' => 'submitted',
+            'submitted_at' => '2026-11-13 08:00:00',
+        ]);
+        $base = '/api/engagement/reward-challenge-submissions';
+
+        $download = $this->getJson("{$base}/{$participant->id}/media/1/download")
+            ->assertOk()
+            ->assertJsonPath('data.filename', 'Wacky-Hojilla_2026-11-12.mov');
+        $this->assertStringContainsString('proofs/clip.MOV', $download->json('data.url'));
+        $this->getJson("{$base}/team-{$teamSubmission->id}/media/0/download")
+            ->assertOk()
+            ->assertJsonPath('data.filename', 'Team-Juan-Dela-Cruz_2026-11-13.mp4');
+
+        $this->getJson("{$base}/{$participant->id}/media/0/download")->assertNotFound();
+        $this->getJson("{$base}/{$participant->id}/media/5/download")->assertNotFound();
+
+        $this->actingAs($employee)
+            ->getJson("{$base}/{$participant->id}/media/1/download")
+            ->assertForbidden();
+    }
+
     public function test_challenge_leaderboards_rank_approved_points_separately_and_mark_tied_winners(): void
     {
         $challenge = $this->createTeamChallenge(2);

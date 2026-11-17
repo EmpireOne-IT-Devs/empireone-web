@@ -117,6 +117,10 @@ export default function ProofSection({
                                                     key={`${activeSubmission.id}-${item.url}`}
                                                     url={item.url}
                                                     label={`Submission video proof ${index + 1}`}
+                                                    submissionId={
+                                                        activeSubmission.id
+                                                    }
+                                                    mediaIndex={index}
                                                     isOpen={
                                                         Boolean(submission) &&
                                                         submission.id ===

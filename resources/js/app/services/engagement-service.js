@@ -225,6 +225,12 @@ export async function export_reward_challenge_submissions_service(params = {}) {
     });
 }
 
+export async function get_reward_challenge_submission_media_download_service(id, index) {
+    return await axios.get(
+        `/api/engagement/reward-challenge-submissions/${id}/media/${index}/download`,
+    );
+}
+
 export async function approve_reward_challenge_submission_service(id, bonus_points = 0) {
     return await axios.post(
         `/api/engagement/reward-challenge-submissions/${id}/approve`,

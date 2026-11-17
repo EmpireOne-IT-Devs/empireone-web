@@ -1,10 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FiPlay as Play, FiRefreshCw as Refresh } from "react-icons/fi";
+import {
+    FiDownload as Download,
+    FiPlay as Play,
+    FiRefreshCw as Refresh,
+} from "react-icons/fi";
+import { get_reward_challenge_submission_media_download_service } from "@/app/services/engagement-service";
 
-export default function SubmissionVideoPlayer({ url, label, isOpen }) {
+export default function SubmissionVideoPlayer({
+    url,
+    label,
+    isOpen,
+    submissionId,
+    mediaIndex,
+}) {
     const videoRef = useRef(null);
     const [sourceRequested, setSourceRequested] = useState(false);
     const [status, setStatus] = useState("idle");
+    const [downloadStatus, setDownloadStatus] = useState("idle");
+    const canDownload = submissionId != null && mediaIndex != null;
 
     const updateStatus = (nextStatus) => {
         if (videoRef.current?.hasAttribute("src")) {
@@ -51,6 +64,29 @@ export default function SubmissionVideoPlayer({ url, label, isOpen }) {
                     setStatus("error");
                 }
             });
+        }
+    };
+
+    const handleDownload = async () => {
+        if (downloadStatus === "preparing") return;
+
+        setDownloadStatus("preparing");
+        try {
+            const response =
+                await get_reward_challenge_submission_media_download_service(
+                    submissionId,
+                    mediaIndex,
+                );
+            // S3 answers with an attachment header, so this saves the file without leaving the page.
+            const link = document.createElement("a");
+            link.href = response.data.data.url;
+            link.rel = "noopener";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setDownloadStatus("idle");
+        } catch (error) {
+            setDownloadStatus("error");
         }
     };
 
@@ -115,6 +151,25 @@ export default function SubmissionVideoPlayer({ url, label, isOpen }) {
                         Retry
                     </button>
                 </div>
+            )}
+
+            {canDownload && (
+                <button
+                    type="button"
+                    onClick={handleDownload}
+                    disabled={downloadStatus === "preparing"}
+                    className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-lg bg-black/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-wait disabled:opacity-70"
+                    aria-label={`Download ${label.toLowerCase()}`}
+                >
+                    <Download className="h-3.5 w-3.5" />
+                    <span aria-live="polite">
+                        {downloadStatus === "preparing"
+                            ? "Preparing…"
+                            : downloadStatus === "error"
+                              ? "Download failed · Try again"
+                              : "Download"}
+                    </span>
+                </button>
             )}
         </>
     );

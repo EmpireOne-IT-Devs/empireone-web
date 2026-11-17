@@ -26,6 +26,13 @@ class COERequestService
         return $next && $next->isFuture() ? $next : null;
     }
 
+    public function signatorySignature(): ?string
+    {
+        $signature = AccountEmployee::where('user_id', config('accounts.coe_signatory_user_id'))->value('signature');
+
+        return is_string($signature) && str_starts_with($signature, 'data:image/') ? $signature : null;
+    }
+
     /** Returns null when the 24-hour limit blocks a new request. */
     public function create(User $user, string $purpose): ?COERequest
     {

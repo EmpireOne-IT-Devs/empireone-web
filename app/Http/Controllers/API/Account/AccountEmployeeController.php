@@ -514,6 +514,15 @@ class AccountEmployeeController extends Controller
             'data'   => $employees,
         ], 200);
     }
+    public function get_hr_director()
+    {
+        $employee = AccountEmployee::where('user_id', '58')->with(['user', 'personal_information', 'department', 'account', 'site'])->first();
+        return response()->json([
+            'status' => 'success',
+            'data'   => $employee,
+        ], 200);
+    }
+    
     public function index(Request $request)
     {
         // 1. Capture search input

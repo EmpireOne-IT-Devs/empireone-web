@@ -311,14 +311,23 @@ class ChallengeTeamSubmissionService
             foreach ($submission->members as $member) {
                 $participant = EngagementRewardChallengeParticipant::query()
                     ->lockForUpdate()
-                    ->findOrFail($member->participant_id);
+                    ->find($member->participant_id);
+
+                // A member who left the challenge or whose account was removed has nothing left to approve.
+                if (! $participant) {
+                    continue;
+                }
 
                 if ($submission->challenge->isDailyChallenge()) {
                     $log = EngagementRewardChallengeDailyLog::query()
                         ->where('team_submission_id', $submission->id)
                         ->where('reward_challenge_participant_id', $participant->id)
                         ->lockForUpdate()
-                        ->firstOrFail();
+                        ->first();
+
+                    if (! $log) {
+                        continue;
+                    }
 
                     if ($log->status !== 'submitted') {
                         throw ValidationException::withMessages([

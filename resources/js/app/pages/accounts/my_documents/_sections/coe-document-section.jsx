@@ -76,6 +76,15 @@ const styles = StyleSheet.create({
         fontSize: 9,
         color: "#000000",
     },
+    signatureImage: {
+        width: 150,
+        height: 62,
+        objectFit: "contain",
+        objectPosition: "left",
+        marginLeft: -24,
+        marginTop: -14,
+        marginBottom: -22,
+    },
     footer: {
         position: "absolute",
         left: 60,
@@ -233,6 +242,7 @@ export default function CoeDocument({
     purpose,
     office_address,
     control_number,
+    signature,
 }) {
     const today = new Date();
     const { salutation, pronoun } = get_title_and_pronoun(gender);
@@ -298,6 +308,9 @@ export default function CoeDocument({
                 <Text style={styles.issuedBy}>Issued by:</Text>
 
                 <View style={styles.signatory}>
+                    {signature ? (
+                        <Image src={signature} style={styles.signatureImage} />
+                    ) : null}
                     <Text>{SIGNATORY_NAME}</Text>
                     <Text style={styles.signatoryTitle}>{SIGNATORY_TITLE}</Text>
                 </View>

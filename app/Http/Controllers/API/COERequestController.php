@@ -78,6 +78,7 @@ class COERequestController extends Controller
         }
 
         return (new COERequestResource($record->load('user.personal_information')))
+            ->additional(['signatory_signature' => $this->service->signatorySignature()])
             ->response()
             ->setStatusCode(201);
     }
