@@ -219,6 +219,19 @@ export default function PerformanceImprovementPlanPage() {
 
         actionDate: pip?.action_date ? formatDate(pip.action_date) : "—",
     };
+    const isWithinOneWeekOfEnd = (endDateString) => {
+        if (!endDateString) return false;
+
+        const today = new Date();
+        const endDate = new Date(endDateString);
+
+        // Subtract 7 days from the PIP end date
+        const oneWeekBefore = new Date(endDate);
+        oneWeekBefore.setDate(endDate.getDate() - 7);
+
+        // Show the component if today's date is past the 1-week-before mark
+        return today >= oneWeekBefore;
+    };
 
     const SignatureSlot = ({
         isSigned,
@@ -609,17 +622,18 @@ export default function PerformanceImprovementPlanPage() {
             </div>
 
             {/* PROGRESS REPORT SECTION */}
-
-            <ProgressReportSection
-                pip={pip}
-                user={user}
-                isSubmitting={isSubmitting}
-                onSign={handleSign}
-                data={data}
-                setData={setData}
-                processing={processing}
-                errors={errors}
-            />
+            {pip?.pip_end_date && isWithinOneWeekOfEnd(pip.pip_end_date) && (
+                <ProgressReportSection
+                    pip={pip}
+                    user={user}
+                    isSubmitting={isSubmitting}
+                    onSign={handleSign}
+                    data={data}
+                    setData={setData}
+                    processing={processing}
+                    errors={errors}
+                />
+            )}
         </div>
     );
 }
