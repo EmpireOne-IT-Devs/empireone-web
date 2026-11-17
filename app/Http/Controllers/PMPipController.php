@@ -266,7 +266,7 @@ class PMPipController extends Controller
         }
         // Check if current action was an HR or Manager initial approval, AND both are now approved
         $isApproverAction = in_array($role, ['is_hr_approved', 'is_manager_approved', 'hr_approve', 'supervisor_approve', 'manager_approve']);
-        if ($isApproverAction && $pMPip->is_hr_approved == 1 && $pMPip->is_manager_approved == 1 && $pMPip->supervisor_email == 1) {
+        if ($isApproverAction && $pMPip->is_hr_approved == 1 && $pMPip->is_manager_approved == 1) {
             $ccRecipients = array_values(array_filter([
                 $pMPip->employee_email,
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
