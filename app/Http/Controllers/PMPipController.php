@@ -242,20 +242,23 @@ class PMPipController extends Controller
             $pMPip->status = ((int) $pMPip->is_passed === 1) ? 'Closed - Passed' : 'Closed - Failed';
         } else {
             // Fallback to initial enrollment status progression if not fully closed yet
-            if ($pMPip->is_employee_acknowledged == 1) {
+            if ($pMPip->is_employee_acknowledged == 1 && $pMPip->is_supervisor_final_approved == 0) {
                 $pMPip->status = 'Active PIP';
-            } elseif ($pMPip->is_manager_approved != 1) {
+            } elseif ($pMPip->is_manager_approved != 1 && $pMPip->is_supervisor_final_approved == 0) {
                 $pMPip->status = 'Pending Manager Approval';
-            } elseif ($pMPip->is_hr_approved != 1) {
+            } elseif ($pMPip->is_hr_approved != 1 && $pMPip->is_supervisor_final_approved == 0) {
                 $pMPip->status = 'Pending HR Approval';
             } else {
-                $pMPip->status = 'Awaiting Employee Acknowledgment';
+                if ($pMPip->is_supervisor_final_approved == 0) {
+                    $pMPip->status = 'Awaiting Employee Acknowledgment';
+                }
             }
         }
 
-        $pMPip->save();
+
 
         if ($request->role == 'is_supervisor_final_approved') {
+            $pMPip->status = 'Pending Final Acknowledgment';
             $mail = Mail::to('webdev@empireonegroup.com');
             $ccRecipients = array_values(array_filter([
                 $pMPip->supervisor_email,
@@ -265,6 +268,8 @@ class PMPipController extends Controller
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
             $mail->send(new PipEnrollmentMail($pMPip, 'PIP Decision'));
         }
+
+        $pMPip->save();
         // Check if current action was an HR or Manager initial approval, AND both are now approved
         $isApproverAction = in_array($role, ['is_hr_approved', 'is_manager_approved', 'hr_approve', 'supervisor_approve', 'manager_approve']);
         if ($isApproverAction && $pMPip->is_hr_approved == 1 && $pMPip->is_manager_approved == 1) {
