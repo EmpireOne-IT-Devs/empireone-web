@@ -10,7 +10,7 @@ import moment from "moment";
 import FullTimeProbationaryContractSection from "./_sections/full-time-probationary-contract-section";
 import SendContractSection from "./_sections/send-contract-section";
 
-export default function Page() {
+export default function Page({ auth }) {
     const { user, hr } = useSelector((store) => store.app);
     const user_id = window.location.pathname.split("/")[3];
 
@@ -22,21 +22,21 @@ export default function Page() {
         store.dispatch(get_user_by_id_thunk(user_id));
     }, []);
 
-    const employer_name = `${hr?.personal_information?.first_name ?? ''} ${hr?.personal_information?.last_name ?? ''}`;
+    const employer_name = `${hr?.personal_information?.first_name ?? ""} ${hr?.personal_information?.last_name ?? ""}`;
     const employer_position = `${hr?.position}`;
     const employer_signature = `${hr?.signature}`;
 
     const data = {
         user_id: user.id,
         signature: user?.account_employee?.signature ?? null,
-        employee_name: `${user?.personal_information?.first_name} ${user?.personal_information?.middle_name == null ? '' : user?.personal_information?.middle_name} ${user?.personal_information?.last_name}`,
+        employee_name: `${user?.personal_information?.first_name} ${user?.personal_information?.middle_name == null ? "" : user?.personal_information?.middle_name} ${user?.personal_information?.last_name}`,
         first_name: `${user?.personal_information?.first_name}`,
         employer_name: employer_name,
         employer_position: employer_position,
         employer_signature: employer_signature,
         allowances: user?.job_offer?.allowances,
         reported_to: `${user?.account_employee?.er_leader?.employee?.personal_information?.first_name} ${user?.account_employee?.er_leader?.employee?.personal_information?.last_name}`,
-        contract_signed_at: moment().add(1, 'days').format('LLL'),
+        contract_signed_at: moment().add(1, "days").format("LLL"),
         residence: `${user?.personal_information?.barangay}  ${user?.personal_information?.city}`,
         province: `${user?.personal_information?.province}`,
         full_address: `${user?.personal_information?.street} ${user?.personal_information?.barangay}  ${user?.personal_information?.city}  ${user?.personal_information?.province}  ${user?.personal_information?.zip_code}`,
@@ -44,9 +44,13 @@ export default function Page() {
         started_at: `${moment(user?.account_employee?.started_at).format("LL")}`,
         ended_at: `${moment(user?.account_employee?.started_at).add(179, "days").format("LL")}`,
         salary: `${user?.job_offer?.salary}`,
-        job_requisition: user?.job_offer?.job_application?.job_posting?.job_requisition
+        job_requisition:
+            user?.job_offer?.job_application?.job_posting?.job_requisition,
     };
-    console.log('useruser', user?.job_offer?.job_application?.job_posting?.job_requisition)
+    console.log(
+        "useruser",
+        user?.job_offer?.job_application?.job_posting?.job_requisition,
+    );
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
             return null;
@@ -55,17 +59,21 @@ export default function Page() {
         } else {
             return (
                 <>
-                    {(user?.application?.contract_type ?? 'probation_full_time') === 'probation_part_time' && (
+                    {(user?.application?.contract_type ??
+                        "probation_full_time") === "probation_part_time" && (
                         <PartTimeProbationaryContractSection data={data} />
                     )}
-                    {(user?.application?.contract_type ?? 'probation_full_time') === 'probation_full_time' && (
+                    {(user?.application?.contract_type ??
+                        "probation_full_time") === "probation_full_time" && (
                         <FullTimeProbationaryContractSection data={data} />
                     )}
                     {!user?.account_employee?.is_has_contract && (
                         <AgreeSection data={data} user={user} />
                     )}
-                    {user?.application?.final_status == "Sent Documents" && <SendContractSection props_data={user} />}
-
+                    {user.id != auth?.user?.id &&
+                        user?.application?.final_status == "Sent Documents" && (
+                            <SendContractSection props_data={user} />
+                        )}
                 </>
             );
         }
