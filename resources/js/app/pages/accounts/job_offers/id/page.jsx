@@ -8,7 +8,8 @@ import VerifySection from "./_sections/verify-section";
 import { get_user_by_id_thunk } from "@/app/redux/app-thunk";
 import ApprovedJOSection from "./jo_documents/approved-jo-section";
 
-export default function Page() {
+export default function Page({ auth }) {
+    console.log("auth", auth?.user);
     const { job_offer } = useSelector((store) => store.applicants);
     const { user } = useSelector((store) => store.app);
     useEffect(() => {
@@ -21,48 +22,51 @@ export default function Page() {
             store.dispatch(get_user_by_id_thunk(job_offer?.user_id));
         }
     }, [job_offer?.user_id]);
-console.log('job_offer',job_offer)
+    console.log("job_offer1", job_offer);
+    console.log("job_offer2", user);
     function verified_section() {
-        if (job_offer?.status == "Pending" && user?.account_employee?.signature === undefined) {
+        if (
+            job_offer?.status == "Pending" &&
+            user?.account_employee?.signature === undefined
+        ) {
             return <VerifySection />;
-        } else if (job_offer?.status == "Pending" && user?.account_employee?.signature === null) {
+        } else if (
+            job_offer?.status == "Pending" &&
+            user?.account_employee?.signature === null
+        ) {
             return (
                 user?.account_employee?.signature === null && <VerifySection />
             );
         } else if (user?.account_employee?.signature != null) {
             return (
                 <>
-
                     <AgentOfferLetterPreview
                         name="Agent Offer"
                         type="offer"
-                        applicant_signature={
-                            user?.account_employee?.signature
-                        }
+                        applicant_signature={user?.account_employee?.signature}
                     />
-                    {job_offer?.status == "Pending" && (
-                        <AcceptJobOfferSection />
-                    )}
+                    {job_offer?.user_id == auth?.user?.id &&
+                        job_offer?.status == "Pending" && (
+                            <AcceptJobOfferSection />
+                        )}
                     {job_offer?.status == "In Review" && (
                         <ApprovedJOSection props_data={job_offer} />
                     )}
-
                 </>
             );
         } else {
-            return <>
-
-                <AgentOfferLetterPreview
-                    name="Agent Offer"
-                    type="offer"
-                    applicant_signature={
-                        user?.account_employee?.signature
-                    }
-                />
-                {job_offer?.status == "In Review" && (
-                    <ApprovedJOSection props_data={job_offer} />
-                )}
-            </>
+            return (
+                <>
+                    <AgentOfferLetterPreview
+                        name="Agent Offer"
+                        type="offer"
+                        applicant_signature={user?.account_employee?.signature}
+                    />
+                    {job_offer?.status == "In Review" && (
+                        <ApprovedJOSection props_data={job_offer} />
+                    )}
+                </>
+            );
         }
     }
     return verified_section();
