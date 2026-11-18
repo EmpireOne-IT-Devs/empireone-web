@@ -125,11 +125,11 @@
                 @endphp
 
                 <div class="info-box">
-
-                    <p style="margin: 0; font-size: 14px;"><strong>Website:</strong>https://careers.empireonecx.com/auth/login</p>
+                    <p>If you already have an account, please use your existing login credentials to access and view your application. If you are a first-time applicant, you may use the credentials provided below to log in.</p>
+                    <p style="margin: 0; font-size: 14px;"><strong>Website:</strong> https://careers.empireonecx.com/auth/login</p>
                     <p style="margin: 0; font-size: 14px;"><strong>Username:</strong> {{ $user->email }}</p>
                     <p style="margin: 5px 0 0; font-size: 14px;"><strong>Password:</strong> <code style="background: #eee; padding: 2px 6px; border-radius: 4px; color: #111827;">Business12</code></p>
-                    <p style="margin: 5px 0 0; font-size: 14px;"><strong>Initial Interview On:</strong> <span style="color: #4f46e5; font-weight: 500;">{{ $scheduleDate->format('F j, Y, g:i A') }}</span></p>
+                    <p style="margin: 5px 0 0; font-size: 14px;"><strong>Initial Interview Schedule:</strong> <span style="color: #4f46e5; font-weight: 500;">{{ $scheduleDate->format('F j, Y, g:i A') }}</span></p>
                 </div>
 
                 <div class="action-buttons">

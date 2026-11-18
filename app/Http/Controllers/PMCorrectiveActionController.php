@@ -216,7 +216,7 @@ class PMCorrectiveActionController extends Controller
             $ccRecipients = array_values(array_filter([
                 $correctiveAction->supervisor_email,
                 $correctiveAction->manager_email,
-                'anthony@empireonegroup.com',
+                $correctiveAction->hr_email,
             ], fn($email) => filter_var($email, FILTER_VALIDATE_EMAIL)));
 
             $mail = Mail::to('webdev@empireonegroup.com');
