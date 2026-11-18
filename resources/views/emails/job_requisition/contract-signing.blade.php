@@ -84,7 +84,7 @@
                 </p>
                 <div class="button-container">
                     <a
-                        href="{{ config('app.url') }}/accounts/my_documents/{{ $user['id'] }}/contract"
+                        href="{{ config('app.url') }}/accounts/my_documents/{{ $user['user']['id'] }}/contract"
                         class="btn-primary"
                         style="color: #ffffff !important; text-decoration: none;">
                         Click to Sign Contract
