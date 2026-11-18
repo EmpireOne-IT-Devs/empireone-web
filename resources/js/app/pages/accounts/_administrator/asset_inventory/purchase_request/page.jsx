@@ -1,20 +1,17 @@
-import React, { useMemo, useState } from "react";
-import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Button from "@/app/_components/button";
+import { FiInbox } from "react-icons/fi";
+import { create_asset_purchase_request_thunk, list_asset_purchase_requests_thunk } from "@/app/redux/asset-purchase-request-thunk";
 import Layout from "../../../layout";
 import AssetInventory from "../layout";
 import HeaderSection from "./sections/header-section";
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import CreatePurchaseReqSection from "./sections/create-purchase-req-section";
-import { APPROVAL_STEPS } from "./sections/purchase-request-helpers";
-import {
-    DEPARTMENT_CODES,
-    initialPurchaseRequests,
-} from "./sections/purchase-request-mock-data";
-
-const PER_PAGE = 10;
-
 export default function Page() {
+    const dispatch = useDispatch();
+    const { items, meta, loading, error } = useSelector((state) => state.asset_purchase_requests.list);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
@@ -22,79 +19,34 @@ export default function Page() {
     const [categoryFilter, setCategoryFilter] = useState("");
     const [currency, setCurrency] = useState("PHP");
     const [page, setPage] = useState(1);
-    const [requests, setRequests] = useState(initialPurchaseRequests);
+    const [search, setSearch] = useState("");
+    const [refresh, setRefresh] = useState(0);
 
-    // Any filter change starts back at the first page.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPage(1);
+            setSearch(searchQuery.trim());
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        const request = dispatch(list_asset_purchase_requests_thunk({
+            page, search, status: statusFilter, priority: priorityFilter, category: categoryFilter,
+        }));
+        return () => request.abort();
+    }, [dispatch, page, search, statusFilter, priorityFilter, categoryFilter, refresh]);
+
     const withPageReset = (setter) => (value) => {
         setter(value);
         setPage(1);
     };
 
-    const handleCreateSubmit = (values) => {
-        const now = moment();
-        const nextNumber = requests.length + 1;
-
-        const request = {
-            id: `PR-${String(nextNumber).padStart(3, "0")}`,
-            requestDate: now.format("YYYY-MM-DD"),
-            itemName: values.itemName,
-            department: values.department,
-            requesterName: values.requesterName,
-            category: values.category,
-            quantity: values.quantity,
-            unitPrice: values.unitPrice,
-            totalAmount: values.unitPrice * values.quantity,
-            departmentCode: `${DEPARTMENT_CODES[values.department] ?? "DEPT"}-${now.format("YYYY")}-Q${now.quarter()}`,
-            priority: values.priority,
-            purchaseDate: now.clone().add(1, "month").format("YYYY-MM-DD"),
-            status: "Pending Approval",
-            supplier: values.supplierName || "General Supplier",
-            approvals: APPROVAL_STEPS.map((step) => ({
-                ...step,
-                status: "pending",
-                approverName: null,
-                actedAt: null,
-                remarks: null,
-            })),
-        };
-
-        setRequests((prev) => [request, ...prev]);
+    const handleCreateSubmit = async (values) => {
+        await dispatch(create_asset_purchase_request_thunk(values)).unwrap();
         setPage(1);
+        setRefresh((value) => value + 1);
     };
-
-    const filteredData = useMemo(() => {
-        const term = searchQuery.trim().toLowerCase();
-
-        return requests.filter((item) => {
-            const matchesSearch =
-                !term ||
-                [item.itemName, item.id, item.department, item.requesterName, item.supplier]
-                    .filter(Boolean)
-                    .some((field) => field.toLowerCase().includes(term));
-
-            return (
-                matchesSearch &&
-                (!statusFilter || item.status === statusFilter) &&
-                (!priorityFilter || item.priority === priorityFilter) &&
-                (!categoryFilter || item.category === categoryFilter)
-            );
-        });
-    }, [requests, searchQuery, statusFilter, priorityFilter, categoryFilter]);
-
-    const pageMeta = useMemo(
-        () => ({
-            current_page: page,
-            last_page: Math.max(1, Math.ceil(filteredData.length / PER_PAGE)),
-            per_page: PER_PAGE,
-            total: filteredData.length,
-        }),
-        [filteredData.length, page],
-    );
-
-    const pageData = useMemo(() => {
-        const start = (page - 1) * PER_PAGE;
-        return filteredData.slice(start, start + PER_PAGE);
-    }, [filteredData, page]);
 
     return (
         <Layout>
@@ -113,15 +65,24 @@ export default function Page() {
                         setCategoryFilter={withPageReset(setCategoryFilter)}
                         currency={currency}
                         setCurrency={setCurrency}
-                        resultCount={filteredData.length}
+                        resultCount={meta?.total ?? 0}
                     />
 
-                    <TableSection
-                        data={pageData}
-                        currency={currency}
-                        meta={pageMeta}
-                        onPageChange={setPage}
-                    />
+                    {error ? (
+                        <div role="alert" className="space-y-3 rounded-xl border border-red-200 p-4 text-sm text-red-700">
+                            <p>{error.message}</p>
+                            <Button outlined onClick={() => setRefresh((value) => value + 1)}>Retry</Button>
+                        </div>
+                    ) : !loading && items.length === 0 ? (
+                        <div className="flex flex-col items-center gap-3 rounded-xl border bg-white p-8 text-center">
+                            <FiInbox className="h-8 w-8 text-purple-600" aria-hidden="true" />
+                            <h2 className="font-semibold">No purchase requests found</h2>
+                            <p className="text-sm text-gray-600">Adjust your filters or create a new purchase request.</p>
+                            <Button variant="secondary" onClick={() => setIsCreateOpen(true)}>Create request</Button>
+                        </div>
+                    ) : (
+                        <TableSection data={items} loading={loading} currency={currency} meta={meta} onPageChange={setPage} />
+                    )}
 
                     <CreatePurchaseReqSection
                         isOpen={isCreateOpen}

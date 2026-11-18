@@ -52,6 +52,7 @@ use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
 use App\Http\Controllers\API\AssetInventory\AssetDeviceController;
+use App\Http\Controllers\API\AssetInventory\AssetPurchaseRequestController;
 use App\Http\Controllers\API\AssetInventory\AssetImportController;
 use App\Http\Controllers\API\AssetInventory\AssetMonitorController;
 use App\Http\Controllers\API\AssetInventory\AssetOtherAssetController;
@@ -158,6 +159,15 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
 
     Route::prefix('asset_inventory')->group(function () {
+        Route::prefix('purchase_requests')->name('asset-purchase-requests.')->group(function () {
+            Route::get('/', [AssetPurchaseRequestController::class, 'index'])->name('index');
+            Route::post('/', [AssetPurchaseRequestController::class, 'store'])->name('store');
+            Route::get('/{purchaseRequest}', [AssetPurchaseRequestController::class, 'show'])->whereUuid('purchaseRequest')->name('show');
+            Route::post('/{purchaseRequest}/approve', [AssetPurchaseRequestController::class, 'approve'])->whereUuid('purchaseRequest')->name('approve');
+            Route::post('/{purchaseRequest}/reject', [AssetPurchaseRequestController::class, 'reject'])->whereUuid('purchaseRequest')->name('reject');
+            Route::get('/{purchaseRequest}/quotation', [AssetPurchaseRequestController::class, 'quotation'])->whereUuid('purchaseRequest')->name('quotation');
+        });
+
         Route::post('devices/import', [AssetDeviceController::class, 'import_devices']);
         Route::get('devices', [AssetDeviceController::class, 'get_all']);
         Route::post('devices', [AssetDeviceController::class, 'create_device']);

@@ -44,34 +44,47 @@ function StepMeta({ step }) {
     );
 }
 
-export default function StepperSection({ approvals = [], onApprove, onReject }) {
-    const [pendingAction, setPendingAction] = useState(null); // "approve" | "reject" | null
+export default function StepperSection({ approvals = [], canAct = false, onDecision }) {
+    const [pendingAction, setPendingAction] = useState(null);
     const [remarks, setRemarks] = useState("");
     const [remarksError, setRemarksError] = useState("");
+    const [actionError, setActionError] = useState("");
+    const [saving, setSaving] = useState(false);
 
     const currentIndex = getCurrentStepIndex(approvals);
     const summary = getApprovalSummary(approvals);
     const currentStep = currentIndex >= 0 ? approvals[currentIndex] : null;
-    const canAct = currentStep && currentStep.status === "pending";
+    const canDecide = canAct && currentStep?.status === "pending";
 
     const closeDialog = () => {
         setPendingAction(null);
         setRemarks("");
         setRemarksError("");
+        setActionError("");
     };
 
-    const confirmAction = () => {
-        if (pendingAction === "reject" && !remarks.trim()) {
+    const confirmAction = async () => {
+        if (!pendingAction || saving) return;
+        if (!canDecide || currentStep.key !== pendingAction.step) {
+            setActionError("The current approval step has changed. Close this dialog and review the request again.");
+            return;
+        }
+        if (pendingAction.decision === "reject" && !remarks.trim()) {
             setRemarksError("A reason is required when rejecting a request.");
             return;
         }
 
-        if (pendingAction === "approve") {
-            onApprove?.(currentIndex, remarks.trim());
-        } else {
-            onReject?.(currentIndex, remarks.trim());
+        setSaving(true);
+        setActionError("");
+        try {
+            await onDecision(pendingAction.decision, pendingAction.step, remarks.trim());
+            closeDialog();
+        } catch (error) {
+            setRemarksError(error?.errors?.remarks?.[0] ?? "");
+            setActionError(error?.message ?? "Unable to save the decision.");
+        } finally {
+            setSaving(false);
         }
-        closeDialog();
     };
 
     const steps = approvals.map((step, index) => ({
@@ -81,12 +94,12 @@ export default function StepperSection({ approvals = [], onApprove, onReject }) 
         status: step.status === "pending" && index === currentIndex ? "current" : step.status,
         meta: <StepMeta step={step} />,
         children:
-            canAct && index === currentIndex ? (
+            canDecide && index === currentIndex ? (
                 <div className="flex flex-wrap gap-2">
                     <Button
                         size="sm"
                         variant="success"
-                        onClick={() => setPendingAction("approve")}
+                        onClick={() => setPendingAction({ decision: "approve", step: step.key, label: step.label })}
                         ariaLabel={`Approve as ${step.label}`}
                     >
                         <FiCheckCircle className="mr-1.5 h-4 w-4" />
@@ -96,7 +109,7 @@ export default function StepperSection({ approvals = [], onApprove, onReject }) 
                         size="sm"
                         variant="danger"
                         outlined
-                        onClick={() => setPendingAction("reject")}
+                        onClick={() => setPendingAction({ decision: "reject", step: step.key, label: step.label })}
                         ariaLabel={`Reject as ${step.label}`}
                     >
                         <FiXCircle className="mr-1.5 h-4 w-4" />
@@ -161,26 +174,28 @@ export default function StepperSection({ approvals = [], onApprove, onReject }) 
 
             <Confirmation
                 isOpen={Boolean(pendingAction)}
-                onClose={closeDialog}
+                onClose={saving ? () => {} : closeDialog}
                 title={
-                    pendingAction === "approve"
-                        ? `Approve as ${currentStep?.label}?`
-                        : `Reject as ${currentStep?.label}?`
+                    pendingAction?.decision === "approve"
+                        ? `Approve as ${pendingAction.label}?`
+                        : `Reject as ${pendingAction?.label}?`
                 }
             >
                 <div className="space-y-4 pt-1">
                     <p className="text-sm text-gray-600">
-                        {pendingAction === "approve"
-                            ? "This will move the request to the next approver in the chain."
+                        {pendingAction?.decision === "approve"
+                            ? "This will record your approval for the current step."
                             : "Rejecting stops the approval chain. The requester will need to submit a new request."}
                     </p>
 
                     <TextArea
                         name="approval-remarks"
-                        label={pendingAction === "reject" ? "Reason for rejection" : "Remarks (optional)"}
+                        label={pendingAction?.decision === "reject" ? "Reason for rejection" : "Remarks (optional)"}
                         rows={3}
+                        maxLength={1000}
+                        disabled={saving}
                         value={remarks}
-                        required={pendingAction === "reject"}
+                        required={pendingAction?.decision === "reject"}
                         error={remarksError}
                         onChange={(e) => {
                             setRemarks(e.target.value);
@@ -188,15 +203,17 @@ export default function StepperSection({ approvals = [], onApprove, onReject }) 
                         }}
                     />
 
+                    {actionError && <p role="alert" className="text-sm text-red-600">{actionError}</p>}
                     <div className="flex justify-end gap-2 border-t border-gray-100 pt-4">
-                        <Button variant="light" outlined onClick={closeDialog}>
+                        <Button variant="light" outlined onClick={closeDialog} disabled={saving}>
                             Cancel
                         </Button>
                         <Button
-                            variant={pendingAction === "approve" ? "success" : "danger"}
+                            variant={pendingAction?.decision === "approve" ? "success" : "danger"}
                             onClick={confirmAction}
+                            loading={saving}
                         >
-                            {pendingAction === "approve" ? "Confirm approval" : "Confirm rejection"}
+                            {pendingAction?.decision === "approve" ? "Confirm approval" : "Confirm rejection"}
                         </Button>
                     </div>
                 </div>

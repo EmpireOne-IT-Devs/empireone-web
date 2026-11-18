@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { Link } from "@inertiajs/react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Link, usePage } from "@inertiajs/react";
+import { useDispatch, useSelector } from "react-redux";
 import { FiSearch } from "react-icons/fi";
 import Layout from "../../../../layout";
-import AssetInventory from "../../layout";
-import { setAlert } from "@/app/redux/app-slice";
+import Button from "@/app/_components/button";
+import {
+    decide_asset_purchase_request_thunk,
+    download_asset_purchase_quotation_thunk,
+    get_asset_purchase_request_thunk,
+} from "@/app/redux/asset-purchase-request-thunk";
 import HeaderSection from "./sections/header-section";
 import PurchaseReqFlowSection from "./sections/purchase-req-flow-section";
-import { findPurchaseRequest } from "../sections/purchase-request-mock-data";
-import { getApprovalSummary } from "../sections/purchase-request-helpers";
 
 const LIST_PATH = "/accounts/administrator/asset_inventory/purchase_request";
 
@@ -32,88 +34,49 @@ function NotFound() {
     );
 }
 
-// Derives the headline status from the approval chain (mock only).
-function deriveStatus(approvals, fallback) {
-    const summary = getApprovalSummary(approvals);
-    if (summary.isRejected) return "Rejected";
-    if (summary.isComplete) return "Approved";
-    if (summary.approvedCount > 0) return "In Progress";
-    return fallback ?? "Pending Approval";
-}
-
 export default function Page() {
-    const id = window.location.pathname.split("/")[5];
+    const uuid = usePage().url.split("?")[0].split("/").filter(Boolean).at(-1);
     const dispatch = useDispatch();
-    const [request, setRequest] = useState(() => findPurchaseRequest(id));
-    const [currency] = useState("PHP");
+    const detail = useSelector((state) => state.asset_purchase_requests.detail);
+    const [retry, setRetry] = useState(0);
 
-    const updateStep = (index, status, remarks) => {
-        setRequest((prev) => {
-            if (!prev) return prev;
+    useEffect(() => {
+        const fetch = dispatch(get_asset_purchase_request_thunk(uuid));
+        return () => fetch.abort();
+    }, [dispatch, uuid, retry]);
 
-            const approvals = prev.approvals.map((step, i) =>
-                i === index
-                    ? {
-                          ...step,
-                          status,
-                          approverName: step.approverName ?? "You",
-                          actedAt: new Date().toISOString().slice(0, 10),
-                          remarks:
-                              remarks ||
-                              (status === "approved" ? "Reviewed and approved." : null),
-                      }
-                    : step,
-            );
+    const handleDecision = (decision, step, remarks) =>
+        dispatch(decide_asset_purchase_request_thunk({ uuid, decision, step, remarks })).unwrap();
 
-            return { ...prev, approvals, status: deriveStatus(approvals, prev.status) };
-        });
-    };
-
-    const handleApprove = (index, remarks) => {
-        const stepLabel = request?.approvals?.[index]?.label ?? "approver";
-        updateStep(index, "approved", remarks);
-        dispatch(
-            setAlert({
-                open: true,
-                type: "success",
-                title: "Request approved",
-                message: `${request.id} was approved by ${stepLabel}.`,
-            }),
-        );
-    };
-
-    const handleReject = (index, remarks) => {
-        const stepLabel = request?.approvals?.[index]?.label ?? "approver";
-        updateStep(index, "rejected", remarks);
-        dispatch(
-            setAlert({
-                open: true,
-                type: "danger",
-                title: "Request rejected",
-                message: `${request.id} was rejected by ${stepLabel}.`,
-            }),
-        );
+    const handleDownload = async () => {
+        const { data } = await dispatch(download_asset_purchase_quotation_thunk(uuid)).unwrap();
+        window.location.assign(data.url);
     };
 
     return (
         <Layout>
-           
-                <div className="space-y-4">
-                    {request ? (
-                        <>
-                            <HeaderSection request={request} />
-                            <PurchaseReqFlowSection
-                                request={request}
-                                currency={currency}
-                                onApprove={handleApprove}
-                                onReject={handleReject}
-                            />
-                        </>
-                    ) : (
-                        <NotFound />
-                    )}
-                </div>
-           
+            <div className="space-y-4">
+                {detail.uuid !== uuid || detail.loading ? (
+                    <p role="status" className="rounded-xl border bg-white p-5 text-sm text-gray-600">Loading purchase request…</p>
+                ) : detail.request ? (
+                    <>
+                        <HeaderSection request={detail.request} />
+                        <PurchaseReqFlowSection
+                            key={uuid}
+                            request={detail.request}
+                            onDecision={handleDecision}
+                            onDownload={handleDownload}
+                        />
+                    </>
+                ) : [403, 404].includes(detail.error?.status) ? (
+                    <NotFound />
+                ) : (
+                    <div role="alert" className="space-y-3 rounded-xl border border-red-200 p-4 text-sm text-red-700">
+                        <p>{detail.error?.message ?? "Unable to load this purchase request."}</p>
+                        <Button outlined onClick={() => setRetry((value) => value + 1)}>Retry</Button>
+                    </div>
+                )}
+            </div>
         </Layout>
     );
 }

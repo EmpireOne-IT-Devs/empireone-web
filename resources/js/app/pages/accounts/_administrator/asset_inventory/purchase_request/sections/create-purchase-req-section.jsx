@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FiSend } from "react-icons/fi";
 import Modal from "@/app/_components/modal";
@@ -34,35 +34,57 @@ export default function CreatePurchaseReqSection({
         handleSubmit,
         control,
         reset,
+        setError,
+        clearErrors,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: DEFAULT_VALUES });
+    const quotationInput = useRef(null);
+    const [hasQuotation, setHasQuotation] = useState(false);
+
+    const clearQuotation = () => {
+        if (quotationInput.current) quotationInput.current.value = "";
+        setHasQuotation(false);
+    };
 
     // Always start from a clean form when the modal opens.
     useEffect(() => {
-        if (isOpen) reset(DEFAULT_VALUES);
+        if (isOpen) {
+            reset(DEFAULT_VALUES);
+            clearQuotation();
+        }
     }, [isOpen, reset]);
 
     const handleClose = () => {
         reset(DEFAULT_VALUES);
+        clearQuotation();
         onClose?.();
     };
 
     const submit = async (values) => {
-        await onSubmit?.({
-            ...values,
-            itemName: values.itemName.trim(),
-            requesterName: values.requesterName.trim(),
-            supplierName: values.supplierName.trim(),
-            quantity: Number(values.quantity),
-            unitPrice: Number(values.unitPrice),
-        });
-        handleClose();
+        clearErrors();
+        try {
+            await onSubmit({
+                ...values,
+                itemName: values.itemName.trim(),
+                requesterName: values.requesterName.trim(),
+                supplierName: values.supplierName.trim(),
+                quantity: Number(values.quantity),
+                unitPrice: values.unitPrice,
+                supplierQuotation: quotationInput.current?.files[0],
+            });
+            handleClose();
+        } catch (error) {
+            for (const [field, messages] of Object.entries(error?.errors ?? {})) {
+                setError(field, { message: messages[0] });
+            }
+            setError("root", { message: error?.message ?? "Could not save your request." });
+        }
     };
 
     return (
         <Modal
             isOpen={isOpen}
-            onClose={handleClose}
+            onClose={isSubmitting || submitting ? () => {} : handleClose}
             width="max-w-xl"
             title={
                 <div>
@@ -181,11 +203,51 @@ export default function CreatePurchaseReqSection({
                     {...register("supplierName")}
                 />
 
+                <div className="space-y-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <div className="min-w-0 flex-1">
+                            <Input
+                                ref={quotationInput}
+                                label="Supplier quotation (optional)"
+                                name="supplierQuotation"
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                error={errors.supplierQuotation}
+                                aria-describedby="supplier-quotation-help"
+                                disabled={isSubmitting || submitting}
+                                onChange={(event) => setHasQuotation(event.target.files.length > 0)}
+                                className="file:mr-2 file:rounded file:border-0 file:bg-purple-50 file:px-2 file:py-1 file:text-sm file:font-medium file:text-purple-700"
+                            />
+                        </div>
+                        {hasQuotation && (
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                outlined
+                                ariaLabel="Remove supplier quotation"
+                                disabled={isSubmitting || submitting}
+                                onClick={() => {
+                                    clearQuotation();
+                                    quotationInput.current?.focus();
+                                }}
+                            >
+                                Remove
+                            </Button>
+                        )}
+                    </div>
+                    <p id="supplier-quotation-help" className="text-xs text-gray-500">
+                        PDF, JPG, or PNG, up to 10 MB.
+                    </p>
+                </div>
+
+                {errors.root && <p role="alert" className="text-sm text-red-600">{errors.root.message}</p>}
                 <div className="mt-2 flex flex-col justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row">
                     <Button
                         type="button"
                         variant="secondary"
                         outlined
+                        disabled={isSubmitting || submitting}
                         onClick={handleClose}
                         className="w-full sm:w-auto"
                     >

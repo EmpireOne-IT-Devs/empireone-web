@@ -125,7 +125,7 @@ export default function TableSection({
             accessor: "actions",
             render: (row) => (
                 <Link
-                    href={`${DETAIL_BASE}/${row.id}`}
+                    href={`${DETAIL_BASE}/${row.uuid}`}
                     aria-label={`View purchase request ${row.id}`}
                     className="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                 >

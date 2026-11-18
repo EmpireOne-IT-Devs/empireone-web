@@ -54,32 +54,6 @@ export const STATUS_VARIANTS = {
     Rejected: "danger",
 };
 
-// Fixed 4-level approval chain. Order matters — each level unlocks the next.
-export const APPROVAL_STEPS = [
-    {
-        key: "department_head",
-        label: "Department Head",
-        description: "Validates the business need and budget line",
-    },
-    {
-        key: "finance",
-        label: "Finance",
-        description: "Confirms funds availability and cost center",
-    },
-    {
-        key: "procurement",
-        label: "Procurement",
-        description: "Reviews supplier, pricing, and sourcing terms",
-    },
-    {
-        key: "general_manager",
-        label: "Admin / General Manager",
-        description: "Final sign-off to release the purchase order",
-    },
-];
-
-export const APPROVAL_STATUSES = ["pending", "approved", "rejected"];
-
 export {
     APPROVAL_STATUS_VARIANTS,
     getCurrentStepIndex,

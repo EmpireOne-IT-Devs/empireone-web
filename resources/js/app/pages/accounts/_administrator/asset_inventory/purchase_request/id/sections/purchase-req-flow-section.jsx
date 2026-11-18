@@ -1,4 +1,5 @@
-﻿import React from "react";
+import React, { useState } from "react";
+import Button from "@/app/_components/button";
 import { motion } from "framer-motion";
 import {
     FiPackage,
@@ -58,9 +59,24 @@ function Field({ icon: Icon, label, children, mono = false }) {
 export default function PurchaseReqFlowSection({
     request,
     currency = "PHP",
-    onApprove,
-    onReject,
+    onDecision,
+    onDownload,
 }) {
+    const [downloading, setDownloading] = useState(false);
+    const [downloadError, setDownloadError] = useState("");
+
+    const downloadQuotation = async () => {
+        setDownloading(true);
+        setDownloadError("");
+        try {
+            await onDownload();
+        } catch (error) {
+            setDownloadError(error?.message ?? "Unable to download the quotation.");
+        } finally {
+            setDownloading(false);
+        }
+    };
+
     return (
         <motion.div
             variants={staggerContainer}
@@ -88,6 +104,15 @@ export default function PurchaseReqFlowSection({
                                 {request.supplier}
                             </Field>
                         </div>
+                        {request.quotationName && (
+                            <Field icon={FiFileText} label="Supplier quotation">
+                                <span className="block break-words">{request.quotationName}</span>
+                                <Button className="mt-2" size="sm" variant="secondary" outlined loading={downloading} onClick={downloadQuotation}>
+                                    Download quotation
+                                </Button>
+                                {downloadError && <span role="alert" className="mt-1 block text-red-600">{downloadError}</span>}
+                            </Field>
+                        )}
                     </dl>
                 </Panel>
 
@@ -149,8 +174,8 @@ export default function PurchaseReqFlowSection({
                 <div className="lg:sticky lg:top-4">
                     <StepperSection
                         approvals={request.approvals}
-                        onApprove={onApprove}
-                        onReject={onReject}
+                        canAct={request.canAct}
+                        onDecision={onDecision}
                     />
                 </div>
             </div>
