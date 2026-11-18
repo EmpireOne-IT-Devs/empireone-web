@@ -80,7 +80,7 @@ class AccountDocumentController extends Controller
         //     ]);
         // }
         Mail::to($request->user['email'])->send(new OnboardingDocumentsMail($request->all()));
-        // Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
+        Mail::to($request->user['email'])->send(new ContractSigningMail($request->all()));
 
         $application = JobApplication::where('id', $request->id)->first();
         if ($application) {
