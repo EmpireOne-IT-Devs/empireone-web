@@ -59,6 +59,7 @@
     <div class="wrapper">
         <div class="card">
             <div class="header">
+                
                 <img
                     src="{{ $message->embed(public_path('images/E1CXlogo.png')) }}"
                     alt="EmpireOne Logo"
@@ -68,9 +69,9 @@
             <div class="content">
                 <p>
                     This is an automated notification to inform you that
-                    <strong>{{ $user['name'] }}</strong> has a contract ready to be signed
+                  <strong>{{ $user['user']['name'] }}</strong> has a contract ready to be signed
                     for the position of
-                    <strong>{{ $user['account_employee']['position'] ?? 'N/A' }}</strong>.
+                    <strong>{{ $user['job_posting']['job_requisition']['title'] }}</strong>.
                 </p>
 
                 <p>
