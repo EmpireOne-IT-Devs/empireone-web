@@ -12,7 +12,7 @@ class AssetPurchaseRequestResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'id' => sprintf('PR-%03d', $this->getKey()),
+            'id' => $this->reference(),
             'itemName' => $this->item_name,
             'department' => $this->department,
             'requesterName' => $this->requester_name,

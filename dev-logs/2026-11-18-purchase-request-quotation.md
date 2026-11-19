@@ -46,3 +46,57 @@
 - **Behavior:** Approval requests, approvals, and rejections share the HTML layout and retain the plain-text fallback. The button points to the existing signed-in request page. Recipients and queue behavior are unchanged.
 - **QA:** 5 focused tests passed (113 assertions), including HTML, fallback text, request links, approval sequence, and exclusion of sensitive remarks and attachments. Live mail delivery and email-client rendering were not tested.
 - **Deployment:** Deploy the template and job changes and restart the Laravel queue workers. No new migration or frontend build is required.
+
+### Phase 1: Monthly purchase request identifiers
+
+- **Timestamp:** 2026-11-19, 21:32 PHT
+- **Mode:** Agent
+- **Personas:** Tech Lead, Backend, Frontend, QA
+- **Files modified/created:** Added the identifier migration; updated the purchase request model, service, resource, controller, email job, and feature tests. Existing frontend views consume the same `id` response field without modification.
+- **Behavior:** New requests receive a unique `PR-YYYYMM-0001` reference, numbered per month in the application timezone. Existing requests retain their `PR-001`-style references. UUID links, approval records, quotation paths, and queued job lookup are unchanged.
+- **Issues and resolution:** A quotation upload or sequence allocation could cross a month boundary. The service now uses one creation timestamp for the reference and the persisted creation date. Pint findings in the model and email job match their pre-change formatting; unrelated formatting was not changed.
+- **QA:** 9 SQLite feature tests passed (157 assertions), including rollover, rollback, uniqueness, search, legacy references, email, and migration reversal; 3 frontend tests passed. Pint passed for the other modified PHP files. Real MySQL concurrency, deployment, email delivery, and browser behavior were not verified.
+- **Deployment:** Pause request creation and queue workers, deploy the migration and code together, apply the migration, and restart workers before resuming. No live migration was run.
+- **Next steps:** Verify concurrent creation against an isolated MySQL environment and deploy the migration using the normal release process.
+
+### Phase 2: Single-table purchase request identifiers
+
+- **Timestamp:** 2026-11-19, 21:45 PHT
+- **Mode:** Agent
+- **Personas:** Tech Lead, Backend, QA
+- **Files modified:** The [identifier migration](../database/migrations/2026_11_19_220000_add_purchase_request_identifiers.php) now only adds the unique `purchase_request_id` column; the [service](../app/Services/AssetPurchaseRequestService.php) reads the month's highest identifier from `asset_purchase_requests` and retries when the unique index rejects a duplicate; the [feature tests](../tests/Feature/AssetPurchaseRequestTest.php) cover the new logic.
+- **Behavior:** Format, monthly reset, legacy references, UUID links, search, and emails are unchanged. The `asset_purchase_request_sequences` table is no longer created or used.
+- **Local database:** With approval, dropped the leftover `asset_purchase_request_sequences` table. The column and the existing `PR-202611-0001` request were kept. The migration was edited in place on the assumption that it had only run locally; any other environment that already ran the earlier version must drop that table manually.
+- **Issues encountered:** The approved one-time queue run processed the waiting email job, but the job skipped sending. `PURCHASE_REQUEST_APPROVER_EMAIL` is not set and [the approver configuration](../config/purchase_request.php) has no default, so no step has an approver. The intended approver account is a verified administrator. No email was sent and the job is no longer queued.
+- **Resolution:** Not resolved in this phase; setting the approver email needs a separate approved change.
+- **QA:** 10 SQLite feature tests passed (164 assertions), including monthly reset, numbers above 9999, duplicate retry, month rollover, and migration reversal. Pint passed for the three modified PHP files. No frontend files changed. Simultaneous creation on real MySQL and browser behavior were not verified.
+- **Next steps:** Configure the approver email, keep a queue worker running during local testing, and create a new request to confirm delivery.
+
+### Phase 3: Verify approver email delivery
+
+- **Timestamp:** 2026-11-19, 21:45 PHT
+- **Mode:** Agent
+- **Personas:** Backend, QA
+- **Files modified:** Dev log only. The user set the approver in local environment configuration.
+- **Resolution:** Verified Laravel loaded the configured, eligible approver and that `PR-202611-0001` was still awaiting Department Head approval. Re-queued only that notification and processed it once.
+- **QA:** Laravel recorded one SMTP handoff for the expected notification. No jobs remained pending or failed on the resend queue. Inbox receipt was not verified. No routes, permissions, schema, or frontend code changed.
+- **Next steps:** Keep a queue worker running for future local notifications and confirm inbox receipt.
+
+### Phase 1: Show the purchase request rejection reason
+
+- **Timestamp:** 2026-11-19, 21:49 PHT
+- **Mode:** Agent
+- **Personas:** Frontend, QA
+- **Files modified:** The [request header](../resources/js/app/pages/accounts/_administrator/asset_inventory/purchase_request/id/sections/header-section.jsx) displays the rejected step's saved reason on rejected requests. The [frontend tests](../tests/Frontend/purchase-request.test.mjs) cover the notice, status gating, and the missing-note message.
+- **Issues and resolution:** The Node render test loads Inertia through its ESM entry to avoid a CommonJS entry error.
+- **QA:** 5 frontend tests and 10 Laravel feature tests passed (164 Laravel assertions). Existing form validation, approval history, authorization, and email behavior are unchanged. Responsive layout and accessibility are code-level checks; browser verification was not run.
+- **Next steps:** No migration or configuration changes are required.
+
+### Phase 2: Run the local approval email queue
+
+- **Timestamp:** 2026-11-19, 22:09 PHT
+- **Mode:** Agent
+- **Personas:** Backend, QA
+- **Issues and resolution:** The local database queue had no running worker. Started an approved background worker on the `default` queue after confirming all five waiting jobs were purchase request notifications.
+- **QA:** The worker processed all five jobs. SMTP accepted the notification for `PR-202611-0001`; four jobs completed without sending. The queue was empty with no new failures at verification. Inbox receipt was not verified. No application code or settings changed.
+- **Next steps:** Keep a worker running for local testing. Restart it after a machine restart or relevant configuration change.

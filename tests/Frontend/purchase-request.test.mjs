@@ -5,6 +5,9 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { configureStore } from "@reduxjs/toolkit";
+import * as inertia from "@inertiajs/react";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const require = createRequire(import.meta.url);
@@ -14,6 +17,7 @@ const { outputFiles } = await build({
         contents: `
             export { default as reducer } from "./resources/js/app/redux/asset-purchase-request-slice";
             export * from "./resources/js/app/redux/asset-purchase-request-thunk";
+            export { default as HeaderSection } from "./resources/js/app/pages/accounts/_administrator/asset_inventory/purchase_request/id/sections/header-section.jsx";
         `,
         resolveDir: root,
     },
@@ -21,18 +25,49 @@ const { outputFiles } = await build({
     write: false,
     platform: "node",
     format: "cjs",
+    jsx: "automatic",
     packages: "external",
     alias: { "@": path.join(root, "resources", "js") },
 });
 const loaded = { exports: {} };
-new Function("require", "module", "exports", outputFiles[0].text)(require, loaded, loaded.exports);
+// Inertia's CommonJS entry is marked as ESM; use its import entry for the render tests.
+const requireForBundle = (id) => id === "@inertiajs/react" ? inertia : require(id);
+new Function("require", "module", "exports", outputFiles[0].text)(requireForBundle, loaded, loaded.exports);
 const {
+    HeaderSection,
     reducer,
     create_asset_purchase_request_thunk,
     decide_asset_purchase_request_thunk,
     get_asset_purchase_request_thunk,
     list_asset_purchase_requests_thunk,
 } = loaded.exports;
+
+test("the request header shows only the rejected step's reason and only on a rejected request", () => {
+    const approvals = [
+        { status: "approved", remarks: "Previous approval note" },
+        { status: "rejected", remarks: "Quote exceeds the budget.\nPlease revise it." },
+    ];
+    const renderHeader = (status) => renderToStaticMarkup(createElement(HeaderSection, {
+        request: { id: "PR-202611-0001", status, approvals },
+    }));
+
+    const rejected = renderHeader("Rejected");
+    assert.match(rejected, /<h2[^>]*>Reason for rejection<\/h2>/);
+    assert.ok(rejected.includes(approvals[1].remarks));
+    assert.doesNotMatch(rejected, /Previous approval note/);
+
+    for (const status of ["Pending Approval", "In Progress", "Approved"]) {
+        assert.doesNotMatch(renderHeader(status), /Reason for rejection|Quote exceeds the budget/);
+    }
+});
+
+test("the request header explains when a rejected request has no saved reason", () => {
+    const html = renderToStaticMarkup(createElement(HeaderSection, {
+        request: { status: "Rejected", approvals: [{ status: "rejected", remarks: "  " }] },
+    }));
+
+    assert.match(html, /No reason was recorded\./);
+});
 
 function respond(config, data) {
     return { config, status: 200, statusText: "OK", headers: {}, data };

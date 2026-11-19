@@ -45,9 +45,12 @@ class AssetPurchaseRequestController extends Controller
                 $search->whereLike('item_name', "%{$term}%")
                     ->orWhereLike('department', "%{$term}%")
                     ->orWhereLike('requester_name', "%{$term}%")
-                    ->orWhereLike('supplier', "%{$term}%");
+                    ->orWhereLike('supplier', "%{$term}%")
+                    ->orWhereLike('purchase_request_id', "%{$term}%");
                 if (preg_match('/^PR-([0-9]{1,18})$/i', $term, $matches)) {
-                    $search->orWhere('id', (int) $matches[1]);
+                    $search->orWhere(function ($legacy) use ($matches) {
+                        $legacy->whereNull('purchase_request_id')->where('id', (int) $matches[1]);
+                    });
                 }
             });
         }

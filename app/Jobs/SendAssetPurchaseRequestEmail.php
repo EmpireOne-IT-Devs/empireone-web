@@ -32,7 +32,7 @@ class SendAssetPurchaseRequestEmail implements ShouldQueue
             return;
         }
 
-        $reference = sprintf('PR-%03d', $request->getKey());
+        $reference = $request->reference();
         if ($this->stepKey !== null) {
             $step = $request->steps()->where('status', 'pending')->first();
             if ($step?->key !== $this->stepKey) {

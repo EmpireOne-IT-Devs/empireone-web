@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Jobs\SendAssetPurchaseRequestEmail;
+use App\Models\AssetInventory\AssetPurchaseRequest;
 use App\Models\User;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +14,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Mockery;
 use PHPUnit\Framework\Assert;
 use Tests\TestCase;
 
@@ -46,6 +51,110 @@ class AssetPurchaseRequestTest extends TestCase
             $table->timestamps();
         });
         (require database_path('migrations/2026_11_18_230000_create_asset_purchase_requests_tables.php'))->up();
+        (require database_path('migrations/2026_11_19_220000_add_purchase_request_identifiers.php'))->up();
+    }
+
+    public function test_new_request_identifiers_reset_monthly_and_existing_identifiers_are_unchanged(): void
+    {
+        $this->travelTo(now()->setDate(2026, 11, 19)->startOfDay());
+        $this->actingAs($this->account('owner'), 'sanctum');
+        $legacy = $this->postJson(self::API, $this->values())->assertCreated()->json('data');
+        DB::table('asset_purchase_requests')->where('uuid', $legacy['uuid'])->update(['purchase_request_id' => null]);
+
+        $first = $this->postJson(self::API, $this->values())->assertCreated()->json('data');
+        $this->assertSame('PR-202611-0001', $first['id']);
+        $second = $this->postJson(self::API, $this->values())->assertCreated()->json('data');
+        $this->assertSame('PR-202611-0002', $second['id']);
+        $this->getJson(self::API.'/'.$legacy['uuid'])->assertOk()->assertJsonPath('data.id', 'PR-001');
+        $this->getJson(self::API.'?search=PR-001')->assertOk()
+            ->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.uuid', $legacy['uuid']);
+        $this->getJson(self::API.'?search=PR-002')->assertOk()->assertJsonPath('meta.total', 0);
+        $this->getJson(self::API.'?search=PR-202611-0001')->assertOk()
+            ->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.uuid', $first['uuid']);
+
+        $this->account('reviewer');
+        Queue::pushed(SendAssetPurchaseRequestEmail::class)->first()->handle();
+        $message = Mail::mailer()->getSymfonyTransport()->messages()->first()->getOriginalMessage();
+        $this->assertStringContainsString('PR-001', $message->getSubject());
+
+        $this->travelTo(now()->setDate(2026, 12, 1));
+        $december = $this->postJson(self::API, $this->values())->assertCreated()
+            ->assertJsonPath('data.id', 'PR-202612-0001')->json('data.uuid');
+        DB::table('asset_purchase_requests')->where('uuid', $december)->update(['purchase_request_id' => 'PR-202612-9999']);
+        $this->postJson(self::API, $this->values())->assertCreated()->assertJsonPath('data.id', 'PR-202612-10000');
+        $this->postJson(self::API, $this->values())->assertCreated()->assertJsonPath('data.id', 'PR-202612-10001');
+
+        $this->expectException(QueryException::class);
+        DB::table('asset_purchase_requests')->where('uuid', $second['uuid'])
+            ->update(['purchase_request_id' => $first['id']]);
+    }
+
+    public function test_identifier_migration_is_reversible(): void
+    {
+        $migration = require database_path('migrations/2026_11_19_220000_add_purchase_request_identifiers.php');
+        $migration->down();
+
+        $this->assertFalse(Schema::hasColumn('asset_purchase_requests', 'purchase_request_id'));
+        $this->assertTrue(Schema::hasTable('asset_purchase_requests'));
+    }
+
+    public function test_a_duplicate_identifier_is_retried_instead_of_failing_the_request(): void
+    {
+        $this->actingAs($this->account('owner'), 'sanctum');
+        $attempts = 0;
+        AssetPurchaseRequest::creating(function (AssetPurchaseRequest $request) use (&$attempts) {
+            if (++$attempts === 1) {
+                // Simulate another request saving the same number first.
+                $request->replicate()->forceFill(['uuid' => (string) Str::uuid()])->saveQuietly();
+            }
+        });
+
+        $this->postJson(self::API, $this->values())->assertCreated()
+            ->assertJsonPath('data.id', 'PR-'.now()->format('Ym').'-0001');
+
+        $this->assertSame(2, $attempts);
+        $this->assertSame(1, DB::table('asset_purchase_requests')->count());
+        $this->assertSame(4, DB::table('asset_purchase_request_steps')->count());
+        Queue::assertPushed(SendAssetPurchaseRequestEmail::class, 1);
+    }
+
+    public function test_identifier_uses_the_creation_month_after_a_slow_quotation_upload(): void
+    {
+        $this->travelTo(now()->setDate(2026, 11, 30)->setTime(23, 59, 59));
+        $disk = Mockery::mock(Filesystem::class);
+        $disk->shouldReceive('putFileAs')->once()->andReturnUsing(function () {
+            $this->travelTo(now()->addSeconds(2));
+
+            return 'purchase-requests/test/quotation.pdf';
+        });
+        Storage::shouldReceive('disk')->once()->with('purchase_quotations')->andReturn($disk);
+
+        $this->actingAs($this->account('owner'), 'sanctum');
+        $created = $this->post(self::API, $this->values() + [
+            'supplierQuotation' => UploadedFile::fake()->createWithContent('quote.pdf', "%PDF-1.4\n%%EOF"),
+        ], ['Accept' => 'application/json'])->assertCreated()->json('data');
+
+        $this->assertSame('PR-202612-0001', $created['id']);
+        $this->assertSame('2026-12-01', $created['requestDate']);
+    }
+
+    public function test_identifier_and_creation_date_match_if_month_changes_during_allocation(): void
+    {
+        $this->travelTo(now()->setDate(2026, 11, 30)->setTime(23, 59, 59));
+        $this->actingAs($this->account('owner'), 'sanctum');
+        $advanced = false;
+        DB::listen(function ($query) use (&$advanced) {
+            if (! $advanced && str_contains($query->sql, 'LENGTH(purchase_request_id)')) {
+                $advanced = true;
+                $this->travelTo(now()->addSeconds(2));
+            }
+        });
+
+        $created = $this->postJson(self::API, $this->values())->assertCreated()->json('data');
+
+        $this->assertTrue($advanced);
+        $this->assertSame('PR-202611-0001', $created['id']);
+        $this->assertSame('2026-11-30', $created['requestDate']);
     }
 
     public function test_list_and_create_routes_persist_data_and_scope_it_to_the_owner_and_reviewer(): void
@@ -147,7 +256,8 @@ class AssetPurchaseRequestTest extends TestCase
         }
         $owner = $this->account('owner');
         $this->actingAs($owner, 'sanctum');
-        $uuid = $this->postJson(self::API, $this->values())->assertCreated()->json('data.uuid');
+        $created = $this->postJson(self::API, $this->values())->assertCreated()->json('data');
+        $uuid = $created['uuid'];
         $path = self::API.'/'.$uuid.'/approve';
         $expectedRecipients = [];
 
@@ -173,6 +283,8 @@ class AssetPurchaseRequestTest extends TestCase
         $this->assertStringContainsString('completed all approval steps', $messages->last()->getHtmlBody());
         $url = route('asset-purchase-requests.page.show', ['id' => $uuid]);
         foreach ($messages as $message) {
+            $this->assertStringContainsString($created['id'], $message->getSubject());
+            $this->assertStringContainsString($created['id'], $message->getTextBody());
             $this->assertStringContainsString('/accounts/administrator/asset_inventory/purchase_request/'.$uuid, $message->getTextBody());
             $this->assertStringContainsString('href="'.e($url).'"', $message->getHtmlBody());
             $this->assertStringContainsString('View Purchase Request</a>', $message->getHtmlBody());
@@ -193,7 +305,9 @@ class AssetPurchaseRequestTest extends TestCase
         }
         Queue::assertNothingPushed();
 
-        $uuid = $this->postJson(self::API, $this->values())->assertCreated()->json('data.uuid');
+        $created = $this->postJson(self::API, $this->values())->assertCreated()->json('data');
+        $this->assertSame('PR-'.now()->format('Ym').'-0001', $created['id']);
+        $uuid = $created['uuid'];
         $this->actingAs($this->account('reviewer'), 'sanctum');
         $this->postJson(self::API.'/'.$uuid.'/reject', ['step' => 'department_head', 'remarks' => 'Not needed.'])->assertOk();
         Queue::assertPushed(SendAssetPurchaseRequestEmail::class, 2);

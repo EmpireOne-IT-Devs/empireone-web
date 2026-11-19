@@ -13,7 +13,7 @@ class AssetPurchaseRequest extends Model
     public const REJECTED = 'Rejected';
 
     protected $fillable = [
-        'uuid', 'requester_id', 'requester_name', 'requester_email', 'item_name',
+        'uuid', 'purchase_request_id', 'requester_id', 'requester_name', 'requester_email', 'item_name',
         'department', 'department_code', 'category', 'priority', 'quantity',
         'unit_price', 'supplier', 'purchase_date', 'status', 'quotation_path', 'quotation_name',
     ];
@@ -23,6 +23,11 @@ class AssetPurchaseRequest extends Model
     public function getRouteKeyName(): string
     {
         return 'uuid';
+    }
+
+    public function reference(): string
+    {
+        return $this->purchase_request_id ?? sprintf('PR-%03d', $this->getKey());
     }
 
     public function steps(): HasMany
