@@ -8,6 +8,10 @@ export async function get_employee_change_form_service() {
     return await axios.get(`/api/er/employee_change_form${window.location.search}`);
 }
 
+export async function delete_employee_change_form_service(id) {
+    return await axios.delete(`/api/er/employee_change_form/${id}`);
+}
+
 
 export async function get_employee_change_form_by_id_service(id) {
     return (await axios.get(`/api/er/employee_change_form/${id}`)).data;

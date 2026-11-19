@@ -271,8 +271,13 @@ class EREmployeeChangeFormController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(EREmployeeChangeForm $eREmployeeChangeForm)
+    public function destroy($id)
     {
-        //
+        $form = EREmployeeChangeForm::findOrFail($id); // Throws 404 if not found
+        $form->delete();
+
+        return response()->json([
+            'status' => 'success',
+        ], 200);
     }
 }

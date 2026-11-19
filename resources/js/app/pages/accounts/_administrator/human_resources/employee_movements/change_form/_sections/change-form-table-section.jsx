@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import ChangeFormDetailsSection from "./change-form-details-section";
 import { FcSearch  } from "react-icons/fc";
 import moment from "moment";
+import DeleteECFSection from "../../_sections/delete-ecf-section";
 
 
 export default function ChangeFormTableSection({ loading }) {
@@ -49,6 +50,7 @@ export default function ChangeFormTableSection({ loading }) {
                                 >
                                     <FcSearch  className='text-2xl' />
                                 </a>
+                                <DeleteECFSection  data={res}/>
                             </div>
                         ),
                     })) ?? []
