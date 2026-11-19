@@ -12,6 +12,13 @@ import {
     ShieldAlert,
     Check,
     CalendarCheck,
+    ClipboardList,
+    UserCog,
+    FileCheck2,
+    TrendingUp,
+    FileSignature,
+    Award,
+    XCircle,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "@inertiajs/react";
@@ -22,12 +29,14 @@ export default function CardSection() {
         useState("total-coaching");
     const [activeDisciplinaryCard, setActiveDisciplinaryCard] =
         useState("total-disciplinary");
+    const [activePipCard, setActivePipCard] = useState("total-pip");
 
     const { p_m_dashboard } = useSelector((store) => store.human_resources);
 
     const regData = p_m_dashboard?.regularization || {};
     const coachingData = p_m_dashboard?.coachings || {};
     const correctiveData = p_m_dashboard?.corrective_actions || {};
+    const pipData = p_m_dashboard?.pip || {};
 
     const getPercentage = (count, total) => {
         if (!total || total === 0) return "0%";
@@ -66,8 +75,7 @@ export default function CardSection() {
             count: regData.probationary || 0,
             percentage: getPercentage(regData.probationary, totalTeamCount),
             icon: UserCheck,
-            activeRing:
-                "border-purple-500 ring-2 ring-purple-500/20 shadow-md",
+            activeRing: "border-purple-500 ring-2 ring-purple-500/20 shadow-md",
             barColor: "bg-purple-600",
             iconBg: "bg-purple-50 text-purple-600",
             link: "/accounts/administrator/performance_management/my_team?status=Probationary",
@@ -224,6 +232,135 @@ export default function CardSection() {
         },
     ];
 
+    // Row 4: PIP Metrics
+    const totalPipCount =
+        pipData.total ??
+        (pipData.pending || 0) +
+        (pipData.pending_manager_approval || 0) +
+            (pipData.pending_hr_approval || 0) +
+            (pipData.awaiting_employee_acknowledgment || 0) +
+            (pipData.active_pip || 0) +
+            (pipData.pending_final_acknowledgment || 0) +
+            (pipData.closed_failed || 0) +
+            (pipData.closed_failed || 0);
+    const pipCards = [
+        {
+            id: "total-pip",
+            title: "Total PIP",
+            count: totalPipCount,
+            percentage: "100%",
+            icon: ClipboardList,
+            activeRing: "border-slate-800 ring-2 ring-slate-800/20 shadow-md",
+            barColor: "bg-slate-800",
+            iconBg: "bg-slate-100 text-slate-800",
+            link: "/accounts/administrator/performance_management/pip?status=all",
+        },
+          {
+            id: "pending",
+            title: "Pending",
+            count: pipData.pending || 0,
+            percentage: getPercentage(
+                pipData.pending,
+                totalPipCount,
+            ),
+            icon: UserCog,
+            activeRing: "border-amber-500 ring-2 ring-amber-500/20 shadow-md",
+            barColor: "bg-amber-500",
+            iconBg: "bg-amber-50 text-amber-600",
+            link: "/accounts/administrator/performance_management/pip?status=PENDING",
+        },
+        {
+            id: "pending-manager-approval",
+            title: "Pending Manager Approval",
+            count: pipData.pending_manager_approval || 0,
+            percentage: getPercentage(
+                pipData.pending_manager_approval,
+                totalPipCount,
+            ),
+            icon: UserCog,
+            activeRing: "border-amber-500 ring-2 ring-amber-500/20 shadow-md",
+            barColor: "bg-amber-500",
+            iconBg: "bg-amber-50 text-amber-600",
+            link: "/accounts/administrator/performance_management/pip?status=PENDING MANAGER APPROVAL",
+        },
+        {
+            id: "pending-hr-approval",
+            title: "Pending HR Approval",
+            count: pipData.pending_hr_approval || 0,
+            percentage: getPercentage(
+                pipData.pending_hr_approval,
+                totalPipCount,
+            ),
+            icon: FileCheck2,
+            activeRing: "border-purple-500 ring-2 ring-purple-500/20 shadow-md",
+            barColor: "bg-purple-600",
+            iconBg: "bg-purple-50 text-purple-600",
+            link: "/accounts/administrator/performance_management/pip?status=PENDING HR APPROVAL",
+        },
+        {
+            id: "awaiting-employee-acknowledgment",
+            title: "Waiting Employee Acknowledgment",
+            count: pipData.awaiting_employee_acknowledgment || 0,
+            percentage: getPercentage(
+                pipData.awaiting_employee_acknowledgment,
+                totalPipCount,
+            ),
+            icon: Hourglass,
+            activeRing: "border-orange-500 ring-2 ring-orange-500/20 shadow-md",
+            barColor: "bg-orange-500",
+            iconBg: "bg-orange-50 text-orange-600",
+            link: "/accounts/administrator/performance_management/pip?status=WAITING EMPLOYEE ACKNOWLEDGMENT",
+        },
+        {
+            id: "active-pip",
+            title: "Active PIP",
+            count: pipData.active_pip || 0,
+            percentage: getPercentage(pipData.active_pip, totalPipCount),
+            icon: TrendingUp,
+            activeRing: "border-blue-500 ring-2 ring-blue-500/20 shadow-md",
+            barColor: "bg-blue-600",
+            iconBg: "bg-blue-50 text-blue-600",
+            link: "/accounts/administrator/performance_management/pip?status=ACTIVE PIP",
+        },
+        {
+            id: "pending-final-acknowledgment",
+            title: "Pending Final Acknowledgment",
+            count: pipData.pending_final_acknowledgment || 0,
+            percentage: getPercentage(
+                pipData.pending_final_acknowledgment,
+                totalPipCount,
+            ),
+            icon: FileSignature,
+            activeRing: "border-indigo-500 ring-2 ring-indigo-500/20 shadow-md",
+            barColor: "bg-indigo-600",
+            iconBg: "bg-indigo-50 text-indigo-600",
+            link: "/accounts/administrator/performance_management/pip?status=PENDING FINAL ACKNOWLEDGMENT",
+        },
+        {
+            id: "closed-passed",
+            title: "Closed - Passed",
+            count: pipData.closed_passed || 0,
+            percentage: getPercentage(pipData.closed_passed, totalPipCount),
+            icon: Award,
+            activeRing:
+                "border-emerald-500 ring-2 ring-emerald-500/20 shadow-md",
+            barColor: "bg-emerald-600",
+            iconBg: "bg-emerald-50 text-emerald-600",
+            link: "/accounts/administrator/performance_management/pip?status=CLOSED - PASSED",
+        },
+        {
+            id: "closed-failed",
+            title: "Closed - Failed",
+            count: pipData.closed_failed || 0,
+            percentage: getPercentage(pipData.closed_failed, totalPipCount),
+            icon: XCircle,
+            activeRing: "border-rose-500 ring-2 ring-rose-500/20 shadow-md",
+            barColor: "bg-rose-500",
+            iconBg: "bg-rose-50 text-rose-600",
+            link: "/accounts/administrator/performance_management/pip?status=CLOSED - FAILED",
+        },
+    ];
+
     const renderCardRow = (
         cards,
         activeId,
@@ -348,6 +485,24 @@ export default function CardSection() {
                     disciplinaryCards,
                     activeDisciplinaryCard,
                     setActiveDisciplinaryCard,
+                    "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3",
+                )}
+            </section>
+
+            {/* Row 4: Performance Improvement Plans (PIP) */}
+            <section className="space-y-3">
+                <div>
+                    <h2 className="text-base font-semibold text-slate-900">
+                        Performance Improvement Plans (PIP)
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                        Approval stages, active plans, and closure outcomes
+                    </p>
+                </div>
+                {renderCardRow(
+                    pipCards,
+                    activePipCard,
+                    setActivePipCard,
                     "sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3",
                 )}
             </section>

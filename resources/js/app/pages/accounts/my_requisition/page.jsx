@@ -13,7 +13,7 @@ export default function Page() {
     useEffect(() => {
         store.dispatch(get_job_requisitions_by_user_thunk());
         store.dispatch(get_job_interviewer_schedule_thunk());
-    }, []);
+    }, [window.location.search]);
 
     return (
         <Layout>

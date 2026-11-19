@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PerformanceManagementLayout from "./../layout";
 import CreatePIPSection from "./_sections/create-pip-section";
 import TableSection from "./_sections/table-section";
@@ -6,14 +6,19 @@ import store from "@/app/store/store";
 import { get_pip_thunk } from "@/app/redux/employee-relation-thunk";
 
 export default function Page() {
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
-        store.dispatch(get_pip_thunk());
+        async function get_data(params) {
+            await store.dispatch(get_pip_thunk());
+            setLoading(false);
+        }
+        get_data();
     }, [window.location.search]);
     return (
         <PerformanceManagementLayout>
             <div className="flex flex-col gap-3">
                 <CreatePIPSection />
-                <TableSection />
+                <TableSection isloading={loading} />
             </div>
         </PerformanceManagementLayout>
     );

@@ -99,7 +99,7 @@ export default function ProgressReportSection({
                                 onChange={() => setData("is_passed", 1)}
                                 className="w-4 h-4 text-emerald-600"
                             />
-                            Closed - Passed
+                            CLOSED - PASSED
                         </label>
                         <label className="flex items-center gap-2 font-semibold text-xs cursor-pointer text-red-700">
                             <input
@@ -110,7 +110,7 @@ export default function ProgressReportSection({
                                 onChange={() => setData("is_passed", 0)}
                                 className="w-4 h-4 text-red-600"
                             />
-                            Closed - Failed
+                            CLOSED - FAILED
                         </label>
                     </div>
                 </div>

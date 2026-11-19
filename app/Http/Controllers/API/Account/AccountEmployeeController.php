@@ -11,6 +11,7 @@ use App\Models\Account\AccountPersonalInformation;
 use App\Models\ER\ERAcknowledgement;
 use App\Models\ER\ERLeader;
 use App\Models\PM\PMCorrectiveAction;
+use App\Models\PM\PMPip;
 use App\Models\PM\PMReach;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class AccountEmployeeController extends Controller
 {
     public function performance_management_dashboard(Request $request)
     {
-        $authId = Auth::id(); // Save it to a variable for cleaner closures
+        $authId = Auth::id();
         $leaders = ERLeader::where('user_id', $authId)->pluck('id');
 
         // Base query for account employees under these leaders
@@ -50,7 +51,7 @@ class AccountEmployeeController extends Controller
             ])
             ->count();
 
-        // 🔥 THE FIX: Group the user checks together so the status filter applies to ALL of them
+        // Coaching Sessions
         $coachingsQuery = PMReach::where(function ($query) use ($authId) {
             $query->where('created_by', $authId)
                 ->orWhere('supervisor_user_id', $authId)
@@ -61,19 +62,36 @@ class AccountEmployeeController extends Controller
         $pendingCoachings = (clone $coachingsQuery)->where('status', 'PENDING')->count();
         $acknowledgedCoachings = (clone $coachingsQuery)->where('status', 'ACKNOWLEDGED')->count();
 
-        // Combined Corrective Actions (No closure needed here since there are no ORs)
+        // Corrective Actions
         $correctiveQuery = PMCorrectiveAction::where(function ($query) use ($authId) {
             $query->where('created_by', $authId)
                 ->orWhere('supervisor_user_id', $authId)
                 ->orWhere('manager_user_id', $authId);
         });
-        $totalCorrective = (clone $correctiveQuery)->count();
 
+        $totalCorrective = (clone $correctiveQuery)->count();
         $pending = (clone $correctiveQuery)->where('status', 'PENDING')->count();
         $pendingExplanation = (clone $correctiveQuery)->where('status', 'PENDING EMPLOYEE EXPLANATION')->count();
         $pendingSanction = (clone $correctiveQuery)->where('status', 'PENDING FINAL SANCTION')->count();
         $pendingCommitment = (clone $correctiveQuery)->where('status', 'PENDING EMPLOYEE COMMITMENT')->count();
         $completed = (clone $correctiveQuery)->where('status', 'COMPLETED')->count();
+
+        // Performance Improvement Plans (PIP)
+        $pipQuery = PMPip::where(function ($query) use ($authId) {
+            $query->where('created_by', $authId)
+                ->orWhere('supervisor_user_id', $authId)
+                ->orWhere('manager_user_id', $authId);
+        });
+
+        $totalPip = (clone $pipQuery)->count();
+        $pending = (clone $pipQuery)->where('status', 'Pending')->count();
+        $pendingManagerApproval = (clone $pipQuery)->where('status', 'Pending Manager Approval')->count();
+        $pendingHrApproval = (clone $pipQuery)->where('status', 'Pending HR Approval')->count();
+        $awaitingEmployeeAck = (clone $pipQuery)->where('status', 'Awaiting Employee Acknowledgment')->count();
+        $activePip = (clone $pipQuery)->where('status', 'Active PIP')->count();
+        $pendingFinalAck = (clone $pipQuery)->where('status', 'Pending Final Acknowledgment')->count();
+        $closedPassed = (clone $pipQuery)->where('status', 'Closed - Passed')->count();
+        $closedFailed = (clone $pipQuery)->where('status', 'Closed - Failed')->count();
 
         return response()->json([
             'regularization' => [
@@ -86,7 +104,7 @@ class AccountEmployeeController extends Controller
             'coachings' => [
                 'pending' => $pendingCoachings,
                 'acknowledged' => $acknowledgedCoachings,
-                'total' => $totalCoachings
+                'total' => $totalCoachings,
             ],
             'corrective_actions' => [
                 'pending' => $pending,
@@ -94,8 +112,19 @@ class AccountEmployeeController extends Controller
                 'pending_final_sanction' => $pendingSanction,
                 'pending_employee_commitment' => $pendingCommitment,
                 'completed' => $completed,
-                'total' => $totalCorrective
-            ]
+                'total' => $totalCorrective,
+            ],
+            'pip' => [
+                'pending' => $pending,
+                'pending_manager_approval' => $pendingManagerApproval,
+                'pending_hr_approval' => $pendingHrApproval,
+                'awaiting_employee_acknowledgment' => $awaitingEmployeeAck,
+                'active_pip' => $activePip,
+                'pending_final_acknowledgment' => $pendingFinalAck,
+                'closed_passed' => $closedPassed,
+                'closed_failed' => $closedFailed,
+                'total' => $totalPip,
+            ],
         ], 200);
     }
     public function export_employee(Request $request)
@@ -522,7 +551,7 @@ class AccountEmployeeController extends Controller
             'data'   => $employee,
         ], 200);
     }
-    
+
     public function index(Request $request)
     {
         // 1. Capture search input

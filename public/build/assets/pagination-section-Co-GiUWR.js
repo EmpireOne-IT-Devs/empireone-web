@@ -1,1 +1,0 @@
-import{j as n}from"./app-BgY1Di0S.js";import{P as i}from"./pagination-Diytcsmd.js";import"./iconBase-DyYVf7AM.js";function s({data:t,onPageChange:r}){return!t?.last_page||t.last_page<=1?null:n.jsx(n.Fragment,{children:n.jsx(i,{data:t,onPageChange:r})})}export{s as default};

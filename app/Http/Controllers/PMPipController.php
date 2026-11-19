@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PM\PMPip;
 use App\Http\Controllers\Controller;
 use App\Mail\PipEnrollmentMail;
+use App\Models\ER\ERLeader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -21,31 +22,65 @@ class PMPipController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = PmPip::query()->with(['account']);
+            $authId = Auth::id();
+            $leaderIds = ERLeader::where('user_id', $authId)->pluck('id');
+
+            $query = PmPip::query()
+                ->with(['account'])
+                ->where(function ($q) use ($authId, $leaderIds) {
+                    $q->where('created_by', $authId)
+                        ->orWhere('supervisor_id', $authId)
+                        ->orWhere('manager_id', $authId)
+                        ->orWhere('supervisor_user_id', $authId)
+                        ->orWhere('manager_user_id', $authId);
+
+                    if ($leaderIds->isNotEmpty()) {
+                        $q->orWhereIn('supervisor_id', $leaderIds)
+                            ->orWhereIn('manager_id', $leaderIds);
+                    }
+                });
 
             // Search functionality
-            if ($request->has('search') && !empty($request->search)) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('first_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('employee_id', 'like', "%{$search}%")
-                        ->orWhere('employee_email', 'like', "%{$search}%");
+            $search = trim((string) $request->input('search', ''));
+            if ($search !== '') {
+                $escaped = addcslashes($search, '%_\\');
+                $terms = preg_split('/\s+/', $escaped, -1, PREG_SPLIT_NO_EMPTY);
+
+                $query->where(function ($q) use ($escaped, $terms) {
+                    $q->where('employee_id', 'like', "%{$escaped}%")
+                        ->orWhere('employee_email', 'like', "%{$escaped}%")
+                        ->orWhere('first_name', 'like', "%{$escaped}%")
+                        ->orWhere('last_name', 'like', "%{$escaped}%")
+                        ->orWhere('supervisor_name', 'like', "%{$escaped}%")
+                        ->orWhere('manager_name', 'like', "%{$escaped}%")
+                        ->orWhereRaw(
+                            "TRIM(CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, ''))) LIKE ?",
+                            ["%{$escaped}%"]
+                        )
+                        ->orWhere(function ($nameQuery) use ($terms) {
+                            foreach ($terms as $term) {
+                                $nameQuery->where(function ($wordQuery) use ($term) {
+                                    $wordQuery->where('first_name', 'like', "%{$term}%")
+                                        ->orWhere('last_name', 'like', "%{$term}%");
+                                });
+                            }
+                        });
                 });
             }
 
-            // Optional: Filter by status
-            if ($request->has('status') && !empty($request->status)) {
-                $query->where('status', $request->status);
+            // Optional: Filter by status (case-insensitive, ignore 'all' / empty)
+            $status = trim((string) $request->input('status', ''));
+            if ($status !== '' && strtolower($status) !== 'all') {
+                $query->whereRaw('LOWER(status) = ?', [strtolower($status)]);
             }
 
             // Optional: Filter by specific employee_id
-            if ($request->has('employee_id') && !empty($request->employee_id)) {
-                $query->where('employee_id', $request->employee_id);
+            if ($request->filled('employee_id')) {
+                $query->where('employee_id', $request->input('employee_id'));
             }
 
-            // Order by newest first and paginate
-            $pips = $query->latest()->paginate($request->input('per_page', 10));
+            $perPage = max(1, min((int) $request->input('per_page', 10), 100));
+            $pips = $query->latest()->paginate($perPage);
 
             return response()->json([
                 'success' => true,
@@ -239,18 +274,18 @@ class PMPipController extends Controller
 
         // Evaluate and update status progression automatically
         if ($isFinalApproved) {
-            $pMPip->status = ((int) $pMPip->is_passed === 1) ? 'Closed - Passed' : 'Closed - Failed';
+            $pMPip->status = ((int) $pMPip->is_passed === 1) ? 'CLOSED - PASSED' : 'CLOSED - FAILED';
         } else {
             // Fallback to initial enrollment status progression if not fully closed yet
             if ($pMPip->is_employee_acknowledged == 1 && $pMPip->is_supervisor_final_approved == 0) {
-                $pMPip->status = 'Active PIP';
+                $pMPip->status = 'ACTIVE PIP';
             } elseif ($pMPip->is_manager_approved != 1 && $pMPip->is_supervisor_final_approved == 0) {
-                $pMPip->status = 'Pending Manager Approval';
+                $pMPip->status = 'PENDING MANAGER APPROVAL';
             } elseif ($pMPip->is_hr_approved != 1 && $pMPip->is_supervisor_final_approved == 0) {
-                $pMPip->status = 'Pending HR Approval';
+                $pMPip->status = 'PENDING HR APPROVAL';
             } else {
                 if ($pMPip->is_supervisor_final_approved == 0) {
-                    $pMPip->status = 'Awaiting Employee Acknowledgment';
+                    $pMPip->status = 'WAITING EMPLOYEE ACKNOWLEDGMENT';
                 }
             }
         }
@@ -258,7 +293,7 @@ class PMPipController extends Controller
 
 
         if ($request->role == 'is_supervisor_final_approved') {
-            $pMPip->status = 'Pending Final Acknowledgment';
+            $pMPip->status = 'PENDING FINAL ACKNOWLEDGMENT';
             $mail = Mail::to('webdev@empireonegroup.com');
             $ccRecipients = array_values(array_filter([
                 $pMPip->supervisor_email,

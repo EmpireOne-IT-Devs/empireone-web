@@ -1,39 +1,47 @@
 import React, { useEffect, useState } from "react";
-
 import { usePage, Link, useForm } from "@inertiajs/react";
-
 import { useSelector } from "react-redux";
-
 import { get_pip_by_id_thunk } from "@/app/redux/employee-relation-thunk";
-
 import store from "@/app/store/store";
-
 import moment from "moment";
-
 import { FiArrowLeft, FiCheckCircle } from "react-icons/fi";
-
 import { approved_pip_service } from "@/app/services/human-resources-service";
-
 import ProgressReportSection from "./progress-report-section";
+
+const PIP_STATUS_BADGE_STYLES = {
+    "pending manager approval": "text-amber-800 bg-amber-50 border-amber-200",
+    "pending hr approval": "text-purple-800 bg-purple-50 border-purple-200",
+    "awaiting employee acknowledgment":
+        "text-orange-800 bg-orange-50 border-orange-200",
+    "waiting employee acknowledgment":
+        "text-orange-800 bg-orange-50 border-orange-200",
+    "active pip": "text-blue-800 bg-blue-50 border-blue-200",
+    "pending final acknowledgment":
+        "text-indigo-800 bg-indigo-50 border-indigo-200",
+    "closed - passed": "text-emerald-800 bg-emerald-50 border-emerald-200",
+    "closed - failed": "text-rose-800 bg-rose-50 border-rose-200",
+};
+
+const getPipStatusBadgeStyle = (status) => {
+    const key = (status || "Pending Manager Approval").trim().toLowerCase();
+    return (
+        PIP_STATUS_BADGE_STYLES[key] ||
+        "text-slate-800 bg-slate-50 border-slate-200"
+    );
+};
 
 export default function PerformanceImprovementPlanPage() {
     const pageProps = usePage().props;
-
     const user = pageProps?.auth?.user;
-
     const { pip } = useSelector((state) => state.human_resources);
 
     console.log("pippip", pip);
 
     // Initialize Inertia useForm using numeric is_passed (1 or 0)
-
     const { data, setData, put, processing, errors } = useForm({
         action_notes: pip?.action_notes || "",
-
         is_passed: Number(pip?.is_passed) === 1 ? 1 : 0,
-
         sanction: Number(pip?.is_passed) === 1 ? null : pip?.sanction,
-
         passed_month: pip?.passed_month || moment().format("MMMM YYYY"),
     });
 
@@ -41,11 +49,8 @@ export default function PerformanceImprovementPlanPage() {
         if (pip) {
             setData({
                 action_notes: pip.action_notes || "",
-
                 is_passed: Number(pip.is_passed) === 1 ? 1 : 0,
-
                 sanction: Number(pip.is_passed) === 1 ? null : pip.sanction,
-
                 passed_month: pip.passed_month || moment().format("MMMM YYYY"),
             });
         }
@@ -57,29 +62,23 @@ export default function PerformanceImprovementPlanPage() {
         if (pip?.id) return pip.id;
 
         const pathSegments = window.location.pathname
-
             .split("/")
-
             .filter(Boolean);
 
         const lastSegment = pathSegments[pathSegments.length - 1];
-
         if (!isNaN(lastSegment)) return lastSegment;
 
         const numericSegment = pathSegments.find((seg) => !isNaN(seg));
-
         return numericSegment || 1;
     };
 
     const formatDate = (dateString) => {
         if (!dateString) return "_____________";
-
         return moment(dateString).format("LL");
     };
 
     const handleSign = async (roleType) => {
         const id = getActionId();
-
         if (!id) return;
 
         if (
@@ -88,29 +87,22 @@ export default function PerformanceImprovementPlanPage() {
             )
         ) {
             setIsSubmitting(true);
-
             console.log("pip?.is_passed", pip?.is_passed);
 
             try {
                 await approved_pip_service({
                     id,
-
                     role: roleType,
-
                     action_notes: data.action_notes,
-
                     is_passed: Number(data.is_passed) === 1 ? 1 : 0,
-
                     sanction:
                         Number(data.is_passed) === 1 ? null : data.sanction,
                 });
 
                 await store.dispatch(get_pip_by_id_thunk(id));
-
                 alert("Successfully signed and approved.");
             } catch (error) {
                 console.error("Signature failed:", error);
-
                 alert(
                     error?.response?.data?.message ||
                         "Failed to submit signature. Please try again.",
@@ -122,7 +114,6 @@ export default function PerformanceImprovementPlanPage() {
     };
 
     // Full names & leader mapping from Redux `pip` object & relations
-
     const employeeFullName = pip
         ? [pip.first_name, pip.last_name].filter(Boolean).join(" ")
         : "";
@@ -130,18 +121,14 @@ export default function PerformanceImprovementPlanPage() {
     const supervisorFullName =
         pip?.supervisor_name ||
         [pip?.supervisor?.first_name, pip?.supervisor?.last_name]
-
             .filter(Boolean)
-
             .join(" ") ||
         "";
 
     const managerFullName =
         pip?.manager_name ||
         [pip?.manager?.first_name, pip?.manager?.last_name]
-
             .filter(Boolean)
-
             .join(" ") ||
         "";
 
@@ -151,17 +138,14 @@ export default function PerformanceImprovementPlanPage() {
         "";
 
     // Status flags
-
     const isEmployeeSigned =
         Number(pip?.is_employee_acknowledged) === 1 ||
         pip?.status === "Acknowledged";
 
     const isHrSigned = Number(pip?.is_hr_approved) === 1;
-
     const isManagerSigned = Number(pip?.is_manager_approved) === 1;
 
     // Role-based permissions
-
     const canEmployeeSign =
         !isEmployeeSigned && Number(user?.id) === Number(pip?.user_id);
 
@@ -175,50 +159,33 @@ export default function PerformanceImprovementPlanPage() {
             user?.role === "Manager");
 
     const employeeSignature = pip?.employee?.signature;
-
     const managerSignature = pip?.manager?.signature;
-
     const hrSignature = pip?.hr?.signature;
 
     const details = {
         employeeName: employeeFullName || "",
-
         employeeId: pip?.employee_id || "",
-
         position: pip?.position || "",
-
         managerName: managerFullName || "",
-
         supervisorName: supervisorFullName || "",
-
         hrName: hrFullName,
-
         startDate: pip?.pip_start_date ? formatDate(pip.pip_start_date) : "",
-
         endDate: pip?.pip_end_date ? formatDate(pip.pip_end_date) : "",
-
         datePrepared: pip?.created_at
             ? moment(pip.created_at).format("LLL")
             : "",
-
         pipCycle: pip?.pip_cycle || "PIP 1",
-
         kpiGoal: pip?.history_kpi || pip?.action_kpi_goal || "KPI 1",
-
         kpiTarget: pip?.history_target || pip?.action_target_action || "—",
-
         kpiActual: pip?.history_actual || "—",
-
         rootCause:
             pip?.root_cause_analysis ||
             "No root cause / action plan notes specified.",
-
         actionKpi: pip?.action_kpi_goal || "KPI 1",
-
         actionTarget: pip?.action_target_action || "—",
-
         actionDate: pip?.action_date ? formatDate(pip.action_date) : "—",
     };
+
     const isWithinOneWeekOfEnd = (endDateString) => {
         if (!endDateString) return false;
 
@@ -235,15 +202,10 @@ export default function PerformanceImprovementPlanPage() {
 
     const SignatureSlot = ({
         isSigned,
-
         canSign,
-
         printedName,
-
         signatureImg,
-
         roleKey,
-
         label,
     }) => (
         <div className="flex flex-col items-center justify-end min-h-[70px]">
@@ -284,11 +246,19 @@ export default function PerformanceImprovementPlanPage() {
         </div>
     );
 
+    const currentStatus = pip?.status || "Pending Manager Approval";
+    const normalizedStatus = currentStatus.trim().toLowerCase();
+    const showStatusIcon =
+        normalizedStatus === "active pip" ||
+        normalizedStatus === "closed - passed" ||
+        normalizedStatus === "awaiting employee acknowledgment" ||
+        normalizedStatus === "waiting employee acknowledgment" ||
+        isEmployeeSigned;
+
     return (
         <div className="flex items-center flex-col justify-center w-full bg-slate-100 min-h-screen py-8 px-4 font-sans text-slate-900">
             <div className="w-full max-w-[850px] bg-white border border-slate-300 shadow-xl p-8 space-y-6 print:border-none print:shadow-none print:p-6 text-[11px] leading-relaxed">
                 {/* Top Navigation Bar */}
-
                 <div className="flex justify-between items-center print:hidden border-b border-slate-200 pb-4 mb-2">
                     <Link
                         href="/auth/login"
@@ -297,28 +267,19 @@ export default function PerformanceImprovementPlanPage() {
                         <FiArrowLeft className="w-4 h-4" /> Go to Login
                     </Link>
 
-                    {pip?.status === "Active PIP" || isEmployeeSigned ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-md border border-emerald-200">
-                            <FiCheckCircle className="w-4 h-4" />{" "}
-                            {pip?.status || "Form Acknowledged"}
-                        </span>
-                    ) : pip?.status === "Awaiting Employee Acknowledgment" ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
-                            <FiCheckCircle className="w-4 h-4" /> {pip?.status}
-                        </span>
-                    ) : pip?.status === "Pending HR Approval" ? (
-                        <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-3 py-1 rounded-md border border-amber-200">
-                            {pip?.status}
-                        </span>
-                    ) : (
-                        <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-3 py-1 rounded-md border border-amber-200">
-                            {pip?.status || "Pending Manager Approval"}
-                        </span>
-                    )}
+                    <span
+                        className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-md border ${getPipStatusBadgeStyle(
+                            currentStatus,
+                        )}`}
+                    >
+                        {showStatusIcon && (
+                            <FiCheckCircle className="w-4 h-4" />
+                        )}
+                        {currentStatus}
+                    </span>
                 </div>
 
                 {/* HEADER TABLE */}
-
                 <div className="border border-black grid grid-cols-1 md:grid-cols-3">
                     <div className="p-4 flex items-center justify-center border-b md:border-b-0 md:border-r border-black">
                         <span className="text-2xl font-black tracking-tight text-blue-900">
@@ -343,7 +304,6 @@ export default function PerformanceImprovementPlanPage() {
                 </div>
 
                 {/* EMPLOYEE INFO TABLE */}
-
                 <table className="w-full border-collapse border border-black text-xs">
                     <tbody>
                         <tr>
@@ -411,7 +371,6 @@ export default function PerformanceImprovementPlanPage() {
                 </table>
 
                 {/* SECTION 1: PERFORMANCE HISTORY */}
-
                 <div className="space-y-2">
                     <div className="font-bold text-xs uppercase">
                         1. Employee Performance History
@@ -462,7 +421,6 @@ export default function PerformanceImprovementPlanPage() {
                 </div>
 
                 {/* SECTION 2: REASONS FOR PERFORMANCE CHALLENGES */}
-
                 <div className="space-y-2">
                     <div className="font-bold text-xs uppercase">
                         2. Reasons for Performance Challenges (based on Root
@@ -475,7 +433,6 @@ export default function PerformanceImprovementPlanPage() {
                 </div>
 
                 {/* SECTION 3: ACTION PLAN */}
-
                 <div className="space-y-2">
                     <div className="font-bold text-xs uppercase">
                         3. Action Plan
@@ -526,7 +483,6 @@ export default function PerformanceImprovementPlanPage() {
                 </div>
 
                 {/* SECTION 4: PERFORMANCE STANDARDS */}
-
                 <div className="space-y-2">
                     <div className="font-bold text-xs uppercase">
                         4. Performance Standards (S.M.A.R.T.)
@@ -541,7 +497,6 @@ export default function PerformanceImprovementPlanPage() {
                 <div className="border-t-2 border-dashed border-black my-6"></div>
 
                 {/* PAGE 2 / TERMS & CONDITIONS */}
-
                 <div className="space-y-4 text-justify">
                     <p>
                         You are given{" "}
@@ -590,7 +545,6 @@ export default function PerformanceImprovementPlanPage() {
                 </div>
 
                 {/* SIGNATURE BLOCK */}
-
                 <div className="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                     <SignatureSlot
                         isSigned={isEmployeeSigned}

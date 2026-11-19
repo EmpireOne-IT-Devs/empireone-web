@@ -1,6 +1,32 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import Table from "@/app/_components/table";
+import { Link } from "@inertiajs/react";
+
+const STATUS_STYLES = {
+    "pending manager approval":
+        "bg-amber-100 text-amber-800 ring-1 ring-amber-200",
+    "pending hr approval":
+        "bg-purple-100 text-purple-800 ring-1 ring-purple-200",
+    "awaiting employee acknowledgment":
+        "bg-orange-100 text-orange-800 ring-1 ring-orange-200",
+    "active pip": "bg-blue-100 text-blue-800 ring-1 ring-blue-200",
+    "pending final acknowledgment":
+        "bg-indigo-100 text-indigo-800 ring-1 ring-indigo-200",
+    "closed - passed":
+        "bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200",
+    "closed - failed": "bg-rose-100 text-rose-800 ring-1 ring-rose-200",
+    acknowledged: "bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200",
+    pending: "bg-amber-100 text-amber-800 ring-1 ring-amber-200",
+};
+
+const getStatusBadgeClass = (status) => {
+    const normalized = (status || "pending").trim().toLowerCase();
+    return (
+        STATUS_STYLES[normalized] ||
+        "bg-slate-100 text-slate-800 ring-1 ring-slate-200"
+    );
+};
 
 export default function TableSection({ isloading }) {
     const { pips } = useSelector((store) => store.human_resources);
@@ -52,6 +78,7 @@ export default function TableSection({ isloading }) {
             const empFullName =
                 [item?.first_name, item?.last_name].filter(Boolean).join(" ") ||
                 "N/A";
+            const statusText = item?.status || "PENDING";
 
             return {
                 id: item?.id,
@@ -141,14 +168,21 @@ export default function TableSection({ isloading }) {
                 ),
                 status: (
                     <span
-                        className={`inline-block px-2.5 py-1 text-xs font-bold rounded-full ${
-                            item?.status === "ACKNOWLEDGED"
-                                ? "bg-emerald-100 text-emerald-800"
-                                : "bg-amber-100 text-amber-800"
-                        }`}
+                        className={`inline-block px-2.5 py-1 text-xs font-bold rounded-full ${getStatusBadgeClass(
+                            statusText,
+                        )}`}
                     >
-                        {item?.status || "PENDING"}
+                        {statusText}
                     </span>
+                ),
+                action: (
+                    <a
+                        href={`/human-resources/pip/${item.id}/acknowledge`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View
+                    </a>
                 ),
             };
         });
