@@ -6,6 +6,7 @@ use App\Jobs\SendAssetPurchaseRequestEmail;
 use App\Models\AssetInventory\AssetPurchaseRequest;
 use App\Models\User;
 use Aws\Exception\AwsException;
+use Brick\Math\BigDecimal;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -59,19 +60,28 @@ class AssetPurchaseRequestService
                 $department = $values['department'];
                 $code = config('purchase_request.departments')[$department];
                 $createdAt = now();
+                $items = isset($values['items']) ? array_map(static fn (array $item) => [
+                    'description' => $item['description'],
+                    'quantity' => (int) $item['quantity'],
+                    'unit_cost' => (string) BigDecimal::of($item['unitCost'])->toScale(2),
+                ], $values['items']) : null;
+                // Preserve the first item in the legacy columns for older clients.
+                $firstItem = $items[0] ?? null;
                 $request = new AssetPurchaseRequest([
                     'uuid' => $uuid,
                     'purchase_request_id' => $this->nextPurchaseRequestId($createdAt->format('Ym')),
                     'requester_id' => $user->getKey(),
-                    'requester_name' => $values['requesterName'] ?? ($user->name ?: $user->email),
+                    'requester_name' => trim((string) $user->name) !== '' ? $user->name : $user->email,
                     'requester_email' => $user->email,
-                    'item_name' => $values['itemName'],
+                    'item_name' => $firstItem['description'] ?? $values['itemName'],
+                    'items' => $items,
+                    'justification' => $values['justification'],
                     'department' => $department,
                     'department_code' => "{$code}-{$now->year}-Q{$now->quarter}",
                     'category' => $values['category'],
                     'priority' => $values['priority'],
-                    'quantity' => $values['quantity'],
-                    'unit_price' => $values['unitPrice'],
+                    'quantity' => $firstItem['quantity'] ?? $values['quantity'],
+                    'unit_price' => $firstItem['unit_cost'] ?? $values['unitPrice'],
                     'supplier' => $values['supplierName'] ?? null,
                     'purchase_date' => $now->copy()->addMonthNoOverflow()->toDateString(),
                     'status' => AssetPurchaseRequest::PENDING,

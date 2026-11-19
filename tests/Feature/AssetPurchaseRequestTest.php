@@ -52,6 +52,8 @@ class AssetPurchaseRequestTest extends TestCase
         });
         (require database_path('migrations/2026_11_18_230000_create_asset_purchase_requests_tables.php'))->up();
         (require database_path('migrations/2026_11_19_220000_add_purchase_request_identifiers.php'))->up();
+        (require database_path('migrations/2026_11_20_000000_add_justification_to_asset_purchase_requests.php'))->up();
+        (require database_path('migrations/2026_11_20_005200_add_items_to_asset_purchase_requests.php'))->up();
     }
 
     public function test_new_request_identifiers_reset_monthly_and_existing_identifiers_are_unchanged(): void
@@ -169,7 +171,7 @@ class AssetPurchaseRequestTest extends TestCase
         $this->actingAs($owner, 'sanctum');
         $this->getJson(self::API)->assertOk()->assertJsonPath('meta.total', 0);
         $saved = $this->postJson(self::API, $this->values() + [
-            'requesterEmail' => 'forged@example.test', 'status' => 'Approved',
+            'requesterName' => 'Forged name', 'requesterEmail' => 'forged@example.test', 'status' => 'Approved',
         ])->assertCreated()
             ->assertJsonPath('data.totalAmount', 300.5)
             ->assertJsonPath('data.requesterName', 'owner@example.test')
@@ -181,7 +183,9 @@ class AssetPurchaseRequestTest extends TestCase
 
         $this->getJson(self::API.'?search='.$saved['id'])->assertOk()
             ->assertJsonPath('data.0.uuid', $saved['uuid'])->assertJsonPath('meta.per_page', 10);
-        $this->getJson(self::API.'/'.$saved['uuid'])->assertOk()->assertJsonPath('data.itemName', 'Monitor');
+        $this->getJson(self::API.'/'.$saved['uuid'])->assertOk()
+            ->assertJsonPath('data.itemName', 'Monitor')
+            ->assertJsonPath('data.justification', $this->values()['justification']);
         $this->postJson(self::API.'/'.$saved['uuid'].'/approve', ['step' => 'department_head'])->assertForbidden();
 
         $this->actingAs($this->account('other'), 'sanctum');
@@ -191,6 +195,93 @@ class AssetPurchaseRequestTest extends TestCase
         $this->actingAs($this->account('reviewer'), 'sanctum');
         $this->getJson(self::API.'?priority=High')->assertOk()->assertJsonPath('meta.total', 1);
         $this->getJson(self::API.'/'.$saved['uuid'])->assertOk()->assertJsonPath('data.canAct', true);
+    }
+
+    public function test_new_requests_require_a_nonblank_justification_of_at_most_1000_characters(): void
+    {
+        $this->actingAs($this->account('owner'), 'sanctum');
+
+        foreach ([null, '   ', str_repeat('a', 1001)] as $justification) {
+            $this->postJson(self::API, [...$this->values(), 'justification' => $justification])
+                ->assertUnprocessable()->assertJsonValidationErrors('justification');
+        }
+
+        $this->assertDatabaseCount('asset_purchase_requests', 0);
+        Queue::assertNothingPushed();
+    }
+
+    public function test_multiple_items_are_saved_and_displayed_with_exact_totals_in_details_and_email(): void
+    {
+        $disk = Storage::fake('purchase_quotations');
+        $this->account('reviewer');
+        $this->actingAs($this->account('owner'), 'sanctum');
+        $items = [
+            ['description' => 'Monitor & stand', 'quantity' => '3', 'unitCost' => '1000.19'],
+            ['unit' => 'Box', 'description' => 'Cable pack', 'quantity' => '2', 'unitCost' => '0.27'],
+        ];
+        $values = array_diff_key($this->values(), array_flip(['itemName', 'quantity', 'unitPrice']));
+        $saved = $this->post(self::API, [
+            ...$values,
+            'items' => $items,
+            'grandTotal' => 1,
+            'supplierQuotation' => UploadedFile::fake()->createWithContent('quote.pdf', "%PDF-1.4\n%%EOF"),
+        ], ['Accept' => 'application/json'])
+            ->assertCreated()->assertJsonPath('data.grandTotal', '3001.11')->json('data');
+        $disk->assertExists('purchase-requests/'.$saved['uuid'].'/quotation.pdf');
+        $request = AssetPurchaseRequest::where('uuid', $saved['uuid'])->firstOrFail();
+        $this->assertArrayNotHasKey('unit', $request->items[0]);
+        $this->assertArrayNotHasKey('unit', $request->items[1]);
+        $storedItems = $request->items;
+        $storedItems[1]['unit'] = 'Box';
+        $request->update(['items' => $storedItems]);
+        $this->getJson(self::API.'/'.$saved['uuid'])->assertOk()
+            ->assertJsonCount(2, 'data.items')
+            ->assertJsonPath('data.items.0.lineTotal', '3000.57')
+            ->assertJsonMissingPath('data.items.1.unit')
+            ->assertJsonPath('data.items.1.description', 'Cable pack')
+            ->assertJsonPath('data.items.1.quantity', 2)
+            ->assertJsonPath('data.items.1.unitCost', '0.27')
+            ->assertJsonPath('data.items.1.lineTotal', '0.54')
+            ->assertJsonPath('data.grandTotal', '3001.11');
+
+        Queue::pushed(SendAssetPurchaseRequestEmail::class)->first()->handle();
+        $message = Mail::mailer()->getSymfonyTransport()->messages()->first()->getOriginalMessage();
+        $html = $message->getHtmlBody();
+        $this->assertStringContainsString('Requested Items', $html);
+        foreach (['Item Name', 'Quantity', 'Unit Cost', 'Total Cost'] as $heading) {
+            $this->assertMatchesRegularExpression('/<th scope="col"[^>]*>'.$heading.'<\/th>/', $html);
+        }
+        foreach ([
+            ['Monitor & stand', '3', 'PHP 1,000.19', 'PHP 3,000.57'],
+            ['Cable pack', '2', 'PHP 0.27', 'PHP 0.54'],
+        ] as [$name, $quantity, $unitCost, $lineTotal]) {
+            $this->assertStringContainsString("{$name} ({$quantity} x {$unitCost} = {$lineTotal})", $message->getTextBody());
+            $this->assertMatchesRegularExpression(
+                '/<th scope="row"[^>]*>'.preg_quote(e($name), '/').'<\/th>\s*<td[^>]*>'.$quantity.'<\/td>\s*<td[^>]*>'.preg_quote($unitCost, '/').'<\/td>\s*<td[^>]*>'.preg_quote($lineTotal, '/').'<\/td>/',
+                $html,
+            );
+        }
+        $this->assertStringContainsString('Grand total: PHP 3,001.11', $message->getTextBody());
+        $this->assertMatchesRegularExpression('/Grand Total<\/th>\s*<td[^>]*>PHP 3,001\.11<\/td>/', $html);
+    }
+
+    public function test_invalid_items_are_rejected_even_when_legacy_fields_are_present(): void
+    {
+        $this->actingAs($this->account('owner'), 'sanctum');
+        $item = ['description' => 'Monitor', 'quantity' => 1, 'unitCost' => '10.00'];
+
+        $this->postJson(self::API, [...$this->values(), 'items' => [[
+            'description' => ' ', 'quantity' => 0, 'unitCost' => '0.001',
+        ]]])->assertUnprocessable()->assertJsonValidationErrors([
+            'items.0.description', 'items.0.quantity', 'items.0.unitCost',
+        ]);
+        foreach (['', [], array_fill(0, 26, $item)] as $items) {
+            $this->postJson(self::API, [...$this->values(), 'items' => $items])
+                ->assertUnprocessable()->assertJsonValidationErrors('items');
+        }
+
+        $this->assertDatabaseCount('asset_purchase_requests', 0);
+        Queue::assertNothingPushed();
     }
 
     public function test_decisions_require_the_current_step_and_record_the_approver_and_remarks(): void
@@ -256,7 +347,11 @@ class AssetPurchaseRequestTest extends TestCase
         }
         $owner = $this->account('owner');
         $this->actingAs($owner, 'sanctum');
-        $created = $this->postJson(self::API, $this->values())->assertCreated()->json('data');
+        $created = $this->postJson(self::API, [
+            ...$this->values(),
+            'itemName' => 'Monitor & stand',
+            'unitPrice' => '750.25',
+        ])->assertCreated()->json('data');
         $uuid = $created['uuid'];
         $path = self::API.'/'.$uuid.'/approve';
         $expectedRecipients = [];
@@ -283,11 +378,24 @@ class AssetPurchaseRequestTest extends TestCase
         $this->assertStringContainsString('completed all approval steps', $messages->last()->getHtmlBody());
         $url = route('asset-purchase-requests.page.show', ['id' => $uuid]);
         foreach ($messages as $message) {
+            foreach (['Requester' => 'Owner', 'Priority' => 'High'] as $label => $value) {
+                $this->assertStringContainsString("{$label}: {$value}", $message->getTextBody());
+                $this->assertMatchesRegularExpression(
+                    '/<(th|td)\b[^>]*>\s*'.preg_quote($label, '/').'\s*<\/\1>\s*<td\b[^>]*>\s*'.preg_quote(e($value), '/').'\s*<\/td>/',
+                    $message->getHtmlBody(),
+                );
+            }
+            $this->assertStringContainsString('Monitor & stand (2 x PHP 750.25 = PHP 1,500.50)', $message->getTextBody());
+            $this->assertStringContainsString('Grand total: PHP 1,500.50', $message->getTextBody());
+            $this->assertMatchesRegularExpression('/<th scope="row"[^>]*>Monitor &amp; stand<\/th>\s*<td[^>]*>2<\/td>\s*<td[^>]*>PHP 750\.25<\/td>\s*<td[^>]*>PHP 1,500\.50<\/td>/', $message->getHtmlBody());
+            $this->assertMatchesRegularExpression('/Grand Total<\/th>\s*<td[^>]*>PHP 1,500\.50<\/td>/', $message->getHtmlBody());
             $this->assertStringContainsString($created['id'], $message->getSubject());
             $this->assertStringContainsString($created['id'], $message->getTextBody());
             $this->assertStringContainsString('/accounts/administrator/asset_inventory/purchase_request/'.$uuid, $message->getTextBody());
-            $this->assertStringContainsString('href="'.e($url).'"', $message->getHtmlBody());
-            $this->assertStringContainsString('View Purchase Request</a>', $message->getHtmlBody());
+            $this->assertMatchesRegularExpression(
+                '/<a\b[^>]*\bhref="'.preg_quote(e($url), '/').'"[^>]*>\s*View Purchase Request[^<]*<\/a>/',
+                $message->getHtmlBody(),
+            );
             $this->assertSame([], $message->getAttachments());
         }
     }
@@ -342,6 +450,7 @@ class AssetPurchaseRequestTest extends TestCase
         return [
             'itemName' => 'Monitor', 'department' => 'IT Department',
             'category' => 'Computer Hardware', 'priority' => 'High', 'quantity' => 2, 'unitPrice' => '150.25',
+            'justification' => "Replace damaged monitors.\nBoth are needed for the support team.",
         ];
     }
 }

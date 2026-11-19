@@ -14,6 +14,20 @@ export const CATEGORIES = [
 ];
 
 export const PRIORITIES = ["Low", "Normal", "High", "Urgent"];
+export const MAX_ITEMS = 25;
+
+export function itemCostInCents({ quantity, unitCost }) {
+    if (!/^\d{1,10}(?:\.\d{1,2})?$/.test(unitCost) || !/^\d{1,7}$/.test(quantity)) return null;
+    const count = BigInt(quantity);
+    if (count < 1n || count > 1000000n) return null;
+
+    const [whole, fraction = ""] = unitCost.split(".");
+    return count * (BigInt(whole) * 100n + BigInt(fraction.padEnd(2, "0")));
+}
+
+export function formatItemCents(cents) {
+    return formatMoney(`${cents / 100n}.${String(cents % 100n).padStart(2, "0")}`);
+}
 
 export const STATUSES = [
     "Pending Approval",
@@ -75,5 +89,5 @@ export function formatMoney(amountPhp, currency = "PHP") {
     return new Intl.NumberFormat("en-PH", {
         style: "currency",
         currency: "PHP",
-    }).format(amount);
+    }).format(typeof amountPhp === "string" && /^\d+\.\d{2}$/.test(amountPhp) ? amountPhp : amount);
 }
