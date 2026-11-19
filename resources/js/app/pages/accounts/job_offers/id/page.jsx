@@ -26,11 +26,13 @@ export default function Page({ auth }) {
     console.log("job_offer2", user);
     function verified_section() {
         if (
+            job_offer?.user_id == auth?.user?.id &&
             job_offer?.status == "Pending" &&
             user?.account_employee?.signature === undefined
         ) {
             return <VerifySection />;
         } else if (
+            job_offer?.user_id == auth?.user?.id &&
             job_offer?.status == "Pending" &&
             user?.account_employee?.signature === null
         ) {
