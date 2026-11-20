@@ -1,0 +1,1 @@
+import{b as s,j as e}from"./app-CiwEgt1d.js";import{P as n}from"./pagination-vI9113sn.js";import"./iconBase-2v4tzyMy.js";function m(){const{employees:o}=s(t=>t.human_resources);return console.log("employees",o),e.jsx(e.Fragment,{children:e.jsx(n,{data:o})})}export{m as default};
