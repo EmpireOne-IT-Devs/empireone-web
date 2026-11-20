@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Account\AccountEmployee;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class OnboardingAppsScriptMailer
 {
@@ -78,18 +80,17 @@ class OnboardingAppsScriptMailer
                     'kasociusUrl'   => 'https://empireone.kasocius.com/#/',
                 ], $data))->render(),
             ],
-            'bdo_payroll_onboarding' => [
-                 'key'     => 'bdo_payroll_onboarding',
-                 'subject' => 'Onboarding Requirement – Payroll Account Opening with BDO Unibank',
-                 'html'    => view('emails.welcome_kit.bdo-payroll-onboarding', array_merge([
-                     'recipientName' => $recipientName,
-                     'deadline'      => $deadline,
-                     'branchName'    => 'BDO San Carlos City Branch',
-                     'kasociusUrl'   => 'https://empireone.kasocius.com/#/account/accountProfile',
-                     'bdoGuideUrl'   => asset('pdf/' . rawurlencode('BDO ONLINE APPLICATION GUIDE.pdf')),
-                 ], $data))->render(),
-                 'attachments' => $this->bdoGuideAttachment(),
-             ],
+            [
+                'key'     => 'bdo_payroll_onboarding',
+                'subject' => 'Onboarding Requirement – Payroll Account Opening with BDO Unibank',
+                'html'    => view('emails.welcome_kit.bdo-payroll-onboarding', array_merge([
+                    'recipientName' => $recipientName,
+                    'deadline'      => $deadline,
+                    'branchName'    => 'BDO San Carlos City Branch',
+                    'kasociusUrl'   => 'https://empireone.kasocius.com/#/account/accountProfile',
+                ], $data))->render(),
+                'attachments' => $this->bdoGuideAttachment(),
+            ],
             [
                 'key'     => 'company_id_request',
                 'subject' => 'Action Required: Company ID Request – EmpireOneCX Community',
@@ -130,11 +131,37 @@ class OnboardingAppsScriptMailer
         if (!is_array($decoded)) {
             throw new \RuntimeException(
                 'Apps Script returned a non-JSON response (HTTP ' . $response->status() . '): ' .
-                mb_substr(trim($response->body()), 0, 500)
+                    mb_substr(trim($response->body()), 0, 500)
             );
         }
 
+        if (($decoded['ok'] ?? false) === true && ((int) ($decoded['sent_count'] ?? 0)) > 0) {
+            $this->markKitSent($recipientEmail, $data);
+        }
+
         return $decoded;
+    }
+
+    private function markKitSent(string $recipientEmail, array $data): void
+    {
+        try {
+            $query = AccountEmployee::query();
+
+            if (!empty($data['userId'])) {
+                $query->where('user_id', $data['userId']);
+            } elseif (!empty($data['employeeId'])) {
+                $query->where('employee_id', $data['employeeId']);
+            } else {
+                $query->where('eogs_email', $recipientEmail);
+            }
+
+            $query->update(['is_kit_sent' => 1]);
+        } catch (\Throwable $e) {
+            Log::warning('Unable to update is_kit_sent on AccountEmployee', [
+                'recipient_email' => $recipientEmail,
+                'error'           => $e->getMessage(),
+            ]);
+        }
     }
 
     private function bdoGuideAttachment(): array

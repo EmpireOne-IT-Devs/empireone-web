@@ -13,6 +13,8 @@ use App\Models\ER\ERSubordinate;
 use App\Models\Jobs\JobApplication;
 use App\Models\Jobs\JobOffer;
 use App\Models\User;
+use App\Services\OnboardingAppsScriptMailer;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -246,18 +248,65 @@ class AccountContractController extends Controller
         $employee = AccountEmployee::updateOrCreate(
             ['user_id' => $request->user_id],
             [
-                'is_has_contract' => true,
-                'employment_status' => null
+                'is_has_contract'   => true,
+                'employment_status' => null,
             ]
         );
 
         if (!$employee->is_has_contract || !empty($employee->employee_id)) {
-            return;
+            return response()->json([
+                'message'     => 'Contract record updated.',
+                'employee_id' => $employee->employee_id,
+            ], 200);
         }
+
         $this->processEmployeeHiring($employee, $request->user_id, $request->started_at);
 
+        $employee->refresh();
+        $employee->load(['user', 'personal_information', 'account']);
+
+        $recipientEmail = $employee->user?->email;
+     
+
+        $personal = $employee->personal_information;
+        $fullNameFromParts = trim(implode(' ', array_filter([
+            $personal?->first_name,
+            $personal?->middle_name,
+            $personal?->last_name,
+        ])));
+        $recipientName = $fullNameFromParts !== ''
+            ? $fullNameFromParts
+            : ($employee->user?->name ?? 'Colleague');
+
+        $rawStartDate = $employee->started_at ?? $request->started_at;
+        $hireDate = $rawStartDate
+            ? Carbon::parse($rawStartDate, 'Asia/Manila')->format('F j, Y')
+            : '';
+
+        $welcomeKitResult = null;
+
+        if (!empty($recipientEmail)) {
+            try {
+                $welcomeKitResult = app(OnboardingAppsScriptMailer::class)->sendAll($recipientEmail, [
+                    'recipientName' => $recipientName,
+                    'employeeId'    => $employee->employee_id ?? (string) $request->user_id,
+                    'accountName'   => $employee->account?->name ?? '',
+                    'designation'   => $employee->position ?? '',
+                    'hireDate'      => $hireDate,
+                ]);
+            } catch (\Throwable $e) {
+                Log::error('Failed to send 8-part welcome kit after contract store', [
+                    'user_id'         => $request->user_id,
+                    'employee_id'     => $employee->employee_id,
+                    'recipient_email' => $recipientEmail,
+                    'error'           => $e->getMessage(),
+                ]);
+            }
+        }
+
         return response()->json([
-            'message' => 'Contract record saved successfully',
+            'message'     => 'Contract record saved successfully',
+            'welcome_kit' => $welcomeKitResult,
         ], 200);
     }
 

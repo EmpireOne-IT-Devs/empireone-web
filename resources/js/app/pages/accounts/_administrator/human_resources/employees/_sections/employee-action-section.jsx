@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FcMenu, FcOpenedFolder } from "react-icons/fc";
 import AddAttritionSection from './add-attrition-section';
 import UpdateEmployee from './update-employee';
-import SendWelcomeKitSection from './send-welcome-kit-section';
 
 export default function EmployeeActionSection({ props_data }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -124,21 +123,7 @@ export default function EmployeeActionSection({ props_data }) {
                         props_data={props_data}
                         onAction={closeDropdown}
                     />
-                </div>
-
-                <div
-                    className="
-                        w-full hover:bg-black/[0.04] active:bg-black/[0.08] transition-colors duration-150
-                        [&>button]:w-full [&>button]:px-4 [&>button]:py-2.5 [&>button]:flex [&>button]:items-center [&>button]:gap-3 [&>button]:text-left [&>button]:text-sm [&>button]:font-normal [&>button]:text-gray-800
-                    "
-                >
-                    <SendWelcomeKitSection
-                        props_data={props_data}
-                        onAction={closeDropdown}
-                    />
-                </div>
-
-                
+                </div>                
             </div>
         </div>
     );

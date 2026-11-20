@@ -70,6 +70,7 @@ export default function AcceptJobOfferSection() {
             if (status == "Declined Job Offer") {
                 router.visit("/accounts/administrator/job_offers");
             }
+            setOpen(false)
         } catch (error) {
             console.error("Failed to upload documents:", error);
             // You might want to dispatch an error alert here too

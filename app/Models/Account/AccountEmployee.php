@@ -48,6 +48,7 @@ class AccountEmployee extends Model
         'employment_status',
         'reason_for_separation',
         'is_rehire',
+        'is_kit_sent'
     ];
 
     /**
