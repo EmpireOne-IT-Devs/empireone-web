@@ -236,6 +236,7 @@ class AccountContractController extends Controller
         ], 200);
     }
 
+
     public function store(Request $request)
     {
         $request->validate([
@@ -282,7 +283,7 @@ class AccountContractController extends Controller
         User::where('id', $userId)->update(['role' => 2]);
 
         JobApplication::where('user_id', $userId)
-            ->where('final_status', 'Sent Documents')
+            // ->where('final_status', 'Sent Documents')
             ->update(['final_status' => 'Hired']);
     }
 
