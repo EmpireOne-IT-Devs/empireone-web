@@ -74,3 +74,13 @@
 - **Issues and resolution:** The Blade already existed; updated it rather than creating a duplicate. The diagnosed email job was queued with zero attempts, so changing the template does not by itself start delivery.
 - **QA:** 13 isolated feature tests passed (238 assertions); Pint passed for the test file. Existing authorization and the plaintext email are preserved. Email-client layout and keyboard behavior require client verification. No live email or queued job was run.
 - **Next steps:** Confirm a queue worker is running on the correct database queue and monitor the pending form's email status.
+
+### Route merge-conflict repair
+
+- **Timestamp:** 2026-11-20 22:10 +08:00
+- **Mode:** Agent
+- **Personas:** Tech Lead, Backend, QA
+- **Files modified:** `routes/web.php` to remove unresolved import conflict markers while preserving both imports.
+- **Issues and resolution:** Conflict markers caused a PHP parse error; both sides were retained without changing routes or middleware.
+- **QA:** PHP syntax and liability signing route registration passed. The isolated Item Request suite passed (13 tests, 238 assertions); no conflict markers remain in `routes/web.php`. UI checks were not applicable. No server, migration, or queue worker was started.
+- **Next steps:** Start the server normally and verify the pending email queue worker separately.
