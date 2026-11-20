@@ -82,10 +82,7 @@ class PMPipController extends Controller
             $perPage = max(1, min((int) $request->input('per_page', 10), 100));
             $pips = $query->latest()->paginate($perPage);
 
-            return response()->json([
-                'success' => true,
-                'data'    => $pips
-            ], 200);
+            return response()->json($pips, 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

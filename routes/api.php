@@ -84,6 +84,7 @@ use App\Http\Controllers\PMPipController;
 use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\SiteController;
 use App\Models\Account\AccountDocument;
+use App\Services\OnboardingAppsScriptMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -91,6 +92,27 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+
+Route::post('/onboarding/send_all_welcome_kit', function (Request $request, OnboardingAppsScriptMailer $mailer) {
+    $validated = $request->validate([
+        'email'          => ['required', 'email'],
+        'recipient_name' => ['nullable', 'string', 'max:120'],
+        'employee_id'    => ['nullable', 'string', 'max:50'],
+        'account_name'   => ['nullable', 'string', 'max:120'],
+        'designation'    => ['nullable', 'string', 'max:150'],
+        'hire_date'      => ['nullable', 'string', 'max:100'],
+    ]);
+
+    $result = $mailer->sendAll($validated['email'], [
+        'recipientName' => $validated['recipient_name'] ?? 'Colleague',
+        'employeeId'    => $validated['employee_id'] ?? '26111616',
+        'accountName'   => $validated['account_name'] ?? 'Latham',
+        'designation'   => $validated['designation'] ?? 'Customer Service Representative',
+        'hireDate'      => $validated['hire_date'] ?? now('Asia/Manila')->format('F j, Y'),
+    ]);
+
+    return response()->json($result);
+});
 
 
 

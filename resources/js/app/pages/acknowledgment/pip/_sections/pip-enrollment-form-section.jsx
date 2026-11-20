@@ -561,7 +561,7 @@ export default function PerformanceImprovementPlanPage() {
                         printedName={details.hrName}
                         signatureImg={hrSignature}
                         roleKey="is_hr_approved"
-                        label="HR Business Partner Name and Signature"
+                        label="HR Representative"
                     />
 
                     <SignatureSlot

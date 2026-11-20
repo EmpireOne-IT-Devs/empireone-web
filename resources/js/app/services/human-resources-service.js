@@ -4,6 +4,11 @@ export async function get_attrition_by_id_service(id) {
     return await axios.get(`/api/er/attrition/${id}`);
 }
 
+export async function send_all_welcome_kit_service(data) {
+    return await axios.post(`/api/onboarding/send_all_welcome_kit`,data);
+}
+
+
 export async function add_exit_clearance_service(data) {
     return await axios.post(`/api/er/exit_clearance`, data);
 }

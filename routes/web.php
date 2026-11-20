@@ -5,7 +5,11 @@ use App\Http\Controllers\PMCorrectiveActionController;
 use App\Http\Controllers\PMPipController;
 use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\ProfileController;
+<<<<<<< HEAD
 use App\Models\AssetInventory\AssetLiabilityForm;
+=======
+use App\Services\OnboardingAppsScriptMailer;
+>>>>>>> 8fc906b95dc4f65e3ca998610baa28e5132f5e61
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +28,7 @@ if (! function_exists('route_page')) {
         };
     }
 }
+
 
 // routes/web.php
 Route::middleware('auth')->get('/user/token', function (Request $request) {

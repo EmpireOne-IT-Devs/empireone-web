@@ -14,6 +14,9 @@ return [
     |
     */
 
+    'apps_script' => [
+        'url'   => env('APPS_SCRIPT_WEB_APP_URL_WELCOME_KIT'),
+    ],
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
