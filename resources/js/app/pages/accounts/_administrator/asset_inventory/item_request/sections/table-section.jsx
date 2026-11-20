@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
-import { FiEye, FiInbox } from "react-icons/fi";
+import { FiAlertCircle, FiEye, FiInbox, FiPlus } from "react-icons/fi";
 import Table from "@/app/_components/table";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
@@ -14,7 +14,7 @@ import {
 
 const DETAIL_BASE = "/accounts/administrator/asset_inventory/item_request";
 
-function EmptyState({ hasFilters, onClearFilters }) {
+function EmptyState({ hasFilters, onClearFilters, onCreateRequest }) {
     return (
         <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-purple-600">
@@ -39,6 +39,12 @@ function EmptyState({ hasFilters, onClearFilters }) {
                     Clear filters
                 </Button>
             )}
+            {!hasFilters && (
+                <Button variant="secondary" size="sm" className="mt-5" onClick={onCreateRequest}>
+                    <FiPlus className="mr-2 h-4 w-4" />
+                    Create item request
+                </Button>
+            )}
         </div>
     );
 }
@@ -46,10 +52,13 @@ function EmptyState({ hasFilters, onClearFilters }) {
 export default function TableSection({
     data = [],
     loading = false,
+    error = null,
+    onRetry,
     meta = null,
     onPageChange,
     hasFilters = false,
     onClearFilters,
+    onCreateRequest,
 }) {
     const columns = [
         {
@@ -65,7 +74,7 @@ export default function TableSection({
             ),
         },
         {
-            header: "Device",
+            header: "Item",
             accessor: "deviceName",
             render: (row) => (
                 <div className="min-w-[180px]">
@@ -135,10 +144,8 @@ export default function TableSection({
                         variant={STATUS_VARIANTS[row.status] ?? "secondary"}
                         className="rounded-full"
                     />
-                    {row.issuedAssetTag && (
-                        <div className="mt-1 font-mono text-[11px] text-gray-500">
-                            Tag: {row.issuedAssetTag}
-                        </div>
+                    {row.status === "Approved" && (
+                        <div className="mt-1 text-[11px] text-gray-500">Awaiting employee acknowledgment</div>
                     )}
                 </div>
             ),
@@ -148,7 +155,7 @@ export default function TableSection({
             accessor: "actions",
             render: (row) => (
                 <Link
-                    href={`${DETAIL_BASE}/${row.id}`}
+                    href={`${DETAIL_BASE}/${row.uuid}`}
                     aria-label={`View item request ${row.id}`}
                     className="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                 >
@@ -164,8 +171,21 @@ export default function TableSection({
     return (
         <div className="space-y-4">
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                {showEmpty ? (
-                    <EmptyState hasFilters={hasFilters} onClearFilters={onClearFilters} />
+                {error && !loading ? (
+                    <div className="flex flex-col items-center px-6 py-12 text-center" role="alert">
+                        <FiAlertCircle className="h-8 w-8 text-red-500" aria-hidden="true" />
+                        <h3 className="mt-3 text-base font-semibold text-gray-900">Unable to load item requests</h3>
+                        <p className="mt-1 max-w-lg text-sm text-red-700">{error.message}</p>
+                        <Button variant="secondary" outlined size="sm" className="mt-4" onClick={onRetry}>
+                            Retry
+                        </Button>
+                    </div>
+                ) : showEmpty ? (
+                    <EmptyState
+                        hasFilters={hasFilters}
+                        onClearFilters={onClearFilters}
+                        onCreateRequest={onCreateRequest}
+                    />
                 ) : (
                     <div className="overflow-x-auto">
                         <Table
@@ -178,7 +198,7 @@ export default function TableSection({
                 )}
             </div>
 
-            {meta && meta.last_page > 1 && (
+            {meta && meta.last_page > 1 && !error && (
                 <Pagination data={meta} onPageChange={onPageChange} />
             )}
         </div>

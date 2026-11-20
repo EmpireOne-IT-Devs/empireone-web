@@ -65,7 +65,7 @@ function periodLabel(request) {
     return `${days} day${days === 1 ? "" : "s"}`;
 }
 
-export default function ItemReqFlowSection({ request, onApprove, onReject, onIssue }) {
+export default function ItemReqFlowSection({ request, onDecision }) {
     const period = periodLabel(request);
 
     return (
@@ -77,9 +77,9 @@ export default function ItemReqFlowSection({ request, onApprove, onReject, onIss
         >
             {/* Left column — request details */}
             <div className="space-y-4 lg:col-span-2">
-                <Panel icon={FiPackage} title="Device Details" subtitle="What is being assigned">
+                <Panel icon={FiPackage} title="Item Details" subtitle="What is being assigned">
                     <dl className="divide-y divide-gray-100">
-                        <Field icon={FiPackage} label="Device">
+                        <Field icon={FiPackage} label="Item">
                             {request.deviceName}
                         </Field>
                         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-6">
@@ -93,7 +93,7 @@ export default function ItemReqFlowSection({ request, onApprove, onReject, onIss
                     </dl>
                 </Panel>
 
-                <Panel icon={FiUser} title="Assignment" subtitle="Who the device is for">
+                <Panel icon={FiUser} title="Assignment" subtitle="Who the item is for">
                     <dl className="grid grid-cols-1 divide-y divide-gray-100 sm:grid-cols-2 sm:divide-y-0 sm:gap-x-6">
                         <Field icon={FiUser} label="Assign to">
                             {request.assigneeName}
@@ -135,17 +135,13 @@ export default function ItemReqFlowSection({ request, onApprove, onReject, onIss
                                 Duration
                             </p>
                             <p className="mt-1 text-sm font-bold">
-                                {request.status === "Issued"
-                                    ? "Item issued"
-                                    : request.status === "Rejected"
-                                      ? "Request rejected"
-                                      : (period ?? "—")}
+                                {request.status === "Rejected" ? "Request rejected" : (period ?? "—")}
                             </p>
                         </div>
                     </div>
                 </Panel>
 
-                <Panel icon={FiFileText} title="Justification & Purpose" subtitle="Why the device is needed">
+                <Panel icon={FiFileText} title="Justification & Purpose" subtitle="Why the item is needed">
                     <dl className="divide-y divide-gray-100">
                         <Field icon={FiFileText} label="Justification">
                             <span className="font-normal leading-relaxed text-gray-700">
@@ -160,23 +156,6 @@ export default function ItemReqFlowSection({ request, onApprove, onReject, onIss
                     </dl>
                 </Panel>
 
-                {request.status === "Issued" && request.issuedAssetTag && (
-                    <Panel
-                        icon={FiTag}
-                        title="Issued Asset"
-                        subtitle="Unit handed over to the assignee"
-                        className="border-green-200 bg-green-50/50"
-                    >
-                        <dl className="divide-y divide-green-100">
-                            <Field icon={FiTag} label="Asset tag" mono>
-                                {request.issuedAssetTag}
-                            </Field>
-                            <Field icon={FiPackage} label="Device issued">
-                                {request.deviceName}
-                            </Field>
-                        </dl>
-                    </Panel>
-                )}
             </div>
 
             {/* Right column — approval timeline */}
@@ -185,9 +164,8 @@ export default function ItemReqFlowSection({ request, onApprove, onReject, onIss
                     <StepperSection
                         approvals={request.approvals}
                         status={request.status}
-                        onApprove={onApprove}
-                        onReject={onReject}
-                        onIssue={onIssue}
+                        canAct={request.canAct === true}
+                        onDecision={onDecision}
                     />
                 </div>
             </div>

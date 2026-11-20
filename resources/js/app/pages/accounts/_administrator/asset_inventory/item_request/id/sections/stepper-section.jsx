@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FiCheckCircle, FiXCircle, FiShield, FiUser, FiPackage } from "react-icons/fi";
+import { FiCheckCircle, FiShield, FiUser, FiXCircle } from "react-icons/fi";
 import Stepper from "@/app/_components/stepper";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Confirmation from "@/app/_components/confirmation";
 import TextArea from "@/app/_components/textarea";
-import Input from "@/app/_components/input";
 import { fadeUp } from "@/lib/animations";
 import {
     APPROVAL_STATUS_VARIANTS,
@@ -26,9 +25,7 @@ function StepMeta({ step }) {
                     variant={APPROVAL_STATUS_VARIANTS[step.status] ?? "secondary"}
                     className="rounded-full"
                 />
-                {step.actedAt && (
-                    <span className="text-[11px] text-gray-400">{formatDate(step.actedAt)}</span>
-                )}
+                {step.actedAt && <span className="text-[11px] text-gray-400">{formatDate(step.actedAt)}</span>}
             </div>
             {step.approverName && (
                 <p className="flex items-center gap-1.5 text-xs text-gray-600">
@@ -45,52 +42,48 @@ function StepMeta({ step }) {
     );
 }
 
-export default function StepperSection({
-    approvals = [],
-    status,
-    onApprove,
-    onReject,
-    onIssue,
-}) {
-    const [pendingAction, setPendingAction] = useState(null); // "approve" | "reject" | "issue" | null
+export default function StepperSection({ approvals = [], status, canAct = false, onDecision }) {
+    const [pendingAction, setPendingAction] = useState(null);
     const [remarks, setRemarks] = useState("");
     const [remarksError, setRemarksError] = useState("");
-    const [assetTag, setAssetTag] = useState("");
-    const [assetTagError, setAssetTagError] = useState("");
+    const [actionError, setActionError] = useState("");
+    const [saving, setSaving] = useState(false);
 
     const currentIndex = getCurrentStepIndex(approvals);
     const summary = getApprovalSummary(approvals);
     const currentStep = currentIndex >= 0 ? approvals[currentIndex] : null;
-    const canAct = currentStep && currentStep.status === "pending";
-    const canIssue = summary.isComplete && status !== "Issued";
+    const canDecide = canAct && currentStep?.status === "pending";
 
     const closeDialog = () => {
         setPendingAction(null);
         setRemarks("");
         setRemarksError("");
-        setAssetTag("");
-        setAssetTagError("");
+        setActionError("");
     };
 
-    const confirmAction = () => {
-        if (pendingAction === "reject" && !remarks.trim()) {
+    const confirmAction = async () => {
+        if (!pendingAction || saving) return;
+        if (!canDecide || currentStep?.key !== pendingAction.step) {
+            setActionError("The current approval step has changed. Close this dialog and review the request again.");
+            return;
+        }
+        if (pendingAction.decision === "reject" && !remarks.trim()) {
             setRemarksError("A reason is required when rejecting a request.");
             return;
         }
 
-        if (pendingAction === "issue" && !assetTag.trim()) {
-            setAssetTagError("Asset tag is required when issuing an item.");
-            return;
+        setSaving(true);
+        setActionError("");
+        try {
+            await onDecision(pendingAction.decision, pendingAction.step, remarks.trim());
+            closeDialog();
+        } catch (error) {
+            const remarksError = error?.errors?.remarks;
+            setRemarksError(Array.isArray(remarksError) ? remarksError[0] : remarksError ?? "");
+            setActionError(error?.message ?? "Unable to save the decision.");
+        } finally {
+            setSaving(false);
         }
-
-        if (pendingAction === "approve") {
-            onApprove?.(currentIndex, remarks.trim());
-        } else if (pendingAction === "reject") {
-            onReject?.(currentIndex, remarks.trim());
-        } else {
-            onIssue?.(assetTag.trim());
-        }
-        closeDialog();
     };
 
     const steps = approvals.map((step, index) => ({
@@ -100,12 +93,12 @@ export default function StepperSection({
         status: step.status === "pending" && index === currentIndex ? "current" : step.status,
         meta: <StepMeta step={step} />,
         children:
-            canAct && index === currentIndex ? (
+            canDecide && index === currentIndex ? (
                 <div className="flex flex-wrap gap-2">
                     <Button
                         size="sm"
                         variant="success"
-                        onClick={() => setPendingAction("approve")}
+                        onClick={() => setPendingAction({ decision: "approve", step: step.key, label: step.label })}
                         ariaLabel={`Approve as ${step.label}`}
                     >
                         <FiCheckCircle className="mr-1.5 h-4 w-4" />
@@ -115,7 +108,7 @@ export default function StepperSection({
                         size="sm"
                         variant="danger"
                         outlined
-                        onClick={() => setPendingAction("reject")}
+                        onClick={() => setPendingAction({ decision: "reject", step: step.key, label: step.label })}
                         ariaLabel={`Reject as ${step.label}`}
                     >
                         <FiXCircle className="mr-1.5 h-4 w-4" />
@@ -125,9 +118,10 @@ export default function StepperSection({
             ) : null,
     }));
 
-    const progressPct = summary.total
-        ? Math.round((summary.approvedCount / summary.total) * 100)
-        : 0;
+    const progressPct = summary.total ? Math.round((summary.approvedCount / summary.total) * 100) : 0;
+    const completedMessage = status === "Approved"
+        ? "Approved — awaiting employee acknowledgment"
+        : "All approvers have signed off";
 
     return (
         <motion.section
@@ -139,18 +133,17 @@ export default function StepperSection({
         >
             <div className="mb-5 flex items-start justify-between gap-3">
                 <div>
-                    <h2
-                        id="approval-timeline-heading"
-                        className="flex items-center gap-2 text-base font-semibold text-gray-900"
-                    >
+                    <h2 id="approval-timeline-heading" className="flex items-center gap-2 text-base font-semibold text-gray-900">
                         <FiShield className="h-5 w-5 text-purple-600" />
                         Approval Timeline
                     </h2>
                     <p className="mt-0.5 text-sm text-gray-500">
-                        {summary.isRejected
-                            ? `Rejected at ${summary.rejectedBy}`
+                        {status === "Approved"
+                            ? completedMessage
+                            : summary.isRejected
+                              ? `Rejected at ${summary.rejectedBy}`
                             : summary.isComplete
-                              ? "All approvers have signed off"
+                              ? completedMessage
                               : `${summary.approvedCount} of ${summary.total} approvals completed`}
                     </p>
                 </div>
@@ -159,7 +152,6 @@ export default function StepperSection({
                 </span>
             </div>
 
-            {/* Progress rail */}
             <div
                 role="progressbar"
                 aria-valuemin={0}
@@ -178,84 +170,44 @@ export default function StepperSection({
 
             <Stepper steps={steps} currentStep={currentIndex} orientation="vertical" />
 
-            {canIssue && (
-                <div className="mt-5 border-t border-gray-100 pt-4">
-                    <Button
-                        variant="secondary"
-                        className="w-full"
-                        onClick={() => setPendingAction("issue")}
-                        ariaLabel="Mark item as issued"
-                    >
-                        <FiPackage className="mr-2 h-4 w-4" />
-                        Mark as Issued
-                    </Button>
-                </div>
-            )}
-
             <Confirmation
                 isOpen={Boolean(pendingAction)}
-                onClose={closeDialog}
+                onClose={saving ? () => {} : closeDialog}
                 title={
-                    pendingAction === "approve"
-                        ? `Approve as ${currentStep?.label}?`
-                        : pendingAction === "reject"
-                          ? `Reject as ${currentStep?.label}?`
-                          : "Mark item as issued?"
+                    pendingAction?.decision === "approve"
+                        ? `Approve as ${pendingAction.label}?`
+                        : `Reject as ${pendingAction?.label}?`
                 }
             >
                 <div className="space-y-4 pt-1">
                     <p className="text-sm text-gray-600">
-                        {pendingAction === "approve" &&
-                            "This will move the request to the next approver in the chain."}
-                        {pendingAction === "reject" &&
-                            "Rejecting stops the approval chain. The requester will need to submit a new request."}
-                        {pendingAction === "issue" &&
-                            "Record the asset tag of the unit handed over. This closes the request."}
+                        {pendingAction?.decision === "approve"
+                            ? "This will record your approval for the current step."
+                            : "Rejecting stops the approval chain. The requester will need to submit a new request."}
                     </p>
-
-                    {pendingAction === "issue" ? (
-                        <Input
-                            label="Asset tag"
-                            name="asset-tag"
-                            value={assetTag}
-                            error={assetTagError}
-                            onChange={(e) => {
-                                setAssetTag(e.target.value);
-                                if (assetTagError) setAssetTagError("");
-                            }}
-                        />
-                    ) : (
-                        <TextArea
-                            name="approval-remarks"
-                            label={pendingAction === "reject" ? "Reason for rejection" : "Remarks (optional)"}
-                            rows={3}
-                            value={remarks}
-                            required={pendingAction === "reject"}
-                            error={remarksError}
-                            onChange={(e) => {
-                                setRemarks(e.target.value);
-                                if (remarksError) setRemarksError("");
-                            }}
-                        />
-                    )}
-
+                    <TextArea
+                        name="approval-remarks"
+                        label={pendingAction?.decision === "reject" ? "Reason for rejection" : "Remarks (optional)"}
+                        rows={3}
+                        maxLength={1000}
+                        disabled={saving}
+                        value={remarks}
+                        required={pendingAction?.decision === "reject"}
+                        error={remarksError}
+                        onChange={(event) => {
+                            setRemarks(event.target.value);
+                            if (remarksError) setRemarksError("");
+                        }}
+                    />
+                    {actionError && <p role="alert" className="text-sm text-red-600">{actionError}</p>}
                     <div className="flex justify-end gap-2 border-t border-gray-100 pt-4">
-                        <Button variant="light" outlined onClick={closeDialog}>
-                            Cancel
-                        </Button>
+                        <Button variant="light" outlined onClick={closeDialog} disabled={saving}>Cancel</Button>
                         <Button
-                            variant={
-                                pendingAction === "reject"
-                                    ? "danger"
-                                    : pendingAction === "issue"
-                                      ? "secondary"
-                                      : "success"
-                            }
+                            variant={pendingAction?.decision === "approve" ? "success" : "danger"}
                             onClick={confirmAction}
+                            loading={saving}
                         >
-                            {pendingAction === "approve" && "Confirm approval"}
-                            {pendingAction === "reject" && "Confirm rejection"}
-                            {pendingAction === "issue" && "Confirm issuance"}
+                            {pendingAction?.decision === "approve" ? "Confirm approval" : "Confirm rejection"}
                         </Button>
                     </div>
                 </div>

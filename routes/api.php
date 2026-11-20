@@ -52,6 +52,8 @@ use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
 use App\Http\Controllers\API\AssetInventory\AssetDeviceController;
+use App\Http\Controllers\API\AssetInventory\AssetItemRequestController;
+use App\Http\Controllers\API\AssetInventory\AssetLiabilityFormController;
 use App\Http\Controllers\API\AssetInventory\AssetPurchaseRequestController;
 use App\Http\Controllers\API\AssetInventory\AssetImportController;
 use App\Http\Controllers\API\AssetInventory\AssetMonitorController;
@@ -159,6 +161,26 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
 
     Route::prefix('asset_inventory')->group(function () {
+        Route::prefix('liability_forms')->name('asset-liability-forms.')->group(function () {
+            Route::get('/', [AssetLiabilityFormController::class, 'index'])->name('index');
+            Route::get('/paper/employees', [AssetLiabilityFormController::class, 'paperEmployees'])->name('paper.employees');
+            Route::post('/paper', [AssetLiabilityFormController::class, 'storePaper'])->name('paper.store');
+            Route::get('/{liabilityForm}', [AssetLiabilityFormController::class, 'show'])->whereUuid('liabilityForm')->name('show');
+            Route::post('/{liabilityForm}/acknowledge', [AssetLiabilityFormController::class, 'acknowledge'])->whereUuid('liabilityForm')->name('acknowledge');
+            Route::post('/{liabilityForm}/void', [AssetLiabilityFormController::class, 'void'])->whereUuid('liabilityForm')->name('void');
+            Route::post('/{liabilityForm}/resend', [AssetLiabilityFormController::class, 'resend'])->whereUuid('liabilityForm')
+                ->middleware('throttle:5,1')->name('resend');
+        });
+
+        Route::prefix('item_requests')->name('asset-item-requests.')->group(function () {
+            Route::get('/', [AssetItemRequestController::class, 'index'])->name('index');
+            Route::post('/', [AssetItemRequestController::class, 'store'])->name('store');
+            Route::get('/lookups', [AssetItemRequestController::class, 'lookups'])->name('lookups');
+            Route::get('/{itemRequest}', [AssetItemRequestController::class, 'show'])->whereUuid('itemRequest')->name('show');
+            Route::post('/{itemRequest}/approve', [AssetItemRequestController::class, 'approve'])->whereUuid('itemRequest')->name('approve');
+            Route::post('/{itemRequest}/reject', [AssetItemRequestController::class, 'reject'])->whereUuid('itemRequest')->name('reject');
+        });
+
         Route::prefix('purchase_requests')->name('asset-purchase-requests.')->group(function () {
             Route::get('/', [AssetPurchaseRequestController::class, 'index'])->name('index');
             Route::post('/', [AssetPurchaseRequestController::class, 'store'])->name('store');

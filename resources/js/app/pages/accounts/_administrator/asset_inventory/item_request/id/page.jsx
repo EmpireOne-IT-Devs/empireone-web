@@ -1,18 +1,21 @@
-import React, { useState } from "react";
-import { Link } from "@inertiajs/react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Link, usePage } from "@inertiajs/react";
+import { useDispatch, useSelector } from "react-redux";
 import { FiSearch } from "react-icons/fi";
 import Layout from "../../../../layout";
 import AssetInventory from "../../layout";
+import Button from "@/app/_components/button";
 import { setAlert } from "@/app/redux/app-slice";
+import {
+    decide_asset_item_request_thunk,
+    get_asset_item_request_thunk,
+} from "@/app/redux/asset-item-request-thunk";
 import HeaderSection from "./sections/header-section";
 import ItemReqFlowSection from "./sections/item-req-flow-section";
-import { findItemRequest } from "../sections/item-request-mock-data";
-import { getApprovalSummary } from "../sections/item-request-helpers";
 
 const LIST_PATH = "/accounts/administrator/asset_inventory/item_request";
 
-function NotFound() {
+function NotFound({ message }) {
     return (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-50 text-purple-600">
@@ -20,7 +23,7 @@ function NotFound() {
             </span>
             <h2 className="mt-4 text-lg font-semibold text-gray-900">Item request not found</h2>
             <p className="mt-1 max-w-sm text-sm text-gray-500">
-                The request you are looking for does not exist or may have been removed.
+                {message || "The request may have been removed or you may not have access to it."}
             </p>
             <Link
                 href={LIST_PATH}
@@ -32,97 +35,64 @@ function NotFound() {
     );
 }
 
-// Derives the headline status from the approval chain (mock only).
-function deriveStatus(approvals, fallback) {
-    const summary = getApprovalSummary(approvals);
-    if (summary.isRejected) return "Rejected";
-    if (summary.isComplete) return "Approved";
-    return fallback ?? "Pending Approval";
-}
-
 export default function Page() {
-    const id = window.location.pathname.split("/")[5];
+    const uuid = usePage().url.split("?")[0].split("/").filter(Boolean).slice(-1)[0];
     const dispatch = useDispatch();
-    const [request, setRequest] = useState(() => findItemRequest(id));
+    const detail = useSelector((state) => state.asset_item_requests.detail);
+    const [retry, setRetry] = useState(0);
 
-    const updateStep = (index, status, remarks) => {
-        setRequest((prev) => {
-            if (!prev) return prev;
+    useEffect(() => {
+        if (!uuid) return undefined;
+        const request = dispatch(get_asset_item_request_thunk(uuid));
+        return () => request.abort();
+    }, [dispatch, uuid, retry]);
 
-            const approvals = prev.approvals.map((step, i) =>
-                i === index
-                    ? {
-                          ...step,
-                          status,
-                          approverName: step.approverName ?? "You",
-                          actedAt: new Date().toISOString().slice(0, 10),
-                          remarks:
-                              remarks ||
-                              (status === "approved" ? "Reviewed and approved." : null),
-                      }
-                    : step,
-            );
-
-            return { ...prev, approvals, status: deriveStatus(approvals, prev.status) };
-        });
+    const handleDecision = async (decision, step, remarks) => {
+        let result;
+        try {
+            result = await dispatch(
+                decide_asset_item_request_thunk({ uuid, decision, step, remarks }),
+            ).unwrap();
+        } catch (error) {
+            if (error?.status === 409) {
+                dispatch(setAlert({ open: true, type: "info", title: "Request updated", message: error.message }));
+                setRetry((value) => value + 1);
+                return;
+            }
+            throw error;
+        }
+        const request = result.data;
+        dispatch(setAlert({
+            open: true,
+            type: decision === "approve" ? "success" : "danger",
+            title: decision === "approve" ? "Approval recorded" : "Request rejected",
+            message: decision === "approve"
+                ? `${request.id}: ${request.status}.`
+                : `${request.id} was rejected.`,
+        }));
     };
 
-    const handleApprove = (index, remarks) => {
-        const stepLabel = request?.approvals?.[index]?.label ?? "approver";
-        updateStep(index, "approved", remarks);
-        dispatch(
-            setAlert({
-                open: true,
-                type: "success",
-                title: "Request approved",
-                message: `${request.id} was approved by ${stepLabel}.`,
-            }),
-        );
-    };
-
-    const handleReject = (index, remarks) => {
-        const stepLabel = request?.approvals?.[index]?.label ?? "approver";
-        updateStep(index, "rejected", remarks);
-        dispatch(
-            setAlert({
-                open: true,
-                type: "danger",
-                title: "Request rejected",
-                message: `${request.id} was rejected by ${stepLabel}.`,
-            }),
-        );
-    };
-
-    const handleIssue = (assetTag) => {
-        setRequest((prev) =>
-            prev ? { ...prev, status: "Issued", issuedAssetTag: assetTag } : prev,
-        );
-        dispatch(
-            setAlert({
-                open: true,
-                type: "success",
-                title: "Item issued",
-                message: `${request.id} issued with asset tag ${assetTag}.`,
-            }),
-        );
-    };
+    const isCurrentRequest = detail.uuid === uuid;
+    const request = isCurrentRequest ? detail.request : null;
 
     return (
         <Layout>
             <AssetInventory>
                 <div className="space-y-4">
-                    {request ? (
+                    {!isCurrentRequest || detail.loading ? (
+                        <p role="status" className="rounded-xl border bg-white p-5 text-sm text-gray-600">Loading item request…</p>
+                    ) : request ? (
                         <>
                             <HeaderSection request={request} />
-                            <ItemReqFlowSection
-                                request={request}
-                                onApprove={handleApprove}
-                                onReject={handleReject}
-                                onIssue={handleIssue}
-                            />
+                            <ItemReqFlowSection key={uuid} request={request} onDecision={handleDecision} />
                         </>
+                    ) : [403, 404].includes(detail.error?.status) ? (
+                        <NotFound message={detail.error?.message} />
                     ) : (
-                        <NotFound />
+                        <div role="alert" className="space-y-3 rounded-xl border border-red-200 bg-white p-4 text-sm text-red-700">
+                            <p>{detail.error?.message ?? "Unable to load this item request."}</p>
+                            <Button outlined onClick={() => setRetry((value) => value + 1)}>Retry</Button>
+                        </div>
                     )}
                 </div>
             </AssetInventory>

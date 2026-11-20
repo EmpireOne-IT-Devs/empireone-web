@@ -5,6 +5,7 @@ use App\Http\Controllers\PMCorrectiveActionController;
 use App\Http\Controllers\PMPipController;
 use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\ProfileController;
+use App\Models\AssetInventory\AssetLiabilityForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,11 @@ Route::get('/dashboard', function () {
 Route::get('/privacy-policy', function () {
     return Inertia::render('accounts/privacy_policy/page');
 })->name('privacy-policy');
+
+Route::get('/asset-accountability/{liabilityForm}/acknowledge', function (AssetLiabilityForm $liabilityForm) {
+    return Inertia::render('acknowledgment/liability_form/page', ['id' => $liabilityForm->uuid]);
+})->whereUuid('liabilityForm')->middleware(['auth', 'can:acknowledge,liabilityForm'])
+    ->name(AssetLiabilityForm::SIGNING_ROUTE);
 
 Route::get('/pm-pips/{pmPip}/acknowledge', [PMPipController::class, 'acknowledge'])
     ->name('pm-pips.acknowledge');
@@ -230,9 +236,12 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('/purchase_request/{id}', 'accounts/_administrator/asset_inventory/purchase_request/id/page')
                 ->name('asset-purchase-requests.page.show');
             Route::inertia('/item_request', 'accounts/_administrator/asset_inventory/item_request/page');
-            Route::inertia('/item_request/{id}', 'accounts/_administrator/asset_inventory/item_request/id/page');
+            Route::inertia('/item_request/{id}', 'accounts/_administrator/asset_inventory/item_request/id/page')
+                ->whereUuid('id')->name('asset-item-requests.page.show');
             Route::inertia('/liability_form', 'accounts/_administrator/asset_inventory/liability_form/page');
-            Route::inertia('/liability_form/{id}', 'accounts/_administrator/asset_inventory/liability_form/id/page');
+            Route::get('/liability_form/{id}', function (string $id) {
+                return Inertia::render('accounts/_administrator/asset_inventory/liability_form/id/page', ['id' => $id]);
+            })->whereUuid('id');
             Route::inertia('/devices', 'accounts/_administrator/asset_inventory/devices/page');
             Route::inertia('/system_unit', 'accounts/_administrator/asset_inventory/system_unit/page');
             Route::inertia('/monitors', 'accounts/_administrator/asset_inventory/monitors/page');

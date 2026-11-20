@@ -174,7 +174,7 @@ export default function SmartImportModal({
                 <div>
                     <h2 className="flex items-center gap-2 text-[15px] font-semibold leading-snug text-neutral-800">
                         <FiCpu className="h-4 w-4 text-purple-600" />
-                        Smart Import from Excel
+                        AI Smart Import from Excel
                     </h2>
                     <p className="mt-0.5 text-xs text-gray-400">
                         Upload your inventory — rows are routed to the right module automatically.

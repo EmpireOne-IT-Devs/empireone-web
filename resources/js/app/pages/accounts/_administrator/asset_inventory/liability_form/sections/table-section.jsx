@@ -1,17 +1,30 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
-import { FiEye, FiDownload, FiInbox, FiUser, FiMonitor } from "react-icons/fi";
+import { FiEye, FiInbox, FiUser, FiMonitor, FiFileText } from "react-icons/fi";
 import Table from "@/app/_components/table";
 import Badge from "@/app/_components/badge";
 import Button from "@/app/_components/button";
 import Pagination from "@/app/_components/pagination";
-import {
-    FORM_STATUS_VARIANTS,
-    FORM_TYPE_VARIANTS,
-    formatDateTime,
-} from "./liability-form-helpers";
 
 const DETAIL_BASE = "/accounts/administrator/asset_inventory/liability_form";
+
+const STATUS_VARIANTS = {
+    "Pending Acknowledgment": "warning",
+    Acknowledged: "success",
+    Voided: "danger",
+};
+
+function formatDate(value) {
+    if (!value) return "—";
+    const date = new Date(value.length === 10 ? `${value}T00:00:00` : value);
+    return Number.isNaN(date.getTime())
+        ? "—"
+        : date.toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+          });
+}
 
 function EmptyState({ hasFilters, onClearFilters }) {
     return (
@@ -25,7 +38,7 @@ function EmptyState({ hasFilters, onClearFilters }) {
             <p className="mt-1 max-w-sm text-sm text-gray-500">
                 {hasFilters
                     ? "Try a different search term or reset the filters to see all forms."
-                    : "Create the first agreement to start tracking device liability."}
+                    : "Approve an Item Request or record an already-signed paper form."}
             </p>
             {hasFilters && (
                 <Button
@@ -49,78 +62,74 @@ export default function TableSection({
     onPageChange,
     hasFilters = false,
     onClearFilters,
-    onDownload,
 }) {
     const columns = [
         {
-            header: "Employee",
+            header: "Agreement",
             accessor: "employeeName",
             render: (row) => (
-                <div className="flex min-w-[180px] items-center gap-3">
+                <div className="flex min-w-[200px] items-center gap-3">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500">
                         <FiUser className="h-4 w-4" />
                     </span>
                     <div>
-                        <span className="font-medium text-gray-900">{row.employeeName}</span>
+                        <span className="font-medium text-gray-900">{row.id}</span>
                         <div className="mt-0.5 text-[11px] text-gray-500">
-                            ID: {row.employeeId}
+                            {row.employeeName || "Employee"}
+                        </div>
+                        <div className="text-[11px] text-gray-500">
+                            Employee no. {row.employeeNumber || "—"}
                         </div>
                     </div>
                 </div>
             ),
         },
         {
-            header: "Device",
+            header: "Asset",
             accessor: "deviceName",
             render: (row) => (
-                <div className="flex min-w-[170px] items-center gap-3">
+                <div className="flex min-w-[160px] items-center gap-3">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
                         <FiMonitor className="h-4 w-4" />
                     </span>
                     <div>
-                        <span className="font-medium text-gray-900">{row.deviceName}</span>
+                        <span className="font-medium text-gray-900">{row.assetTag || "—"}</span>
                         <div className="mt-0.5 font-mono text-[11px] text-gray-500">
-                            {row.assetTag}
+                            {row.source === "paper" ? "Paper Record" : "Digital"}
                         </div>
                     </div>
                 </div>
             ),
         },
         {
-            header: "Type",
-            accessor: "type",
+            header: "Item request",
+            accessor: "itemRequestReference",
             render: (row) => (
-                <Badge
-                    outlined
-                    label={row.type}
-                    variant={FORM_TYPE_VARIANTS[row.type] ?? "secondary"}
-                />
+                <div className="flex min-w-[130px] items-center gap-2 text-sm text-gray-700">
+                    <FiFileText className="h-4 w-4 shrink-0 text-gray-400" />
+                    <span>{row.itemRequestReference || "—"}</span>
+                </div>
             ),
         },
         {
             header: "Status",
             accessor: "status",
             render: (row) => (
-                <div>
-                    <Badge
-                        outlined
-                        showDot
-                        label={row.status}
-                        variant={FORM_STATUS_VARIANTS[row.status] ?? "secondary"}
-                        className="rounded-full"
-                    />
-                    <div className="mt-1 text-[11px] text-gray-500">
-                        {row.department} • {row.employeeRole}
-                    </div>
-                </div>
+                <Badge
+                    outlined
+                    showDot
+                    label={row.status}
+                    variant={STATUS_VARIANTS[row.status] ?? "secondary"}
+                    className="rounded-full"
+                />
             ),
         },
         {
-            header: "Signed Date",
-            accessor: "signedDate",
+            header: "Signed / acknowledged",
+            accessor: "acknowledgedAt",
             render: (row) => (
                 <span className="text-sm text-gray-700">
-                    {formatDateTime(row.signedDate)}
+                    {formatDate(row.paperSignedDate ?? row.acknowledgedAt)}
                 </span>
             ),
         },
@@ -130,23 +139,13 @@ export default function TableSection({
             render: (row) => (
                 <div className="flex items-center gap-2">
                     <Link
-                        href={`${DETAIL_BASE}/${row.id}`}
+                        href={`${DETAIL_BASE}/${row.uuid}`}
                         aria-label={`View liability form ${row.id}`}
                         className="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
                     >
                         <FiEye className="mr-1.5 h-3.5 w-3.5" />
                         View
                     </Link>
-                    <Button
-                        size="sm"
-                        variant="light"
-                        outlined
-                        onClick={() => onDownload?.(row)}
-                        ariaLabel={`Download liability form ${row.id}`}
-                    >
-                        <FiDownload className="mr-1.5 h-3.5 w-3.5" />
-                        Download
-                    </Button>
                 </div>
             ),
         },

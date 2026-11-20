@@ -1,36 +1,45 @@
-import React, { useMemo, useState } from "react";
-import moment from "moment";
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../layout";
 import AssetInventory from "../layout";
+import { setAlert } from "@/app/redux/app-slice";
+import { list_asset_item_requests_thunk, create_asset_item_request_thunk } from "@/app/redux/asset-item-request-thunk";
 import HeaderSection from "./sections/header-section";
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import CreateItemReqSection from "./sections/create-item-req-section";
-import { APPROVAL_STEPS, findDevice, findEmployee } from "./sections/item-request-helpers";
-import { emptyApprovals } from "../_lib/approval-helpers";
-import { initialItemRequests } from "./sections/item-request-mock-data";
-
-const PER_PAGE = 10;
 
 export default function Page() {
+    const dispatch = useDispatch();
+    const list = useSelector((state) => state.asset_item_requests.list);
+    const saving = useSelector((state) => state.asset_item_requests.saving);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
     const [priorityFilter, setPriorityFilter] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [page, setPage] = useState(1);
-    const [requests, setRequests] = useState(initialItemRequests);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    // Any filter change starts back at the first page.
+    const params = useMemo(() => ({
+        search: searchQuery.trim() || undefined,
+        status: statusFilter || undefined,
+        priority: priorityFilter || undefined,
+        type: typeFilter || undefined,
+        page,
+    }), [searchQuery, statusFilter, priorityFilter, typeFilter, page]);
+
+    useEffect(() => {
+        const request = dispatch(list_asset_item_requests_thunk(params));
+        return () => request.abort();
+    }, [dispatch, params, refreshKey]);
+
     const withPageReset = (setter) => (value) => {
         setter(value);
         setPage(1);
     };
 
-    const hasFilters = Boolean(
-        searchQuery.trim() || statusFilter || priorityFilter || typeFilter,
-    );
-
+    const hasFilters = Boolean(searchQuery.trim() || statusFilter || priorityFilter || typeFilter);
     const clearFilters = () => {
         setSearchQuery("");
         setStatusFilter("");
@@ -39,69 +48,18 @@ export default function Page() {
         setPage(1);
     };
 
-    const handleCreateSubmit = (values) => {
-        const nextNumber = requests.length + 1;
-        const device = findDevice(values.assetTag);
-        const employee = findEmployee(values.assigneeId);
-
-        const request = {
-            id: `IR-${String(nextNumber).padStart(3, "0")}`,
-            requestDate: moment().format("YYYY-MM-DD"),
-            deviceName: device?.name ?? values.assetTag,
-            assetTag: values.assetTag,
-            assigneeName: employee?.name ?? values.assigneeId,
-            assigneeId: values.assigneeId,
-            requestType: values.requestType,
-            fromDate: values.fromDate || null,
-            untilDate: values.untilDate || null,
-            justification: values.justification,
-            purpose: values.purpose || null,
-            requesterName: employee?.name ?? "You",
-            requesterEmail: employee?.email ?? null,
-            department: employee?.department ?? "—",
-            priority: values.priority,
-            status: "Pending Approval",
-            issuedAssetTag: null,
-            approvals: emptyApprovals(APPROVAL_STEPS),
-        };
-
-        setRequests((prev) => [request, ...prev]);
+    const handleCreateSubmit = async (values) => {
+        await dispatch(create_asset_item_request_thunk(values)).unwrap();
+        setIsCreateOpen(false);
         setPage(1);
+        dispatch(setAlert({
+            open: true,
+            type: "success",
+            title: "Request submitted",
+            message: "Your item request has been submitted for review.",
+        }));
+        setRefreshKey((value) => value + 1);
     };
-
-    const filteredData = useMemo(() => {
-        const term = searchQuery.trim().toLowerCase();
-
-        return requests.filter((item) => {
-            const matchesSearch =
-                !term ||
-                [item.deviceName, item.id, item.assetTag, item.assigneeName, item.assigneeId, item.department]
-                    .filter(Boolean)
-                    .some((field) => field.toLowerCase().includes(term));
-
-            return (
-                matchesSearch &&
-                (!statusFilter || item.status === statusFilter) &&
-                (!priorityFilter || item.priority === priorityFilter) &&
-                (!typeFilter || item.requestType === typeFilter)
-            );
-        });
-    }, [requests, searchQuery, statusFilter, priorityFilter, typeFilter]);
-
-    const pageMeta = useMemo(
-        () => ({
-            current_page: page,
-            last_page: Math.max(1, Math.ceil(filteredData.length / PER_PAGE)),
-            per_page: PER_PAGE,
-            total: filteredData.length,
-        }),
-        [filteredData.length, page],
-    );
-
-    const pageData = useMemo(() => {
-        const start = (page - 1) * PER_PAGE;
-        return filteredData.slice(start, start + PER_PAGE);
-    }, [filteredData, page]);
 
     return (
         <Layout>
@@ -118,21 +76,26 @@ export default function Page() {
                         setPriorityFilter={withPageReset(setPriorityFilter)}
                         typeFilter={typeFilter}
                         setTypeFilter={withPageReset(setTypeFilter)}
-                        resultCount={filteredData.length}
+                        resultCount={list.meta?.total ?? list.items.length}
                     />
 
                     <TableSection
-                        data={pageData}
-                        meta={pageMeta}
+                        data={list.items}
+                        loading={list.loading}
+                        error={list.error}
+                        onRetry={() => setRefreshKey((value) => value + 1)}
+                        meta={list.meta}
                         onPageChange={setPage}
                         hasFilters={hasFilters}
                         onClearFilters={clearFilters}
+                        onCreateRequest={() => setIsCreateOpen(true)}
                     />
 
                     <CreateItemReqSection
                         isOpen={isCreateOpen}
                         onClose={() => setIsCreateOpen(false)}
                         onSubmit={handleCreateSubmit}
+                        submitting={saving}
                     />
                 </div>
             </AssetInventory>

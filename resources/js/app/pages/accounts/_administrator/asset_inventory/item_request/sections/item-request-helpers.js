@@ -27,7 +27,9 @@ export const ASSET_CATEGORIES = [
 
 export const PRIORITIES = ["Low", "Normal", "High", "Urgent"];
 
-export const STATUSES = ["Pending Approval", "Approved", "Issued", "Rejected"];
+export const STATUSES = ["Pending Approval", "In Progress", "Approved", "Rejected"];
+
+export const ASSET_TYPES = ["devices", "monitors", "peripherals", "parts", "other_assets"];
 
 export const REQUEST_TYPES = [
     "New Assignment",
@@ -102,12 +104,12 @@ export const PRIORITY_VARIANTS = {
 
 export const STATUS_VARIANTS = {
     "Pending Approval": "warning",
+    "In Progress": "info",
     Approved: "success",
-    Issued: "purple",
     Rejected: "danger",
 };
 
-// 3-level chain — items are issued from existing stock, so no Finance/Procurement step.
+// Three-stage approval chain for item requests.
 export const APPROVAL_STEPS = [
     {
         key: "department_head",

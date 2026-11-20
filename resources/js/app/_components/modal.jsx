@@ -11,6 +11,7 @@ export default function Modal({
     children,
     width = "sm:max-w-lg",
     closeOnClickOutside = false,
+    trapFocus = false,
 }) {
     const [mounted, setMounted] = useState(false);
 
@@ -36,6 +37,7 @@ export default function Modal({
     }, [isOpen]);
 
     if (!mounted) return null;
+    const Panel = trapFocus ? FocusTrap : "div";
 
     // Handles drag end on mobile - dismiss if dragged past threshold or velocity
     const handleDragEnd = (_, info) => {
@@ -83,7 +85,7 @@ export default function Modal({
                         leaveFrom="translate-y-0 sm:opacity-100 sm:scale-100"
                         leaveTo="translate-y-full sm:translate-y-0 sm:opacity-0 sm:scale-95"
                     >
-                        <div
+                        <Panel
                             as={motion.div}
                             style={{ y: dragY }}
                             drag="y"
@@ -132,7 +134,7 @@ export default function Modal({
                             <div className="min-h-0 flex-1 overflow-y-auto pt-3 sm:pt-2 text-sm sm:text-base text-gray-700 overscroll-contain">
                                 {children}
                             </div>
-                        </div>
+                        </Panel>
                     </Transition.Child>
                 </div>
             </div>

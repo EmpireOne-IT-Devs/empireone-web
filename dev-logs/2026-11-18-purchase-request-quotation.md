@@ -189,3 +189,13 @@
 - **Issues and resolution:** Kept a template guard so workers still running the older job can continue rendering the previous summary during deployment. Recipients, approval order, sign-in link, and the purple email design were preserved.
 - **QA:** 13 Laravel tests passed (252 assertions) using in-memory mail. Job syntax and scoped test formatting passed. No frontend, route, or database changes. Rendering in actual email clients was not verified.
 - **Next steps:** Restart queue workers so new notifications use the updated job. No live mail was sent and no worker was restarted in this phase.
+
+### Phase 2: Reload the worker for itemized purchase request emails
+
+- **Timestamp:** 2026-11-20 16:10 PHT
+- **Mode:** Agent
+- **Personas:** Backend, QA
+- **Files modified:** Dev log only.
+- **Issues and resolution:** The local Laravel worker predated the itemized email job. Gracefully stopped it and verified that its replacement was running on the local default database queue.
+- **QA:** Rendered the saved request in memory and verified all four items, quantities, unit costs, line totals, and the PHP 77,000.00 grand total in HTML and plain text. The queue was empty before restart. No live email was sent or requeued, and no purchase request records were changed.
+- **Next steps:** Check the next normal approval notification in the email client. Previously delivered emails will not change.

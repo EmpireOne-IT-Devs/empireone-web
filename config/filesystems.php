@@ -57,6 +57,13 @@ return [
             'throw' => true,
         ],
 
+        'liability_paper_scans' => [
+            'driver' => 'local',
+            'root' => env('LIABILITY_PAPER_SCAN_ROOT', storage_path('app/private/liability-paper-scans')),
+            'visibility' => 'private',
+            'throw' => true,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

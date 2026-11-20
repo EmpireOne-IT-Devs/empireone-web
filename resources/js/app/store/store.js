@@ -24,6 +24,8 @@ import assetOtherAssetsSlice from "../redux/asset-other-asset-slice";
 import assetPeripheralsSlice from "../redux/asset-peripheral-slice";
 import coeRequestsSlice from "../redux/coe-request-slice";
 import assetPurchaseRequestsSlice from "../redux/asset-purchase-request-slice";
+import assetItemRequestsSlice from "../redux/asset-item-request-slice";
+import assetLiabilityFormsSlice from "../redux/asset-liability-form-slice";
 
 const store = configureStore({
     reducer: {
@@ -52,6 +54,8 @@ const store = configureStore({
         asset_peripherals: assetPeripheralsSlice,
         coe_requests: coeRequestsSlice,
         asset_purchase_requests: assetPurchaseRequestsSlice,
+        asset_item_requests: assetItemRequestsSlice,
+        asset_liability_forms: assetLiabilityFormsSlice,
     },
 });
 

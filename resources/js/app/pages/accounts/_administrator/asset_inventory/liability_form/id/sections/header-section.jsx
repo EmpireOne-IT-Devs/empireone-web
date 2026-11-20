@@ -4,13 +4,15 @@ import { motion } from "framer-motion";
 import { FiArrowLeft } from "react-icons/fi";
 import Badge from "@/app/_components/badge";
 import { fadeUp } from "@/lib/animations";
-import {
-    FORM_STATUS_VARIANTS,
-    FORM_TYPE_VARIANTS,
-    formatDateTime,
-} from "../../sections/liability-form-helpers";
+import { formatDateTime } from "../../sections/liability-form-helpers";
 
 const LIST_PATH = "/accounts/administrator/asset_inventory/liability_form";
+
+const STATUS_VARIANTS = {
+    "Pending Acknowledgment": "warning",
+    Acknowledged: "success",
+    Voided: "danger",
+};
 
 export default function HeaderSection({ form }) {
     return (
@@ -34,7 +36,7 @@ export default function HeaderSection({ form }) {
                     <span className="font-mono text-purple-700">{form.id}</span>
                 </h1>
                 <p className="mt-0.5 text-sm text-gray-500">
-                    Created {formatDateTime(form.createdAt)} for {form.employeeName}
+                    Created {formatDateTime(form.createdAt)} for {form.employeeName || "the assigned employee"}
                 </p>
             </div>
 
@@ -43,13 +45,8 @@ export default function HeaderSection({ form }) {
                     outlined
                     showDot
                     label={form.status}
-                    variant={FORM_STATUS_VARIANTS[form.status] ?? "secondary"}
+                    variant={STATUS_VARIANTS[form.status] ?? "secondary"}
                     className="rounded-full"
-                />
-                <Badge
-                    outlined
-                    label={form.type}
-                    variant={FORM_TYPE_VARIANTS[form.type] ?? "secondary"}
                 />
             </div>
         </motion.div>
