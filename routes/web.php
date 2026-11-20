@@ -5,6 +5,7 @@ use App\Http\Controllers\PMCorrectiveActionController;
 use App\Http\Controllers\PMPipController;
 use App\Http\Controllers\PMReachController;
 use App\Http\Controllers\ProfileController;
+use App\Services\OnboardingAppsScriptMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,7 @@ if (! function_exists('route_page')) {
         };
     }
 }
+
 
 // routes/web.php
 Route::middleware('auth')->get('/user/token', function (Request $request) {
