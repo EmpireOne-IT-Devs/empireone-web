@@ -6,8 +6,10 @@ use App\Jobs\SendAssetPurchaseRequestEmail;
 use App\Models\AssetInventory\AssetPurchaseRequest;
 use App\Models\User;
 use Aws\Exception\AwsException;
+use Brick\Math\BigDecimal;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\QueryException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -54,27 +56,40 @@ class AssetPurchaseRequestService
         }
 
         try {
-            return DB::transaction(function () use ($user, $values, $uuid, $now, $path, $name) {
+            $save = function () use ($user, $values, $uuid, $now, $path, $name) {
                 $department = $values['department'];
                 $code = config('purchase_request.departments')[$department];
-                $request = AssetPurchaseRequest::create([
+                $createdAt = now();
+                $items = isset($values['items']) ? array_map(static fn (array $item) => [
+                    'description' => $item['description'],
+                    'quantity' => (int) $item['quantity'],
+                    'unit_cost' => (string) BigDecimal::of($item['unitCost'])->toScale(2),
+                ], $values['items']) : null;
+                // Preserve the first item in the legacy columns for older clients.
+                $firstItem = $items[0] ?? null;
+                $request = new AssetPurchaseRequest([
                     'uuid' => $uuid,
+                    'purchase_request_id' => $this->nextPurchaseRequestId($createdAt->format('Ym')),
                     'requester_id' => $user->getKey(),
-                    'requester_name' => $values['requesterName'] ?? ($user->name ?: $user->email),
+                    'requester_name' => trim((string) $user->name) !== '' ? $user->name : $user->email,
                     'requester_email' => $user->email,
-                    'item_name' => $values['itemName'],
+                    'item_name' => $firstItem['description'] ?? $values['itemName'],
+                    'items' => $items,
+                    'justification' => $values['justification'],
                     'department' => $department,
                     'department_code' => "{$code}-{$now->year}-Q{$now->quarter}",
                     'category' => $values['category'],
                     'priority' => $values['priority'],
-                    'quantity' => $values['quantity'],
-                    'unit_price' => $values['unitPrice'],
+                    'quantity' => $firstItem['quantity'] ?? $values['quantity'],
+                    'unit_price' => $firstItem['unit_cost'] ?? $values['unitPrice'],
                     'supplier' => $values['supplierName'] ?? null,
                     'purchase_date' => $now->copy()->addMonthNoOverflow()->toDateString(),
                     'status' => AssetPurchaseRequest::PENDING,
                     'quotation_path' => $path,
                     'quotation_name' => $name,
                 ]);
+                $request->created_at = $createdAt;
+                $request->save();
                 $position = 0;
                 foreach (config('purchase_request.steps') as $key => $step) {
                     $request->steps()->create([
@@ -90,7 +105,15 @@ class AssetPurchaseRequestService
                 }
 
                 return $request;
-            });
+            };
+
+            // If two requests take the same number, the unique index rejects one and it retries with the next number.
+            return retry(
+                3,
+                fn () => DB::transaction($save, 3),
+                0,
+                fn (Throwable $e) => $e instanceof UniqueConstraintViolationException,
+            );
         } catch (Throwable $e) {
             if ($path !== null) {
                 try {
@@ -103,6 +126,20 @@ class AssetPurchaseRequestService
             }
             throw $e;
         }
+    }
+
+    // Format: PR-YYYYMM-0001. The number restarts at 0001 each month.
+    private function nextPurchaseRequestId(string $month): string
+    {
+        $prefix = "PR-{$month}-";
+        $latest = AssetPurchaseRequest::query()
+            ->whereLike('purchase_request_id', $prefix.'%')
+            ->orderByRaw('LENGTH(purchase_request_id) DESC')
+            ->orderByDesc('purchase_request_id')
+            ->value('purchase_request_id');
+        $number = $latest === null ? 1 : (int) substr($latest, strlen($prefix)) + 1;
+
+        return sprintf('%s%04d', $prefix, $number);
     }
 
     public function decide(AssetPurchaseRequest $request, User $user, string $key, ?string $remarks, bool $approve): AssetPurchaseRequest

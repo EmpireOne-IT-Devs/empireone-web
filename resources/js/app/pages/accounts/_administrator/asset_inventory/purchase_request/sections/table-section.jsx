@@ -40,6 +40,7 @@ export default function TableSection({
             render: (row) => (
                 <div className="min-w-[180px]">
                     <span className="font-medium text-gray-900">{row.itemName}</span>
+                    {row.items?.length > 1 && <span className="ml-1 text-xs text-gray-500">+{row.items.length - 1} more</span>}
                     <div className="mt-0.5 text-[11px] text-gray-500">
                         {row.department} • {row.requesterName}
                     </div>
@@ -58,14 +59,20 @@ export default function TableSection({
             ),
         },
         {
-            header: "Qty",
+            header: "Qty / Items",
             accessor: "quantity",
             render: (row) => (
                 <div>
-                    <span className="font-medium text-gray-900">{row.quantity}</span>
-                    <div className="mt-0.5 text-[11px] text-gray-500">
-                        {formatMoney(row.unitPrice, currency)} each
-                    </div>
+                    {row.items?.length > 1 ? (
+                        <span className="font-medium text-gray-900">{row.items.length} items</span>
+                    ) : (
+                        <>
+                            <span className="font-medium text-gray-900">{row.quantity}{row.items?.length === 1 ? ` ${row.items[0].unit}` : ""}</span>
+                            <div className="mt-0.5 text-[11px] text-gray-500">
+                                {formatMoney(row.unitPrice, currency)} each
+                            </div>
+                        </>
+                    )}
                 </div>
             ),
         },
@@ -75,7 +82,7 @@ export default function TableSection({
             render: (row) => (
                 <div>
                     <span className="font-semibold text-gray-900">
-                        {formatMoney(row.totalAmount, currency)}
+                        {formatMoney(row.grandTotal ?? row.totalAmount, currency)}
                     </span>
                     <div className="mt-0.5 font-mono text-[11px] text-gray-500">
                         {row.departmentCode}

@@ -10,6 +10,20 @@ export async function list_purchase_requests_service(params, signal) {
 export async function create_purchase_request_service(values) {
     const form = new FormData();
     for (const [key, value] of Object.entries(values)) {
+        if (key === "items") {
+            if (!Array.isArray(value) || value.length === 0) {
+                // Keep the key present so Laravel rejects it instead of accepting legacy fields.
+                form.append("items", "");
+                continue;
+            }
+            for (const [index, item] of value.entries()) {
+                const { description, quantity, unitCost } = item ?? {};
+                for (const [field, fieldValue] of Object.entries({ description, quantity, unitCost })) {
+                    form.append(`items[${index}][${field}]`, fieldValue ?? "");
+                }
+            }
+            continue;
+        }
         if (value != null) form.append(key, value);
     }
     return (await axios.post(BASE, form)).data;

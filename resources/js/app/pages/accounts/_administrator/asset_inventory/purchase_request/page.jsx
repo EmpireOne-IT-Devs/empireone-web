@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { usePage } from "@inertiajs/react";
 import Button from "@/app/_components/button";
 import { FiInbox } from "react-icons/fi";
 import { create_asset_purchase_request_thunk, list_asset_purchase_requests_thunk } from "@/app/redux/asset-purchase-request-thunk";
@@ -11,6 +12,7 @@ import TableSection from "./sections/table-section";
 import CreatePurchaseReqSection from "./sections/create-purchase-req-section";
 export default function Page() {
     const dispatch = useDispatch();
+    const user = usePage().props.auth?.user;
     const { items, meta, loading, error } = useSelector((state) => state.asset_purchase_requests.list);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -86,6 +88,7 @@ export default function Page() {
 
                     <CreatePurchaseReqSection
                         isOpen={isCreateOpen}
+                        requesterName={user?.name?.trim() ? user.name : user?.email}
                         onClose={() => setIsCreateOpen(false)}
                         onSubmit={handleCreateSubmit}
                     />

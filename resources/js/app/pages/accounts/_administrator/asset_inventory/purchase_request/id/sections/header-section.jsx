@@ -14,6 +14,11 @@ import {
 const LIST_PATH = "/accounts/administrator/asset_inventory/purchase_request";
 
 export default function HeaderSection({ request }) {
+    const isRejected = request.status === "Rejected";
+    const rejectionReason = isRejected
+        ? request.approvals?.find((step) => step.status === "rejected")?.remarks?.trim()
+        : null;
+
     return (
         <motion.div
             variants={fadeUp}
@@ -37,6 +42,14 @@ export default function HeaderSection({ request }) {
                 <p className="mt-0.5 text-sm text-gray-500">
                     Requested {formatDate(request.requestDate)} by {request.requesterName}
                 </p>
+                {isRejected && (
+                    <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-900">
+                        <h2 className="text-sm font-semibold">Reason for rejection</h2>
+                        <p className="mt-1 whitespace-pre-wrap [overflow-wrap:anywhere] text-sm">
+                            {rejectionReason || "No reason was recorded."}
+                        </p>
+                    </div>
+                )}
             </div>
 
             <div className="flex flex-wrap items-center gap-2 sm:justify-end">

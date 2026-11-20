@@ -1,25 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { FiSend } from "react-icons/fi";
+import { Plus, X } from "lucide-react";
 import Modal from "@/app/_components/modal";
 import Input from "@/app/_components/input";
+import TextArea from "@/app/_components/textarea";
 import Select from "@/app/_components/select";
 import Button from "@/app/_components/button";
 import {
     CATEGORIES,
     DEPARTMENTS,
+    MAX_ITEMS,
     PRIORITIES,
+    formatItemCents,
+    itemCostInCents,
     toOptions,
 } from "./purchase-request-helpers";
 
+const EMPTY_ITEM = { description: "", quantity: "1", unitCost: "" };
 const DEFAULT_VALUES = {
-    itemName: "",
+    items: [EMPTY_ITEM],
     department: "IT Department",
-    requesterName: "",
+    justification: "",
     category: "Computer Hardware",
     priority: "Normal",
-    quantity: "1",
-    unitPrice: "",
     supplierName: "",
 };
 
@@ -27,6 +31,7 @@ export default function CreatePurchaseReqSection({
     isOpen,
     onClose,
     onSubmit,
+    requesterName = "",
     submitting = false,
 }) {
     const {
@@ -38,6 +43,11 @@ export default function CreatePurchaseReqSection({
         clearErrors,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: DEFAULT_VALUES });
+    const { fields, append, remove } = useFieldArray({ control, name: "items" });
+    const items = useWatch({ control, name: "items" }) ?? [];
+    const lineTotals = items.map(itemCostInCents);
+    const grandTotal = lineTotals.reduce((total, cost) => total + (cost ?? 0n), 0n);
+    const busy = isSubmitting || submitting;
     const quotationInput = useRef(null);
     const [hasQuotation, setHasQuotation] = useState(false);
 
@@ -65,11 +75,9 @@ export default function CreatePurchaseReqSection({
         try {
             await onSubmit({
                 ...values,
-                itemName: values.itemName.trim(),
-                requesterName: values.requesterName.trim(),
+                items: values.items.map((item) => ({ ...item, description: item.description.trim() })),
+                justification: values.justification.trim(),
                 supplierName: values.supplierName.trim(),
-                quantity: Number(values.quantity),
-                unitPrice: values.unitPrice,
                 supplierQuotation: quotationInput.current?.files[0],
             });
             handleClose();
@@ -85,7 +93,7 @@ export default function CreatePurchaseReqSection({
         <Modal
             isOpen={isOpen}
             onClose={isSubmitting || submitting ? () => {} : handleClose}
-            width="max-w-xl"
+            width="sm:max-w-4xl"
             title={
                 <div>
                     <h2 className="text-[15px] font-semibold leading-snug text-neutral-800">
@@ -102,13 +110,86 @@ export default function CreatePurchaseReqSection({
                 className="mt-4 flex flex-col gap-4 p-2"
                 noValidate
             >
-                <Input
-                    label="Item name"
-                    name="itemName"
-                    error={errors.itemName}
-                    {...register("itemName", {
-                        required: "Item name is required.",
-                        minLength: { value: 2, message: "Item name is too short." },
+                <section aria-labelledby="purchase-request-items" className="space-y-3">
+                    <h3 id="purchase-request-items" className="text-sm font-semibold text-gray-900">Items</h3>
+                    {fields.map((field, index) => {
+                        const name = `items.${index}`;
+                        const rowErrors = errors.items?.[index];
+                        return (
+                            <fieldset key={field.id} disabled={busy} className="min-w-0 border-b border-gray-200 pb-3">
+                                <legend className="mb-3 text-xs font-medium text-gray-600">Item {index + 1}</legend>
+                                {rowErrors?.message && <p role="alert" className="mb-2 text-xs text-red-600">{rowErrors.message}</p>}
+                                <div className="grid items-start gap-3 sm:grid-cols-2 md:grid-cols-[minmax(8rem,2fr)_minmax(5rem,0.8fr)_minmax(6rem,1fr)_minmax(6rem,1fr)_auto]">
+                                    <Input
+                                        label="Item Name"
+                                        maxLength={150}
+                                        error={rowErrors?.description}
+                                        {...register(`${name}.description`, {
+                                            validate: (value) => value.trim().length >= 2 || "Enter an item name with at least 2 characters.",
+                                        })}
+                                    />
+                                    <Input
+                                        label="Quantity"
+                                        type="number"
+                                        min="1"
+                                        max="1000000"
+                                        error={rowErrors?.quantity}
+                                        {...register(`${name}.quantity`, {
+                                            validate: (value) => (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 1000000) || "Enter a whole number from 1 to 1,000,000.",
+                                        })}
+                                    />
+                                    <Input
+                                        label="Unit Cost (₱)"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        error={rowErrors?.unitCost}
+                                        {...register(`${name}.unitCost`, {
+                                            validate: (value) => itemCostInCents({ quantity: "1", unitCost: value }) !== null || "Enter a valid cost with up to 2 decimal places.",
+                                        })}
+                                    />
+                                    <div className="min-w-0 text-sm">
+                                        <div className="text-xs text-gray-600">Total Cost (₱)</div>
+                                        <output className="block break-words font-semibold text-gray-900">
+                                            {lineTotals[index] == null ? "—" : formatItemCents(lineTotals[index])}
+                                        </output>
+                                    </div>
+                                    <Button
+                                        variant="danger"
+                                        size="sm"
+                                        outlined
+                                        ariaLabel={`Remove item ${index + 1}`}
+                                        disabled={fields.length === 1}
+                                        onClick={() => remove(index)}
+                                        className="min-h-11 w-11"
+                                    >
+                                        <X size={16} aria-hidden="true" />
+                                    </Button>
+                                </div>
+                            </fieldset>
+                        );
+                    })}
+                    {(errors.items?.message || errors.items?.root?.message) && (
+                        <p role="alert" className="text-xs text-red-600">{errors.items.message ?? errors.items.root.message}</p>
+                    )}
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <Button variant="success" size="sm" disabled={busy || fields.length >= MAX_ITEMS} onClick={() => append({ ...EMPTY_ITEM })}>
+                            <Plus size={16} className="mr-1" aria-hidden="true" /> Add Item
+                        </Button>
+                        <p className="text-sm font-semibold text-gray-900">Grand Total: {formatItemCents(grandTotal)}</p>
+                    </div>
+                    {fields.length >= MAX_ITEMS && <p className="text-xs text-gray-600">Maximum of {MAX_ITEMS} items per request.</p>}
+                </section>
+
+                <TextArea
+                    label="Reason for request"
+                    rows={3}
+                    required
+                    maxLength={1000}
+                    error={errors.justification?.message}
+                    {...register("justification", {
+                        validate: (value) => Boolean(value.trim()) || "Explain why you need this item.",
+                        maxLength: { value: 1000, message: "Use 1,000 characters or fewer." },
                     })}
                 />
 
@@ -131,10 +212,8 @@ export default function CreatePurchaseReqSection({
                     <Input
                         label="Requester name"
                         name="requesterName"
-                        error={errors.requesterName}
-                        {...register("requesterName", {
-                            required: "Requester name is required.",
-                        })}
+                        value={requesterName}
+                        readOnly
                     />
                 </div>
 
@@ -168,31 +247,6 @@ export default function CreatePurchaseReqSection({
                                 error={errors.priority}
                             />
                         )}
-                    />
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Input
-                        label="Quantity"
-                        name="quantity"
-                        type="number"
-                        min="1"
-                        error={errors.quantity}
-                        {...register("quantity", {
-                            required: "Quantity is required.",
-                            min: { value: 1, message: "Quantity must be at least 1." },
-                        })}
-                    />
-                    <Input
-                        label="Unit price (₱)"
-                        name="unitPrice"
-                        type="number"
-                        min="0"
-                        error={errors.unitPrice}
-                        {...register("unitPrice", {
-                            required: "Unit price is required.",
-                            min: { value: 0, message: "Unit price cannot be negative." },
-                        })}
                     />
                 </div>
 

@@ -12,8 +12,10 @@ class AssetPurchaseRequestResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
-            'id' => sprintf('PR-%03d', $this->getKey()),
+            'id' => $this->reference(),
             'itemName' => $this->item_name,
+            'items' => $this->itemLines(),
+            'justification' => $this->justification,
             'department' => $this->department,
             'requesterName' => $this->requester_name,
             'requesterEmail' => $this->requester_email,
@@ -21,6 +23,7 @@ class AssetPurchaseRequestResource extends JsonResource
             'quantity' => $this->quantity,
             'unitPrice' => (float) $this->unit_price,
             'totalAmount' => round($this->quantity * (float) $this->unit_price, 2),
+            'grandTotal' => $this->items !== null ? $this->grandTotal() : null,
             'departmentCode' => $this->department_code,
             'priority' => $this->priority,
             'purchaseDate' => $this->purchase_date->toDateString(),

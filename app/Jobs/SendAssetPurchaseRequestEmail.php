@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\AssetInventory\AssetPurchaseRequest;
 use App\Models\User;
+use Brick\Math\BigDecimal;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Mail\Message;
@@ -32,7 +33,7 @@ class SendAssetPurchaseRequestEmail implements ShouldQueue
             return;
         }
 
-        $reference = sprintf('PR-%03d', $request->getKey());
+        $reference = $request->reference();
         if ($this->stepKey !== null) {
             $step = $request->steps()->where('status', 'pending')->first();
             if ($step?->key !== $this->stepKey) {
@@ -64,12 +65,46 @@ class SendAssetPurchaseRequestEmail implements ShouldQueue
         }
 
         $url = route('asset-purchase-requests.page.show', ['id' => $request->uuid]);
+        $summary = ['Requester' => $request->requester_name, 'Priority' => $request->priority];
+        $items = $request->itemLines();
+        if ($request->items !== null) {
+            $total = $request->grandTotal();
+        } else {
+            $total = (string) BigDecimal::of($request->unit_price)->multipliedBy($request->quantity);
+            $items = [[
+                'description' => $request->item_name,
+                'quantity' => $request->quantity,
+                'unitCost' => $request->unit_price,
+                'lineTotal' => $total,
+            ]];
+        }
+        $grandTotal = $this->formatAmount($total);
+        $summaryText = '';
+        foreach ($summary as $label => $value) {
+            $summaryText .= "\n{$label}: {$value}";
+        }
+        $itemRows = [];
+        $itemText = '';
+        foreach ($items as $index => $item) {
+            $unitCost = $this->formatAmount($item['unitCost']);
+            $lineTotal = $this->formatAmount($item['lineTotal']);
+            $itemRows[] = [...$item, 'unitCost' => $unitCost, 'lineTotal' => $lineTotal];
+            $itemText .= "\n".($index + 1).". {$item['description']} ({$item['quantity']} x {$unitCost} = {$lineTotal})";
+        }
+
         Mail::send([
             'html' => 'emails.asset_inventory.purchase-request',
-            'raw' => "{$body}\n\nView purchase request: {$url}",
-        ], compact('subject', 'body', 'url'), function (Message $message) use ($recipient, $subject) {
+            'raw' => "{$body}\n\nRequest summary{$summaryText}\n\nRequested items{$itemText}\n\nGrand total: {$grandTotal}\n\nView purchase request: {$url}",
+        ], compact('subject', 'body', 'url', 'summary', 'itemRows', 'grandTotal'), function (Message $message) use ($recipient, $subject) {
             $message->to($recipient->email)->subject($subject);
         });
+    }
+
+    private function formatAmount(string $amount): string
+    {
+        [$whole, $fraction] = explode('.', $amount, 2);
+
+        return 'PHP '.preg_replace('/\B(?=(\d{3})+$)/', ',', $whole).'.'.$fraction;
     }
 
     private function logMissingRecipient(): void

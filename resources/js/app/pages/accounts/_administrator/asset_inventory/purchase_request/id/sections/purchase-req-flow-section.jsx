@@ -64,6 +64,7 @@ export default function PurchaseReqFlowSection({
 }) {
     const [downloading, setDownloading] = useState(false);
     const [downloadError, setDownloadError] = useState("");
+    const items = request.items ?? [];
 
     const downloadQuotation = async () => {
         setDownloading(true);
@@ -88,12 +89,31 @@ export default function PurchaseReqFlowSection({
             <div className="space-y-4 lg:col-span-2">
                 <Panel icon={FiPackage} title="Item Details" subtitle="What is being requested">
                     <dl className="divide-y divide-gray-100">
-                        <Field icon={FiPackage} label="Item">
-                            {request.itemName}
-                        </Field>
-                        <Field icon={FiFileText} label="Description / Justification">
-                            <span className="font-normal leading-relaxed text-gray-700">
-                                {request.description}
+                        {items.length > 0 ? (
+                            <div className="py-3">
+                                <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">Items</dt>
+                                <dd>
+                                    <ol className="mt-2 divide-y divide-gray-100 rounded-lg border border-gray-200">
+                                        {items.map((item, index) => (
+                                            <li key={index} className="flex flex-wrap items-start justify-between gap-2 px-3 py-3 text-sm text-gray-900">
+                                                <div className="min-w-0">
+                                                    <p className="break-words font-medium">{item.description}</p>
+                                                    <p className="text-gray-600">{item.quantity} × {formatMoney(item.unitCost, currency)}</p>
+                                                </div>
+                                                <p className="font-semibold">{formatMoney(item.lineTotal, currency)}</p>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </dd>
+                            </div>
+                        ) : (
+                            <Field icon={FiPackage} label="Item">
+                                {request.itemName}
+                            </Field>
+                        )}
+                        <Field icon={FiFileText} label="Reason for request">
+                            <span className="whitespace-pre-wrap [overflow-wrap:anywhere] font-normal leading-relaxed text-gray-700">
+                                {request.justification ?? "—"}
                             </span>
                         </Field>
                         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-6">
@@ -117,30 +137,37 @@ export default function PurchaseReqFlowSection({
                 </Panel>
 
                 <Panel icon={FiCreditCard} title="Financial Summary" subtitle={`Amounts shown in ${currency}`}>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                        <div className="rounded-xl bg-gray-50 p-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                                Quantity
-                            </p>
-                            <p className="mt-1 text-xl font-bold text-gray-900">{request.quantity}</p>
-                        </div>
-                        <div className="rounded-xl bg-gray-50 p-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                                Unit price
-                            </p>
-                            <p className="mt-1 text-xl font-bold text-gray-900">
-                                {formatMoney(request.unitPrice, currency)}
-                            </p>
-                        </div>
+                    {items.length > 0 ? (
                         <div className="rounded-xl bg-purple-600 p-4 text-white shadow-md shadow-purple-200">
-                            <p className="text-xs font-medium uppercase tracking-wide text-purple-100">
-                                Total amount
-                            </p>
-                            <p className="mt-1 text-xl font-bold">
-                                {formatMoney(request.totalAmount, currency)}
-                            </p>
+                            <p className="text-xs font-medium uppercase tracking-wide text-purple-100">Grand total</p>
+                            <p className="mt-1 break-words text-xl font-bold">{formatMoney(request.grandTotal, currency)}</p>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <div className="rounded-xl bg-gray-50 p-4">
+                                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                                    Quantity
+                                </p>
+                                <p className="mt-1 text-xl font-bold text-gray-900">{request.quantity}</p>
+                            </div>
+                            <div className="rounded-xl bg-gray-50 p-4">
+                                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                                    Unit price
+                                </p>
+                                <p className="mt-1 text-xl font-bold text-gray-900">
+                                    {formatMoney(request.unitPrice, currency)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-purple-600 p-4 text-white shadow-md shadow-purple-200">
+                                <p className="text-xs font-medium uppercase tracking-wide text-purple-100">
+                                    Total amount
+                                </p>
+                                <p className="mt-1 text-xl font-bold">
+                                    {formatMoney(request.totalAmount, currency)}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     <dl className="mt-3 divide-y divide-gray-100">
                         <Field icon={FiHash} label="Budget / department code" mono>
                             {request.departmentCode}
