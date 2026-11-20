@@ -60,14 +60,16 @@ export function AssetAccountabilityDocument({ form }) {
                 <h3 className="font-bold">{document.acknowledgmentTitle}</h3>
                 <p>{document.acknowledgment}</p>
                 {form.signature && (
-                    <div className="grid gap-4 pt-3 sm:grid-cols-2">
-                        <div>
-                            <p>{form.issueDate}</p>
+                    <div className="grid gap-4 pt-3 sm:grid-cols-2 sm:gap-y-0">
+                        <div className="min-w-0 sm:row-span-2 sm:grid sm:grid-rows-subgrid">
+                            <p className="self-end">{form.issueDate}</p>
                             <p className="border-t border-gray-300 pt-1 text-xs">{document.dateLabel}</p>
                         </div>
-                        <div>
-                            <img src={form.signature} alt="Recorded employee signature" className="h-14 w-full object-contain object-left" />
-                            <p>{form.printedName}</p>
+                        <div className="min-w-0 sm:row-span-2 sm:grid sm:grid-rows-subgrid">
+                            <div className="self-end">
+                                <img src={form.signature} alt="Recorded employee signature" className="h-14 w-full object-contain object-left" />
+                                <p className="break-words">{form.printedName}</p>
+                            </div>
                             <p className="border-t border-gray-300 pt-1 text-xs">{document.signatureLabel}</p>
                         </div>
                     </div>

@@ -84,3 +84,13 @@
 - **Issues and resolution:** Conflict markers caused a PHP parse error; both sides were retained without changing routes or middleware.
 - **QA:** PHP syntax and liability signing route registration passed. The isolated Item Request suite passed (13 tests, 238 assertions); no conflict markers remain in `routes/web.php`. UI checks were not applicable. No server, migration, or queue worker was started.
 - **Next steps:** Start the server normally and verify the pending email queue worker separately.
+
+### Acknowledgment signature layout
+
+- **Timestamp:** 2026-11-20 22:33 +08:00
+- **Mode:** Agent
+- **Personas:** Frontend, UI/UX, QA
+- **Files modified:** [Asset Accountability document](../resources/js/app/pages/acknowledgment/liability_form/sections/asset-accountability-document.jsx)
+- **Issue and resolution:** The signature image pushed the signature line lower than the date line. The two fields now share grid rows when displayed side by side and stack on narrow screens. No stored values or PDF rendering changed.
+- **QA:** Headless Chrome verified matching line positions at 684 and 1008 CSS pixels and stacking at 500 CSS pixels with a wrapped name. The Item Request regression suite passed (13 tests, 238 assertions). No links, controls, API calls, or authorization behavior changed.
+- **Next steps:** None for this layout fix.
