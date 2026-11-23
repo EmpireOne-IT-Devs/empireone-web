@@ -3,6 +3,7 @@ import {
     decide_asset_purchase_request_thunk,
     get_asset_purchase_request_thunk,
     list_asset_purchase_requests_thunk,
+    search_asset_purchase_approvers_thunk,
 } from "./asset-purchase-request-thunk";
 
 const assetPurchaseRequestsSlice = createSlice({
@@ -10,6 +11,7 @@ const assetPurchaseRequestsSlice = createSlice({
     initialState: {
         list: { items: [], meta: null, loading: true, error: null },
         detail: { uuid: null, request: null, loading: true, error: null },
+        approvers: [],
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -38,6 +40,9 @@ const assetPurchaseRequestsSlice = createSlice({
             })
             .addCase(decide_asset_purchase_request_thunk.fulfilled, (state, { meta, payload }) => {
                 if (state.detail.uuid === meta.arg.uuid) state.detail.request = payload.data;
+            })
+            .addCase(search_asset_purchase_approvers_thunk.fulfilled, (state, { payload }) => {
+                state.approvers = payload.data ?? [];
             });
     },
 });

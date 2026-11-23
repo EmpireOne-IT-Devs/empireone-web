@@ -38,16 +38,28 @@ class SendAssetItemRequestEmail implements ShouldQueue
             if ($step?->key !== $this->stepKey) {
                 return;
             }
-            $email = trim((string) config('item_request.steps.'.$step->key.'.email'));
-            $recipient = $email === '' ? null : User::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
-            $allowed = $recipient && Gate::forUser($recipient)->allows('decide', [AssetItemRequest::class, $step->key]);
+            $recipient = $step->assigned_user_id ? User::with('account_employee')->find($step->assigned_user_id) : null;
+            $assigned = $step->assigned_user_id !== null;
+            if (! $recipient) {
+                $email = trim((string) config('item_request.steps.'.$step->key.'.email'));
+                $recipient = $email === '' ? null : User::with('account_employee')->whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
+            }
+            $eogs = trim((string) $recipient?->account_employee?->eogs_email);
+            $allowed = $recipient && $recipient->hasVerifiedEmail()
+                && Gate::forUser($recipient)->allows('decide', [AssetItemRequest::class, $step->key, $request])
+                && (! $assigned
+                    ? strcasecmp(trim((string) config('item_request.steps.'.$step->key.'.email')), (string) $recipient->email) === 0
+                    : filter_var($eogs, FILTER_VALIDATE_EMAIL) !== false);
             $subject = "{$reference} needs your approval";
             $body = "{$reference} is waiting for your review at the {$step->label} step.";
         } else {
-            $recipient = User::find($request->requester_id);
+            $recipient = User::with('account_employee')->find($request->requester_id);
             $allowed = $recipient && $recipient->hasVerifiedEmail() && Gate::forUser($recipient)->allows('view', $request);
-            $subject = "{$reference} was rejected";
-            $body = "{$reference} was rejected. Sign in to review the request.";
+            $approved = $request->status === AssetItemRequest::APPROVED;
+            $subject = "{$reference} was ".($approved ? 'approved' : 'rejected');
+            $body = $approved
+                ? "{$reference} has completed all approval steps."
+                : "{$reference} was rejected. Sign in to review the request.";
         }
         if (! $allowed) {
             Log::warning('Item request email skipped: no eligible verified recipient.', [
@@ -64,7 +76,8 @@ class SendAssetItemRequestEmail implements ShouldQueue
             'html' => 'emails.asset_inventory.item-request',
             'raw' => "{$body}\n\nView item request: {$url}",
         ], compact('subject', 'body', 'url'), function (Message $message) use ($recipient, $subject) {
-            $message->to($recipient->email)->subject($subject);
+            $recipientAddress = trim((string) $recipient->account_employee?->eogs_email);
+            $message->to(filter_var($recipientAddress, FILTER_VALIDATE_EMAIL) ? $recipientAddress : $recipient->email)->subject($subject);
         });
     }
 }

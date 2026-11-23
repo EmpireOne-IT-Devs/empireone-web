@@ -37,6 +37,8 @@ class StoreAssetPurchaseRequest extends FormRequest
             'priority' => ['required', Rule::in(config('purchase_request.priorities'))],
             'supplierName' => ['nullable', 'string', 'max:150'],
             'supplierQuotation' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'approverIds' => ['required', 'array', 'size:3'],
+            'approverIds.*' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 }

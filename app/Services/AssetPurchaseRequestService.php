@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Jobs\SendAssetPurchaseRequestEmail;
 use App\Models\AssetInventory\AssetPurchaseRequest;
+use App\Models\Account\AccountEmployee;
 use App\Models\User;
 use Aws\Exception\AwsException;
 use Brick\Math\BigDecimal;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use Predis\PredisException;
@@ -23,11 +26,50 @@ use RedisException;
 use RuntimeException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Throwable;
+use Illuminate\Database\Eloquent\Builder;
 
 class AssetPurchaseRequestService
 {
+    public function approvers(string $search = ''): array
+    {
+        $query = User::query()->where('role', User::ROLE_ADMIN)->whereNotNull('email_verified_at')
+            ->whereHas('account_employee', function (Builder $employee) use ($search) {
+                $employee->whereNotNull('eogs_email')->where('eogs_email', '<>', '');
+                if ($search !== '') {
+                    $employee->where(function (Builder $profile) use ($search) {
+                        $term = '%'.$search.'%';
+                        $profile->where('eogs_email', 'like', $term)
+                            ->orWhereHas('user', fn (Builder $user) => $user->where('name', 'like', $term));
+                    });
+                }
+            })->with('account_employee:user_id,eogs_email')->orderBy('name')->limit(50);
+        return $query->get()->map(fn (User $user) => [
+            'id' => $user->getKey(),
+            'label' => trim($user->name ?: $user->email).' — '.trim($user->account_employee->eogs_email),
+        ])->all();
+    }
+
+    private function eligibleApprovers(array $ids): Collection
+    {
+        // The same person may be assigned to more than one step, so repeats are kept.
+        $ids = array_values(array_map('intval', $ids));
+        $users = User::query()->whereIn('id', $ids)->where('role', User::ROLE_ADMIN)
+            ->whereNotNull('email_verified_at')->with('account_employee:user_id,eogs_email')
+            ->get()->keyBy(fn (User $user) => $user->getKey());
+
+        return collect($ids)->map(function (int $id) use ($users) {
+            $user = $users->get($id);
+            $eogs = trim((string) $user?->account_employee?->eogs_email);
+            return $user && filter_var($eogs, FILTER_VALIDATE_EMAIL) !== false ? $user : null;
+        })->filter()->values();
+    }
+
     public function create(User $user, array $values, ?UploadedFile $quotation): AssetPurchaseRequest
     {
+        $approvers = $this->eligibleApprovers($values['approverIds']);
+        if (count($approvers) !== 3) {
+            throw ValidationException::withMessages(['approverIds' => 'Select three eligible administrators with usable EOGS emails.']);
+        }
         $uuid = (string) Str::uuid();
         $now = now();
         $path = null;
@@ -56,7 +98,7 @@ class AssetPurchaseRequestService
         }
 
         try {
-            $save = function () use ($user, $values, $uuid, $now, $path, $name) {
+            $save = function () use ($user, $values, $uuid, $now, $path, $name, $approvers) {
                 $department = $values['department'];
                 $code = config('purchase_request.departments')[$department];
                 $createdAt = now();
@@ -91,11 +133,12 @@ class AssetPurchaseRequestService
                 $request->created_at = $createdAt;
                 $request->save();
                 $position = 0;
-                foreach (config('purchase_request.steps') as $key => $step) {
+                $steps = collect(config('purchase_request.steps'))->take(3)->all();
+                foreach ($steps as $key => $step) {
                     $request->steps()->create([
                         'key' => $key, 'position' => ++$position,
                         'label' => $step['label'], 'description' => $step['description'],
-                        'status' => 'pending',
+                        'status' => 'pending', 'assigned_user_id' => $approvers[$position - 1]->getKey(),
                     ]);
                 }
 
@@ -151,7 +194,7 @@ class AssetPurchaseRequestService
             $step = $pending->first();
 
             abort_unless($locked->isPending() && $step && $step->key === $key, 409, 'This approval step is no longer current. Reload the request.');
-            Gate::forUser($user)->authorize('decide', [AssetPurchaseRequest::class, $step->key]);
+            Gate::forUser($user)->authorize('decide', [AssetPurchaseRequest::class, $step->key, $locked]);
 
             $step->update([
                 'status' => $approve ? 'approved' : 'rejected',

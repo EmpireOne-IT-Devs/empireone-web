@@ -34,6 +34,7 @@ class AssetPurchaseRequestController extends Controller
         if (Gate::denies('reviewAny', AssetPurchaseRequest::class)) {
             $query->where('requester_id', $request->user()->getKey());
         }
+
         foreach (['status', 'priority', 'category'] as $filter) {
             if (isset($filters[$filter])) {
                 $query->where($filter, $filters[$filter]);
@@ -56,6 +57,14 @@ class AssetPurchaseRequestController extends Controller
         }
 
         return AssetPurchaseRequestResource::collection($query->paginate(10)->appends($filters));
+    }
+
+    public function approvers(Request $request)
+    {
+        Gate::authorize('create', AssetPurchaseRequest::class);
+        $values = $request->validate(['search' => ['nullable', 'string', 'max:150']]);
+
+        return response()->json(['data' => $this->service->approvers(trim($values['search'] ?? ''))]);
     }
 
     public function store(StoreAssetPurchaseRequest $request)

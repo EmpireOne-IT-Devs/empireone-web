@@ -49,11 +49,12 @@ class AssetItemRequestController extends Controller
         $values = $request->validate([
             'assetSearch' => ['nullable', 'string', 'max:150'],
             'employeeSearch' => ['nullable', 'string', 'max:150'],
+            'approverSearch' => ['nullable', 'string', 'max:150'],
         ]);
 
         return new AssetItemRequestLookupResource($this->service->lookups(
             trim($values['assetSearch'] ?? ''), trim($values['employeeSearch'] ?? ''),
-        ));
+        ) + ['approvers' => $this->service->approvers(trim($values['approverSearch'] ?? ''))]);
     }
 
     public function store(StoreAssetItemRequest $request)

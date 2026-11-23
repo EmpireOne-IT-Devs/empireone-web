@@ -35,19 +35,31 @@ export default function CreateSystemUnitSection({
     onClose,
     onSubmit,
     submitting = false,
+    apiErrors = {},
+    saveError = null,
 }) {
     const {
         register,
         handleSubmit,
         control,
         reset,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm({ defaultValues: DEFAULT_VALUES });
+    const hasFieldErrors = Object.keys(apiErrors).length > 0;
 
     // Always start from a clean form when the modal opens.
     useEffect(() => {
         if (isOpen) reset(DEFAULT_VALUES);
     }, [isOpen, reset]);
+
+    // Show the server's validation messages under the matching fields.
+    useEffect(() => {
+        Object.entries(apiErrors).forEach(([field, messages]) => {
+            const message = Array.isArray(messages) ? messages[0] : String(messages);
+            setError(field, { type: "server", message });
+        });
+    }, [apiErrors, setError]);
 
     const handleClose = () => {
         reset(DEFAULT_VALUES);
@@ -55,7 +67,7 @@ export default function CreateSystemUnitSection({
     };
 
     const submit = async (values) => {
-        await onSubmit?.({
+        const saved = await onSubmit?.({
             ...values,
             name: values.name.trim(),
             cpu: values.cpu.trim(),
@@ -64,7 +76,8 @@ export default function CreateSystemUnitSection({
             os: values.os.trim(),
             station: values.station.trim(),
         });
-        handleClose();
+        // Keep the form open with its values when the save failed.
+        if (saved) handleClose();
     };
 
     return (
@@ -208,6 +221,12 @@ export default function CreateSystemUnitSection({
                         />
                     </div>
                 </div>
+
+                {saveError && !hasFieldErrors && (
+                    <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                        {saveError}
+                    </p>
+                )}
 
                 <div className="mt-1 flex flex-col justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row">
                     <Button

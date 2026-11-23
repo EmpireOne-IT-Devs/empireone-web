@@ -10,7 +10,6 @@ const CARDS = [
         icon: FiMonitor,
         surface: "border-gray-200 bg-gray-50/70",
         iconTile: "bg-gray-200 text-gray-600",
-        value: (units) => units.length,
     },
     {
         key: "available",
@@ -18,7 +17,6 @@ const CARDS = [
         icon: FiCheckCircle,
         surface: "border-green-100 bg-green-50/70",
         iconTile: "bg-green-100 text-green-600",
-        value: (units) => units.filter((u) => u.status === "Available").length,
     },
     {
         key: "assigned",
@@ -26,7 +24,6 @@ const CARDS = [
         icon: FiArrowRightCircle,
         surface: "border-cyan-100 bg-cyan-50/70",
         iconTile: "bg-cyan-100 text-cyan-600",
-        value: (units) => units.filter((u) => u.status === "Assigned").length,
     },
     {
         key: "custom",
@@ -34,11 +31,11 @@ const CARDS = [
         icon: FiTool,
         surface: "border-purple-100 bg-purple-50/70",
         iconTile: "bg-purple-100 text-purple-600",
-        value: (units) => units.filter((u) => u.customBuilt).length,
     },
 ];
 
-export default function StatsSection({ units = [] }) {
+// `stats` holds inventory-wide counts from the API; it is null until the first load.
+export default function StatsSection({ stats = null }) {
     return (
         <motion.div
             variants={staggerContainer}
@@ -57,7 +54,7 @@ export default function StatsSection({ units = [] }) {
                         <div>
                             <p className="text-xs font-medium text-gray-600">{card.label}</p>
                             <p className="mt-1 text-2xl font-bold text-gray-900">
-                                {card.value(units)}
+                                {stats?.[card.key] ?? "—"}
                             </p>
                         </div>
                         <span

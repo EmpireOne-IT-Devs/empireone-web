@@ -13,6 +13,7 @@ const initialState = {
     lookups: {
         assets: [],
         employees: [],
+        approvers: [],
         assetLoading: false,
         employeeLoading: false,
         assetError: null,
@@ -73,6 +74,9 @@ const assetItemRequestsSlice = createSlice({
                 }
             })
             .addCase(search_asset_item_request_lookups_thunk.fulfilled, (state, { meta, payload }) => {
+                if (meta.arg.approverSearch !== undefined) {
+                    state.lookups.approvers = payload.data?.approvers ?? [];
+                }
                 if (meta.arg.assetSearch !== undefined && state.lookups.assetRequestId === meta.requestId) {
                     state.lookups.assets = payload.data?.assets ?? [];
                     state.lookups.assetLoading = false;

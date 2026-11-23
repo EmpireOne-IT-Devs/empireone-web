@@ -3,6 +3,10 @@ import axios from "axios";
 const BASE = "/api/asset_inventory/purchase_requests";
 const requestPath = (uuid) => `${BASE}/${encodeURIComponent(uuid)}`;
 
+export async function search_purchase_approvers_service(search, signal) {
+    return (await axios.get(`${BASE}/approvers`, { params: { search }, signal })).data;
+}
+
 export async function list_purchase_requests_service(params, signal) {
     return (await axios.get(BASE, { params, signal })).data;
 }
@@ -21,6 +25,13 @@ export async function create_purchase_request_service(values) {
                 for (const [field, fieldValue] of Object.entries({ description, quantity, unitCost })) {
                     form.append(`items[${index}][${field}]`, fieldValue ?? "");
                 }
+            }
+            continue;
+        }
+        if (key === "approverIds" && Array.isArray(value)) {
+            // FormData would join an array into one comma-separated string.
+            for (const [index, id] of value.entries()) {
+                form.append(`approverIds[${index}]`, id ?? "");
             }
             continue;
         }

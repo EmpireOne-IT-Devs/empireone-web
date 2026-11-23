@@ -24,11 +24,44 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class AssetItemRequestService
 {
+    public function approvers(string $search = ''): array
+    {
+        $query = User::query()->where('role', User::ROLE_ADMIN)->whereNotNull('email_verified_at')
+            ->whereHas('account_employee', function (Builder $employee) use ($search) {
+                $employee->whereNotNull('eogs_email')->where('eogs_email', '<>', '');
+                if ($search !== '') {
+                    $employee->where('eogs_email', 'like', '%'.$search.'%');
+                }
+            })->with('account_employee:user_id,eogs_email')->orderBy('name')->limit(50);
+        return $query->get()->map(fn (User $user) => [
+            'id' => $user->getKey(),
+            'label' => trim($user->name ?: $user->email).' — '.trim($user->account_employee->eogs_email),
+        ])->all();
+    }
+
+    private function eligibleApprovers(array $ids): Collection
+    {
+        // The same person may be assigned to more than one step, so repeats are kept.
+        $ids = array_values(array_map('intval', $ids));
+        $users = User::query()->whereIn('id', $ids)->where('role', User::ROLE_ADMIN)
+            ->whereNotNull('email_verified_at')->with('account_employee:user_id,eogs_email')
+            ->get()->keyBy(fn (User $user) => $user->getKey());
+        return collect($ids)->map(function (int $id) use ($users) {
+            $user = $users->get($id);
+            $eogs = trim((string) $user?->account_employee?->eogs_email);
+            return $user && filter_var($eogs, FILTER_VALIDATE_EMAIL) !== false ? $user : null;
+        })->filter()->values();
+    }
+
     public function __construct(private AssetLiabilityFormService $liabilityForms) {}
 
     public function create(User $actor, array $values): AssetItemRequest
     {
-        return retry(3, fn () => DB::transaction(function () use ($actor, $values) {
+        $approvers = $this->eligibleApprovers($values['approverIds']);
+        if (count($approvers) !== 3) {
+            throw ValidationException::withMessages(['approverIds' => 'Select three eligible administrators with usable EOGS emails.']);
+        }
+        return retry(3, fn () => DB::transaction(function () use ($actor, $values, $approvers) {
             $type = $values['assetType'];
             $asset = AssetItemRequest::availableAssets($type)->where('uuid', $values['assetUuid'])->lockForUpdate()->first();
             if (! $asset || AssetItemRequest::where('asset_type', $type)->where('asset_id', $asset->getKey())
@@ -77,6 +110,7 @@ class AssetItemRequestService
                 $request->steps()->create([
                     'key' => $key, 'position' => ++$position, 'label' => $step['label'],
                     'description' => $step['description'], 'status' => 'pending',
+                    'assigned_user_id' => $approvers[$position - 1]->getKey(),
                 ]);
             }
             $this->queueEmail($request, array_key_first($steps));
@@ -89,7 +123,7 @@ class AssetItemRequestService
     {
         return DB::transaction(function () use ($request, $actor, $key, $remarks, $approve) {
             $locked = AssetItemRequest::lockForUpdate()->findOrFail($request->getKey());
-            Gate::forUser($actor)->authorize('decide', [AssetItemRequest::class, $key]);
+            Gate::forUser($actor)->authorize('decide', [AssetItemRequest::class, $key, $locked]);
             $pending = $locked->steps()->where('status', 'pending')->limit(2)->get();
             $step = $pending->first();
             abort_unless($locked->isPending() && $step?->key === $key, 409, 'This approval step is no longer current. Reload the request.');
@@ -113,6 +147,7 @@ class AssetItemRequestService
                 $this->queueEmail($locked, null);
             } else {
                 $this->liabilityForms->createForApprovedRequest($locked);
+                $this->queueEmail($locked, null);
             }
 
             return $locked->load('steps');

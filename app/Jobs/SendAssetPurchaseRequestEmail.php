@@ -40,9 +40,19 @@ class SendAssetPurchaseRequestEmail implements ShouldQueue
                 return;
             }
 
-            $email = trim((string) config('purchase_request.steps.'.$step->key.'.email'));
-            $recipient = $email === '' ? null : User::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
-            if (! $recipient || Gate::forUser($recipient)->denies('decide', [AssetPurchaseRequest::class, $step->key])) {
+            $recipient = $step->assigned_user_id ? User::with('account_employee')->find($step->assigned_user_id) : null;
+            $assigned = $step->assigned_user_id !== null;
+            if (! $recipient) {
+                $email = trim((string) config('purchase_request.steps.'.$step->key.'.email'));
+                $recipient = $email === '' ? null : User::with('account_employee')->whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
+            }
+            $eogs = trim((string) $recipient?->account_employee?->eogs_email);
+            $allowed = $recipient && $recipient->hasVerifiedEmail()
+                && Gate::forUser($recipient)->allows('decide', [AssetPurchaseRequest::class, $step->key, $request])
+                && (! $assigned
+                    ? strcasecmp(trim((string) config('purchase_request.steps.'.$step->key.'.email')), (string) $recipient->email) === 0
+                    : filter_var($eogs, FILTER_VALIDATE_EMAIL) !== false);
+            if (! $allowed) {
                 $this->logMissingRecipient();
                 return;
             }
@@ -51,8 +61,9 @@ class SendAssetPurchaseRequestEmail implements ShouldQueue
             $body = "Purchase request {$reference} is waiting for your review at the {$step->label} step.";
         } else {
             // Use the owner's current verified account, not the historical email snapshot.
-            $recipient = User::find($request->requester_id);
-            if (! $recipient || ! $recipient->hasVerifiedEmail() || Gate::forUser($recipient)->denies('view', $request)) {
+            $recipient = User::with('account_employee')->find($request->requester_id);
+            $allowed = $recipient && $recipient->hasVerifiedEmail() && Gate::forUser($recipient)->allows('view', $request);
+            if (! $allowed) {
                 $this->logMissingRecipient();
                 return;
             }
@@ -96,7 +107,8 @@ class SendAssetPurchaseRequestEmail implements ShouldQueue
             'html' => 'emails.asset_inventory.purchase-request',
             'raw' => "{$body}\n\nRequest summary{$summaryText}\n\nRequested items{$itemText}\n\nGrand total: {$grandTotal}\n\nView purchase request: {$url}",
         ], compact('subject', 'body', 'url', 'summary', 'itemRows', 'grandTotal'), function (Message $message) use ($recipient, $subject) {
-            $message->to($recipient->email)->subject($subject);
+            $recipientAddress = trim((string) $recipient->account_employee?->eogs_email);
+            $message->to(filter_var($recipientAddress, FILTER_VALIDATE_EMAIL) ? $recipientAddress : $recipient->email)->subject($subject);
         });
     }
 

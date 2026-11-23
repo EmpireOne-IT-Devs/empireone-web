@@ -76,6 +76,7 @@ class AssetItemRequestTest extends TestCase
         (require database_path('migrations/2026_11_21_000000_create_asset_item_requests_tables.php'))->up();
         (require database_path('migrations/2026_11_21_000001_create_asset_liability_forms_table.php'))->up();
         (require database_path('migrations/2026_11_21_000002_add_paper_record_to_asset_liability_forms.php'))->up();
+        (require database_path('migrations/2026_11_23_000000_add_assigned_user_to_asset_request_steps.php'))->up();
     }
 
     public function test_inventory_search_paginates_saved_assets_across_categories(): void
@@ -120,7 +121,13 @@ class AssetItemRequestTest extends TestCase
     public function test_ordered_approvals_use_real_people_and_queue_only_current_notices(): void
     {
         $creator = $this->user('creator');
+        DB::table('account_employees')->updateOrInsert(['user_id' => $creator->id], ['eogs_email' => 'creator.eogs@example.test']);
         $reviewer = $this->user('reviewer');
+        DB::table('account_employees')->updateOrInsert(['user_id' => $reviewer->id], ['eogs_email' => 'reviewer.eogs@example.test']);
+        $second = $this->user('item-step-two');
+        DB::table('account_employees')->updateOrInsert(['user_id' => $second->id], ['eogs_email' => 'item-step-two.eogs@example.test']);
+        $third = $this->user('item-step-three');
+        DB::table('account_employees')->updateOrInsert(['user_id' => $third->id], ['eogs_email' => 'item-step-three.eogs@example.test']);
         $employee = $this->employee();
         $asset = $this->asset();
         $this->actingAs($creator, 'sanctum');
@@ -139,27 +146,99 @@ class AssetItemRequestTest extends TestCase
         $firstNotice->handle();
         $transport = Mail::mailer()->getSymfonyTransport();
         $sent = $transport->messages()->first()->getOriginalMessage();
-        $this->assertSame($reviewer->email, $sent->getTo()[0]->getAddress());
+        $this->assertSame('reviewer.eogs@example.test', $sent->getTo()[0]->getAddress());
         $this->assertStringContainsString($created['uuid'], $sent->getHtmlBody());
+
+        // The second approver cannot act until the first approver has approved.
+        $this->actingAs($second, 'sanctum');
+        $this->postJson($url.'/approve', ['step' => 'asset_custodian'])->assertConflict();
+        $this->postJson($url.'/approve', ['step' => 'department_head'])->assertForbidden();
+        $this->assertSame(3, DB::table('asset_item_request_steps')->where('status', 'pending')->count());
 
         $this->actingAs($reviewer, 'sanctum');
         $this->getJson($url)->assertOk()->assertJsonPath('data.canAct', true);
-        $this->postJson($url.'/approve', ['step' => 'general_manager'])->assertConflict();
+        $this->postJson($url.'/approve', ['step' => 'general_manager'])->assertForbidden();
         $this->postJson($url.'/approve', ['step' => 'department_head'])->assertOk()
             ->assertJsonPath('data.status', 'In Progress');
         $firstNotice->handle();
         $this->assertCount(1, $transport->messages());
         $this->postJson($url.'/approve', ['step' => 'department_head'])->assertConflict();
+        // The first approver cannot decide the next approver's step.
+        $this->postJson($url.'/approve', ['step' => 'asset_custodian'])->assertForbidden();
+        $this->actingAs($second, 'sanctum');
         $this->postJson($url.'/approve', ['step' => 'asset_custodian'])->assertOk()
             ->assertJsonPath('data.approvals.1.status', 'approved');
+        $this->actingAs($third, 'sanctum');
         $this->postJson($url.'/approve', ['step' => 'general_manager'])->assertOk()
             ->assertJsonPath('data.status', 'Approved')->assertJsonPath('data.canAct', false);
         $this->postJson($url.'/approve', ['step' => 'general_manager'])->assertConflict();
-        Queue::assertPushed(SendAssetItemRequestEmail::class, 3);
+
+        // Three approver notices in order, then the outcome notice to the requester.
+        $notices = Queue::pushed(SendAssetItemRequestEmail::class);
+        $this->assertSame(['department_head', 'asset_custodian', 'general_manager', null], $notices->pluck('stepKey')->all());
+        $notices->last()->handle();
+        $outcome = $transport->messages()->last()->getOriginalMessage();
+        $this->assertSame('creator.eogs@example.test', $outcome->getTo()[0]->getAddress());
+        $this->assertStringContainsString('completed all approval steps', $outcome->getTextBody());
         $this->getJson(self::API.'?status=Approved&search=EMP-100')->assertOk()
             ->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.uuid', $created['uuid']);
         $this->postJson(self::API, $this->values($employee, $asset))->assertUnprocessable()
             ->assertJsonValidationErrors('assetUuid');
+    }
+
+    public function test_selected_item_approvers_must_be_verified_admins_with_usable_eogs_email(): void
+    {
+        $employee = $this->employee();
+        $asset = $this->asset();
+        $eligible = $this->user('eligible');
+        DB::table('account_employees')->insert(['user_id' => $eligible->id, 'eogs_email' => 'eligible.eogs@example.test']);
+        $employeeRole = $this->user('item-employee', User::ROLE_EMPLOYEE);
+        $unverified = $this->user('item-unverified');
+        $unverified->forceFill(['email_verified_at' => null])->save();
+        DB::table('account_employees')->insert(['user_id' => $unverified->id, 'eogs_email' => 'unverified.eogs@example.test']);
+        $missingEogs = $this->user('item-missing-eogs');
+
+        $this->actingAs($this->user('item-owner'), 'sanctum');
+        foreach ([$employeeRole, $unverified, $missingEogs] as $ineligible) {
+            $this->postJson(self::API, [...$this->values($employee, $asset), 'approverIds' => [$eligible->id, $ineligible->id, $eligible->id]])
+                ->assertUnprocessable()->assertJsonValidationErrors('approverIds');
+        }
+        $this->assertDatabaseCount('asset_item_requests', 0);
+    }
+
+    public function test_the_same_item_approver_can_hold_every_step_and_must_still_approve_in_order(): void
+    {
+        $approver = $this->user('reviewer');
+        $values = $this->values($this->employee(), $this->asset());
+        $values['approverIds'] = [$approver->id, $approver->id, $approver->id];
+        $this->actingAs($this->user('item-owner'), 'sanctum');
+        $url = self::API.'/'.$this->postJson(self::API, $values)->assertCreated()->json('data.uuid');
+        $this->assertSame(3, DB::table('asset_item_request_steps')->where('assigned_user_id', $approver->id)->count());
+
+        $this->actingAs($approver, 'sanctum');
+        $this->postJson($url.'/approve', ['step' => 'general_manager'])->assertConflict();
+        foreach (array_keys(config('item_request.steps')) as $step) {
+            $this->postJson($url.'/approve', ['step' => $step])->assertOk();
+        }
+        $this->getJson($url)->assertOk()->assertJsonPath('data.status', 'Approved');
+    }
+
+    public function test_legacy_unassigned_item_steps_fall_back_to_env_authorization(): void
+    {
+        $legacyReviewer = $this->user('legacy-item-reviewer');
+        config(['item_request.steps.department_head.email' => $legacyReviewer->email]);
+        $employee = $this->employee();
+        $asset = $this->asset();
+
+        $this->actingAs($this->user('item-owner'), 'sanctum');
+        $uuid = $this->postJson(self::API, $this->values($employee, $asset))->assertCreated()->json('data.uuid');
+        $requestId = DB::table('asset_item_requests')->where('uuid', $uuid)->value('id');
+        DB::table('asset_item_request_steps')
+            ->where('item_request_id', $requestId)
+            ->update(['assigned_user_id' => null]);
+
+        $this->actingAs($legacyReviewer, 'sanctum');
+        $this->postJson(self::API.'/'.$uuid.'/approve', ['step' => 'department_head'])->assertOk();
     }
 
     public function test_reservation_releases_on_rejection_and_lookups_exclude_unavailable_rows(): void
@@ -180,6 +259,12 @@ class AssetItemRequestTest extends TestCase
         $this->postJson(self::API.'/'.$uuid.'/reject', ['step' => 'department_head', 'remarks' => 'Not required.'])
             ->assertOk()->assertJsonPath('data.status', 'Rejected');
         $this->assertDatabaseCount('asset_liability_forms', 0);
+        foreach (Queue::pushed(SendAssetItemRequestEmail::class) as $job) {
+            $job->handle();
+        }
+        $rejection = Mail::mailer()->getSymfonyTransport()->messages()->last()->getOriginalMessage();
+        $this->assertSame('reviewer.eogs@example.test', $rejection->getTo()[0]->getAddress());
+        $this->assertStringContainsString('was rejected', $rejection->getTextBody());
         $this->postJson(self::API, $this->values($employee, $asset))->assertCreated();
         Queue::assertPushed(SendAssetItemRequestEmail::class, fn ($job) => $job->expectedStatus === 'Rejected' && $job->stepKey === null);
     }
@@ -223,11 +308,12 @@ class AssetItemRequestTest extends TestCase
         $this->postJson(self::API, $this->values($employee, $asset))->assertForbidden();
 
         $reviewer = $this->user('reviewer');
-        $reviewer->forceFill(['email_verified_at' => null])->save();
         $this->actingAs($reviewer, 'sanctum');
         $this->postJson(self::API, array_replace($this->values($employee, $asset), ['untilDate' => '2026-12-01']))
             ->assertUnprocessable()->assertJsonValidationErrors('fromDate');
         $uuid = $this->postJson(self::API, $this->values($employee, $asset))->assertCreated()->json('data.uuid');
+        // An approver who is no longer verified cannot decide their own step.
+        $reviewer->forceFill(['email_verified_at' => null])->save();
         $this->postJson(self::API.'/'.$uuid.'/approve', ['step' => 'department_head'])->assertForbidden();
         $this->actingAs($employee, 'sanctum');
         $this->getJson(self::API.'/'.$uuid)->assertForbidden();
@@ -372,11 +458,14 @@ class AssetItemRequestTest extends TestCase
         $reviewer = $this->user('reviewer');
         $this->actingAs($reviewer, 'sanctum');
         $asset = $this->asset();
-        $item = $this->postJson(self::API, $this->values($employee, $asset))->assertCreated()->json('data.uuid');
-        foreach (['department_head', 'asset_custodian'] as $step) {
+        $values = $this->values($employee, $asset);
+        $item = $this->postJson(self::API, $values)->assertCreated()->json('data.uuid');
+        foreach (['department_head', 'asset_custodian'] as $index => $step) {
+            $this->actingAs(User::find($values['approverIds'][$index]), 'sanctum');
             $this->postJson(self::API.'/'.$item.'/approve', ['step' => $step])->assertOk();
         }
         $asset->delete();
+        $this->actingAs(User::find($values['approverIds'][2]), 'sanctum');
         $this->postJson(self::API.'/'.$item.'/approve', ['step' => 'general_manager'])->assertConflict();
         $this->getJson(self::API.'/'.$item)->assertOk()
             ->assertJsonPath('data.status', AssetItemRequest::IN_PROGRESS)->assertJsonPath('data.approvals.2.status', 'pending');
@@ -474,7 +563,8 @@ class AssetItemRequestTest extends TestCase
     {
         $this->actingAs($reviewer, 'sanctum');
         $uuid = $this->postJson(self::API, $values)->assertCreated()->json('data.uuid');
-        foreach (array_keys(config('item_request.steps')) as $step) {
+        foreach (array_values(array_keys(config('item_request.steps'))) as $index => $step) {
+            $this->actingAs(User::find($values['approverIds'][$index]), 'sanctum');
             $this->postJson(self::API.'/'.$uuid.'/approve', ['step' => $step])->assertOk();
         }
 
@@ -483,6 +573,9 @@ class AssetItemRequestTest extends TestCase
 
     private function user(string $name, int $role = User::ROLE_ADMIN): User
     {
+        $email = $name.'@example.test';
+        $existing = User::where('email', $email)->first();
+        if ($existing) return $existing;
         $user = new User([
             'name' => ucfirst($name), 'email' => $name.'@example.test', 'role' => $role, 'password' => 'password',
         ]);
@@ -512,9 +605,20 @@ class AssetItemRequestTest extends TestCase
 
     private function values(User $employee, AssetDevice $asset): array
     {
+        $approverIds = [];
+        foreach (['reviewer', 'item-step-two', 'item-step-three'] as $name) {
+            $approver = $this->user($name);
+            DB::table('account_employees')->updateOrInsert(
+                ['user_id' => $approver->id],
+                ['eogs_email' => $name === 'reviewer'
+                    ? 'reviewer.eogs@example.test' : $name.'.eogs@example.test'],
+            );
+            $approverIds[] = $approver->id;
+        }
         return [
             'assetType' => 'devices', 'assetUuid' => $asset->uuid, 'assigneeId' => $employee->id,
             'requestType' => 'New Assignment', 'priority' => 'Normal', 'justification' => 'New employee equipment.',
+            'approverIds' => $approverIds,
         ];
     }
 }

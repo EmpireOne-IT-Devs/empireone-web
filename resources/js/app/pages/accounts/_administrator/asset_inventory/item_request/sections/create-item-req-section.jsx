@@ -21,6 +21,7 @@ const DEFAULT_VALUES = {
     untilDate: "",
     justification: "",
     purpose: "",
+    approverIds: ["", "", ""],
 };
 
 function useLookupSearch(isOpen, query, key, dispatch) {
@@ -167,6 +168,7 @@ export default function CreateItemReqSection({ isOpen, onClose, onSubmit, submit
 
     useEffect(() => {
         if (isOpen) {
+            dispatch(search_asset_item_request_lookups_thunk({ approverSearch: "" }));
             reset(DEFAULT_VALUES);
             setSelectedAsset(null);
             setSelectedEmployee(null);
@@ -198,6 +200,7 @@ export default function CreateItemReqSection({ isOpen, onClose, onSubmit, submit
             untilDate: values.untilDate || null,
             justification: values.justification.trim(),
             purpose: values.purpose.trim() || null,
+            approverIds: values.approverIds.map(Number),
         };
 
         try {
@@ -373,6 +376,38 @@ export default function CreateItemReqSection({ isOpen, onClose, onSubmit, submit
                     })}
                 />
                 <TextArea label="Purpose (Optional)" name="purpose" rows={3} error={errors.purpose?.message} {...register("purpose")} />
+
+                <fieldset disabled={busy} className="space-y-3">
+                    <legend className="text-sm font-semibold text-gray-900">Approval sequence</legend>
+                    <p className="text-xs text-gray-500">The selected approvers must act in this exact order.</p>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        {[0, 1, 2].map((index) => (
+                            <Controller
+                                key={index}
+                                name={`approverIds.${index}`}
+                                control={control}
+                                rules={{ required: "Select an approver." }}
+                                render={({ field }) => (
+                                    <LookupField
+                                        name={`approverIds.${index}`}
+                                        label={`Approver ${index + 1}`}
+                                        query=""
+                                        setQuery={() => {}}
+                                        selected={lookups.approvers?.find((option) => String(option.id) === String(field.value)) ? {
+                                            label: lookups.approvers.find((option) => String(option.id) === String(field.value)).label,
+                                        } : null}
+                                        options={(lookups.approvers ?? []).map((option) => ({ id: option.id, uuid: String(option.id), label: option.label }))}
+                                        loading={false}
+                                        error={null}
+                                        onRetry={() => dispatch(search_asset_item_request_lookups_thunk({ approverSearch: "" }))}
+                                        fieldError={errors.approverIds?.[index]}
+                                        onSelect={(option) => field.onChange(option?.id ?? "")}
+                                    />
+                                )}
+                            />
+                        ))}
+                    </div>
+                </fieldset>
 
                 <div className="mt-2 flex flex-col justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row">
                     <Button type="button" variant="secondary" outlined onClick={handleClose} disabled={busy} className="w-full sm:w-auto">

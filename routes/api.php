@@ -56,6 +56,7 @@ use App\Http\Controllers\API\AssetInventory\AssetInventorySearchController;
 use App\Http\Controllers\API\AssetInventory\AssetItemRequestController;
 use App\Http\Controllers\API\AssetInventory\AssetLiabilityFormController;
 use App\Http\Controllers\API\AssetInventory\AssetPurchaseRequestController;
+use App\Http\Controllers\API\AssetInventory\AssetSystemUnitController;
 use App\Http\Controllers\API\AssetInventory\AssetImportController;
 use App\Http\Controllers\API\AssetInventory\AssetMonitorController;
 use App\Http\Controllers\API\AssetInventory\AssetOtherAssetController;
@@ -209,6 +210,7 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
 
         Route::prefix('purchase_requests')->name('asset-purchase-requests.')->group(function () {
             Route::get('/', [AssetPurchaseRequestController::class, 'index'])->name('index');
+            Route::get('/approvers', [AssetPurchaseRequestController::class, 'approvers'])->name('approvers');
             Route::post('/', [AssetPurchaseRequestController::class, 'store'])->name('store');
             Route::get('/{purchaseRequest}', [AssetPurchaseRequestController::class, 'show'])->whereUuid('purchaseRequest')->name('show');
             Route::post('/{purchaseRequest}/approve', [AssetPurchaseRequestController::class, 'approve'])->whereUuid('purchaseRequest')->name('approve');
@@ -249,6 +251,9 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
         Route::get('peripherals/{asset_peripheral}', [AssetPeripheralController::class, 'get_device']);
         Route::put('peripherals/{asset_peripheral}', [AssetPeripheralController::class, 'update_device']);
         Route::delete('peripherals/{asset_peripheral}', [AssetPeripheralController::class, 'delete_device']);
+
+        Route::get('system_units', [AssetSystemUnitController::class, 'get_all']);
+        Route::post('system_units', [AssetSystemUnitController::class, 'create_device']);
     });
     Route::resource('get_app_data', AppController::class);
     Route::resource('accounts_information', AccountPersonalInformationController::class);

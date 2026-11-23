@@ -25,6 +25,8 @@ class StoreAssetItemRequest extends FormRequest
             'untilDate' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:fromDate'],
             'justification' => ['required', 'string', 'max:4000'],
             'purpose' => ['nullable', 'string', 'max:4000'],
+            'approverIds' => ['required', 'array', 'size:3'],
+            'approverIds.*' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 }

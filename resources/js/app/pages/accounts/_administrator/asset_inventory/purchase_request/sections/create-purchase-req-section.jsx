@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { search_asset_purchase_approvers_thunk } from "@/app/redux/asset-purchase-request-thunk";
 import { FiSend } from "react-icons/fi";
 import { Plus, X } from "lucide-react";
 import Modal from "@/app/_components/modal";
@@ -25,6 +27,7 @@ const DEFAULT_VALUES = {
     category: "Computer Hardware",
     priority: "Normal",
     supplierName: "",
+    approverIds: ["", "", ""],
 };
 
 export default function CreatePurchaseReqSection({
@@ -34,6 +37,11 @@ export default function CreatePurchaseReqSection({
     requesterName = "",
     submitting = false,
 }) {
+    const dispatch = useDispatch();
+    const approvers = useSelector((state) => state.asset_purchase_requests.approvers);
+    useEffect(() => {
+        if (isOpen) dispatch(search_asset_purchase_approvers_thunk(""));
+    }, [dispatch, isOpen]);
     const {
         register,
         handleSubmit,
@@ -78,6 +86,7 @@ export default function CreatePurchaseReqSection({
                 items: values.items.map((item) => ({ ...item, description: item.description.trim() })),
                 justification: values.justification.trim(),
                 supplierName: values.supplierName.trim(),
+                approverIds: values.approverIds.map(Number),
                 supplierQuotation: quotationInput.current?.files[0],
             });
             handleClose();
@@ -256,6 +265,33 @@ export default function CreatePurchaseReqSection({
                     error={errors.supplierName}
                     {...register("supplierName")}
                 />
+
+                <fieldset disabled={busy} className="space-y-3">
+                    <legend className="text-sm font-semibold text-gray-900">Approval sequence</legend>
+                    <p className="text-xs text-gray-500">The selected approvers must act in this exact order.</p>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        {[0, 1, 2].map((index) => (
+                            <Controller
+                                key={index}
+                                name={`approverIds.${index}`}
+                                control={control}
+                                rules={{ required: "Select an approver." }}
+                                render={({ field }) => (
+                                    <Select
+                                        label={`Approver ${index + 1}`}
+                                        name={`approverIds.${index}`}
+                                        required
+                                        options={approvers.map((option) => ({ value: String(option.id), label: option.label }))}
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        onSelect={(option) => field.onChange(option.value)}
+                                        error={errors.approverIds?.[index]}
+                                    />
+                                )}
+                            />
+                        ))}
+                    </div>
+                </fieldset>
 
                 <div className="space-y-2">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">

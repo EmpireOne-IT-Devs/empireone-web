@@ -9,7 +9,7 @@ import {
     SYSTEM_TYPE_VARIANTS,
 } from "./system-unit-helpers";
 
-function EmptyState({ hasFilters, onClearFilters }) {
+function EmptyState({ hasFilters, onClearFilters, onCreate }) {
     return (
         <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-purple-600">
@@ -34,6 +34,11 @@ function EmptyState({ hasFilters, onClearFilters }) {
                     Clear filters
                 </Button>
             )}
+            {!hasFilters && onCreate && (
+                <Button variant="secondary" size="sm" className="mt-5" onClick={onCreate}>
+                    Add system unit
+                </Button>
+            )}
         </div>
     );
 }
@@ -45,6 +50,7 @@ export default function TableSection({
     onPageChange,
     hasFilters = false,
     onClearFilters,
+    onCreate,
     onView,
 }) {
     const columns = [
@@ -110,7 +116,7 @@ export default function TableSection({
         {
             header: "Station",
             accessor: "station",
-            render: (row) => <span className="text-sm text-gray-700">{row.station}</span>,
+            render: (row) => <span className="text-sm text-gray-700">{row.station || "—"}</span>,
         },
         {
             header: "Actions",
@@ -134,7 +140,7 @@ export default function TableSection({
         <div className="space-y-4">
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
                 {showEmpty ? (
-                    <EmptyState hasFilters={hasFilters} onClearFilters={onClearFilters} />
+                    <EmptyState hasFilters={hasFilters} onClearFilters={onClearFilters} onCreate={onCreate} />
                 ) : (
                     <div className="overflow-x-auto">
                         <Table

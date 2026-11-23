@@ -38,7 +38,7 @@ export default function SearchSection({
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:items-center">
                     <div className="sm:col-span-2 lg:w-72">
                         <Input
-                            label="Search monitors by serial number, brand, model, size…"
+                            label="Search monitors by serial number or name"
                             name="monitor_search"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}

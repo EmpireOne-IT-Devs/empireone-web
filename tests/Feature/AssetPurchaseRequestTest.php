@@ -54,6 +54,16 @@ class AssetPurchaseRequestTest extends TestCase
         (require database_path('migrations/2026_11_19_220000_add_purchase_request_identifiers.php'))->up();
         (require database_path('migrations/2026_11_20_000000_add_justification_to_asset_purchase_requests.php'))->up();
         (require database_path('migrations/2026_11_20_005200_add_items_to_asset_purchase_requests.php'))->up();
+        Schema::create('account_employees', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('eogs_email')->nullable();
+        });
+        // The employee profile relation also loads these; they stay empty here.
+        foreach (['accounts', 'sites', 'departments', 'e_r_leaders'] as $tableName) {
+            Schema::create($tableName, fn (Blueprint $table) => $table->id());
+        }
+        (require database_path('migrations/2026_11_23_000000_add_assigned_user_to_asset_request_steps.php'))->up();
     }
 
     public function test_new_request_identifiers_reset_monthly_and_existing_identifiers_are_unchanged(): void
@@ -116,7 +126,7 @@ class AssetPurchaseRequestTest extends TestCase
 
         $this->assertSame(2, $attempts);
         $this->assertSame(1, DB::table('asset_purchase_requests')->count());
-        $this->assertSame(4, DB::table('asset_purchase_request_steps')->count());
+        $this->assertSame(3, DB::table('asset_purchase_request_steps')->count());
         Queue::assertPushed(SendAssetPurchaseRequestEmail::class, 1);
     }
 
@@ -178,7 +188,7 @@ class AssetPurchaseRequestTest extends TestCase
             ->assertJsonPath('data.requesterEmail', 'owner@example.test')
             ->assertJsonPath('data.status', 'Pending Approval')
             ->assertJsonPath('data.canAct', false)
-            ->assertJsonCount(4, 'data.approvals')
+            ->assertJsonCount(3, 'data.approvals')
             ->json('data');
 
         $this->getJson(self::API.'?search='.$saved['id'])->assertOk()
@@ -286,8 +296,17 @@ class AssetPurchaseRequestTest extends TestCase
 
     public function test_decisions_require_the_current_step_and_record_the_approver_and_remarks(): void
     {
-        $this->actingAs($this->account('reviewer'), 'sanctum');
+        $reviewer = $this->account('reviewer');
+        $this->actingAs($reviewer, 'sanctum');
         $path = self::API.'/'.$this->postJson(self::API, $this->values())->assertCreated()->json('data.uuid');
+
+        // The second approver cannot act until the first approver has approved.
+        $this->actingAs($this->account('step-two'), 'sanctum');
+        $this->postJson($path.'/approve', ['step' => 'finance'])->assertConflict();
+        $this->postJson($path.'/approve', ['step' => 'department_head'])->assertForbidden();
+        $this->assertSame(3, DB::table('asset_purchase_request_steps')->where('status', 'pending')->count());
+
+        $this->actingAs($reviewer, 'sanctum');
         $this->postJson($path.'/approve', ['step' => 'finance'])->assertConflict();
         $this->postJson($path.'/reject', ['step' => 'department_head', 'remarks' => '   '])
             ->assertUnprocessable()->assertJsonValidationErrors('remarks');
@@ -295,15 +314,78 @@ class AssetPurchaseRequestTest extends TestCase
             ->assertJsonPath('data.status', 'In Progress')->assertJsonPath('data.approvals.0.approverName', 'Reviewer')
             ->assertJsonPath('data.approvals.0.remarks', 'Reviewed.');
         $this->postJson($path.'/approve', ['step' => 'department_head'])->assertConflict();
-        foreach (['finance', 'procurement', 'general_manager'] as $step) {
+        foreach (['finance' => 'step-two', 'general_manager' => 'step-three'] as $step => $approver) {
+            // The previous approver cannot decide the next approver's step.
+            $this->postJson($path.'/approve', ['step' => $step])->assertForbidden();
+            $this->actingAs($this->account($approver), 'sanctum');
             $this->postJson($path.'/approve', ['step' => $step])->assertOk();
         }
         $this->getJson($path)->assertOk()->assertJsonPath('data.status', 'Approved')->assertJsonPath('data.canAct', false);
 
+        $this->actingAs($reviewer, 'sanctum');
         $second = self::API.'/'.$this->postJson(self::API, $this->values())->assertCreated()->json('data.uuid');
         $this->postJson($second.'/reject', ['step' => 'department_head', 'remarks' => 'Not needed.'])->assertOk()
             ->assertJsonPath('data.status', 'Rejected')->assertJsonPath('data.canAct', false);
         $this->postJson($second.'/approve', ['step' => 'finance'])->assertConflict();
+    }
+
+    public function test_selected_approvers_must_be_verified_admins_with_usable_eogs_email(): void
+    {
+        $owner = $this->account('owner');
+        $eligible = $this->account('eligible');
+        DB::table('account_employees')->insert(['user_id' => $eligible->id, 'eogs_email' => 'eligible.eogs@example.test']);
+        $employee = $this->account('employee', User::ROLE_EMPLOYEE);
+        $unverified = $this->account('unverified');
+        $unverified->forceFill(['email_verified_at' => null])->save();
+        DB::table('account_employees')->insert(['user_id' => $unverified->id, 'eogs_email' => 'unverified.eogs@example.test']);
+        $missingEogs = $this->account('missing-eogs');
+
+        $this->actingAs($owner, 'sanctum');
+        foreach ([$employee, $unverified, $missingEogs] as $ineligible) {
+            $this->postJson(self::API, [...$this->values(), 'approverIds' => [$eligible->id, $ineligible->id, $eligible->id]])
+                ->assertUnprocessable()->assertJsonValidationErrors('approverIds');
+        }
+        $this->assertDatabaseCount('asset_purchase_requests', 0);
+    }
+
+    public function test_the_same_approver_can_hold_every_step_and_must_still_approve_in_order(): void
+    {
+        $approver = $this->account('reviewer');
+        $values = $this->values();
+        $values['approverIds'] = [$approver->id, $approver->id, $approver->id];
+        $this->actingAs($this->account('owner'), 'sanctum');
+        $path = self::API.'/'.$this->postJson(self::API, $values)->assertCreated()
+            ->assertJsonCount(3, 'data.approvals')->json('data.uuid');
+        $this->assertSame(3, DB::table('asset_purchase_request_steps')->where('assigned_user_id', $approver->id)->count());
+
+        $this->actingAs($approver, 'sanctum');
+        $this->postJson($path.'/approve', ['step' => 'general_manager'])->assertConflict();
+        foreach (['department_head', 'finance', 'general_manager'] as $step) {
+            // Each step sends its own notice once it becomes current.
+            Queue::pushed(SendAssetPurchaseRequestEmail::class)->last()->handle();
+            $this->postJson($path.'/approve', ['step' => $step])->assertOk();
+        }
+        $this->getJson($path)->assertOk()->assertJsonPath('data.status', 'Approved');
+
+        $recipients = Mail::mailer()->getSymfonyTransport()->messages()
+            ->map(fn ($message) => $message->getOriginalMessage()->getTo()[0]->getAddress())->all();
+        $this->assertSame(array_fill(0, 3, 'reviewer.eogs@example.test'), $recipients);
+    }
+
+    public function test_legacy_unassigned_purchase_steps_fall_back_to_env_authorization(): void
+    {
+        $owner = $this->account('owner');
+        $legacyReviewer = $this->account('legacy-reviewer');
+        config(['purchase_request.steps.department_head.email' => $legacyReviewer->email]);
+
+        $this->actingAs($owner, 'sanctum');
+        $uuid = $this->postJson(self::API, $this->values())->assertCreated()->json('data.uuid');
+        DB::table('asset_purchase_request_steps')->where('purchase_request_id', function ($query) use ($uuid) {
+            $query->select('id')->from('asset_purchase_requests')->where('uuid', $uuid);
+        })->update(['assigned_user_id' => null]);
+
+        $this->actingAs($legacyReviewer, 'sanctum');
+        $this->postJson(self::API.'/'.$uuid.'/approve', ['step' => 'department_head'])->assertOk();
     }
 
     public function test_quotation_is_optional_validated_private_and_downloadable_only_after_authorization(): void
@@ -340,15 +422,28 @@ class AssetPurchaseRequestTest extends TestCase
     public function test_emails_follow_the_approval_sequence_without_notifying_for_duplicate_decisions(): void
     {
         $keys = array_keys(config('purchase_request.steps'));
-        $reviewers = [];
-        foreach ($keys as $key) {
-            $reviewers[$key] = $this->account($key);
-            config(['purchase_request.steps.'.$key.'.email' => $reviewers[$key]->email]);
+        $reviewers = [
+            $keys[0] => $this->account('reviewer'),
+            $keys[1] => $this->account('step-two'),
+            $keys[2] => $this->account('step-three'),
+        ];
+        // values() assigns default EOGS addresses, so set the per-step ones afterwards.
+        $values = $this->values();
+        foreach ($reviewers as $index => $reviewer) {
+            DB::table('account_employees')->updateOrInsert(
+                ['user_id' => $reviewer->id],
+                ['eogs_email' => str_replace(' ', '-', strtolower($index)).'.eogs@example.test'],
+            );
         }
         $owner = $this->account('owner');
+        DB::table('account_employees')->updateOrInsert(
+            ['user_id' => $owner->id],
+            ['eogs_email' => 'owner.eogs@example.test'],
+        );
         $this->actingAs($owner, 'sanctum');
+        $values['approverIds'] = array_map(fn ($key) => $reviewers[$key]->id, $keys);
         $created = $this->postJson(self::API, [
-            ...$this->values(),
+            ...$values,
             'itemName' => 'Monitor & stand',
             'unitPrice' => '750.25',
         ])->assertCreated()->json('data');
@@ -359,15 +454,18 @@ class AssetPurchaseRequestTest extends TestCase
         foreach ($keys as $index => $key) {
             Queue::assertPushed(SendAssetPurchaseRequestEmail::class, $index + 1);
             Queue::pushed(SendAssetPurchaseRequestEmail::class)->last()->handle();
-            $expectedRecipients[] = $reviewers[$key]->email;
+            $expectedRecipients[] = str_replace(' ', '-', strtolower($key)).'.eogs@example.test';
 
             $this->actingAs($reviewers[$key], 'sanctum');
+            if ($index > 0) {
+                $this->postJson($path, ['step' => $keys[0]])->assertConflict();
+            }
             $this->postJson($path, ['step' => $key])->assertOk();
             $this->postJson($path, ['step' => $key])->assertConflict();
         }
-        Queue::assertPushed(SendAssetPurchaseRequestEmail::class, 5);
+        Queue::assertPushed(SendAssetPurchaseRequestEmail::class, count($keys) + 1);
         Queue::pushed(SendAssetPurchaseRequestEmail::class)->last()->handle();
-        $expectedRecipients[] = $owner->email;
+        $expectedRecipients[] = 'owner.eogs@example.test';
         // A delayed email for an already-approved step no longer needs to be sent.
         Queue::pushed(SendAssetPurchaseRequestEmail::class)->first()->handle();
 
@@ -403,6 +501,10 @@ class AssetPurchaseRequestTest extends TestCase
     public function test_rejection_notifies_only_the_owner_and_rolled_back_requests_do_not_queue_mail(): void
     {
         $owner = $this->account('owner');
+        DB::table('account_employees')->updateOrInsert(
+            ['user_id' => $owner->id],
+            ['eogs_email' => 'owner.eogs@example.test'],
+        );
         $this->actingAs($owner, 'sanctum');
         DB::beginTransaction();
         try {
@@ -426,7 +528,7 @@ class AssetPurchaseRequestTest extends TestCase
         $messages = Mail::mailer()->getSymfonyTransport()->messages();
         $this->assertCount(1, $messages);
         $message = $messages->first()->getOriginalMessage();
-        $this->assertSame($owner->email, $message->getTo()[0]->getAddress());
+        $this->assertSame('owner.eogs@example.test', $message->getTo()[0]->getAddress());
         $this->assertStringContainsString('was rejected', $message->getTextBody());
         $this->assertStringNotContainsString('Not needed.', $message->getTextBody());
         $this->assertStringContainsString('was rejected', $message->getHtmlBody());
@@ -435,6 +537,9 @@ class AssetPurchaseRequestTest extends TestCase
 
     private function account(string $name, int $role = User::ROLE_ADMIN): User
     {
+        $email = $name.'@example.test';
+        $existing = User::where('email', $email)->first();
+        if ($existing) return $existing;
         $user = new User([
             'name' => ucfirst($name), 'email' => $name.'@example.test', 'role' => $role,
             'password' => 'test-password',
@@ -447,10 +552,21 @@ class AssetPurchaseRequestTest extends TestCase
 
     private function values(): array
     {
+        $approverIds = [];
+        foreach (['reviewer', 'step-two', 'step-three'] as $name) {
+            $approver = $this->account($name);
+            DB::table('account_employees')->updateOrInsert(
+                ['user_id' => $approver->id],
+                ['eogs_email' => $name === 'reviewer'
+                    ? 'reviewer.eogs@example.test' : $name.'.eogs@example.test'],
+            );
+            $approverIds[] = $approver->id;
+        }
         return [
             'itemName' => 'Monitor', 'department' => 'IT Department',
             'category' => 'Computer Hardware', 'priority' => 'High', 'quantity' => 2, 'unitPrice' => '150.25',
             'justification' => "Replace damaged monitors.\nBoth are needed for the support team.",
+            'approverIds' => $approverIds,
         ];
     }
 }

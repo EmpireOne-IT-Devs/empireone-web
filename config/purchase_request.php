@@ -8,7 +8,6 @@ return [
     'steps' => [
         'department_head' => ['label' => 'Department Head', 'description' => 'Validates the business need and budget line', 'email' => $approver],
         'finance' => ['label' => 'Finance', 'description' => 'Confirms funds availability and cost center', 'email' => $approver],
-        'procurement' => ['label' => 'Procurement', 'description' => 'Reviews supplier, pricing, and sourcing terms', 'email' => $approver],
         'general_manager' => ['label' => 'Admin / General Manager', 'description' => 'Final sign-off', 'email' => $approver],
     ],
     'departments' => ['IT Department' => 'IT', 'Human Resources' => 'HR', 'Administration' => 'ADMIN', 'Operations' => 'OPS'],

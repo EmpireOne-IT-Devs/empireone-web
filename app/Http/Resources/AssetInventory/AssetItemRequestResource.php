@@ -35,6 +35,7 @@ class AssetItemRequestResource extends JsonResource
                 'label' => $step->label,
                 'description' => $step->description,
                 'status' => $step->status,
+                'assignedUserId' => $step->assigned_user_id,
                 'approverName' => $step->approver_name,
                 'actedAt' => $step->acted_at?->toIso8601String(),
                 'remarks' => $step->remarks,

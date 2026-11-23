@@ -1,15 +1,20 @@
-import React, { useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../layout";
 import AssetInventory from "../layout";
+import Button from "@/app/_components/button";
 import { setAlert } from "@/app/redux/app-slice";
+import {
+    create_asset_system_unit_thunk,
+    get_asset_system_units_thunk,
+} from "@/app/redux/asset-system-unit-thunk";
+import { clearErrors } from "@/app/redux/asset-system-unit-slice";
 import HeaderSection from "./sections/header-section";
 import StatsSection from "./sections/stats-section";
 import CurrencyStrip from "./sections/currency-strip";
 import SearchSection from "./sections/search-section";
 import TableSection from "./sections/table-section";
 import CreateSystemUnitSection from "./sections/create-system-unit-section";
-import { initialSystemUnits } from "./sections/system-unit-mock-data";
 
 const PER_PAGE = 10;
 
@@ -22,7 +27,37 @@ export default function Page() {
     const [locationFilter, setLocationFilter] = useState("");
     const [currency, setCurrency] = useState("PHP");
     const [page, setPage] = useState(1);
-    const [units, setUnits] = useState(initialSystemUnits);
+    const [reloadKey, setReloadKey] = useState(0);
+    const { items, meta, stats, loading, error, saving, errors, saveError } = useSelector(
+        (state) => state.asset_system_units,
+    );
+    const lastSearch = useRef("");
+
+    // Typing in the search box waits briefly; filters, paging and reloads fetch straight away.
+    useEffect(() => {
+        const search = searchQuery.trim();
+        let request;
+        const timer = setTimeout(
+            () => {
+                lastSearch.current = search;
+                request = dispatch(
+                    get_asset_system_units_thunk({
+                        page,
+                        per_page: PER_PAGE,
+                        search: search || undefined,
+                        type: typeFilter || undefined,
+                        status: statusFilter || undefined,
+                        location: locationFilter || undefined,
+                    }),
+                );
+            },
+            search === lastSearch.current ? 0 : 300,
+        );
+        return () => {
+            clearTimeout(timer);
+            request?.abort();
+        };
+    }, [dispatch, page, searchQuery, typeFilter, statusFilter, locationFilter, reloadKey]);
 
     // Any filter change starts back at the first page.
     const withPageReset = (setter) => (value) => {
@@ -42,33 +77,40 @@ export default function Page() {
         setPage(1);
     };
 
-    const handleCreateSubmit = (values) => {
-        const nextNumber = units.length + 1;
+    const closeCreate = () => {
+        setIsCreateOpen(false);
+        dispatch(clearErrors());
+    };
 
-        const unit = {
-            id: `SU-${String(nextNumber).padStart(3, "0")}`,
-            name: values.name,
-            type: values.type,
-            cpu: values.cpu,
-            ram: values.ram,
-            storage: values.storage,
-            os: values.os,
-            status: values.status,
-            location: values.location,
-            station: values.station || "—",
-            customBuilt: values.name.toLowerCase().includes("custom"),
-        };
+    // Returns true when the unit was saved so the form knows it can close.
+    const handleCreateSubmit = async (values) => {
+        const result = await dispatch(
+            create_asset_system_unit_thunk({
+                name: values.name,
+                type: values.type,
+                cpu: values.cpu,
+                ram: values.ram,
+                storage: values.storage,
+                os: values.os,
+                status: values.status,
+                location: values.location,
+                station: values.station || null,
+            }),
+        );
+        if (!create_asset_system_unit_thunk.fulfilled.match(result)) return false;
 
-        setUnits((prev) => [unit, ...prev]);
+        const unit = result.payload.data;
         setPage(1);
+        setReloadKey((value) => value + 1);
         dispatch(
             setAlert({
                 open: true,
                 type: "success",
                 title: "System unit added",
-                message: `${unit.name} was added to the inventory.`,
+                message: `${unit.name} (${unit.id}) was added to the inventory.`,
             }),
         );
+        return true;
     };
 
     const handleView = (row) => {
@@ -82,47 +124,13 @@ export default function Page() {
         );
     };
 
-    const filteredData = useMemo(() => {
-        const term = searchQuery.trim().toLowerCase();
-
-        return units.filter((unit) => {
-            const matchesSearch =
-                !term ||
-                [unit.name, unit.id, unit.cpu, unit.os, unit.station]
-                    .filter(Boolean)
-                    .some((field) => field.toLowerCase().includes(term));
-
-            return (
-                matchesSearch &&
-                (!typeFilter || unit.type === typeFilter) &&
-                (!statusFilter || unit.status === statusFilter) &&
-                (!locationFilter || unit.location === locationFilter)
-            );
-        });
-    }, [units, searchQuery, typeFilter, statusFilter, locationFilter]);
-
-    const pageMeta = useMemo(
-        () => ({
-            current_page: page,
-            last_page: Math.max(1, Math.ceil(filteredData.length / PER_PAGE)),
-            per_page: PER_PAGE,
-            total: filteredData.length,
-        }),
-        [filteredData.length, page],
-    );
-
-    const pageData = useMemo(() => {
-        const start = (page - 1) * PER_PAGE;
-        return filteredData.slice(start, start + PER_PAGE);
-    }, [filteredData, page]);
-
     return (
         <Layout>
             <AssetInventory>
                 <div className="space-y-4">
                     <HeaderSection onCreateClick={() => setIsCreateOpen(true)} />
 
-                    <StatsSection units={units} />
+                    <StatsSection stats={stats} />
 
                     <CurrencyStrip currency={currency} setCurrency={setCurrency} />
 
@@ -135,22 +143,48 @@ export default function Page() {
                         setStatusFilter={withPageReset(setStatusFilter)}
                         locationFilter={locationFilter}
                         setLocationFilter={withPageReset(setLocationFilter)}
-                        resultCount={filteredData.length}
+                        resultCount={meta?.total ?? 0}
                     />
 
-                    <TableSection
-                        data={pageData}
-                        meta={pageMeta}
-                        onPageChange={setPage}
-                        hasFilters={hasFilters}
-                        onClearFilters={clearFilters}
-                        onView={handleView}
-                    />
+                    {error && !loading ? (
+                        <div
+                            role="alert"
+                            className="flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                            <div>
+                                <p className="font-medium text-red-900">Couldn’t load system units</p>
+                                <p className="mt-1 text-sm text-red-700">{error}</p>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                outlined
+                                size="sm"
+                                onClick={() => setReloadKey((value) => value + 1)}
+                            >
+                                Retry
+                            </Button>
+                        </div>
+                    ) : (
+                        <TableSection
+                            data={items}
+                            loading={loading}
+                            meta={meta}
+                            onPageChange={setPage}
+                            hasFilters={hasFilters}
+                            onClearFilters={clearFilters}
+                            onCreate={() => setIsCreateOpen(true)}
+                            onView={handleView}
+                        />
+                    )}
 
                     <CreateSystemUnitSection
                         isOpen={isCreateOpen}
-                        onClose={() => setIsCreateOpen(false)}
+                        onClose={closeCreate}
                         onSubmit={handleCreateSubmit}
+                        submitting={saving}
+                        apiErrors={errors}
+                        saveError={saveError}
                     />
                 </div>
             </AssetInventory>

@@ -5,6 +5,7 @@ import {
     get_purchase_request_service,
     decide_purchase_request_service,
     download_purchase_quotation_service,
+    search_purchase_approvers_service,
 } from "@/app/services/purchase-request-service";
 
 function purchaseThunk(name, service, fallback) {
@@ -29,3 +30,4 @@ export const create_asset_purchase_request_thunk = purchaseThunk("create", creat
 export const get_asset_purchase_request_thunk = purchaseThunk("detail", get_purchase_request_service, "Unable to load this purchase request.");
 export const decide_asset_purchase_request_thunk = purchaseThunk("decide", decide_purchase_request_service, "Unable to save the decision. Please try again.");
 export const download_asset_purchase_quotation_thunk = purchaseThunk("quotation", download_purchase_quotation_service, "Unable to download the quotation. Please try again.");
+export const search_asset_purchase_approvers_thunk = purchaseThunk("approvers", search_purchase_approvers_service, "Unable to load approvers.");
