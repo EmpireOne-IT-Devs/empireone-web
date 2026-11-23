@@ -3,7 +3,7 @@ import Layout from "./../layout";
 // import HeaderSection from "./_sections/header-section";
 // import AddMemberSection from "./_sections/add-member-section";
 // import TabsSection from "./_sections/tabs-section";
-import SidebarSection from "./_sections/sidebar-section";
+// import SidebarSection from "./_sections/sidebar-section";
 import HeaderSection from "./_sections/header-section";
 
 export default function PerformanceManagementLayout({ children }) {
