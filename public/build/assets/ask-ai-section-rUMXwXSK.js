@@ -1,4 +1,12 @@
+<<<<<<< HEAD:public/build/assets/ask-ai-section-rUMXwXSK.js
 import{r,j as e}from"./app-JPCEg48Z.js";import{g,s as j,k as N}from"./index-DiqxFfOl.js";import{I as _}from"./index-C7CugMaz.js";import{g as $}from"./human-resources-service-tHOIUMZP.js";import"./iconBase-DP_gj4bS.js";function R(){const[o,b]=r.useState(!1),[l,m]=r.useState(""),[i,x]=r.useState(!1),[f,c]=r.useState([{role:"ai",text:"Hi there! How can I help you today?"}]),d=r.useRef(null),u=r.useRef(null),h=()=>b(!o);r.useEffect(()=>{o&&d.current&&setTimeout(()=>d.current.focus(),100)},[o]),r.useEffect(()=>{u.current&&u.current.scrollIntoView({behavior:"smooth"})},[f,i]);const y=s=>{if(s?.offenses&&s.offenses.length>0){const a=s.offenses.map((t,n)=>{const p=t.sanctions_ladder?`
+=======
+<<<<<<<< HEAD:public/build/assets/ask-ai-section-Ci1ymGMj.js
+import{r,j as e}from"./app-Bv3gEjB6.js";import{g,s as j,k as N}from"./index-7Hkv85Yk.js";import{I as _}from"./index-DW-hDcuN.js";import{g as $}from"./human-resources-service-CZsixLmu.js";import"./iconBase-CMX6kxXg.js";function R(){const[o,b]=r.useState(!1),[l,m]=r.useState(""),[i,x]=r.useState(!1),[f,c]=r.useState([{role:"ai",text:"Hi there! How can I help you today?"}]),d=r.useRef(null),u=r.useRef(null),h=()=>b(!o);r.useEffect(()=>{o&&d.current&&setTimeout(()=>d.current.focus(),100)},[o]),r.useEffect(()=>{u.current&&u.current.scrollIntoView({behavior:"smooth"})},[f,i]);const y=s=>{if(s?.offenses&&s.offenses.length>0){const a=s.offenses.map((t,n)=>{const p=t.sanctions_ladder?`
+========
+import{r,j as e}from"./app-BmJv78w7.js";import{g,s as j,k as N}from"./index-DpSMF4WM.js";import{I as _}from"./index-DnlaLB4s.js";import{g as $}from"./human-resources-service-CBuRUdO7.js";import"./iconBase-AK-M_6nA.js";function R(){const[o,b]=r.useState(!1),[l,m]=r.useState(""),[i,x]=r.useState(!1),[f,c]=r.useState([{role:"ai",text:"Hi there! How can I help you today?"}]),d=r.useRef(null),u=r.useRef(null),h=()=>b(!o);r.useEffect(()=>{o&&d.current&&setTimeout(()=>d.current.focus(),100)},[o]),r.useEffect(()=>{u.current&&u.current.scrollIntoView({behavior:"smooth"})},[f,i]);const y=s=>{if(s?.offenses&&s.offenses.length>0){const a=s.offenses.map((t,n)=>{const p=t.sanctions_ladder?`
+>>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/ask-ai-section-C06g1QwB.js
+>>>>>>> 1a5a327fd2aa4f73efe75a7d8e004e521c46889a:public/build/assets/ask-ai-section-C06g1QwB.js
   - 1st: ${t.sanctions_ladder["1st"]||"N/A"}
   - 2nd: ${t.sanctions_ladder["2nd"]||"N/A"}
   - 3rd: ${t.sanctions_ladder["3rd"]||"N/A"}

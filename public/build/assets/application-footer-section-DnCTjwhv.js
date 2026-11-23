@@ -1,4 +1,12 @@
+<<<<<<< HEAD:public/build/assets/application-footer-section-DnCTjwhv.js
 import{j as e,R as s}from"./app-JPCEg48Z.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
+=======
+<<<<<<<< HEAD:public/build/assets/application-footer-section-D0eq6Thm.js
+import{j as e,R as s}from"./app-Bv3gEjB6.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
+========
+import{j as e,R as s}from"./app-BmJv78w7.js";function c(){const t=[{label:"Home",href:"/"},{label:"About",href:"/#about-us"},{label:"Contact",href:"/#contact"},{label:"Login",href:"/auth/login"}];return e.jsx("footer",{className:"w-full py-4 px-4 relative z-20 border-t border-white/10",style:{background:`
+>>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/application-footer-section-DZXGCDeX.js
+>>>>>>> 1a5a327fd2aa4f73efe75a7d8e004e521c46889a:public/build/assets/application-footer-section-DZXGCDeX.js
             radial-gradient(circle at 10% 40%, rgba(168, 85, 247, 0.3), transparent 30%),
             radial-gradient(circle at 90% 60%, rgba(249, 115, 22, 0.25), transparent 30%),
             rgba(10, 5, 25, 0.45)

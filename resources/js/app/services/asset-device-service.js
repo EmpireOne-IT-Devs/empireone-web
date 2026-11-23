@@ -2,6 +2,10 @@ import axios from "axios";
 
 const BASE = "/api/asset_inventory/devices";
 
+export async function search_asset_inventory_service(params, signal) {
+    return (await axios.get("/api/asset_inventory/inventory-search", { params, signal })).data;
+}
+
 export async function get_asset_devices_service(params = {}) {
     return (await axios.get(BASE, { params })).data;
 }

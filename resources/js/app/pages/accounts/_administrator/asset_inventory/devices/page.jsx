@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../../layout";
 import AssetInventory from "../layout";
+import Button from "@/app/_components/button";
 import { setAlert } from "@/app/redux/app-slice";
 import HeaderSection from "./sections/header-section";
 import StatsSection from "./sections/stats-section";
@@ -17,40 +18,52 @@ import {
 import {
     create_asset_device_thunk,
     get_asset_devices_thunk,
+    search_asset_inventory_thunk,
 } from "@/app/redux/asset-device-thunk";
 import { clearErrors } from "@/app/redux/asset-device-slice";
+import { INVENTORY_CATEGORIES } from "./sections/device-helpers";
 
 export default function Page() {
     const dispatch = useDispatch();
-    const { items, meta, stats, loading, saving, importing, errors } = useSelector(
+    const { inventory: { items, meta, loading, error }, stats, saving, errors } = useSelector(
         (state) => state.asset_devices,
     );
 
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isImportOpen, setIsImportOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [category, setCategory] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [availabilityFilter, setAvailabilityFilter] = useState("");
     const [currency, setCurrency] = useState("PHP");
     const [page, setPage] = useState(1);
+    const [refresh, setRefresh] = useState(0);
 
-    // Debounced server-side fetch on any filter/page change.
     useEffect(() => {
+        let request;
         const timer = setTimeout(() => {
-            dispatch(
-                get_asset_devices_thunk({
+            request = dispatch(
+                search_asset_inventory_thunk({
                     page,
                     per_page: 10,
                     search: searchQuery.trim() || undefined,
+                    category: category || undefined,
                     status: statusFilter || undefined,
                     device_type: typeFilter || undefined,
                     availability: availabilityFilter || undefined,
                 }),
             );
         }, 300);
-        return () => clearTimeout(timer);
-    }, [dispatch, page, searchQuery, statusFilter, typeFilter, availabilityFilter]);
+        return () => {
+            clearTimeout(timer);
+            request?.abort();
+        };
+    }, [dispatch, page, searchQuery, category, statusFilter, typeFilter, availabilityFilter, refresh]);
+
+    useEffect(() => {
+        if (category === "devices") dispatch(get_asset_devices_thunk({ per_page: 1 }));
+    }, [dispatch, category, refresh]);
 
     const withPageReset = (setter) => (value) => {
         setter(value);
@@ -58,15 +71,28 @@ export default function Page() {
     };
 
     const hasFilters = Boolean(
-        searchQuery.trim() || statusFilter || typeFilter || availabilityFilter,
+        searchQuery.trim() || category || statusFilter || typeFilter || availabilityFilter,
     );
 
     const clearFilters = () => {
         setSearchQuery("");
+        setCategory("");
         setStatusFilter("");
         setTypeFilter("");
         setAvailabilityFilter("");
         setPage(1);
+    };
+
+    const changeCategory = (value) => {
+        setCategory(value);
+        setTypeFilter("");
+        setAvailabilityFilter("");
+        setPage(1);
+    };
+
+    const refreshInventory = () => {
+        setPage(1);
+        setRefresh((value) => value + 1);
     };
 
     const handleCreateSubmit = async (values) => {
@@ -82,8 +108,7 @@ export default function Page() {
                     message: `${values.asset_tag} was added to the inventory.`,
                 }),
             );
-            dispatch(get_asset_devices_thunk({ page: 1, per_page: 10 }));
-            setPage(1);
+            refreshInventory();
         }
     };
 
@@ -116,17 +141,18 @@ export default function Page() {
                 message: `${total} assets imported across all modules.`,
             }),
         );
-        dispatch(get_asset_devices_thunk({ page: 1, per_page: 10 }));
-        setPage(1);
+        refreshInventory();
     };
 
     const handleView = (row) => {
+        const name = row.name ?? ([row.brand, row.model].filter(Boolean).join(" ") || row.deviceType);
         dispatch(
             setAlert({
                 open: true,
                 type: "info",
                 title: row.assetTag,
-                message: `${row.brand} ${row.model ?? ""} — ${row.status} / ${row.availability}.`,
+                message: [INVENTORY_CATEGORIES[row.category], name, row.status, row.availability,
+                    row.quantity !== null ? `Quantity: ${row.quantity}` : null].filter(Boolean).join(" · "),
             }),
         );
     };
@@ -140,23 +166,32 @@ export default function Page() {
                         onImportClick={() => setIsImportOpen(true)}
                     />
 
-                    <StatsSection stats={stats} />
+                    {category === "devices" && <StatsSection stats={stats} />}
 
                     <CurrencyStrip currency={currency} setCurrency={setCurrency} />
 
                     <SearchSection
                         searchQuery={searchQuery}
                         setSearchQuery={withPageReset(setSearchQuery)}
+                        category={category}
+                        setCategory={changeCategory}
                         statusFilter={statusFilter}
                         setStatusFilter={withPageReset(setStatusFilter)}
                         typeFilter={typeFilter}
                         setTypeFilter={withPageReset(setTypeFilter)}
                         availabilityFilter={availabilityFilter}
                         setAvailabilityFilter={withPageReset(setAvailabilityFilter)}
-                        resultCount={meta?.total ?? 0}
+                        resultCount={meta?.total}
+                        loading={loading}
+                        fieldErrors={error?.errors}
                     />
 
-                    <TableSection
+                    {error && !loading ? (
+                        <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                            <p>{error.message}</p>
+                            <Button type="button" variant="secondary" outlined size="sm" onClick={refreshInventory}>Retry</Button>
+                        </div>
+                    ) : <TableSection
                         data={items}
                         currency={currency}
                         loading={loading}
@@ -165,7 +200,7 @@ export default function Page() {
                         hasFilters={hasFilters}
                         onClearFilters={clearFilters}
                         onView={handleView}
-                    />
+                    />}
 
                     <CreateDeviceSection
                         isOpen={isCreateOpen}

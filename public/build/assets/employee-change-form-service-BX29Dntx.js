@@ -1,1 +1,9 @@
+<<<<<<< HEAD:public/build/assets/employee-change-form-service-BX29Dntx.js
 import{a}from"./app-JPCEg48Z.js";async function o(e){return await a.post("/api/er/employee_change_form",e)}async function c(){return await a.get(`/api/er/employee_change_form${window.location.search}`)}async function _(e){return await a.delete(`/api/er/employee_change_form/${e}`)}async function n(e){return(await a.get(`/api/er/employee_change_form/${e}`)).data}async function t(e){return await a.post("/api/er/accept_employee_change_form",e)}export{c as a,t as b,o as c,_ as d,n as g};
+=======
+<<<<<<<< HEAD:public/build/assets/employee-change-form-service-DuVxX78C.js
+import{a}from"./app-Bv3gEjB6.js";async function o(e){return await a.post("/api/er/employee_change_form",e)}async function c(){return await a.get(`/api/er/employee_change_form${window.location.search}`)}async function _(e){return await a.delete(`/api/er/employee_change_form/${e}`)}async function n(e){return(await a.get(`/api/er/employee_change_form/${e}`)).data}async function t(e){return await a.post("/api/er/accept_employee_change_form",e)}export{c as a,t as b,o as c,_ as d,n as g};
+========
+import{a}from"./app-BmJv78w7.js";async function o(e){return await a.post("/api/er/employee_change_form",e)}async function c(){return await a.get(`/api/er/employee_change_form${window.location.search}`)}async function _(e){return await a.delete(`/api/er/employee_change_form/${e}`)}async function n(e){return(await a.get(`/api/er/employee_change_form/${e}`)).data}async function t(e){return await a.post("/api/er/accept_employee_change_form",e)}export{c as a,t as b,o as c,_ as d,n as g};
+>>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/employee-change-form-service-Y81eqKG9.js
+>>>>>>> 1a5a327fd2aa4f73efe75a7d8e004e521c46889a:public/build/assets/employee-change-form-service-Y81eqKG9.js

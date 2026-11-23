@@ -1,1 +1,9 @@
+<<<<<<< HEAD:public/build/assets/duplicate-survey-section-n3V0MZf_.js
 import{j as t}from"./app-JPCEg48Z.js";import{T as n}from"./index-DiqxFfOl.js";import"./iconBase-DP_gj4bS.js";function p({survey:e,createSurveyRef:r,onAction:o}){const a=()=>{r?.current?.openDuplicate(e),o?.()};return t.jsxs("button",{type:"button",onClick:a,className:"flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-900",children:[t.jsx(n,{size:16,className:"shrink-0 text-blue-500"}),"Duplicate"]})}export{p as default};
+=======
+<<<<<<<< HEAD:public/build/assets/duplicate-survey-section-Cog0Vy-X.js
+import{j as t}from"./app-Bv3gEjB6.js";import{T as n}from"./index-7Hkv85Yk.js";import"./iconBase-CMX6kxXg.js";function p({survey:e,createSurveyRef:r,onAction:o}){const a=()=>{r?.current?.openDuplicate(e),o?.()};return t.jsxs("button",{type:"button",onClick:a,className:"flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-900",children:[t.jsx(n,{size:16,className:"shrink-0 text-blue-500"}),"Duplicate"]})}export{p as default};
+========
+import{j as t}from"./app-BmJv78w7.js";import{T as n}from"./index-DpSMF4WM.js";import"./iconBase-AK-M_6nA.js";function p({survey:e,createSurveyRef:r,onAction:o}){const a=()=>{r?.current?.openDuplicate(e),o?.()};return t.jsxs("button",{type:"button",onClick:a,className:"flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-normal text-gray-700 hover:bg-gray-50 hover:text-gray-900",children:[t.jsx(n,{size:16,className:"shrink-0 text-blue-500"}),"Duplicate"]})}export{p as default};
+>>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/duplicate-survey-section-CM4-ZI9g.js
+>>>>>>> 1a5a327fd2aa4f73efe75a7d8e004e521c46889a:public/build/assets/duplicate-survey-section-CM4-ZI9g.js

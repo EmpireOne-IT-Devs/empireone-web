@@ -8,6 +8,7 @@ import {
     AVAILABILITY_VARIANTS,
     DEVICE_STATUS_VARIANTS,
     DEVICE_TYPE_VARIANTS,
+    INVENTORY_CATEGORIES,
     formatDate,
     formatMoney,
 } from "./device-helpers";
@@ -19,12 +20,12 @@ function EmptyState({ hasFilters, onClearFilters }) {
                 <FiInbox className="h-6 w-6" />
             </span>
             <h3 className="mt-4 text-base font-semibold text-gray-900">
-                {hasFilters ? "No devices match your filters" : "No devices yet"}
+                {hasFilters ? "No assets match your filters" : "No assets recorded yet"}
             </h3>
             <p className="mt-1 max-w-sm text-sm text-gray-500">
                 {hasFilters
-                    ? "Try a different search term or reset the filters to see all devices."
-                    : "Add the first device to start tracking your inventory."}
+                    ? "Try a different search term or reset the filters to see all assets."
+                    : "Use Add Device or Import Excel to start tracking inventory."}
             </p>
             {hasFilters && (
                 <Button
@@ -53,40 +54,37 @@ export default function TableSection({
 }) {
     const columns = [
         {
-            header: "Serial Number",
-            accessor: "serialNumber",
+            header: "Asset Tag / Serial",
+            accessor: "assetTag",
             render: (row) => (
                 <div>
                     <span className="font-mono text-sm font-semibold text-gray-900">
-                        {row.serialNumber ?? "—"}
+                        {row.assetTag}
                     </span>
                     <div className="mt-0.5 font-mono text-[11px] text-gray-400">
-                        {row.assetTag}
+                        {row.serialNumber ?? "—"}
                     </div>
                 </div>
             ),
         },
         {
-            header: "Device Type",
-            accessor: "deviceType",
+            header: "Category",
+            accessor: "category",
             render: (row) => (
-                <Badge
-                    outlined
-                    label={row.deviceType}
-                    variant={DEVICE_TYPE_VARIANTS[row.deviceType] ?? "secondary"}
-                />
+                <div>
+                    <Badge outlined label={INVENTORY_CATEGORIES[row.category]}
+                        variant={DEVICE_TYPE_VARIANTS[row.deviceType] ?? "secondary"} />
+                    {row.deviceType && <div className="mt-1 text-xs text-gray-500">{row.deviceType}</div>}
+                </div>
             ),
         },
         {
-            header: "Brand",
-            accessor: "brand",
-            render: (row) => <span className="text-sm text-gray-700">{row.brand}</span>,
-        },
-        {
-            header: "Model",
-            accessor: "model",
+            header: "Name / Model",
+            accessor: "name",
             render: (row) => (
-                <span className="text-sm font-medium text-gray-900">{row.model ?? "—"}</span>
+                <span className="text-sm font-medium text-gray-900">
+                    {row.name ?? ([row.brand, row.model].filter(Boolean).join(" ") || "—")}
+                </span>
             ),
         },
         {
@@ -107,9 +105,9 @@ export default function TableSection({
             ),
         },
         {
-            header: "Availability",
+            header: "Availability / Stock",
             accessor: "availability",
-            render: (row) => (
+            render: (row) => row.availability ? (
                 <Badge
                     outlined
                     showDot
@@ -117,7 +115,7 @@ export default function TableSection({
                     variant={AVAILABILITY_VARIANTS[row.availability] ?? "secondary"}
                     className="rounded-full"
                 />
-            ),
+            ) : row.quantity !== null ? `${row.quantity} in stock` : "—",
         },
         {
             header: "Price",
@@ -155,7 +153,7 @@ export default function TableSection({
                     size="sm"
                     variant="info"
                     onClick={() => onView?.(row)}
-                    ariaLabel={`View device ${row.serialNumber}`}
+                    ariaLabel={`View asset ${row.assetTag}`}
                 >
                     <FiEye className="h-3.5 w-3.5" />
                 </Button>

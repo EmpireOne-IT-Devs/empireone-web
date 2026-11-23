@@ -8,7 +8,10 @@ use App\Jobs\SendAssetLiabilityFormEmail;
 use App\Models\AssetInventory\AssetDevice;
 use App\Models\AssetInventory\AssetItemRequest;
 use App\Models\AssetInventory\AssetLiabilityForm;
+use App\Models\AssetInventory\AssetMonitor;
+use App\Models\AssetInventory\AssetOtherAsset;
 use App\Models\AssetInventory\AssetPart;
+use App\Models\AssetInventory\AssetPeripheral;
 use App\Models\User;
 use App\Services\AssetItemRequestService;
 use Illuminate\Database\Schema\Blueprint;
@@ -28,6 +31,8 @@ class AssetItemRequestTest extends TestCase
     private const API = '/api/asset_inventory/item_requests';
 
     private const LIABILITY_API = '/api/asset_inventory/liability_forms';
+
+    private const SEARCH_API = '/api/asset_inventory/inventory-search';
 
     private const SIGNATURE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZsAAAAASUVORK5CYII=';
 
@@ -71,6 +76,45 @@ class AssetItemRequestTest extends TestCase
         (require database_path('migrations/2026_11_21_000000_create_asset_item_requests_tables.php'))->up();
         (require database_path('migrations/2026_11_21_000001_create_asset_liability_forms_table.php'))->up();
         (require database_path('migrations/2026_11_21_000002_add_paper_record_to_asset_liability_forms.php'))->up();
+    }
+
+    public function test_inventory_search_paginates_saved_assets_across_categories(): void
+    {
+        $this->actingAs($this->user('inventory-admin'), 'sanctum');
+        $this->asset()->update(['brand' => 'Omni Devices', 'device_type' => 'Desktop']);
+        AssetMonitor::create(['asset_tag' => 'MON-01', 'serial_number' => 'OmniSerial', 'brand' => 'Display Co', 'status' => 'Available', 'availability' => 'Available']);
+        AssetPeripheral::create(['asset_tag' => 'PER-01', 'peripheral_type' => 'Headset', 'model' => 'Omni USB', 'status' => 'Active', 'quantity' => 0]);
+        AssetPart::create(['asset_tag' => 'PART-01', 'part_type' => 'Adapter', 'name' => 'Omni% Adapter', 'status' => 'Working', 'quantity' => 4]);
+        AssetOtherAsset::create(['asset_tag' => 'OMNI-01', 'category' => 'Furniture', 'name' => 'Chair', 'status' => 'Assigned', 'assigned_to' => 'Test Employee']);
+        AssetOtherAsset::create(['asset_tag' => 'OMNI-02', 'category' => 'Furniture', 'name' => 'Deleted Chair', 'status' => 'Retired'])->delete();
+
+        $categories = [];
+        for ($page = 1; $page <= 3; $page++) {
+            $response = $this->getJson(self::SEARCH_API.'?search=omni&per_page=2&page='.$page)
+                ->assertOk()->assertJsonPath('meta.total', 5)->assertJsonPath('meta.last_page', 3)
+                ->assertJsonPath('meta.current_page', $page)->assertJsonCount($page === 3 ? 1 : 2, 'data');
+            $categories = array_merge($categories, array_column($response->json('data'), 'category'));
+        }
+        $this->assertEqualsCanonicalizing(['devices', 'monitors', 'peripherals', 'parts', 'other_assets'], $categories);
+
+        $this->getJson(self::SEARCH_API.'?search=OmniSerial&category=monitors&availability=Available')
+            ->assertOk()->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.assetTag', 'MON-01');
+        $this->getJson(self::SEARCH_API.'?search=omni%25')
+            ->assertOk()->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.quantity', 4);
+        $this->getJson(self::SEARCH_API.'?category=peripherals&status=Active')
+            ->assertOk()->assertJsonPath('data.0.quantity', 0)->assertJsonPath('data.0.availability', null);
+        $this->getJson(self::SEARCH_API.'?category=devices&device_type=Desktop')
+            ->assertOk()->assertJsonPath('meta.total', 1)->assertJsonPath('data.0.deviceType', 'Desktop');
+        $this->getJson(self::SEARCH_API.'?search=missing')->assertOk()->assertJsonCount(0, 'data');
+    }
+
+    public function test_inventory_search_requires_admin_access_and_bounds_the_request(): void
+    {
+        $this->getJson(self::SEARCH_API)->assertUnauthorized();
+        $this->actingAs($this->employee(), 'sanctum')->getJson(self::SEARCH_API)->assertForbidden();
+        $this->actingAs($this->user('inventory-admin'), 'sanctum')
+            ->getJson(self::SEARCH_API.'?category=system_unit&per_page=101&page=0&search='.str_repeat('a', 151))
+            ->assertUnprocessable()->assertJsonValidationErrors(['category', 'per_page', 'page', 'search']);
     }
 
     public function test_ordered_approvals_use_real_people_and_queue_only_current_notices(): void
