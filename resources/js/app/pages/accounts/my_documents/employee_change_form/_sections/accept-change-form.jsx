@@ -62,7 +62,7 @@ export default function AcceptChangeForm() {
                     onClick={() => setOpen(true)}
                     className="shadow-lg"
                 >
-                    I Accept
+                   I Acknowledge
                 </Button>
                 <Modal
                     width="max-w-2xl"

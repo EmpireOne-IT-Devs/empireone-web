@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSidebarOpen } from "@/app/redux/app-slice";
@@ -14,17 +14,15 @@ import {
     FcSportsMode,
     FcPortraitMode,
     FcDiploma1,
-    FcCloseUpMode,
     FcShop,
     FcConferenceCall,
     FcCustomerSupport,
-    FcSurvey,
     FcPodiumWithAudience,
     FcOvertime,
     FcSalesPerformance,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
-import { Link, router } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
 import { FiPackage as PackageIcon } from "react-icons/fi";
@@ -38,51 +36,95 @@ export default function SidebarSection() {
         (store) => store.app,
     );
     const dispatch = useDispatch();
-    const path = window.location.pathname.split("/")[3];
-    const account_role = window.location.pathname.split("/")[2];
-    console.log("datadata", data?.user?.account_employee);
+
+    const currentPathname = window.location.pathname;
+    const path = currentPathname.split("/")[3];
+    const account_role = currentPathname.split("/")[2];
+
+    const [openDropdowns, setOpenDropdowns] = useState(() => ({
+        "Performance Management": path === "performance_management",
+    }));
+
+    const toggleDropdown = (name) => {
+        setOpenDropdowns((prev) => ({
+            ...prev,
+            [name]: !prev[name],
+        }));
+    };
+
+    const closeSidebar = () => {
+        dispatch(setSidebarOpen());
+    };
+
+    const performanceChildren = [
+        {
+            name: "Dashboard",
+            href: `/accounts/${account_role}/performance_management/dashboard`,
+        },
+        {
+            name: "My Team",
+            href: `/accounts/${account_role}/performance_management/my_team`,
+        },
+
+        {
+            name: "PIP",
+            href: `/accounts/${account_role}/performance_management/pip`,
+        },
+        {
+            name: "Coaching",
+            href: `/accounts/${account_role}/performance_management/reach`,
+        },
+        {
+            name: "Corrective Action",
+            href: `/accounts/${account_role}/performance_management/corrective_action`,
+        },
+    ].map((child) => ({
+        ...child,
+        current: currentPathname === child.href,
+    }));
+
     const mainNavigation = [
         { is_label: true, name: "Main Menu" },
         {
             name: "Dashboard",
             href: `/accounts/${account_role}/dashboard`,
             icon: FcBullish,
-            current: path == "dashboard",
+            current: path === "dashboard",
             is_incoming: false,
         },
         {
             name: "Job Offers",
             href: `/accounts/${account_role}/job_offers`,
             icon: FcFeedback,
-            current: path == "job_offers",
+            current: path === "job_offers",
             is_incoming: false,
         },
         {
             name: "Job Openings",
             href: `/accounts/${account_role}/job_openings`,
             icon: FcBriefcase,
-            current: path == "job_openings",
+            current: path === "job_openings",
             is_incoming: false,
         },
         {
             name: "My Applications",
             href: `/accounts/${account_role}/my_applications`,
             icon: FcDocument,
-            current: path == "my_applications",
+            current: path === "my_applications",
             is_incoming: false,
         },
         {
             name: "My Documents",
             href: `/accounts/${account_role}/my_documents`,
             icon: FcOpenedFolder,
-            current: path == "my_documents",
+            current: path === "my_documents",
             is_incoming: false,
         },
         {
             name: "Messages",
             href: `/accounts/${account_role}/messages`,
             icon: FcVoicePresentation,
-            current: path == "messages",
+            current: path === "messages",
             is_incoming: true,
         },
 
@@ -95,7 +137,7 @@ export default function SidebarSection() {
                       name: "My Job Requisition",
                       href: `/accounts/${account_role}/my_requisition`,
                       icon: FcFeedback,
-                      current: path == "my_requisition",
+                      current: path === "my_requisition",
                       is_incoming: false,
                   },
                   { is_label: true, name: "Leader Hub" },
@@ -105,6 +147,7 @@ export default function SidebarSection() {
                       icon: FcConferenceCall,
                       current: path === "performance_management",
                       is_incoming: false,
+                      children: performanceChildren,
                   },
               ]
             : []),
@@ -112,11 +155,10 @@ export default function SidebarSection() {
         // ------------------------------------
         // ADMINISTRATOR HUB
         // ------------------------------------
-        ...(account_role == "administrator"
+        ...(account_role === "administrator"
             ? [
                   { is_label: true, name: "Administration" },
 
-                  // CORRECTED: Conditionally render Talent Acquisition
                   ...([1, 2].includes(
                       data?.user?.account_employee?.department_id,
                   )
@@ -132,21 +174,21 @@ export default function SidebarSection() {
                                 name: "Human Resources",
                                 href: `/accounts/${account_role}/human_resources/employees?location_id=${data?.user?.account_employee?.location_id}`,
                                 icon: FcPodiumWithAudience,
-                                current: path == "human_resources",
+                                current: path === "human_resources",
                                 is_incoming: false,
                             },
                             {
                                 name: "Timekeeping",
                                 href: `/accounts/${account_role}/time_keeping/attendance`,
                                 icon: FcOvertime,
-                                current: path == "time_keeping",
+                                current: path === "time_keeping",
                                 is_incoming: false,
                             },
                             {
                                 name: "Asset & Inventory",
                                 href: `/accounts/${account_role}/asset_inventory`,
                                 icon: PackageIcon,
-                                current: path == "asset_inventory",
+                                current: path === "asset_inventory",
                                 is_incoming: false,
                             },
                         ]
@@ -160,21 +202,21 @@ export default function SidebarSection() {
                                 name: "Engagement Floor",
                                 href: `/accounts/${account_role}/activities`,
                                 icon: FcSportsMode,
-                                current: path == "activities",
+                                current: path === "activities",
                                 is_incoming: false,
                             },
                             {
                                 name: "R & R",
                                 href: `/accounts/${account_role}/rnr/peer_recognition`,
                                 icon: FcDiploma1,
-                                current: path == "rnr",
+                                current: path === "rnr",
                                 is_incoming: false,
                             },
                             {
                                 name: "E-Store",
                                 href: `/accounts/${account_role}/e_store/rewards_items`,
                                 icon: FcShop,
-                                current: path == "e_store",
+                                current: path === "e_store",
                                 is_incoming: true,
                             },
                         ]
@@ -184,7 +226,7 @@ export default function SidebarSection() {
                       name: "Ticketing",
                       href: `/accounts/${account_role}/ticketing`,
                       icon: FcCustomerSupport,
-                      current: path == "ticketing",
+                      current: path === "ticketing",
                       is_incoming: true,
                   },
 
@@ -192,7 +234,7 @@ export default function SidebarSection() {
                       name: "Finance",
                       href: `/accounts/${account_role}/finance/dashboard`,
                       icon: FcSalesPerformance,
-                      current: path == "finance",
+                      current: path === "finance",
                       is_incoming: true,
                   },
               ]
@@ -201,7 +243,7 @@ export default function SidebarSection() {
         // ------------------------------------
         // EMPLOYEE HUB
         // ------------------------------------
-        ...(account_role == "employee" ||
+        ...(account_role === "employee" ||
         ![1, 11].includes(data?.user?.account_employee?.department_id)
             ? [
                   { is_label: true, name: "Employee Hub" },
@@ -209,94 +251,304 @@ export default function SidebarSection() {
                       name: "Engagement Floor",
                       href: `/accounts/${account_role}/activities`,
                       icon: FcSportsMode,
-                      current: path == "activities",
+                      current: path === "activities",
                       is_incoming: false,
                   },
                   {
                       name: "Timekeeping",
                       href: `/accounts/${account_role}/time_keeping/attendance`,
                       icon: FcOvertime,
-                      current:
-                          path == "time_keeping" ||
-                          (account_role == "employee" &&
-                              path == "time_keeping"),
+                      current: path === "time_keeping",
                       is_incoming: false,
                   },
                   {
                       name: "HR Services",
                       href: `/accounts/${account_role}/hr_services`,
                       icon: FcPortraitMode,
-                      current: path == "hr_services",
+                      current: path === "hr_services",
                       is_incoming: true,
                   },
                   {
                       name: "RNR",
                       href: `/accounts/${account_role}/rnr`,
                       icon: FcDiploma1,
-                      current: path == "rnr",
+                      current: path === "rnr",
                       is_incoming: false,
                   },
                   {
                       name: "Reward Store",
                       href: `/accounts/${account_role}/rewards_store`,
                       icon: FcShop,
-                      current: path == "rewards_store",
+                      current: path === "rewards_store",
                       is_incoming: true,
                   },
                   {
                       name: "Loan",
                       href: `/accounts/${account_role}/loan`,
                       icon: () => (
-                          <FaMoneyBillWave className="text-purple-600" />
+                          <FaMoneyBillWave className="text-purple-600 w-6 h-6 shrink-0" />
                       ),
-                      current: path == "loan",
+                      current: path === "loan",
                       is_incoming: true,
                   },
                   {
                       name: "Payroll",
                       href: `/accounts/${account_role}/payroll`,
                       icon: () => (
-                          <FaMoneyCheckAlt className="text-green-600" />
+                          <FaMoneyCheckAlt className="text-green-600 w-6 h-6 shrink-0" />
                       ),
-                      current: path == "payroll",
+                      current: path === "payroll",
                       is_incoming: true,
                   },
               ]
             : []),
     ];
 
-    // 2. ...from the bottom navigation items.
     const bottomNavigation = [
         {
             name: "My Profile",
             href: `/accounts/${account_role}/my_profile/personal`,
             icon: FcBusinessman,
-            current: path == "my_profile",
+            current: path === "my_profile",
         },
         {
             name: "Settings",
             href: `/accounts/${account_role}/settings`,
             icon: FcSettings,
-            current: path == "settings",
+            current: path === "settings",
         },
     ];
 
-    const sidebarWidth = desktopCollapsed
-        ? "w-20 flex items-center justify-center"
-        : "w-72";
-    const sidebarText = desktopCollapsed ? "hidden" : "block";
+    const renderNavItems = ({ isMobile = false }) => {
+        const isCompact = !isMobile && desktopCollapsed;
 
-    function open_sidebar(params) {
-        dispatch(setSidebarOpen());
-    }
+        return mainNavigation.map((item, i) => {
+            if (item.is_label) {
+                if (isCompact) return null;
+
+                return (
+                    <li
+                        key={`label-${i}`}
+                        className="flex items-start justify-start pt-2"
+                    >
+                        <span className="px-3 text-xs font-black text-gray-500 uppercase tracking-wider">
+                            {item.name}
+                        </span>
+                    </li>
+                );
+            }
+
+            const hasChildren =
+                Array.isArray(item.children) && item.children.length > 0;
+            const isOpen = !!openDropdowns[item.name];
+            const isParentActive =
+                item.current ||
+                (hasChildren && item.children.some((child) => child.current));
+
+            const handleParentClick = () => {
+                if (hasChildren && !isCompact) {
+                    toggleDropdown(item.name);
+                    return;
+                }
+
+                if (isMobile) {
+                    closeSidebar();
+                }
+                router.visit(item.href);
+            };
+
+            const buttonContent = (
+                <button
+                    type="button"
+                    disabled={item.is_incoming}
+                    onClick={handleParentClick}
+                    className={classNames(
+                        isParentActive
+                            ? "bg-purple-700 text-white"
+                            : isOpen
+                              ? "bg-purple-50 text-purple-700"
+                              : "text-gray-700 hover:text-purple-600 hover:bg-purple-200",
+                        isCompact ? "justify-center px-2" : "px-2",
+                        "group flex items-center gap-x-3 rounded-md py-2 w-full text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed",
+                    )}
+                >
+                    <item.icon
+                        aria-hidden="true"
+                        className={classNames(
+                            isParentActive
+                                ? "text-white"
+                                : "text-gray-400 group-hover:text-purple-600",
+                            "w-6 h-6 shrink-0",
+                        )}
+                    />
+
+                    {!isCompact && (
+                        <span className="truncate text-left">{item.name}</span>
+                    )}
+
+                    {!isCompact && item.is_incoming && (
+                        <span className="ml-auto inline-block py-0.5 px-2 text-[10px] font-medium rounded-full bg-gray-200 text-gray-500 shrink-0">
+                            Coming Soon
+                        </span>
+                    )}
+
+                    {!isCompact && hasChildren && !item.is_incoming && (
+                        <svg
+                            className={classNames(
+                                "ml-auto h-4 w-4 shrink-0 transition-transform duration-200",
+                                isOpen ? "rotate-180" : "",
+                                isParentActive
+                                    ? "text-white"
+                                    : "text-gray-400 group-hover:text-purple-600",
+                            )}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                            />
+                        </svg>
+                    )}
+                </button>
+            );
+
+            return (
+                <li key={`${isMobile ? "m" : "d"}-${item.name}`}>
+                    {isCompact ? (
+                        <Tooltip text={item.name} position="right">
+                            {buttonContent}
+                        </Tooltip>
+                    ) : (
+                        buttonContent
+                    )}
+
+                    {hasChildren && isOpen && !isCompact && (
+                        <ul className="relative mt-1 ml-5 space-y-1">
+                            {item.children.map((child, idx) => {
+                                const isLast = idx === item.children.length - 1;
+
+                                return (
+                                    <li
+                                        key={child.href}
+                                        className="relative flex items-center pl-6"
+                                    >
+                                        {/* Vertical connector line to next child */}
+                                        {!isLast && (
+                                            <span
+                                                aria-hidden="true"
+                                                className="absolute left-[7px] top-4 -bottom-2 w-[1.5px] bg-gray-200"
+                                            />
+                                        )}
+
+                                        {/* Node dot: solid purple when active, hollow gray ring when inactive */}
+                                        <span
+                                            aria-hidden="true"
+                                            className={classNames(
+                                                "absolute left-1 top-1/2 -translate-y-1/2 rounded-full transition-colors",
+                                                child.current
+                                                    ? "h-2.5 w-2.5 bg-purple-700 ring-4 ring-purple-100"
+                                                    : "h-2.5 w-2.5 border-[1.5px] border-gray-300 bg-white",
+                                            )}
+                                        />
+
+                                        <button
+                                            type="button"
+                                            disabled={child.is_incoming}
+                                            onClick={() => {
+                                                if (isMobile) {
+                                                    closeSidebar();
+                                                }
+                                                router.visit(child.href);
+                                            }}
+                                            className={classNames(
+                                                child.current
+                                                    ? "text-purple-700 font-semibold"
+                                                    : "text-gray-600 hover:text-purple-600 font-medium",
+                                                "flex items-center justify-between rounded-md py-1.5 px-2 w-full text-sm transition-colors text-left disabled:opacity-60 disabled:cursor-not-allowed",
+                                            )}
+                                        >
+                                            <span className="truncate">
+                                                {child.name}
+                                            </span>
+                                            {child.is_incoming && (
+                                                <span className="ml-2 inline-block py-0.5 px-1.5 text-[9px] font-medium rounded-full bg-gray-200 text-gray-500 shrink-0">
+                                                    Soon
+                                                </span>
+                                            )}
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+                </li>
+            );
+        });
+    };
+
+    const renderBottomItems = ({ isMobile = false }) => {
+        const isCompact = !isMobile && desktopCollapsed;
+
+        return bottomNavigation.map((item) => {
+            const btn = (
+                <button
+                    type="button"
+                    disabled={item.is_incoming}
+                    onClick={() => {
+                        if (isMobile) {
+                            closeSidebar();
+                        }
+                        router.visit(item.href);
+                    }}
+                    className={classNames(
+                        item.current
+                            ? "bg-purple-700 text-white"
+                            : "text-gray-700 hover:text-purple-600 hover:bg-purple-200",
+                        isCompact ? "justify-center px-2" : "px-2",
+                        "group flex items-center gap-x-3 rounded-md py-2 w-full text-sm font-semibold transition-colors",
+                    )}
+                >
+                    <item.icon
+                        aria-hidden="true"
+                        className={classNames(
+                            item.current
+                                ? "text-white"
+                                : "text-gray-400 group-hover:text-purple-600",
+                            "w-6 h-6 shrink-0",
+                        )}
+                    />
+                    {!isCompact && (
+                        <span className="truncate">{item.name}</span>
+                    )}
+                </button>
+            );
+
+            return (
+                <li key={`${isMobile ? "bm" : "bd"}-${item.name}`}>
+                    {isCompact ? (
+                        <Tooltip text={item.name} position="right">
+                            {btn}
+                        </Tooltip>
+                    ) : (
+                        btn
+                    )}
+                </li>
+            );
+        });
+    };
 
     return (
         <>
+            {/* Mobile Sidebar */}
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
                     as="div"
-                    className="relative z-50 lg:hidden"
-                    onClose={open_sidebar}
+                    className="relative z-50 lg:hidden w-full"
+                    onClose={closeSidebar}
                 >
                     <Transition.Child
                         as={Fragment}
@@ -307,7 +559,7 @@ export default function SidebarSection() {
                         leaveFrom="opacity-80"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-gray-900 " />
+                        <div className="fixed inset-0 w-full" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 flex">
@@ -321,118 +573,34 @@ export default function SidebarSection() {
                             leaveTo="-translate-x-full"
                         >
                             <Dialog.Panel className="relative flex w-full flex-1 flex-col bg-white">
-                                <div className="flex items-start justify-between top-0 right-0 px-5 pt-5 border-b border-gray-300 pb-2">
-                                    <div className="flex h-12 items-center">
-                                        <img
-                                            alt="Logo"
-                                            src="/images/E1CXlogo.png"
-                                            className="h-12 w-auto "
-                                        />
-                                    </div>
+                                <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-200">
+                                    <img
+                                        alt="Logo"
+                                        src="/images/E1CXlogo.png"
+                                        className="h-12 w-auto"
+                                    />
                                     <button
                                         type="button"
-                                        onClick={() => open_sidebar()}
-                                        className="text-gray-700 font-bold text-xl"
+                                        onClick={closeSidebar}
+                                        className="text-gray-700 hover:text-gray-900 font-bold text-xl px-2"
+                                        aria-label="Close sidebar"
                                     >
-                                        X
+                                        &times;
                                     </button>
                                 </div>
-                                <div className="flex flex-col h-full p-6 pb-4">
-                                    {/* Main Mobile Navigation */}
+
+                                <div className="flex flex-col flex-1 overflow-hidden p-4">
                                     <nav className="flex-1 overflow-y-auto no-scrollbar">
-                                        <ul className="space-y-4">
-                                            {mainNavigation.map((item, i) =>
-                                                item.is_label ? (
-                                                    <li
-                                                        key={`label-${i}`}
-                                                        className="flex items-start justify-start"
-                                                    >
-                                                        <span className="px-3 text-xs font-black text-gray-500 uppercase tracking-wider">
-                                                          {item.name}
-                                                           
-                                                        </span>
-                                                    </li>
-                                                ) : (
-                                                    <li key={item.name}>
-                                                        <button
-                                                            disabled={
-                                                                item.is_incoming
-                                                            }
-                                                            onClick={(e) => {
-                                                                dispatch(
-                                                                    setSidebarOpen(),
-                                                                );
-                                                                router.visit(
-                                                                    `${item.href}`,
-                                                                );
-                                                            }}
-                                                            className={classNames(
-                                                                item.current
-                                                                    ? "bg-purple-700 text-white "
-                                                                    : "text-gray-700 hover:text-puple-600 hover:bg-purple-200 ",
-                                                                "flex items-center gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
-                                                            )}
-                                                        >
-                                                            <item.icon
-                                                                aria-hidden="true"
-                                                                className={classNames(
-                                                                    item.current
-                                                                        ? "text-purple-600 "
-                                                                        : "text-gray-400 group-hover:text-purple-600 ",
-                                                                    "w-6 h-6 shrink-0",
-                                                                )}
-                                                            />
-                                                            {item.name}
-                                                            {!desktopCollapsed &&
-                                                                item.is_incoming && (
-                                                                    <span className="ml-auto inline-block py-0.5 px-2 text-[10px] font-medium rounded-full bg-gray-200 text-gray-500 dark:bg-gray-200 dark:text-gray-500">
-                                                                       Coming Soon
-                                                                    </span>
-                                                                )}
-                                                        </button>
-                                                    </li>
-                                                ),
-                                            )}
+                                        <ul className="space-y-2">
+                                            {renderNavItems({ isMobile: true })}
                                         </ul>
                                     </nav>
 
-                                    {/* Bottom Mobile Navigation */}
-                                    <div className="mt-auto pt-4 border-t border-gray-200 mb-20">
-                                        <ul className="space-y-4">
-                                            {bottomNavigation.map((item) => (
-                                                <li key={item.name}>
-                                                    <button
-                                                        disabled={
-                                                            item.is_incoming
-                                                        }
-                                                        onClick={(e) => {
-                                                            dispatch(
-                                                                setSidebarOpen(),
-                                                            );
-                                                            router.visit(
-                                                                `${item.href}`,
-                                                            );
-                                                        }}
-                                                        className={classNames(
-                                                            item.current
-                                                                ? "bg-purple-700 text-white "
-                                                                : "text-gray-700 hover:text-purple-600 hover:bg-purple-200 ",
-                                                            "flex items-center gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
-                                                        )}
-                                                    >
-                                                        <item.icon
-                                                            aria-hidden="true"
-                                                            className={classNames(
-                                                                item.current
-                                                                    ? "text-purple-600 "
-                                                                    : "text-gray-400 group-hover:text-purple-600 ",
-                                                                "w-6 h-6 shrink-0",
-                                                            )}
-                                                        />
-                                                        {item.name}
-                                                    </button>
-                                                </li>
-                                            ))}
+                                    <div className="mt-auto pt-4 border-t border-gray-200">
+                                        <ul className="space-y-2">
+                                            {renderBottomItems({
+                                                isMobile: true,
+                                            })}
                                         </ul>
                                     </div>
                                 </div>
@@ -442,133 +610,38 @@ export default function SidebarSection() {
                 </Dialog>
             </Transition.Root>
 
-            {/* Desktop sidebar */}
-            <div
-                className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col bg-white border-r border-gray-200 transition-all duration-300 ${sidebarWidth}`}
+            {/* Desktop Sidebar */}
+            <aside
+                className={classNames(
+                    "hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col bg-white border-r border-gray-200 transition-all duration-300",
+                    desktopCollapsed ? "w-20" : "w-72",
+                )}
             >
-                <div className="flex flex-col flex-1 h-full">
-                    <div className="w-full shrink-0 ">
-                        <div className="flex h-16 w-full items-center justify-center px-4">
-                            <img
-                                alt="EmpireOne CX Logo"
-                                src="/images/E1CXlogo.png"
-                                className={`h-12 w-auto object-contain ${sidebarText}`}
-                            />
+                <div className="flex h-16 shrink-0 items-center justify-center border-b border-gray-200 px-4">
+                    <img
+                        alt="Logo"
+                        src="/images/E1CXlogo.png"
+                        className={classNames(
+                            "w-auto transition-all duration-300",
+                            desktopCollapsed ? "h-8" : "h-11",
+                        )}
+                    />
+                </div>
 
-                            <img
-                                alt="EmpireOne CX Logo"
-                                src="/images/E1CXlogo.png"
-                                className={`hidden h-12 w-auto object-contain ${sidebarText}`}
-                            />
-                        </div>
-
-                        <hr className=" border-gray-200 " />
-                    </div>
-
-                    {/* Main Desktop Navigation */}
-                    <nav className="flex-1 overflow-y-auto no-scrollbar  p-2">
-                        <ul className="space-y-1">
-                            {mainNavigation.map((item, i) =>
-                                item.is_label ? (
-                                    <li
-                                        key={`label-${i}`}
-                                        className="flex items-start justify-start"
-                                    >
-                                        {desktopCollapsed ? (
-                                            <hr className="border-gray-200 mx-2" />
-                                        ) : (
-                                            <span className="px-3 text-xs font-black text-gray-500 uppercase tracking-wider">
-                                               {item.name}
-                                            </span>
-                                        )}
-                                    </li>
-                                ) : (
-                                    <li key={i}>
-                                        <Tooltip
-                                            position="right"
-                                            title={item.name}
-                                            className="w-full"
-                                            isShow={desktopCollapsed}
-                                        >
-                                            <Link
-                                                href={
-                                                    item.is_incoming
-                                                        ? "#"
-                                                        : item.href
-                                                }
-                                                onClick={(e) => {
-                                                    if (item.is_incoming)
-                                                        e.preventDefault();
-                                                }}
-                                                className={classNames(
-                                                    item.current
-                                                        ? "bg-purple-700 text-white "
-                                                        : "text-gray-700 hover:text-purple-600 hover:bg-purple-200 ",
-                                                    "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
-                                                )}
-                                            >
-                                                <div className="flex gap-3 items-start justify-start w-full">
-                                                    <item.icon
-                                                        className="w-6 h-6 shrink-0"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span
-                                                        className={sidebarText}
-                                                    >
-                                                        {item.name}
-                                                    </span>
-                                                    {!desktopCollapsed &&
-                                                        item.is_incoming && (
-                                                            <span className="ml-auto inline-block py-0.5 px-2 text-[9px] font-medium rounded-full bg-gray-200 text-gray-500 dark:bg-gray-200 dark:text-gray-500">
-                                                           Coming Soon
-                                                            </span>
-                                                        )}
-                                                </div>
-                                            </Link>
-                                        </Tooltip>
-                                    </li>
-                                ),
-                            )}
+                <div className="flex flex-col flex-1 overflow-hidden p-3">
+                    <nav className="flex-1 overflow-y-auto no-scrollbar">
+                        <ul className="space-y-2">
+                            {renderNavItems({ isMobile: false })}
                         </ul>
                     </nav>
 
-                    {/* Bottom Desktop Navigation */}
-                    <div className="mt-auto p-2 pt-3 border-t border-gray-200">
-                        <ul className="space-y-1">
-                            {bottomNavigation.map((item, i) => (
-                                <li key={i}>
-                                    <Tooltip
-                                        position="right"
-                                        title={item.name}
-                                        className="w-full"
-                                        isShow={desktopCollapsed}
-                                    >
-                                        <Link
-                                            href={item.href}
-                                            className={classNames(
-                                                item.current
-                                                    ? "bg-purple-700 text-white "
-                                                    : "text-gray-700 hover:text-purple-600 hover:bg-purple-200 ",
-                                                "flex items-center py-3 gap-x-3 rounded-md p-2 w-full text-sm font-semibold",
-                                            )}
-                                        >
-                                            <div className="flex gap-3 items-start justify-start w-full">
-                                                <item.icon
-                                                    className="w-6 h-6 shrink-0"
-                                                    aria-hidden="true"
-                                                />
-                                                <span className={sidebarText}>
-                                                    {item.name}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    </Tooltip>
-                                </li>
-                            ))}
+                    <div className="mt-auto pt-3 border-t border-gray-200">
+                        <ul className="space-y-2">
+                            {renderBottomItems({ isMobile: false })}
                         </ul>
                     </div>
                 </div>
-            </div>
+            </aside>
         </>
     );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from './../layout'
+import Layout from "./../layout";
 // import HeaderSection from "./_sections/header-section";
 // import AddMemberSection from "./_sections/add-member-section";
 // import TabsSection from "./_sections/tabs-section";
@@ -19,8 +19,7 @@ export default function PerformanceManagementLayout({ children }) {
                 <TabsSection />
                 {children}
             </div> */}
-            <div className="flex flex-col md:flex-row h-[87vh] bg-gray-50 overflow-hidden w-full">
-                <SidebarSection />
+            <div className="flex flex-col md:flex-row h-[87vh]  overflow-hidden w-full">
                 <div className="p-3 overflow-auto w-full">
                     <HeaderSection />
                     {children}

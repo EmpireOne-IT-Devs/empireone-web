@@ -210,7 +210,9 @@ export default function ProgressReportSection({
                             <td className="border border-black p-2">
                                 {pip?.pip_cycle || "1"}
                             </td>
-                            <td className="border border-black p-2">{formatDate(pip?.pip_start_date)}</td>
+                            <td className="border border-black p-2">
+                                {formatDate(pip?.pip_start_date)}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -451,10 +453,7 @@ export default function ProgressReportSection({
                             </span>
                         </div>
                         <span className="text-[10px] block mt-1 font-semibold text-slate-700">
-                            Employee
-                        </span>
-                        <span className="text-[9px] text-slate-500">
-                            Name and Signature/Date
+                           Employee Name and Signature
                         </span>
                     </div>
 
@@ -489,9 +488,6 @@ export default function ProgressReportSection({
                         <span className="text-[10px] block mt-1 font-semibold text-slate-700">
                             Immediate Supervisor
                         </span>
-                        <span className="text-[9px] text-slate-500">
-                            Name and Signature/Date
-                        </span>
                     </div>
 
                     {/* 3. Operations Manager Signature Block */}
@@ -523,10 +519,7 @@ export default function ProgressReportSection({
                             </span>
                         </div>
                         <span className="text-[10px] block mt-1 font-semibold text-slate-700">
-                            Operations Manager
-                        </span>
-                        <span className="text-[9px] text-slate-500">
-                            Name and Signature/Date
+                            Manager's Name and Signature
                         </span>
                     </div>
 
@@ -558,10 +551,7 @@ export default function ProgressReportSection({
                             </span>
                         </div>
                         <span className="text-[10px] block mt-1 font-semibold text-slate-700">
-                            Human Resources
-                        </span>
-                        <span className="text-[9px] text-slate-500">
-                            Name and Signature/Date
+                            HR Representative
                         </span>
                     </div>
                 </div>

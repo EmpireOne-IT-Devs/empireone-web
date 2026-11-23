@@ -72,11 +72,8 @@ export default function CreateLeadSection() {
     const existingLeaderIds =
         leaders?.map((leader) => leader.user_id || leader.id) || [];
 
-    // Filter out users whose ID already exists in the existingLeaderIds array
-    const availableUsers =
-        users?.filter((user) => !existingLeaderIds.includes(user.id)) ||
-        [];
-    console.log('availableUsers', leaders)
+ 
+    console.log('availableUsers', users)
     return (
         <>
             <Button
