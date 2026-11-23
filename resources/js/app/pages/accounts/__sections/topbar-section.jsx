@@ -46,7 +46,7 @@ export default function TopbarSection() {
             </button>
 
             <div className="flex-1 flex items-center gap-x-4">
-                <form
+                {/* <form
                     className="flex-1 relative mx-5"
                     onSubmit={(e) => e.preventDefault()}
                 >
@@ -56,7 +56,8 @@ export default function TopbarSection() {
                         className="block w-full pl-8 pr-2 py-2 text-gray-900 bg-white border rounded"
                     />
                     <MagnifyingGlassIcon className="absolute left-2 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" />
-                </form>
+                </form> */}
+                <div className="flex-1 relative mx-5" />
 
                 <div className="flex items-center gap-x-4">
                     <PointsSection />

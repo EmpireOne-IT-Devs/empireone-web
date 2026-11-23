@@ -136,10 +136,6 @@ export default function SidebarSection() {
             name: "Employees",
             href: `/accounts/${account_role}/human_resources/employees?location_id=${locationId}`,
         },
-        // {
-        //     name: "Performance Management",
-        //     href: `/accounts/${account_role}/human_resources/performance_management?location_id=${locationId}`,
-        // },
         {
             name: "Leaders",
             href: `/accounts/${account_role}/human_resources/leaders?location_id=${locationId}`,
@@ -386,7 +382,7 @@ export default function SidebarSection() {
                       name: "Loan",
                       href: `/accounts/${account_role}/loan`,
                       icon: () => (
-                          <FaMoneyBillWave className="text-purple-600 w-6 h-6 shrink-0" />
+                          <FaMoneyBillWave className="text-purple-600 w-5 h-5 shrink-0" />
                       ),
                       current: path === "loan",
                       is_incoming: true,
@@ -395,7 +391,7 @@ export default function SidebarSection() {
                       name: "Payroll",
                       href: `/accounts/${account_role}/payroll`,
                       icon: () => (
-                          <FaMoneyCheckAlt className="text-green-600 w-6 h-6 shrink-0" />
+                          <FaMoneyCheckAlt className="text-green-600 w-5 h-5 shrink-0" />
                       ),
                       current: path === "payroll",
                       is_incoming: true,
@@ -431,7 +427,7 @@ export default function SidebarSection() {
                         key={`label-${i}`}
                         className="flex items-start justify-start pt-2"
                     >
-                        <span className="px-3 text-xs font-black text-gray-500 uppercase tracking-wider">
+                        <span className="px-2.5 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
                             {item.name}
                         </span>
                     </li>
@@ -467,9 +463,9 @@ export default function SidebarSection() {
                             ? "bg-purple-700 text-white"
                             : isOpen
                               ? "bg-purple-50 text-purple-700"
-                              : "text-gray-700 hover:text-purple-600 hover:bg-purple-200",
-                        isCompact ? "justify-center px-2" : "px-2",
-                        "group flex items-center gap-x-3 rounded-md py-2 w-full text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed",
+                              : "text-gray-700 hover:text-purple-600 hover:bg-purple-100",
+                        isCompact ? "justify-center px-1.5" : "px-2.5",
+                        "group flex items-center gap-x-2.5 rounded-md py-1.5 w-full text-[13px] font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed",
                     )}
                 >
                     <item.icon
@@ -478,7 +474,7 @@ export default function SidebarSection() {
                             isParentActive
                                 ? "text-white"
                                 : "text-gray-400 group-hover:text-purple-600",
-                            "w-6 h-6 shrink-0",
+                            "w-5 h-5 shrink-0",
                         )}
                     />
 
@@ -487,7 +483,7 @@ export default function SidebarSection() {
                     )}
 
                     {!isCompact && item.is_incoming && (
-                        <span className="ml-auto inline-block py-0.5 px-2 text-[10px] font-medium rounded-full bg-gray-200 text-gray-500 shrink-0">
+                        <span className="ml-auto inline-block py-0.5 px-2 text-[9px] font-medium rounded-full bg-gray-200 text-gray-500 shrink-0">
                             Coming Soon
                         </span>
                     )}
@@ -527,7 +523,7 @@ export default function SidebarSection() {
                     )}
 
                     {hasChildren && isOpen && !isCompact && (
-                        <ul className="relative mt-1 ml-5 space-y-1">
+                        <ul className="relative mt-1 ml-4 space-y-0.5">
                             {item.children.map((child, idx) => {
                                 const isLast = idx === item.children.length - 1;
 
@@ -536,22 +532,20 @@ export default function SidebarSection() {
                                         key={child.href}
                                         className="relative flex items-center pl-6"
                                     >
-                                        {/* Vertical connector line to next child */}
                                         {!isLast && (
                                             <span
                                                 aria-hidden="true"
-                                                className="absolute left-[7px] top-4 -bottom-2 w-[1.5px] bg-gray-200"
+                                                className="absolute left-[7px] top-3.5 -bottom-1.5 w-[1.5px] bg-gray-200"
                                             />
                                         )}
 
-                                        {/* Node dot: solid purple when active, hollow gray ring when inactive */}
                                         <span
                                             aria-hidden="true"
                                             className={classNames(
                                                 "absolute left-1 top-1/2 -translate-y-1/2 rounded-full transition-colors",
                                                 child.current
-                                                    ? "h-2.5 w-2.5 bg-purple-700 ring-4 ring-purple-100"
-                                                    : "h-2.5 w-2.5 border-[1.5px] border-gray-300 bg-white",
+                                                    ? "h-2 w-2 bg-purple-700 ring-2 ring-purple-100"
+                                                    : "h-2 w-2 border-[1.5px] border-gray-300 bg-white",
                                             )}
                                         />
 
@@ -568,7 +562,7 @@ export default function SidebarSection() {
                                                 child.current
                                                     ? "text-purple-700 font-semibold"
                                                     : "text-gray-600 hover:text-purple-600 font-medium",
-                                                "flex items-center justify-between rounded-md py-1.5 px-2 w-full text-sm transition-colors text-left disabled:opacity-60 disabled:cursor-not-allowed",
+                                                "flex items-center justify-between rounded-md py-1 px-2 w-full text-[13px] transition-colors text-left disabled:opacity-60 disabled:cursor-not-allowed",
                                             )}
                                         >
                                             <span className="truncate">
@@ -607,9 +601,9 @@ export default function SidebarSection() {
                     className={classNames(
                         item.current
                             ? "bg-purple-700 text-white"
-                            : "text-gray-700 hover:text-purple-600 hover:bg-purple-200",
-                        isCompact ? "justify-center px-2" : "px-2",
-                        "group flex items-center gap-x-3 rounded-md py-2 w-full text-sm font-semibold transition-colors",
+                            : "text-gray-700 hover:text-purple-600 hover:bg-purple-100",
+                        isCompact ? "justify-center px-1.5" : "px-2.5",
+                        "group flex items-center gap-x-2.5 rounded-md py-1.5 w-full text-[13px] font-semibold transition-colors",
                     )}
                 >
                     <item.icon
@@ -618,7 +612,7 @@ export default function SidebarSection() {
                             item.current
                                 ? "text-white"
                                 : "text-gray-400 group-hover:text-purple-600",
-                            "w-6 h-6 shrink-0",
+                            "w-5 h-5 shrink-0",
                         )}
                     />
                     {!isCompact && (
@@ -673,11 +667,11 @@ export default function SidebarSection() {
                             leaveTo="-translate-x-full"
                         >
                             <Dialog.Panel className="relative flex w-full flex-1 flex-col bg-white">
-                                <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-200">
+                                <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-gray-200">
                                     <img
                                         alt="Logo"
                                         src="/images/E1CXlogo.png"
-                                        className="h-12 w-auto"
+                                        className="h-10 w-auto"
                                     />
                                     <button
                                         type="button"
@@ -689,15 +683,15 @@ export default function SidebarSection() {
                                     </button>
                                 </div>
 
-                                <div className="flex flex-col flex-1 overflow-hidden p-4">
+                                <div className="flex flex-col flex-1 overflow-hidden p-3.5">
                                     <nav className="flex-1 overflow-y-auto no-scrollbar">
-                                        <ul className="space-y-2">
+                                        <ul className="space-y-1.5">
                                             {renderNavItems({ isMobile: true })}
                                         </ul>
                                     </nav>
 
-                                    <div className="mt-auto pt-4 border-t border-gray-200">
-                                        <ul className="space-y-2">
+                                    <div className="mt-auto pt-3.5 border-t border-gray-200">
+                                        <ul className="space-y-1.5">
                                             {renderBottomItems({
                                                 isMobile: true,
                                             })}
@@ -714,28 +708,28 @@ export default function SidebarSection() {
             <aside
                 className={classNames(
                     "hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col bg-white border-r border-gray-200 transition-all duration-300",
-                    desktopCollapsed ? "w-20" : "w-72",
+                    desktopCollapsed ? "w-16" : "w-64",
                 )}
             >
-                <div className="flex h-16 shrink-0 items-center justify-center border-b border-gray-200 px-4">
+                <div className="flex h-14 shrink-0 items-center justify-center border-b border-gray-200 px-3">
                     <img
                         alt="Logo"
                         src="/images/E1CXlogo.png"
                         className={classNames(
                             "w-auto transition-all duration-300",
-                            desktopCollapsed ? "h-8" : "h-11",
+                            desktopCollapsed ? "h-7" : "h-9",
                         )}
                     />
                 </div>
 
-                <div className="flex flex-col flex-1 overflow-hidden p-3">
+                <div className="flex flex-col flex-1 overflow-hidden p-2.5">
                     <nav className="flex-1 overflow-y-auto no-scrollbar">
-                        <ul className="space-y-2">
+                        <ul className="space-y-1.5">
                             {renderNavItems({ isMobile: false })}
                         </ul>
                     </nav>
-                    <div className="mt-auto pt-3 border-t border-gray-200">
-                        <ul className="space-y-2">
+                    <div className="mt-auto pt-2.5 border-t border-gray-200">
+                        <ul className="space-y-1.5">
                             {renderBottomItems({ isMobile: false })}
                         </ul>
                     </div>
