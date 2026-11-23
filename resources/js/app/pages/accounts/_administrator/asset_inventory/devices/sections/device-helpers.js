@@ -4,6 +4,14 @@ export { toOptions } from "../../_lib/approval-helpers";
 
 export const DEVICE_TYPES = ["Laptop", "MAC", "Desktop", "Mobile", "Tablet"];
 
+export const INVENTORY_CATEGORIES = {
+    devices: "Devices",
+    monitors: "Monitors",
+    peripherals: "Peripherals",
+    parts: "Parts & Accessories",
+    other_assets: "Other Assets",
+};
+
 export const DEVICE_TYPE_VARIANTS = {
     Laptop: "primary",
     MAC: "purple",

@@ -4,10 +4,12 @@ import {
     delete_asset_device_thunk,
     get_asset_devices_thunk,
     import_asset_devices_thunk,
+    search_asset_inventory_thunk,
     update_asset_device_thunk,
 } from "./asset-device-thunk";
 
 const initialState = {
+    inventory: { items: [], meta: null, loading: true, error: null, requestId: null },
     items: [],
     meta: null,
     stats: null,
@@ -33,6 +35,25 @@ const assetDevicesSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(search_asset_inventory_thunk.pending, (state, action) => {
+                state.inventory.loading = true;
+                state.inventory.error = null;
+                state.inventory.requestId = action.meta.requestId;
+            })
+            .addCase(search_asset_inventory_thunk.fulfilled, (state, action) => {
+                if (state.inventory.requestId !== action.meta.requestId) return;
+                state.inventory = {
+                    items: action.payload.data, meta: action.payload.meta,
+                    loading: false, error: null, requestId: null,
+                };
+            })
+            .addCase(search_asset_inventory_thunk.rejected, (state, action) => {
+                if (state.inventory.requestId !== action.meta.requestId) return;
+                state.inventory.requestId = null;
+                if (action.meta.aborted) return;
+                state.inventory.loading = false;
+                state.inventory.error = action.payload ?? { message: "Unable to search inventory." };
+            })
             .addCase(get_asset_devices_thunk.pending, (state) => {
                 state.loading = true;
                 state.error = null;

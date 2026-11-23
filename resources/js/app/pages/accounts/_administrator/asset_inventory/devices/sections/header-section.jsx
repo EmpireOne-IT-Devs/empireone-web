@@ -8,7 +8,7 @@ export default function HeaderSection({ onCreateClick, onImportClick }) {
             <div>
                 <h1 className="text-2xl font-bold text-gray-900">Devices</h1>
                 <p className="mt-0.5 text-sm text-gray-500">
-                    A list of all the devices in your organization.
+                    Search all saved equipment and assets from one place.
                 </p>
             </div>
             <div className="flex shrink-0 gap-2">

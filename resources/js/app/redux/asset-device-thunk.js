@@ -4,6 +4,7 @@ import {
     delete_asset_device_service,
     get_asset_devices_service,
     import_asset_devices_service,
+    search_asset_inventory_service,
     update_asset_device_service,
 } from "@/app/services/asset-device-service";
 
@@ -11,6 +12,17 @@ const toError = (error, fallback) => ({
     message: error.response?.data?.message || fallback,
     errors: error.response?.data?.errors || {},
 });
+
+export const search_asset_inventory_thunk = createAsyncThunk(
+    "assetDevices/searchInventory",
+    async (params, { rejectWithValue, signal }) => {
+        try {
+            return await search_asset_inventory_service(params, signal);
+        } catch (error) {
+            return rejectWithValue(toError(error, "Unable to search inventory."));
+        }
+    },
+);
 
 export const get_asset_devices_thunk = createAsyncThunk(
     "assetDevices/getAll",

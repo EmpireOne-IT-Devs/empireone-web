@@ -52,6 +52,7 @@ use App\Http\Controllers\API\Activities\ActivityPostController;
 use App\Http\Controllers\API\Activities\ActivityPostInteractionController;
 use App\Http\Controllers\API\Activities\PostEventSurveyController;
 use App\Http\Controllers\API\AssetInventory\AssetDeviceController;
+use App\Http\Controllers\API\AssetInventory\AssetInventorySearchController;
 use App\Http\Controllers\API\AssetInventory\AssetItemRequestController;
 use App\Http\Controllers\API\AssetInventory\AssetLiabilityFormController;
 use App\Http\Controllers\API\AssetInventory\AssetPurchaseRequestController;
@@ -183,6 +184,8 @@ Route::prefix('')->middleware(['auth:sanctum'])->group(function () {
     Route::get('my_tickets', [TicketingController::class, 'my_tickets']);
 
     Route::prefix('asset_inventory')->group(function () {
+        Route::get('inventory-search', AssetInventorySearchController::class)->name('asset-inventory.search');
+
         Route::prefix('liability_forms')->name('asset-liability-forms.')->group(function () {
             Route::get('/', [AssetLiabilityFormController::class, 'index'])->name('index');
             Route::get('/paper/employees', [AssetLiabilityFormController::class, 'paperEmployees'])->name('paper.employees');
