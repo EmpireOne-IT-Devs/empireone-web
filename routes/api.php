@@ -118,6 +118,7 @@ Route::post('/onboarding/send_all_welcome_kit', function (Request $request, Onbo
 
 Route::get('import_reach_data',  [ImportController::class, 'import_reach_data']);
 Route::get('import_corrective_action_data',  [ImportController::class, 'import_corrective_action_data']);
+Route::get('import_pip_data',  [ImportController::class, 'import_pip_data']);
 
 
 Route::middleware('auth:sanctum')->post('auth/logout', [AuthorizationController::class, 'logout']);

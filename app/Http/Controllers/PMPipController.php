@@ -282,7 +282,7 @@ class PMPipController extends Controller
                 $pMPip->status = 'PENDING HR APPROVAL';
             } else {
                 if ($pMPip->is_supervisor_final_approved == 0) {
-                    $pMPip->status = 'WAITING EMPLOYEE ACKNOWLEDGMENT';
+                    $pMPip->status = 'AWAITING EMPLOYEE ACKNOWLEDGMENT';
                 }
             }
         }
