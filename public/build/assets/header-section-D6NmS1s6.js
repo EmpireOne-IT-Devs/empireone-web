@@ -1,9 +1,0 @@
-<<<<<<< HEAD:public/build/assets/header-section-D6NmS1s6.js
-import{b as n,j as e}from"./app-JPCEg48Z.js";function t(){const{leader:a}=n(s=>s.human_resources);return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsxs("div",{className:"text-2xl font-black",children:["Hi Team ",a?.data?.user?.personal_information?.first_name,"👥"]}),e.jsx("div",{className:"text-gray-600",children:"Manage team concerns, communication, and workplace engagement"})]})}export{t as default};
-=======
-<<<<<<<< HEAD:public/build/assets/header-section-BHIoZt_Z.js
-import{b as n,j as e}from"./app-Bv3gEjB6.js";function t(){const{leader:a}=n(s=>s.human_resources);return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsxs("div",{className:"text-2xl font-black",children:["Hi Team ",a?.data?.user?.personal_information?.first_name,"👥"]}),e.jsx("div",{className:"text-gray-600",children:"Manage team concerns, communication, and workplace engagement"})]})}export{t as default};
-========
-import{b as n,j as e}from"./app-BmJv78w7.js";function t(){const{leader:a}=n(s=>s.human_resources);return e.jsxs("div",{className:"flex flex-col gap-2 my-3",children:[e.jsxs("div",{className:"text-2xl font-black",children:["Hi Team ",a?.data?.user?.personal_information?.first_name,"👥"]}),e.jsx("div",{className:"text-gray-600",children:"Manage team concerns, communication, and workplace engagement"})]})}export{t as default};
->>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/header-section-BTgU3Uxd.js
->>>>>>> 1a5a327fd2aa4f73efe75a7d8e004e521c46889a:public/build/assets/header-section-BTgU3Uxd.js

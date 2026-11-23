@@ -1,5 +1,0 @@
-<<<<<<<< HEAD:public/build/assets/job-offer-service-Bo4qfk3C.js
-import{a as o}from"./app-Bv3gEjB6.js";async function a(e={}){return await o.get("/api/job/get_job_offer_by_user",{params:e})}async function t(e){return await o.post("/api/job/submit_job_offer",e)}async function s(e){return(await o.get(`/api/job/offers/${e}`)).data}async function _(e){return await o.post("/api/job/transfer_job_offer",e)}export{s as a,a as g,t as s,_ as t};
-========
-import{a as o}from"./app-BmJv78w7.js";async function a(e={}){return await o.get("/api/job/get_job_offer_by_user",{params:e})}async function t(e){return await o.post("/api/job/submit_job_offer",e)}async function s(e){return(await o.get(`/api/job/offers/${e}`)).data}async function _(e){return await o.post("/api/job/transfer_job_offer",e)}export{s as a,a as g,t as s,_ as t};
->>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/job-offer-service-CWn7XhbJ.js

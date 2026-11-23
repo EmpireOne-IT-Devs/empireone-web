@@ -1,9 +1,0 @@
-<<<<<<< HEAD:public/build/assets/layout-BFKBMtPn.js
-import{j as t}from"./app-JPCEg48Z.js";import{T as s}from"./tabs-BO0vLMfM.js";import"./index-DiqxFfOl.js";import"./iconBase-DP_gj4bS.js";function p({children:e}){const o=window.location.pathname.split("/")[4],n=window.location.pathname.split("/")[2],a=[{label:"My Documents",path:`/accounts/${n}/my_documents`,active:o==null},{label:"Acknowledgements",path:`/accounts/${n}/my_documents/acknowledgements`,active:o=="acknowledgements"}];return t.jsxs(t.Fragment,{children:[t.jsx(s,{tabs:a}),e]})}export{p as default};
-=======
-<<<<<<<< HEAD:public/build/assets/layout-FgqWWWLK.js
-import{j as t}from"./app-Bv3gEjB6.js";import{T as s}from"./tabs-6MMW0fX-.js";import"./index-7Hkv85Yk.js";import"./iconBase-CMX6kxXg.js";function p({children:e}){const o=window.location.pathname.split("/")[4],n=window.location.pathname.split("/")[2],a=[{label:"My Documents",path:`/accounts/${n}/my_documents`,active:o==null},{label:"Acknowledgements",path:`/accounts/${n}/my_documents/acknowledgements`,active:o=="acknowledgements"}];return t.jsxs(t.Fragment,{children:[t.jsx(s,{tabs:a}),e]})}export{p as default};
-========
-import{j as t}from"./app-BmJv78w7.js";import{T as s}from"./tabs-CDkKeneE.js";import"./index-DpSMF4WM.js";import"./iconBase-AK-M_6nA.js";function p({children:e}){const o=window.location.pathname.split("/")[4],n=window.location.pathname.split("/")[2],a=[{label:"My Documents",path:`/accounts/${n}/my_documents`,active:o==null},{label:"Acknowledgements",path:`/accounts/${n}/my_documents/acknowledgements`,active:o=="acknowledgements"}];return t.jsxs(t.Fragment,{children:[t.jsx(s,{tabs:a}),e]})}export{p as default};
->>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/layout-CLjctPL5.js
->>>>>>> 1a5a327fd2aa4f73efe75a7d8e004e521c46889a:public/build/assets/layout-CLjctPL5.js

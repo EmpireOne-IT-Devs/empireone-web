@@ -1,9 +1,0 @@
-<<<<<<< HEAD:public/build/assets/table-columns-component-B2gXWCSF.js
-import{j as t}from"./app-JPCEg48Z.js";function r({column_name:e}){return t.jsx(t.Fragment,{children:t.jsx("th",{className:"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase",children:e})})}export{r as default};
-=======
-<<<<<<<< HEAD:public/build/assets/table-columns-component-BIMMTCMD.js
-import{j as t}from"./app-Bv3gEjB6.js";function r({column_name:e}){return t.jsx(t.Fragment,{children:t.jsx("th",{className:"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase",children:e})})}export{r as default};
-========
-import{j as t}from"./app-BmJv78w7.js";function r({column_name:e}){return t.jsx(t.Fragment,{children:t.jsx("th",{className:"px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase",children:e})})}export{r as default};
->>>>>>>> de64c7047e163d6e80b5bf54511616659dc5dee7:public/build/assets/table-columns-component-CuFuCokI.js
->>>>>>> 1a5a327fd2aa4f73efe75a7d8e004e521c46889a:public/build/assets/table-columns-component-CuFuCokI.js
