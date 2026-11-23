@@ -7,6 +7,7 @@ use App\Models\Account;
 use App\Models\Account\AccountEmployee;
 use App\Models\ER\ERLeader;
 use App\Models\PM\PMCorrectiveAction;
+use App\Models\PM\PMPip;
 use App\Models\PM\PMReach;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,6 +20,217 @@ use Exception;
 
 class ImportController extends Controller
 {
+    public function import_pip_data(Request $request)
+    {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
+        $filename = public_path("csv/PIP Automation System - PIP_Records.csv"); // Update filename if needed
+        $responses = [];
+
+        if (!file_exists($filename)) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'The target CSV file does not exist in public/csv/.'
+            ], 404);
+        }
+
+        if (($handle = fopen($filename, "r")) !== false) {
+            $raw_headers = fgetcsv($handle, 0, ",");
+
+            if (!$raw_headers) {
+                fclose($handle);
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'The CSV file is empty or formatted incorrectly.'
+                ], 400);
+            }
+
+            $clean_headers = array_map(function ($header, $index) {
+                $header = mb_convert_encoding(trim($header), 'UTF-8', 'ISO-8859-1');
+                if ($index === 0) {
+                    $header = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $header);
+                }
+                return strtolower(str_replace([' ', '/', '-'], '_', $header));
+            }, $raw_headers, array_keys($raw_headers));
+
+            $header_count = count($clean_headers);
+
+            while (($data = fgetcsv($handle, 0, ",")) !== false) {
+                if (count($data) === $header_count) {
+                    $utf8_data = array_map(function ($value) {
+                        return mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
+                    }, $data);
+
+                    $row = array_combine($clean_headers, $utf8_data);
+                    $responses[] = (object) $row;
+                }
+            }
+            fclose($handle);
+        }
+
+        // Helper function to split full names into [first_name, last_name]
+        $splitName = function (?string $fullName): array {
+            $fullName = trim($fullName ?? '');
+            if (empty($fullName)) {
+                return [null, null];
+            }
+            $parts = preg_split('/\s+/', $fullName);
+            $lastName = count($parts) > 1 ? array_pop($parts) : '';
+            $firstName = implode(' ', $parts);
+            return [$firstName ?: $lastName, $lastName];
+        };
+
+        $accountEmployees = AccountEmployee::all();
+        $accountEmployeesByEmail = $accountEmployees->keyBy(fn($item) => strtolower(trim($item->eogs_email ?? '')));
+        $accountEmployeesById = $accountEmployees->keyBy('employee_id');
+
+        $imported_count = 0;
+        $skipped_count = 0;
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($responses as $value) {
+                $empId = trim($value->emp_id ?? '');
+
+                if (!empty($empId)) {
+                    $empEmail = strtolower(trim($value->emp_email ?? ''));
+                    $supEmail = strtolower(trim($value->sup_email ?? ''));
+                    $mgrEmail = strtolower(trim($value->nl_manager_email ?? ''));
+
+                    $employee = $accountEmployeesById->get($empId)
+                        ?? ($empEmail ? $accountEmployeesByEmail->get($empEmail) : null);
+
+                    $supervisor = $supEmail ? $accountEmployeesByEmail->get($supEmail) : null;
+                    $manager    = $mgrEmail ? $accountEmployeesByEmail->get($mgrEmail) : null;
+
+                    // Split Employee Name
+                    [$empFirst, $empLast] = $splitName($value->emp_name ?? '');
+
+                    // Parse Dates safely
+                    $pipStartDate = !empty($value->start_date)
+                        ? Carbon::parse($value->start_date)->format('Y-m-d')
+                        : null;
+
+                    $pipEndDate = !empty($value->end_date)
+                        ? Carbon::parse($value->end_date)->format('Y-m-d')
+                        : null;
+
+                    // Decode JSON strings from `history` and `action_plan`
+                    $historyList = !empty($value->history) ? json_decode($value->history, true) : [];
+                    $firstHistory = is_array($historyList) && !empty($historyList[0]) ? $historyList[0] : [];
+
+                    $actionPlanList = !empty($value->action_plan) ? json_decode($value->action_plan, true) : [];
+                    $firstAction = is_array($actionPlanList) && !empty($actionPlanList[0]) ? $actionPlanList[0] : [];
+
+                    $actionDate = !empty($firstAction['date'])
+                        ? Carbon::parse($firstAction['date'])->format('Y-m-d')
+                        : null;
+
+                    // Map Status & Evaluation Result
+                    $rawStatus = trim($value->status ?? 'Pending');
+                    $evalResult = strtolower(trim($value->eval_result ?? ''));
+
+                    $isPassed = match (true) {
+                        $evalResult === 'passed' || stripos($rawStatus, 'Successful') !== false => 1,
+                        $evalResult === 'failed' || stripos($rawStatus, 'Failed') !== false     => 0,
+                        default                                                                 => null,
+                    };
+
+                    $isClosed = stripos($rawStatus, 'Closed') !== false;
+                    $isRejected = stripos($rawStatus, 'Rejected') !== false || stripos($rawStatus, 'Returned') !== false;
+                    $isEmpAcknowledged = !empty(trim($value->emp_signature ?? ''));
+
+                    // Unique lookup keys to prevent duplicate inserts on re-imports
+                    $attributes = [
+                        'employee_id'    => $empId,
+                        'pip_start_date' => $pipStartDate,
+                        'pip_cycle'      => trim($value->cycle ?? ''),
+                    ];
+
+                    $values = [
+                        'user_id'                        => $employee?->user_id,
+                        'created_by'                     => $supervisor?->user_id ?? $manager?->user_id,
+                        'first_name'                     => $empFirst,
+                        'last_name'                      => $empLast,
+                        'position'                       => trim($value->position ?? '') ?: ($employee?->position ?? null),
+                        'employee_email'                 => $empEmail ?: ($employee?->eogs_email ?? null),
+                        'account_id'                     => $employee?->account_id ?? $supervisor?->account_id,
+
+                        'supervisor_id'                  => $supervisor?->employee_id,
+                        'supervisor_user_id'             => $supervisor?->user_id,
+                        'supervisor_name'                => trim($value->sup_name ?? ''),
+                        'supervisor_email'               => $supEmail ?: null,
+
+                        'manager_id'                     => $manager?->employee_id,
+                        'manager_user_id'                => $manager?->user_id,
+                        'manager_name'                   => trim($value->nl_manager_name ?? ''),
+                        'manager_email'                  => $mgrEmail ?: null,
+
+                        'is_hr_acknowledge'         => 1,
+                        'hr_user_id' => 58,
+                        'hr_id'            => '26011207',
+                        'hr_first_name'    => 'Anthony',
+                        'hr_last_name'     => 'Aragon',
+                        'hr_email'         => 'anthony@empireonegroup.com',
+
+                        'pip_end_date'                   => $pipEndDate,
+
+                        'is_hr_approved'                 => !$isRejected,
+                        'is_manager_approved'            => !$isRejected,
+                        'is_supervisor_approved'         => true,
+                        'is_employee_acknowledged'       => $isEmpAcknowledged,
+
+                        'is_passed'                      => $isPassed,
+                        'action_notes'                   => trim($value->emp_comments ?? '') ?: null,
+
+                        'is_hr_final_approved'           => $isClosed,
+                        'is_manager_final_approved'      => $isClosed,
+                        'is_supervisor_final_approved'   => $isClosed,
+                        'is_employee_final_acknowledged' => $isClosed && $isEmpAcknowledged,
+
+                        'history_kpi'                    => $firstHistory['kpi'] ?? null,
+                        'history_target'                 => $firstHistory['target'] ?? null,
+                        'history_actual'                 => $firstHistory['actual'] ?? null,
+
+                        'root_cause_analysis'            => trim($value->root_cause ?? '') ?: null,
+
+                        'action_kpi_goal'                => $firstAction['kpi'] ?? null,
+                        'action_target_action'           => $firstAction['target'] ?? null,
+                        'action_date'                    => $actionDate,
+
+                        'status'                         => strtoupper($rawStatus),
+                    ];
+
+                    PMPip::updateOrCreate($attributes, $values);
+
+                    $imported_count++;
+                } else {
+                    $skipped_count++;
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status'         => 'success',
+                'message'        => 'PIP import complete',
+                'total_rows'     => count($responses),
+                'imported_count' => $imported_count,
+                'skipped_count'  => $skipped_count,
+                'data'           => $responses,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('PIP Data Import Failed: ' . $e->getMessage());
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'An error occurred during import: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
     public function import_corrective_action_data(Request $request)
     {
         // Increase memory limit and execution time to prevent timeouts on large files

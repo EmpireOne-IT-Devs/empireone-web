@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSidebarOpen } from "@/app/redux/app-slice";
@@ -22,7 +22,7 @@ import {
     FcSalesPerformance,
 } from "react-icons/fc";
 import Tooltip from "@/app/_components/tooltip";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
 import { FiPackage as PackageIcon } from "react-icons/fi";
@@ -36,14 +36,32 @@ export default function SidebarSection() {
         (store) => store.app,
     );
     const dispatch = useDispatch();
+    const { url } = usePage();
 
-    const currentPathname = window.location.pathname;
+    const currentPathname = (url || window.location.pathname).split("?")[0];
     const path = currentPathname.split("/")[3];
+    const subPath = currentPathname.split("/")[4];
     const account_role = currentPathname.split("/")[2];
+    const locationId = data?.user?.account_employee?.location_id;
 
     const [openDropdowns, setOpenDropdowns] = useState(() => ({
         "Performance Management": path === "performance_management",
+        "Talent Acquisition": path === "talent_acquisition",
+        "Human Resources": path === "human_resources",
     }));
+
+    useEffect(() => {
+        setOpenDropdowns((prev) => ({
+            ...prev,
+            ...(path === "performance_management"
+                ? { "Performance Management": true }
+                : {}),
+            ...(path === "talent_acquisition"
+                ? { "Talent Acquisition": true }
+                : {}),
+            ...(path === "human_resources" ? { "Human Resources": true } : {}),
+        }));
+    }, [path]);
 
     const toggleDropdown = (name) => {
         setOpenDropdowns((prev) => ({
@@ -65,7 +83,6 @@ export default function SidebarSection() {
             name: "My Team",
             href: `/accounts/${account_role}/performance_management/my_team`,
         },
-
         {
             name: "PIP",
             href: `/accounts/${account_role}/performance_management/pip`,
@@ -81,6 +98,87 @@ export default function SidebarSection() {
     ].map((child) => ({
         ...child,
         current: currentPathname === child.href,
+    }));
+
+    const talentAcquisitionChildren = [
+        {
+            name: "Job Posting",
+            subSlug: "job_posting",
+            href: `/accounts/${account_role}/talent_acquisition/job_posting?location_id=${locationId}`,
+        },
+        {
+            name: "Applicants",
+            subSlug: "applicants",
+            href: `/accounts/${account_role}/talent_acquisition/applicants?location_id=${locationId}`,
+        },
+        {
+            name: "ERP",
+            subSlug: "erp",
+            href: `/accounts/${account_role}/talent_acquisition/erp?location_id=${locationId}`,
+        },
+        {
+            name: "Calendar",
+            subSlug: "calendar",
+            href: `/accounts/${account_role}/talent_acquisition/calendar?location_id=${locationId}`,
+        },
+        {
+            name: "Job Requisition",
+            subSlug: "job_requisition",
+            href: `/accounts/${account_role}/talent_acquisition/job_requisition?location_id=${locationId}`,
+        },
+    ].map((child) => ({
+        ...child,
+        current: path === "talent_acquisition" && subPath === child.subSlug,
+    }));
+
+    const humanResourcesChildren = [
+        {
+            name: "Employees",
+            href: `/accounts/${account_role}/human_resources/employees?location_id=${locationId}`,
+        },
+        // {
+        //     name: "Performance Management",
+        //     href: `/accounts/${account_role}/human_resources/performance_management?location_id=${locationId}`,
+        // },
+        {
+            name: "Leaders",
+            href: `/accounts/${account_role}/human_resources/leaders?location_id=${locationId}`,
+        },
+        {
+            name: "Employee Movements",
+            href: `/accounts/${account_role}/human_resources/employee_movements?location_id=${locationId}`,
+        },
+        {
+            name: "Separation",
+            href: `/accounts/${account_role}/human_resources/separation?location_id=${locationId}`,
+        },
+        {
+            name: "201Files",
+            href: `/accounts/${account_role}/human_resources/201_files?location_id=${locationId}`,
+        },
+        {
+            name: "Accounts",
+            href: `/accounts/${account_role}/human_resources/sourcing/accounts`,
+        },
+        {
+            name: "Departments",
+            href: `/accounts/${account_role}/human_resources/sourcing/departments`,
+        },
+        {
+            name: "Account Pendings",
+            href: `/accounts/${account_role}/human_resources/account_pendings?location_id=${locationId}`,
+        },
+        {
+            name: "Acknowledgements",
+            href: `/accounts/${account_role}/human_resources/acknowledgements?location_id=${locationId}`,
+        },
+        {
+            name: "COE Requests",
+            href: `/accounts/${account_role}/human_resources/coe_requests?location_id=${locationId}`,
+        },
+    ].map((child) => ({
+        ...child,
+        current: currentPathname === child.href.split("?")[0],
     }));
 
     const mainNavigation = [
@@ -165,17 +263,19 @@ export default function SidebarSection() {
                       ? [
                             {
                                 name: "Talent Acquisition",
-                                href: `/accounts/${account_role}/talent_acquisition/job_posting?location_id=${data?.user?.account_employee?.location_id}`,
+                                href: `/accounts/${account_role}/talent_acquisition/job_posting?location_id=${locationId}`,
                                 icon: FcPortraitMode,
                                 current: path === "talent_acquisition",
                                 is_incoming: false,
+                                children: talentAcquisitionChildren,
                             },
                             {
                                 name: "Human Resources",
-                                href: `/accounts/${account_role}/human_resources/employees?location_id=${data?.user?.account_employee?.location_id}`,
+                                href: `/accounts/${account_role}/human_resources/employees?location_id=${locationId}`,
                                 icon: FcPodiumWithAudience,
                                 current: path === "human_resources",
                                 is_incoming: false,
+                                children: humanResourcesChildren,
                             },
                             {
                                 name: "Timekeeping",
@@ -634,7 +734,6 @@ export default function SidebarSection() {
                             {renderNavItems({ isMobile: false })}
                         </ul>
                     </nav>
-
                     <div className="mt-auto pt-3 border-t border-gray-200">
                         <ul className="space-y-2">
                             {renderBottomItems({ isMobile: false })}

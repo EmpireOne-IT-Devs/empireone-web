@@ -296,9 +296,9 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('separation', 'accounts/_administrator/human_resources/separation/page');
             Route::inertia('acknowledgements', 'accounts/_administrator/human_resources/acknowledgements/page');
             Route::inertia('coe_requests', 'accounts/_administrator/human_resources/coe_requests/page');
-            Route::inertia('201Files', 'accounts/_administrator/human_resources/201Files/page');
+            Route::inertia('201_files', 'accounts/_administrator/human_resources/201Files/page');
 
-            Route::prefix('leads')->group(function () {
+            Route::prefix('leaders')->group(function () {
                 Route::inertia('', 'accounts/_administrator/human_resources/leads/page');
                 Route::inertia('/{id}', 'accounts/_administrator/human_resources/leads/id/page');
             });

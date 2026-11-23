@@ -2,6 +2,12 @@ php artisan make:model Engagement/EngagementPostEvent -mcr
 php artisan migrate --path=/database/migrations/2026_11_13_180729_create_p_m_pips_table.php
 
 
+composer create-project yazidkhaldi/react-jsx-starter-kit react-jsx-app
+cd react-jsx-app
+npm install
+npm run dev
+
+
 Task
 - Add supervisor and department manager input in add attrition
 - Add supervisor and department manager in leader page
@@ -13,7 +19,7 @@ PIP NOTES
  - form
  - PENDING MANAGER APPROVAL
  - PENDING HR APPROVAL
- - WAITING EMPLOYEE ACKNOWLEDGMENT
+ - AWAITING EMPLOYEE ACKNOWLEDGMENT
  - ACTIVE PIP
  - PENDING FINAL ACKNOWLEDGMENT
  - CLOSED - PASSED || CLOSED - FAILED
