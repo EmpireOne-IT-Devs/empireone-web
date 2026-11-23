@@ -1,0 +1,1 @@
+import{b as n,j as o}from"./app-CcmsQMTp.js";import{P as r}from"./pagination-Cbee1bkB.js";import"./iconBase-B1snjM10.js";function p(){const{erps:t}=n(s=>s.job_postings);return console.log("erps",t),o.jsx(o.Fragment,{children:o.jsx(r,{data:t})})}export{p as default};

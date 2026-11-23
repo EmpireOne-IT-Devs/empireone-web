@@ -1,172 +1,295 @@
-import Table from '@/app/_components/table';
-import { Link, router } from '@inertiajs/react';
-import moment from 'moment';
-import React from 'react';
-import {
-    FiBriefcase,
-    FiMoreHorizontal
-} from 'react-icons/fi';
-import { LuArrowUpDown } from 'react-icons/lu';
-import { useSelector } from 'react-redux';
-import JobPostingActionSection from './employee-action-section';
-import ShowErfSection from './show-erf-section';
-
-
-
+import Table from "@/app/_components/table";
+import { Link, router } from "@inertiajs/react";
+import moment from "moment";
+import React from "react";
+import { FiBriefcase, FiMoreHorizontal } from "react-icons/fi";
+import { LuArrowUpDown } from "react-icons/lu";
+import { useSelector } from "react-redux";
+import JobPostingActionSection from "./employee-action-section";
+import ShowErfSection from "./show-erf-section";
 
 export default function TableSection({ loading }) {
-    const { job_postings } = useSelector(
-        (state) => state.job_postings,
-    );
-    const { data } = useSelector(
-        (state) => state.app,
-    );
+    const { job_postings } = useSelector((state) => state.job_postings);
+    const { data } = useSelector((state) => state.app);
 
     // Extract the current location_id from the URL query string
-    const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    const currentLocationId = searchParams.get('location_id') ?? data?.user?.account_employee?.location_id;
-    const status = searchParams.get('status')
-    console.log('job_postings?.data', job_postings?.data)
+    const searchParams = new URLSearchParams(
+        typeof window !== "undefined" ? window.location.search : "",
+    );
+    const currentLocationId =
+        searchParams.get("location_id") ??
+        data?.user?.account_employee?.location_id;
+    const status = searchParams.get("status");
+
+    console.log("job_postings?.data", job_postings?.data);
+
+    const getHiredCount = (row) =>
+        row?.applications?.filter((app) => app.final_status === "Hired")
+            .length || 0;
+
+    const getTargetHeadcount = (row) =>
+        Number(row?.job_requisition?.number_of_positions) || 0;
+
     const tableColumns = [
         {
-            key: 'id',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Job Posting ID</div>,
+            key: "id",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Job Posting ID
+                </div>
+            ),
             render: (row) => (
                 <>
                     <span className="ml-2 font-medium">{row?.id}</span>
                 </>
-            )
+            ),
         },
         {
-            key: 'Location',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Location <LuArrowUpDown className="w-3 h-3 text-purple-500" /></div>,
+            key: "Location",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Location{" "}
+                    <LuArrowUpDown className="w-3 h-3 text-purple-500" />
+                </div>
+            ),
             render: (row) => (
-                <button
-
-                    className="font-medium text-left"
-                >
+                <button className="font-medium text-left">
                     {row?.job_requisition?.location?.name}
                 </button>
-            )
+            ),
         },
         {
-            key: 'title',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Job <LuArrowUpDown className="w-3 h-3 text-purple-500" /></div>,
-            render: (row) => (
-                <ShowErfSection props_data={row} />
-            )
+            key: "title",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Job <LuArrowUpDown className="w-3 h-3 text-purple-500" />
+                </div>
+            ),
+            render: (row) => <ShowErfSection props_data={row} />,
         },
         {
-            key: 'candidates',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Candidates <LuArrowUpDown className="w-3 h-3" /></div>,
+            key: "candidates",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Candidates <LuArrowUpDown className="w-3 h-3" />
+                </div>
+            ),
             render: (row) => (
                 <button
                     onClick={() =>
                         window.open(
                             `/accounts/administrator/talent_acquisition/applicants?job_posting_id=${row.id}&location_id=${currentLocationId}`,
-                            '_blank',
-                            'noopener,noreferrer'
+                            "_blank",
+                            "noopener,noreferrer",
                         )
                     }
                 >
                     {row?.applications?.length > 0 && (
-                        <span className=" ml-2 font-medium underline text-blue-500">{row?.applications?.length}</span>
+                        <span className="ml-2 font-medium underline text-blue-500">
+                            {row?.applications?.length}
+                        </span>
                     )}
                 </button>
-            )
+            ),
         },
         {
-            key: 'erp',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">ERP <LuArrowUpDown className="w-3 h-3" /></div>,
+            key: "erp",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    ERP <LuArrowUpDown className="w-3 h-3" />
+                </div>
+            ),
             render: (row) => (
                 <button
                     onClick={() =>
                         window.open(
                             `/accounts/administrator/talent_acquisition/erp?job_posting_id=${row.id}&location_id=${currentLocationId}`,
-                            '_blank',
-                            'noopener,noreferrer'
+                            "_blank",
+                            "noopener,noreferrer",
                         )
                     }
                 >
                     {row?.erps?.length > 0 && (
-                        <span className=" ml-2 font-medium underline text-blue-500">{row?.erps?.length}</span>
+                        <span className="ml-2 font-medium underline text-blue-500">
+                            {row?.erps?.length}
+                        </span>
                     )}
                 </button>
-            )
+            ),
         },
         {
-            key: 'inProcess',
+            key: "inProcess",
             header: (
                 <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
                     In process <LuArrowUpDown className="w-3 h-3" />
                 </div>
             ),
             render: (row) => {
-                const inProcessCount = row?.applications?.filter(app => {
-                    const hasPassedScreening = app.screening_status?.includes('Passed');
-                    const hasPassedInterview = app.interview_status?.includes('Passed');
+                const inProcessCount =
+                    row?.applications?.filter((app) => {
+                        const hasPassedScreening =
+                            app.screening_status?.includes("Passed");
+                        const hasPassedInterview =
+                            app.interview_status?.includes("Passed");
 
-                    return hasPassedScreening || hasPassedInterview;
-                }).length || 0;
+                        return hasPassedScreening || hasPassedInterview;
+                    }).length || 0;
 
                 return (
                     <span className="text-gray-800">
-                        {inProcessCount > 0 ? inProcessCount : '0'}
+                        {inProcessCount > 0 ? inProcessCount : "0"}
                     </span>
                 );
-            }
+            },
         },
         {
-            key: 'hired',
+            key: "hired",
             header: (
                 <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
                     Hired <LuArrowUpDown className="w-3 h-3" />
                 </div>
             ),
             render: (row) => {
-                const hiredCount = row?.applications?.filter(app => {
-                    return app.final_status === 'Hired';
-                }).length || 0;
+                const hiredCount = getHiredCount(row);
 
                 return (
                     <span className="text-gray-800">
-                        {hiredCount > 0 ? hiredCount : '0'}
+                        {hiredCount > 0 ? hiredCount : "0"}
                     </span>
                 );
-            }
+            },
         },
         {
-            key: 'failed',
+            key: "failed",
             header: (
                 <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
                     Failed <LuArrowUpDown className="w-3 h-3" />
                 </div>
             ),
             render: (row) => {
-                const failedCount = row?.applications?.filter(app => {
-                    const hasFailedScreening = app.screening_status?.includes('Failed');
-                    const hasFailedInterview = app.interview_status?.includes('Failed');
-                    const hasFailedFinal = app.final_status?.includes('Failed');
+                const failedCount =
+                    row?.applications?.filter((app) => {
+                        const hasFailedScreening =
+                            app.screening_status?.includes("Failed");
+                        const hasFailedInterview =
+                            app.interview_status?.includes("Failed");
+                        const hasFailedFinal =
+                            app.final_status?.includes("Failed");
 
-                    return hasFailedScreening || hasFailedInterview || hasFailedFinal;
-                }).length || 0;
+                        return (
+                            hasFailedScreening ||
+                            hasFailedInterview ||
+                            hasFailedFinal
+                        );
+                    }).length || 0;
 
                 return (
                     <span className="text-gray-800">
-                        {failedCount > 0 ? failedCount : '0'}
+                        {failedCount > 0 ? failedCount : "0"}
                     </span>
                 );
-            }
+            },
         },
         {
-            key: 'created',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Created <LuArrowUpDown className="w-3 h-3" /></div>,
-            render: (row) => <span className="text-gray-500">{moment(row.created_at).format('LL')}</span>
+            key: "headcount_target",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Target <LuArrowUpDown className="w-3 h-3" />
+                </div>
+            ),
+            render: (row) => {
+                const target = getTargetHeadcount(row);
+                return (
+                    <span className="font-medium text-gray-800">{target}</span>
+                );
+            },
         },
         {
-            key: 'start_date',
-            header: <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">Start Date <LuArrowUpDown className="w-3 h-3" /></div>,
-            render: (row) => <span className="text-gray-500">{moment(job_postings?.data?.job_requisition?.target_start_date).format('LL')}</span>
+            key: "fill_percentage",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Fill % <LuArrowUpDown className="w-3 h-3" />
+                </div>
+            ),
+            render: (row) => {
+                const target = getTargetHeadcount(row);
+                const hiredCount = getHiredCount(row);
+                const fillPct =
+                    target > 0
+                        ? Math.min(100, Math.round((hiredCount / target) * 100))
+                        : 0;
+
+                const badgeColor =
+                    fillPct >= 100
+                        ? "bg-green-100 text-green-700"
+                        : fillPct >= 50
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-amber-100 text-amber-700";
+
+                return (
+                    <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${badgeColor}`}
+                    >
+                        {fillPct}%
+                    </span>
+                );
+            },
+        },
+        {
+            key: "created",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Created <LuArrowUpDown className="w-3 h-3" />
+                </div>
+            ),
+            render: (row) => (
+                <span className="text-gray-500">
+                    {moment(row.created_at).format("LL")}
+                </span>
+            ),
+        },
+        {
+            key: "start_date",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Start Date <LuArrowUpDown className="w-3 h-3" />
+                </div>
+            ),
+            render: (row) => {
+                const startDate = row?.job_requisition?.target_start_date;
+                return (
+                    <span className="text-gray-500">
+                        {startDate ? moment(startDate).format("LL") : "—"}
+                    </span>
+                );
+            },
+        },
+        {
+            key: "days_left",
+            header: (
+                <div className="flex items-center gap-1 cursor-pointer hover:text-gray-700">
+                    Days Left <LuArrowUpDown className="w-3 h-3" />
+                </div>
+            ),
+            render: (row) => {
+                const startDate = row?.job_requisition?.target_start_date;
+                if (!startDate) return <span className="text-gray-400">—</span>;
+
+                const diff = moment(startDate)
+                    .startOf("day")
+                    .diff(moment().startOf("day"), "days");
+                const daysLeft = Math.max(0, diff);
+
+                return (
+                    <span
+                        className={`font-medium ${daysLeft <= 5 && daysLeft > 0 ? "text-red-600" : "text-gray-700"}`}
+                    >
+                        {diff < 0
+                            ? "Started"
+                            : `${daysLeft} ${daysLeft === 1 ? "day" : "days"}`}
+                    </span>
+                );
+            },
         },
         // {
         //     key: 'status',
@@ -174,49 +297,62 @@ export default function TableSection({ loading }) {
         //     render: (row) => <StatusBadge status={row.status} />
         // },
         {
-            key: 'actions',
-            width: 'w-12',
-            header: '',
+            key: "actions",
+            width: "w-12",
+            header: "",
             render: (row) => {
-                return <JobPostingActionSection props_data={row} />
-            }
-        }
+                return <JobPostingActionSection props_data={row} />;
+            },
+        },
     ];
 
     return (
         <div className="min-h-screen bg-gray-50/50 flex flex-col md:flex-row gap-4 md:gap-6 text-sm font-sans text-gray-800">
-
             {/* ADDED: min-w-0 to prevent flex blowout if the table scales too large */}
             <div className="flex-1 flex flex-col gap-4 min-w-0">
                 {/* Jobs Table Card */}
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-
                     {/* Tabs */}
                     {/* ADDED: overflow-x-auto whitespace-nowrap to allow tabs to scroll horizontally on small screens */}
                     <div className="flex border-b border-gray-200 px-2 text-sm overflow-x-auto whitespace-nowrap">
                         <button
-
-                            onClick={() => router.visit(`?location_id=${currentLocationId}`)}
-                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${!status ? 'border-purple-600 text-purple-600' : ""}  font-medium`}>
+                            onClick={() =>
+                                router.visit(
+                                    `?location_id=${currentLocationId}`,
+                                )
+                            }
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${!status ? "border-purple-600 text-purple-600" : ""} font-medium`}
+                        >
                             <FiBriefcase className="w-4 h-4" /> Active jobs
                         </button>
                         <button
-                            onClick={() => router.visit(`?location_id=${currentLocationId}&status=Closed`)}
-                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == 'Closed' ? 'border-purple-600 text-purple-600' : ""} font-medium`}>
+                            onClick={() =>
+                                router.visit(
+                                    `?location_id=${currentLocationId}&status=Closed`,
+                                )
+                            }
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == "Closed" ? "border-purple-600 text-purple-600" : ""} font-medium`}
+                        >
                             <FiBriefcase className="w-4 h-4" /> Closed jobs
                         </button>
                         <button
-                            onClick={() => router.visit(`?location_id=${currentLocationId}&status=On Hold`)}
-                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == 'On Hold' ? 'border-purple-600 text-purple-600' : ""} font-medium`}>
+                            onClick={() =>
+                                router.visit(
+                                    `?location_id=${currentLocationId}&status=On Hold`,
+                                )
+                            }
+                            className={`flex items-center gap-2 px-4 md:px-6 py-3 border-b-2 ${status == "On Hold" ? "border-purple-600 text-purple-600" : ""} font-medium`}
+                        >
                             <FiBriefcase className="w-4 h-4" /> On Hold
                         </button>
                     </div>
 
-
                     {/* Dynamic Table Component injected here */}
-                    {/* (Assuming your `<Table />` component still has the mobile card view built-in from the earlier steps) */}
-                    <Table columns={tableColumns} data={job_postings?.data} isloading={loading} />
-
+                    <Table
+                        columns={tableColumns}
+                        data={job_postings?.data}
+                        isloading={loading}
+                    />
                 </div>
             </div>
         </div>
