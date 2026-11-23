@@ -98,14 +98,12 @@ class PMReachController extends Controller
             'status' => ['nullable', Rule::in(['PENDING', 'ACKNOWLEDGED'])],
         ]);
     }
-
     public function get_reach_specific_leader(Request $request)
     {
-        // Initialize the query builder
         $query = PMReach::query()->with(['account']);
 
-        // If 'all' is not true, filter by the logged-in user safely wrapped in parenthesis
-        if (!$request->boolean('all')) {
+        // If 'all' is not true AND no specific supervisor_id filter is selected, restrict to logged-in user
+        if (!$request->boolean('all') && !$request->filled('supervisor_id')) {
             $userId = Auth::id();
             $query->where(function ($q) use ($userId) {
                 $q->where('supervisor_user_id', $userId)
@@ -113,12 +111,23 @@ class PMReachController extends Controller
             });
         }
 
-        // Filter by search term across first_name and last_name
+        // Filter by supervisor_id (matches supervisor_user_id on PMReach)
+        if ($request->filled('supervisor_id')) {
+            $query->where('supervisor_user_id', $request->input('supervisor_id'));
+        }
+
+        // Filter by search term (supports full names like "First Last", email, and KPI)
         if ($request->filled('search')) {
-            $search = $request->input('search');
+            $search = trim($request->input('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%");
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhereRaw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) LIKE ?", ["%{$search}%"])
+                    ->orWhere('supervisor_first_name', 'like', "%{$search}%")
+                    ->orWhere('supervisor_last_name', 'like', "%{$search}%")
+                    ->orWhereRaw("CONCAT(COALESCE(supervisor_first_name, ''), ' ', COALESCE(supervisor_last_name, '')) LIKE ?", ["%{$search}%"])
+                    ->orWhere('employee_email', 'like', "%{$search}%")
+                    ->orWhere('kpi', 'like', "%{$search}%");
             });
         }
 
@@ -127,7 +136,6 @@ class PMReachController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Eager load relationships if any (e.g., ->with(['user', 'account'])) and paginate
         $reaches = $query->orderBy('id', 'desc')->paginate($request->input('per_page', 10));
 
         return response()->json($reaches, 200);

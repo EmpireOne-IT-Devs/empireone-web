@@ -35,17 +35,24 @@ class ERLeaderController extends Controller
         $query = AccountEmployee::query();
 
         // 1. Secure Base Authorization: Must belong to the leader/manager
-        $query->where(function ($q) use ($ids) {
-            $q->whereIn('e_r_leader_id', $ids)
-                ->orWhereIn('department_manager_id', $ids);
-        });
 
-        // 2. Optional Account Filter
+
+        // 2. Optional Immediate Supervisor Filter (matches ERLeader id)
+        if ($request->filled('supervisor_id')) {
+            $query->where('e_r_leader_id', $request->input('supervisor_id'));
+        } else {
+            $query->where(function ($q) use ($ids) {
+                $q->whereIn('e_r_leader_id', $ids)
+                    ->orWhereIn('department_manager_id', $ids);
+            });
+        }
+
+        // 3. Optional Account Filter
         if ($request->filled('account_id')) {
             $query->where('account_id', $request->input('account_id'));
         }
 
-        // 3. Status Filter
+        // 4. Status Filter
         if ($request->status == '5th_review') {
             $query->whereBetween('started_at', [
                 now()->subMonths(6)->startOfDay(),
@@ -62,7 +69,7 @@ class ERLeaderController extends Controller
             }
         }
 
-        // 4. Search Filter
+        // 5. Search Filter (Employee ID, Email, Employee Name, & Immediate Supervisor Name)
         if ($request->filled('search')) {
             $search = trim($request->input('search'));
             $query->where(function ($q) use ($search) {
@@ -70,7 +77,13 @@ class ERLeaderController extends Controller
                     ->orWhere('eogs_email', 'like', "%{$search}%")
                     ->orWhereHas('personal_information', function ($sub) use ($search) {
                         $sub->where('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhereRaw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) LIKE ?", ["%{$search}%"]);
+                    })
+                    ->orWhereHas('er_leader.employee.personal_information', function ($sub) use ($search) {
+                        $sub->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhereRaw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) LIKE ?", ["%{$search}%"]);
                     });
             });
         }
@@ -78,8 +91,8 @@ class ERLeaderController extends Controller
         $teams = $query->with([
             'personal_information',
             'account',
-            'er_leader',
-            'department_manager',
+            'er_leader.employee.personal_information',
+            'department_manager.personal_information',
             'reaches' => function ($q) use ($month, $year) {
                 $q->whereMonth('created_at', $month)
                     ->whereYear('created_at', $year);
