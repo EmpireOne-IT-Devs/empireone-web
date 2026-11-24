@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { get_departments_thunk } from "@/app/redux/department-thunk";
 import Layout from "./layout";
 import LoadingPage from "@/app/_components/loading-page";
+import FooterSection from "../landing_page/sections/footer-section";
 export default function Page() {
     const { job_postings } = useSelector((store) => store.job_postings);
     const { job_posting_id } = useSelector((store) => store.app);
@@ -13,15 +14,19 @@ export default function Page() {
     const isLoaded = Array.isArray(job_postings);
 
     const interview_id = isLoaded
-        ? job_postings.find((res) => res.id == job_posting_id)
-              ?.job_requisition?.recruiter_id
+        ? job_postings.find((res) => res.id == job_posting_id)?.job_requisition
+              ?.recruiter_id
         : undefined;
 
     useEffect(() => {
-        store.dispatch(get_job_posting_by_location_thunk(window.location.pathname.split('/')[3]));
+        store.dispatch(
+            get_job_posting_by_location_thunk(
+                window.location.pathname.split("/")[3],
+            ),
+        );
         store.dispatch(get_departments_thunk());
     }, []);
-    
+
     // useEffect(() => {
     //     if (interview_id) {
     //         store.dispatch(

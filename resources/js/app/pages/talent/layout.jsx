@@ -1,20 +1,18 @@
 import React from "react";
-
-import { Link } from "@inertiajs/react";
-import NavFooterSection from "../landing_page/sections/nav-footer-section";
-import ApplicationFooterSection from "./_sections/application-footer-section";
+import ApplicationFooterSection from "../landing_page/sections/application-footer-section";
 export default function Layout({ children }) {
     return (
         <div
-            className="h-screen flex flex-col overflow-hidden font-sans"
+            className="min-h-screen flex flex-col relative font-sans"
             style={{
                 backgroundImage: "url('/images/empireone-background.jpg')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+                backgroundAttachment: "fixed",
             }}
         >
             <div
-                className="fixed inset-0 pointer-events-none"
+                className="absolute inset-0 pointer-events-none"
                 style={{
                     background: `
                     linear-gradient(135deg, rgba(13,5,32,0.55) 0%, rgba(19,8,48,0.50) 50%, rgba(10,15,31,0.55) 100%),
@@ -25,8 +23,7 @@ export default function Layout({ children }) {
                 }}
             />
 
-            {/* Scrollable card area */}
-            <div className="relative z-10 flex-1 overflow-y-auto md:p-6 flex justify-center">
+            <div className="relative z-10 flex-1 md:p-6 flex justify-center">
                 <div
                     className="relative max-w-4xl w-full md:rounded-2xl shadow-2xl transition-all duration-500 self-start"
                     style={{
@@ -40,7 +37,10 @@ export default function Layout({ children }) {
                     {children}
                 </div>
             </div>
-            <ApplicationFooterSection />
+
+            <div className="relative z-10 w-full">
+                <ApplicationFooterSection/>
+            </div>
         </div>
     );
 }
