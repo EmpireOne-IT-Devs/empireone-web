@@ -9,6 +9,10 @@ import {
     SYSTEM_TYPE_VARIANTS,
 } from "./system-unit-helpers";
 
+function displayValue(value) {
+    return value || "—";
+}
+
 function EmptyState({ hasFilters, onClearFilters, onCreate }) {
     return (
         <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
@@ -76,24 +80,33 @@ export default function TableSection({
             ),
         },
         {
+            header: "Serial Number",
+            accessor: "serialNumber",
+            render: (row) => (
+                <span className="font-mono text-xs text-gray-700">
+                    {displayValue(row.serialNumber)}
+                </span>
+            ),
+        },
+        {
             header: "CPU",
             accessor: "cpu",
-            render: (row) => <span className="text-sm text-gray-700">{row.cpu}</span>,
+            render: (row) => <span className="text-sm text-gray-700">{displayValue(row.cpu)}</span>,
         },
         {
             header: "RAM",
             accessor: "ram",
-            render: (row) => <span className="text-sm text-gray-700">{row.ram}</span>,
+            render: (row) => <span className="text-sm text-gray-700">{displayValue(row.ram)}</span>,
         },
         {
             header: "Storage",
             accessor: "storage",
-            render: (row) => <span className="text-sm text-gray-700">{row.storage}</span>,
+            render: (row) => <span className="text-sm text-gray-700">{displayValue(row.storage)}</span>,
         },
         {
             header: "Operating System",
             accessor: "os",
-            render: (row) => <span className="text-sm text-gray-700">{row.os}</span>,
+            render: (row) => <span className="text-sm text-gray-700">{displayValue(row.os)}</span>,
         },
         {
             header: "Status",
@@ -111,7 +124,12 @@ export default function TableSection({
         {
             header: "Location",
             accessor: "location",
-            render: (row) => <span className="text-sm text-gray-700">{row.location}</span>,
+            render: (row) => <span className="text-sm text-gray-700">{displayValue(row.location)}</span>,
+        },
+        {
+            header: "Account",
+            accessor: "account",
+            render: (row) => <span className="text-sm text-gray-700">{displayValue(row.account)}</span>,
         },
         {
             header: "Station",

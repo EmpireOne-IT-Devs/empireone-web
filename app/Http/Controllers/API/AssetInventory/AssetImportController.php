@@ -8,6 +8,7 @@ use App\Models\AssetInventory\AssetMonitor;
 use App\Models\AssetInventory\AssetOtherAsset;
 use App\Models\AssetInventory\AssetPart;
 use App\Models\AssetInventory\AssetPeripheral;
+use App\Models\AssetInventory\AssetSystemUnit;
 use App\Services\AssetImportAiAdvisor;
 use App\Services\AssetImportClassifier;
 use App\Services\AssetImportService;
@@ -22,6 +23,7 @@ class AssetImportController extends Controller
         'parts' => AssetPart::class,
         'other_assets' => AssetOtherAsset::class,
         'peripherals' => AssetPeripheral::class,
+        'system_units' => AssetSystemUnit::class,
     ];
 
     /**

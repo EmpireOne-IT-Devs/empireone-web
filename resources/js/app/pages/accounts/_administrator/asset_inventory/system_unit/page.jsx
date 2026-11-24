@@ -4,6 +4,8 @@ import Layout from "../../../layout";
 import AssetInventory from "../layout";
 import Button from "@/app/_components/button";
 import { setAlert } from "@/app/redux/app-slice";
+import SmartImportModal from "../_components/smart-import-modal";
+import { analyze_import_thunk, commit_import_thunk } from "@/app/redux/asset-import-thunk";
 import {
     create_asset_system_unit_thunk,
     get_asset_system_units_thunk,
@@ -21,6 +23,7 @@ const PER_PAGE = 10;
 export default function Page() {
     const dispatch = useDispatch();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isImportOpen, setIsImportOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [typeFilter, setTypeFilter] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
@@ -77,6 +80,35 @@ export default function Page() {
         setPage(1);
     };
 
+    const handleAnalyze = async (rows) => {
+        const result = await dispatch(analyze_import_thunk(rows));
+        if (analyze_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
+
+    const handleImport = async (modules) => {
+        const result = await dispatch(commit_import_thunk(modules));
+        if (commit_import_thunk.fulfilled.match(result)) return result.payload;
+        throw result.payload;
+    };
+
+    const handleImportDone = (summary) => {
+        const total = Object.values(summary ?? {}).reduce(
+            (sum, module) => sum + (module.imported ?? 0),
+            0,
+        );
+        setPage(1);
+        setReloadKey((value) => value + 1);
+        dispatch(
+            setAlert({
+                open: true,
+                type: "success",
+                title: "Import complete",
+                message: `${total} assets imported.`,
+            }),
+        );
+    };
+
     const closeCreate = () => {
         setIsCreateOpen(false);
         dispatch(clearErrors());
@@ -114,12 +146,13 @@ export default function Page() {
     };
 
     const handleView = (row) => {
+        const specifications = [row.cpu, row.ram, row.storage].filter(Boolean).join(" • ");
         dispatch(
             setAlert({
                 open: true,
                 type: "info",
                 title: row.name,
-                message: `${row.cpu} • ${row.ram} • ${row.storage} — ${row.status}.`,
+                message: [specifications, row.status].filter(Boolean).join(" — "),
             }),
         );
     };
@@ -128,7 +161,10 @@ export default function Page() {
         <Layout>
             <AssetInventory>
                 <div className="space-y-4">
-                    <HeaderSection onCreateClick={() => setIsCreateOpen(true)} />
+                    <HeaderSection
+                        onCreateClick={() => setIsCreateOpen(true)}
+                        onImportClick={() => setIsImportOpen(true)}
+                    />
 
                     <StatsSection stats={stats} />
 
@@ -185,6 +221,13 @@ export default function Page() {
                         submitting={saving}
                         apiErrors={errors}
                         saveError={saveError}
+                    />
+                    <SmartImportModal
+                        isOpen={isImportOpen}
+                        onClose={() => setIsImportOpen(false)}
+                        onAnalyze={handleAnalyze}
+                        onImport={handleImport}
+                        onDone={handleImportDone}
                     />
                 </div>
             </AssetInventory>

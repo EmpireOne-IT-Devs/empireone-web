@@ -26,6 +26,7 @@ const STEPS = [
 const MODULE_LABELS = {
     devices: "Devices",
     monitors: "Monitors",
+    system_units: "System Units",
     parts: "Parts & Accessories",
     other_assets: "Other Assets",
     peripherals: "Peripherals",
@@ -35,6 +36,7 @@ const MODULE_LABELS = {
 const MODULE_VARIANTS = {
     devices: "primary",
     monitors: "info",
+    system_units: "primary",
     parts: "purple",
     other_assets: "warning",
     peripherals: "success",
@@ -255,9 +257,9 @@ export default function SmartImportModal({
                                 AI-assisted routing
                             </p>
                             <p className="mt-1 text-xs text-purple-700">
-                                Each row is classified into Devices, Monitors, Parts &amp; Accessories,
-                                Other Assets, or Peripherals. Rows the rules can't classify are sent to
-                                AI for a suggestion, with warnings for data problems.
+                                Each row is classified into Devices, Monitors, System Units, Parts &amp;
+                                Accessories, Other Assets, or Peripherals. Rows the rules can't classify
+                                are sent to AI for a suggestion, with warnings for data problems.
                             </p>
                         </div>
 

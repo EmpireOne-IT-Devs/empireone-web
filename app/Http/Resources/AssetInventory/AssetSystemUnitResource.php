@@ -12,6 +12,7 @@ class AssetSystemUnitResource extends JsonResource
         return [
             'id' => $this->asset_tag,
             'uuid' => $this->uuid,
+            'serialNumber' => $this->serial_number,
             'name' => $this->name,
             'type' => $this->system_type,
             'cpu' => $this->cpu,
@@ -19,6 +20,10 @@ class AssetSystemUnitResource extends JsonResource
             'storage' => $this->storage,
             'os' => $this->os,
             'status' => $this->status,
+            'condition' => $this->condition,
+            'nature' => $this->nature,
+            'purchaseDate' => $this->purchase_date?->toDateString(),
+            'account' => $this->account,
             'location' => $this->location,
             'station' => $this->station,
             'customBuilt' => str_contains(mb_strtolower($this->name), 'custom'),

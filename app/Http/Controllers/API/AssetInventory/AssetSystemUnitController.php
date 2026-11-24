@@ -28,7 +28,7 @@ class AssetSystemUnitController extends Controller
         $query = AssetSystemUnit::query()->latest()->latest('id');
         if (($term = trim($filters['search'] ?? '')) !== '') {
             $query->where(function ($search) use ($term) {
-                foreach (['name', 'asset_tag', 'cpu', 'os', 'station'] as $column) {
+                foreach (['name', 'asset_tag', 'serial_number', 'cpu', 'os', 'station', 'account'] as $column) {
                     $search->orWhereLike($column, "%{$term}%");
                 }
             });

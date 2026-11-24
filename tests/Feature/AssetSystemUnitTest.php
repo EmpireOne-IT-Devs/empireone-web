@@ -15,6 +15,10 @@ class AssetSystemUnitTest extends TestCase
 
     private const MIGRATION = 'migrations/2026_11_23_100000_create_asset_system_units_table.php';
 
+    private const IMPORT_FIELDS_MIGRATION = 'migrations/2026_11_24_000000_add_import_fields_to_asset_system_units.php';
+
+    private const IMPORT_API = '/api/asset_inventory/import';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,6 +40,77 @@ class AssetSystemUnitTest extends TestCase
             $table->timestamps();
         });
         (require database_path(self::MIGRATION))->up();
+        (require database_path(self::IMPORT_FIELDS_MIGRATION))->up();
+    }
+
+    public function test_inventory_import_sends_pc_rows_to_system_units_and_treats_none_as_empty(): void
+    {
+        $this->actingAs($this->user('admin'), 'sanctum');
+        $sheetRow = fn (array $values) => [
+            'unit' => 'PC', 'asset_tag' => 'None', 'sn' => 'None', 'model' => 'None', 'status' => 'Good',
+            'condition' => 'Second Hand', 'nature' => 'None', 'date_purchased' => 'Undetermined', 'remarks' => 'JTV',
+            ...$values,
+        ];
+
+        $analysis = $this->postJson(self::IMPORT_API.'/analyze', ['rows' => [
+            $sheetRow(['asset_tag' => 'EOG001', 'sn' => 'SN-1', 'model' => 'HP', 'condition' => 'Brandnew', 'nature' => 'Dedicated', 'date_purchased' => '45292']),
+            $sheetRow(['status' => 'Damage', 'remarks' => 'Stock']),
+            $sheetRow(['model' => 'TRENDSONIC', 'remarks' => 'Stock']),
+            $sheetRow(['unit' => 'Monitor', 'model' => 'AOC']),
+            $sheetRow(['unit' => 'Monitor', 'asset_tag' => 'MON001', 'model' => 'AOC']),
+        ]])->assertOk()
+            ->assertJsonPath('grouped.system_units', 3)
+            ->assertJsonPath('rows.0.status', 'ready')
+            ->assertJsonPath('rows.0.payload', [
+                'asset_tag' => 'EOG001', 'serial_number' => 'SN-1', 'name' => 'HP', 'system_type' => 'Desktop',
+                'status' => 'Assigned', 'condition' => 'Brandnew', 'nature' => 'Dedicated',
+                'purchase_date' => '2024-01-01', 'account' => 'JTV',
+            ])
+            ->assertJsonPath('rows.1.status', 'ready')
+            ->assertJsonPath('rows.1.payload.asset_tag', '')
+            ->assertJsonPath('rows.1.payload.serial_number', null)
+            ->assertJsonPath('rows.1.payload.name', 'PC')
+            ->assertJsonPath('rows.1.payload.status', 'Maintenance')
+            ->assertJsonPath('rows.1.payload.purchase_date', null)
+            ->assertJsonPath('rows.2.payload.status', 'Available')
+            // Other modules still need a real asset tag, but a missing serial number is fine.
+            ->assertJsonPath('rows.3.module', 'monitors')
+            ->assertJsonPath('rows.3.status', 'invalid')
+            ->assertJsonPath('rows.3.warnings.0', 'Asset tag is required')
+            ->assertJsonPath('rows.4.status', 'ready')
+            ->assertJsonPath('rows.4.payload.serial_number', null)
+            ->json('rows');
+
+        $units = ['system_units' => ['rows' => array_column(array_slice($analysis, 0, 3), 'payload')]];
+        $this->postJson(self::IMPORT_API.'/commit', ['modules' => $units])->assertOk()
+            ->assertJsonPath('modules.system_units.imported', 3)
+            ->assertJsonPath('modules.system_units.skipped', []);
+        $this->assertSame(
+            ['EOG001', 'SU-0001', 'SU-0002'],
+            AssetSystemUnit::orderBy('asset_tag')->pluck('asset_tag')->all(),
+        );
+
+        // A second import skips the row it can recognise by its tag.
+        $this->postJson(self::IMPORT_API.'/commit', ['modules' => $units])->assertOk()
+            ->assertJsonPath('modules.system_units.skipped.0.reason', 'Duplicate asset tag');
+        $this->assertSame(1, AssetSystemUnit::where('asset_tag', 'EOG001')->count());
+
+        $this->getJson(self::API.'?search=SN-1')->assertOk()
+            ->assertJsonPath('meta.total', 1)
+            ->assertJsonPath('data.0.id', 'EOG001')
+            ->assertJsonPath('data.0.serialNumber', 'SN-1')
+            ->assertJsonPath('data.0.account', 'JTV')
+            ->assertJsonPath('data.0.purchaseDate', '2024-01-01')
+            ->assertJsonPath('data.0.condition', 'Brandnew')
+            ->assertJsonPath('data.0.cpu', null);
+    }
+
+    public function test_generated_tags_skip_imported_tags_that_share_the_prefix(): void
+    {
+        $this->unit(['asset_tag' => 'SU-LEGACY-ITEM']);
+        $this->unit(['asset_tag' => 'SU-0001']);
+
+        $this->assertSame('SU-0002', $this->unit()->asset_tag);
     }
 
     public function test_only_admins_can_list_or_create_system_units(): void
@@ -137,10 +212,17 @@ class AssetSystemUnitTest extends TestCase
             ->assertJsonValidationErrors(['type', 'status', 'per_page', 'page']);
     }
 
-    public function test_migration_is_reversible(): void
+    public function test_migrations_are_reversible(): void
     {
-        (require database_path(self::MIGRATION))->down();
+        $imported = $this->unit(['cpu' => null, 'location' => null, 'serial_number' => 'SN-9']);
 
+        (require database_path(self::IMPORT_FIELDS_MIGRATION))->down();
+        $this->assertFalse(Schema::hasColumn('asset_system_units', 'serial_number'));
+        $this->assertFalse(Schema::hasColumn('asset_system_units', 'imported_at'));
+        // Units imported without specs survive the rollback with an empty placeholder.
+        $this->assertSame('', $imported->refresh()->cpu);
+
+        (require database_path(self::MIGRATION))->down();
         $this->assertFalse(Schema::hasTable('asset_system_units'));
     }
 

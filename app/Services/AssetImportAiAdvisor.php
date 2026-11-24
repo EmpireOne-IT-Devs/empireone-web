@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
  */
 class AssetImportAiAdvisor
 {
-    const MODULES = 'devices, monitors, parts, other_assets, peripherals';
+    const MODULES = 'system_units, devices, monitors, parts, other_assets, peripherals';
 
     public function enabled(): bool
     {
@@ -32,7 +32,7 @@ class AssetImportAiAdvisor
         $sample = array_slice($unknownRows, 0, 50, true);
 
         $prompt = "You are classifying IT asset inventory rows into modules: " . self::MODULES . ".\n" .
-            "Rules: PC/Desktop→devices, Monitor→monitors, UPS→other_assets, Cellphone/Laptop→parts, Mouse/Keyboard/Headset→peripherals.\n" .
+            "Rules: PC/Desktop→system_units, Monitor→monitors, UPS→other_assets, Cellphone/Laptop→parts, Mouse/Keyboard/Headset→peripherals.\n" .
             "For each row, return the best module and a short warning if the row has a data problem (missing asset tag, unknown brand, ambiguous unit, etc.).\n" .
             "Respond with ONLY a JSON object keyed by row index: {\"0\":{\"module\":\"devices\",\"warning\":null}, ...}.\n\n" .
             "Rows:\n" . json_encode($sample);

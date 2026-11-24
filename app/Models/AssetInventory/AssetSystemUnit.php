@@ -19,7 +19,13 @@ class AssetSystemUnit extends Model
     protected $table = 'asset_system_units';
 
     protected $fillable = [
-        'name', 'system_type', 'cpu', 'ram', 'storage', 'os', 'status', 'location', 'station',
+        'asset_tag', 'serial_number', 'name', 'system_type', 'cpu', 'ram', 'storage', 'os', 'status',
+        'condition', 'nature', 'purchase_date', 'account', 'location', 'station', 'imported_at',
+    ];
+
+    protected $casts = [
+        'purchase_date' => 'date',
+        'imported_at' => 'datetime',
     ];
 
     protected static function booted(): void
@@ -43,6 +49,11 @@ class AssetSystemUnit extends Model
             ->orderByDesc('asset_tag')
             ->value('asset_tag');
         $number = $latest === null ? 1 : (int) substr($latest, strlen(self::TAG_PREFIX)) + 1;
+
+        // Imported tags can also start with the prefix without following the number format.
+        while (static::withTrashed()->where('asset_tag', sprintf('%s%04d', self::TAG_PREFIX, $number))->exists()) {
+            $number++;
+        }
 
         return sprintf('%s%04d', self::TAG_PREFIX, $number);
     }
