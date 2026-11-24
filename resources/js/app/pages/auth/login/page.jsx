@@ -5,6 +5,8 @@ import { Link, router, useForm } from "@inertiajs/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaRegUserCircle } from "react-icons/fa";
 import NavFooterSection from "../../landing_page/sections/nav-footer-section";
+import FooterSection from "../../landing_page/sections/footer-section";
+import HeaderSection from "../../landing_page/sections/header-section";
 
 const Page = ({ flash }) => {
     const params = new URLSearchParams(location.search);
@@ -40,11 +42,12 @@ const Page = ({ flash }) => {
 
     return (
         <div
-            className="min-h-screen flex flex-col items-center font-sans overflow-hidden relative"
+            className="min-h-screen flex flex-col font-sans relative"
             style={{
                 background: `linear-gradient(135deg, ${colors.deepPurple} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
             }}
         >
+            {/* <HeaderSection /> */}
             {/* --- INTERACTIVE BACKGROUND --- */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <motion.div
@@ -80,12 +83,12 @@ const Page = ({ flash }) => {
             </div>
 
             {/* --- CENTERING CONTAINER FOR CARD --- */}
-            <div className="flex-1 flex items-center justify-center w-full z-10 px-4 py-8">
+            <div className="flex-1 flex items-center justify-center w-full relative z-10 px-4 pt-28 pb-12 sm:pt-32 sm:pb-16">
                 {/* --- LOGIN CARD --- */}
                 <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="w-full max-w-md px-9 py-8 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/50 md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(59,130,246,0.3)]"
+                    className="w-full max-w-md px-9 py-6 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/50 md:rounded-[1.5rem] md:shadow-[0_20px_40px_-12px_rgba(59,130,246,0.25)]"
                 >
                     {/* Header */}
                     <div className="flex flex-col items-center mb-8">
@@ -93,15 +96,7 @@ const Page = ({ flash }) => {
                             Welcome Back
                         </h2>
                         <p className="text-slate-300 text-md flex items-center gap-1">
-                            Log in to your{" "}
-                            <span className="inline-flex items-center">
-                                <img
-                                    src="/images/E1CXlogo.png"
-                                    alt="EmpireOne Logo"
-                                    className="h-4 w-auto mt-0.5 object-contain"
-                                />
-                            </span>{" "}
-                            account
+                            Log into MyEmpire
                         </p>
                     </div>
 
@@ -122,7 +117,9 @@ const Page = ({ flash }) => {
                                 <input
                                     type="text"
                                     value={data.login_id}
-                                    onChange={(e) => setData("login_id", e.target.value)}
+                                    onChange={(e) =>
+                                        setData("login_id", e.target.value)
+                                    }
                                     placeholder="22****01"
                                     className={`w-full bg-white/5 border ${errors.login_id ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                                 />
@@ -144,16 +141,24 @@ const Page = ({ flash }) => {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={data.password}
-                                    onChange={(e) => setData("password", e.target.value)}
+                                    onChange={(e) =>
+                                        setData("password", e.target.value)
+                                    }
                                     className={`w-full bg-white/5 border ${errors.password ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-14 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
                                 >
-                                    {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                                    {showPassword ? (
+                                        <FaEyeSlash size={18} />
+                                    ) : (
+                                        <FaEye size={18} />
+                                    )}
                                 </button>
                             </div>
                             {errors.password && (
@@ -172,7 +177,9 @@ const Page = ({ flash }) => {
                             </Link>
                             <button
                                 type="button"
-                                onClick={() => router.visit("/auth/forgot_password")}
+                                onClick={() =>
+                                    router.visit("/auth/forgot_password")
+                                }
                                 className="text-xs text-slate-400 hover:text-[#e85c0d] transition-colors uppercase tracking-widest font-medium"
                             >
                                 Forgot?
@@ -228,8 +235,10 @@ const Page = ({ flash }) => {
                 </motion.div>
             </div>
 
-            {/* --- STICKY FOOTER IN THE PARENT CONTAINER --- */}
-            <NavFooterSection />
+            {/* <NavFooterSection /> */}
+            <div className="relative z-10 w-full">
+                <FooterSection />
+            </div>
         </div>
     );
 };
