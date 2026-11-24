@@ -214,6 +214,7 @@ Route::prefix('accounts')->middleware(['auth', 'info.complete'])->group(function
             Route::inertia('dashboard', 'accounts/performance_management/dashboard/page');
             Route::inertia('reach', 'accounts/performance_management/reach/page');
             Route::inertia('corrective_action', 'accounts/performance_management/corrective_action/page');
+            Route::inertia('evaluation', 'accounts/performance_management/evaluation/page');
             Route::inertia('my_team', 'accounts/performance_management/my_team/page');
             Route::inertia('pip', 'accounts/performance_management/pip/page');
         });

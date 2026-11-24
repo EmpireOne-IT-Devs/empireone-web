@@ -266,7 +266,7 @@ class AccountContractController extends Controller
         $employee->load(['user', 'personal_information', 'account']);
 
         $recipientEmail = $employee->user?->email;
-     
+
 
         $personal = $employee->personal_information;
         $fullNameFromParts = trim(implode(' ', array_filter([
@@ -293,6 +293,7 @@ class AccountContractController extends Controller
                     'accountName'   => $employee->account?->name ?? '',
                     'designation'   => $employee->position ?? '',
                     'hireDate'      => $hireDate,
+                    'location_id'   => $employee->location_id ?? 1
                 ]);
             } catch (\Throwable $e) {
                 Log::error('Failed to send 8-part welcome kit after contract store', [

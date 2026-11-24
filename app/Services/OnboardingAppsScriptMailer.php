@@ -8,6 +8,20 @@ use Illuminate\Support\Facades\Log;
 
 class OnboardingAppsScriptMailer
 {
+
+    public function previewBpi()
+    {
+        return view('emails.welcome_kit.bpi-payroll-onboarding', [
+            'recipientName'      => 'Juan Dela Cruz',
+            'branchName'         => 'BPI San Carlos City Branch',
+            'deadline'           => 'November 21, 2026',
+            'kasociusUrl'        => 'https://empireone.kasocius.com/#/account/accountProfile',
+            'endorsementFileName' => 'BPI ENDORSEMENT LETTER.pdf',
+            'endorsementFileSize' => '450K',
+            'endorsementPdfUrl'   => asset('pdf/' . rawurlencode('BPI ENDORSEMENT LETTER.pdf')),
+        ]);
+    }
+
     public function sendAll(string $recipientEmail, array $data = []): array
     {
         $webAppUrl = config('services.apps_script.url');
@@ -19,6 +33,37 @@ class OnboardingAppsScriptMailer
         $recipientName = $data['recipientName'] ?? 'Colleague';
         $employeeId    = $data['employeeId'] ?? '';
         $deadline      = $data['deadline'] ?? now('Asia/Manila')->format('F j, Y, \a\t g:i A (\M\N\L).');
+        $locationId    = (int) ($data['location_id'] ?? 1);
+
+        $bpiPdfPath = public_path('pdf/BPI ENDORSEMENT LETTER.pdf');
+        $bpiPdfSize = file_exists($bpiPdfPath) ? round(filesize($bpiPdfPath) / 1024) . 'K' : '450K';
+
+        $payrollEmail = ((int) ($data['location_id'] ?? 1) === 1)
+            ? [
+                'key'     => 'bdo_payroll_onboarding',
+                'subject' => 'Onboarding Requirement – Payroll Account Opening with BDO Unibank',
+                'html'    => view('emails.welcome_kit.bdo-payroll-onboarding', array_merge([
+                    'recipientName' => $recipientName,
+                    'deadline'      => $deadline,
+                    'branchName'    => 'BDO San Carlos City Branch',
+                    'kasociusUrl'   => 'https://empireone.kasocius.com/#/account/accountProfile',
+                ], $data))->render(),
+                'attachments' => $this->bdoGuideAttachment(),
+            ]
+            : [
+                'key'     => 'bpi_payroll_onboarding',
+                'subject' => 'Onboarding Requirement – Payroll Account Opening with BPI',
+                'html'    => view('emails.welcome_kit.bpi-payroll-onboarding', array_merge([
+                    'recipientName'       => $recipientName,
+                    'deadline'            => $deadline,
+                    'branchName'          => 'Any BPI Branch Nearest Your Location',
+                    'kasociusUrl'         => 'https://empireone.kasocius.com/#/account/accountProfile',
+                    'endorsementFileName' => 'BPI ENDORSEMENT LETTER.pdf',
+                    'endorsementFileSize' => $bpiPdfSize,
+                    'endorsementPdfUrl'   => asset('pdf/' . rawurlencode('BPI ENDORSEMENT LETTER.pdf')),
+                ], $data))->render(),
+                'attachments' => $this->bpiEndorsementAttachment(),
+            ];
 
         $templates = [
             [
@@ -80,17 +125,7 @@ class OnboardingAppsScriptMailer
                     'kasociusUrl'   => 'https://empireone.kasocius.com/#/',
                 ], $data))->render(),
             ],
-            [
-                'key'     => 'bdo_payroll_onboarding',
-                'subject' => 'Onboarding Requirement – Payroll Account Opening with BDO Unibank',
-                'html'    => view('emails.welcome_kit.bdo-payroll-onboarding', array_merge([
-                    'recipientName' => $recipientName,
-                    'deadline'      => $deadline,
-                    'branchName'    => 'BDO San Carlos City Branch',
-                    'kasociusUrl'   => 'https://empireone.kasocius.com/#/account/accountProfile',
-                ], $data))->render(),
-                'attachments' => $this->bdoGuideAttachment(),
-            ],
+            $payrollEmail,
             [
                 'key'     => 'company_id_request',
                 'subject' => 'Action Required: Company ID Request – EmpireOneCX Community',
@@ -140,6 +175,23 @@ class OnboardingAppsScriptMailer
         }
 
         return $decoded;
+    }
+
+    protected function bpiEndorsementAttachment(): array
+    {
+        $pdfPath = storage_path('app/public/guides/BPI ENDORSEMENT LETTER.pdf');
+
+        if (!file_exists($pdfPath)) {
+            return [];
+        }
+
+        return [
+            [
+                'filename'  => 'BDO ONLINE APPLICATION GUIDE.pdf',
+                'mime_type' => 'application/pdf',
+                'base64'    => base64_encode(file_get_contents($pdfPath)),
+            ],
+        ];
     }
 
     private function markKitSent(string $recipientEmail, array $data): void

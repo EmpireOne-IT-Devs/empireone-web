@@ -9,7 +9,6 @@ const buildRecipientName = (data) => {
     const middle = data?.personal_information?.middle_name?.trim() || "";
     const last = data?.personal_information?.last_name?.trim() || "";
     const fullName = [first, middle, last].filter(Boolean).join(" ");
-
     return (
         fullName ||
         data?.user?.name?.trim() ||
@@ -75,11 +74,12 @@ export default function SendWelcomeKitSection({ props_data }) {
 
     const recipientEmail = resolveRecipientEmail(props_data);
     const recipientName = buildRecipientName(props_data);
-    const employeeId = resolveEmployeeId(props_data) || "—";
+    const employeeId = props_data?.user?.account_employee?.location_id || "—";
     const accountName = resolveAccountName(props_data) || "—";
     const designation = resolveDesignation(props_data) || "—";
     const hireDate = resolveHireDate(props_data) || "—";
-    console.log("accountName", props_data?.user?.account_employee?.is_kit_sent);
+    
+
     const handleClose = () => {
         if (loading) return;
         setOpen(false);
@@ -108,7 +108,8 @@ export default function SendWelcomeKitSection({ props_data }) {
             const payload = {
                 email: recipientEmail,
                 recipient_name: recipientName,
-                employee_id: resolveEmployeeId(props_data),
+                location_id: props_data?.user?.account_employee?.location_id,
+                employee_id: employeeId,
                 account_name: resolveAccountName(props_data),
                 designation: resolveDesignation(props_data),
                 hire_date: resolveHireDate(props_data),

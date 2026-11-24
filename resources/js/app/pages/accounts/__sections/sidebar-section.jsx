@@ -95,6 +95,10 @@ export default function SidebarSection() {
             name: "Corrective Action",
             href: `/accounts/${account_role}/performance_management/corrective_action`,
         },
+        {
+            name: "Evaluation",
+            href: `/accounts/${account_role}/performance_management/evaluation`,
+        },
     ].map((child) => ({
         ...child,
         current: currentPathname === child.href,

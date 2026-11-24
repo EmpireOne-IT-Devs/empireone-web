@@ -94,22 +94,25 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/onboarding/bpi-preview', [OnboardingAppsScriptMailer::class, 'previewBpi']);
 
 Route::post('/onboarding/send_all_welcome_kit', function (Request $request, OnboardingAppsScriptMailer $mailer) {
     $validated = $request->validate([
         'email'          => ['required', 'email'],
-        'recipient_name' => ['nullable', 'string', 'max:120'],
-        'employee_id'    => ['nullable', 'string', 'max:50'],
-        'account_name'   => ['nullable', 'string', 'max:120'],
-        'designation'    => ['nullable', 'string', 'max:150'],
-        'hire_date'      => ['nullable', 'string', 'max:100'],
+        'recipient_name' => ['nullable', 'string'],
+        'employee_id'    => ['nullable', 'string'],
+        'account_name'   => ['nullable', 'string'],
+        'designation'    => ['nullable', 'string'],
+        'hire_date'      => ['nullable', 'string'],
+        'location_id'      => ['nullable'],
     ]);
 
     $result = $mailer->sendAll($validated['email'], [
-        'recipientName' => $validated['recipient_name'] ?? 'Colleague',
-        'employeeId'    => $validated['employee_id'] ?? '26111616',
-        'accountName'   => $validated['account_name'] ?? 'Latham',
-        'designation'   => $validated['designation'] ?? 'Customer Service Representative',
+        'location_id'      => $validated['location_id'],
+        'recipientName' => $validated['recipient_name'] ?? '',
+        'employeeId'    => $validated['employee_id'] ?? '',
+        'accountName'   => $validated['account_name'] ?? '',
+        'designation'   => $validated['designation'] ?? '',
         'hireDate'      => $validated['hire_date'] ?? now('Asia/Manila')->format('F j, Y'),
     ]);
 
