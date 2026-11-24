@@ -7,6 +7,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import NavFooterSection from "../../landing_page/sections/nav-footer-section";
 import FooterSection from "../../landing_page/sections/footer-section";
 import HeaderSection from "../../landing_page/sections/header-section";
+import ApplicationFooterSection from "../../landing_page/sections/application-footer-section";
 
 const Page = ({ flash }) => {
     const params = new URLSearchParams(location.search);
@@ -237,7 +238,8 @@ const Page = ({ flash }) => {
 
             {/* <NavFooterSection /> */}
             <div className="relative z-10 w-full">
-                <FooterSection />
+                {/* <FooterSection /> */}
+                <ApplicationFooterSection/>
             </div>
         </div>
     );
