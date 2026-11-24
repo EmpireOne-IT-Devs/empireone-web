@@ -97,7 +97,7 @@ const Page = ({ flash }) => {
                             Welcome Back
                         </h2>
                         <p className="text-slate-300 text-md flex items-center gap-1">
-                            Log into MyEmpire
+                            Log into <p className="text-orange-400">MyEmpire</p>
                         </p>
                     </div>
 
