@@ -717,11 +717,15 @@ export default function SidebarSection() {
             >
                 <div className="flex h-14 shrink-0 items-center justify-center border-b border-gray-200 px-3">
                     <img
-                        alt="Logo"
-                        src="/images/E1CXlogo.png"
+                        alt={desktopCollapsed ? "EmpireOne E1" : "EmpireOneCX"}
+                        src={
+                            desktopCollapsed
+                                ? "/images/E1Icon.png"
+                                : "/images/E1CXlogo.png"
+                        }
                         className={classNames(
-                            "w-auto transition-all duration-300",
-                            desktopCollapsed ? "h-7" : "h-9",
+                            "object-contain transition-all duration-300",
+                            desktopCollapsed ? "h-7 w-7" : "h-9 w-auto",
                         )}
                     />
                 </div>
