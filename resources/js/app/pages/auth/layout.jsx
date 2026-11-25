@@ -77,9 +77,9 @@ export default function AuthLayout({ children }) {
                             Work better, together.
                         </h2>
                         <p className="mt-4 max-w-md text-sm leading-7 text-white/85 sm:text-base">
-                            Your all-in-one integrated management system for
-                            HR, ticketing, activities, and employee engagement
-                            — built for modern teams.
+                            Delivering outstanding customer support, efficient
+                            outsourcing solutions, and meaningful client
+                            connections that drive business growth.
                         </p>
                         <div className="mt-8 flex items-center gap-3 text-xs text-white/60">
                             <span className="h-1.5 w-1.5 rounded-full bg-white/70" />
