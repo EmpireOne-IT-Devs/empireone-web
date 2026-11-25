@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-    FaEnvelope,
-    FaLock,
-    FaEye,
-    FaEyeSlash,
-    FaShieldAlt,
-    FaCheckCircle,
-    FaExclamationTriangle,
-} from "react-icons/fa";
-import { Head, useForm, Link } from "@inertiajs/react";
+import React, { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { FaEnvelope, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { useDispatch } from "react-redux";
 import { setAlert } from "@/app/redux/app-slice";
+import AuthLayout from "@/app/pages/auth/layout";
 
-export default function ResetPassword({ token, email, flash }) {
+export default function ResetPassword({ token, email }) {
     const dispatch = useDispatch();
+    const reduceMotion = useReducedMotion();
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,
@@ -24,17 +18,6 @@ export default function ResetPassword({ token, email, flash }) {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    // Color Palette Constants
-    const colors = {
-        darkNavy: "#1a0b3b",
-        electricBlue: "#e85c0d",
-        cyan: "#00FFFF",
-        deepPurple: "#5a3d9a",
-        mutedPurple: "#7b52c8",
-        blue: "#3b82f6",
-        orange: "#e85c0d",
-    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -48,10 +31,9 @@ export default function ResetPassword({ token, email, flash }) {
                     }),
                 );
             },
-            onError: async (errors) => {
-                // Optionally, you can pass the server validation errors to your alert
+            onError: async (formErrors) => {
                 const message =
-                    errors.email || "Something went wrong. Please try again.";
+                    formErrors.email || "Something went wrong. Please try again.";
                 await dispatch(
                     setAlert({
                         type: "error",
@@ -63,148 +45,154 @@ export default function ResetPassword({ token, email, flash }) {
     };
 
     return (
-        <div
-            className={`min-h-screen flex items-center justify-center font-sans overflow-hidden relative`}
-            style={{
-                background: `linear-gradient(135deg, ${colors.deepPurple} 0%, #0d1b4b 50%, #0a0a2e 50%, ${colors.orange} 150%)`,
-            }}
-        >
+        <AuthLayout>
             <Head title="Reset Password" />
-
-            {/* --- INTERACTIVE BACKGROUND --- */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* Large Blurred Orbs */}
-                <motion.div
-                    animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-                    transition={{
-                        duration: 10,
-                        repeat: Infinity,
-                        ease: "linear",
-                    }}
-                    className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-[130px] opacity-20"
-                    style={{ backgroundColor: colors.deepPurple }}
-                />
-                <motion.div
-                    animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
-                    transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "linear",
-                    }}
-                    className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[130px] opacity-20"
-                    style={{ backgroundColor: colors.electricBlue }}
-                />
-            </div>
-
-            {/* --- RESET PASSWORD CARD --- */}
             <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                // Changed border and rounded classes here for mobile responsiveness
-                className="relative z-10 w-full max-w-md p-10 md:bg-white/5 md:backdrop-blur-2xl border-0 md:border md:border-white/10  md:rounded-[2rem] md:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
+                initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.35 }}
+                className="w-full max-w-md"
             >
-                {/* Header */}
-                <div className="flex flex-col items-center mb-8">
-                    <motion.div
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                        }}
-                        className="text-5xl mb-6"
-                        style={{
-                            color: colors.orange,
-                            filter: `drop-shadow(0 0 15px ${colors.orange}66)`,
-                        }}
-                    >
-                        <FaShieldAlt />
-                    </motion.div>
-
-                    <h2 className="text-3xl font-bold text-white tracking-tight mb-2 text-center">
-                        Secure Account
-                    </h2>
-                    <p className="text-slate-400 text-sm text-center">
+                <header className="mb-8 flex flex-col items-center text-center">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-violet-300 bg-white shadow-sm">
+                        <img
+                            src="/images/E1Icon.png"
+                            alt=""
+                            className="h-12 w-12 object-contain"
+                        />
+                    </div>
+                    <h1 className="text-xl font-semibold text-violet-700 sm:text-2xl">
+                        Reset Password
+                    </h1>
+                    <p className="mt-2 text-sm text-gray-500">
                         Create a new, strong password.
                     </p>
-                </div>
+                </header>
 
                 <form onSubmit={submit} className="space-y-5">
-                    {/* Email (Usually Read-only in Reset context, but kept editable as per standard Breeze) */}
-                    <div className="group space-y-2">
-                          <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
+                    <div className="space-y-2">
+                        <label
+                            htmlFor="email"
+                            className="ml-1 block text-xs font-medium text-violet-700"
+                        >
                             Email Address
                         </label>
                         <div className="relative">
-                            <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
+                            <FaEnvelope
+                                aria-hidden="true"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                            />
                             <input
                                 id="email"
                                 type="email"
                                 name="email"
+                                autoComplete="email"
                                 value={data.email}
                                 onChange={(e) =>
                                     setData("email", e.target.value)
                                 }
-                                  className={`w-full bg-white/5 border ${errors.email ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
-                                readOnly // Optional: Usually you don't want them changing the email on the reset token page
+                                readOnly
+                                aria-invalid={Boolean(errors.email)}
+                                aria-describedby={
+                                    errors.email ? "email-error" : undefined
+                                }
+                                className={`w-full rounded-xl border bg-white py-3 pl-11 pr-4 text-sm text-gray-900 outline-none transition focus:ring-2 focus:ring-violet-200 read-only:cursor-not-allowed read-only:bg-gray-50 ${
+                                    errors.email
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-violet-200 focus:border-violet-500"
+                                }`}
                             />
                         </div>
                         {errors.email && (
-                            <p className="text-red-500 text-xs ml-1">
+                            <p
+                                id="email-error"
+                                className="ml-1 text-xs text-red-600"
+                            >
                                 {errors.email}
                             </p>
                         )}
                     </div>
 
-                    {/* New Password */}
-                    <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
+                    <div className="space-y-2">
+                        <label
+                            htmlFor="password"
+                            className="ml-1 block text-xs font-medium text-violet-700"
+                        >
                             New Password
                         </label>
                         <div className="relative">
-                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
+                            <FaLock
+                                aria-hidden="true"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                            />
                             <input
                                 id="password"
                                 type={showPassword ? "text" : "password"}
                                 name="password"
+                                autoComplete="new-password"
                                 value={data.password}
                                 onChange={(e) =>
                                     setData("password", e.target.value)
                                 }
-                               className={`w-full bg-white/5 border ${errors.password ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
-                                placeholder="••••••••"
+                                aria-invalid={Boolean(errors.password)}
+                                aria-describedby={
+                                    errors.password
+                                        ? "password-error"
+                                        : undefined
+                                }
+                                className={`w-full rounded-xl border bg-white py-3 pl-11 pr-12 text-sm text-gray-900 outline-none transition focus:ring-2 focus:ring-violet-200 ${
+                                    errors.password
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-violet-200 focus:border-violet-500"
+                                }`}
+                                placeholder="Enter your new password"
                                 autoFocus
                             />
                             <button
                                 type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                                onClick={() =>
+                                    setShowPassword((visible) => !visible)
+                                }
+                                aria-label={
+                                    showPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                                aria-pressed={showPassword}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-violet-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
                             >
-                                {showPassword ? (
-                                    <FaEyeSlash size={18} />
-                                ) : (
-                                    <FaEye size={18} />
-                                )}
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
                             </button>
                         </div>
                         {errors.password && (
-                            <p className="text-red-500 text-xs ml-1">
+                            <p
+                                id="password-error"
+                                className="ml-1 text-xs text-red-600"
+                            >
                                 {errors.password}
                             </p>
                         )}
                     </div>
 
-                    {/* Confirm Password */}
-                    <div className="group space-y-2">
-                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-1 group-focus-within:text-[#e85c0d] transition-colors">
+                    <div className="space-y-2">
+                        <label
+                            htmlFor="password_confirmation"
+                            className="ml-1 block text-xs font-medium text-violet-700"
+                        >
                             Confirm Password
                         </label>
                         <div className="relative">
-                            <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#e85c0d] transition-colors" />
+                            <FaLock
+                                aria-hidden="true"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                            />
                             <input
                                 id="password_confirmation"
-                                type={showConfirmPassword ? "text" : "password"}
+                                type={
+                                    showConfirmPassword ? "text" : "password"
+                                }
                                 name="password_confirmation"
+                                autoComplete="new-password"
                                 value={data.password_confirmation}
                                 onChange={(e) =>
                                     setData(
@@ -212,67 +200,80 @@ export default function ResetPassword({ token, email, flash }) {
                                         e.target.value,
                                     )
                                 }
-                            className={`w-full bg-white/5 border ${errors.password_confirmation ? "border-red-500" : "border-white/10"} rounded-xl py-4 pl-12 pr-4 text-white outline-none focus:border-[#e85c0d] focus:ring-4 focus:ring-[#e85c0d]/10 transition-all placeholder:text-slate-600`}
-                                placeholder="••••••••"
+                                aria-invalid={Boolean(
+                                    errors.password_confirmation,
+                                )}
+                                aria-describedby={
+                                    errors.password_confirmation
+                                        ? "password-confirmation-error"
+                                        : undefined
+                                }
+                                className={`w-full rounded-xl border bg-white py-3 pl-11 pr-12 text-sm text-gray-900 outline-none transition focus:ring-2 focus:ring-violet-200 ${
+                                    errors.password_confirmation
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-violet-200 focus:border-violet-500"
+                                }`}
+                                placeholder="Confirm your new password"
                             />
                             <button
                                 type="button"
                                 onClick={() =>
-                                    setShowConfirmPassword(!showConfirmPassword)
+                                    setShowConfirmPassword((visible) => !visible)
                                 }
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                                aria-label={
+                                    showConfirmPassword
+                                        ? "Hide confirmation password"
+                                        : "Show confirmation password"
+                                }
+                                aria-pressed={showConfirmPassword}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-violet-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
                             >
                                 {showConfirmPassword ? (
-                                    <FaEyeSlash size={18} />
+                                    <FaEyeSlash />
                                 ) : (
-                                    <FaEye size={18} />
+                                    <FaEye />
                                 )}
                             </button>
                         </div>
                         {errors.password_confirmation && (
-                            <p className="text-red-500 text-xs ml-1">
+                            <p
+                                id="password-confirmation-error"
+                                className="ml-1 text-xs text-red-600"
+                            >
                                 {errors.password_confirmation}
                             </p>
                         )}
                     </div>
 
-                    {/* Submit Button */}
                     <motion.button
+                        type="submit"
                         disabled={processing}
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full relative flex items-center justify-center gap-3 py-4 rounded-xl font-black text-white uppercase tracking-[0.2em] overflow-hidden transition-all group mt-6"
-                           style={{
-                            background: `linear-gradient(135deg, ${colors.electricBlue}, #7c3aed, ${colors.blue})`,
-                        }}
+                        whileHover={
+                            reduceMotion || processing
+                                ? undefined
+                                : { scale: 1.01 }
+                        }
+                        whileTap={
+                            reduceMotion || processing
+                                ? undefined
+                                : { scale: 0.98 }
+                        }
+                        aria-busy={processing}
+                        className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-blue-500 py-3.5 text-sm font-semibold text-white shadow-md shadow-violet-200 transition hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                        {processing ? (
-                            <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{
-                                    repeat: Infinity,
-                                    duration: 1,
-                                    ease: "linear",
-                                }}
-                                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mx-auto"
-                            />
-                        ) : (
-                            <span>Reset Password</span>
-                        )}
+                        {processing ? "Saving..." : "Reset Password"}
                     </motion.button>
                 </form>
 
-                {/* Return Link */}
-                <div className="mt-8 flex justify-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+                <div className="mt-6 border-t border-violet-100 pt-5 text-center">
                     <Link
                         href={route("login")}
-                        className="hover:text-[#e85c0d] transition-colors underline decoration-[#e85c0d]/30 underline-offset-4"
+                        className="text-sm font-medium text-violet-600 transition-colors hover:text-violet-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
                     >
                         Return to Login
                     </Link>
                 </div>
             </motion.div>
-        </div>
+        </AuthLayout>
     );
 }
