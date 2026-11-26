@@ -11,6 +11,7 @@ import talentAcquisitionSlice from "../redux/talent-acquisition-slice";
 import activitiesSlice from "../redux/activities-slice";
 import postEventSurveySlice from "../redux/post-event-survey-slice";
 import engagementSlice from "../redux/engagement-slice";
+import recentActivitySlice from "../redux/recent-activity-slice";
 import locationEmployeeSlice from "../redux/location-employee-slice";
 import accountPendingSlice from "../redux/account-pending-slice";
 import teamRequestSlice from "../redux/team-request-slice";
@@ -42,6 +43,7 @@ const store = configureStore({
         activities: activitiesSlice,
         post_event_surveys: postEventSurveySlice,
         engagement: engagementSlice,
+        recent_activity: recentActivitySlice,
         location_employees: locationEmployeeSlice,
         account_pendings: accountPendingSlice,
         team_requests: teamRequestSlice,

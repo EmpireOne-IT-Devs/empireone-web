@@ -604,19 +604,19 @@ export default function SidebarSection() {
                     }}
                     className={classNames(
                         item.current
-                            ? "bg-purple-700 text-white"
-                            : "text-gray-700 hover:text-purple-600 hover:bg-purple-100",
+                            ? "bg-white/80 text-purple-700 shadow-sm ring-1 ring-inset ring-purple-100"
+                            : "text-slate-700 hover:text-purple-700 hover:bg-white/70",
                         isCompact ? "justify-center px-1.5" : "px-2.5",
-                        "group flex items-center gap-x-2.5 rounded-md py-1.5 w-full text-[13px] font-semibold transition-colors",
+                        "group flex items-center gap-x-2.5 rounded-lg py-2 w-full text-xs font-medium transition-colors",
                     )}
                 >
                     <item.icon
                         aria-hidden="true"
                         className={classNames(
                             item.current
-                                ? "text-white"
-                                : "text-gray-400 group-hover:text-purple-600",
-                            "w-5 h-5 shrink-0",
+                                ? "text-purple-700"
+                                : "text-gray-400 group-hover:text-purple-700",
+                            "w-4 h-4 shrink-0",
                         )}
                     />
                     {!isCompact && (
@@ -638,6 +638,31 @@ export default function SidebarSection() {
             );
         });
     };
+
+    const renderBottomNavigationBackground = () => (
+        <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+        >
+            <div className="absolute inset-0 bg-gradient-to-br from-white via-violet-50/50 to-white" />
+            <svg
+                viewBox="0 0 320 160"
+                preserveAspectRatio="none"
+                className="absolute inset-0 h-full w-full"
+            >
+                <path
+                    d="M0 82C38 79 60 101 101 97C149 92 183 48 226 39C267 30 294 40 320 49V160H0V82Z"
+                    fill="#EDE5FF"
+                    fillOpacity="0.62"
+                />
+                <path
+                    d="M0 112C39 99 72 105 112 118C157 133 198 148 242 139C278 132 300 117 320 108V160H0V112Z"
+                    fill="#F8F5FF"
+                    fillOpacity="0.9"
+                />
+            </svg>
+        </div>
+    );
 
     return (
         <>
@@ -694,8 +719,9 @@ export default function SidebarSection() {
                                         </ul>
                                     </nav>
 
-                                    <div className="mt-auto pt-3.5 border-t border-gray-200">
-                                        <ul className="space-y-1.5">
+                                    <div className="relative isolate mt-auto overflow-hidden border-t border-violet-100/80">
+                                        {renderBottomNavigationBackground()}
+                                        <ul className="relative z-10 space-y-1.5 px-2.5 py-3.5">
                                             {renderBottomItems({
                                                 isMobile: true,
                                             })}
@@ -736,8 +762,9 @@ export default function SidebarSection() {
                             {renderNavItems({ isMobile: false })}
                         </ul>
                     </nav>
-                    <div className="mt-auto pt-2.5 border-t border-gray-200">
-                        <ul className="space-y-1.5">
+                    <div className="relative isolate mt-auto overflow-hidden border-t border-violet-100/80">
+                        {renderBottomNavigationBackground()}
+                        <ul className="relative z-10 space-y-1.5 px-2.5 py-3.5">
                             {renderBottomItems({ isMobile: false })}
                         </ul>
                     </div>

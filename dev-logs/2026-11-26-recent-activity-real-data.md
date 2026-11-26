@@ -1,0 +1,39 @@
+### Phase 1: Connect dashboard recent activity to real data
+
+- **Timestamp:** 2026-11-26 22:56:51 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, 🖥️ Frontend, ⚙️ Backend, 🧪 QA
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/dashboard/_sections/recent-activity-card-section.jsx` — Replaced sample rows with real activity and loading, error, and empty states.
+  - `resources/js/app/services/recent-activity-service.js` — Fetches published company posts, the signed-in user's applications, and their tickets via existing services.
+  - `resources/js/app/redux/recent-activity-thunk.js` — Normalizes and sorts activity records by actual timestamps.
+  - `resources/js/app/redux/recent-activity-slice.js` — Stores activity items and request state.
+  - `resources/js/app/store/store.js` — Registers the new slice.
+  - `dev-logs/2026-11-26-recent-activity-real-data.md` — Records this phase and its QA results.
+- **Issues Encountered:** No unified recent-activity endpoint existed; the dashboard samples had no connection to persisted records.
+- **Resolution:** Aggregated existing company-post, authenticated ticket, and user-application services. Upcoming unpublished scheduled posts are excluded; results are sorted newest-first and limited to five.
+- **QA Checklist Result:** ✅ All applicable checks pass.
+  - JavaScript purity: ✅ Plain JavaScript/JSX only.
+  - `web.php` Inertia-only and `api.php` JSON-only: N/A — neither file changed.
+  - Form Requests for POST/PUT, policies for new resources, API Resources, reversible migrations, and backend service classes: N/A — no backend code or endpoints added.
+  - Axios services: ✅ Aggregated through existing Axios services.
+  - Async thunk/slice/store: ✅ The thunk loads and normalizes activity, the slice tracks data/loading/errors, and the reducer is registered.
+  - 422 field-level errors: N/A — no form or write request.
+  - Internal links: ✅ Uses Inertia `Link`.
+  - Persistent Layout: ✅ Existing authenticated dashboard layout is unchanged.
+  - Reusable components: ✅ Reused existing `Button` and `Skeleton`; the dashboard section is page-specific, not a Redux-connected reusable primitive.
+  - Reusable component directory checked: ✅ Existing primitives were reused; no new UI primitive was created.
+  - Naming: ✅ New service/thunk/slice files and thunk/service functions follow project conventions; no new page or React component was introduced.
+  - Slice registration: ✅ Registered in `resources/js/app/store/store.js`.
+  - Network loading state: ✅ Skeleton displayed while loading.
+  - Destructive-action confirmation: N/A — no destructive action.
+  - Inline form validation: N/A — no form.
+  - Empty state: ✅ Includes icon, heading, description, and CTA.
+  - Keyboard accessibility: ✅ Links and buttons are keyboard-operable with focus styles; browser verification not performed.
+  - Responsive layout: ✅ Uses the existing fluid dashboard card layout; browser verification not performed.
+  - Modal focus trapping: N/A — no modal.
+  - Sanctum/Axios behavior: ✅ Reuses existing Axios services and existing authenticated, user-scoped ticket/application endpoints; no auth configuration changed.
+  - API Resources/raw arrays and route primary keys: N/A — no API responses or routes added.
+  - Guarded commands: ✅ No migrations, npm build/dev scripts, destructive commands, or git commands were run.
+  - Validation: ✅ Vite transformed all five changed JavaScript modules successfully.
+- **Next Steps:** None.

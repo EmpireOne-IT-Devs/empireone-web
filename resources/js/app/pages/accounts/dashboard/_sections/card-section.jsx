@@ -1,79 +1,171 @@
 import React from "react";
+import { Link } from "@inertiajs/react";
 import {
-    FiBriefcase as Briefcase,
-    FiClipboard as Clipboard,
-    FiInbox as InboxIcon,
-    FiMail as Mail,
-} from "react-icons/fi";
-import Card from "@/app/_components/card";
+    ArrowRight,
+    BriefcaseBusiness,
+    FileCheck2,
+    Mail,
+    MessageCircle,
+    Send,
+} from "lucide-react";
 import { useSelector } from "react-redux";
+import Card from "@/app/_components/card";
 
 export default function CardSection() {
     const { data } = useSelector((store) => store.app);
     const { job_postings } = useSelector((store) => store.job_postings);
 
+    const userRole = window.location.pathname.split("/")[2];
+
+    const cards = [
+        {
+            label: "Job Openings",
+            value:
+                data?.dashboard?.total_job_opening ??
+                job_postings?.length ??
+                0,
+            caption: "Explore current opportunities",
+            href: `/accounts/${userRole}/job_openings`,
+            icon: BriefcaseBusiness,
+            iconStyle: "bg-indigo-100 text-indigo-600",
+            gradient: "from-indigo-50 via-white to-indigo-100",
+            accent: "text-indigo-700",
+            border: "border-indigo-100",
+            arrow: "border-indigo-200 text-indigo-600 hover:bg-indigo-100",
+        },
+        {
+            label: "Applications",
+            value: data?.dashboard?.total_application_submitted ?? 0,
+            caption: "Track your applications",
+            href: `/accounts/${userRole}/my_applications`,
+            icon: FileCheck2,
+            iconStyle: "bg-emerald-100 text-emerald-600",
+            gradient: "from-emerald-50 via-white to-emerald-100",
+            accent: "text-emerald-700",
+            border: "border-emerald-100",
+            arrow: "border-emerald-200 text-emerald-600 hover:bg-emerald-100",
+        },
+        {
+            label: "Job Offers",
+            value: data?.dashboard?.total_job_offer ?? 0,
+            caption: "Review your offer",
+            href: `/accounts/${userRole}/job_offers`,
+            icon: Mail,
+            iconStyle: "bg-orange-100 text-orange-600",
+            gradient: "from-orange-50 via-white to-orange-100",
+            accent: "text-orange-700",
+            border: "border-orange-100",
+            arrow: "border-orange-200 text-orange-600 hover:bg-orange-100",
+        },
+        {
+            label: "Unread Messages",
+            value: 0,
+            caption: "View your messages",
+            icon: MessageCircle,
+            iconStyle: "bg-pink-100 text-pink-600",
+            gradient: "from-pink-50 via-white to-pink-100",
+            accent: "text-pink-700",
+            border: "border-pink-100",
+            arrow: "border-pink-200 text-pink-600 hover:bg-pink-100",
+        },
+    ];
+
     return (
-        /* REMOVE 'flex' from this outer div. 
-           'grid' is much more reliable for enforcing specific column counts.
-        */
-        <div className="flex gap-3 w-full flex-wrap ">
-            {/* Total Job Openings */}
-            <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
-                <div className="flex items-start justify-between">
-                    <div className="p-3 bg-blue-50 rounded-lg text-blue-700">
-                        <Briefcase size={28} />
-                    </div>
-                    <div className="text-3xl font-bold text-blue-900">
-                        {job_postings?.length ?? 0}
-                    </div>
-                </div>
-                <div className="mt-4 text-sm font-medium text-gray-500">
-                    Total Job Openings
-                </div>
-            </Card>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {cards.map((item) => {
+                const Icon = item.icon;
 
-            <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
-                <div className="flex items-start justify-between">
-                    <div className="p-3 bg-green-50 rounded-lg text-green-600">
-                        <Clipboard size={28} />
-                    </div>
-                    <div className="text-3xl font-bold text-green-700">
-                        {data?.dashboard?.total_application_submitted ?? 0}
-                    </div>
-                </div>
-                <div className="mt-4 text-sm font-medium text-gray-500">
-                    Applications Submitted
-                </div>
-            </Card>
-            <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
-                <div className="flex items-start justify-between">
-                    <div className="p-3 bg-orange-50 rounded-lg text-orange-500">
-                        <InboxIcon size={28} />
-                    </div>
-                    <div className="text-3xl font-bold text-orange-600">
-                        {data?.dashboard?.total_job_offer ?? 0}
-                    </div>
-                </div>
-                <div className="mt-4 text-sm font-medium text-gray-500">
-                    Job Offers Received
-                </div>
-            </Card>
+                const content = (
+                    <Card
+                        key={item.label}
+                        padding="p-0"
+                        className={`group relative min-w-0 overflow-hidden rounded-2xl border ${item.border} bg-gradient-to-br ${item.gradient} shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}
+                    >
+                        {/* Decorative bottom-right shapes */}
+                        <div
+                            aria-hidden="true"
+                            className={`pointer-events-none absolute -bottom-10 -right-7 h-24 w-36 rounded-[100%] opacity-50 ${item.iconStyle}`}
+                        />
 
-            {/* Unread Messages */}
-            <Card className="p-5 border w-full flex-1 border-gray-100 shadow-sm rounded-xl bg-white h-full flex flex-col justify-between">
-                <div className="flex items-start justify-between">
-                    <div className="p-3 bg-red-50 rounded-lg text-red-500">
-                        <Mail size={28} />
-                    </div>
-                    <div className="text-3xl font-bold text-red-600">0</div>
-                </div>
-                <div className="mt-4 text-sm font-medium text-gray-500">
-                    Unread Messages
-                    <span className="text-[10px] text-gray-400 block xl:inline ml-0 xl:ml-1">
-                        (coming soon)
-                    </span>
-                </div>
-            </Card>
+                        <div
+                            aria-hidden="true"
+                            className={`pointer-events-none absolute -bottom-14 right-12 h-24 w-36 rounded-[100%] opacity-30 ${item.iconStyle}`}
+                        />
+
+                        {/* Card content */}
+                        <div className="relative flex min-h-[104px] items-center gap-3 px-3.5 py-3 sm:gap-4 sm:px-4">
+                            {/* Icon */}
+                            <div
+                                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${item.iconStyle} sm:h-14 sm:w-14`}
+                            >
+                                <Icon
+                                    aria-hidden="true"
+                                    className="h-7 w-7"
+                                    strokeWidth={2.2}
+                                />
+                            </div>
+
+                            {/* Text */}
+                            <div className="min-w-0 flex-1">
+                                <h2 className="truncate text-xs font-semibold text-slate-800">
+                                    {item.label}
+                                </h2>
+
+                                <p
+                                    className={`mt-0.5 text-2xl font-bold leading-none tracking-tight ${item.accent}`}
+                                >
+                                    {Number(item.value || 0).toLocaleString()}
+                                </p>
+
+                                {item.href ? (
+                                    <Link
+                                        href={item.href}
+                                        className={`mt-1.5 inline-flex items-center gap-1 text-[10px] font-medium sm:text-[11px] ${item.accent} transition-all hover:gap-1.5 hover:underline`}
+                                    >
+                                        <span className="truncate">
+                                            {item.caption}
+                                        </span>
+
+                                        <ArrowRight
+                                            aria-hidden="true"
+                                            className="h-3 w-3 shrink-0"
+                                        />
+                                    </Link>
+                                ) : (
+                                    <p
+                                        className={`mt-1.5 text-[10px] font-medium sm:text-[11px] ${item.accent}`}
+                                    >
+                                        {item.caption}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Circular arrow */}
+                            {item.href ? (
+                                <Link
+                                    href={item.href}
+                                    aria-label={`View ${item.label}`}
+                                    className={`absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full border bg-white/70 backdrop-blur-sm transition-all duration-200 group-hover:scale-110 ${item.arrow}`}
+                                >
+                                    <ArrowRight className="h-3.5 w-3.5" />
+                                </Link>
+                            ) : (
+                                <div
+                                    className={`absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full border bg-white/70 ${item.arrow}`}
+                                >
+                                    <ArrowRight className="h-3.5 w-3.5" />
+                                </div>
+                            )}
+                        </div>
+                    </Card>
+                );
+
+                return item.href ? (
+                    <div key={item.label}>{content}</div>
+                ) : (
+                    <div key={item.label}>{content}</div>
+                );
+            })}
         </div>
     );
 }

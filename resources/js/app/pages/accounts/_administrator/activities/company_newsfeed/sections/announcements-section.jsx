@@ -123,7 +123,7 @@ function AnnouncementCard({ announcement, index, onClick }) {
     );
 }
 
-export default function AnnouncementsSection({ onCardClick }) {
+export default function AnnouncementsSection({ onCardClick, limit = null }) {
     const dispatch = useDispatch();
     const { posts, postsLoading } = useSelector((s) => s.engagement);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
@@ -154,6 +154,10 @@ export default function AnnouncementsSection({ onCardClick }) {
                 date: formatDate(p.published_at || p.created_at),
             };
         });
+    const visibleAnnouncements =
+        Number.isInteger(limit) && limit >= 0
+            ? announcements.slice(0, limit)
+            : announcements;
 
     const handleOpen = (announcement, index) => {
         setSelectedAnnouncement(announcement);
@@ -192,7 +196,7 @@ export default function AnnouncementsSection({ onCardClick }) {
                 )}
             </div>
 
-            {postsLoading && announcements.length === 0 ? (
+            {postsLoading && visibleAnnouncements.length === 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="bg-white rounded-2xl overflow-hidden border border-gray-100/80 p-5 h-40">
                         <Skeleton />
@@ -201,7 +205,7 @@ export default function AnnouncementsSection({ onCardClick }) {
                         <Skeleton />
                     </div>
                 </div>
-            ) : announcements.length === 0 ? (
+            ) : visibleAnnouncements.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white mb-3 shadow-sm">
                         <TbSpeakerphone size={22} className="text-gray-300" />
@@ -215,7 +219,7 @@ export default function AnnouncementsSection({ onCardClick }) {
                 </div>
             ) : (
                 <div className="flex flex-col gap-4 items-start">
-                    {announcements.map((a, i) => (
+                    {visibleAnnouncements.map((a, i) => (
                         <AnnouncementCard
                             key={a.id}
                             announcement={a}

@@ -1,130 +1,208 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect } from "react";
+import { Link } from "@inertiajs/react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-    FiBell as Bell,
-    FiCheckCircle as TicketCheck,
-    FiFileText as FileText,
-    FiCalendar as CalendarDays,
-    FiChevronRight as ChevronRight,
-} from "react-icons/fi";
-import {
-    FaNewspaper as Newspaper,
-} from "react-icons/fa";
-import {
-    BsMegaphone as Megaphone,
-} from "react-icons/bs";
+    Bell,
+    CalendarDays,
+    CheckCircle2,
+    ChevronRight,
+    FileText,
+    Newspaper,
+} from "lucide-react";
+import Button from "@/app/_components/button";
+import Skeleton from "@/app/_components/skeleton";
+import { get_recent_activity_thunk } from "@/app/redux/recent-activity-thunk";
 
-const activities = [
-    {
-        title: "Company Achieves Major Milestone",
-        source: "CEO Office",
-        time: "2 hours ago",
+const activityPresentation = {
+    post: {
         icon: Newspaper,
-        gradient: "from-blue-500 to-indigo-600",
-        shadow: "shadow-blue-200",
-        sourceBg: "bg-blue-50",
-        sourceText: "text-blue-600",
+        color: "bg-blue-50 text-blue-600",
+        sourceColor: "bg-blue-50 text-blue-700",
     },
-    {
-        title: "Your ticket #TKT-1045 was resolved",
-        source: "IT Support",
-        time: "4 hours ago",
-        icon: TicketCheck,
-        gradient: "from-rose-500 to-red-600",
-        shadow: "shadow-red-200",
-        sourceBg: "bg-red-50",
-        sourceText: "text-red-500",
-    },
-    {
-        title: "Application update for Senior Developer",
-        source: "HR Team",
-        time: "1 day ago",
-        icon: FileText,
-        gradient: "from-teal-400 to-emerald-500",
-        shadow: "shadow-teal-200",
-        sourceBg: "bg-teal-50",
-        sourceText: "text-teal-600",
-    },
-    {
-        title: "New event: Tech Innovation Showcase",
-        source: "Events Team",
-        time: "2 days ago",
+    event: {
         icon: CalendarDays,
-        gradient: "from-yellow-400 to-orange-500",
-        shadow: "shadow-yellow-200",
-        sourceBg: "bg-yellow-50",
-        sourceText: "text-yellow-600",
+        color: "bg-amber-50 text-amber-600",
+        sourceColor: "bg-amber-50 text-amber-700",
     },
-    {
-        title: "Q1 Performance Review Cycle Begins",
-        source: "HR Central",
-        time: "3 days ago",
-        icon: Megaphone,
-        gradient: "from-violet-500 to-purple-600",
-        shadow: "shadow-purple-200",
-        sourceBg: "bg-violet-50",
-        sourceText: "text-violet-600",
+    ticket: {
+        icon: CheckCircle2,
+        color: "bg-rose-50 text-rose-600",
+        sourceColor: "bg-rose-50 text-rose-700",
     },
-];
+    application: {
+        icon: FileText,
+        color: "bg-emerald-50 text-emerald-600",
+        sourceColor: "bg-emerald-50 text-emerald-700",
+    },
+};
+
+function formatRelativeTime(timestamp) {
+    const seconds = Math.round((timestamp - Date.now()) / 1000);
+    const units = [
+        ["year", 31536000],
+        ["month", 2592000],
+        ["week", 604800],
+        ["day", 86400],
+        ["hour", 3600],
+        ["minute", 60],
+    ];
+    const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+    for (const [unit, secondsPerUnit] of units) {
+        if (Math.abs(seconds) >= secondsPerUnit) {
+            return formatter.format(Math.round(seconds / secondsPerUnit), unit);
+        }
+    }
+
+    return formatter.format(seconds, "second");
+}
 
 export default function RecentActivityCardSection() {
-    const [hovered, setHovered] = useState(null);
+    const dispatch = useDispatch();
+    const { items: activities, loading, error } = useSelector(
+        (store) => store.recent_activity,
+    );
+    const userRole = window.location.pathname.split("/")[2];
+    const activitiesPath = `/accounts/${userRole}/activities/home`;
+    const loadActivities = useCallback(
+        () => dispatch(get_recent_activity_thunk()),
+        [dispatch],
+    );
+
+    useEffect(() => {
+        loadActivities();
+    }, [loadActivities]);
+
+    const errorMessage =
+        typeof error === "string"
+            ? error
+            : error?.message || "Unable to load recent activity.";
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <section className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 sm:px-5">
                 <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center">
-                        <Bell size={15} className="text-gray-600" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50">
+                        <Bell
+                            aria-hidden="true"
+                            className="h-4 w-4 text-violet-600"
+                        />
                     </div>
-                    <span className="text-sm font-bold text-gray-800">Recent Activity</span>
+                    <div>
+                        <h2 className="text-sm font-bold text-slate-900">
+                            Recent Activity
+                        </h2>
+                        <p className="text-xs text-slate-500">
+                            Your latest updates
+                        </p>
+                    </div>
                 </div>
-                <button className="text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full transition-colors">
-                    View All
-                </button>
+                <Link
+                    href={activitiesPath}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+                >
+                    View all
+                    <ChevronRight
+                        aria-hidden="true"
+                        className="h-3.5 w-3.5"
+                    />
+                </Link>
             </div>
 
-            {/* Activity list */}
-            <div className="flex flex-col gap-1 p-3">
-                {activities.map((item, index) => {
-                    const Icon = item.icon;
-                    return (
-                        <div
-                            key={index}
-                            onMouseEnter={() => setHovered(index)}
-                            onMouseLeave={() => setHovered(null)}
-                            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 ${
-                                hovered === index ? "bg-gray-50 scale-[1.01]" : "bg-white"
-                            }`}
-                        >
-                            {/* Gradient icon bubble */}
-                            <div
-                                className={`flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md ${item.shadow}`}
+            {loading ? (
+                <div
+                    role="status"
+                    aria-label="Loading recent activity"
+                    className="space-y-4 p-4"
+                >
+                    <Skeleton variant="text" lines={4} />
+                </div>
+            ) : error ? (
+                <div role="alert" className="space-y-3 px-4 py-5">
+                    <p className="text-sm text-rose-700">{errorMessage}</p>
+                    <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={loadActivities}
+                        loading={loading}
+                        className="gap-2"
+                    >
+                        Try again
+                    </Button>
+                </div>
+            ) : activities.length === 0 ? (
+                <div className="flex flex-col items-center px-5 py-8 text-center">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
+                        <Bell aria-hidden="true" className="h-5 w-5" />
+                    </div>
+                    <h3 className="mt-3 text-sm font-semibold text-slate-800">
+                        No recent activity
+                    </h3>
+                    <p className="mt-1 max-w-xs text-xs text-slate-500">
+                        New posts, applications, and ticket updates will appear
+                        here.
+                    </p>
+                    <Link
+                        href={activitiesPath}
+                        className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-violet-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+                    >
+                        Browse activities
+                        <ChevronRight
+                            aria-hidden="true"
+                            className="h-3.5 w-3.5"
+                        />
+                    </Link>
+                </div>
+            ) : (
+                <ul className="space-y-1 p-3">
+                    {activities.map((item, index) => {
+                        const presentation =
+                            activityPresentation[item.type] ||
+                            activityPresentation.post;
+                        const Icon = presentation.icon;
+
+                        return (
+                            <li
+                                key={item.id}
+                                className="flex gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-violet-50/60"
                             >
-                                <Icon size={16} className="text-white" />
-                            </div>
-
-                            {/* Content */}
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-gray-800 truncate leading-snug">
-                                    {item.title}
-                                </p>
-                                <div className="flex items-center gap-1.5 mt-0.5">
-                                    <span className={`text-xs font-medium px-1.5 py-0.5 rounded-md ${item.sourceBg} ${item.sourceText}`}>
-                                        {item.source}
+                                <div className="relative flex w-9 shrink-0 justify-center">
+                                    {index < activities.length - 1 && (
+                                        <span
+                                            aria-hidden="true"
+                                            className="absolute bottom-[-1.25rem] top-8 w-px bg-violet-100"
+                                        />
+                                    )}
+                                    <span
+                                        className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full ${presentation.color}`}
+                                    >
+                                        <Icon
+                                            aria-hidden="true"
+                                            className="h-4 w-4"
+                                        />
                                     </span>
-                                    <div className="w-1 h-1 rounded-full bg-gray-300" />
-                                    <span className="text-xs text-gray-400">{item.time}</span>
                                 </div>
-                            </div>
 
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${hovered === index ? "bg-gray-200" : "bg-gray-100"}`}>
-                                <ChevronRight size={13} className="text-gray-500" />
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-xs font-semibold leading-snug text-slate-800">
+                                        {item.title}
+                                    </p>
+                                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                                        <span
+                                            className={`rounded-md px-1.5 py-0.5 text-[10px] font-medium ${presentation.sourceColor}`}
+                                        >
+                                            {item.source}
+                                        </span>
+                                        <span className="text-[11px] text-slate-400">
+                                            {formatRelativeTime(item.timestamp)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ul>
+            )}
+        </section>
     );
 }

@@ -171,8 +171,16 @@ export default function EngagementCardSection({ onCardClick, limit = null }) {
                     ))}
                 </div>
             ) : items.length === 0 ? (
-                <div className="flex items-center justify-center py-16 text-sm text-gray-400">
-                    No events or polls published yet.
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-gray-400">
+                        <Calendar size={20} aria-hidden="true" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-gray-700">
+                        No events or polls yet
+                    </h3>
+                    <p className="mt-1 max-w-xs text-sm text-gray-500">
+                        New company activities will appear here when published.
+                    </p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

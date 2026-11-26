@@ -1,0 +1,23 @@
+### Phase 1: Fix engagement card challenge link
+
+- **Timestamp:** 2026-11-26 23:15:13 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, 🖥️ Frontend, 🧪 QA
+- **Files Modified/Created:**
+  - `resources/js/app/pages/accounts/dashboard/_sections/engagement-card-section.jsx` — Mapped administrator and employee roles to their existing challenge routes; hid the link when no route exists for the role.
+  - `dev-logs/2026-11-26-engagement-challenge-link.md` — Recorded the fix and QA results.
+- **Issues Encountered:** The dashboard link used `/rnr/challenge_events/join`, which does not match the registered administrator route.
+- **Resolution:** Administrator now links to `/rnr/challenges_events/join`; employee links to its existing `/rnr/challenge_event` page.
+- **QA Checklist Result:** ✅ All applicable checks pass.
+  - JavaScript purity: ✅ Plain JSX.
+  - Backend routing, requests, policies, resources, migrations, and services: N/A — no backend changes; verified both destination routes already exist.
+  - Frontend API/service/thunk/slice flow and 422 handling: N/A — no data flow or form changes.
+  - Navigation: ✅ Uses Inertia `Link`; destination is role-specific and valid.
+  - Layout, reusable components, and naming: ✅ Existing layout and components are unchanged; no new component or Redux files.
+  - Loading, destructive-action confirmation, validation, empty state, and modal focus: N/A — no related behavior changed.
+  - Keyboard access: ✅ Link retains visible focus styles; browser verification not performed.
+  - Responsive layout: ✅ No layout changes; browser verification not performed.
+  - Security: ✅ No new routes or API responses; no primary keys in the paths.
+  - Guarded commands: ✅ No guarded commands or git commands run.
+  - Validation: ✅ Vite transformed the updated engagement card successfully.
+- **Next Steps:** None.

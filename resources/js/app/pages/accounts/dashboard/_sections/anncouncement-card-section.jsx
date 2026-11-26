@@ -1,15 +1,11 @@
 import React, { useState } from "react";
-import {
-    BsMegaphone as Megaphone,
-} from "react-icons/bs";
+import { BsMegaphone as Megaphone } from "react-icons/bs";
 import {
     FiHeart as Heart,
     FiAlertTriangle as AlertTriangle,
     FiChevronRight as ChevronRight,
 } from "react-icons/fi";
-import {
-    IoSparkles as Sparkles,
-} from "react-icons/io5";
+import { IoSparkles as Sparkles } from "react-icons/io5";
 
 const announcements = [
     {
@@ -63,7 +59,7 @@ export default function AnnouncementCardSection() {
                 <span className="text-xs font-semibold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
                     {announcements.length} alerts
                 </span>
-            </div>  
+            </div>
             {/* Items */}
             <div className="flex flex-col gap-2 p-3">
                 {announcements.map((item, index) => (
@@ -109,13 +105,6 @@ export default function AnnouncementCardSection() {
                         </div>
                     </div>
                 ))}
-            </div>
-
-            {/* Footer */}
-            <div className="mx-3 mb-5 py-2.5 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-100 text-center">
-                <button className="text-xs font-semibold text-gray-500 hover:text-blue-600 transition-colors">
-                    View all announcements →
-                </button>
             </div>
         </div>
     );
