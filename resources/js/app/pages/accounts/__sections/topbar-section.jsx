@@ -106,16 +106,14 @@ export default function TopbarSection() {
                                 </Menu.Item>
                                 <Menu.Item>
                                     {({ active }) => (
-                                        <button
-                                            type="button"
-                                            onClick={handleLogout}
-                                            className={classNames(
-                                                active ? "bg-gray-100" : "",
-                                                "w-full text-left block px-3 py-1 text-sm text-gray-900",
-                                            )}
+                                        <Link
+                                            method="post"
+                                            href={route("logout")}
+                                            as="button"
+                                            className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
                                         >
-                                            Sign Out
-                                        </button>
+                                            Logout
+                                        </Link>
                                     )}
                                 </Menu.Item>
                             </Menu.Items>
