@@ -1,0 +1,24 @@
+### Phase 1: Fix topbar logout and stale account after switching users
+
+- **Timestamp:** 2026-11-27 18:55:34 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, ⚙️ Backend, 🧪 QA
+- **Files Modified/Created:**
+  - `app/Http/Controllers/Auth/AuthenticatedSessionController.php` — Login and logout return `Inertia::location()` so the browser does a full page load and the Redux store is recreated. Removed the unused `RedirectResponse` import.
+  - `dev-logs/2026-11-27-topbar-logout-fix.md` — Recorded the phase and QA results.
+- **Issues Encountered:**
+  - The controller was back to plain redirects, so the earlier fix was not in the code and the first account still showed after switching users.
+  - `resources/js/app/pages/accounts/__sections/topbar-section.jsx` had already been corrected to a single Logout link before this phase ran, so it was not modified. Its `handleLogout` function is now unused.
+- **Resolution:** Re-applied the full-page-load response for login and logout. The existing tests in `tests/Unit/SharedChallengeLoginTest.php` already covered this and needed no change.
+- **QA Checklist Result:** ✅ All applicable checks pass.
+  - JavaScript purity: N/A — no JavaScript changed.
+  - `web.php` / `api.php`: ✅ Not modified.
+  - Form Requests, Policies, API Resources, migrations, backend service classes: N/A — no new endpoint or data operation.
+  - Services, thunks, slices, store registration, 422 handling: N/A — no frontend data flow changed.
+  - Internal links, persistent layout, reusable components, naming: N/A — no frontend files changed.
+  - Loading state, destructive confirmation, inline validation, empty state, modal focus: N/A — no UI changed.
+  - Keyboard access and responsive layout: N/A — no UI changed.
+  - Security: ✅ Login still regenerates the session; logout still invalidates the session and regenerates the CSRF token; the intended-URL redirect is preserved.
+  - Guarded commands: ✅ No migrations, npm build/dev, destructive commands, or git commands were run.
+  - Validation: ✅ `php artisan test tests/Unit/SharedChallengeLoginTest.php` — 10 passed, 49 assertions. Account switching in a browser was not verified.
+- **Next Steps:** Verify in the browser: log in as account A, log out, log in as account B, and confirm B's name and data appear without a refresh.
