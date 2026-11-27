@@ -45,6 +45,7 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
     const dispatch = useDispatch();
     const { data } = useSelector((state) => state.app);
 
+    const { leaders } = useSelector((store) => store.human_resources);
     console.log('props_datasssss', data)
     const {
         register,
@@ -58,11 +59,11 @@ export default function EmployeeInformationForm({ props_data, open, setOpen }) {
     // Memoized options for drop-down performance
     const leaderOptions = useMemo(
         () =>
-            data?.leaders?.map((item) => ({
+            leaders?.map((item) => ({
                 label: item?.user?.name || '',
                 value: item.id,
             })) || [],
-        [data?.leaders]
+        [leaders]
     );
 
     const accountOptions = useMemo(

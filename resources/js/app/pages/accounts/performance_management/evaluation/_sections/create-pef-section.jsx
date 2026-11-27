@@ -1,593 +1,496 @@
 import Button from "@/app/_components/button";
-import { setAlert } from "@/app/redux/app-slice";
-import { get_app_data_thunk, get_user_by_id_thunk } from "@/app/redux/app-thunk";
-import { create_performance_evaluation_service } from "@/app/services/performance-evaluation-service";
-import store from "@/app/store/store";
-import { router } from "@inertiajs/react";
-import moment from "moment";
-import React, { useEffect } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import Modal from "@/app/_components/modal";
+import React, { useMemo, useState } from "react";
 
-const CreatePEFSection = () => {
-    const { user } = useSelector((store) => store.app);
-    const dispatch = useDispatch();
-    const params = new URLSearchParams(window.location.search);
-    const evaluation_period = params.get("evaluation_period");
+const EVALUATION_MILESTONES = [
+    "3rd Month (Mid-Probationary)",
+    "5th Month (Regularization)",
+];
 
-    const {
-        register,
-        control,
-        handleSubmit,
-        watch,
-        setValue,
-        reset,
-        formState: { errors, isSubmitting },
-    } = useForm({
-        defaultValues: {
-            employee_name: "",
-            supervisor_name: "",
-            user_id: "",
-            supervisor_id: "",
-            date_of_assessment: moment().format("YYYY-MM-DD"),
-            objectives: [
-                { title: "", action_items: "", outcomes: "", mgr_rating: "" },
-            ],
-            // CHANGED: performance is now an array of objects matching your backend
-            performances: [
-                {
-                    title: "Job Knowledge",
-                    action_items:
-                        "Application, Technical and Professional skills",
-                    mgr_rating: "",
-                },
-                {
-                    title: "Communication Skills",
-                    action_items:
-                        "Communicates effectively to clients/individuals",
-                    mgr_rating: "",
-                },
-                {
-                    title: "Management Skills",
-                    action_items: "Leads team to get desired results",
-                    mgr_rating: "",
-                },
-                {
-                    title: "Organizing Skills",
-                    action_items: "Sets priorities for tasks and commitments",
-                    mgr_rating: "",
-                },
-                {
-                    title: "Initiative",
-                    action_items: "Commitment to seek improvements",
-                    mgr_rating: "",
-                },
-                {
-                    title: "Discipline",
-                    action_items: "Adherence to provisions in Code of Conduct",
-                    mgr_rating: "",
-                },
-                {
-                    title: "Attendance",
-                    action_items:
-                        "Adherence to provisions in Attendance policy",
-                    mgr_rating: "",
-                },
-            ],
-            remarks: "",
-            recommendation: "",
-        },
-    });
+const SCORE_OPTIONS = [
+    { value: 4, label: "4 - Exceed Expectation" },
+    { value: 3, label: "3 - Meets Expectation" },
+    { value: 2, label: "2 - Needs Improvement" },
+    { value: 1, label: "1 - Unsatisfactory" },
+];
 
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "objectives",
-    });
-
-    // Watch form values for real-time calculations
-    const watchedObjectives = watch("objectives");
-    const watchedPerformances = watch("performances");
-
-    useEffect(() => {
-        setValue(
-            "employee_name",
-            `${user?.personal_information?.first_name} ${user?.personal_information?.last_name}`,
-        );
-        setValue(
-            "supervisor_name",
-            `${user?.subordinate?.leader?.user?.personal_information?.first_name} ${user?.subordinate?.leader?.user?.personal_information?.last_name}`,
-        );
-        setValue("user_id", user?.personal_information?.user_id);
-        setValue(
-            "supervisor_id",
-            user?.subordinate?.leader?.user?.personal_information?.user_id,
-        );
-    }, [user?.subordinate]);
-
-    // --- INTERACTIVE CALCULATION LOGIC ---
-    const getSection1Score = () => {
-        const ratings = watchedObjectives
-            .map((obj) => parseFloat(obj.mgr_rating))
-            .filter((val) => !isNaN(val) && val > 0);
-
-        if (ratings.length === 0) return 0;
-        return (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2);
-    };
-
-    const getSection2Score = () => {
-        // CHANGED: watchedPerformances is now an array, we map over mgr_rating
-        const ratings = watchedPerformances
-            .map((item) => parseFloat(item.mgr_rating))
-            .filter((val) => !isNaN(val) && val > 0);
-
-        if (ratings.length === 0) return 0;
-        return (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2);
-    };
-
-    const section1Score = getSection1Score();
-    const section2Score = getSection2Score();
-    const totalScore =
-        section1Score > 0 && section2Score > 0
-            ? (
-                (parseFloat(section1Score) + parseFloat(section2Score)) /
-                2
-            ).toFixed(2)
-            : 0;
-
-    const getScoreColor = (score) => {
-        if (score >= 4.5) return "text-green-600 bg-green-50";
-        if (score >= 3.5) return "text-blue-600 bg-blue-50";
-        if (score >= 2.5) return "text-yellow-600 bg-yellow-50";
-        if (score > 0) return "text-red-600 bg-red-50";
-        return "text-gray-800 bg-gray-100";
-    };
-
-    const onSubmit = async (data) => {
-        const finalPayload = {
-            ...data,
-            evaluation_period:evaluation_period,
-            calculated_scores: {
-                section_1: section1Score,
-                section_2: section2Score,
-                total_average: totalScore,
+const EVALUATION_SECTIONS = [
+    {
+        key: "attendance",
+        title: "ATTENDANCE",
+        criteria: [
+            {
+                key: "on_time_meetings_and_activities",
+                label: "Always on time (or even early) for meetings, conferences, and company activities.",
             },
-        };
-        console.log("Submitting Form Data:", finalPayload);
-        try {
-            await create_performance_evaluation_service(finalPayload);
-            await store.dispatch(get_app_data_thunk());
-            dispatch(
-                setAlert({
-                    type: "success",
-                    title: "Evaluation Submitted Successfully!",
-                    message:
-                        "The Evaluation has been created and is ready for review.",
-                    open: true,
-                }),
-            );
-            reset();
-            router.visit(
-                `/accounts/${window.location.pathname.split("/")[2]}/my_team/team`,
-            );
-        } catch (error) { }
+            {
+                key: "within_leave_and_time_off_limits",
+                label: "Maintains attendance within allowed limits for leaves and time offs.",
+            },
+            {
+                key: "adheres_to_schedules_breaks_and_overtime",
+                label: "Adheres to schedules, including breaks and mandatory overtime.",
+            },
+            {
+                key: "notifies_ahead_if_absent_or_late",
+                label: "Notifies ahead if absent or late.",
+            },
+            {
+                key: "perfect_attendance_three_months",
+                label: "Achieves perfect attendance for at least 3 months, excluding approved leaves.",
+            },
+        ],
+    },
+    {
+        key: "attitude",
+        title: "ATTITUDE",
+        criteria: [
+            {
+                key: "cheerful_attitude_benefits_teammates",
+                label: "Has a cheerful attitude that benefits teammates.",
+            },
+            {
+                key: "respects_colleagues_consistently",
+                label: "Respects colleagues consistently.",
+            },
+            {
+                key: "looks_for_positive_in_every_situation",
+                label: "Looks for the positive in every situation.",
+            },
+            {
+                key: "protects_company_reputation_and_culture",
+                label: "Does not engage in actions that could affect the reputation or culture of the company.",
+            },
+            {
+                key: "lightens_mood_during_stressful_times",
+                label: "Offers a smile or joke to lighten the mood during stressful times.",
+            },
+            {
+                key: "ready_to_share_and_help_others",
+                label: "Ready to share and help others.",
+            },
+            {
+                key: "stays_motivated_and_influences_positively",
+                label: "Stays motivated and influences the team positively.",
+            },
+            {
+                key: "open_to_feedback_and_constructive_criticism",
+                label: "Open to feedback and constructive criticism.",
+            },
+            {
+                key: "reports_to_work_with_positive_attitude",
+                label: "Always reports to work with a positive attitude.",
+            },
+            {
+                key: "frequently_has_a_smile_for_others",
+                label: "Frequently has a smile for others.",
+            },
+        ],
+    },
+    {
+        key: "dependability",
+        title: "DEPENDABILITY",
+        criteria: [
+            {
+                key: "willing_to_work_beyond_scheduled_hours",
+                label: "Willing to work beyond scheduled hours when needed.",
+            },
+            {
+                key: "manages_time_and_meets_deadlines",
+                label: "Manages time effectively and consistently meets deadlines.",
+            },
+            {
+                key: "delivers_good_to_great_results",
+                label: "Delivers good to great results consistently.",
+            },
+            {
+                key: "cares_about_quality_and_helps_others",
+                label: "Cares about the quality of work and always willing to help others.",
+            },
+        ],
+    },
+    {
+        key: "flexibility",
+        title: "FLEXIBILITY",
+        criteria: [
+            {
+                key: "adapts_to_unknown_processes_and_shows_initiative",
+                label: "Adapts well to tasks with unknown processes and shows initiative.",
+            },
+            {
+                key: "new_solutions_to_common_problems",
+                label: "Can come up with new solutions to common problems.",
+            },
+            {
+                key: "handles_varied_assignments_efficiently",
+                label: "Handles a variety of assignments efficiently.",
+            },
+            {
+                key: "identifies_and_implements_efficient_methods",
+                label: "Identifies and implements more efficient methods.",
+            },
+            {
+                key: "remains_calm_under_pressure_and_adapts",
+                label: "Remains calm under pressure and adapts quickly to changing situations.",
+            },
+            {
+                key: "willing_to_admit_mistakes_and_learn",
+                label: "Willing to admit lapses or mistakes and learn from them.",
+            },
+            {
+                key: "takes_ownership_and_accountability",
+                label: "Takes ownership and accountability for responsibilities.",
+            },
+        ],
+    },
+    {
+        key: "interpersonal_skills",
+        title: "INTERPERSONAL SKILLS",
+        criteria: [
+            {
+                key: "builds_strong_positive_relationships",
+                label: "Builds strong, positive relationships with coworkers.",
+            },
+            {
+                key: "easy_to_get_along_with_and_approachable",
+                label: "Is easy to get along with and approachable.",
+            },
+            {
+                key: "shows_genuine_interest_and_values_others",
+                label: "Shows genuine interest in others and makes them feel valued.",
+            },
+            {
+                key: "no_superior_attitude_towards_others",
+                label: "Does not display a superior attitude towards others.",
+            },
+            {
+                key: "sensitive_and_considerate_of_feelings",
+                label: "Is sensitive and considerate of coworkers’ feelings.",
+            },
+        ],
+    },
+    {
+        key: "teamwork",
+        title: "TEAMWORK",
+        criteria: [
+            {
+                key: "actively_listens_and_values_input",
+                label: "Actively listens to team members and values their input.",
+            },
+            {
+                key: "encourages_teamwork_and_collaboration",
+                label: "Encourages teamwork and collaboration to achieve common goals.",
+            },
+            {
+                key: "offers_assistance_and_advice",
+                label: "Offers assistance and advice to teammates when needed.",
+            },
+            {
+                key: "promotes_team_centered_workplace_and_unity",
+                label: "Promotes a team-centered workplace and fosters unity.",
+            },
+            {
+                key: "shares_ideas_and_techniques",
+                label: "Shares ideas and techniques to help the team improve.",
+            },
+            {
+                key: "cooperates_and_resolves_conflicts_professionally",
+                label: "Willing to cooperate with coworkers and resolve conflicts professionally.",
+            },
+        ],
+    },
+];
+
+function buildInitialScores() {
+    return EVALUATION_SECTIONS.reduce((acc, section) => {
+        acc[section.key] = section.criteria.reduce((sectionAcc, item) => {
+            sectionAcc[item.key] = null;
+            return sectionAcc;
+        }, {});
+        return acc;
+    }, {});
+}
+
+export default function PerformanceEvaluationForm({
+    employeeId = 1,
+    employeeName = "Bautista, Benedicto",
+    position = "Customer Service",
+    onSubmitEvaluation,
+}) {
+    const [evaluationType, setEvaluationType] = useState("");
+    const [scores, setScores] = useState(buildInitialScores);
+    const [submitting, setSubmitting] = useState(false);
+    const [statusMessage, setStatusMessage] = useState("");
+    const [open, setOpen] = useState(false);
+    const averageScore = useMemo(() => {
+        const numericScores = Object.values(scores)
+            .flatMap((categoryScores) => Object.values(categoryScores))
+            .filter((val) => typeof val === "number" && !Number.isNaN(val));
+
+        if (numericScores.length === 0) return "0.00";
+        const sum = numericScores.reduce(
+            (total, current) => total + current,
+            0,
+        );
+        return (sum / numericScores.length).toFixed(2);
+    }, [scores]);
+
+    const handleScoreChange = (categoryKey, criterionKey, value) => {
+        setScores((prev) => ({
+            ...prev,
+            [categoryKey]: {
+                ...prev[categoryKey],
+                [criterionKey]: Number(value),
+            },
+        }));
     };
 
-    // --- REUSABLE COMPONENTS ---
-    const SectionHeader = ({ title }) => (
-        <div className="bg-gray-800 text-white p-2 font-bold uppercase mt-8 mb-4 shadow-sm rounded-t-sm">
-            {title}
-        </div>
-    );
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatusMessage("");
 
-    const RatingRadioGroup = ({ name, hasError }) => (
-        <div
-            className={`flex justify-between w-full px-2 max-w-md mx-auto rounded-md transition-colors ${hasError ? "bg-red-50 ring-1 ring-red-400 py-1" : ""}`}
-        >
-            {[1, 2, 3, 4, 5].map((val) => (
-                <label
-                    key={val}
-                    className="flex flex-col items-center cursor-pointer group"
-                >
-                    <span className="text-[10px] font-bold mb-1 text-blue-800 group-hover:text-blue-500 transition-colors">
-                        {val}
-                    </span>
-                    <input
-                        type="radio"
-                        value={val}
-                        {...register(name, { required: true })}
-                        className="w-4 h-4 cursor-pointer accent-blue-600"
-                    />
-                </label>
-            ))}
-        </div>
-    );
+        const payload = {
+            employee_id: employeeId,
+            position,
+            evaluation_type: evaluationType,
+            scores,
+            average_score: Number(averageScore),
+        };
 
-    const inputStyles =
-        "w-full p-2 border-b-2 border-transparent bg-yellow-50 hover:bg-yellow-100 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none rounded-sm";
+        if (onSubmitEvaluation) {
+            setSubmitting(true);
+            try {
+                await onSubmitEvaluation(payload);
+                setStatusMessage("Evaluation submitted and emailed to HR.");
+            } catch (err) {
+                setStatusMessage(
+                    "Failed to submit evaluation. Please try again.",
+                );
+            } finally {
+                setSubmitting(false);
+            }
+            return;
+        }
 
-    const getErrorStyle = (error) =>
-        error ? "ring-2 ring-red-500 bg-red-50" : "";
+        setSubmitting(true);
+        try {
+            const response = await fetch("/api/performance-evaluations", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+            setStatusMessage("Evaluation submitted and emailed to HR.");
+        } catch (error) {
+            setStatusMessage("Could not reach /api/performance-evaluations.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
-        <div className="max-w-4xl mx-auto p-8 bg-white shadow-2xl border border-gray-200 my-10 rounded-lg">
-            <div className="flex justify-between items-center mb-8 border-b-4 border-blue-600 pb-4">
-                <div className="text-3xl font-black text-blue-900 tracking-tighter">
-                    <img src="/images/E1CXlogo2.png" className="w-52" />
-                </div>
-                <div className="text-right">
-                    <h1 className="font-bold text-xl uppercase tracking-wider text-gray-800">
-                        Performance Evaluation Form
-                    </h1>
-                    <p className="text-sm text-gray-500 font-medium">
-                        (Probationary Employee)
-                    </p>
-                </div>
-            </div>
-
-            {Object.keys(errors).length > 0 && (
-                <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 font-medium text-sm rounded">
-                    Please fill out all required fields marked in red before
-                    submitting.
-                </div>
-            )}
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {/* Basic Info */}
-                <div className="grid grid-cols-2 gap-[1px] bg-gray-300 border border-gray-300 rounded-sm overflow-hidden shadow-sm">
-                    <div className="p-3 font-semibold bg-gray-100 flex items-center">
-                        Employee Name:{" "}
-                        <span className="text-red-500 ml-1">*</span>
+       <>
+       <Button>
+        CLICK ME
+       </Button>
+       <Modal>
+ <div className="min-h-screen bg-slate-100 py-8 px-4">
+            <form
+                onSubmit={handleSubmit}
+                className="mx-auto max-w-5xl space-y-6"
+            >
+                {/* Top Banner & Header Card */}
+                <div className="overflow-hidden rounded-lg bg-white shadow-sm border border-slate-200">
+                    <div className="bg-blue-600 px-6 py-4">
+                        <h1 className="text-lg font-semibold text-white">
+                            Performance Evaluation
+                        </h1>
                     </div>
-                    <input
-                        disabled
-                        {...register("employee_name", { required: true })}
-                        className={`${inputStyles} ${getErrorStyle(errors.employee_name)} bg-white m-[1px] w-[calc(100%-2px)]`}
-                        placeholder="John Doe"
-                    />
 
-                    <div className="p-3 font-semibold bg-gray-100 flex items-center">
-                        Supervisor Name:{" "}
-                        <span className="text-red-500 ml-1">*</span>
-                    </div>
-                    <input
-                        disabled
-                        {...register("supervisor_name", { required: true })}
-                        className={`${inputStyles} ${getErrorStyle(errors.supervisor_name)} bg-white m-[1px] w-[calc(100%-2px)]`}
-                        placeholder="Jane Smith"
-                    />
-
-                    <div className="p-3 font-semibold bg-gray-100 flex items-center">
-                        Date of Assessment:{" "}
-                        <span className="text-red-500 ml-1">*</span>
-                    </div>
-                    <input
-                        disabled
-                        type="date"
-                        {...register("date_of_assessment", {
-                            required: true,
-                        })}
-                        className={`${inputStyles} ${getErrorStyle(errors.date_of_assessment)} bg-white m-[1px] w-[calc(100%-2px)]`}
-                    />
-                </div>
-
-                {/* Legend */}
-                <div className="bg-blue-50 p-4 rounded-md border border-blue-100 text-sm">
-                    <p className="font-bold text-blue-900 mb-1">
-                        Rating Scale:
-                    </p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-blue-800">
-                        <span>
-                            <strong>5</strong> - Excellent
-                        </span>
-                        <span>
-                            <strong>4</strong> - Outstanding
-                        </span>
-                        <span>
-                            <strong>3</strong> - Satisfactory
-                        </span>
-                        <span>
-                            <strong>2</strong> - Needs Improvement
-                        </span>
-                        <span>
-                            <strong>1</strong> - Unacceptable
-                        </span>
-                    </div>
-                </div>
-
-                {/* SECTION 1 */}
-                <SectionHeader title="Section 1: Objectives (50%)" />
-                <div className="space-y-4">
-                    {fields.map((field, index) => (
-                        <div
-                            key={field.id}
-                            className="border border-gray-200 p-4 rounded-md bg-gray-50 shadow-sm relative group hover:border-blue-300 transition-colors"
-                        >
-                            <div className="grid grid-cols-3 gap-4 mb-4">
-                                <div className="flex flex-col">
-                                    <label className="text-xs font-bold uppercase text-gray-600 mb-1">
-                                        Objective{" "}
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <textarea
-                                        {...register(
-                                            `objectives.${index}.title`,
-                                            { required: true },
-                                        )}
-                                        className={`${inputStyles} ${getErrorStyle(errors.objectives?.[index]?.title)}`}
-                                        rows="2"
-                                        placeholder="Describe objective..."
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <label className="text-xs font-bold uppercase text-gray-600 mb-1">
-                                        Action Items{" "}
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <textarea
-                                        {...register(
-                                            `objectives.${index}.action_items`,
-                                            { required: true },
-                                        )}
-                                        className={`${inputStyles} ${getErrorStyle(errors.objectives?.[index]?.action_items)}`}
-                                        rows="2"
-                                        placeholder="Steps taken..."
-                                    />
-                                </div>
-                                <div className="flex flex-col">
-                                    <label className="text-xs font-bold uppercase text-gray-600 mb-1">
-                                        Outcomes{" "}
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <textarea
-                                        {...register(
-                                            `objectives.${index}.outcomes`,
-                                            { required: true },
-                                        )}
-                                        className={`${inputStyles} ${getErrorStyle(errors.objectives?.[index]?.outcomes)}`}
-                                        rows="2"
-                                        placeholder="Results..."
-                                    />
-                                </div>
+                    <div className="p-6 space-y-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                    Employee Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={employeeName}
+                                    readOnly
+                                    className="w-full rounded-md border border-slate-300 bg-slate-50 px-3.5 py-2 text-sm text-slate-800"
+                                />
                             </div>
 
-                            <div className="bg-white p-3 border border-gray-100 rounded">
-                                <div className="flex flex-col gap-1 justify-center">
-                                    <label className="text-xs font-bold text-blue-900 text-center mb-1">
-                                        Manager Rating{" "}
-                                        <span className="text-red-500">*</span>
-                                    </label>
-                                    <RatingRadioGroup
-                                        name={`objectives.${index}.mgr_rating`}
-                                        hasError={
-                                            !!errors.objectives?.[index]
-                                                ?.mgr_rating
-                                        }
-                                    />
-                                </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                    Position
+                                </label>
+                                <input
+                                    type="text"
+                                    value={position}
+                                    readOnly
+                                    className="w-full rounded-md border border-slate-300 bg-slate-50 px-3.5 py-2 text-sm text-slate-800"
+                                />
                             </div>
-
-                            {fields.length > 1 && (
-                                <button
-                                    type="button"
-                                    onClick={() => remove(index)}
-                                    className="absolute -top-3 -right-3 bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500 hover:text-white shadow-md"
-                                >
-                                    ✕
-                                </button>
-                            )}
                         </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={() =>
-                            append({
-                                title: "",
-                                action_items: "",
-                                outcomes: "",
-                                mgr_rating: "",
-                            })
-                        }
-                        className="text-blue-600 font-semibold text-sm flex items-center gap-1 hover:text-blue-800 transition-colors p-2 border border-dashed border-blue-300 rounded w-full justify-center hover:bg-blue-50"
+
+                        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+                            <div className="w-full sm:max-w-md">
+                                <label
+                                    htmlFor="evaluation_type"
+                                    className="block text-sm font-medium text-slate-700 mb-1.5"
+                                >
+                                    Select Evaluation Type
+                                </label>
+                                <select
+                                    id="evaluation_type"
+                                    value={evaluationType}
+                                    onChange={(e) =>
+                                        setEvaluationType(e.target.value)
+                                    }
+                                    required
+                                    className="w-full rounded-md border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
+                                >
+                                    <option value="">
+                                        -- Choose Milestone --
+                                    </option>
+                                    {EVALUATION_MILESTONES.map((milestone) => (
+                                        <option
+                                            key={milestone}
+                                            value={milestone}
+                                        >
+                                            {milestone}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="rounded-lg bg-slate-100 px-6 py-3 text-center border border-slate-200 min-w-[150px]">
+                                <div className="text-xs font-medium text-blue-700">
+                                    Average Score
+                                </div>
+                                <div className="text-2xl font-bold text-slate-900">
+                                    {averageScore}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Evaluation Categories */}
+                {EVALUATION_SECTIONS.map((section) => (
+                    <div
+                        key={section.key}
+                        className="rounded-lg bg-white p-6 shadow-sm border border-slate-200"
                     >
-                        + Add Another Objective
-                    </button>
-                </div>
+                        <h2 className="border-b border-slate-200 pb-3 text-sm font-bold tracking-wide text-slate-800 uppercase">
+                            {section.title}
+                        </h2>
 
-                {/* SECTION 2 */}
-                <SectionHeader title="Section 2: General Performance Requirements (50%)" />
-                <div className="border border-gray-300 rounded-md overflow-hidden shadow-sm">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-100 text-gray-700 uppercase">
-                            <tr>
-                                <th className="px-4 py-3 border-b w-3/4">
-                                    Requirement
-                                </th>
-                                <th className="px-4 py-3 border-b border-l text-center w-1/4 bg-blue-50">
-                                    Mgr. Rating{" "}
-                                    <span className="text-red-500">*</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {/* CHANGED: We now map over the watched performance array */}
-                            {watchedPerformances?.map((item, index) => (
-                                <tr
-                                    key={index}
-                                    className="hover:bg-gray-50 transition-colors"
-                                >
-                                    <td className="px-4 py-3">
-                                        <span className="font-bold text-gray-800 block">
-                                            {item.title}
-                                        </span>
-                                        <span className="text-xs text-gray-500 italic">
-                                            {item.action_items}
-                                        </span>
-                                        {/* Hidden inputs to ensure these fields get sent in the payload */}
-                                        <input
-                                            type="hidden"
-                                            {...register(
-                                                `performances.${index}.title`,
+                        <div className="divide-y divide-slate-100">
+                            {section.criteria.map((criterion) => {
+                                const currentScore =
+                                    scores[section.key]?.[criterion.key];
+                                const groupName = `${section.key}__${criterion.key}`;
+
+                                return (
+                                    <div
+                                        key={criterion.key}
+                                        className="flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6"
+                                    >
+                                        <p className="text-sm text-slate-700 lg:max-w-xl">
+                                            {criterion.label}
+                                        </p>
+
+                                        <div
+                                            role="radiogroup"
+                                            aria-label={criterion.label}
+                                            className="flex flex-wrap gap-2 shrink-0"
+                                        >
+                                            {SCORE_OPTIONS.map(
+                                                (option, idx) => {
+                                                    const inputId = `${groupName}_${option.value}`;
+                                                    const isSelected =
+                                                        currentScore ===
+                                                        option.value;
+
+                                                    return (
+                                                        <label
+                                                            key={option.value}
+                                                            htmlFor={inputId}
+                                                            className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium cursor-pointer transition ${
+                                                                isSelected
+                                                                    ? "border-blue-600 bg-blue-50 text-blue-800"
+                                                                    : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                                                            }`}
+                                                        >
+                                                            <input
+                                                                id={inputId}
+                                                                type="radio"
+                                                                name={groupName}
+                                                                value={
+                                                                    option.value
+                                                                }
+                                                                checked={
+                                                                    isSelected
+                                                                }
+                                                                required={
+                                                                    idx === 0
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleScoreChange(
+                                                                        section.key,
+                                                                        criterion.key,
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
+                                                                className="h-3.5 w-3.5 accent-blue-600"
+                                                            />
+                                                            <span>
+                                                                {option.label}
+                                                            </span>
+                                                        </label>
+                                                    );
+                                                },
                                             )}
-                                        />
-                                        <input
-                                            type="hidden"
-                                            {...register(
-                                                `performances.${index}.action_items`,
-                                            )}
-                                        />
-                                    </td>
-                                    <td className="border-l p-2 align-middle bg-blue-50/30">
-                                        <RatingRadioGroup
-                                            name={`performances.${index}.mgr_rating`}
-                                            hasError={
-                                                !!errors.performances?.[index]
-                                                    ?.mgr_rating
-                                            }
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* INTERACTIVE SCORING TABLE */}
-                <SectionHeader title="Over-all Rating" />
-                <div className="flex justify-end">
-                    <table className="w-1/2 border-collapse border border-gray-300 text-sm shadow-sm rounded-md overflow-hidden">
-                        <tbody>
-                            <tr className="border-b border-gray-200">
-                                <td className="p-3 font-semibold bg-gray-100 w-2/3">
-                                    Section 1 (50%) Average:
-                                </td>
-                                <td className="p-3 text-center font-mono font-bold">
-                                    {section1Score > 0 ? section1Score : "-"}
-                                </td>
-                            </tr>
-                            <tr className="border-b border-gray-200">
-                                <td className="p-3 font-semibold bg-gray-100">
-                                    Section 2 (50%) Average:
-                                </td>
-                                <td className="p-3 text-center font-mono font-bold">
-                                    {section2Score > 0 ? section2Score : "-"}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="p-3 font-black bg-gray-800 text-white uppercase tracking-wider">
-                                    Total Average Score:
-                                </td>
-                                <td
-                                    className={`p-3 text-center font-mono font-black text-lg ${getScoreColor(totalScore)} transition-colors duration-500`}
-                                >
-                                    {totalScore > 0 ? totalScore : "-"}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Remarks Section */}
-                <div
-                    className={`mt-8 p-4 rounded border transition-colors ${errors.remarks ? "bg-red-50 border-red-300" : "bg-gray-50 border-gray-200"}`}
-                >
-                    <label className="font-bold block mb-2 text-gray-800 uppercase tracking-wide">
-                        Remarks / Comments:{" "}
-                        <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                        {...register("remarks", { required: true })}
-                        className={`w-full p-3 border rounded outline-none transition-all min-h-[120px] ${getErrorStyle(errors.remarks) || "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"}`}
-                        placeholder="Add your evaluation remarks here..."
-                    />
-                </div>
-
-                {/* Signatures & Recommendations */}
-                <div className="mt-12 grid grid-cols-2 gap-12 px-6">
-                    {
-                        evaluation_period != "3 Months" && <div
-                            className={`flex flex-col gap-3 p-4 rounded-md transition-colors ${errors.recommendation ? "bg-red-50 ring-1 ring-red-300" : ""}`}
-                        >
-                            <p className="text-sm font-bold uppercase text-gray-800  ">
-                                Recommendation{" "}
-                                <span className="text-red-500">*</span>
-                            </p>
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                    type="radio"
-                                    value="Regular"
-                                    {...register("recommendation", {
-                                        required: true,
-                                    })}
-                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
-                                />
-                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                    Regular
-                                </span>
-                            </label>
-
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                    type="radio"
-                                    value="Extended Probationary"
-                                    {...register("recommendation", {
-                                        required: true,
-                                    })}
-                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
-                                />
-                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                    Extended Probationary
-                                </span>
-                            </label>
-
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                    type="radio"
-                                    value="End of Contract"
-                                    {...register("recommendation", {
-                                        required: true,
-                                    })}
-                                    className="w-4 h-4 accent-blue-600 cursor-pointer"
-                                />
-                                <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                                    End of Contract
-                                </span>
-                            </label>
-                        </div>
-                    }
-
-                    <div className="flex flex-col items-center justify-end h-full w-full max-w-sm mx-auto">
-                        <div className="relative flex flex-col items-center justify-end w-full">
-                            {user?.subordinate?.leader?.user?.account_employee
-                                ?.signature && (
-                                    <img
-                                        src={
-                                            user?.subordinate?.leader?.user
-                                                ?.account_employee?.signature
-                                        }
-                                        alt="Supervisor Signature"
-                                        className="h-96 object-contain absolute -bottom-[160px] pointer-events-none mix-blend-multiply"
-                                    />
-                                )}
-                            <span className="font-bold text-gray-900 text-lg mb-1 relative z-10">
-                                {watch("supervisor_name")}
-                            </span>
-                        </div>
-                        <div className="border-t-2 border-gray-800 pt-2 text-center group cursor-pointer hover:bg-gray-50 rounded transition-colors pb-4 flex flex-col items-center justify-center w-full">
-                            <p className="text-sm font-bold uppercase text-gray-800">
-                                Immediate Superior Name & Signature
-                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
-                </div>
+                ))}
 
-                <div className="flex justify-center mt-10 pt-6 border-t border-gray-200">
-                    <Button type="submit" size="lg" loading={isSubmitting}>
-                        SUBMIT EVALUATION
-                    </Button>
+                {/* Submit Button */}
+                <div className="space-y-3">
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full rounded-md bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-60 transition cursor-pointer"
+                    >
+                        {submitting
+                            ? "Submitting..."
+                            : "Submit & Email Evaluation to HR"}
+                    </button>
+
+                    {statusMessage && (
+                        <p className="text-center text-sm font-medium text-slate-700">
+                            {statusMessage}
+                        </p>
+                    )}
                 </div>
             </form>
         </div>
-    );
-};
 
-export default CreatePEFSection;
+
+       </Modal>
+       </>
+    );
+}
