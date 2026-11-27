@@ -289,7 +289,7 @@ export default function SidebarSection() {
                                 href: `/accounts/${account_role}/asset_inventory`,
                                 icon: PackageIcon,
                                 current: path === "asset_inventory",
-                                is_incoming: true,
+                                is_incoming: false,
                             },
                         ]
                       : []),
