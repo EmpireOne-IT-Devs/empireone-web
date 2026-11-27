@@ -61,6 +61,34 @@ it('preserves a guest challenge URL through password login', function () {
     $this->assertAuthenticated();
 });
 
+it('forces a full page load after an Inertia password login', function () {
+    sharedChallengeUser();
+    $intended = url('/accounts/employee/rnr/challenge_event?challenge=6');
+
+    $this->withSession(['url.intended' => $intended])
+        ->withHeaders(['X-Inertia' => 'true'])
+        ->post('/login', [
+            'login_id' => 'challenge@example.test',
+            'password' => 'password',
+        ])
+        ->assertStatus(409)
+        ->assertHeader('X-Inertia-Location', $intended);
+
+    $this->assertAuthenticated();
+});
+
+it('forces a full page load after an Inertia logout', function () {
+    $user = sharedChallengeUser();
+
+    $this->actingAs($user)
+        ->withHeaders(['X-Inertia' => 'true'])
+        ->post('/logout')
+        ->assertStatus(409)
+        ->assertHeader('X-Inertia-Location', url('/auth/login'));
+
+    $this->assertGuest();
+});
+
 it('returns Google users to their intended challenge URL', function () {
     sharedChallengeUser();
     $provider = Mockery::mock();

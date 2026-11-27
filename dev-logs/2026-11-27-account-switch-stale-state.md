@@ -1,0 +1,26 @@
+### Phase 1: Clear stale frontend state when switching accounts
+
+- **Timestamp:** 2026-11-27 15:34:58 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, ⚙️ Backend, 🧪 QA
+- **Files Modified/Created:**
+  - `app/Http/Controllers/Auth/AuthenticatedSessionController.php` — Return Inertia location responses after login and logout to force a browser page load and recreate the Redux store.
+  - `tests/Unit/SharedChallengeLoginTest.php` — Cover full-load responses for Inertia login/logout and preserve intended challenge URLs.
+  - `dev-logs/2026-11-27-account-switch-stale-state.md` — Record the phase and QA results.
+- **Issues Encountered:** Inertia navigation preserved the in-memory Redux store across authentication changes, leaving account-specific state from the previous user visible.
+- **Resolution:** Use `Inertia::location()` with the existing intended login redirect and `/auth/login` logout redirect. Normal non-Inertia requests still receive regular redirects, and server-side session regeneration/invalidation remains unchanged.
+- **QA Checklist Result:** ✅ All applicable checks pass.
+  - JavaScript purity: N/A — no JavaScript changed.
+  - `web.php`/`api.php` route integrity: ✅ No route files or API endpoints changed.
+  - Form Requests, Policies, API Resources, migrations, backend service classes: N/A — no new endpoint or data operation.
+  - API calls and Redux thunk/slice flow: N/A — full document navigation resets the existing client store.
+  - 422 field validation: N/A — no form behavior changed.
+  - Internal navigation: ✅ Existing login redirect destination is retained; logout still targets `/auth/login`.
+  - Persistent layouts/reusable components: N/A — no frontend component changes.
+  - Naming conventions: ✅ Updated controller return types match the Symfony response returned by `Inertia::location()`.
+  - UI loading/destructive confirmation/empty states: N/A — no related UI changes.
+  - Keyboard/responsive/modal focus: N/A — no UI changes.
+  - Security: ✅ Login authentication and session regeneration, logout session invalidation and CSRF token regeneration are unchanged; intended redirect behavior is preserved.
+  - Guarded commands: ✅ No migrations, npm build/dev commands, destructive commands, or git commands were run.
+  - Validation: ✅ `php artisan test tests/Unit/SharedChallengeLoginTest.php` — 10 passed, 49 assertions.
+- **Next Steps:** Test switching accounts in the browser by signing out, then signing in as a different user.
