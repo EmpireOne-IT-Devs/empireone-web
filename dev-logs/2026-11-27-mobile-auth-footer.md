@@ -1,0 +1,23 @@
+### Phase 1: Mobile auth footer placement
+
+- **Timestamp:** 2026-11-27 22:22:13 +08:00
+- **Mode:** Agent
+- **Persona(s) Active:** 🏗️ Tech Lead, 🎨 UI/UX, 🖥️ Frontend, 🧪 QA
+- **Files Modified/Created:**
+  - `resources/js/app/pages/auth/layout.jsx` — Moved the existing footer after the promotional panel in the mobile layout while retaining its desktop position in the right column.
+  - `dev-logs/2026-11-27-mobile-auth-footer.md` — Recorded the change and QA results.
+- **Issues Encountered:** None.
+- **Resolution:** Use one footer as a grid item; the promotional panel spans both desktop grid rows.
+- **QA Checklist Result:**
+  - JavaScript purity: ✅ Plain JavaScript/JSX.
+  - Backend routes, Form Requests, Policies, API Resources, migrations, and services: N/A — no backend changes.
+  - Axios services, thunks, slices, store registration, and 422 validation: N/A — no data flow or forms changed.
+  - Inertia links and layout: ✅ Existing footer links and authentication layout preserved.
+  - Reusable components and naming: ✅ No new components or files requiring registration.
+  - Network loading, destructive confirmations, form errors, and empty states: N/A — unchanged.
+  - Keyboard access: Code-level ✅ — existing focus styles retained; requires browser verification.
+  - Responsive layout: Code-level ✅ — mobile ordering and desktop grid placement reviewed; requires browser verification.
+  - Modal focus trapping: N/A — no modal.
+  - Security and guarded commands: ✅ No authentication, API, route, or guarded command changes.
+  - Validation: ✅ Vite transformed the updated auth layout.
+- **Next Steps:** Verify footer placement at mobile and desktop widths in a browser.

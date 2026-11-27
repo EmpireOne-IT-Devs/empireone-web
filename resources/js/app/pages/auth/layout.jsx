@@ -37,8 +37,8 @@ export default function AuthLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-[#f7f5ff] font-sans">
-            <main className="grid min-h-screen bg-[#f7f5ff] lg:grid-cols-[1.08fr_0.92fr]">
-                <section className="relative order-2 flex min-h-[320px] items-center overflow-hidden px-7 py-12 sm:px-12 lg:order-1 lg:min-h-screen lg:px-16 xl:px-24">
+            <main className="grid min-h-screen bg-[#f7f5ff] lg:grid-cols-[1.08fr_0.92fr] lg:grid-rows-[1fr_auto]">
+                <section className="relative order-2 flex min-h-[320px] items-center overflow-hidden px-7 py-12 sm:px-12 lg:order-1 lg:row-span-2 lg:min-h-screen lg:px-16 xl:px-24">
                     {LOGIN_CAROUSEL_IMAGES.map((src, index) => (
                         <motion.img
                             key={src}
@@ -88,7 +88,7 @@ export default function AuthLayout({ children }) {
                     </div>
                 </section>
 
-                <section className="relative order-1 flex min-h-screen flex-col overflow-hidden px-6 sm:px-10 lg:order-2 lg:px-12 xl:px-20">
+                <section className="relative order-1 flex min-h-screen flex-col overflow-hidden px-6 sm:px-10 lg:order-2 lg:min-h-0 lg:px-12 xl:px-20">
                     <div
                         aria-hidden="true"
                         className="pointer-events-none absolute inset-0"
@@ -103,32 +103,31 @@ export default function AuthLayout({ children }) {
                     <div className="relative z-10 flex flex-1 items-center justify-center py-10">
                         {children}
                     </div>
-
-                    <footer className="relative z-10 mt-auto border-t border-violet-100/70 py-4">
-                        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-gray-500">
-                            <nav
-                                aria-label="Footer navigation"
-                                className="flex flex-wrap items-center justify-center gap-x-5"
-                            >
-                                {FOOTER_LINKS.map(({ label, href }) => (
-                                    <Link
-                                        key={label}
-                                        href={href}
-                                        className="transition-colors hover:text-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
-                                    >
-                                        {label}
-                                    </Link>
-                                ))}
-                            </nav>
-                            <span className="hidden text-gray-300 sm:inline">
-                                |
-                            </span>
-                            <p className="whitespace-nowrap text-gray-400">
-                                © 2026 EmpireOneCX. All rights reserved.
-                            </p>
-                        </div>
-                    </footer>
                 </section>
+                <footer className="relative order-3 mx-6 border-t border-violet-100/70 py-4 sm:mx-10 lg:col-start-2 lg:row-start-2 lg:mx-12 xl:mx-20">
+                    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-gray-500">
+                        <nav
+                            aria-label="Footer navigation"
+                            className="flex flex-wrap items-center justify-center gap-x-5"
+                        >
+                            {FOOTER_LINKS.map(({ label, href }) => (
+                                <Link
+                                    key={label}
+                                    href={href}
+                                    className="transition-colors hover:text-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
+                                >
+                                    {label}
+                                </Link>
+                            ))}
+                        </nav>
+                        <span className="hidden text-gray-300 sm:inline">
+                            |
+                        </span>
+                        <p className="whitespace-nowrap text-gray-400">
+                            © 2026 EmpireOneCX. All rights reserved.
+                        </p>
+                    </div>
+                </footer>
             </main>
         </div>
     );

@@ -1,0 +1,1 @@
+import{b as o,j as t}from"./app-BWSrfJv2.js";import{P as r}from"./pagination-B6p99-Tt.js";import"./iconBase-GgL_v7OV.js";function m(){const{applicants:a}=o(n=>n.human_resources);return t.jsx(t.Fragment,{children:t.jsx(r,{data:a})})}export{m as default};
