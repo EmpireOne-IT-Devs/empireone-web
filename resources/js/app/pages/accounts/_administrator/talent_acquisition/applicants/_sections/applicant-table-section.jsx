@@ -39,10 +39,18 @@ export default function ApplicantTableSection({ loading = false }) {
 
     const columns = [
          {
-            header: "ID",
+            header: "Applicant ID",
             render: (row) => (
                 <span className="font-mono text-xs font-semibold text-gray-600">
                    {row.id}
+                </span>
+            ),
+        },
+           {
+            header: "User ID",
+            render: (row) => (
+                <span className="font-mono text-xs font-semibold text-gray-600">
+                   {row?.user?.id}
                 </span>
             ),
         },

@@ -54,7 +54,10 @@ export default function Page({ auth }) {
     function verified_section() {
         if (user?.account_employee?.signature === undefined) {
             return null;
-        } else if (user?.account_employee?.signature === null) {
+        } else if (
+            user.id == auth?.user?.id &&
+            user?.account_employee?.signature === null
+        ) {
             return <VerifySection />;
         } else {
             return (
@@ -67,9 +70,10 @@ export default function Page({ auth }) {
                         "probation_full_time") === "probation_full_time" && (
                         <FullTimeProbationaryContractSection data={data} />
                     )}
-                    {!user?.account_employee?.is_has_contract && (
-                        <AgreeSection data={data} user={user} />
-                    )}
+                    {user.id == auth?.user?.id &&
+                        !user?.account_employee?.is_has_contract && (
+                            <AgreeSection data={data} user={user} />
+                        )}
                     {user.id != auth?.user?.id &&
                         user?.application?.final_status == "Sent Documents" && (
                             <SendContractSection props_data={user} />

@@ -12,13 +12,14 @@ import Wysiwyg from "@/app/_components/wysiwyg";
 import { get_job_requisitions_thunk } from "@/app/redux/job-requisition-thunk";
 import Radio from "@/app/_components/radio";
 import { peso_format } from "@/app/lib/peso-format";
-import {
-    FiBriefcase as BriefcaseIcon,
-} from "react-icons/fi";
+import { FiBriefcase as BriefcaseIcon } from "react-icons/fi";
 import store from "@/app/store/store";
 import { router } from "@inertiajs/react";
 
-export default function CreateJobRequisition({ autoOpen = false, hideButton = false }) {
+export default function CreateJobRequisition({
+    autoOpen = false,
+    hideButton = false,
+}) {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -64,9 +65,10 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
             qualifications: "",
             responsibilities: "",
             approver1_id: "",
-            position_level: 'Rank and File',
+            position_level: "Rank and File",
             approver2_id: "",
             approver3_id: 3,
+            work_setup: "On Site",
         },
     });
 
@@ -79,7 +81,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     const selectedPosition = data?.position?.find(
         (res) => String(res.id) == String(existingPositionId),
     );
-    console.log('selectedPosition', selectedPosition)
+    console.log("selectedPosition", selectedPosition);
     useEffect(() => {
         if (String(watchedValues.department_id) !== "4") {
             setValue("account_id", "");
@@ -161,10 +163,11 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                 ...form_data,
                 availability1: `${form_data.week_from1}-${form_data.week_to1} `,
                 availability2: `${form_data.week_from2}-${form_data.week_to2} `,
-                salary_range: `₱${peso_format(form_data.salary_range_from)} ${form_data.salary_range_to
-                    ? ` - ₱${peso_format(form_data.salary_range_to)}`
-                    : ""
-                    }`,
+                salary_range: `₱${peso_format(form_data.salary_range_from)} ${
+                    form_data.salary_range_to
+                        ? ` - ₱${peso_format(form_data.salary_range_to)}`
+                        : ""
+                }`,
             });
             dispatch(
                 setAlert({
@@ -175,7 +178,7 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                     open: true,
                 }),
             );
-            router.visit(window.location.pathname)
+            router.visit(window.location.pathname);
             reset();
             setOpen(false);
         } catch (error) {
@@ -229,12 +232,18 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
     ];
     return (
         <div>
-            {!hideButton && <Button type="button" variant="secondary" onClick={() => setOpen(true)}>
-                <div className="flex items-center gap-2">
-                    <PlusCircleIcon className="w-5 h-5" />
-                    New Job Requisition
-                </div>
-            </Button>}
+            {!hideButton && (
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setOpen(true)}
+                >
+                    <div className="flex items-center gap-2">
+                        <PlusCircleIcon className="w-5 h-5" />
+                        New Job Requisition
+                    </div>
+                </Button>
+            )}
 
             <Modal
                 width="max-w-4xl"
@@ -359,8 +368,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                             </div>
                         </div>
 
-                        {
-                            positionType && <>
+                        {positionType && (
+                            <>
                                 <div className="px-1 sm:px-3">
                                     <h3 className="text-sm font-semibold text-gray-700 mb-4">
                                         Position Details
@@ -371,14 +380,16 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             <div className="flex-1 w-full">
                                                 <Input
                                                     {...register("title", {
-                                                        required: "Title is required",
+                                                        required:
+                                                            "Title is required",
                                                     })}
-                                                    error={errors.title?.message}
+                                                    error={
+                                                        errors.title?.message
+                                                    }
                                                     label="Position Title"
                                                     placeholder="e.g. Senior Software Engineer"
                                                 />
                                             </div>
-
 
                                             <div className="flex-1 w-full">
                                                 <Controller
@@ -392,12 +403,13 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                         <Select
                                                             {...field}
                                                             label="Select category"
-                                                            options={['Agent','Support']?.map(
-                                                                (res) => ({
-                                                                    label: res,
-                                                                    value: res,
-                                                                }),
-                                                            )}
+                                                            options={[
+                                                                "Agent",
+                                                                "Support",
+                                                            ]?.map((res) => ({
+                                                                label: res,
+                                                                value: res,
+                                                            }))}
                                                             error={
                                                                 errors.category
                                                                     ?.message
@@ -427,61 +439,73 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                                 }),
                                                             )}
                                                             error={
-                                                                errors.department_id
+                                                                errors
+                                                                    .department_id
                                                                     ?.message
                                                             }
                                                         />
                                                     )}
                                                 />
                                             </div>
-
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {String(watchedValues.department_id) ===
-                                                "4" && (
-                                                    <>
-                                                        <div className="flex-1 w-full">
-                                                            <Controller
-                                                                name="account_id"
-                                                                control={control}
-                                                                rules={{
+                                            {String(
+                                                watchedValues.department_id,
+                                            ) === "4" && (
+                                                <>
+                                                    <div className="flex-1 w-full">
+                                                        <Controller
+                                                            name="account_id"
+                                                            control={control}
+                                                            rules={{
+                                                                required:
+                                                                    "Account is required",
+                                                            }}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <Select
+                                                                    {...field}
+                                                                    label="Select Account"
+                                                                    options={data?.accounts?.map(
+                                                                        (
+                                                                            res,
+                                                                        ) => ({
+                                                                            ...res,
+                                                                            label: res.name,
+                                                                            value: res.id,
+                                                                        }),
+                                                                    )}
+                                                                    error={
+                                                                        errors
+                                                                            .account_id
+                                                                            ?.message
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 w-full">
+                                                        <Input
+                                                            {...register(
+                                                                "wave",
+                                                                {
                                                                     required:
-                                                                        "Account is required",
-                                                                }}
-                                                                render={({ field }) => (
-                                                                    <Select
-                                                                        {...field}
-                                                                        label="Select Account"
-                                                                        options={data?.accounts?.map(
-                                                                            (res) => ({
-                                                                                ...res,
-                                                                                label: res.name,
-                                                                                value: res.id,
-                                                                            }),
-                                                                        )}
-                                                                        error={
-                                                                            errors.account_id
-                                                                                ?.message
-                                                                        }
-                                                                    />
-                                                                )}
-                                                            />
-                                                        </div>
-                                                        <div className="flex-1 w-full">
-                                                            <Input
-                                                                {...register("wave", {
-                                                                    required: "Wave is required",
-                                                                })}
-                                                                min="0"
-                                                                error={errors.wave?.message}
-                                                                type="number"
-                                                                label="Wave"
-                                                                placeholder="Wave of account"
-                                                            />
-                                                        </div>
-                                                    </>
-
-                                                )}
+                                                                        "Wave is required",
+                                                                },
+                                                            )}
+                                                            min="0"
+                                                            error={
+                                                                errors.wave
+                                                                    ?.message
+                                                            }
+                                                            type="number"
+                                                            label="Wave"
+                                                            placeholder="Wave of account"
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <Controller
@@ -514,7 +538,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             },
                                                         ]}
                                                         error={
-                                                            errors.employment_type
+                                                            errors
+                                                                .employment_type
                                                                 ?.message
                                                         }
                                                     />
@@ -522,12 +547,16 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             />
 
                                             <Input
-                                                {...register("number_of_positions", {
-                                                    required:
-                                                        "Number of Positions is required",
-                                                })}
+                                                {...register(
+                                                    "number_of_positions",
+                                                    {
+                                                        required:
+                                                            "Number of Positions is required",
+                                                    },
+                                                )}
                                                 error={
-                                                    errors.number_of_positions?.message
+                                                    errors.number_of_positions
+                                                        ?.message
                                                 }
                                                 type="number"
                                                 label="Number of Positions"
@@ -538,7 +567,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 name="priority"
                                                 control={control}
                                                 rules={{
-                                                    required: "Priority is required",
+                                                    required:
+                                                        "Priority is required",
                                                 }}
                                                 render={({ field }) => (
                                                     <Select
@@ -558,7 +588,10 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                                 label: "High",
                                                             },
                                                         ]}
-                                                        error={errors.priority?.message}
+                                                        error={
+                                                            errors.priority
+                                                                ?.message
+                                                        }
                                                     />
                                                 )}
                                             />
@@ -595,7 +628,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             },
                                                         ]}
                                                         error={
-                                                            errors.erf_classification
+                                                            errors
+                                                                .erf_classification
                                                                 ?.message
                                                         }
                                                     />
@@ -628,7 +662,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             },
                                                         ]}
                                                         error={
-                                                            errors.target_audience
+                                                            errors
+                                                                .target_audience
                                                                 ?.message
                                                         }
                                                     />
@@ -664,7 +699,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             },
                                                         ]}
                                                         error={
-                                                            errors.position_level
+                                                            errors
+                                                                .position_level
                                                                 ?.message
                                                         }
                                                     />
@@ -672,13 +708,13 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             />
                                         </div>
 
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <Controller
                                                 name="location_id"
                                                 control={control}
                                                 rules={{
-                                                    required: "Location is required",
+                                                    required:
+                                                        "Location is required",
                                                 }}
                                                 render={({ field }) => (
                                                     <Select
@@ -691,7 +727,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             }),
                                                         )}
                                                         error={
-                                                            errors.location_id?.message
+                                                            errors.location_id
+                                                                ?.message
                                                         }
                                                     />
                                                 )}
@@ -700,16 +737,53 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             <Controller
                                                 name="site_id"
                                                 control={control}
-                                                rules={{ required: "Site is required" }}
+                                                rules={{
+                                                    required:
+                                                        "Site is required",
+                                                }}
                                                 render={({ field }) => (
                                                     <Select
                                                         {...field}
                                                         label="Select Site"
-                                                        options={sites?.map((res) => ({
-                                                            label: `${res.name} (${res.address})`,
-                                                            value: res.id,
+                                                        options={sites?.map(
+                                                            (res) => ({
+                                                                label: `${res.name} (${res.address})`,
+                                                                value: res.id,
+                                                            }),
+                                                        )}
+                                                        error={
+                                                            errors.site_id
+                                                                ?.message
+                                                        }
+                                                    />
+                                                )}
+                                            />
+                                            <Controller
+                                                name="work_setup"
+                                                control={control}
+                                                rules={{
+                                                    required:
+                                                        "Setup is required",
+                                                }}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        value={
+                                                            watchedValues.work_setup
+                                                        }
+                                                        {...field}
+                                                        label="Work Setup"
+                                                        options={[
+                                                            "Hybrid",
+                                                            "On Site",
+                                                            "Work From Home",
+                                                        ].map((res) => ({
+                                                            label: `${res}`,
+                                                            value: res,
                                                         }))}
-                                                        error={errors.site_id?.message}
+                                                        error={
+                                                            errors.work_setup
+                                                                ?.message
+                                                        }
                                                     />
                                                 )}
                                             />
@@ -727,7 +801,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             },
                                                         )}
                                                         error={
-                                                            errors.salary_range_from
+                                                            errors
+                                                                .salary_range_from
                                                                 ?.message
                                                         }
                                                         iconLeft="₱"
@@ -745,7 +820,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             },
                                                         )}
                                                         error={
-                                                            errors.salary_range_to
+                                                            errors
+                                                                .salary_range_to
                                                                 ?.message
                                                         }
                                                         iconLeft="₱"
@@ -757,10 +833,13 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             <div className="flex mt-2">
                                                 <Input
                                                     type="date"
-                                                    {...register("target_start_date", {
-                                                        required:
-                                                            "Target Start Date is required",
-                                                    })}
+                                                    {...register(
+                                                        "target_start_date",
+                                                        {
+                                                            required:
+                                                                "Target Start Date is required",
+                                                        },
+                                                    )}
                                                     error={
                                                         errors.target_start_date
                                                             ?.message
@@ -781,9 +860,12 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <Input
                                                 {...register("interviewer1", {
-                                                    required: "Interviewer is required",
+                                                    required:
+                                                        "Interviewer is required",
                                                 })}
-                                                error={errors.interviewer1?.message}
+                                                error={
+                                                    errors.interviewer1?.message
+                                                }
                                                 label="Interviewer "
                                                 placeholder="e.g. John Doe"
                                             />
@@ -793,7 +875,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                     name="week_from1"
                                                     control={control}
                                                     rules={{
-                                                        required: "From is required",
+                                                        required:
+                                                            "From is required",
                                                     }}
                                                     render={({ field }) => (
                                                         <Select
@@ -801,7 +884,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             label="From"
                                                             options={weeks}
                                                             error={
-                                                                errors.week_from1
+                                                                errors
+                                                                    .week_from1
                                                                     ?.message
                                                             }
                                                         />
@@ -814,7 +898,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                     name="week_to1"
                                                     control={control}
                                                     rules={{
-                                                        required: "To is required",
+                                                        required:
+                                                            "To is required",
                                                     }}
                                                     render={({ field }) => (
                                                         <Select
@@ -822,7 +907,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             label="To "
                                                             options={weeks}
                                                             error={
-                                                                errors.week_to1?.message
+                                                                errors.week_to1
+                                                                    ?.message
                                                             }
                                                         />
                                                     )}
@@ -831,11 +917,17 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
 
                                             <Input
                                                 type="time"
-                                                {...register("interview_time1", {
-                                                    required:
-                                                        "Interview time is required",
-                                                })}
-                                                error={errors.interview_time1?.message}
+                                                {...register(
+                                                    "interview_time1",
+                                                    {
+                                                        required:
+                                                            "Interview time is required",
+                                                    },
+                                                )}
+                                                error={
+                                                    errors.interview_time1
+                                                        ?.message
+                                                }
                                                 label="Interview Time"
                                             />
                                         </div>
@@ -843,7 +935,9 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <Input
                                                 {...register("interviewer2")}
-                                                error={errors.interviewer2?.message}
+                                                error={
+                                                    errors.interviewer2?.message
+                                                }
                                                 label="Interviewer 2 (optional)"
                                                 placeholder="e.g. John Doe"
                                             />
@@ -862,7 +956,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             label="From"
                                                             options={weeks}
                                                             error={
-                                                                errors.week_from2
+                                                                errors
+                                                                    .week_from2
                                                                     ?.message
                                                             }
                                                         />
@@ -883,7 +978,8 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                             label="To"
                                                             options={weeks}
                                                             error={
-                                                                errors.week_to2?.message
+                                                                errors.week_to2
+                                                                    ?.message
                                                             }
                                                         />
                                                     )}
@@ -893,7 +989,10 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                             <Input
                                                 type="time"
                                                 {...register("interview_time2")}
-                                                error={errors.interview_time2?.message}
+                                                error={
+                                                    errors.interview_time2
+                                                        ?.message
+                                                }
                                                 label="Interview Time 2 (optional)"
                                             />
                                         </div>
@@ -903,10 +1002,11 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 <span className="font-medium">
                                                     Note:
                                                 </span>{" "}
-                                                The final interviewer will conduct the
-                                                last round of interviews, while the
-                                                sub-interviewer will assist in the
-                                                initial screening process.
+                                                The final interviewer will
+                                                conduct the last round of
+                                                interviews, while the
+                                                sub-interviewer will assist in
+                                                the initial screening process.
                                             </p>
                                         </div>
                                     </div>
@@ -924,33 +1024,51 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 required
                                                 name="approver1_id"
                                                 options={
-                                                    users?.users?.map((res) => ({
-                                                        ...res,
-                                                        label: res.name,
-                                                        value: res.id,
-                                                    })) || []
+                                                    users?.users?.map(
+                                                        (res) => ({
+                                                            ...res,
+                                                            label: res.name,
+                                                            value: res.id,
+                                                        }),
+                                                    ) || []
                                                 }
-                                                value={watchedValues.approver1_id}
+                                                value={
+                                                    watchedValues.approver1_id
+                                                }
                                                 onChange={(val) =>
-                                                    setValue("approver1_id", val)
+                                                    setValue(
+                                                        "approver1_id",
+                                                        val,
+                                                    )
                                                 }
-                                                error={errors.approver1_id?.message}
+                                                error={
+                                                    errors.approver1_id?.message
+                                                }
                                             />
                                             <Select
                                                 label="Approver 2 "
                                                 required
                                                 name="approver2_id"
                                                 options={
-                                                    users?.users?.map((res) => ({
-                                                        ...res,
-                                                        label: res.name,
-                                                        value: res.id,
-                                                    })) || []
+                                                    users?.users?.map(
+                                                        (res) => ({
+                                                            ...res,
+                                                            label: res.name,
+                                                            value: res.id,
+                                                        }),
+                                                    ) || []
                                                 }
-                                                value={watchedValues.approver2_id}
-                                                error={errors.approver2_id?.message}
+                                                value={
+                                                    watchedValues.approver2_id
+                                                }
+                                                error={
+                                                    errors.approver2_id?.message
+                                                }
                                                 onChange={(val) =>
-                                                    setValue("approver2_id", val)
+                                                    setValue(
+                                                        "approver2_id",
+                                                        val,
+                                                    )
                                                 }
                                             />
                                             <Select
@@ -959,17 +1077,26 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 disabled
                                                 name="approver3_id"
                                                 options={
-                                                    users?.users?.map((res) => ({
-                                                        ...res,
-                                                        label: res.name,
-                                                        value: res.id,
-                                                    })) || []
+                                                    users?.users?.map(
+                                                        (res) => ({
+                                                            ...res,
+                                                            label: res.name,
+                                                            value: res.id,
+                                                        }),
+                                                    ) || []
                                                 }
-                                                value={watchedValues.approver3_id}
+                                                value={
+                                                    watchedValues.approver3_id
+                                                }
                                                 onChange={(val) =>
-                                                    setValue("approver3_id", val)
+                                                    setValue(
+                                                        "approver3_id",
+                                                        val,
+                                                    )
                                                 }
-                                                error={errors.approver3_id?.message}
+                                                error={
+                                                    errors.approver3_id?.message
+                                                }
                                             />
                                         </div>
 
@@ -978,9 +1105,10 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 <span className="font-medium">
                                                     Note:
                                                 </span>{" "}
-                                                The request is approved by the 1st
-                                                approver, Director, and TA Manager, then
-                                                assigned to a recruiter.
+                                                The request is approved by the
+                                                1st approver, Director, and TA
+                                                Manager, then assigned to a
+                                                recruiter.
                                             </p>
                                         </div>
                                     </div>
@@ -998,7 +1126,10 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                                 label="Job / Position Requirements"
                                                 value={field.value}
                                                 onChange={field.onChange}
-                                                error={errors.qualifications?.message}
+                                                error={
+                                                    errors.qualifications
+                                                        ?.message
+                                                }
                                             />
                                         )}
                                     />
@@ -1007,22 +1138,24 @@ export default function CreateJobRequisition({ autoOpen = false, hideButton = fa
                                         name="responsibilities"
                                         control={control}
                                         rules={{
-                                            required: "Responsibility is required",
+                                            required:
+                                                "Responsibility is required",
                                         }}
                                         render={({ field }) => (
                                             <Wysiwyg
                                                 label="Job Description / Responsibility"
                                                 value={field.value}
                                                 onChange={field.onChange}
-                                                error={errors.responsibilities?.message}
+                                                error={
+                                                    errors.responsibilities
+                                                        ?.message
+                                                }
                                             />
                                         )}
                                     />
                                 </div>
                             </>
-                        }
-
-
+                        )}
                     </div>
 
                     <div className="sticky bottom-0 bg-white border-t pt-4 mt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 pb-2 px-1 sm:px-3">
