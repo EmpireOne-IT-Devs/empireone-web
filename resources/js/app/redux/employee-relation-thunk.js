@@ -41,7 +41,10 @@ export function get_employees_thunk(all = false, lite = false) {
         dispatch(employeeRelationSlice.actions.setEmployeesLoading(true));
         try {
             const result = await get_employees_service(undefined, all, lite);
-            dispatch(employeeRelationSlice.actions.setEmployees(result));
+            dispatch(
+                employeeRelationSlice.actions.setEmployees(result.employees),
+            );
+            dispatch(employeeRelationSlice.actions.setLeaders(result.leaders));
         } finally {
             dispatch(employeeRelationSlice.actions.setEmployeesLoading(false));
         }

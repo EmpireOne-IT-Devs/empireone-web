@@ -670,7 +670,15 @@ class AccountEmployeeController extends Controller
             });
         }
 
-        return response()->json($employees, 200);
+        $leaders = ERLeader::when($location_id, function ($query, $location) {
+            $query->where('location_id', $location);
+        })
+            ->with('user', 'location')
+            ->get();
+        return response()->json([
+            'leaders' => $leaders,
+            'employees' => $employees,
+        ], 200);
     }
 
     /**
