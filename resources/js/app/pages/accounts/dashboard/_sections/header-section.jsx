@@ -132,7 +132,7 @@ export default function HeaderSection() {
 
             <div className="pointer-events-none absolute bottom-0 right-0 hidden h-full items-end lg:flex">
                 <img
-                    src="/images/EmpireOne Futuristic Glass Office Tower.png"
+                    src="/images/EmpireOneCX-Building.webp"
                     alt="Side visual"
                     className="h-[900%] w-auto max-w-[500px] object-contain object-bottom drop-shadow-xl"
                 />
